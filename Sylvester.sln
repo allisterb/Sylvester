@@ -3,21 +3,50 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Base", "Sylvester.Base\Sylvester.Base.csproj", "{42E8D976-5F1D-480F-B657-8E34B9AD26D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Base", "Sylvester.Base\Sylvester.Base.csproj", "{42E8D976-5F1D-480F-B657-8E34B9AD26D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nativelibs", "nativelibs", "{7DE1256E-E67E-4A53-82D6-ADAF514DA554}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Native.PlaidML.x64-win", "nativelibs\Sylvester.Native.PlaidML.x64-win\Sylvester.Native.PlaidML.x64-win.csproj", "{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Compiler.PlaidML", "Sylvester.Compiler.PlaidML\Sylvester.Compiler.PlaidML.csproj", "{4A133E72-8387-46CE-98AA-3F4225116743}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Debug|x64.ActiveCfg = Debug|x64
+		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Debug|x64.Build.0 = Debug|x64
 		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Release|x64.ActiveCfg = Release|x64
+		{42E8D976-5F1D-480F-B657-8E34B9AD26D0}.Release|x64.Build.0 = Release|x64
+		{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9}.Debug|x64.ActiveCfg = Debug|x64
+		{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9}.Debug|x64.Build.0 = Debug|x64
+		{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9}.Release|Any CPU.ActiveCfg = Release|x64
+		{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9}.Release|x64.ActiveCfg = Release|x64
+		{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9}.Release|x64.Build.0 = Release|x64
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Debug|x64.Build.0 = Debug|Any CPU
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Release|x64.ActiveCfg = Release|Any CPU
+		{4A133E72-8387-46CE-98AA-3F4225116743}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{44C5D6E7-D8A2-4A02-929C-9ABD9C6A5BE9} = {7DE1256E-E67E-4A53-82D6-ADAF514DA554}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

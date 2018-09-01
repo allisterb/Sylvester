@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Sylvester.Native.PlaidML.x64-win</id>
+    <version>0.3.3.1</version>
+    <authors>Allister Beharry</authors>
+    <owners>Allister Beharry</owners>
+    <copyright>PlaidML is Copyright © 2018 The PlaidML authors: https://github.com/plaidml/plaidml/ </copyright>
+    <licenseUrl>https://raw.githubusercontent.com/plaidml/plaidml/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <projectUrl>https://github.com/Lokad/Adrien</projectUrl>
+    <summary>PlaidML Windows binary for use with the Adrien project</summary>
+    <description>PlaidML Windows binary for use with the Adrien project. The DLL files will be automatically copied to your project output directory.</description>
+    <releaseNotes>See https://github.com/plaidml/plaidml </releaseNotes>
+    <tags>Tensor ML</tags>
+  </metadata>
+  <files>
+    <file src="native\**\*.dll" target="build\native\" />
+    <file src="native\**\*.json" target="build\native\" />
+    <file src="Sylvester.Native.PlaidML.x64-win.targets" target="build\Sylvester.Native.PlaidML.x64-win.targets" />
+  </files>
+</package>
