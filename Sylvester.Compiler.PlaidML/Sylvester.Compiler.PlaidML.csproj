@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -26,4 +26,18 @@
     <ProjectReference Include="..\Sylvester.Base\Sylvester.Base.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Include="$(SolutionDir)lib\native\plaidmlwin\**\*.dll" />
+    <None Include="@(NativeLibs)">
+      <Link>%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Settings Include="$(SolutionDir)lib\native\plaidmlwin\**\*.json" />
+    <None Include="@(Settings)">
+      <Link>%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
