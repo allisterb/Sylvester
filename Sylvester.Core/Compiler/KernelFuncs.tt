@@ -1,0 +1,21 @@
+﻿<#@ assembly name="netstandard.dll" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="$(SolutionDir)lib\netstandard2.0\Humanizer.dll" #>
+<#@ assembly name="$(TargetDir)Sylvester.Core.dll" #>
+<#@ import namespace="Sylvester.Notation" #>
+<#@ output extension=".cs" #>
+using System;
+
+namespace Sylvester.Compiler
+{
+	public partial class Kernel<T> : IKernel<T> where T : unmanaged, IEquatable<T>, IComparable<T>, IConvertible
+	{
+		<#for (int i = 1; i <= 8; i++) {#>  
+		public Func<<#for(int j=1;j<=i;j++){#>Var<T>,<#}#> Var<T>> Func<#=i#> => 
+            new Func<<#for(int j=1;j<=i;j++){#>Var<T>,<#}#> Var<T>>((<#for(int j=1;j<i;j++){#>i<#=j#>,<#}#>i<#=i#>) 
+			=> Func(new Var<T>[] { <#for(int j=1;j<i;j++){#>i<#=j#>,<#}#>i<#=i#> }));
+		<#}#>}
+}

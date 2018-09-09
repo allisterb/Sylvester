@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <RootNamespace>Sylvester</RootNamespace>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.4.2" />
+    <PackageReference Include="Sawmill" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sylvester.Base\Sylvester.Base.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Compiler\KernelFuncs.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>KernelFuncs.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Notation\Tensors\MatrixConstructors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MatrixConstructors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Notation\Tensors\ScalarConstructors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ScalarConstructors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Notation\Tensors\TensorConstructors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TensorConstructors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Notation\Tensors\TensorIndexers.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TensorIndexers.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Notation\Tensors\VectorConstructors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VectorConstructors.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Compiler\KernelFuncs.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>KernelFuncs.cs</LastGenOutput>
+    </None>
+    <None Update="Notation\Tensors\MatrixConstructors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MatrixConstructors.cs</LastGenOutput>
+    </None>
+    <None Update="Notation\Tensors\ScalarConstructors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ScalarConstructors.cs</LastGenOutput>
+    </None>
+    <None Update="Notation\Tensors\TensorConstructors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TensorConstructors.cs</LastGenOutput>
+    </None>
+    <None Update="Notation\Tensors\TensorIndexers.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TensorIndexers.cs</LastGenOutput>
+    </None>
+    <None Update="Notation\Tensors\VectorConstructors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VectorConstructors.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

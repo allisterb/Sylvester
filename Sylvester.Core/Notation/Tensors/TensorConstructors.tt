@@ -1,0 +1,59 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="netstandard.dll" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="$(SolutionDir)lib\netstandard2.0\Humanizer.dll" #>
+<#@ assembly name="$(TargetDir)Sylvester.Core.dll" #>
+<#@ import namespace="Sylvester.Notation" #>
+<#@ output extension=".cs" #>
+namespace Sylvester.Notation
+{
+	public partial class Tensor
+	{<#for (int i = 2; i < 100; i++)
+	{
+	string tn = Tensor.RankToTensorName(i);
+	#>
+		
+		public static Tensor <#=tn#>D(string name, (<# for (int j = 1; j < i; j++) {#>int dim<#=j#>, <#}#>int dim<#=i#>) dim) =>
+			new Tensor(name, <# for (int j = 1; j < i; j++) {#>dim.dim<#=j#>, <#}#>dim.dim<#=i#>);
+
+		public static Tensor <#=tn#>D((<# for (int j = 1; j < i; j++) {#>int dim<#=j#>, <#}#>int dim<#=i#>) dim) =>
+			new Tensor(<# for (int j = 1; j < i; j++) {#>dim.dim<#=j#>, <#}#>dim.dim<#=i#>);
+
+		public static Tensor <#=tn#>D(string name, (<# for (int j = 1; j < i; j++) {#>int dim<#=j#>, <#}#>int dim<#=i#>) dim, string indexNameBase, out IndexSet I)
+		{
+			Tensor t = Tensor.<#=tn#>D(name, dim);
+			I = new IndexSet(t, indexNameBase,  <# for (int j = 1; j < i; j++){#>dim.dim<#=j#>, <#}#>dim.dim<#=i#>);
+			return t;
+		}
+
+		public static Tensor <#=tn#>D(string name, (<# for (int j = 1; j < i; j++) {#>int dim<#=j#>, <#}#>int dim<#=i#>) dim, string indexNameBase,
+			<#for (int j = 1; j < i; j++) {#>out Index index<#=j#>, <#}#>out Index index<#=i#>)
+		{
+			Tensor t = new Tensor(name, indexNameBase, out IndexSet I, <#for (int j = 1; j < i; j++){#>dim.dim<#=j#>, <#}#>dim.dim<#=i#>);
+			<#for (int j = 1; j <= i; j++) {#>index<#=j#> = new Index(I, <#=j-1#>, dim.dim<#=j#>, t.GenerateName(<#=j-1#>, indexNameBase));
+			<#}#>return t;
+		}
+
+		public static Tensor <#=tn#>D((<# for (int j = 1; j < i; j++) {#>int dim<#=j#>, <#}#>int dim<#=i#>) dim,
+			<#for (int j = 1; j < i; j++) {#>out Index index<#=j#>, <#}#>out Index index<#=i#>)
+		{
+			Tensor t = new Tensor("A", "i", out IndexSet I, <#for (int j = 1; j < i; j++){#>dim.dim<#=j#>, <#}#>dim.dim<#=i#>);
+			<#for (int j = 1; j <= i; j++) {#>index<#=j#> = new Index(I, <#=j-1#>, dim.dim<#=j#>, t.GenerateName(<#=j-1#>, "i"));
+			<#}#>return t;
+
+		}
+
+	<#}#>
+<#for (int i = 2; i < 100; i++)
+{
+		string n = Tensor.RankToTensorName(i);
+#>
+		public (<# for (int j = 1; j < i; j++) {#>Tensor, <#}#>Tensor) <#=n#>() => (this<# for (int j = 1; j < i; j++) {#>, new Tensor(this.GenerateName(<#=j#>, this.Name), this.Dimensions)<#}#>);
+		public (<# for (int j = 1; j < i; j++) {#>Tensor, <#}#>Tensor) <#=n#>(<# for (int j = 1; j < i; j++) {#>string name<#=j#>, <#}#>string name<#=i#>) => (<# for (int j = 1; j < i; j++) {#>new Tensor(name<#=j#>, this.Dimensions),<#}#>new Tensor(name<#=i#>, this.Dimensions));
+<#}#>
+	}
+}
