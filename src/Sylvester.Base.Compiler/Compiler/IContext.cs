@@ -2,7 +2,7 @@
 
 namespace Sylvester.Compiler
 {
-    public interface ITensorContext
+    public interface IContext
     {
         List<INDArray> Tensors { get; }
     }

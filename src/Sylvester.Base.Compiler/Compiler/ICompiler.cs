@@ -7,7 +7,7 @@ namespace Sylvester.Compiler
     {
         Dictionary<string, object> Options { get; }
 
-        ITensorContext TensorContext { get; }
+        IContext TensorContext { get; }
 
         CompilerStatus Status { get; }
 

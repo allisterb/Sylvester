@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sylvester.Base\Sylvester.Base.csproj" />
+    <ProjectReference Include="..\Sylvester.Base.Compiler\Sylvester.Base.Compiler.csproj" />
   </ItemGroup>
 
   <ItemGroup>

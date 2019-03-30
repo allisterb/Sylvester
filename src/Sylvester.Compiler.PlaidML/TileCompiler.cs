@@ -11,7 +11,7 @@ namespace Sylvester.Compiler.PlaidML
     {
         public Dictionary<string, object> Options { get; }
 
-        public ITensorContext TensorContext { get; }
+        public IContext TensorContext { get; }
 
         public bool Initialized { get; protected set; }
 

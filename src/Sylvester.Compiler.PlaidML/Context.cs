@@ -9,7 +9,7 @@ using Sylvester.Compiler.PlaidML.Bindings;
 
 namespace Sylvester.Compiler.PlaidML
 {
-    public class Context : CompilerApi<Context>, ITensorContext
+    public class Context : CompilerApi<Context>, IContext
     {
         protected IntPtr ptr;
 

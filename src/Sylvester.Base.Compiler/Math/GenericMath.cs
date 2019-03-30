@@ -120,6 +120,7 @@ namespace Sylvester.Math
             return strides;
         }
 
+        /*
         public static int[] StridesInBytes<T>(int[] dim)
         {
             var strides = StridesInElements(dim);
@@ -130,5 +131,6 @@ namespace Sylvester.Math
 
             return strides;
         }
+        */
     }
 }
