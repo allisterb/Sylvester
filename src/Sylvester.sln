@@ -3,15 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Base.Compiler", "Sylvester.Base.Compiler\Sylvester.Base.Compiler.csproj", "{3EAA0046-8055-4FE6-B095-D0AE8D439392}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Base.FixedPoint", "Base\Sylvester.Base.FixedPoint\Sylvester.Base.FixedPoint.fsproj", "{4E51BA61-D5BF-48AD-9320-0D75863159A6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Base.Compiler", "Base\Sylvester.Base.Compiler\Sylvester.Base.Compiler.csproj", "{3EAA0046-8055-4FE6-B095-D0AE8D439392}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Bindings", "Sylvester.Bindings\Sylvester.Bindings.csproj", "{3FE81F5C-8518-488E-93A5-98E64974F1A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Compiler.PlaidML", "Sylvester.Compiler.PlaidML\Sylvester.Compiler.PlaidML.csproj", "{AC1D3D9E-F4CE-4963-9D27-0C210AE99A8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Compiler.PlaidML", "Compilers\Sylvester.Compiler.PlaidML\Sylvester.Compiler.PlaidML.csproj", "{AC1D3D9E-F4CE-4963-9D27-0C210AE99A8A}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Base.FixedPoint", "Sylvester.Base.FixedPoint\Sylvester.Base.FixedPoint.fsproj", "{4E51BA61-D5BF-48AD-9320-0D75863159A6}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.Arithmetic.DesignTime", "Providers\Sylvester.Provider.Arithmetic\src\Sylvester.Provider.Arithmetic.DesignTime\Sylvester.Provider.Arithmetic.DesignTime.fsproj", "{AD554F2F-49C5-41EE-A6B3-48F77C55231A}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.Arithmetic.DesignTime", "Sylvester.Provider.Arithmetic\src\Sylvester.Provider.Arithmetic.DesignTime\Sylvester.Provider.Arithmetic.DesignTime.fsproj", "{AD554F2F-49C5-41EE-A6B3-48F77C55231A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{6B594C72-1F63-42A3-87DB-CC18B5724753}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compilers", "Compilers", "{382469D4-786B-46FC-AFD3-00FEE4BE2FBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{771620C3-D5D0-4AC0-8F94-E7F3B33931D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +29,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x64.Build.0 = Debug|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x86.Build.0 = Debug|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x64.ActiveCfg = Release|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x64.Build.0 = Release|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x86.ActiveCfg = Release|Any CPU
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x86.Build.0 = Release|Any CPU
 		{3EAA0046-8055-4FE6-B095-D0AE8D439392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3EAA0046-8055-4FE6-B095-D0AE8D439392}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EAA0046-8055-4FE6-B095-D0AE8D439392}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -59,18 +77,6 @@ Global
 		{AC1D3D9E-F4CE-4963-9D27-0C210AE99A8A}.Release|x64.Build.0 = Release|x64
 		{AC1D3D9E-F4CE-4963-9D27-0C210AE99A8A}.Release|x86.ActiveCfg = Release|x86
 		{AC1D3D9E-F4CE-4963-9D27-0C210AE99A8A}.Release|x86.Build.0 = Release|x86
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x64.Build.0 = Debug|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Debug|x86.Build.0 = Debug|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x64.ActiveCfg = Release|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x64.Build.0 = Release|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x86.ActiveCfg = Release|Any CPU
-		{4E51BA61-D5BF-48AD-9320-0D75863159A6}.Release|x86.Build.0 = Release|Any CPU
 		{AD554F2F-49C5-41EE-A6B3-48F77C55231A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD554F2F-49C5-41EE-A6B3-48F77C55231A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD554F2F-49C5-41EE-A6B3-48F77C55231A}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -86,6 +92,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4E51BA61-D5BF-48AD-9320-0D75863159A6} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
+		{3EAA0046-8055-4FE6-B095-D0AE8D439392} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
+		{AC1D3D9E-F4CE-4963-9D27-0C210AE99A8A} = {382469D4-786B-46FC-AFD3-00FEE4BE2FBD}
+		{AD554F2F-49C5-41EE-A6B3-48F77C55231A} = {771620C3-D5D0-4AC0-8F94-E7F3B33931D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

@@ -23,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sylvester.Base.Compiler\Sylvester.Base.Compiler.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <NativeLibs Include="$(SolutionDir)lib\native\plaidmlwin\**\*.dll" />
     <None Include="@(NativeLibs)">
       <Link>%(FileName)%(Extension)</Link>
@@ -39,5 +35,8 @@
       <Link>%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Sylvester.Base.Compiler\Sylvester.Base.Compiler.csproj" />
   </ItemGroup>
 </Project>

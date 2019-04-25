@@ -28,7 +28,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sylvester.Base.FixedPoint\Sylvester.Base.FixedPoint.fsproj" />
+    <ProjectReference Include="..\..\..\..\Base\Sylvester.Base.FixedPoint\Sylvester.Base.FixedPoint.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

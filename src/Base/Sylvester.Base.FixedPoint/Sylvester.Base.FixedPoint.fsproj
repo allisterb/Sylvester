@@ -10,6 +10,4 @@
     <Compile Include="Base10\Base10.fs" />
   </ItemGroup>
 
-  <ItemGroup />
-
 </Project>
