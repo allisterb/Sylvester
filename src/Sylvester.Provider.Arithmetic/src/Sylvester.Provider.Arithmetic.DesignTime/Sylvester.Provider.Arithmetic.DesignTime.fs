@@ -11,28 +11,7 @@ open MyNamespace
 open ProviderImplementation
 open ProviderImplementation.ProvidedTypes
 
-open Sylvester.Base10Digits
-open Sylvester.Base10N16
-
-
-[<AutoOpen>]
-module internal TypeHelpers =
-
-    let getDigit(n:int) =
-        match n with
-        | 0 -> typedefof<_0>
-        | 1 -> typedefof<_1>
-        | 2 -> typedefof<_2>
-        | 3 -> typedefof<_3>
-        | 4 -> typedefof<_4>
-        | 5 -> typedefof<_5>
-        | 6 -> typedefof<_6>
-        | 7 -> typedefof<_7>
-        | 8 -> typedefof<_8>
-        | _ -> failwith "Invalid digit."
-
-    let getDigits (d:int) =
-        [| for i in d.ToString() do yield Int32.Parse(i.ToString()) |> getDigit |] //Quick and dirty way to extract digits from number
+open Sylvester.Base10
 
 [<TypeProvider>]
 type ArithmeticProvider (config : TypeProviderConfig) as this =
@@ -46,7 +25,7 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
 
     let createTypes () =
         
-        let baseType = typedefof<N16b<_,_,_,_,_>>
+        let baseType = typedefof<N5<_,_,_,_,_>>
         
         let N = ProvidedTypeDefinition(asm, ns, "N", Some baseType)
 

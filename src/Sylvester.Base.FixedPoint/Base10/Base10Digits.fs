@@ -213,4 +213,5 @@ module Base10Digits =
   //type _:_7 with static member inline (.*) (_:_7, nn) = nn + nn + nn + nn + nn + nn + nn
   //type _:_8 with static member inline (.*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
   //type _:_9 with static member inline (.*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
+
   

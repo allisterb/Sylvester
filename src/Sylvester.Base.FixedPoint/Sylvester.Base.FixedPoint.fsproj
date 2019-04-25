@@ -7,7 +7,7 @@
   <ItemGroup>
     <None Include="Scratchpad.fsx" />
     <Compile Include="Base10\Base10Digits.fs" />
-    <Compile Include="Base10\Base10N16b.fs" />
+    <Compile Include="Base10\Base10.fs" />
   </ItemGroup>
 
   <ItemGroup />
