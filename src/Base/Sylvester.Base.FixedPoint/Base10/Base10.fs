@@ -24,8 +24,8 @@ module Base10 =
     
     member x.Digits = (n5, n4, n3, n2, n1)
 
-    static member Zero = N5(D0, D0, D0, D0, D0)
-    static member One = N5(D0, D0, D0, D0, D1)
+    static member Zero = N5(d0, d0, d0, d0, d0)
+    static member One = N5(d0, d0, d0, d0, d1)
 
     static member inline (+.) (l: N5<'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N5<'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
     
@@ -43,7 +43,7 @@ module Base10 =
         let c4, r3 = a3 +++ (b3, c3)
         let c5, r4 = a4 +++ (b4, c4)
         let c6, r5 = a5 +++ (b5, c5)
-        c6, N5(r5, r4, r3, r2, D0)
+        c6, N5(r5, r4, r3, r2, d0)
 
     static member inline (+) (a : N5<_, _, _, _, _>, b) =
       snd (a +. b)
