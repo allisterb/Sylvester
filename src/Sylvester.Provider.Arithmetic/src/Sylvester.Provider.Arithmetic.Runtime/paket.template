@@ -1,0 +1,39 @@
+type file
+id Sylvester.Provider.Arithmetic
+authors
+    Steffen Forkmann, Gustavo Guerra, JohnDoeKyrgyz, Don Syme
+owners
+    Steffen Forkmann, Gustavo Guerra, JohnDoeKyrgyz, Don Syme
+projectUrl
+    http://github.com/fsprojects/Sylvester.Provider.Arithmetic
+iconUrl
+    https://raw.githubusercontent.com/fsprojects/Sylvester.Provider.Arithmetic/master/docs/files/img/logo.png
+licenseUrl
+    http://github.com/fsprojects/Sylvester.Provider.Arithmetic/blob/master/LICENSE.txt
+requireLicenseAcceptance
+    false
+tags
+    F# fsharp typeproviders Sylvester.Provider.Arithmetic
+summary
+    This library is for the .NET platform implementing Sylvester.Provider.Arithmetic.
+description
+    This library is for the .NET platform implementing Sylvester.Provider.Arithmetic.
+tags
+    F# fsharp typeproviders Sylvester.Provider.Arithmetic
+files
+    bin/Release/net45/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/net45
+    bin/Release/netstandard2.0/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/netstandard2.0
+    bin/Release/typeproviders/fsharp41/netstandard2.0/*.dll ==> typeproviders/fsharp41/netstandard2.0
+    bin/Release/typeproviders/fsharp41/netcoreapp2.0/*.dll ==> typeproviders/fsharp41/netcoreapp2.0
+    bin/Release/typeproviders/fsharp41/net45/*.dll ==> typeproviders/fsharp41/net45
+references
+    Sylvester.Provider.Arithmetic.Runtime.dll
+dependencies
+  FSharp.Core >= LOCKEDVERSION
+
+# put any package references here
+#  Some.Package
+#  framework: netcoreapp2.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION
+#  framework: netstandard2.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION
