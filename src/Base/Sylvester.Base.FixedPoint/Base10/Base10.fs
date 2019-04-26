@@ -14,6 +14,7 @@ module Base10 =
         | 6 -> typedefof<_6>
         | 7 -> typedefof<_7>
         | 8 -> typedefof<_8>
+        | 9 -> typedefof<_9>
         | _ -> failwith "Invalid digit."
 
   let getDigits (d:int) =
@@ -26,6 +27,14 @@ module Base10 =
 
     static member Zero = N5(d0, d0, d0, d0, d0)
     static member One = N5(d0, d0, d0, d0, d1)
+    static member Two = N5(d0, d0, d0, d0, d2)
+    static member Three = N5(d0, d0, d0, d0, d3)
+    static member Four = N5(d0, d0, d0, d0, d4)
+    static member Five = N5(d0, d0, d0, d0, d5)
+    static member Six = N5(d0, d0, d0, d0, d6)
+    static member Seven = N5(d0, d0, d0, d0, d7)
+    static member Eight = N5(d0, d0, d0, d0, d8)
+    static member Nine = N5(d0, d0, d0, d0, d9)
 
     static member inline (+.) (l: N5<'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N5<'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
     
@@ -33,19 +42,44 @@ module Base10 =
         let (b5, b4, b3, b2, b1) = r.Digits
 
         let inline (+++) a (b, c) =
-            let cc, r1 = a + b
-            let cc1, r2 = r1 + c
-            let D0, cc2 = cc + cc1
-            cc2, r2
+            let carry1, rem1 = a + b
+            let carry2, rem2 = rem1 + c
+            let d0, carry3 = carry1 + carry2
+            carry3, rem2
 
-        let c2, r1 = a1 + b1
-        let c3, r2 = a2 +++ (b2, c2)
-        let c4, r3 = a3 +++ (b3, c3)
-        let c5, r4 = a4 +++ (b4, c4)
-        let c6, r5 = a5 +++ (b5, c5)
-        c6, N5(r5, r4, r3, r2, d0)
+        let carry1, rem1 = a1 + b1
+        let carry2, rem2 = a2 +++ (b2, carry1)
+        let carry3, rem3 = a3 +++ (b3, carry2)
+        let carry4, rem4 = a4 +++ (b4, carry3)
+        let carry5, rem5 = a5 +++ (b5, carry4)
+        carry5, N5(rem5, rem4, rem3, rem2, rem1)
 
     static member inline (+) (a : N5<_, _, _, _, _>, b) =
-      snd (a +. b)
+        snd (a +. b)
+
+    static member inline (*) (a : N5<_, _, _, _, _>, b) =
+        let (a5, a4, a3, a2, a1) = a.Digits
+       
+        let b1 = b
+        let b2 = !<<< b
+        let b3 = !<<< (!<<< b)
+        let b4 = !<<< (!<<< (!<<< b))
+        let b5 = !<<< (!<<< (!<<< (!<<< b)))
+        (a5 .* b5) + (a4 .* b4) + (a3 .* b3) + (a2 .* b2) + (a1 .* b1)
+
+    static member inline (!<<<) (a: N5<_, _, _, _, _>) =
+        let (a5, a4, a3, a2, a1) = a.Digits
+        N5(a4, a3, a2, a1, d0)
+
+    static member inline (!>>>) (a: N5<_, _, _, _, _>) =
+        let (a5, a4, a3, a2, a1) = a.Digits
+        N5(d0, a5, a4, a3, a2)
+
+    static member inline (!!!) (a: N5<_, _, _, _, _>) =
+        let (a5, a4, a3, a2, a1) = a.Digits
+        N5(!! a5, !! a4, !! a3, !! a2, !! a1)
+
+    static member inline (-) (a: N5<_, _, _, _, _>, b) = !!!((!!! a) + b)
+
 
     
