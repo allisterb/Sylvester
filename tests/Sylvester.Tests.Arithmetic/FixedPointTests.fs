@@ -12,7 +12,7 @@ module FixedPointTests =
     let ``Can add fixed-point number`` () =
         let a = N5(d0, d0, d0, d1, d1)
         let b = N5(d0, d0, d0, d1, d0)
-        Assert.IsType(typedefof<N5<_0, _0, _0, _2, _1>>, a + b)
-        Assert.IsType(typedefof<N5<_0, _0, _0, _0, _1>>, a - b)
+        Assert.IsType<N5<_0, _0, _0, _2, _1>>(a + b) |> ignore
+        Assert.IsType<N5<_0, _0, _0, _0, _1>>(a - b) |> ignore
 
 

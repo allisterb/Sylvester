@@ -54,7 +54,7 @@ module Base10 =
         let carry5, rem5 = a5 +++ (b5, carry4)
         carry5, N5(rem5, rem4, rem3, rem2, rem1)
 
-    static member inline (+) (a : N5<_, _, _, _, _>, b) =
+    static member inline (+) (a , b) =
         snd (a +. b)
 
     static member inline (*) (a : N5<_, _, _, _, _>, b) =
@@ -79,7 +79,7 @@ module Base10 =
         let (a5, a4, a3, a2, a1) = a.Digits
         N5(!! a5, !! a4, !! a3, !! a2, !! a1)
 
-    static member inline (-) (a: N5<_, _, _, _, _>, b) = !!!((!!! a) + b)
+    static member inline (-) (a, b) = !!!((!!! a) + b)
 
 
     
