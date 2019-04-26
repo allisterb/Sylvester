@@ -11,7 +11,7 @@ open MyNamespace
 open ProviderImplementation
 open ProviderImplementation.ProvidedTypes
 
-open Sylvester.Base10
+open Sylvester
 
 [<TypeProvider>]
 type ArithmeticProvider (config : TypeProviderConfig) as this =

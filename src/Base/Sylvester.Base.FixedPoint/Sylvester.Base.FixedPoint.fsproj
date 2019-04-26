@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Scratchpad.fsx" />
     <Compile Include="Base10\Base10Digits.fs" />
     <Compile Include="Base10\Base10.fs" />
   </ItemGroup>
