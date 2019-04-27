@@ -27,20 +27,16 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
         
         let baseType = typedefof<N5<_,_,_,_,_>>
         
-        let N = ProvidedTypeDefinition(asm, ns, "N", Some baseType)
+        let N = ProvidedTypeDefinition(asm, ns, "N", Some baseType, true, true, false, false )
 
-        
-        let ctor = ProvidedConstructor([], invokeCode = fun args -> <@@ "My internal state" :> obj @@>)
+        do N.DefineStaticParameters([], fun name args ->
+            let n = args.[0] :?> int
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some(N.MakeGenericType(getDigits(n))), hideObjectMethods = true)
+            provided
+        )
+
+        let ctor = ProvidedConstructor([], invokeCode = fun args -> <@@ obj() @@>)
         N.AddMember(ctor)
-
-        let ctor2 = ProvidedConstructor([ProvidedParameter("InnerState", typeof<string>)], invokeCode = fun args -> <@@ (%%(args.[0]):string) :> obj @@>)
-        N.AddMember(ctor2)
-
-        let innerState = ProvidedProperty("InnerState", typeof<string>, getterCode = fun args -> <@@ (%%(args.[0]) :> obj) :?> string @@>)
-        N.AddMember(innerState)
-
-        let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
-        N.AddMember(meth)
 
         let nameOf =
             let param = ProvidedParameter("p", typeof<Expr<int>>)
