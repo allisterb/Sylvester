@@ -7,7 +7,6 @@ open System.Linq
 open System.Reflection
 open FSharp.Quotations
 open FSharp.Core.CompilerServices
-open MyNamespace
 open ProviderImplementation
 open ProviderImplementation.ProvidedTypes
 

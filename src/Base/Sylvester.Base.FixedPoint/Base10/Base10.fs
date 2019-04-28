@@ -1,11 +1,14 @@
 ﻿namespace Sylvester
 
+open System
 open Base10Digits
 
 type N5<'d5, 'd4, 'd3, 'd2, 'd1 when 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
     and 'd1 :> Base10Digit> (n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 
     
     member x.Digits = (n5, n4, n3, n2, n1)
+
+    new() = N5(Activator.CreateInstance<'d5>(), Activator.CreateInstance<'d4>(), Activator.CreateInstance<'d3>(),Activator.CreateInstance<'d2>(), Activator.CreateInstance<'d1>())
 
     static member inline (+.) (l: N5<'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N5<'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
     
@@ -17,7 +20,7 @@ type N5<'d5, 'd4, 'd3, 'd2, 'd1 when 'd5 :> Base10Digit and 'd4 :> Base10Digit a
             let carry2, rem2 = rem1 + c
             let d0, carry3 = carry1 + carry2
             carry3, rem2
-
+            
         let carry1, rem1 = a1 + b1
         let carry2, rem2 = a2 +++ (b2, carry1)
         let carry3, rem3 = a3 +++ (b3, carry2)
@@ -52,9 +55,9 @@ type N5<'d5, 'd4, 'd3, 'd2, 'd1 when 'd5 :> Base10Digit and 'd4 :> Base10Digit a
 
     static member inline (-) (a, b) = !!!((!!! a) + b)
 
-[<AutoOpen>]
+   
 module Base10 =     
-    let getDigit(n:int) =
+    let getDigitType(n:int) =
         match n with
         | 0 -> typedefof<_0>
         | 1 -> typedefof<_1>
@@ -68,9 +71,9 @@ module Base10 =
         | 9 -> typedefof<_9>
         | _ -> failwith "Invalid digit."
 
-    let getDigits (d:int) = [| for i in d.ToString() do yield System.Int32.Parse(i.ToString()) |> getDigit |] //Quick and dirty way to extract digits from number
-
+    let getDigits (d:int) = [| for i in d.ToString() do yield System.Int32.Parse(i.ToString()) |> getDigitType |] //Quick and dirty way to extract digits from number
 
     let Zero = N5(d0, d0, d0, d0, d0)
+    
     let One = N5(d0, d0, d0, d0, d1)
     

@@ -24,7 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Be explicit about the version of FSharp.Core since we mention it in the manual nuget package spec -->
-    <PackageReference Include="FSharp.Core" Version="4.3.4" />
+    <PackageReference Include="FSharp.Core" Version="4.6.2" />
   </ItemGroup>
   <Target Name="BeforeBuild">
     <MSBuild Projects="..\Sylvester.Provider.Arithmetic.DesignTime\Sylvester.Provider.Arithmetic.DesignTime.fsproj" Targets="Restore" />

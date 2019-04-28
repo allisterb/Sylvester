@@ -2,8 +2,11 @@
 #nowarn "0077"
 
 module Base10Digits =
-  type Base10Digit = interface end
-  
+
+  [<NoEquality; NoComparison>]
+  type Base10Digit =  
+    abstract member Value:int
+    
   type ZeroDigit = interface inherit Base10Digit end
 
   type NonZeroDigit = interface inherit Base10Digit end
@@ -42,16 +45,17 @@ module Base10Digits =
 
   type I9 = interface inherit NonZeroDigit inherit PowerOf3Digit inherit SquareDigit end
 
-  type _0() = interface I0
-  type _1() = interface I1
-  type _2() = interface I2
-  type _3() = interface I3
-  type _4() = interface I4
-  type _5() = interface I5
-  type _6() = interface I6
-  type _7() = interface I7
-  type _8() = interface I8
-  type _9() = interface I9
+
+  type _0() = interface I0 with member x.Value = 0 
+  type _1() = interface I1 with member x.Value = 1
+  type _2() = interface I2 with member x.Value = 2
+  type _3() = interface I3 with member x.Value = 3
+  type _4() = interface I4 with member x.Value = 4
+  type _5() = interface I5 with member x.Value = 5
+  type _6() = interface I6 with member x.Value = 6
+  type _7() = interface I7 with member x.Value = 7
+  type _8() = interface I8 with member x.Value = 8
+  type _9() = interface I9 with member x.Value = 9
 
   let d0 = _0()
   let d1 = _1()
@@ -64,6 +68,14 @@ module Base10Digits =
   let d8 = _8()
   let d9 = _9()
   
+  let IsEqualTo<'d when 'd :> Base10Digit>(b: obj) =
+    match b with 
+        | :? 'd ->  true            
+        | _  -> false
+
+
+  let AreEqual<'d when 'd :> Base10Digit>(_:'d, b: obj) = IsEqualTo<'d>(b)
+
   type _0 with
     static member inline (!!) (_:_0) = d9
     static member inline (+) (_:_0, _:_0) = (d0, d0)
@@ -204,5 +216,9 @@ module Base10Digits =
   type _7 with static member inline (.*) (_:_7, nn) = nn + nn + nn + nn + nn + nn + nn
   type _8 with static member inline (.*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
   type _9 with static member inline (.*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
+
+
+  
+  
 
   

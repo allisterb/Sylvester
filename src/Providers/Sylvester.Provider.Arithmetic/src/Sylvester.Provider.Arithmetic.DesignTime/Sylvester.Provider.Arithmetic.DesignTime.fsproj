@@ -30,5 +30,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Base\Sylvester.Base.FixedPoint\Sylvester.Base.FixedPoint.fsproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.6.2" />
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
