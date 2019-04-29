@@ -26,14 +26,12 @@ module FixedPointTests =
         Assert.True(AreEqual(b_5, t_4))
         Assert.True(IsEqualTo<_0>(b_3))
 
-
-    
     [<Fact>]
     let ``Can add fixed-point numbers`` () =
         let a = N5(d0, d0, d0, d1, d1)
         let b = N5(d0, d0, d0, d1, d0)
-        let g = N5<_0, _0, _0, _2, _1>()
+        let g = N5<_0, _5, _0, _2, _1>()
         Assert.IsType<N5<_0, _0, _0, _2, _1>>(a + b) |> ignore
         Assert.IsType<N5<_0, _0, _0, _2, _2>>(a + b + One) |> ignore
-
+        Assert.IsType<N5<_0, _5, _0, _4, _3>>(a + b + One + g) |> ignore
 
