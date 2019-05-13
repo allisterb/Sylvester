@@ -26,6 +26,9 @@
     <!-- Be explicit about the version of FSharp.Core since we mention it in the manual nuget package spec -->
     <PackageReference Include="FSharp.Core" Version="4.6.2" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Base\Sylvester.Base.FixedPoint\Sylvester.Base.FixedPoint.fsproj" />
+  </ItemGroup>
   <Target Name="BeforeBuild">
     <MSBuild Projects="..\Sylvester.Provider.Arithmetic.DesignTime\Sylvester.Provider.Arithmetic.DesignTime.fsproj" Targets="Restore" />
     <MSBuild Projects="..\Sylvester.Provider.Arithmetic.DesignTime\Sylvester.Provider.Arithmetic.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=netcoreapp2.0" />

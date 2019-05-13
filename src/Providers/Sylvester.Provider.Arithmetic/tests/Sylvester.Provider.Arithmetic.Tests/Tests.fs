@@ -3,12 +3,19 @@
 open NUnit.Framework
 open NUnit.Framework
 
+//open Sylvester.Arithmetic
+//open Sylvester.Arithmetic
 
 module ArithmeticProviderTests = 
 
     [<Test>]
     let ``Default constructor should create instance`` () =
         Assert.AreEqual("My internal state", Is.False)
+
+
+    type s = N
+
+
     (*
     [<Test>]
     let ``Constructor with parameter should create instance`` () =

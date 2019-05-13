@@ -71,9 +71,28 @@ module Base10 =
         | 9 -> typedefof<_9>
         | _ -> failwith "Invalid digit."
 
+    let getDigit(d:string) =
+        match d with
+        | "0" -> d0 :> Base10Digit
+        | "1" -> d1 :> Base10Digit
+        | "2" -> d2 :> Base10Digit
+        | "3" -> d3 :> Base10Digit
+        | "4" -> d4 :> Base10Digit
+        | "5" -> d5 :> Base10Digit
+        | "6" -> d6 :> Base10Digit
+        | "7" -> d7 :> Base10Digit
+        | "8" -> d8 :> Base10Digit
+        | "9" -> d9 :> Base10Digit
+        | _ -> failwith "Invalid digit."
+       
     let getDigits (d:int) = [| for i in d.ToString() do yield System.Int32.Parse(i.ToString()) |> getDigitType |] //Quick and dirty way to extract digits from number
 
     let Zero = N5(d0, d0, d0, d0, d0)
     
     let One = N5(d0, d0, d0, d0, d1)
     
+    let getd(a:int) = 
+        match a with
+        |1 -> d1 :> Base10Digit
+        |_ -> d2 :> Base10Digit
+        
