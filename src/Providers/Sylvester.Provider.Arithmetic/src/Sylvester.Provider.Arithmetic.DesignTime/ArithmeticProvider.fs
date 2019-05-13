@@ -25,13 +25,20 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
     let createTypes () =
         
         let N = ProvidedTypeDefinition(asm, ns, "N", Some typeof<N5<_,_,_,_,_>>, false)
-        let valueParam = ProvidedStaticParameter("value", typeof<int>)
+        
+        let helpText = 
+            """<summary>Typed representation of a natural number.</summary>
+           <param name='Value'>The number to represent.</param>
+            """
+        N.AddXmlDoc helpText
+
+        let valueParam = ProvidedStaticParameter("Value", typeof<int>)
 
         do N.DefineStaticParameters([valueParam], fun name args ->
             let n = args.[0] :?> int
             let g = typedefof<N5<_,_,_,_,_>>.MakeGenericType(getDigits(54321))
             let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
-            n |> sprintf "A typed representation of the natural number %d"  |> provided.AddXmlDoc  
+            provided.AddXmlDoc <| (sprintf "<summary>A typed representation of the natural number %d.</summary>" <| n)   
             let ctor = ProvidedConstructor([], invokeCode = fun args -> <@@ Activator.CreateInstance(typedefof<N5<_,_,_,_,_>>.MakeGenericType(getDigits(54321)))  @@>)
             provided.AddMember(ctor)
             provided
@@ -40,6 +47,6 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
 
     do
         this.AddNamespace(ns, createTypes())
-
+        
 [<TypeProviderAssembly>]
 do ()
