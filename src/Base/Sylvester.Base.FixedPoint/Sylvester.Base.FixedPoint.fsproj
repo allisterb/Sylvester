@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Base10\Base10Digits.fs" />
-    <Compile Include="Base10\Base10.fs" />
+    <Compile Include="Base10.fs" />
+    <Compile Include="N9.fs" />
   </ItemGroup>
 
   <ItemGroup>
