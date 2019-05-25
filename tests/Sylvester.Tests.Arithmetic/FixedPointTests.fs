@@ -5,12 +5,8 @@ open Xunit
 
 open Sylvester
 
-
 module FixedPointTests = 
-    let o = _N1(d1)
     
-
-
     [<Fact>]
     let ``Can construct fixed-point numbers``() = 
         let n11056_1 = _N5(d1, d1, d0, d5, d6)
@@ -33,14 +29,19 @@ module FixedPointTests =
         let b = _N5(d0, d0, d0, d1, d0)
         let g = N5<_0, _5, _0, _2, _1>()
         Assert.IsType<N5<_0, _0, _0, _2, _1>>(a + b) |> ignore
-        Assert.IsType<N5<_0, _0, _0, _2, _2>>(a + b + o) |> ignore
-        //Assert.IsType<N5<_0, _5, _0, _4, _3>>(a + b + o) |> ignore
+        Assert.IsType<N5<_0, _0, _0, _2, _2>>(a + b + One) |> ignore
+        Assert.IsType<N5<_0, _5, _0, _4, _3>>(a + b + One + g) |> ignore
 
     [<Fact>]
     let ``Can compare fixed-point numbers`` () =
-        let a = _N5(d0, d0, d0, d1, d1)
-        let b = _N5(d0, d0, d0, d1, d0)
-        let g = (a ++++ b)
-        Assert.NotNull g
+        let a = _N5(d3, d0, d0, d8, d2)
+        let b = _N5(d4, d9, d0, d2, d2)
+        let g = (a +> b)
+        let h = !! (a +== b)
+        let i = a +== Zero
+        let j = (Zero + One) +== One
+        Assert.IsType<N0>(g)
+
+
 
 

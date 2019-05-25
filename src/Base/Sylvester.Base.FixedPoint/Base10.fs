@@ -27,12 +27,6 @@ module Base10 =
 
   type PrimeDigit = interface inherit Base10Digit end
 
-  
-  type GreaterThanDigit<'d when 'd :> Base10Digit> = interface end
-
-  type LessThanDigit<'d when 'd :> Base10Digit> = interface end
-
-  
   type I0 = interface inherit ZeroDigit end
 
   type I1 = interface inherit NonZeroDigit end
@@ -76,23 +70,6 @@ module Base10 =
   type _8 = ``8``
   type _9 = ``9``
 
-  type gt<'d when 'd :> Base10Digit>() = interface GreaterThanDigit<'d>
-  type lt<'d when 'd :> Base10Digit>() = interface GreaterThanDigit<'d>
-  
-  let gt0 = gt<_0>()
-  let gt1 = gt<_1>()
-  let gt2 = gt<_2>()
-  let gt3 = gt<_3>()
-  let gt4 = gt<_4>()
-  let gt5 = gt<_5>()
-
-  let lt0 = lt<_0>()
-  let lt1 = lt<_1>()
-  let lt2 = lt<_2>()
-  let lt3 = lt<_3>()
-  let lt4 = lt<_4>()
-  let lt5 = lt<_5>()
-
   let d0 = _0()
   let d1 = _1()
   let d2 = _2()
@@ -128,13 +105,6 @@ module Base10 =
     | _ -> failwith "Invalid digit."
 
   type ``0`` with
-    static member Not(_: _1) = gt0
-    static member Not(_: _2) = gt0 
-    static member Not(_: _3) = gt0
-    static member Not(_: _4) = gt0
-    static member Not(_: _5) = gt0 
-    static member Not(_: _6) = gt0
-
     static member inline (!!) (_:_0) = d9
     static member inline (+) (_:_0, _:_0) = (d0, d0)
     static member inline (+) (_:_0, _:_1) = (d0, d1)
@@ -147,24 +117,31 @@ module Base10 =
     static member inline (+) (_:_0, _:_8) = (d0, d8)
     static member inline (+) (_:_0, _:_9) = (d0, d9)
 
-    static member inline (-----) (_:_0, _:_0) = (d1, d9)
-    static member inline (-----) (_:_0, _:_1) = (d0, d1)
-    static member inline (-----) (_:_0, _:_2) = (d0, d1)
-    static member inline (-----) (_:_0, _:_3) = (d0, d1)
-    static member inline (-----) (_:_0, _:_4) = (d0, d1)
-    static member inline (-----) (_:_0, _:_5) = (d0, d1)
-    static member inline (-----) (_:_0, _:_6) = (d0, d1)
-    static member inline (-----) (_:_0, _:_7) = (d0, d1)
-    static member inline (-----) (_:_0, _:_8) = (d0, d1)
-    static member inline (-----) (_:_0, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_0, _:_0) = (d1, d0)
+    static member inline (+>>>) (_:_0, _:_1) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_2) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_3) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_4) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_5) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_6) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_7) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_8) = (d1, d1)
+    static member inline (+>>>) (_:_0, _:_9) = (d1, d1)
 
+    static member inline (+===) (_:_0, _:_0) = _true
+    static member inline (+===) (_:_0, _:_1) = _false
+    static member inline (+===) (_:_0, _:_2) = _false
+    static member inline (+===) (_:_0, _:_3) = _false
+    static member inline (+===) (_:_0, _:_4) = _false
+    static member inline (+===) (_:_0, _:_5) = _false
+    static member inline (+===) (_:_0, _:_6) = _false
+    static member inline (+===) (_:_0, _:_7) = _false
+    static member inline (+===) (_:_0, _:_8) = _false
+    static member inline (+===) (_:_0, _:_9) = _false
+
+    static member inline (!!!!) (_:_0) = _true
+  
   type ``1`` with
-    static member Not(_: _0) = lt1 
-    static member Not(_: _2) = gt1
-    static member Not(_: _3) = gt1
-    static member Not(_: _4) = gt1 
-    static member Not(_: _5) = gt1
-   
     static member inline (!!) (_:_1) = d8
     static member inline (+) (_:_1, _:_0) = (d0, d1)
     static member inline (+) (_:_1, _:_1) = (d0, d2)
@@ -177,29 +154,31 @@ module Base10 =
     static member inline (+) (_:_1, _:_8) = (d0, d9)
     static member inline (+) (_:_1, _:_9) = (d1, d0)
 
-    static member inline (-----) (_:_1, _:_0) = (d0, d9)
-    static member inline (-----) (_:_1, _:_1) = (d1, d9)
-    static member inline (-----) (_:_1, _:_2) = (d0, d1)
-    static member inline (-----) (_:_1, _:_3) = (d0, d1)
-    static member inline (-----) (_:_1, _:_4) = (d0, d1)
-    static member inline (-----) (_:_1, _:_5) = (d0, d1)
-    static member inline (-----) (_:_1, _:_6) = (d0, d1)
-    static member inline (-----) (_:_1, _:_7) = (d0, d1)
-    static member inline (-----) (_:_1, _:_8) = (d0, d1)
-    static member inline (-----) (_:_1, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_1, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_1, _:_1) = (d1, d0)
+    static member inline (+>>>) (_:_1, _:_2) = (d1, d1)
+    static member inline (+>>>) (_:_1, _:_3) = (d1, d1)
+    static member inline (+>>>) (_:_1, _:_4) = (d1, d1)
+    static member inline (+>>>) (_:_1, _:_5) = (d1, d1)
+    static member inline (+>>>) (_:_1, _:_6) = (d1, d1)
+    static member inline (+>>>) (_:_1, _:_7) = (d1, d1)
+    static member inline (+>>>) (_:_1, _:_8) = (d1, d1)
+    static member inline (+>>>) (_:_1, _:_9) = (d1, d1)
 
+    static member inline (+===) (_:_1, _:_0) = _false
+    static member inline (+===) (_:_1, _:_1) = _true
+    static member inline (+===) (_:_1, _:_2) = _false
+    static member inline (+===) (_:_1, _:_3) = _false
+    static member inline (+===) (_:_1, _:_4) = _false
+    static member inline (+===) (_:_1, _:_5) = _false
+    static member inline (+===) (_:_1, _:_6) = _false
+    static member inline (+===) (_:_1, _:_7) = _false
+    static member inline (+===) (_:_1, _:_8) = _false
+    static member inline (+===) (_:_1, _:_9) = _false
 
+    static member inline (!!!!) (_:_1) = _false
+  
   type ``2`` with
-    static member GreaterThanDigit(_: _0) : unit = ()
-    static member GreaterThanDigit(_: _1) : unit = ()
-    static member LessThanDigit(_: _3) : unit = ()
-    static member LessThanDigit(_: _4) : unit = ()
-    static member LessThanDigit(_: _5) : unit = ()
-    static member LessThanDigit(_: _6) : unit = ()
-    static member LessThanDigit(_: _7) : unit = ()
-    static member LessThanDigit(_: _8) : unit = ()
-    static member LessThanDigit(_: _9) : unit = ()
-
     static member inline (!!) (_:_2) = d7
     static member inline (+) (_:_2, _:_0) = (d0, d2)
     static member inline (+) (_:_2, _:_1) = (d0, d3)
@@ -212,17 +191,29 @@ module Base10 =
     static member inline (+) (_:_2, _:_8) = (d1, d0)
     static member inline (+) (_:_2, _:_9) = (d1, d1)
 
-    static member inline (-----) (_:_2, _:_0) = (d0, d9)
-    static member inline (-----) (_:_2, _:_1) = (d0, d9)
-    static member inline (-----) (_:_2, _:_2) = (d1, d9)
-    static member inline (-----) (_:_2, _:_3) = (d0, d1)
-    static member inline (-----) (_:_2, _:_4) = (d0, d1)
-    static member inline (-----) (_:_2, _:_5) = (d0, d1)
-    static member inline (-----) (_:_2, _:_6) = (d0, d1)
-    static member inline (-----) (_:_2, _:_7) = (d0, d1)
-    static member inline (-----) (_:_2, _:_8) = (d0, d1)
-    static member inline (-----) (_:_2, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_2, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_2, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_2, _:_2) = (d1, d0)
+    static member inline (+>>>) (_:_2, _:_3) = (d1, d1)
+    static member inline (+>>>) (_:_2, _:_4) = (d1, d1)
+    static member inline (+>>>) (_:_2, _:_5) = (d1, d1)
+    static member inline (+>>>) (_:_2, _:_6) = (d1, d1)
+    static member inline (+>>>) (_:_2, _:_7) = (d1, d1)
+    static member inline (+>>>) (_:_2, _:_8) = (d1, d1)
+    static member inline (+>>>) (_:_2, _:_9) = (d1, d1)
 
+    static member inline (+===) (_:_2, _:_0) = _false
+    static member inline (+===) (_:_2, _:_1) = _false
+    static member inline (+===) (_:_2, _:_2) = _true
+    static member inline (+===) (_:_2, _:_3) = _false
+    static member inline (+===) (_:_2, _:_4) = _false
+    static member inline (+===) (_:_2, _:_5) = _false
+    static member inline (+===) (_:_2, _:_6) = _false
+    static member inline (+===) (_:_2, _:_7) = _false
+    static member inline (+===) (_:_2, _:_8) = _false
+    static member inline (+===) (_:_2, _:_9) = _false
+
+    static member inline (!!!!) (_:_2) = _false
 
   type ``3`` with
     static member inline (!!) (_:_3) = d6
@@ -237,17 +228,29 @@ module Base10 =
     static member inline (+) (_:_3, _:_8) = (d1, d1)
     static member inline (+) (_:_3, _:_9) = (d1, d2)
 
-    static member inline (-----) (_:_3, _:_0) = (d0, d9)
-    static member inline (-----) (_:_3, _:_1) = (d0, d9)
-    static member inline (-----) (_:_3, _:_2) = (d0, d9)
-    static member inline (-----) (_:_3, _:_3) = (d1, d9)
-    static member inline (-----) (_:_3, _:_4) = (d0, d1)
-    static member inline (-----) (_:_3, _:_5) = (d0, d1)
-    static member inline (-----) (_:_3, _:_6) = (d0, d1)
-    static member inline (-----) (_:_3, _:_7) = (d0, d1)
-    static member inline (-----) (_:_3, _:_8) = (d0, d1)
-    static member inline (-----) (_:_3, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_3, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_3, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_3, _:_2) = (d0, d0)
+    static member inline (+>>>) (_:_3, _:_3) = (d1, d0)
+    static member inline (+>>>) (_:_3, _:_4) = (d1, d1)
+    static member inline (+>>>) (_:_3, _:_5) = (d1, d1)
+    static member inline (+>>>) (_:_3, _:_6) = (d1, d1)
+    static member inline (+>>>) (_:_3, _:_7) = (d1, d1)
+    static member inline (+>>>) (_:_3, _:_8) = (d1, d1)
+    static member inline (+>>>) (_:_3, _:_9) = (d1, d1)
 
+    static member inline (+===) (_:_3, _:_0) = _false
+    static member inline (+===) (_:_3, _:_1) = _false
+    static member inline (+===) (_:_3, _:_2) = _false
+    static member inline (+===) (_:_3, _:_3) = _true
+    static member inline (+===) (_:_3, _:_4) = _false
+    static member inline (+===) (_:_3, _:_5) = _false
+    static member inline (+===) (_:_3, _:_6) = _false
+    static member inline (+===) (_:_3, _:_7) = _false
+    static member inline (+===) (_:_3, _:_8) = _false
+    static member inline (+===) (_:_3, _:_9) = _false
+
+    static member inline (!!!!) (_:_3) = _false
 
   type ``4`` with
     static member inline (!!) (_:_4) = d5
@@ -262,17 +265,29 @@ module Base10 =
     static member inline (+) (_:_4, _:_8) = (d1, d2)
     static member inline (+) (_:_4, _:_9) = (d1, d3)
 
-    static member inline (-----) (_:_4, _:_0) = (d0, d9)
-    static member inline (-----) (_:_4, _:_1) = (d0, d9)
-    static member inline (-----) (_:_4, _:_2) = (d1, d9)
-    static member inline (-----) (_:_4, _:_3) = (d0, d1)
-    static member inline (-----) (_:_4, _:_4) = (d0, d1)
-    static member inline (-----) (_:_4, _:_5) = (d0, d1)
-    static member inline (-----) (_:_4, _:_6) = (d0, d1)
-    static member inline (-----) (_:_4, _:_7) = (d0, d1)
-    static member inline (-----) (_:_4, _:_8) = (d0, d1)
-    static member inline (-----) (_:_4, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_4, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_4, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_4, _:_2) = (d0, d0)
+    static member inline (+>>>) (_:_4, _:_3) = (d0, d0)
+    static member inline (+>>>) (_:_4, _:_4) = (d1, d0)
+    static member inline (+>>>) (_:_4, _:_5) = (d1, d1)
+    static member inline (+>>>) (_:_4, _:_6) = (d1, d1)
+    static member inline (+>>>) (_:_4, _:_7) = (d1, d1)
+    static member inline (+>>>) (_:_4, _:_8) = (d1, d1)
+    static member inline (+>>>) (_:_4, _:_9) = (d1, d1)
 
+    static member inline (+===) (_:_4, _:_0) = _false
+    static member inline (+===) (_:_4, _:_1) = _false
+    static member inline (+===) (_:_4, _:_2) = _false
+    static member inline (+===) (_:_4, _:_3) = _false
+    static member inline (+===) (_:_4, _:_4) = _true
+    static member inline (+===) (_:_4, _:_5) = _false
+    static member inline (+===) (_:_4, _:_6) = _false
+    static member inline (+===) (_:_4, _:_7) = _false
+    static member inline (+===) (_:_4, _:_8) = _false
+    static member inline (+===) (_:_4, _:_9) = _false
+
+    static member inline (!!!!) (_:_4) = _false
 
   type ``5`` with
     static member inline (!!) (_:_5) = d4
@@ -287,17 +302,29 @@ module Base10 =
     static member inline (+) (_:_5, _:_8) = (d1, d3)
     static member inline (+) (_:_5, _:_9) = (d1, d4)
 
-    static member inline (-----) (_:_5, _:_0) = (d0, d9)
-    static member inline (-----) (_:_5, _:_1) = (d0, d9)
-    static member inline (-----) (_:_5, _:_2) = (d1, d9)
-    static member inline (-----) (_:_5, _:_3) = (d0, d1)
-    static member inline (-----) (_:_5, _:_4) = (d0, d1)
-    static member inline (-----) (_:_5, _:_5) = (d0, d1)
-    static member inline (-----) (_:_5, _:_6) = (d0, d1)
-    static member inline (-----) (_:_5, _:_7) = (d0, d1)
-    static member inline (-----) (_:_5, _:_8) = (d0, d1)
-    static member inline (-----) (_:_5, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_5, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_5, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_5, _:_2) = (d0, d0)
+    static member inline (+>>>) (_:_5, _:_3) = (d0, d0)
+    static member inline (+>>>) (_:_5, _:_4) = (d0, d0)
+    static member inline (+>>>) (_:_5, _:_5) = (d1, d0)
+    static member inline (+>>>) (_:_5, _:_6) = (d1, d1)
+    static member inline (+>>>) (_:_5, _:_7) = (d1, d1)
+    static member inline (+>>>) (_:_5, _:_8) = (d0, d1)
+    static member inline (+>>>) (_:_5, _:_9) = (d0, d1)
 
+    static member inline (+===) (_:_5, _:_0) = _false
+    static member inline (+===) (_:_5, _:_1) = _false
+    static member inline (+===) (_:_5, _:_2) = _false
+    static member inline (+===) (_:_5, _:_3) = _false
+    static member inline (+===) (_:_5, _:_4) = _false
+    static member inline (+===) (_:_5, _:_5) = _true
+    static member inline (+===) (_:_5, _:_6) = _false
+    static member inline (+===) (_:_5, _:_7) = _false
+    static member inline (+===) (_:_5, _:_8) = _false
+    static member inline (+===) (_:_5, _:_9) = _false
+
+    static member inline (!!!!) (_:_5) = _false
 
   type ``6`` with
     static member inline (!!) (_:_6) = d3
@@ -312,16 +339,29 @@ module Base10 =
     static member inline (+) (_:_6, _:_8) = (d1, d4)
     static member inline (+) (_:_6, _:_9) = (d1, d5)
 
-    static member inline (-----) (_:_6, _:_0) = (d0, d9)
-    static member inline (-----) (_:_6, _:_1) = (d0, d9)
-    static member inline (-----) (_:_6, _:_2) = (d1, d9)
-    static member inline (-----) (_:_6, _:_3) = (d0, d1)
-    static member inline (-----) (_:_6, _:_4) = (d0, d1)
-    static member inline (-----) (_:_6, _:_5) = (d0, d1)
-    static member inline (-----) (_:_6, _:_6) = (d0, d1)
-    static member inline (-----) (_:_6, _:_7) = (d0, d1)
-    static member inline (-----) (_:_6, _:_8) = (d0, d1)
-    static member inline (-----) (_:_6, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_6, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_6, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_6, _:_2) = (d1, d0)
+    static member inline (+>>>) (_:_6, _:_3) = (d0, d0)
+    static member inline (+>>>) (_:_6, _:_4) = (d0, d0)
+    static member inline (+>>>) (_:_6, _:_5) = (d0, d0)
+    static member inline (+>>>) (_:_6, _:_6) = (d1, d0)
+    static member inline (+>>>) (_:_6, _:_7) = (d1, d1)
+    static member inline (+>>>) (_:_6, _:_8) = (d1, d1)
+    static member inline (+>>>) (_:_6, _:_9) = (d1, d1)
+
+    static member inline (+===) (_:_6, _:_0) = _false
+    static member inline (+===) (_:_6, _:_1) = _false
+    static member inline (+===) (_:_6, _:_2) = _false
+    static member inline (+===) (_:_6, _:_3) = _false
+    static member inline (+===) (_:_6, _:_4) = _false
+    static member inline (+===) (_:_6, _:_5) = _false
+    static member inline (+===) (_:_6, _:_6) = _true
+    static member inline (+===) (_:_6, _:_7) = _false
+    static member inline (+===) (_:_6, _:_8) = _false
+    static member inline (+===) (_:_6, _:_9) = _false
+
+    static member inline (!!!!) (_:_6) = _false
 
   type ``7`` with
     static member inline (!!) (_:_7) = d2
@@ -336,16 +376,29 @@ module Base10 =
     static member inline (+) (_:_7, _:_8) = (d1, d5)
     static member inline (+) (_:_7, _:_9) = (d1, d6)
 
-    static member inline (-----) (_:_7, _:_0) = (d0, d9)
-    static member inline (-----) (_:_7, _:_1) = (d0, d9)
-    static member inline (-----) (_:_7, _:_2) = (d1, d9)
-    static member inline (-----) (_:_7, _:_3) = (d0, d1)
-    static member inline (-----) (_:_7, _:_4) = (d0, d1)
-    static member inline (-----) (_:_7, _:_5) = (d0, d1)
-    static member inline (-----) (_:_7, _:_6) = (d0, d1)
-    static member inline (-----) (_:_7, _:_7) = (d0, d1)
-    static member inline (-----) (_:_7, _:_8) = (d0, d1)
-    static member inline (-----) (_:_7, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_7, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_7, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_7, _:_2) = (d0, d0)
+    static member inline (+>>>) (_:_7, _:_3) = (d0, d0)
+    static member inline (+>>>) (_:_7, _:_4) = (d0, d0)
+    static member inline (+>>>) (_:_7, _:_5) = (d0, d0)
+    static member inline (+>>>) (_:_7, _:_6) = (d0, d0)
+    static member inline (+>>>) (_:_7, _:_7) = (d1, d0)
+    static member inline (+>>>) (_:_7, _:_8) = (d1, d1)
+    static member inline (+>>>) (_:_7, _:_9) = (d1, d1)
+
+    static member inline (+===) (_:_7, _:_0) = _false
+    static member inline (+===) (_:_7, _:_1) = _false
+    static member inline (+===) (_:_7, _:_2) = _false
+    static member inline (+===) (_:_7, _:_3) = _false
+    static member inline (+===) (_:_7, _:_4) = _false
+    static member inline (+===) (_:_7, _:_5) = _false
+    static member inline (+===) (_:_7, _:_6) = _false
+    static member inline (+===) (_:_7, _:_7) = _true
+    static member inline (+===) (_:_7, _:_8) = _false
+    static member inline (+===) (_:_7, _:_9) = _false
+
+    static member inline (!!!!) (_:_7) = _false
 
   type ``8`` with
     static member inline (!!) (_:_8) = d1
@@ -360,18 +413,29 @@ module Base10 =
     static member inline (+) (_:_8, _:_8) = (d1, d6)
     static member inline (+) (_:_8, _:_9) = (d1, d7)
 
-    static member inline (-----) (_:_8, _:_0) = (d0, d9)
-    static member inline (-----) (_:_8, _:_1) = (d0, d9)
-    static member inline (-----) (_:_8, _:_2) = (d1, d9)
-    static member inline (-----) (_:_8, _:_3) = (d0, d1)
-    static member inline (-----) (_:_8, _:_4) = (d0, d1)
-    static member inline (-----) (_:_8, _:_5) = (d0, d1)
-    static member inline (-----) (_:_8, _:_6) = (d0, d1)
-    static member inline (-----) (_:_8, _:_7) = (d0, d1)
-    static member inline (-----) (_:_8, _:_8) = (d0, d1)
-    static member inline (-----) (_:_8, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_8, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_8, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_8, _:_2) = (d1, d0)
+    static member inline (+>>>) (_:_8, _:_3) = (d0, d0)
+    static member inline (+>>>) (_:_8, _:_4) = (d0, d0)
+    static member inline (+>>>) (_:_8, _:_5) = (d0, d0)
+    static member inline (+>>>) (_:_8, _:_6) = (d0, d0)
+    static member inline (+>>>) (_:_8, _:_7) = (d0, d0)
+    static member inline (+>>>) (_:_8, _:_8) = (d1, d0)
+    static member inline (+>>>) (_:_8, _:_9) = (d1, d1)
 
+    static member inline (+===) (_:_8, _:_0) = _false
+    static member inline (+===) (_:_8, _:_1) = _false
+    static member inline (+===) (_:_8, _:_2) = _false
+    static member inline (+===) (_:_8, _:_3) = _false
+    static member inline (+===) (_:_8, _:_4) = _false
+    static member inline (+===) (_:_8, _:_5) = _false
+    static member inline (+===) (_:_8, _:_6) = _false
+    static member inline (+===) (_:_8, _:_7) = _false
+    static member inline (+===) (_:_8, _:_8) = _true
+    static member inline (+===) (_:_8, _:_9) = _false
 
+    static member inline (!!!!) (_:_8) = _false
 
   type ``9`` with
     static member inline (!!) (_:_9) = d0
@@ -386,20 +450,32 @@ module Base10 =
     static member inline (+) (_:_9, _:_8) = (d1, d7)
     static member inline (+) (_:_9, _:_9) = (d1, d8)
 
-    static member inline (-----) (_:_9, _:_0) = (d0, d9)
-    static member inline (-----) (_:_9, _:_1) = (d0, d9)
-    static member inline (-----) (_:_9, _:_2) = (d1, d9)
-    static member inline (-----) (_:_9, _:_3) = (d0, d1)
-    static member inline (-----) (_:_9, _:_4) = (d0, d1)
-    static member inline (-----) (_:_9, _:_5) = (d0, d1)
-    static member inline (-----) (_:_9, _:_6) = (d0, d1)
-    static member inline (-----) (_:_9, _:_7) = (d0, d1)
-    static member inline (-----) (_:_9, _:_8) = (d0, d1)
-    static member inline (-----) (_:_9, _:_9) = (d0, d1)
+    static member inline (+>>>) (_:_9, _:_0) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_1) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_2) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_3) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_4) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_5) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_6) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_7) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_8) = (d0, d0)
+    static member inline (+>>>) (_:_9, _:_9) = (d1, d0)
 
+    static member inline (+===) (_:_9, _:_0) = _false
+    static member inline (+===) (_:_9, _:_1) = _false
+    static member inline (+===) (_:_9, _:_2) = _false
+    static member inline (+===) (_:_9, _:_3) = _false
+    static member inline (+===) (_:_9, _:_4) = _false
+    static member inline (+===) (_:_9, _:_5) = _false
+    static member inline (+===) (_:_9, _:_6) = _false
+    static member inline (+===) (_:_9, _:_7) = _false
+    static member inline (+===) (_:_9, _:_8) = _false
+    static member inline (+===) (_:_9, _:_9) = _true
+
+    static member inline (!!!!) (_:_9) = _false
 
   
-  type ``0`` with static member inline (.*) (_:_0, nn : ^nn) = ( ^nn : (static member Zero : ^zero) ())
+  type ``0`` with static member inline (.*) (_:_0, nn : ^nn) = d0 //( ^nn : (static member Zero : ^zero) ())
   type ``1`` with static member inline (.*) (_:_1, nn) = nn
   type ``2`` with static member inline (.*) (_:_2, nn) = nn + nn
   type ``3`` with static member inline (.*) (_:_3, nn) = nn + nn + nn
@@ -410,12 +486,6 @@ module Base10 =
   type ``8`` with static member inline (.*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
   type ``9`` with static member inline (.*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
 
-
-
-  type IsGreaterThan<'a, 'b when 'a :> Base10Digit and 'b :> Base10Digit and 'a : (static member GreaterThanDigit : 'b -> unit)> = class end
-
-  
-  type g = IsGreaterThan<_2, _0> 
 
 
   
