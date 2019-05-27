@@ -7,6 +7,13 @@ open Sylvester
 
 module FixedPointTests = 
     
+    let r (a, b)  =
+        check (a +> b)
+        let z = a + b
+        checkres(z, z +< ten)
+    
+    let q =  r (six + one, two)
+        
     [<Fact>]
     let ``Can construct fixed-point numbers``() = 
         let n11056_1 = _N5(d1, d1, d0, d5, d6)
@@ -38,10 +45,19 @@ module FixedPointTests =
         let b = _N5(d4, d9, d0, d2, d2)
         Assert.IsType<True>(a +== a) |> ignore
         Assert.IsType<False>(a +== b) |> ignore
+        Assert.IsType<False>(a +!= a) |> ignore
         Assert.IsType<True>(b +> a) |> ignore
         Assert.IsType<False>(a +> b) |> ignore
         Assert.IsType<True>(a +< b) |> ignore
 
+        let g = isZero four.Digits
+        
+        let testWhile = six -|> While(Not <-< IsZero, Pred)  //While(Not <-< IsZero, Pred <-< Fst)
+        ()
+        //()
+        //Assert.IsType<N0> testWhile
+
+        
  (*let r = three * ten + two
         let h = !! (a +== b)
         let i = a +== zero

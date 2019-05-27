@@ -4,6 +4,7 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
     and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit and 'd1 :> Base10Digit> 
     (n9:'d9, n8:'d8, n7:'d7, n6:'d6, n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 
     
+   
     member x.Digits = (n9, n8, n7, n6, n5, n4, n3, n2, n1)
 
     member x.Digit1 = n1.Value
@@ -46,7 +47,7 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
 
         (a9 +=== b9) * (a8 +=== b8) * (a7 +=== b7) * (a6 +=== b6) * (a5 +=== b5) * (a4 +=== b4) * (a3 +=== b3) * (a2 +=== b2) * (a1 +=== b1)
 
-    static member inline (+!==) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+    static member inline (+!=) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
         !! (l +== r)
 
     static member inline (+.) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
@@ -96,7 +97,7 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
         
         let inline (+>>) (a, b) c = (a .* fst(b +>>> c), a .* snd(b +>>> c))
         
-        let inline isZero (a1, a2, a3, a4, a5, a6, a7, a8, a9)  = 
+        let inline _isZero (a1, a2, a3, a4, a5, a6, a7, a8, a9)  = 
             (!!!! a9) * (!!!! a8) * (!!!! a7) * (!!!! a6) * (!!!! a5) * (!!!! a4) * (!!!! a3) * (!!!! a2) * (!!!! a1)
 
         let c9, r9 = (d1, a9) +>> b9
@@ -109,7 +110,7 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
         let c2, r2 = (c3, a2) +>> b2
         let c1, r1 = (c2, a1) +>> b1
         
-        (!! (l +== r)) * isZero (r9, r8, r7, r6, r5, r4, r3, r2, r1)
+        (!! (l +== r)) * _isZero (r9, r8, r7, r6, r5, r4, r3, r2, r1)
             
     static member inline (+<) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
         (!! (l +== r)) * (!! (l +> r))
@@ -132,6 +133,9 @@ type N5<'d5, 'd4, 'd3, 'd2, 'd1 when 'd5:> Base10Digit and 'd4 :> Base10Digit an
 module N9 =
     
     let zero = N9(d0, d0, d0, d0, d0, d0, d0, d0, d0)
+
+    //let inline isZero (a1, a2, a3, a4, a5, a6, a7, a8, a9)  = 
+    //        (!!!! a9) * (!!!! a8) * (!!!! a7) * (!!!! a6) * (!!!! a5) * (!!!! a4) * (!!!! a3) * (!!!! a2) * (!!!! a1)
    
     let one = N9(d0, d0, d0, d0, d0, d0, d0, d0, d1)
 
@@ -159,7 +163,7 @@ module N9 =
 
     let _N1(n1: #Base10Digit) = N9(d0, d0, d0, d0, d0, d0, d0, d0, n1)
     
-    let _N2(n2: #Base10Digit, n1: #Base10Digit) =N9(d0, d0, d0, d0, d0, d0, d0, n2, n1)
+    let _N2(n2: #Base10Digit, n1: #Base10Digit) = N9(d0, d0, d0, d0, d0, d0, d0, n2, n1)
      
     let _N3(n3: #Base10Digit, n2: #Base10Digit, n1: #Base10Digit) =
         N9(d0, d0, d0, d0, d0, d0, n3, n2, n1)
@@ -169,3 +173,9 @@ module N9 =
         
     let _N5(n5: #Base10Digit, n4: #Base10Digit, n3: #Base10Digit, n2: #Base10Digit, n1: #Base10Digit) =
         N9(d0, d0, d0, d0, n5, n4, n3, n2, n1)
+
+    let inline isZero (a1, a2, a3, a4, a5, a6, a7, a8, a9)  = 
+        (!!!! a9) * (!!!! a8) * (!!!! a7) * (!!!! a6) * (!!!! a5) * (!!!! a4) * (!!!! a3) * (!!!! a2) * (!!!! a1)
+
+    let inline neg (a9, a8, a7, a6, a5, a4, a3, a2, a1)  = 
+        N9(!! a9, !! a8, !! a7, !! a6, !! a5, !! a4, !! a3, !!a2, !! a1)

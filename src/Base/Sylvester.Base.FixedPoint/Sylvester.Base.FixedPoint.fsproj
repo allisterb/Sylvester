@@ -8,7 +8,8 @@
     <Compile Include="Bool.fs" />
     <Compile Include="Base10.fs" />
     <Compile Include="N9.fs" />
-    <Compile Include="Constraints.fs" />
+    <Compile Include="Func.fs" />
+    <Compile Include="Constraint.fs" />
   </ItemGroup>
 
   <ItemGroup>
