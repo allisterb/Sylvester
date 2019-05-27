@@ -115,6 +115,7 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
     static member inline (+<) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
         (!! (l +== r)) * (!! (l +> r))
 
+    
 type N0 = N9<_0, _0, _0, _0, _0, _0, _0, _0, _0>
 
 type N1<'d1 when 'd1:>Base10Digit> = N9<_0, _0, _0, _0, _0, _0, _0, _0, 'd1>
@@ -130,13 +131,9 @@ type N5<'d5, 'd4, 'd3, 'd2, 'd1 when 'd5:> Base10Digit and 'd4 :> Base10Digit an
     N9<_0, _0, _0, _0, 'd5, 'd4, 'd3, 'd2, 'd1>
 
 [<AutoOpen>]
-module N9 =
-    
+module N9 =    
     let zero = N9(d0, d0, d0, d0, d0, d0, d0, d0, d0)
 
-    //let inline isZero (a1, a2, a3, a4, a5, a6, a7, a8, a9)  = 
-    //        (!!!! a9) * (!!!! a8) * (!!!! a7) * (!!!! a6) * (!!!! a5) * (!!!! a4) * (!!!! a3) * (!!!! a2) * (!!!! a1)
-   
     let one = N9(d0, d0, d0, d0, d0, d0, d0, d0, d1)
 
     let two = N9(d0, d0, d0, d0, d0, d0, d0, d0, d2)
@@ -179,3 +176,11 @@ module N9 =
 
     let inline neg (a9, a8, a7, a6, a5, a4, a3, a2, a1)  = 
         N9(!! a9, !! a8, !! a7, !! a6, !! a5, !! a4, !! a3, !!a2, !! a1)
+    
+    //let inline addneg (a9, a8, a7, a6, a5, a4, a3, a2, a1) 
+    type IsZero = IsZero with
+        static member inline (<|-) (IsZero, n:N9<_,_,_,_,_,_,_,_,_>) = isZero n.Digits
+    
+    type Neg = Neg with
+        static member inline (<|-) (Neg, n:N9<_,_,_,_,_,_,_,_,_>) = neg n.Digits
+
