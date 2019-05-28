@@ -51,7 +51,7 @@ module FixedPointTests =
         Assert.IsType<True>(a +< b) |> ignore
 
         let r = If(LessThan(five), Const(six), Const(seven)) <|- ten
-        let x = For(zero, three, Add(one)) <|- four
+        let x = For(four, six, Add(two)) <|- two
         //let x = For()
         ()
         

@@ -62,7 +62,7 @@ module Func =
         static member inline (<|-) (While(p, f), v) = ((p <|- v) <?> (While(p, f) <-< f, Id)) <|- v
     *)
     type For<'s, 'e, 'f> = For of 's * 'e * 'f with
-        static member inline (<|-) (For(s, e, f), v) = (LessThan(e) <|- v) <?> (For(s + one , e, f) <-< f, Id) <|- v
+        static member inline (<|-) (For(s, e, f), v) = (s +< e <?> (For(s + one, e, f) <-< f, Id)) <|- v
 
   
 
