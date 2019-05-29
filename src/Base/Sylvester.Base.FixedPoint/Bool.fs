@@ -19,7 +19,7 @@ module Bool =
         static member (+) (_:True, _:False) = _true
 
         static member inline (<?>) (_:True, (x, _)) = x
-        static member inline (<|-) (_:True, _) = _true
+      
 
     type False with 
         static member inline (!!) (_:False) = _true
@@ -29,7 +29,7 @@ module Bool =
         static member (+) (_:False, _:False) = _false
         
         static member inline (<?>) (_:False, (_, y)) = y
-        static member inline (<|-) (_:False, _) = _false
+        
 
     
 

@@ -485,16 +485,16 @@ module Base10 =
 
     static member inline (!!!!) (_:_9) = _false
 
-  type ``0`` with static member inline (.*) (_:_0, nn : ^nn) = ( ^nn : (static member Zero : ^zero) ())
-  type ``1`` with static member inline (.*) (_:_1, nn) = nn
-  type ``2`` with static member inline (.*) (_:_2, nn) = nn + nn
-  type ``3`` with static member inline (.*) (_:_3, nn) = nn + nn + nn
-  type ``4`` with static member inline (.*) (_:_4, nn) = nn + nn + nn + nn
-  type ``5`` with static member inline (.*) (_:_5, nn) = nn + nn + nn + nn + nn
-  type ``6`` with static member inline (.*) (_:_6, nn) = nn + nn + nn + nn + nn + nn
-  type ``7`` with static member inline (.*) (_:_7, nn) = nn + nn + nn + nn + nn + nn + nn
-  type ``8`` with static member inline (.*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
-  type ``9`` with static member inline (.*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
+  type ``0`` with static member inline (++*) (_:_0, nn : ^nn) = ( ^nn : (static member Zero : ^zero) ())
+  type ``1`` with static member inline (++*) (_:_1, nn) = nn
+  type ``2`` with static member inline (++*) (_:_2, nn) = nn + nn
+  type ``3`` with static member inline (++*) (_:_3, nn) = nn + nn + nn
+  type ``4`` with static member inline (++*) (_:_4, nn) = nn + nn + nn + nn
+  type ``5`` with static member inline (++*) (_:_5, nn) = nn + nn + nn + nn + nn
+  type ``6`` with static member inline (++*) (_:_6, nn) = nn + nn + nn + nn + nn + nn
+  type ``7`` with static member inline (++*) (_:_7, nn) = nn + nn + nn + nn + nn + nn + nn
+  type ``8`` with static member inline (++*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
+  type ``9`` with static member inline (++*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
 
 
 
