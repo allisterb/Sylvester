@@ -50,35 +50,9 @@ module FixedPointTests =
         Assert.IsType<False>(a +> b) |> ignore
         Assert.IsType<True>(a +< b) |> ignore
         
-        //let x = While(Not <-< LessThan(five), Sub(one)) <|- six
-        let inline f a  = a
-        let inline g a = a +< three
+       
 
-        //let inline h a  = While2(g, f one) <|- one
-
-        //let inline z a = While(g, f) <|- a
-        //let inline z a = While2(g, f) <|- a
-        
-        //let inline x a = While2(f,g) <|- a
-
-        //let r = WhileNotZero(NotZero <->, Add(one)) <|- three
-
-
-
-
-
-
-
-
-
-        //let r = z two
-        //let r = If(LessThan(five), Const(six), Const(seven)) <|- hundred
-        
-        //let x = For(zero, two, Add(thousand)) <|- five
-        ()
-        //Assert.IsType<True> (x +== six)
-    
-        
+       
 
 
 

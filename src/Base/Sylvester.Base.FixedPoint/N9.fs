@@ -113,14 +113,6 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
             
     static member inline (+<) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
         (!! (l +== r)) * (!! (l +> r))
-
-    static member inline IsZero(l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) = 
-        let (a9, a8, a7, a6, a5, a4, a3, a2, a1) = l.Digits
-        (!!!! a9) * (!!!! a8) * (!!!! a7) * (!!!! a6) * (!!!! a5) * (!!!! a4) * (!!!! a3) * (!!!! a2) * (!!!! a1) 
-   
-    static member inline Neg (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) =
-        let (a9, a8, a7, a6, a5, a4, a3, a2, a1) = l.Digits
-        N9(!! a9, !! a8, !! a7, !! a6, !! a5, !! a4, !! a3, !!a2, !! a1)
     
 type N0 = N9<_0, _0, _0, _0, _0, _0, _0, _0, _0>
 
@@ -156,7 +148,11 @@ module N9 =
 
     let eight = N9(d0, d0, d0, d0, d0, d0, d0, d0, d8)
 
+    let nine = N9(d0, d0, d0, d0, d0, d0, d0, d0, d8)
+
     let ten = N9(d0, d0, d0, d0, d0, d0, d0, d1, d0)
+
+    let twenty = ten * two
 
     let hundred = N9(d0, d0, d0, d0, d0, d0, d1, d0, d0)
 
