@@ -7,8 +7,9 @@ module Base10 =
   open System 
   
   [<NoEquality; NoComparison>]
-  type Base10Digit = abstract member Value:int
-  
+  type Base10Digit = 
+    abstract member Value:int
+    
   type ZeroDigit = interface inherit Base10Digit end
 
   type NonZeroDigit = interface inherit Base10Digit end

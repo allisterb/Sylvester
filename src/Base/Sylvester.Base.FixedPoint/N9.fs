@@ -4,26 +4,25 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
     and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit and 'd1 :> Base10Digit> 
     (n9:'d9, n8:'d8, n7:'d7, n6:'d6, n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 
     
-   
     member x.Digits = (n9, n8, n7, n6, n5, n4, n3, n2, n1)
 
-    member x.Digit1 = n1.Value
+    member x.Digit1 = n1
 
-    member x.Digit2 = n2.Value
+    member x.Digit2 = n2
 
-    member x.Digit3 = n3.Value
+    member x.Digit3 = n3
 
-    member x.Digit4 = n4.Value
+    member x.Digit4 = n4
 
-    member x.Digit5 = n5.Value
+    member x.Digit5 = n5
 
-    member x.Digit6 = n6.Value
+    member x.Digit6 = n6
 
-    member x.Digit7 = n7.Value
+    member x.Digit7 = n7
 
-    member x.Digit8 = n8.Value
+    member x.Digit8 = n8
 
-    member x.Digit9 = n9.Value
+    member x.Digit9 = n9
 
     new() = N9(digit<'d9>(), digit<'d8>(), digit<'d7>(), digit<'d6>(), digit<'d5>(), digit<'d4>(), digit<'d3>(), digit<'d2>(), digit<'d1>())
 
@@ -115,6 +114,13 @@ type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 
     static member inline (+<) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
         (!! (l +== r)) * (!! (l +> r))
 
+    static member inline IsZero(l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) = 
+        let (a9, a8, a7, a6, a5, a4, a3, a2, a1) = l.Digits
+        (!!!! a9) * (!!!! a8) * (!!!! a7) * (!!!! a6) * (!!!! a5) * (!!!! a4) * (!!!! a3) * (!!!! a2) * (!!!! a1) 
+   
+    static member inline Neg (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) =
+        let (a9, a8, a7, a6, a5, a4, a3, a2, a1) = l.Digits
+        N9(!! a9, !! a8, !! a7, !! a6, !! a5, !! a4, !! a3, !!a2, !! a1)
     
 type N0 = N9<_0, _0, _0, _0, _0, _0, _0, _0, _0>
 
@@ -171,16 +177,5 @@ module N9 =
     let _N5(n5: #Base10Digit, n4: #Base10Digit, n3: #Base10Digit, n2: #Base10Digit, n1: #Base10Digit) =
         N9(d0, d0, d0, d0, n5, n4, n3, n2, n1)
 
-    let inline isZero (a1, a2, a3, a4, a5, a6, a7, a8, a9)  = 
-        (!!!! a9) * (!!!! a8) * (!!!! a7) * (!!!! a6) * (!!!! a5) * (!!!! a4) * (!!!! a3) * (!!!! a2) * (!!!! a1)
-
-    let inline neg (a9, a8, a7, a6, a5, a4, a3, a2, a1)  = 
-        N9(!! a9, !! a8, !! a7, !! a6, !! a5, !! a4, !! a3, !!a2, !! a1)
     
-    //let inline addneg (a9, a8, a7, a6, a5, a4, a3, a2, a1) 
-    type IsZero = IsZero with
-        static member inline (<|-) (IsZero, n:N9<_,_,_,_,_,_,_,_,_>) = isZero n.Digits
-    
-    type Neg = Neg with
-        static member inline (<|-) (Neg, n:N9<_,_,_,_,_,_,_,_,_>) = neg n.Digits
 
