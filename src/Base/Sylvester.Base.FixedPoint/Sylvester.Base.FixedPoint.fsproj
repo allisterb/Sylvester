@@ -10,11 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="TestPad.fsx" />
     <Compile Include="Bool.fs" />
     <Compile Include="Base10.fs" />
     <Compile Include="N9.fs" />
     <Compile Include="Constraint.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.6.2" />

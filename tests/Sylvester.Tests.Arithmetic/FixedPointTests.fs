@@ -7,13 +7,9 @@ open Sylvester
 
 module FixedPointTests = 
     
-    let r (a, b)  =
+    let inline r (a, b)  =
         check (a +> b)
-        let z = a + b
-        checkres(z, z +< ten)
-    
-    let q =  r (six + one, two)
-        
+      
     [<Fact>]
     let ``Can construct fixed-point numbers``() = 
         let n11056_1 = _N5(d1, d1, d0, d5, d6)
@@ -49,6 +45,13 @@ module FixedPointTests =
         Assert.IsType<True>(b +> a) |> ignore
         Assert.IsType<False>(a +> b) |> ignore
         Assert.IsType<True>(a +< b) |> ignore
+
+    [<Fact>]
+    let ``Can constrain fixed-point numbers`` () =
+        check(one + two +< ten)
+        check(!? zero)
+
+
         
        
 
