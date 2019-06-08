@@ -11,8 +11,7 @@ open ProviderImplementation
 open ProviderImplementation.ProvidedTypes
 
 open Sylvester
-open Sylvester.Base10
-open Sylvester.Base10Digits
+
 
 [<TypeProvider>]
 type ArithmeticProvider (config : TypeProviderConfig) as this =

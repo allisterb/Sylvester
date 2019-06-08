@@ -49,7 +49,17 @@ module FixedPointTests =
     [<Fact>]
     let ``Can constrain fixed-point numbers`` () =
         check(one + two +< ten)
-        check(!? zero)
+        check((ten + two) +== (six * two))
+
+    [<Fact>]
+    let ``Can overflow fixed-point number`` () =
+        let a = N9(d9, d8, d7, d6, d5, d4, d3, d2, d1)
+        let b = N9(d9, d8, d7, d6, d5, d4, d3, d2, d1)
+       
+        Assert.IsType<N9Overflow>(a + b) |> ignore
+        Assert.IsType<N9Overflow>(a + a) |> ignore
+        Assert.IsType<N9Underflow>(a - (b + one)) |> ignore
+      
 
 
         
