@@ -18,13 +18,13 @@ module FixedPointTests =
         let (_, _, _, _, b_5, b_4, b_3, b_2, b_1) = n11056_b.Digits
         Assert.IsType<_1>(t_5) |> ignore
         Assert.IsType<_6>(t_1) |> ignore
-        Assert.True(AreEqual(t_5, t_4))
-        Assert.True(IsEqualTo<_0>(t_3))
+        Assert.True(areEqual(t_5, t_4))
+        Assert.True(isEqualTo<_0>(t_3))
 
         Assert.IsType<_1>(b_5) |> ignore
         Assert.IsType<_6>(b_1) |> ignore
-        Assert.True(AreEqual(b_5, t_4))
-        Assert.True(IsEqualTo<_0>(b_3))
+        Assert.True(areEqual(b_5, t_4))
+        Assert.True(isEqualTo<_0>(b_3))
 
     [<Fact>]
     let ``Can add fixed-point numbers`` () =
@@ -59,6 +59,7 @@ module FixedPointTests =
         Assert.IsType<N9Overflow>(a + b) |> ignore
         Assert.IsType<N9Overflow>(a + a) |> ignore
         Assert.IsType<N9Underflow>(a - (b + one)) |> ignore
+        Assert.IsType<N9Underflow>(zero - (b + one)) |> ignore
       
 
 

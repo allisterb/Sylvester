@@ -82,29 +82,6 @@ module Base10 =
   let d8 = _8()
   let d9 = _9()
 
-  let digit<'d when 'd :>Base10Digit>() :'d = Activator.CreateInstance<'d>()
-    
-  let IsEqualTo<'d when 'd :> Base10Digit>(b: obj) =
-    match b with 
-        | :? 'd ->  true            
-        | _  -> false
-
-  let AreEqual<'d when 'd :> Base10Digit>(_:'d, b: obj) = IsEqualTo<'d>(b)
-
-  let getDigitType(n:int) =
-    match n with
-    | 0 -> typedefof<_0>
-    | 1 -> typedefof<_1>
-    | 2 -> typedefof<_2>
-    | 3 -> typedefof<_3>
-    | 4 -> typedefof<_4>
-    | 5 -> typedefof<_5>
-    | 6 -> typedefof<_6>
-    | 7 -> typedefof<_7>
-    | 8 -> typedefof<_8>
-    | 9 -> typedefof<_9>
-    | _ -> failwith "Invalid digit."
-
   type ``0`` with
     static member Zero = d0
     static member inline (!!) (_:_0) = d9
@@ -141,7 +118,7 @@ module Base10 =
     static member inline (+===) (_:_0, _:_8) = _false
     static member inline (+===) (_:_0, _:_9) = _false
 
-    static member inline (!!!!) (_:_0) = _true
+    static member inline (!??) (_:_0) = _true
   
   type ``1`` with
     static member Zero = d0
@@ -179,7 +156,7 @@ module Base10 =
     static member inline (+===) (_:_1, _:_8) = _false
     static member inline (+===) (_:_1, _:_9) = _false
 
-    static member inline (!!!!) (_:_1) = _false
+    static member inline (!??) (_:_1) = _false
   
   type ``2`` with
     static member Zero = d0
@@ -217,7 +194,7 @@ module Base10 =
     static member inline (+===) (_:_2, _:_8) = _false
     static member inline (+===) (_:_2, _:_9) = _false
 
-    static member inline (!!!!) (_:_2) = _false
+    static member inline (!??) (_:_2) = _false
 
   type ``3`` with
     static member Zero = d0
@@ -255,7 +232,7 @@ module Base10 =
     static member inline (+===) (_:_3, _:_8) = _false
     static member inline (+===) (_:_3, _:_9) = _false
 
-    static member inline (!!!!) (_:_3) = _false
+    static member inline (!??) (_:_3) = _false
 
   type ``4`` with
     static member Zero = d0
@@ -293,7 +270,7 @@ module Base10 =
     static member inline (+===) (_:_4, _:_8) = _false
     static member inline (+===) (_:_4, _:_9) = _false
 
-    static member inline (!!!!) (_:_4) = _false
+    static member inline (!??) (_:_4) = _false
 
   type ``5`` with
     static member Zero = d0
@@ -331,7 +308,7 @@ module Base10 =
     static member inline (+===) (_:_5, _:_8) = _false
     static member inline (+===) (_:_5, _:_9) = _false
 
-    static member inline (!!!!) (_:_5) = _false
+    static member inline (!??) (_:_5) = _false
 
   type ``6`` with
     static member Zero = d0
@@ -369,7 +346,7 @@ module Base10 =
     static member inline (+===) (_:_6, _:_8) = _false
     static member inline (+===) (_:_6, _:_9) = _false
 
-    static member inline (!!!!) (_:_6) = _false
+    static member inline (!??) (_:_6) = _false
 
   type ``7`` with
     static member Zero = d0
@@ -407,7 +384,7 @@ module Base10 =
     static member inline (+===) (_:_7, _:_8) = _false
     static member inline (+===) (_:_7, _:_9) = _false
 
-    static member inline (!!!!) (_:_7) = _false
+    static member inline (!??) (_:_7) = _false
 
   type ``8`` with
     static member Zero = d0
@@ -445,7 +422,7 @@ module Base10 =
     static member inline (+===) (_:_8, _:_8) = _true
     static member inline (+===) (_:_8, _:_9) = _false
 
-    static member inline (!!!!) (_:_8) = _false
+    static member inline (!??) (_:_8) = _false
 
   type ``9`` with
     static member Zero = d0
@@ -483,7 +460,7 @@ module Base10 =
     static member inline (+===) (_:_9, _:_8) = _false
     static member inline (+===) (_:_9, _:_9) = _true
 
-    static member inline (!!!!) (_:_9) = _false
+    static member inline (!??) (_:_9) = _false
 
   type ``0`` with static member inline (++*) (_:_0, nn : ^nn) = ( ^nn : (static member Zero : ^zero) ())
   type ``1`` with static member inline (++*) (_:_1, nn) = nn
@@ -495,6 +472,29 @@ module Base10 =
   type ``7`` with static member inline (++*) (_:_7, nn) = nn + nn + nn + nn + nn + nn + nn
   type ``8`` with static member inline (++*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
   type ``9`` with static member inline (++*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
+
+  let digit<'d when 'd :>Base10Digit>() :'d = Activator.CreateInstance<'d>()
+    
+  let isEqualTo<'d when 'd :> Base10Digit>(b: obj) =
+    match b with 
+        | :? 'd ->  true            
+        | _  -> false
+
+  let areEqual<'d when 'd :> Base10Digit>(_:'d, b: obj) = isEqualTo<'d>(b)
+
+  let getIntDigitType(n:int) =
+    match n with
+    | 0 -> typedefof<_0>
+    | 1 -> typedefof<_1>
+    | 2 -> typedefof<_2>
+    | 3 -> typedefof<_3>
+    | 4 -> typedefof<_4>
+    | 5 -> typedefof<_5>
+    | 6 -> typedefof<_6>
+    | 7 -> typedefof<_7>
+    | 8 -> typedefof<_8>
+    | 9 -> typedefof<_9>
+    | _ -> failwith "Invalid integer digit."
 
   
   
