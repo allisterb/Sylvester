@@ -1,16 +1,15 @@
-﻿namespace Sylvester
+﻿namespace Sylvester.Arithmetic
 
-[<AutoOpen>]
 module N9 = 
+
+    let inline isZero (x1, x2, x3, x4, x5, x6, x7, x8, x9)  = 
+        (!?? x9) * (!?? x8) * (!?? x7) * (!?? x6) * (!?? x5) * (!?? x4) * (!?? x3) * (!?? x2) * (!?? x1)
+
+    let inline isNotZero (x1, x2, x3, x4, x5, x6, x7, x8, x9)  = !! (isZero (x1, x2, x3, x4, x5, x6, x7, x8, x9))
 
     type N9Overflow = N9Overflow
     
     type N9Underflow = N9Underflow
-
-    let inline isZero (x1, x2, x3, x4, x5, x6, x7, x8, x9)  = 
-            (!?? x9) * (!?? x8) * (!?? x7) * (!?? x6) * (!?? x5) * (!?? x4) * (!?? x3) * (!?? x2) * (!?? x1)
-
-    let inline isNotZero (x1, x2, x3, x4, x5, x6, x7, x8, x9)  = !! (isZero (x1, x2, x3, x4, x5, x6, x7, x8, x9))
 
     type N9<'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
         and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit and 'd1 :> Base10Digit> 
@@ -138,6 +137,7 @@ module N9 =
 
         static member inline (+<=) (l: N9<'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N9<'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
             (!! (l +> r))
+
 
     type N0 = N9<_0, _0, _0, _0, _0, _0, _0, _0, _0>
 

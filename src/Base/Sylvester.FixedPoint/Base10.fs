@@ -1,4 +1,4 @@
-﻿namespace Sylvester
+﻿namespace Sylvester.Arithmetic
 #nowarn "0077"
 
 [<AutoOpen>]
@@ -8,7 +8,7 @@ module Base10 =
   
   [<NoEquality; NoComparison>]
   type Base10Digit = 
-    abstract member Value:int
+    abstract member Val:int
     
   type ZeroDigit = interface inherit Base10Digit end
 
@@ -49,16 +49,16 @@ module Base10 =
   type I9 = interface inherit NonZeroDigit inherit PowerOf3Digit inherit SquareDigit end
 
 
-  type ``0``() = interface I0 with member x.Value = 0 
-  type ``1``() = interface I1 with member x.Value = 1
-  type ``2``() = interface I2 with member x.Value = 2
-  type ``3``() = interface I3 with member x.Value = 3
-  type ``4``() = interface I4 with member x.Value = 4
-  type ``5``() = interface I5 with member x.Value = 5
-  type ``6``() = interface I6 with member x.Value = 6
-  type ``7``() = interface I7 with member x.Value = 7
-  type ``8``() = interface I8 with member x.Value = 8
-  type ``9``() = interface I9 with member x.Value = 9
+  type ``0``() = interface I0 with member x.Val = 0 
+  type ``1``() = interface I1 with member x.Val = 1
+  type ``2``() = interface I2 with member x.Val = 2
+  type ``3``() = interface I3 with member x.Val = 3
+  type ``4``() = interface I4 with member x.Val = 4
+  type ``5``() = interface I5 with member x.Val = 5
+  type ``6``() = interface I6 with member x.Val = 6
+  type ``7``() = interface I7 with member x.Val = 7
+  type ``8``() = interface I8 with member x.Val = 8
+  type ``9``() = interface I9 with member x.Val = 9
 
   type _0 = ``0``
   type _1 = ``1``

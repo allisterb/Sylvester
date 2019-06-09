@@ -1,17 +1,13 @@
-namespace Sylvester.Tests
+namespace Sylvester.Tests.Arithmetic
 
-open System
-open Xunit
+module N9 = 
 
-open Sylvester
-
-module FixedPointTests = 
-    
-    let inline r (a, b)  =
-        check (a +> b)
-      
+    open Xunit
+    open Sylvester.Arithmetic
+    open Sylvester.Arithmetic.N9
+       
     [<Fact>]
-    let ``Can construct fixed-point numbers``() = 
+    let ``Can construct N9 fixed-point numbers``() = 
         let n11056_1 = _N5(d1, d1, d0, d5, d6)
         let n11056_b = N9<_0, _0, _0, _0, _1, _1, _0, _5, _6>()
         let (_, _, _, _, t_5, t_4, t_3, t_2, t_1) = n11056_1.Digits
@@ -27,7 +23,7 @@ module FixedPointTests =
         Assert.True(isEqualTo<_0>(b_3))
 
     [<Fact>]
-    let ``Can add fixed-point numbers`` () =
+    let ``Can add N9 fixed-point numbers`` () =
         let a = _N5(d0, d0, d0, d1, d1)
         let b = _N5(d0, d0, d0, d1, d0)
         let g = N5<_0, _5, _0, _2, _1>()
@@ -36,7 +32,7 @@ module FixedPointTests =
         Assert.IsType<N5<_0, _5, _0, _4, _3>>(a + b + one + g) |> ignore
 
     [<Fact>]
-    let ``Can compare fixed-point numbers`` () =
+    let ``Can compare N9 fixed-point numbers`` () =
         let a = _N5(d3, d0, d0, d8, d2)
         let b = _N5(d4, d9, d0, d2, d2)
         Assert.IsType<True>(a +== a) |> ignore
@@ -47,12 +43,12 @@ module FixedPointTests =
         Assert.IsType<True>(a +< b) |> ignore
 
     [<Fact>]
-    let ``Can constrain fixed-point numbers`` () =
+    let ``Can constrain N9 fixed-point numbers`` () =
         check(one + two +< ten)
         check((ten + two) +== (six * two))
 
     [<Fact>]
-    let ``Can overflow fixed-point number`` () =
+    let ``Can overflow N9 fixed-point number`` () =
         let a = N9(d9, d8, d7, d6, d5, d4, d3, d2, d1)
         let b = N9(d9, d8, d7, d6, d5, d4, d3, d2, d1)
        
@@ -60,6 +56,7 @@ module FixedPointTests =
         Assert.IsType<N9Overflow>(a + a) |> ignore
         Assert.IsType<N9Underflow>(a - (b + one)) |> ignore
         Assert.IsType<N9Underflow>(zero - (b + one)) |> ignore
+        Assert.IsType<N9Underflow>(b - (b + one)) |> ignore
       
 
 

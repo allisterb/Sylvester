@@ -1,6 +1,8 @@
-﻿#r "bin\\Debug\\net45\\Sylvester.Base.FixedPoint.dll"
+﻿#r "bin\\Debug\\net45\\Sylvester.FixedPoint.dll"
 
-open Sylvester
+open Sylvester.Arithmetic
+open Sylvester.Arithmetic.N9
+
 
 let g = one + ten
 

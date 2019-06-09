@@ -12,7 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="FixedPointTests.fs" />
+    <Compile Include="N10Tests.fs" />
+    <Compile Include="N9Tests.fs" />
   </ItemGroup>
 
   <ItemGroup>
