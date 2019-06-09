@@ -482,19 +482,24 @@ module Base10 =
 
   let areEqual<'d when 'd :> Base10Digit>(_:'d, b: obj) = isEqualTo<'d>(b)
 
-  let getIntDigitType(n:int) =
-    match n with
-    | 0 -> typedefof<_0>
-    | 1 -> typedefof<_1>
-    | 2 -> typedefof<_2>
-    | 3 -> typedefof<_3>
-    | 4 -> typedefof<_4>
-    | 5 -> typedefof<_5>
-    | 6 -> typedefof<_6>
-    | 7 -> typedefof<_7>
-    | 8 -> typedefof<_8>
-    | 9 -> typedefof<_9>
-    | _ -> failwith "Invalid integer digit."
+  let getCharDigitType(d:char) =
+    match d with
+    | '0' -> typedefof<_0>
+    | '1' -> typedefof<_1>
+    | '2' -> typedefof<_2>
+    | '3' -> typedefof<_3>
+    | '4' -> typedefof<_4>
+    | '5' -> typedefof<_5>
+    | '6' -> typedefof<_6>
+    | '7' -> typedefof<_7>
+    | '8' -> typedefof<_8>
+    | '9' -> typedefof<_9>
+    | _ -> failwith "Invalid char digit."
+
+  let getIntBase10TypeArray(n:int, length:int) =
+    let s = n.ToString()
+    do if s.Length > length then failwith <| sprintf "The number of integer digits in %i is more than %i." n length
+    s.PadLeft(length, '0') |> Seq.map(fun d -> getCharDigitType d) |> Seq.toArray
 
   
   

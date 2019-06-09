@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Tailcalls>true</Tailcalls>
-    <Optimize>true</Optimize>
+    <Tailcalls>false</Tailcalls>
+    <Optimize>false</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Base10Tests.fs" />
     <Compile Include="N10Tests.fs" />
     <Compile Include="N9Tests.fs" />
   </ItemGroup>

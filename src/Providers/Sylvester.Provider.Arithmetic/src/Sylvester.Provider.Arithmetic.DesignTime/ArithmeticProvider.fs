@@ -30,11 +30,11 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
 
         do N.DefineStaticParameters([valueParam], fun name args ->
             let n = args.[0] :?> int
-            let g = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntDigitType(54321))
+            let g = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
             let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
             provided.AddXmlDoc <| (sprintf "<summary>A typed representation of the natural number %d.</summary>" <| n)   
             let ctor = ProvidedConstructor([], invokeCode = fun args -> 
-                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntDigitType(54321))) @@>)
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))) @@>)
             provided.AddMember(ctor)
             provided
         )

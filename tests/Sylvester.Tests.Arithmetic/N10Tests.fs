@@ -2,6 +2,8 @@ namespace Sylvester.Tests.Arithmetic
 
 module N10 = 
 
+    open System
+    open System.Reflection
     open Xunit
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
@@ -21,6 +23,15 @@ module N10 =
         Assert.IsType<_6>(b_1) |> ignore
         Assert.True(areEqual(b_5, t_4))
         Assert.True(isEqualTo<_0>(b_3))
+
+    [<Fact>]
+    let ``Can construct N10 fixed-point numbers via reflection``() = 
+        let _n = 466710
+        let t = getIntBase10TypeArray(_n, 10)
+        Assert.Equal(10, t.Length)
+        let n = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(_n, 10))
+        ()
+
 
     [<Fact>]
     let ``Can add N10 fixed-point numbers`` () =
