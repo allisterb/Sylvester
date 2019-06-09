@@ -16,7 +16,4 @@ group Test
   source https://nuget.org/api/v2
   frameworks: net461, netcoreapp2.0
 
-  nuget NUnit 3.6.1
-  nuget NUnit.Console 3.6.1
-  nuget NUnit3TestAdapter 3.7.0 version_in_path: true
   nuget FSharp.Core 4.3.4

@@ -13,8 +13,8 @@
   <ItemGroup>
     <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Bool.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Base10.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\N10.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Constraint.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\N9.fs" />
     <Compile Include="..\..\paket-files\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fsi">
       <Paket>True</Paket>
       <Link>paket-files/ProvidedTypes.fsi</Link>
@@ -31,7 +31,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.6.2" />
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

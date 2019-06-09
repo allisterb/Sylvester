@@ -18,13 +18,17 @@
       <Paket>True</Paket>
       <Link>paket-files/ProvidedTypes.fs</Link>
     </Compile>
+    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Bool.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Base10.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\N10.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Constraint.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Sylvester.Provider.Arithmetic.Runtime.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <!-- Be explicit about the version of FSharp.Core since we mention it in the manual nuget package spec -->
-    <PackageReference Include="FSharp.Core" Version="4.6.2" />
+    <PackageReference Include="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
   <Target Name="BeforeBuild">
     <MSBuild Projects="..\Sylvester.Provider.Arithmetic.DesignTime\Sylvester.Provider.Arithmetic.DesignTime.fsproj" Targets="Restore" />

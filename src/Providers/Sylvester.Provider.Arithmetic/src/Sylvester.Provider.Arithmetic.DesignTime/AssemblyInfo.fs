@@ -3,15 +3,15 @@ namespace System
 open System.Reflection
 
 [<assembly: AssemblyTitleAttribute("Sylvester.Provider.Arithmetic.DesignTime")>]
-[<assembly: AssemblyProductAttribute("Sylvester.Provider.Arithmetic")>]
-[<assembly: AssemblyDescriptionAttribute("This library is for the .NET platform implementing Sylvester.Provider.Arithmetic.")>]
-[<assembly: AssemblyVersionAttribute("1.0.0")>]
-[<assembly: AssemblyFileVersionAttribute("1.0.0")>]
+[<assembly: AssemblyProductAttribute("Sylvester")>]
+[<assembly: AssemblyDescriptionAttribute("Type provider for Sylvester.Arithmetic.")>]
+[<assembly: AssemblyVersionAttribute("0.1.0")>]
+[<assembly: AssemblyFileVersionAttribute("0.1.0")>]
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "Sylvester.Provider.Arithmetic.DesignTime"
     let [<Literal>] AssemblyProduct = "Sylvester.Provider.Arithmetic"
-    let [<Literal>] AssemblyDescription = "This library is for the .NET platform implementing Sylvester.Provider.Arithmetic."
-    let [<Literal>] AssemblyVersion = "1.0.0"
-    let [<Literal>] AssemblyFileVersion = "1.0.0"
+    let [<Literal>] AssemblyDescription = "Type provider for Sylvester.Arithmetic."
+    let [<Literal>] AssemblyVersion = "0.1.0"
+    let [<Literal>] AssemblyFileVersion = "0.1.0"
