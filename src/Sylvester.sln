@@ -26,6 +26,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interactive", "Interactive", "{1BBCE66D-39C7-4576-8F60-1526BCD478A6}"
 	ProjectSection(SolutionItems) = preProject
 		..\tests\Interactive\ArithmeticProvider.fsx = ..\tests\Interactive\ArithmeticProvider.fsx
+		..\tests\Interactive\FixedPoint.fsx = ..\tests\Interactive\FixedPoint.fsx
 	EndProjectSection
 EndProject
 Global

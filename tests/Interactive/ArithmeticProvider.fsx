@@ -9,6 +9,8 @@ let h = one + g
 
 check(g +< two * hundred)
 
+h.Val
+
 
 
 

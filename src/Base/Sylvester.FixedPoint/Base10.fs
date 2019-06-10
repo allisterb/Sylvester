@@ -9,6 +9,7 @@ module Base10 =
   [<NoEquality; NoComparison>]
   type Base10Digit = 
     abstract member Val:int
+    abstract member Val_:uint64
     
   type ZeroDigit = interface inherit Base10Digit end
 
@@ -49,16 +50,16 @@ module Base10 =
   type I9 = interface inherit NonZeroDigit inherit PowerOf3Digit inherit SquareDigit end
 
 
-  type ``0``() = interface I0 with member x.Val = 0 
-  type ``1``() = interface I1 with member x.Val = 1
-  type ``2``() = interface I2 with member x.Val = 2
-  type ``3``() = interface I3 with member x.Val = 3
-  type ``4``() = interface I4 with member x.Val = 4
-  type ``5``() = interface I5 with member x.Val = 5
-  type ``6``() = interface I6 with member x.Val = 6
-  type ``7``() = interface I7 with member x.Val = 7
-  type ``8``() = interface I8 with member x.Val = 8
-  type ``9``() = interface I9 with member x.Val = 9
+  type ``0``() = interface I0 with member x.Val = 0 member x.Val_ = 0UL
+  type ``1``() = interface I1 with member x.Val = 1 member x.Val_ = 1UL
+  type ``2``() = interface I2 with member x.Val = 2 member x.Val_ = 2UL
+  type ``3``() = interface I3 with member x.Val = 3 member x.Val_ = 3UL
+  type ``4``() = interface I4 with member x.Val = 4 member x.Val_ = 4UL
+  type ``5``() = interface I5 with member x.Val = 5 member x.Val_ = 5UL
+  type ``6``() = interface I6 with member x.Val = 6 member x.Val_ = 6UL
+  type ``7``() = interface I7 with member x.Val = 7 member x.Val_ = 7UL
+  type ``8``() = interface I8 with member x.Val = 8 member x.Val_ = 8UL
+  type ``9``() = interface I9 with member x.Val = 9 member x.Val_ = 9UL
 
   type _0 = ``0``
   type _1 = ``1``
@@ -474,7 +475,10 @@ module Base10 =
   type ``9`` with static member inline (++*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
 
   let digit<'d when 'd :>Base10Digit>() :'d = Activator.CreateInstance<'d>()
-    
+   
+  let _val(d:Base10Digit) = (uint64) d.Val
+
+
   let isEqualTo<'d when 'd :> Base10Digit>(b: obj) =
     match b with 
         | :? 'd ->  true            
