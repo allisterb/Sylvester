@@ -11,6 +11,7 @@ module N10 =
 
     let inline isNotZero (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10)  = !! (isZero (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10))
 
+    [<StructuredFormatDisplay("N<{Val}>")>]
     type N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
         and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit and 'd1 :> Base10Digit> 
         (n10: 'd10, n9:'d9, n8:'d8, n7:'d7, n6:'d6, n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 

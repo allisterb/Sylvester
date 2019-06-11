@@ -15,7 +15,6 @@
     <Compile Include="N9.fs" />
     <Compile Include="N10.fs" />
     <Compile Include="Constraint.fs" />
-    <None Include="TestPad.fsx" />
   </ItemGroup>
 
   <ItemGroup>

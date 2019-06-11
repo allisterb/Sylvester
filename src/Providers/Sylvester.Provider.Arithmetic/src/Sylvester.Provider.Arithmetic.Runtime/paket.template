@@ -1,25 +1,25 @@
 type file
-id Sylvester.Provider.Arithmetic
+
+id Sylvester.Arithmetic
+
+title Sylvester.Arithmetic
+
 authors
-    Steffen Forkmann, Gustavo Guerra, JohnDoeKyrgyz, Don Syme
+    Allister Beharry
 owners
-    Steffen Forkmann, Gustavo Guerra, JohnDoeKyrgyz, Don Syme
+    Allister Beharry
 projectUrl
-    http://github.com/fsprojects/Sylvester.Provider.Arithmetic
-iconUrl
-    https://raw.githubusercontent.com/fsprojects/Sylvester.Provider.Arithmetic/master/docs/files/img/logo.png
+    https://github.com/allisterb/Sylvester/tree/master/src/Providers/Sylvester.Provider.Arithmetic
 licenseUrl
-    http://github.com/fsprojects/Sylvester.Provider.Arithmetic/blob/master/LICENSE.txt
+    https://raw.githubusercontent.com/allisterb/Sylvester/blob/master/LiCENSE
 requireLicenseAcceptance
     false
 tags
-    F# fsharp typeproviders Sylvester.Provider.Arithmetic
+    F# math arithmetic dependent-types
 summary
-    This library is for the .NET platform implementing Sylvester.Provider.Arithmetic.
+    Dependently typed natural number arithmetic and constraints
 description
-    This library is for the .NET platform implementing Sylvester.Provider.Arithmetic.
-tags
-    F# fsharp typeproviders Sylvester.Provider.Arithmetic
+    This library implements dependently type natural number arithmetic and constraints using fixed-point decimal types.
 files
     bin/Release/net45/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/net45
     bin/Release/netstandard2.0/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/netstandard2.0

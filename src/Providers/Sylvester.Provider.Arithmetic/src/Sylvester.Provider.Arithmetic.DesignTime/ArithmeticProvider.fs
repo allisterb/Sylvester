@@ -22,20 +22,28 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
         
         let helpText = 
             """<summary>Typed representation of a natural number.</summary>
-           <param name='Value'>The number to represent.</param>
+           <param name='Val'>The number to represent.</param>
             """
         N.AddXmlDoc helpText
 
-        let valueParam = ProvidedStaticParameter("Value", typeof<int>)
+        let valueParam = ProvidedStaticParameter("Val", typeof<int>)
 
         do N.DefineStaticParameters([valueParam], fun name args ->
             let n = args.[0] :?> int
             let g = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
             let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
             provided.AddXmlDoc <| (sprintf "<summary>A typed representation of the natural number %d.</summary>" <| n)   
+            
             let ctor = ProvidedConstructor([], invokeCode = fun args -> 
                 <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))) @@>)
             provided.AddMember(ctor)
+
+            let p = ProvidedProperty(propertyName = "i", propertyType = g, isStatic = true, getterCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))) @@>)
+
+            p.AddXmlDocDelayed(fun () -> sprintf "An instance of the typed representation of %d" n)
+            provided.AddMember(p)
+
             provided
         )
         [N]

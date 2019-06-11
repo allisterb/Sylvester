@@ -4,6 +4,14 @@
         "**/.stfolder": true,
         "**/.vscode": true,
         "**/bin": true,
-        "**/obj": true
+        "**/obj": true,
+		"**/lib": true,
+		"**/.git*": true,
+		"**/packages": true,
+		"**/NuGet": true,
+		"src/Base/Sylvester.Bindings": true,
+		"src/Providers/": true,
+		"src/Compilers/": true
+		"src/Loggers/": true
     }
 }

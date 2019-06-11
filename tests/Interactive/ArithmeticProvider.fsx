@@ -3,15 +3,12 @@
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 
-let g = new N<100>()
 
-let h = one + g
+let a,b,c = new N<400>(), new N<231111>(), new N<6577700>()
 
-check(g +< two * hundred)
+let d = a + b + c
 
-h.Val
-
-
+/// k(d +< ten)
 
 
 
