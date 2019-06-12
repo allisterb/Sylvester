@@ -7,21 +7,20 @@
         "type": "shell",
         "problemMatcher": "$msCompile",
         "options": {
-          "cwd": "${workspaceFolder}/src"
+          "cwd": "${fileDirname}"
         }
       },
       {
         "label": "build",
         "command": "dotnet build",
         "type": "shell",
-        "dependsOn": "clean",
         "group": {
           "kind": "build",
           "isDefault": true
         },
         "problemMatcher": "$msCompile",
         "options": {
-          "cwd": "${workspaceFolder}/src"
+          "cwd": "${fileDirname}"
         }
       }
     ]

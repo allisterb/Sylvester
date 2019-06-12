@@ -1,4 +1,5 @@
 ﻿namespace Sylvester.Arithmetic
+open System
 
 module N10 = 
 
@@ -249,8 +250,5 @@ module N10 =
     let _N5(n5: #Base10Digit, n4: #Base10Digit, n3: #Base10Digit, n2: #Base10Digit, n1: #Base10Digit) =
         N10(d0, d0, d0, d0, d0, n5, n4, n3, n2, n1)
 
-    
-
-
-    
+    let inline getN<'n when 'n : (static member Zero: N0)>() = Activator.CreateInstance<'n>()
 
