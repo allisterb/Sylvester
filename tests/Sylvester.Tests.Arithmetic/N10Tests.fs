@@ -1,4 +1,4 @@
-namespace Sylvester.Tests.Arithmetic
+namespace Sylvester.Tests.Arithmetic.FixedPoint
 
 module N10 = 
 

@@ -10,7 +10,17 @@
 		"**/packages": true,
 		"**/NuGet": true,
 		"**/src/Base/Sylvester.Bindings": true,
-		"**/src/Compilers/": true
+		"**/src/Compilers/": true,
 		"**/src/Loggers/": true
-    }
+    },
+    "FSharp.excludeProjectDirectories": [
+        ".git",
+        "paket-files",
+        ".fable",
+        "node_modules",
+		"src/NuGet",
+		"Sylvester.Bindings",
+		"src/Compilers",
+		"src/Loggers/"
+    ]
 }

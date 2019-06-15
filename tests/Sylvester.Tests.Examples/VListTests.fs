@@ -20,8 +20,4 @@ module VList =
                                 and 'i : (static member (+<=): 'i -> 'n -> True) 
                                 and 'i : (static member op_Explicit: 'i -> int)>() : 't = x.Item(getN<'i>()) 
     
-    [<Fact>]
-    let ``Can get VList``() =
-        let v = new VList<N<100>, int>()
-        let j = v.[five]
-        ()
+  

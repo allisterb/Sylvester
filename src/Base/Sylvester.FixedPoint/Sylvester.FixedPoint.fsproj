@@ -12,9 +12,8 @@
   <ItemGroup>
     <Compile Include="Bool.fs" />
     <Compile Include="Base10.fs" />
-    <Compile Include="N9.fs" />
-    <Compile Include="N10.fs" />
     <Compile Include="Constraint.fs" />
+    <Compile Include="N10.fs" />
   </ItemGroup>
 
   <ItemGroup>

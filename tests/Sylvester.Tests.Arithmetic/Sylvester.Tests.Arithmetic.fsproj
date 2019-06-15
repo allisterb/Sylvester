@@ -14,7 +14,7 @@
   <ItemGroup>
     <Compile Include="Base10Tests.fs" />
     <Compile Include="N10Tests.fs" />
-    <Compile Include="N9Tests.fs" />
+    <Compile Include="VListTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Base\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
     <ProjectReference Include="..\..\src\Base\Sylvester.FixedPoint\Sylvester.FixedPoint.fsproj" />
   </ItemGroup>
 
