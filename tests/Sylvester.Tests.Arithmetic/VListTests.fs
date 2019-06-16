@@ -5,7 +5,7 @@ module VListTests =
     open Xunit
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
-    open Sylvester.Arithmetic.Collections.VList
+    open Sylvester.Arithmetic.Collections
 
     [<Fact>]
     let ``Can create VList``() =

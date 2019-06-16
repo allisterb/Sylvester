@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="VList.fs" />
     <Compile Include="HList.fs" />
+    <Compile Include="Logic.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,8 @@ module N10 =
 
     open System
 
+    type N10Number = interface end
+
     type N10Overflow = N10Overflow
     
     type N10Underflow = N10Underflow
@@ -17,6 +19,10 @@ module N10 =
     type N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
         and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit and 'd1 :> Base10Digit> 
         (n10: 'd10, n9:'d9, n8:'d8, n7:'d7, n6:'d6, n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 
+
+        interface N10Number
+
+        member x.get =  Activator.CreateInstance<N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>>()
 
         member x.Val = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)
         

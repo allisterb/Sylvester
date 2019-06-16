@@ -4,4 +4,19 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="Tensor.fs" />
+    <Compile Include="Scalar.fs" />
+    <Compile Include="Vector.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
+    <ProjectReference Include="..\Sylvester.FixedPoint\Sylvester.FixedPoint.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.6.2" />
+  </ItemGroup>
+
 </Project>
