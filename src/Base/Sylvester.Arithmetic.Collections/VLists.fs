@@ -9,13 +9,14 @@ type VCons<'a, 'b when 'b :> VLists>  = VCons of 'a * 'b with
     interface VLists
     static member inline (|*|) (f, VCons(x, xs)) = f $ VCons(x, xs) 
     static member inline (!?) (VCons(x, xs)) = _false
-    static member inline (^+^) (y:'v  when 'v: (static member inline VList: True), VCons(x, xs)) = VCons(y, VCons(x, xs))
-    static member inline (^+^) (VCons(x, xs), y:'v  when 'v: (static member inline VList: True)) = VCons(VCons(x, xs), y)
+    static member inline (^+^) (x: 'x when 'x: (static member inline VList: True), VCons(y, ys)) = VCons(x, VCons(y, ys))
+    static member inline (^+^) (VCons(x, xs), y:'y when 'y: (static member inline VList: True)) = VCons(VCons(x, xs), y)
     static member inline (^+^) (y:VCons<'d, 'e>, VCons(x, xs)) = VCons(y, VCons(x, xs))
+    //static member inline (+) (y:VCons<'d, 'e>, VCons(x, xs)) = VCons(y, VCons(x, xs))
     static member inline (^+++*^) (x, y) = (VAppend $ x) <| y
     static member inline (^<|^) (mapper:VMapper<'a>, x) = mapper $ x
     static member inline (^<|-^) (folder:VFolder<'a, 'v>, x) = folder $ x
-    static member inline (!+)(VCons(x, xs)) = (!+ xs) + one
+    static member inline (!+)(VCons(x, xs)) = (!+ xs) + one 
       
     static member inline (|@|) (VCons(x, _), _:N1<_0>) = x
     static member inline (|@|) (VCons(_, VCons(y, _)), _:N1<_1>) = y
@@ -34,9 +35,8 @@ and VNil = VNil with
     static member inline (!?)(VNil) = _true
     static member inline (!+)(VNil) = zero
     static member inline (^+^) (x:'v when 'v: (static member inline VList: True) , VNil) = VCons(x, VNil)
-    //static member inline (+) (x:'v when 'v: (static member inline VList: True) , VNil) = VLists(one, VCons(x, VNil))
-    static member inline (^++^) (x:VCons<'a, 'b>,  VNil) = VLists(!+ x, x)
-   
+    static member inline (+) (x:'v when 'v: (static member inline VList: True) , VNil) = VCons(x, VNil)
+    
 and VAppend = VAppend with
     static member ($) (VAppend, VNil) = id
     static member inline ($) (VAppend, VCons(x, xs)) = fun list ->
@@ -52,6 +52,10 @@ and VFolder<'a, 'v> = VFolder of 'a * 'v with
     static member ($) (VFolder(F, v), VNil) = v
     static member inline ($) (VFolder(F, v), VCons(x, xs)) = VFolder(F, F $ (v,x)) |*| xs
 
+and VLength = VLength with
+    static member ($) (VLength, VNil) = zero
+    static member inline ($) (VLength, VCons(x, xs)) = (VLength |*| xs) + one
+
 and VLists<'n when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> = interface end
 
 and VLists<'n, 'V when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int) 
@@ -64,10 +68,8 @@ and VLists<'n, 'V when 'n: (static member Zero : N0) and 'n : (static member op_
 
         static member inline Unwrap(VLists(x, xs)) = (x, xs) |> snd
         
-        static member inline (!+)(VLists(c, _)) = c
+        static member inline (!+)(VLists(x, xs)) = !+ xs
 
-        static member inline (+) (y:'v  when 'v: (static member inline VList: True), VLists(c, l)) = VLists(c + one, VCons(y, l))
-
-        static member inline (+) (VLists(c, l), y:'v  when 'v: (static member inline VList: True)) = VLists(c + one, VCons(l, y))
+        static member inline (+) (VLists(c, x), VLists(d, y) ) = VLists(c + d, VCons(x, y))
 
         static member inline (|@|) (VLists(_, l), n) = (l |@| n) 

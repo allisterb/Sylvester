@@ -12,11 +12,13 @@ type VList<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_
 
     static member inline (!+) = getN<'n>()
 
-    static member inline (+) (x:VList<'n, 't>, y: VList<'m, 't>) = VLists(two, x ^+^ (y ^+^ VNil))
+    //static member inline (+) (x:VList<'n, 't>, y: VList<'m, 't>) = x ^+^ y ^+^ VNil//VLists(two, x ^+^ (y ^+^ VNil))
 
-    static member inline (+) (VLists(c, l), y:VList<'n, 't>) = VLists(c + one, l)
+    //static member inline (+) (x:VList<'n, 't>, VCons(y, ys)) = x ^+^ VCons(y, ys)//VCons(x, VCons(y, ys))
+    
+    //static member inline (+) (VCons(x, VNil), y:VList<'n, 't>) = x ^+^ y ^+^ VNil
 
-    static member inline (+) (x:VList<'n, 't>, VLists(c, l)) = VLists(c + one, l)
+    //static member inline (+) (VCons(x, xs), y:VList<'n, 't>) = VCons(x, xs) ^+^ y ^+^ VNil
 
     member inline x.Length = getN<'n>()
 
@@ -53,6 +55,8 @@ type VList<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_
 
     member inline x.SetVal(i:int, item:'t) =
         if i < (x.IntLength) then x._List.Item((i)) <- item else failwith "Index out of range."
+
+    member inline x.SetVals(y: VList<'n, 't>) = for i in [0..x.IntLength] do x.SetVal(i, y._List.[i])
 
     member inline x.At<'i when  'i : (static member Zero : N0) 
                             and 'i : (static member (+<): 'i -> 'n -> True) 

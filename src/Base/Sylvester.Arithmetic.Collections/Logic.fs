@@ -18,8 +18,14 @@ module Logic =
     let inline vlist<'n, 't when 'n: (static member Zero : N0) 
                                 and 'n : (static member op_Explicit: 'n -> int)> (n:'n) (items: IEnumerable<'t>) = 
                                 VList<'n, 't>() |> vlinit (items)
+    let inline vlnew<'n, 't when 'n: (static member Zero : N0) 
+                                and 'n : (static member op_Explicit: 'n -> int)>  = 
+        let length, intlength = getN<'n>(), getN<'n>() |> int
+        vlist length [for i in 1..intlength do yield Unchecked.defaultof<'t>]
 
     let inline hlistn(list) = HList(!+ list, list)
+
+    let inline vlists (list) = VLists(!+list, list) 
 
     let inline hlist x = x ^+^ HNil |> hlistn 
     
@@ -35,6 +41,3 @@ module Logic =
 
     let inline hlist7 x y z a b c d = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ c ^+^ d ^+^ HNil |> hlistn
 
-
-
-    let z = vlist one [1] ^+^ vlist one [1] ^+^ VNil 
