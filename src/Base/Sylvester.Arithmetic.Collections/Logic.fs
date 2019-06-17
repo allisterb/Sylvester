@@ -41,3 +41,4 @@ module Logic =
 
     let inline hlist7 x y z a b c d = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ c ^+^ d ^+^ HNil |> hlistn
 
+    let z = vlist one [1] ^+^ vlist one [1] ^+^ vlist one [1] ^+^ VNil

@@ -12,7 +12,6 @@ type VCons<'a, 'b when 'b :> VLists>  = VCons of 'a * 'b with
     static member inline (^+^) (x: 'x when 'x: (static member inline VList: True), VCons(y, ys)) = VCons(x, VCons(y, ys))
     static member inline (^+^) (VCons(x, xs), y:'y when 'y: (static member inline VList: True)) = VCons(VCons(x, xs), y)
     static member inline (^+^) (y:VCons<'d, 'e>, VCons(x, xs)) = VCons(y, VCons(x, xs))
-    //static member inline (+) (y:VCons<'d, 'e>, VCons(x, xs)) = VCons(y, VCons(x, xs))
     static member inline (^+++*^) (x, y) = (VAppend $ x) <| y
     static member inline (^<|^) (mapper:VMapper<'a>, x) = mapper $ x
     static member inline (^<|-^) (folder:VFolder<'a, 'v>, x) = folder $ x
@@ -35,7 +34,6 @@ and VNil = VNil with
     static member inline (!?)(VNil) = _true
     static member inline (!+)(VNil) = zero
     static member inline (^+^) (x:'v when 'v: (static member inline VList: True) , VNil) = VCons(x, VNil)
-    static member inline (+) (x:'v when 'v: (static member inline VList: True) , VNil) = VCons(x, VNil)
     
 and VAppend = VAppend with
     static member ($) (VAppend, VNil) = id

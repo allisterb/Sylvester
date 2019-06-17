@@ -13,7 +13,7 @@ type Vector<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op
     
     member inline x.IntLength = x.Length |> int
     
-    member inline x.Dims = vlnew<'n, 't> ^+^ VNil |> vlists
+    member inline x.Dims = vlnew<'n, 't> ^+^ VNil|> vlists
 
     member inline x.Dim1 = x.Dims |@| zero
 

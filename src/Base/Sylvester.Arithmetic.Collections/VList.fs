@@ -12,14 +12,7 @@ type VList<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_
 
     static member inline (!+) = getN<'n>()
 
-    //static member inline (+) (x:VList<'n, 't>, y: VList<'m, 't>) = x ^+^ y ^+^ VNil//VLists(two, x ^+^ (y ^+^ VNil))
-
-    //static member inline (+) (x:VList<'n, 't>, VCons(y, ys)) = x ^+^ VCons(y, ys)//VCons(x, VCons(y, ys))
-    
-    //static member inline (+) (VCons(x, VNil), y:VList<'n, 't>) = x ^+^ y ^+^ VNil
-
-    //static member inline (+) (VCons(x, xs), y:VList<'n, 't>) = VCons(x, xs) ^+^ y ^+^ VNil
-
+    static member inline (^+^) (x:VList<'n, 't>, y: VList<'m, 't>) = x ^+^ y ^+^ VNil
     member inline x.Length = getN<'n>()
 
     member inline x.IntLength = x.Length |> int
