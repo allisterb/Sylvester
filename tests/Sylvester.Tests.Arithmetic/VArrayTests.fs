@@ -1,6 +1,6 @@
 namespace Sylvester.Tests.Arithmetic.Collections
 
-module VListTests =
+module VArrayTests =
 
     open Xunit
     open Sylvester.Arithmetic
@@ -8,8 +8,8 @@ module VListTests =
     open Sylvester.Arithmetic.Collections
 
     [<Fact>]
-    let ``Can create VList``() =
-        let v = VList<N3<_2, _3,_4>, int>()
+    let ``Can create VArray``() =
+        let v = VArray<N3<_2, _3,_4>, int>()
         Assert.IsType<N3<_2, _3, _4>>(v.Length) |> ignore
 
         

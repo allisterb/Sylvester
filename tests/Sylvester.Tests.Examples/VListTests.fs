@@ -1,13 +1,13 @@
 ﻿namespace Sylvester.Tests.Arithmetic
 
-module VList = 
+module VArray = 
 
     open System.Collections.Generic
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
     open Xunit
     
-    type VList<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)>() = 
+    type VArray<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)>() = 
         
         member inline x.Length = getN<'n>()
        

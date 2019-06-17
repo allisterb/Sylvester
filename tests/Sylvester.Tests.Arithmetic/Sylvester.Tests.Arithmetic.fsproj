@@ -14,7 +14,7 @@
   <ItemGroup>
     <Compile Include="Base10Tests.fs" />
     <Compile Include="N10Tests.fs" />
-    <Compile Include="VListTests.fs" />
+    <Compile Include="VArrayTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

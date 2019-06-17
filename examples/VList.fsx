@@ -1,13 +1,13 @@
 ﻿#r ".\\..\src\\Providers\\Sylvester.Provider.Arithmetic\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\net45\\Sylvester.Provider.Arithmetic.Runtime.dll"
 
 
-module VList = 
+module VArray = 
     open System.Collections.Generic
     
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
 
-    type VList<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)>() = 
+    type VArray<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)>() = 
                 
         member inline x.Length = getN<'n>()
        
@@ -30,7 +30,7 @@ module VList =
         member inline x.at<'i when  'i : (static member Zero : N0) 
                                 and 'i : (static member (+<): 'i -> 'n -> True) 
                                 and 'i : (static member op_Explicit: 'i -> int)>() : 't = x.Item(getN<'i>())
-    let v = VList<N<100>, int>()
+    let v = VArray<N<100>, int>()
 
     
     let h = v.[five] // Ok

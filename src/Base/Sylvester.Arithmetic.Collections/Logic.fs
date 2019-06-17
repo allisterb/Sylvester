@@ -11,21 +11,21 @@ module Logic =
     type VDim<'n when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> = interface end
 
    
-    let inline vlinit (items:IEnumerable<'t>) (vl:VList<'n, 't>) =
+    let inline vainit (items:IEnumerable<'t>) (vl:VArray<'n, 't>) =
             do if Seq.length items <> vl.IntLength then raise(ArgumentOutOfRangeException("items"))
             vl
 
-    let inline vlist<'n, 't when 'n: (static member Zero : N0) 
+    let inline varray<'n, 't when 'n: (static member Zero : N0) 
                                 and 'n : (static member op_Explicit: 'n -> int)> (n:'n) (items: IEnumerable<'t>) = 
-                                VList<'n, 't>() |> vlinit (items)
+                                VArray<'n, 't>() |> vainit (items)
     let inline vlnew<'n, 't when 'n: (static member Zero : N0) 
                                 and 'n : (static member op_Explicit: 'n -> int)>  = 
         let length, intlength = getN<'n>(), getN<'n>() |> int
-        vlist length [for i in 1..intlength do yield Unchecked.defaultof<'t>]
+        varray length [for i in 1..intlength do yield Unchecked.defaultof<'t>]
 
     let inline hlistn(list) = HList(!+ list, list)
 
-    let inline vlists (list) = VLists(!+list, list) 
+    let inline varrays (list) = VArrays(!+list, list) 
 
     let inline hlist x = x ^+^ HNil |> hlistn 
     
@@ -41,4 +41,4 @@ module Logic =
 
     let inline hlist7 x y z a b c d = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ c ^+^ d ^+^ HNil |> hlistn
 
-    let z = vlist one [1] ^+^ vlist one [1] ^+^ vlist one [1] ^+^ VNil
+    let z = varray one [1] ^+^ varray one [1] ^+^ varray one [1] ^+^ VNil

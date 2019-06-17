@@ -17,4 +17,4 @@ type Vector<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op
 
     member inline x.Dim1 = x.Dims |@| zero
 
-    member inline x.SetVal(v:VList<'n, 't>) = x.Dim1.SetVals(v)
+    member inline x.SetVal(v:VArray<'n, 't>) = x.Dim1.SetVals(v)

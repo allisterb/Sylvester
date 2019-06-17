@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="VLists.fs" />
+    <Compile Include="VArrays.fs" />
     <Compile Include="HList.fs" />
-    <Compile Include="VList.fs" />
+    <Compile Include="VArray.fs" />
     <Compile Include="Logic.fs" />
     
   </ItemGroup>
