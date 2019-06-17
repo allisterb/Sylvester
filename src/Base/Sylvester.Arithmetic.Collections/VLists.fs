@@ -34,7 +34,8 @@ and VNil = VNil with
     static member inline (!?)(VNil) = _true
     static member inline (!+)(VNil) = zero
     static member inline (^+^) (x:'v when 'v: (static member inline VList: True) , VNil) = VCons(x, VNil)
-    //static member inline (^++^) (x:VCons<'a, 'b>,  VNil) = VLists(!+ x, x)
+    //static member inline (+) (x:'v when 'v: (static member inline VList: True) , VNil) = VLists(one, VCons(x, VNil))
+    static member inline (^++^) (x:VCons<'a, 'b>,  VNil) = VLists(!+ x, x)
    
 and VAppend = VAppend with
     static member ($) (VAppend, VNil) = id
@@ -53,11 +54,20 @@ and VFolder<'a, 'v> = VFolder of 'a * 'v with
 
 and VLists<'n when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> = interface end
 
-and VListsN<'n, 'V when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int) 
+and VLists<'n, 'V when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int) 
                     and 'V : (static member inline (!+) : 'V -> 'n)>  = VLists of 'n * 'V with 
-                    interface VLists<'n>
-                    static member inline Zero = VLists(zero, VNil)
-    
-   
+        interface VLists<'n>
+        
+        static member inline Zero = VLists(zero, VNil)
+        
+        static member inline Length(VLists(x, xs)) = (x, xs) |> fst
 
-    
+        static member inline Unwrap(VLists(x, xs)) = (x, xs) |> snd
+        
+        static member inline (!+)(VLists(c, _)) = c
+
+        static member inline (+) (y:'v  when 'v: (static member inline VList: True), VLists(c, l)) = VLists(c + one, VCons(y, l))
+
+        static member inline (+) (VLists(c, l), y:'v  when 'v: (static member inline VList: True)) = VLists(c + one, VCons(l, y))
+
+        static member inline (|@|) (VLists(_, l), n) = (l |@| n) 

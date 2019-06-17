@@ -10,7 +10,6 @@ type Tensor<'n, 't when 'n: (static member Zero : N0)
                     and 't : (static member Zero: 't) 
                     and 't : (static member (+): 't -> 't -> 't)> () =     
     
-    //abstract member x.Dims: HList<'n>
     member inline x.Rank = getN<'n>()
 
     

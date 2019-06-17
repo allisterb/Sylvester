@@ -10,6 +10,14 @@ type VList<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_
 
     static member inline VList = _true
 
+    static member inline (!+) = getN<'n>()
+
+    static member inline (+) (x:VList<'n, 't>, y: VList<'m, 't>) = VLists(two, x ^+^ (y ^+^ VNil))
+
+    static member inline (+) (VLists(c, l), y:VList<'n, 't>) = VLists(c + one, l)
+
+    static member inline (+) (x:VList<'n, 't>, VLists(c, l)) = VLists(c + one, l)
+
     member inline x.Length = getN<'n>()
 
     member inline x.IntLength = x.Length |> int
