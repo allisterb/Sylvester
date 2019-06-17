@@ -8,6 +8,8 @@ open System
 
 type VList<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> () = 
 
+    static member inline VList = _true
+
     member inline x.Length = getN<'n>()
 
     member inline x.IntLength = x.Length |> int

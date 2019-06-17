@@ -32,3 +32,7 @@ module Logic =
 
     let inline hlistn(list) = HList(!+ list, list)
 
+    let r = (vlist one [1]) ^+^ (vlist one [1]) ^+^ VNil
+
+
+
