@@ -34,7 +34,7 @@ and VNil = VNil with
     static member inline (!?)(VNil) = _true
     static member inline (!+)(VNil) = zero
     static member inline (^+^) (x:'v when 'v: (static member inline VArray: True) , VNil) = VCons(x, VNil)
-    
+   
 and VAppend = VAppend with
     static member ($) (VAppend, VNil) = id
     static member inline ($) (VAppend, VCons(x, xs)) = fun list ->

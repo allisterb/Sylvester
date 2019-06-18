@@ -5,7 +5,7 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Arithmetic.Collections
 
 
-type Tensor<'n, 't when 'n: (static member Zero : N0) 
+type Tensor<'n, 't when 'n: (static member Zero : NZero) 
                     and 'n : (static member op_Explicit: 'n -> int) 
                     and 't : (static member Zero: 't) 
                     and 't : (static member (+): 't -> 't -> 't)> () =     

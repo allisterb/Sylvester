@@ -46,7 +46,7 @@ type VArray<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op
     member inline x.SetVal(i:int, item:'t) =
         if i < (x.IntLength) then  x._Array.[i |> int] <- item else failwith "Index out of range."
 
-    member inline x.SetVals(y: VArray<'n, 't>) = for i in [0..x.IntLength] do x.SetVal(i, y._Array.[i])
+    member inline x.SetVals(y: VArray<'n, 't>) = for i in [0..x.IntLength - 1] do x.SetVal(i, y._Array.[i])
 
     member inline x.At<'i when  'i : (static member Zero : N0) 
                             and 'i : (static member (+<): 'i -> 'n -> True) 
