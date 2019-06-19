@@ -16,22 +16,47 @@ module Logic =
             vl
 
     let inline varray<'n, 't when 'n: (static member Zero : N0) 
-                                and 'n : (static member op_Explicit: 'n -> int)> (n:'n) (items: IEnumerable<'t>) = 
-                                VArray<'n, 't>() |> vainit (items)
+                             and 'n : (static member op_Explicit: 'n -> int)> (items: IEnumerable<'t>) = 
+        VArray<'n, 't>() |> vainit (items)
 
     let inline vanew<'n, 't when 'n: (static member Zero : N0) 
-                                and 'n : (static member op_Explicit: 'n -> int)>  (x:'t) = 
-        let length, intlength = getN<'n>(), getN<'n>() |> int
-        varray length [for i in 0..intlength - 1 do yield x]
+                            and 'n : (static member op_Explicit: 'n -> int)>  (x:'t) = 
+        let intlength = getN<'n>() |> int in varray<'n , 't> [for i in 0..intlength - 1 do yield x]
 
     let inline vanew'<'n, 't when 'n: (static member Zero : N0) 
-                                and 'n : (static member op_Explicit: 'n -> int)>  = 
-        let length, intlength = getN<'n>(), getN<'n>() |> int
-        varray length [for i in 0..intlength - 1 do yield Unchecked.defaultof<'t>]
+                            and 'n : (static member op_Explicit: 'n -> int)> = vanew<'n, 't> Unchecked.defaultof<'t>
+
+    let inline va2dinit (items:'t[,]) (vl:VArray2D<'d0, 'd1, 't>) =
+            for i in 0..vl.Length0 - 1 do 
+                for j in 0 ..vl.Length1 do
+                    vl.SetVal(i, j, items.[i, j])
+            vl
+
+    let inline varray2d<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd1: (static member Zero : N0) 
+                                     and 'd0 : (static member op_Explicit: 'd0 -> int)
+                                     and 'd1 : (static member op_Explicit: 'd1 -> int)> (items: 't[,]) = 
+        VArray2D<'d0, 'd1, 't>() |> va2dinit (items)
+
+    let inline va2dnew<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd1: (static member Zero : N0) 
+                                     and 'd0 : (static member op_Explicit: 'd0 -> int)
+                                     and 'd1 : (static member op_Explicit: 'd1 -> int)> (x:'t) 
+                                     = 
+        let intlength0 = getN<'d0>() |> int 
+        let intlength1 = getN<'d1>() |> int
+        let v = VArray2D<'d0, 'd1, 't>()
+        for i in 0..intlength0 - 1 do
+            for j in 0..intlength1 - 1 do
+                v.SetVal(i, j, x)
+        v
+    
+    let inline va2dnew'<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd1: (static member Zero : N0) 
+                                     and 'd0 : (static member op_Explicit: 'd0 -> int)
+                                     and 'd1 : (static member op_Explicit: 'd1 -> int)> = 
+        va2dnew<'d0, 'd1, 't> Unchecked.defaultof<'t>
+    
+    let inline varrays (list) = VArrays(!+list, list) 
 
     let inline hlistn(list) = HList(!+ list, list)
-
-    let inline varrays (list) = VArrays(!+list, list) 
 
     let inline hlist x = x ^+^ HNil |> hlistn 
     
@@ -46,5 +71,3 @@ module Logic =
     let inline hlist6 x y z a b c = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ c ^+^ HNil |> hlistn
 
     let inline hlist7 x y z a b c d = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ c ^+^ d ^+^ HNil |> hlistn
-
-    let z = varray one [1] ^+^ varray one [1] ^+^ varray one [1] 

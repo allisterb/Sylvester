@@ -29,7 +29,7 @@ let t = Matrix<N<100>, N<24>, float>()
 
 let s = Matrix<N<24>, N<50>, float>()
 
-let x = t * t
+//let a = t + t
 
     //let  x = new Mat
 

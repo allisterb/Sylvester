@@ -5,9 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="VArrays.fs" />
     <Compile Include="HList.fs" />
+    <Compile Include="VArrays.fs" />
     <Compile Include="VArray.fs" />
+    <Compile Include="VArray2D.fs" />
     <Compile Include="Logic.fs" />
     
   </ItemGroup>

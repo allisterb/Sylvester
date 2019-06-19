@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ext\FsAlg\src\FsAlg.NETStandard\FsAlg.NETStandard.fsproj" />
     <ProjectReference Include="..\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
     <ProjectReference Include="..\Sylvester.FixedPoint\Sylvester.FixedPoint.fsproj" />
   </ItemGroup>
