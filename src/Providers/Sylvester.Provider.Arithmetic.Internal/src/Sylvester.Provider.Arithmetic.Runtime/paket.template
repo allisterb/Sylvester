@@ -1,0 +1,39 @@
+type file
+
+id Sylvester.Arithmetic
+
+title Sylvester.Arithmetic
+
+authors
+    Allister Beharry
+owners
+    Allister Beharry
+projectUrl
+    https://github.com/allisterb/Sylvester/tree/master/src/Providers/Sylvester.Provider.Arithmetic
+licenseUrl
+    https://raw.githubusercontent.com/allisterb/Sylvester/blob/master/LiCENSE
+requireLicenseAcceptance
+    false
+tags
+    F# math arithmetic dependent-types
+summary
+    Dependently typed natural number arithmetic and constraints
+description
+    This library implements dependently type natural number arithmetic and constraints using fixed-point decimal types.
+files
+    bin/Release/net45/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/net45
+    bin/Release/netstandard2.0/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/netstandard2.0
+    bin/Release/typeproviders/fsharp41/netstandard2.0/*.dll ==> typeproviders/fsharp41/netstandard2.0
+    bin/Release/typeproviders/fsharp41/netcoreapp2.0/*.dll ==> typeproviders/fsharp41/netcoreapp2.0
+    bin/Release/typeproviders/fsharp41/net45/*.dll ==> typeproviders/fsharp41/net45
+references
+    Sylvester.Provider.Arithmetic.Runtime.dll
+dependencies
+  FSharp.Core >= LOCKEDVERSION
+
+# put any package references here
+#  Some.Package
+#  framework: netcoreapp2.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION
+#  framework: netstandard2.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION

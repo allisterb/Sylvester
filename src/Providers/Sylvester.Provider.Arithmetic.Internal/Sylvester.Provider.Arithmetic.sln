@@ -1,0 +1,42 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+	EndProjectSection
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.Arithmetic.Runtime", "src\Sylvester.Provider.Arithmetic.Runtime\Sylvester.Provider.Arithmetic.Runtime.fsproj", "{A1283BDC-16C1-4B04-A6FA-C9E0B81F188D}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.Arithmetic.DesignTime", "src\Sylvester.Provider.Arithmetic.DesignTime\Sylvester.Provider.Arithmetic.DesignTime.fsproj", "{F0EC6CC0-DB1C-45F8-9A56-E6070FB58B0C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ED8079DD-2B06-4030-9F0F-DC548F98E1C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6EA7A12F-39E8-4A69-8C98-2CB951060839}"
+	ProjectSection(SolutionItems) = preProject
+		src\Sylvester.Provider.Arithmetic.Runtime\paket.template = src\Sylvester.Provider.Arithmetic.Runtime\paket.template
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1283BDC-16C1-4B04-A6FA-C9E0B81F188D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1283BDC-16C1-4B04-A6FA-C9E0B81F188D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1283BDC-16C1-4B04-A6FA-C9E0B81F188D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1283BDC-16C1-4B04-A6FA-C9E0B81F188D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0EC6CC0-DB1C-45F8-9A56-E6070FB58B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0EC6CC0-DB1C-45F8-9A56-E6070FB58B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0EC6CC0-DB1C-45F8-9A56-E6070FB58B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0EC6CC0-DB1C-45F8-9A56-E6070FB58B0C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7B7E4CA-886E-45A3-95FC-A206B832E6DC}
+	EndGlobalSection
+EndGlobal

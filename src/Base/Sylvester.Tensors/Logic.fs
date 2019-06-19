@@ -4,7 +4,9 @@ namespace Sylvester.Tensors
 module Logic =
 
     open Sylvester.Arithmetic.N10
-    
+    open FSharp.Data.UnitSystems.SI.UnitNames
+
+   
     (*
     let inline vinit (dim0:IEnumerable<'t>) (v:Vector<'d0, 't>) =
             do if Seq.length dim0 <> v.[zero].IntLength then raise(ArgumentOutOfRangeException("dim0"))
@@ -19,9 +21,5 @@ module Logic =
             Seq.iteri (fun i x -> m.[one].SetVal(i, x)) dim1
 
 *)
-    let x = Matrix<NTwo, NFive, int>()
-
-    let c = x.[three].[one]
-
 
 

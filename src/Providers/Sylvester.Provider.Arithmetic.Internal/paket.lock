@@ -1,0 +1,14 @@
+RESTRICTION: || (== net45) (== netcoreapp2.0) (== netstandard2.0)
+NUGET
+  remote: https://www.nuget.org/api/v2
+    FSharp.Core (4.3.4)
+    NETStandard.Library.NETFramework (2.0.0-preview2-25405-01)
+GITHUB
+  remote: fsprojects/FSharp.TypeProviders.SDK
+    src/ProvidedTypes.fs (592d23a96db79b4248ed23a062db3a17433282ce)
+    src/ProvidedTypes.fsi (592d23a96db79b4248ed23a062db3a17433282ce)
+GROUP Test
+RESTRICTION: || (== net461) (== netcoreapp2.0)
+NUGET
+  remote: https://www.nuget.org/api/v2
+    FSharp.Core (4.3.4)
