@@ -14,9 +14,9 @@ type VArray2D<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd0 : (static
 
     static member inline (^+^) (x:VArray2D<'xd0, 'xd1, 't>, y: VArray2D<'yd0, 'yd1, 't>) = x ^+^ y ^+^ VNil
     
-    member inline x.Length0 = getN<'d0>() |> int
+    member inline x.Length0 = getN<'d0>()
 
-    member inline x.Length1 = getN<'d1>() |> int
+    member inline x.Length1 = getN<'d1>()
 
     member inline x.IntLength0 = x.Length0 |> int
 
@@ -27,6 +27,14 @@ type VArray2D<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd0 : (static
     member inline x.SetVal(i:'i, j:'j, item: 't  when 'i : (static member (+<): 'i -> 'd0 -> True) 
                                                    and 'j : (static member (+<): 'j -> 'd1 -> True))  = 
         x._Array.[i |> int, j |> int] <- item
+
+    member inline x.For(starti:'starti, finishi:'finishi, startj:'startj, finishj:'finishj, f: int -> int -> 't -> unit 
+                                when 'starti :  (static member (+<): 'starti -> 'i -> True)
+                                and  'finishi : (static member (+<): 'finishi -> 'i -> True)
+                                and  'startj :  (static member (+<): 'startj -> 'j -> True)
+                                and  'finishj : (static member (+<): 'finishj -> 'j -> True)) =
+        for i in ((int) starti)..((int)finishi) do 
+            for j in ((int) startj)..((int) finishj) do f i j x._Array.[i, j]
 
     member inline x.SetVal(i:int, j:int, item:'t) =
         if i < (x.IntLength0) && j < x.IntLength1 then  x._Array.[i, j] <- item else raise(IndexOutOfRangeException("i,j"))
@@ -52,8 +60,9 @@ type VArray2D<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd0 : (static
                                          and 'z0 : (static member op_Explicit: 'z0 -> int)
                                          and 'z1 : (static member op_Explicit: 'z1 -> int)) =
             let v = VArray2D<'z0, 'z1,'t>()
-            for i in 0..v.Length0 - 1 do 
-                for j in 0 ..v.Length1 do
+           
+            for i in 0..v.IntLength0 - 1 do 
+                for j in 0 ..v.IntLength1 do
                     v.SetVal(i, j, items.[i, j])
             v
 
@@ -63,16 +72,12 @@ type VArray2D<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd0 : (static
         let intstart1, intfinish1 = _start1 |> int, _finish1 |> int
         let length0, length1 = _finish0 - _start0, _finish1 - _start1                                                       
         create(length0, length1, x._Array.[intstart0..intfinish0, intstart1..intfinish1])
-        
-        
-                                        
+                                    
     member inline x.At<'i, 'j when  'i : (static member Zero : N0) and 'j : (static member Zero : N0) 
                             and 'i : (static member (+<): 'i -> 'd0 -> True) 
                             and 'i : (static member op_Explicit: 'i -> int)                             
                             and 'j : (static member (+<): 'j -> 'd1 -> True) 
-                            and 'j : (static member op_Explicit: 'j -> int)>() : 't 
-                            
-                            
+                            and 'j : (static member op_Explicit: 'j -> int)>() : 't                     
                             = x.Item(getN<'i>(), getN<'j>())     
                             
 

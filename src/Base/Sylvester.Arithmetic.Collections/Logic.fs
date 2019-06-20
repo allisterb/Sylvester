@@ -27,8 +27,8 @@ module Logic =
                             and 'n : (static member op_Explicit: 'n -> int)> = vanew<'n, 't> Unchecked.defaultof<'t>
 
     let inline va2dinit (items:'t[,]) (vl:VArray2D<'d0, 'd1, 't>) =
-            for i in 0..vl.Length0 - 1 do 
-                for j in 0 ..vl.Length1 do
+            for i in 0..vl.IntLength0 - 1 do 
+                for j in 0 ..vl.IntLength1 - 1 do
                     vl.SetVal(i, j, items.[i, j])
             vl
 

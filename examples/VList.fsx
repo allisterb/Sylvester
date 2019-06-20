@@ -13,7 +13,7 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Tensors
 
     
-let v = VArray<N<100>, int>()
+let v = VArray<N<100>, int>()//
 let h = v.[five] // Ok
     
 v.SetVal(five, 23) // Ok
@@ -30,7 +30,11 @@ let t = Matrix<N<100>, N<24>, float>()
 
 let s = Matrix<N<24>, N<50>, float>()
 
-let a = t * s
+//let a = t * s
+
+let G = FsAlg.Generic.Matrix(Array2D.create 4 5 1.)
+let H = FsAlg.Generic.Matrix(Array2D.create 4 5 1.)
+G + H
 
     //let  x = new Mat
 

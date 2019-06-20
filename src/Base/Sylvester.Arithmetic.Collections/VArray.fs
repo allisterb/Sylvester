@@ -22,8 +22,13 @@ type VArray<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op
     member inline x.SetVal(i:'i, item:'t when 'i : (static member (+<): 'i -> 'n -> True)) = 
         x._Array.[i |> int] <- item
 
+    member inline x.For(start:'start, finish:'finish, f: int -> 't -> unit 
+                                when 'start :  (static member (+<): 'start -> 'n -> True)
+                                and  'finish : (static member (+<): 'finish -> 'n -> True)) =
+        for i in ((int) start)..((int)finish) do f i x._Array.[i]
+      
     member inline x.SetVal(i:int, item:'t) =
-        if i < (x.IntLength) then  x._Array.[i |> int] <- item else raise(IndexOutOfRangeException("item"))//r//failwith "Index out of range."
+        if i < (x.IntLength) then  x._Array.[i |> int] <- item else raise(IndexOutOfRangeException("item"))
 
     member inline x.SetVals(items: IEnumerable<'t> ) = 
         do if Seq.length items <> x.IntLength then raise(ArgumentOutOfRangeException("items"))
