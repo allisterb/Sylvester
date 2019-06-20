@@ -8,6 +8,7 @@ module Logic =
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
 
+    (*
     type VDim<'n when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> = interface end
 
     let inline vainit (items:IEnumerable<'t>) (vl:VArray<'n, 't>) =
@@ -25,7 +26,7 @@ module Logic =
 
     let inline vanew'<'n, 't when 'n: (static member Zero : N0) 
                             and 'n : (static member op_Explicit: 'n -> int)> = vanew<'n, 't> Unchecked.defaultof<'t>
-
+                            *)
     let inline va2dinit (items:'t[,]) (vl:VArray2D<'d0, 'd1, 't>) =
             for i in 0..vl.IntLength0 - 1 do 
                 for j in 0 ..vl.IntLength1 - 1 do

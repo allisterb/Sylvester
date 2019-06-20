@@ -26,6 +26,8 @@ module N10 =
 
         member x.Val = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)
         
+        member x.IntVal = Checked.int(x.Val)
+
         member x.Digits = (n10, n9, n8, n7, n6, n5, n4, n3, n2, n1)
 
         member x.Digit1 = n1
@@ -146,7 +148,7 @@ module N10 =
             let c1, r1 = (c2, a1) +>> b1
         
             isZero (r10, r9, r8, r7, r6, r5, r4, r3, r2, r1)
-            
+           
         static member inline (+>) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
             (l +>= r) * (!! (l +== r))
             
@@ -155,6 +157,27 @@ module N10 =
 
         static member inline (+<=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
             (!! (l +> r))
+
+        static member inline (+@<<) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+            (l +< r) <?> (IndexInRange(r), IndexOutOfRange(r))
+        
+        static member inline (+@<) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+            (l +< r) <?> (LessThan(r), GreaterThanOrEqual(r))
+        
+        static member inline (+@<=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+            (l +<= r) <?> (LessThanOrEqual(r), GreaterThan(r))
+
+        static member inline (+@>) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+            (l +> r) <?> (GreaterThan(r), LessThanOrEqual(r))
+
+        static member inline (+@>=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+            (l +>= r) <?> (GreaterThanOrEqual(r), LessThan(r))
+
+        static member inline (+@==) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+            (l +== r) <?> (Equal(r), NotEqual(r))
+
+        static member inline (+@!=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
+            (l +!= r) <?> (NotEqual(r), Equal(r))
 
         static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : int = Checked.int(l.Val)
 
@@ -284,6 +307,4 @@ module N10 =
         N10(d0, d0, d0, d0, d0, n5, n4, n3, n2, n1)
 
     let inline getN<'n when 'n : (static member Zero: N0)>() = Activator.CreateInstance<'n>()
-
-
    

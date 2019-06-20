@@ -10,5 +10,5 @@ module MatrixTests =
 
     [<Fact>]
     let ``Can get Base10 digits for integer``() = 
-        let d = VArray<N<100>, int>()
-        ()
+        let a = mat<NFour, NFive, float>(Array2D.create 4 5 1.) 
+        a

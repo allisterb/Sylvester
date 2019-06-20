@@ -5,56 +5,56 @@ open System.Collections.Generic
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 
-type VArray<'n, 't when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> () = 
+type VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
+                and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
+                and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
+                and 'd1 :> Base10Digit>(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, items:'t[]) = 
 
-    static member inline VArray = _true
+    member val _Array = if items.Length = n.IntVal then items else raise(ArgumentOutOfRangeException("items"))
+    
+    member val Length = n
 
-    static member inline (!+) = getN<'n>()
-
-    static member inline (^+^) (x:VArray<'n, 't>, y: VArray<'m, 't>) = x ^+^ y ^+^ VNil
-
-    member inline x.Length = getN<'n>()
-
-    member inline x.IntLength = x.Length |> int
-   
-    member inline x._Array = Array.create x.IntLength Unchecked.defaultof<'t>
-        
-    member inline x.SetVal(i:'i, item:'t when 'i : (static member (+<): 'i -> 'n -> True)) = 
+    member val IntLength = n.IntVal
+         
+    member inline x.SetVal(i:'i, item:'t) =
+        checkidx(i, x.Length)
         x._Array.[i |> int] <- item
 
-    member inline x.For(start:'start, finish:'finish, f: int -> 't -> unit 
-                                when 'start :  (static member (+<): 'start -> 'n -> True)
-                                and  'finish : (static member (+<): 'finish -> 'n -> True)) =
+    member inline x.For(start:'start, finish:'finish, f: int -> 't -> unit) =
+        checkidx(start, x.Length)
+        checkidx(finish, x.Length)
+        checklt(start, finish)
         for i in ((int) start)..((int)finish) do f i x._Array.[i]
       
-    member inline x.SetVal(i:int, item:'t) =
-        if i < (x.IntLength) then  x._Array.[i |> int] <- item else raise(IndexOutOfRangeException("item"))
+    member inline x.ForAll(f: int -> 't -> unit) =
+        for i in 0..x._Array.Length - 1 do f i x._Array.[i]
 
     member inline x.SetVals(items: IEnumerable<'t> ) = 
         do if Seq.length items <> x.IntLength then raise(ArgumentOutOfRangeException("items"))
-        Seq.iteri (fun (i:int) a -> x.SetVal(i, a)) items
+        x.ForAll(fun i a -> x._Array.SetValue(a, i))
 
-    member inline x.Item(i:'i when 'i : (static member (+<): 'i -> 'n -> True)) : 't = x._Array.[i |> int]
-        
-    member inline x.GetSlice(start: 'a option, 
-                                        finish : 'b option when ('a or 'b): (static member Zero : N0) 
-                                                            and 'a : (static member op_Explicit: 'a -> int) 
-                                                            and 'b : (static member op_Explicit: 'b -> int)
-                                                            and 'a : (static member (+<): 'a -> 'n -> True) 
-                                                            and 'b : (static member (+<): 'b -> 'n -> True)) : VArray<'c, 't> = 
-                                       
-        let inline create(n:'z, items:IEnumerable<'t> when 'z: (static member Zero : N0) 
-                                and 'z : (static member op_Explicit: 'z -> int)) = 
-                let v = VArray<'z,'t>()
-                v.SetVals items
-                v
+    member inline x.Item(i:'i) : 't = 
+        checkidx(i, x.Length)
+        x._Array.[i |> int]
+           
+    member inline x.GetSlice(start: 'a option, finish : 'b option) = //: VArray<'t, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> = 
+        let inline create(c:'c, items: 't[] when 'c :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1>) = 
+            VArray<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1>(c, items)
 
+        checkidx(start.Value, x.Length)
+        checkidx(finish.Value, x.Length)
+        checklt(start.Value, finish.Value)
         let _start, _finish = start.Value, finish.Value            
         let intstart, intfinish = _start |> int, _finish |> int
         let length = _finish - _start  
-        let v = create(length, x._Array.[intstart..intfinish])
-        v
+
+        create(length, x._Array.[intstart..intfinish])
+        
     
-    member inline x.At<'i when  'i : (static member Zero : N0) 
-                            and 'i : (static member (+<): 'i -> 'n -> True) 
-                            and 'i : (static member op_Explicit: 'i -> int)>() : 't = x.Item(getN<'i>())     
+    static member inline VArray = _true
+
+    static member inline (!+) (v:VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = v.Length 
+
+    static member inline (^+^) (x:VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, y: VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) 
+        = x ^+^ y ^+^ VNil   
+    
