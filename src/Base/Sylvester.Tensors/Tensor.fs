@@ -5,20 +5,12 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Arithmetic.Collections
 open System.Collections.Generic
 
-type TensorProps = Dims | DExpr
-
-type Tensor<'n, 't> () =     
+type Tensor<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
+                and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
+                and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
+                and 'd1 :> Base10Digit>(rank:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
+    member val Rank = rank
     
-    member inline x.Props = 
-        let props = Dictionary<TensorProps, Option<obj>>()
-        props.Add(Dims, None)
-        props.Add(DExpr, None)
-        props
-    
-    member inline x.SetProp(p, v) = x.Props.[p] <- v
-
-    member inline x.Rank = getN<'n>()
-
     
 
 

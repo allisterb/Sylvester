@@ -8,7 +8,6 @@
   <ItemGroup>
     <Compile Include="Tensor.fs" />
     <Compile Include="Scalar.fs" />
-    <Compile Include="Logic.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Matrix.fs" />
   </ItemGroup>
