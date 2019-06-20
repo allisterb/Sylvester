@@ -25,5 +25,3 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
     member inline x.SetVal(i:'i, item: 't) = x.Array.SetVal(i, item)
     
     member inline x.Item(i:'i) = x.Array.[i]
-
-    member inline x.Item(i:int) = x._Array.[i]

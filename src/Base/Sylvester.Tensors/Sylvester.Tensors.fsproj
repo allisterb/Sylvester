@@ -10,6 +10,7 @@
     <Compile Include="Scalar.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Matrix.fs" />
+    <Compile Include="Logic.fs" />
   </ItemGroup>
 
   <ItemGroup>
