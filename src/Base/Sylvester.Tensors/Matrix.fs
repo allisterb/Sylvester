@@ -39,12 +39,14 @@ type Matrix<'r, 'c, 't when 'r: (static member Zero : N0)
 
     member inline x.Item(i:int, j:int) = x._Array.[i, j]
 
-    static member inline (*) (l:Matrix<'a, 'b, 't>, r:Matrix<'b, 'c, 't>) = 
-        Matrix<'a, 'c, 't>().Array |> va2dinit ((Generic.Matrix(l._Array) * Generic.Matrix(r._Array)).ToArray2D())
+    static member inline (*) (l:Matrix<'i, 'j, 't>, r:Matrix<'j, 'k, 't>) = 
+        let m = Matrix<'i, 'k, 't>() in m.Array |> va2dinit ((Generic.Matrix(l._Array) * Generic.Matrix(r._Array)).ToArray2D()) |> ignore
+        m
 
     static member inline (+) (l:Matrix<'a, 'b, 't>, r:Matrix<'a, 'b, 't>) =
-        let m = Matrix<'i, 'j, 't>() in m.Array |> va2dinit ((Generic.Matrix(l._Array) + Generic.Matrix(r._Array)).ToArray2D()) |> ignore
+        let m = Matrix<'a, 'b, 't>() in m.Array |> va2dinit ((Generic.Matrix(l._Array) + Generic.Matrix(r._Array)).ToArray2D()) |> ignore
         m
+        
 
         
         

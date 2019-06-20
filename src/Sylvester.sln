@@ -44,7 +44,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.Arithmet
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsAlg.NETStandard", "..\ext\FsAlg\src\FsAlg.NETStandard\FsAlg.NETStandard.fsproj", "{5F845F64-CC33-4A9F-927D-05BCEA022219}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsAlg.NETStandard", "..\ext\FsAlg\src\FsAlg.NETStandard\FsAlg.NETStandard.fsproj", "{5F845F64-CC33-4A9F-927D-05BCEA022219}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "DiffSharp", "..\ext\DiffSharp\src\DiffSharp\DiffSharp.fsproj", "{3D80092E-A53A-4DAD-8270-01141ABE42D4}"
 EndProject
