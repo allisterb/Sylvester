@@ -8,53 +8,34 @@ module Logic =
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
 
-    (*
-    type VDim<'n when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> = interface end
+    let inline vainit (items:IEnumerable<'t>) (vl:VArray<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+            vl.SetVals items
 
-    let inline vainit (items:IEnumerable<'t>) (vl:VArray<'n, 't>) =
-            do if Seq.length items <> vl.IntLength then raise(ArgumentOutOfRangeException("items"))
-            Seq.iteri (fun i x -> vl.SetVal(i, x)) items
-            vl
+    let inline vanew (n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =  
+        VArray<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, Unchecked.defaultof<'t>) 
 
-    let inline varray<'n, 't when 'n: (static member Zero : N0) 
-                             and 'n : (static member op_Explicit: 'n -> int)> (items: IEnumerable<'t>) = 
-        VArray<'n, 't>() |> vainit (items)
+    let inline vacopy (n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, items:IEnumerable<'t>) =  
+        VArray<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, Unchecked.defaultof<'t>) |> vainit (items)
 
-    let inline vanew<'n, 't when 'n: (static member Zero : N0) 
-                            and 'n : (static member op_Explicit: 'n -> int)>  (x:'t) = 
-        let intlength = getN<'n>() |> int in varray<'n , 't> [for i in 0..intlength - 1 do yield x]
+    let inline varray (n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, arr:'t[]) =  
+        VArray<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, arr)
 
-    let inline vanew'<'n, 't when 'n: (static member Zero : N0) 
-                            and 'n : (static member op_Explicit: 'n -> int)> = vanew<'n, 't> Unchecked.defaultof<'t>
-                            
-    let inline va2dinit (items:'t[,]) (vl:VArray2D<'d0, 'd1, 't>) =
-            for i in 0..vl.IntLength0 - 1 do 
-                for j in 0 ..vl.IntLength1 - 1 do
-                    vl.SetVal(i, j, items.[i, j])
-            vl
-
-    let inline varray2d<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd1: (static member Zero : N0) 
-                                     and 'd0 : (static member op_Explicit: 'd0 -> int)
-                                     and 'd1 : (static member op_Explicit: 'd1 -> int)> (items: 't[,]) = 
-        VArray2D<'d0, 'd1, 't>() |> va2dinit (items)
-
-    let inline va2dnew<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd1: (static member Zero : N0) 
-                                     and 'd0 : (static member op_Explicit: 'd0 -> int)
-                                     and 'd1 : (static member op_Explicit: 'd1 -> int)> (x:'t) 
-                                     = 
-        let intlength0 = getN<'d0>() |> int 
-        let intlength1 = getN<'d1>() |> int
-        let v = VArray2D<'d0, 'd1, 't>()
-        for i in 0..intlength0 - 1 do
-            for j in 0..intlength1 - 1 do
-                v.SetVal(i, j, x)
-        v
+    let inline varray'<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
+                and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
+                and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
+                and 'd1 :> Base10Digit>(arr:'t[]) = 
+        let n = N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+        VArray<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, arr)
     
-    let inline va2dnew'<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd1: (static member Zero : N0) 
-                                     and 'd0 : (static member op_Explicit: 'd0 -> int)
-                                     and 'd1 : (static member op_Explicit: 'd1 -> int)> = 
-        va2dnew<'d0, 'd1, 't> Unchecked.defaultof<'t>
-    *)
+    let inline va2dnew (dim0:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) (dim1:N10<'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) (x:'t) =
+        VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> (dim0, dim1, x)
+
+    let inline va2dcopy (items: 't[,]) (vl:VArray2D<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) =
+        vl.SetVals items
+
+    let inline va2darray (dim0:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) (dim1:N10<'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) (x:'t[,]) =
+        VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> (dim0, dim1, x)
+    
     let inline varrays (list) = VArrays(!+list, list) 
 
     let inline hlistn(list) = HList(!+ list, list)

@@ -8,13 +8,17 @@
   <ItemGroup>
     <Compile Include="Tensor.fs" />
     <Compile Include="Scalar.fs" />
+    <Compile Include="Logic.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Matrix.fs" />
-    <Compile Include="Logic.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ext\FsAlg\src\FsAlg.NETStandard\FsAlg.NETStandard.fsproj" />
+    <PackageReference Include="MathNet.Numerics" Version="4.8.1" />
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
     <ProjectReference Include="..\Sylvester.FixedPoint\Sylvester.FixedPoint.fsproj" />
   </ItemGroup>

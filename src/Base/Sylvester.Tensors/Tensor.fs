@@ -7,10 +7,7 @@ open System.Collections.Generic
 
 type TensorProps = Dims | DExpr
 
-type Tensor<'n, 't when 'n: (static member Zero : NZero) 
-                    and 'n : (static member op_Explicit: 'n -> int) 
-                    and 't : (static member Zero: 't) 
-                    and 't : (static member (+): 't -> 't -> 't)> () =     
+type Tensor<'n, 't> () =     
     
     member inline x.Props = 
         let props = Dictionary<TensorProps, Option<obj>>()
