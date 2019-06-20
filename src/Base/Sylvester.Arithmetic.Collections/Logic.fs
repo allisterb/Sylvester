@@ -26,7 +26,7 @@ module Logic =
 
     let inline vanew'<'n, 't when 'n: (static member Zero : N0) 
                             and 'n : (static member op_Explicit: 'n -> int)> = vanew<'n, 't> Unchecked.defaultof<'t>
-                            *)
+                            
     let inline va2dinit (items:'t[,]) (vl:VArray2D<'d0, 'd1, 't>) =
             for i in 0..vl.IntLength0 - 1 do 
                 for j in 0 ..vl.IntLength1 - 1 do
@@ -54,7 +54,7 @@ module Logic =
                                      and 'd0 : (static member op_Explicit: 'd0 -> int)
                                      and 'd1 : (static member op_Explicit: 'd1 -> int)> = 
         va2dnew<'d0, 'd1, 't> Unchecked.defaultof<'t>
-    
+    *)
     let inline varrays (list) = VArrays(!+list, list) 
 
     let inline hlistn(list) = HList(!+ list, list)

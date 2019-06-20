@@ -13,13 +13,18 @@ open Sylvester.Arithmetic.N10
 //open Sylvester.Tensors
 
     
-let varray(n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = VArray<int, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, Array.zeroCreate (3))
-
-let x = varray(three)
-
-let g = x.[one..two]
+let varray(n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = VArray<int, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, Array.zeroCreate((int) n))
 
 
+let x = varray(four)
+
+x.SetVal(zero, 2)
+
+x._Array
+
+//let g = x.[one..two]
+
+//g
 //let h = v.[five] // Ok
     
 //v.SetVal(five, 23) // Ok

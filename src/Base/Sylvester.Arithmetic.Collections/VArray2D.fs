@@ -1,83 +1,90 @@
 namespace Sylvester.Arithmetic.Collections
  
-open System.Collections.Generic
-open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
 open System
 
-type VArray2D<'d0, 'd1, 't when 'd0: (static member Zero : N0) and 'd0 : (static member op_Explicit: 'd0 -> int)
-                            and 'd1: (static member Zero : N0) and 'd1 : (static member op_Explicit: 'd1 -> int)> () =
-                            
-    static member inline VArray = _true
+open Sylvester.Arithmetic
+open Sylvester.Arithmetic.N10
 
-    static member inline (!+) = (getN<'d0>(), getN<'d1>())
+type VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1 
+when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
+                and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
+                and 'd1 :> Base10Digit and 'e10 :> Base10Digit and 'e9 :> Base10Digit and 'e8 :> Base10Digit and 'e7 :> Base10Digit and 'e6 :> Base10Digit
+                and 'e5 :> Base10Digit and 'e4 :> Base10Digit and 'e3 :> Base10Digit and 'e2 :> Base10Digit 
+                and 'e1 :> Base10Digit>(dim0:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, 
+                                        dim1:N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>, items:'t[,]) = 
 
-    static member inline (^+^) (x:VArray2D<'xd0, 'xd1, 't>, y: VArray2D<'yd0, 'yd1, 't>) = x ^+^ y ^+^ VNil
+    member val _Array = if items.Length = dim0.IntVal then items else raise(ArgumentOutOfRangeException("items"))
     
-    member inline x.Length0 = getN<'d0>()
+    member val Length0 = dim0
 
-    member inline x.Length1 = getN<'d1>()
+    member val Length1 = dim1
 
-    member inline x.IntLength0 = x.Length0 |> int
+    member val IntLength0 = dim0.IntVal
 
-    member inline x.IntLength1 = x.Length1 |> int
-   
-    member inline x._Array = Array2D.create x.IntLength0 x.IntLength1 Unchecked.defaultof<'t>
+    member val IntLength1 = dim1.IntVal
+         
+    new(dim0:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, 
+        dim1:N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>, x:'t) = 
+        VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 
+                 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>(dim0, dim1, Array2D.create dim0.IntVal dim1.IntVal x)
 
-    member inline x.SetVal(i:'i, j:'j, item: 't  when 'i : (static member (+<): 'i -> 'd0 -> True) 
-                                                   and 'j : (static member (+<): 'j -> 'd1 -> True))  = 
+    member inline x.SetVal(i:'i, j:'j, item:'t) =
+        checkidx(i, x.Length0)
+        checkidx(j, x.Length1)
         x._Array.[i |> int, j |> int] <- item
 
-    member inline x.For(starti:'starti, finishi:'finishi, startj:'startj, finishj:'finishj, f: int -> int -> 't -> unit 
-                                when 'starti :  (static member (+<): 'starti -> 'i -> True)
-                                and  'finishi : (static member (+<): 'finishi -> 'i -> True)
-                                and  'startj :  (static member (+<): 'startj -> 'j -> True)
-                                and  'finishj : (static member (+<): 'finishj -> 'j -> True)) =
-        for i in ((int) starti)..((int)finishi) do 
-            for j in ((int) startj)..((int) finishj) do f i j x._Array.[i, j]
+    member inline x.For(start0:'start0, finish0:'finish0, start1:'start1, finish1:'finish1, f: int -> int -> 't -> unit) =
+        checkidx(start0, x.Length0)
+        checkidx(finish0, x.Length0)
+        checkidx(start1, x.Length1)
+        checkidx(finish1, x.Length1)
+        checklt(start0, finish0)
+        checklt(start1, finish1)
+        for i in ((int) start0)..((int)finish0) do
+            for j in ((int) start1)..((int)finish1) do
+                f i j x._Array.[i, j]
+      
+    member inline x.ForAll(f: int -> int -> 't -> unit) =
+        for i in 0..(x.IntLength0 - 1) do 
+            for j in 0..(x.IntLength1 - 1) do
+                f i j x._Array.[i, j]
 
-    member inline x.SetVal(i:int, j:int, item:'t) =
-        if i < (x.IntLength0) && j < x.IntLength1 then  x._Array.[i, j] <- item else raise(IndexOutOfRangeException("i,j"))
+    member inline x.SetVals(items: 't[,] ) = 
+        do if items.Length <> x.IntLength0 then raise(ArgumentOutOfRangeException("items"))
+        x.ForAll(fun i j a -> x._Array.SetValue(a, i, j))
 
-    member inline x.Item(i:'i, j:'j when 'i : (static member (+<): 'i -> 'd0 -> True) 
-                                     and 'j : (static member (+<): 'j -> 'd1 -> True)) : 't = 
+    member inline x.Item(i:'i, j: 'j) : 't = 
+        checkidx(i, x.Length0)
+        checkidx(j, x.Length1)
         x._Array.[i |> int, j |> int]
-        
-    member inline x.GetSlice(start0: 'start0 option, finish0: 'finish0 option, start1: 'start1 option, finish1: 'finish1 option 
-                            when ('start0 or 'finish0 or 'start1 or 'finish1): (static member Zero : N0) 
-                            and 'start0 : (static member op_Explicit: 'start0 -> int) 
-                            and 'finish0 : (static member op_Explicit: 'finish0 -> int)
-                            and 'start1 : (static member op_Explicit: 'start1 -> int) 
-                            and 'finish1 : (static member op_Explicit: 'finish1 -> int)
-                            and 'start0 : (static member (+<): 'start0 -> 'd0 -> True)
-                            and 'finish0 : (static member (+<): 'finish0 -> 'd0 -> True)
-                            and 'start1 : (static member (+<): 'start1 -> 'd1 -> True)
-                            and 'finish1 : (static member (+<): 'finish1 -> 'd1 -> True)
-
-                            and 'b : (static member (+<): 'b -> 'n -> True)) : VArray2D<'c0, 'c1, 't> = 
-                                       
-        let inline create(z0:'z0, z1:'z1, items:'t[,] when ('z0 or 'z1): (static member Zero : N0) 
-                                         and 'z0 : (static member op_Explicit: 'z0 -> int)
-                                         and 'z1 : (static member op_Explicit: 'z1 -> int)) =
-            let v = VArray2D<'z0, 'z1,'t>()
            
-            for i in 0..v.IntLength0 - 1 do 
-                for j in 0 ..v.IntLength1 do
-                    v.SetVal(i, j, items.[i, j])
-            v
+    member inline x.GetSlice(start0: 'a option, finish0 : 'b option, start1: 'c option, finish1 : 'd option) : 
+        VArray2D<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1> = //: VArray<'t, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> = 
+        let inline create(z0:'z0, z1:'z1, items: 't[,] when 'z0 :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1> 
+                                                    and 'z1 :> N10<'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>) = 
+            VArray2D<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>(z0, z1, items)
 
+        checkidx(start0.Value, x.Length0)
+        checkidx(finish0.Value, x.Length0)
+        checkidx(start1.Value, x.Length1)
+        checkidx(finish1.Value, x.Length1)
+        checklt(start0.Value, finish0.Value)
+        checklt(start1.Value, finish1.Value)
         let _start0, _finish0 = start0.Value, finish0.Value
         let _start1, _finish1 = start1.Value, finish1.Value
         let intstart0, intfinish0 = _start0 |> int, _finish0 |> int
         let intstart1, intfinish1 = _start1 |> int, _finish1 |> int
-        let length0, length1 = _finish0 - _start0, _finish1 - _start1                                                       
-        create(length0, length1, x._Array.[intstart0..intfinish0, intstart1..intfinish1])
-                                    
-    member inline x.At<'i, 'j when  'i : (static member Zero : N0) and 'j : (static member Zero : N0) 
-                            and 'i : (static member (+<): 'i -> 'd0 -> True) 
-                            and 'i : (static member op_Explicit: 'i -> int)                             
-                            and 'j : (static member (+<): 'j -> 'd1 -> True) 
-                            and 'j : (static member op_Explicit: 'j -> int)>() : 't                     
-                            = x.Item(getN<'i>(), getN<'j>())     
-                            
+        let length0 = _finish0 - _start0
+        let length1 = _finish1 - _start1
 
+        create(length0, length1, x._Array.[intstart0..intfinish0, intstart1..intfinish1])
+        
+    static member inline VArray = _true
+
+    static member inline (!+) (v:VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) 
+        = (v.Length0, v.Length1) 
+
+    static member inline (^+^) (x:VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>, 
+                                y:VArray2D<'t, 'zd10, 'zd9, 'zd8, 'zd7, 'zd6, 'zd5, 'zd4, 'zd3, 'zd2, 'zd1, 'ze10, 'ze9, 'ze8, 'ze7, 'ze6, 'ze5, 'ze4, 'ze3, 'ze2, 'ze1>) 
+        = x ^+^ y ^+^ VNil   
+    

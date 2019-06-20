@@ -5,17 +5,22 @@ open System.Collections.Generic
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 
+[<StructuredFormatDisplay("{_Array}")>]
 type VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
                 and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
                 and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
                 and 'd1 :> Base10Digit>(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, items:'t[]) = 
 
-    member val _Array = if items.Length = n.IntVal then items else raise(ArgumentOutOfRangeException("items"))
+    member val _Array = if items.Length = n.IntVal then items else raise(ArgumentOutOfRangeException("items", sprintf "The initializing array length %i does not match %i." items.Length n.IntVal))
     
     member val Length = n
 
     member val IntLength = n.IntVal
          
+    new(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, x:'t) = 
+        VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, 
+            Array.create (getN<N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>>().IntVal) x)
+
     member inline x.SetVal(i:'i, item:'t) =
         checkidx(i, x.Length)
         x._Array.[i |> int] <- item
