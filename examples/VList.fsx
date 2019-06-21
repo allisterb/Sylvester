@@ -1,6 +1,6 @@
-﻿#r ".\\..\src\\Base\\Sylvester.Arithmetic.FixedPoint\\bin\\Debug\\net45\\Sylvester.Arithmetic.FixedPoint.dll"
-//#r ".\\..\src\\Providers\\Sylvester.Provider.Arithmetic.Internal\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\net45\\Sylvester.Provider.Arithmetic.Runtime.dll"
-#r ".\\..\src\\Base\\Sylvester.Arithmetic.Collections\\bin\\Debug\\net45\\Sylvester.Arithmetic.Collections.dll"
+﻿//#r ".\\..\src\\Base\\Sylvester.Arithmetic.FixedPoint\\bin\\Debug\\net45\\Sylvester.Arithmetic.FixedPoint.dll"
+#r ".\\..\src\\Providers\\Sylvester.Provider.Arithmetic\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\net45\\Sylvester.Provider.Arithmetic.Runtime.dll"
+//#r ".\\..\src\\Base\\Sylvester.Arithmetic.Collections\\bin\\Debug\\net45\\Sylvester.Arithmetic.Collections.dll"
 //#r ".\\..\src\\Base\\Sylvester.Tensors\\bin\\Debug\\net45\\FsAlg.NETStandard.dll"
 #r ".\\..\src\\Base\\Sylvester.Tensors\\bin\\Debug\\net45\\Sylvester.Tensors.dll"
 
@@ -15,11 +15,13 @@ open Sylvester.Tensors
     
 let varray(n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = VArray<int, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, Array.zeroCreate((int) n))
 
+let xxxx = new N<100>()
 
-let x = varray(four)
+let x = varray(xxxx)
 
 x.SetVal(zero, 2)
 
+x.[N<90>.i]
 //let y = vec four Arr
 
 

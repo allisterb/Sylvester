@@ -15,13 +15,15 @@ licenseUrl
 requireLicenseAcceptance
     false
 tags
-    F# math arithmetic dependent-types
+    F# math arithmetic type-level
 summary
-    Dependently typed natural number arithmetic and constraints
+    Type-level natural number arithmetic and constraints
 description
-    This library implements dependently type natural number arithmetic and constraints using fixed-point decimal types.
+    This library implements type-level natural number arithmetic and constraints using fixed-point decimal types.
 files
     bin/Release/net45/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/net45
+    bin/Release/net45/Sylvester.Provider.Arithmetic.DesignTime.* ==> lib/net45
+    bin/Release/net45/netstandard.dll ==> lib/net45
     bin/Release/netstandard2.0/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/netstandard2.0
     bin/Release/typeproviders/fsharp41/netstandard2.0/*.dll ==> typeproviders/fsharp41/netstandard2.0
     bin/Release/typeproviders/fsharp41/netcoreapp2.0/*.dll ==> typeproviders/fsharp41/netcoreapp2.0

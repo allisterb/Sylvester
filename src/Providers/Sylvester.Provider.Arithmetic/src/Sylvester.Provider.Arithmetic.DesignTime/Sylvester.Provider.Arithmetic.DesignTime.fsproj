@@ -15,6 +15,11 @@
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Base10.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Constraint.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\N10.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.Collections\HList.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.Collections\VArrays.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.Collections\VArray.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.Collections\VArray2D.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.Collections\Logic.fs" />
     <Compile Include="..\..\paket-files\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fsi">
       <Paket>True</Paket>
       <Link>paket-files/ProvidedTypes.fsi</Link>

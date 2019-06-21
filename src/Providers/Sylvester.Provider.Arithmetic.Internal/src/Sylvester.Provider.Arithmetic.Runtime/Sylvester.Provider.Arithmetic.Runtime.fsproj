@@ -27,6 +27,7 @@
     <PackageReference Include="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Base\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
     <ProjectReference Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
   </ItemGroup>
   <Target Name="BeforeBuild">

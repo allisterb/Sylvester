@@ -7,6 +7,7 @@ open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 open Sylvester.Arithmetic.Collections
 
+[<StructuredFormatDisplay("{_Array}")>]
 type Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1 
     when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
     and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
@@ -51,7 +52,9 @@ type Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8,
 
         create(length0, length1, x._Array.[intstart0..intfinish0, intstart1..intfinish1])
 
-
+    member inline x.Create(z0:'z0, z1:'z1, items: 't[,] when 'z0 :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1> and 'z1 :> N10<'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>) = 
+            Matrix<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>(z0, z1, items)
+        
     static member inline (+) (l:Matrix<'t, 'ld10,'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1, 'le10,'le9, 'le8, 'le7, 'le6, 'le5, 'le4, 'le3, 'le2, 'le1>, 
                               r:Matrix<'t, 'ld10,'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1, 'le10,'le9, 'le8, 'le7, 'le6, 'le5, 'le4, 'le3, 'le2, 'le1>) :
                               Matrix<'t, 'ld10,'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1, 'le10,'le9, 'le8, 'le7, 'le6, 'le5, 'le4, 'le3, 'le2, 'le1> =
