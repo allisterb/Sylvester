@@ -22,6 +22,21 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
 
     member x.Dims = x.Array ^+^ VNil |> varrays
 
+    member x.Dim0 = x.Array.Length
+
     member inline x.SetVal(i:'i, item: 't) = x.Array.SetVal(i, item)
     
     member inline x.Item(i:'i) = x.Array.[i]
+
+    member inline x.GetSlice(start: 'a option, finish : 'b option) = 
+        let inline create(c:'c, items: 't[] when 'c :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1>) = 
+            Vector<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1>(c, items)
+
+        checkidx(start.Value, x.Dim0)
+        checkidx(finish.Value, x.Dim0)
+        checklt(start.Value, finish.Value)
+        let _start, _finish = start.Value, finish.Value            
+        let intstart, intfinish = _start |> int, _finish |> int
+        let length = (_finish - _start) + one  
+
+        create(length, x._Array.[intstart..intfinish])

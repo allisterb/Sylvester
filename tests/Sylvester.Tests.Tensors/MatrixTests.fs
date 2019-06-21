@@ -20,3 +20,5 @@ module MatrixTests =
         Assert.Equal(2, b.Dim0.IntVal)
         Assert.Equal(3, b.Dim1.IntVal)
         Assert.Equal(5., b.[zero, two])
+
+    

@@ -51,11 +51,10 @@ type VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
         checklt(start.Value, finish.Value)
         let _start, _finish = start.Value, finish.Value            
         let intstart, intfinish = _start |> int, _finish |> int
-        let length = _finish - _start  
+        let length = (_finish - _start) + one  
 
         create(length, x._Array.[intstart..intfinish])
         
-    
     static member inline VArray = _true
 
     static member inline (!+) (v:VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = v.Length 
