@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
-    <ProjectReference Include="..\Sylvester.FixedPoint\Sylvester.FixedPoint.fsproj" />
+    <ProjectReference Include="..\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

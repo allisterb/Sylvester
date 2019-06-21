@@ -11,10 +11,10 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Bool.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Base10.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\N10.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.FixedPoint\Constraint.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Bool.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Base10.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Constraint.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\N10.fs" />
     <Compile Include="..\..\paket-files\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fsi">
       <Paket>True</Paket>
       <Link>paket-files/ProvidedTypes.fsi</Link>

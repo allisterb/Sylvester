@@ -27,7 +27,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Base\Sylvester.FixedPoint\Sylvester.FixedPoint.fsproj" />
+    <ProjectReference Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.3.4" />

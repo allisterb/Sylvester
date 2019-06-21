@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Base\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
-    <ProjectReference Include="..\..\src\Base\Sylvester.FixedPoint\Sylvester.FixedPoint.fsproj" />
+    <ProjectReference Include="..\..\src\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

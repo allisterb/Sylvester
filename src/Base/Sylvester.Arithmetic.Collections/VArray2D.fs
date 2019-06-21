@@ -13,7 +13,7 @@ when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :
                 and 'e1 :> Base10Digit>(dim0:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, 
                                         dim1:N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>, items:'t[,]) = 
 
-    member val _Array = if items.Length = dim0.IntVal then items else raise(ArgumentOutOfRangeException("items"))
+    member val _Array = if items.Length = dim0.IntVal * dim1.IntVal then items else raise(ArgumentOutOfRangeException("items"))
     
     member val Length0 = dim0
 
@@ -59,7 +59,7 @@ when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :
         x._Array.[i |> int, j |> int]
            
     member inline x.GetSlice(start0: 'a option, finish0 : 'b option, start1: 'c option, finish1 : 'd option) : 
-        VArray2D<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1> = //: VArray<'t, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> = 
+        VArray2D<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1> =  
         let inline create(z0:'z0, z1:'z1, items: 't[,] when 'z0 :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1> 
                                                     and 'z1 :> N10<'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>) = 
             VArray2D<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>(z0, z1, items)
@@ -74,8 +74,8 @@ when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :
         let _start1, _finish1 = start1.Value, finish1.Value
         let intstart0, intfinish0 = _start0 |> int, _finish0 |> int
         let intstart1, intfinish1 = _start1 |> int, _finish1 |> int
-        let length0 = _finish0 - _start0
-        let length1 = _finish1 - _start1
+        let length0 = (_finish0 - _start0) + one
+        let length1 = (_finish1 - _start1) + one
 
         create(length0, length1, x._Array.[intstart0..intfinish0, intstart1..intfinish1])
         
