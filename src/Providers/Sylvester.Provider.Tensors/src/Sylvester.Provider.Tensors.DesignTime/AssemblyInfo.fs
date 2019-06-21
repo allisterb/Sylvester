@@ -5,13 +5,13 @@ open System.Reflection
 [<assembly: AssemblyTitleAttribute("Sylvester.Provider.Tensors.DesignTime")>]
 [<assembly: AssemblyProductAttribute("Sylvester.Provider.Tensors")>]
 [<assembly: AssemblyDescriptionAttribute("This library is for the .NET platform implementing Sylvester.Provider.Tensors.")>]
-[<assembly: AssemblyVersionAttribute("0.1.5.2")>]
-[<assembly: AssemblyFileVersionAttribute("0.1.5.2")>]
+[<assembly: AssemblyVersionAttribute("0.1.6.0")>]
+[<assembly: AssemblyFileVersionAttribute("0.1.6.0")>]
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "Sylvester.Provider.Tensors.DesignTime"
     let [<Literal>] AssemblyProduct = "Sylvester.Provider.Tensors"
     let [<Literal>] AssemblyDescription = "This library is for the .NET platform implementing Sylvester.Provider.Tensors."
-    let [<Literal>] AssemblyVersion = "0.1.5.2"
-    let [<Literal>] AssemblyFileVersion = "0.1.5.2"
+    let [<Literal>] AssemblyVersion = "0.1.6.0"
+    let [<Literal>] AssemblyFileVersion = "0.1.6.0"

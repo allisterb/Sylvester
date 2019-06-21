@@ -31,6 +31,11 @@ let j = new Vec<700>(Array.zeroCreate 700)
 
 let f = j.[hundred]
 
+let m = new Mat<800, 700>()
+
+let h = new Mat<4, 4>()
+
+
 //f = j.[thousand]
 
 
