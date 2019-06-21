@@ -1,0 +1,46 @@
+type file
+id Sylvester.Tensors
+authors
+    Allister Beharry
+owners
+    Allister Beharry
+
+projectUrl
+    http://github.com/allisterb//Sylvester
+
+    licenseUrl
+    https://raw.githubusercontent.com/allisterb/Sylvester/blob/master/LiCENSE
+
+requireLicenseAcceptance
+    false
+tags
+    F# math arithmetic type-level
+requireLicenseAcceptance
+    false
+tags
+    F# fsharp math linear-algebra
+summary
+    Tensors with type-level dimension constraints
+description
+    Tensors with type-level dimension constraints
+
+files
+    bin/Release/net45/Sylvester.Provider.Tensors.Runtime.* ==> lib/net45
+    bin/Release/netstandard2.0/Sylvester.Provider.Tensors.Runtime.* ==> lib/netstandard2.0
+    bin/Release/typeproviders/fsharp41/netstandard2.0/*.dll ==> typeproviders/fsharp41/netstandard2.0
+    bin/Release/typeproviders/fsharp41/netcoreapp2.0/*.dll ==> typeproviders/fsharp41/netcoreapp2.0
+    bin/Release/typeproviders/fsharp41/net45/*.dll ==> typeproviders/fsharp41/net45
+references
+    Sylvester.Provider.Tensors.Runtime.dll
+dependencies
+  FSharp.Core >= LOCKEDVERSION
+  Sylvester.Arithmetic >= 0.1.5.1
+  MathNet.Numerics >= 4.8.1
+  MathNet.Numerics.FSharp >= 4.8.1
+
+# put any package references here
+#  Some.Package
+#  framework: netcoreapp2.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION
+#  framework: netstandard2.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION
