@@ -19,6 +19,8 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
     
     new () =  Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(Array.create (N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>().IntVal) Unchecked.defaultof<'t>)
     
+    new(x:'t) = Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(Array.create (N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>().IntVal) x)
+    
     member val Array = varray n items
     
     member val _Array = items
@@ -28,6 +30,12 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
     member x.Dims = x.Array ^+^ VNil |> varrays
 
     member x.Dim0 = x.Array.Length
+
+    static member inline (!+)  (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = l.Dim0
+
+    static member inline (!@)  (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = l._Array
+
+    static member inline (!@@)  (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = l._Vector
 
     member inline x.SetVal(i:'i, item: 't) = x.Array.SetVal(i, item)
     
@@ -40,8 +48,55 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
         checkidx(start.Value, x.Dim0)
         checkidx(finish.Value, x.Dim0)
         checklt(start.Value, finish.Value)
+        
         let _start, _finish = start.Value, finish.Value            
         let intstart, intfinish = _start |> int, _finish |> int
         let length = (_finish - _start) + one  
 
         create(length, x._Array.[intstart..intfinish])
+ 
+    member inline x.For(start, finish, f: int -> 't -> unit) = x.Array.For(start, finish, f)
+
+    member inline x.ForAll(f: int -> 't -> unit) = x.Array.ForAll(f)
+
+    static member inline Zero = Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+    
+    static member inline Rand =  
+        let n = N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+        Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(Vector<'t>.Build.Random(n.IntVal).AsArray()) 
+
+
+    static member inline (+) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+       let res = Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+       l._Vector.Add(r._Vector, res._Vector)
+       res
+
+    static member inline (-) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+       let res = Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+       l._Vector.Subtract(r._Vector, res._Vector) 
+       res
+
+    static member inline (*) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+       let res = Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+       l._Vector.DotProduct(r._Vector) |> Scalar 
+
+    static member inline (*) (l:Scalar<'t>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+        r._Vector.Multiply(l.Val).AsArray() |> Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>
+    
+    static member inline (*) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r: Scalar<'t>) =
+        l._Vector.Multiply(r.Val).AsArray() |> Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>
+
+    static member inline (/) (l:Scalar<'t>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+        r._Vector.Divide(l.Val).AsArray() |> Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>
+    
+    static member inline (/) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r: Scalar<'t>) =
+        l._Vector.Divide(r.Val).AsArray() |> Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>
+
+    static member inline (.*) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+       l._Vector.PointwiseMultiply(r._Vector).AsArray() |> Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> 
+
+    static member inline (./) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
+       let res = Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+       l._Vector.PointwiseDivide(r._Vector).AsArray() |> Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> 
+
+       

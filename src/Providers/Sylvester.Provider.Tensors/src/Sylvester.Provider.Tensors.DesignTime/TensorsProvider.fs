@@ -30,18 +30,22 @@ type TensorsProvider (config : TypeProviderConfig) as this =
 
         do V.DefineStaticParameters([lengthParam], fun name args ->
             let n = args.[0] :?> int
-            let tp = Array.concat [[|typeof<float>|];getIntBase10TypeArray(n, 10)]
+            let tp = Array.concat [[|typeof<single>|];getIntBase10TypeArray(n, 10)]
             let g = typedefof<Vector<_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(tp)
             let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
             provided.AddXmlDoc <| (sprintf "<summary>Floating-point vector of length %d with type-level dimension constraints.</summary>" <| n)   
             
             let ctor = ProvidedConstructor([], invokeCode = fun args -> 
-                <@@ Activator.CreateInstance(typedefof<Vector<_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<float>|];getIntBase10TypeArray(n, 10)])) @@>)
-            let ctor2 = ProvidedConstructor([ ProvidedParameter("items",typeof<float[]>) ], invokeCode = fun args -> 
-                <@@ Activator.CreateInstance(typedefof<Vector<_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<float>|];getIntBase10TypeArray(n, 10)]), (%%(args.[0]) : float[])) @@>)
-
+                <@@ Activator.CreateInstance(typedefof<Vector<_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<single>|];getIntBase10TypeArray(n, 10)])) @@>)
+            let ctor2 = ProvidedConstructor([ ProvidedParameter("items",typeof<single[]>) ], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<Vector<_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<single>|];getIntBase10TypeArray(n, 10)]), (%%(args.[0]) : single[])) @@>)
+            let ctor3 = ProvidedConstructor([ ProvidedParameter("value",typeof<single>) ], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<Vector<_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<single>|];getIntBase10TypeArray(n, 10)]), (%%(args.[0]) : single)) @@>)
+  
             provided.AddMember(ctor)
             provided.AddMember(ctor2)
+            provided.AddMember(ctor3)
+          
             provided
         )
 
@@ -59,18 +63,21 @@ type TensorsProvider (config : TypeProviderConfig) as this =
         do M.DefineStaticParameters([dim0Param; dim1Param], fun name args ->
             let d0 = args.[0] :?> int
             let d1 = args.[1] :?> int
-            let tp = Array.concat [[|typeof<float>|];getIntBase10TypeArray(d0, 10);getIntBase10TypeArray(d1, 10)]
+            let tp = Array.concat [[|typeof<single>|];getIntBase10TypeArray(d0, 10);getIntBase10TypeArray(d1, 10)]
             let g = typedefof<Matrix<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(tp)
             let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
             provided.AddXmlDoc <| (sprintf "<summary>Floating-point matrix of %d rows and %d columns with type-level dimension constraints.</summary>" d0 d1)   
             
             let ctor = ProvidedConstructor([], invokeCode = fun args -> 
-                <@@ Activator.CreateInstance(typedefof<Matrix<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<float>|];getIntBase10TypeArray(d0, 10); getIntBase10TypeArray(d1, 10)])) @@>)
-            let ctor2 = ProvidedConstructor([ ProvidedParameter("items",typeof<float[,]>) ], invokeCode = fun args -> 
-                <@@ Activator.CreateInstance(typedefof<Matrix<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<float>|];getIntBase10TypeArray(d0, 10); getIntBase10TypeArray(d1, 10)]), (%%(args.[0]) : float[,])) @@>)
+                <@@ Activator.CreateInstance(typedefof<Matrix<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<single>|];getIntBase10TypeArray(d0, 10); getIntBase10TypeArray(d1, 10)])) @@>)
+            let ctor2 = ProvidedConstructor([ ProvidedParameter("items",typeof<single[,]>) ], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<Matrix<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<single>|];getIntBase10TypeArray(d0, 10); getIntBase10TypeArray(d1, 10)]), (%%(args.[0]) : single[,])) @@>)
+            let ctor3 = ProvidedConstructor([ ProvidedParameter("value",typeof<single>) ], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<Matrix<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<single>|];getIntBase10TypeArray(d0, 10); getIntBase10TypeArray(d1, 10)]), (%%(args.[0]) : single)) @@>)
 
             provided.AddMember(ctor)
             provided.AddMember(ctor2)
+            provided.AddMember(ctor3)
             provided
         )
 

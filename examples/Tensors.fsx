@@ -27,13 +27,21 @@ x.SetVal(zero, 2)
 x.[N<90>.i]
 
 //let  h = Vector<float, _0, _0>()
-let j = new Vec<700>(Array.zeroCreate 700)
+let j = new Vec<700>()
 
 let f = j.[hundred]
 
-let m = new Mat<800, 700>()
+let z = vmax j
 
-let h = new Mat<4, 4>()
+let r = Vec<700>.Rand
+
+let s = Vec<900>.Rand
+
+//let u = app
+
+//let m = new Mat<800, 700>()
+
+//let h = new Mat<4, 4>()
 
 
 //f = j.[thousand]
