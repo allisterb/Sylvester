@@ -26,7 +26,7 @@ module Logic =
     let inline mnew d0 d1 x = mat d0 d1 (Array2D.create (d0 |> int) (d1 |> int) x)
 
     let inline vconj(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
-        v._Vector.Conjugate().AsArray() |> Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> 
+        v._Vector.Conjugate().ToArray() |> Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> 
 
     let inline vnorm(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
         v._Vector.L2Norm() |> Scalar 
@@ -107,16 +107,16 @@ module Logic =
         Matrix.sum m._Matrix |> scalar
 
     let inline msumrows (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
-        let sum = Matrix.sumRows m._Matrix in sum.AsArray() |> vec m.Dim1
+        let sum = Matrix.sumRows m._Matrix in sum.ToArray() |> vec m.Dim1
 
     let inline msumcols (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
-        let sum = Matrix.sumCols m._Matrix in sum.AsArray() |> vec m.Dim0
+        let sum = Matrix.sumCols m._Matrix in sum.ToArray() |> vec m.Dim0
 
     let inline mtrans (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
-        let trans = m._Matrix.Transpose() in trans.AsArray() |> mat m.Dim1 m.Dim0
+        let trans = m._Matrix.Transpose() in trans.ToArray() |> mat m.Dim1 m.Dim0
 
     let inline minv (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
-        let inv = m._Matrix.Inverse() in inv.AsArray() |> mat m.Dim0 m.Dim1
+        let inv = m._Matrix.Inverse() in inv.ToArray() |> mat m.Dim0 m.Dim1
 
     let inline mnorm (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
         let norm = m._Matrix.L2Norm() in norm |> scalar
