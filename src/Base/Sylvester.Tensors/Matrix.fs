@@ -32,9 +32,9 @@ type Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8,
 
     member x.Dims = x.Array ^+^ VNil |> varrays
 
-    member inline x.Dim0 = N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()//x.Array.Length0
+    member val Dim0 = N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
 
-    member inline x.Dim1 = N10<'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>()//x.Array.Length1
+    member val Dim1 = N10<'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>()
 
     member inline x._Matrix = DenseMatrix.ofArray2(x._Array)
 
@@ -96,9 +96,39 @@ type Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8,
         let res = l._Matrix * r._Matrix
         l.Create(l.Array.Length0, r.Array.Length1, res.AsArray())
 
-    
+    static member inline (*) (l:Matrix<'t, 'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1, 'le10,'le9, 'le8, 'le7, 'le6, 'le5, 'le4, 'le3, 'le2, 'le1>, r: Vector<'t, 'le10,'le9, 'le8, 'le7, 'le6, 'le5, 'le4, 'le3, 'le2, 'le1>) =
+
+        let res = l._Matrix * r._Vector
+        r.Create(l.Dim0, res.AsArray())
+
+    static member inline (*) (l:Matrix<'t, 'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1, 'le10,'le9, 'le8, 'le7, 'le6, 'le5, 'le4, 'le3, 'le2, 'le1>, r: Scalar<'t>) : Matrix<'t, 'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1, 'le10,'le9, 'le8, 'le7, 'le6, 'le5, 'le4, 'le3, 'le2, 'le1> = 
+        let res = l._Matrix.Multiply(r.Val)
+        l.Create(l.Dim0, l.Dim1, res.AsArray())
+
+    static member inline Rand =
+        let d0 = N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+        let d1 = N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>()
+        Matrix<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>(d0, d1, Matrix<'t>.Build.Random(d0.IntVal, d1.IntVal).AsArray())
+        
+    static member inline Zero =     
+        Matrix<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>() 
+
+    static member inline One =
+        Matrix<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>(Matrix<'t>.One)
+  
+    static member inline Identity =
+        let d0 = N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+        let d1 = N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>()
+        Matrix<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>(d0, d1, Matrix<'t>.Build.DenseIdentity(d0.IntVal).AsArray())
+  
+    static member inline Diag(x: int) =
+        let d0 = N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+        let d1 = N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>()
+        Matrix<int, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>(d0, d1, Matrix<int>.Build.DenseDiagonal(d0.IntVal, x).AsArray()) 
+   
 
 
+   
     
         
 
