@@ -88,6 +88,16 @@ module Logic =
         let dim0 = !+ m
         mat newdim1 dim0 ((Matrix.prependCol (!@@ v) (!@@ m)).AsArray())
 
+    let inline (+@) m (p,v) = minsrow m p v
+
+    let inline (+@.) m v = maprow m v
+
+    let inline (+@@) m (p,v) = minscol m p v
+
+    let inline (+@@.) m v = mapcol m v
+
+    let inline (+.@) m v = mpprow m v
+
     let inline msum (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
         Matrix.sum m._Matrix |> scalar
 

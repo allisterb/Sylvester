@@ -1,12 +1,7 @@
-﻿//#r ".\\..\src\\Base\\Sylvester.Arithmetic.FixedPoint\\bin\\Debug\\net45\\Sylvester.Arithmetic.FixedPoint.dll"
-#r ".\\..\src\\Providers\\Sylvester.Provider.Tensors\\src\\Sylvester.Provider.Tensors.Runtime\\bin\\Release\\net45\\Mathnet.Numerics.dll"
+﻿#r ".\\..\src\\Providers\\Sylvester.Provider.Tensors\\src\\Sylvester.Provider.Tensors.Runtime\\bin\\Release\\net45\\Mathnet.Numerics.dll"
 #r ".\\..\src\\Providers\\Sylvester.Provider.Tensors\\src\\Sylvester.Provider.Tensors.Runtime\\bin\\Release\\net45\\Mathnet.Numerics.FSharp.dll"
 #r ".\\..\src\\Providers\\Sylvester.Provider.Arithmetic\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\net45\\Sylvester.Provider.Arithmetic.Runtime.dll"
 #r ".\\..\src\\Providers\\Sylvester.Provider.Tensors\\src\\Sylvester.Provider.Tensors.Runtime\\bin\\Release\\net45\\Sylvester.Provider.Tensors.Runtime.dll"
-//#r ".\\..\src\\Providers\\Sylvester.Provider.Tensors\\src\\Sylvester.Provider.Tensors.DesignTime\\bin\\Release\\net45\\Sylvester.Provider.Tensors.DesignTime.dll"
-
-
-
 
 
 open Sylvester.Arithmetic.Collections
@@ -36,6 +31,14 @@ let z = vmax j
 let r = Vec<700>.Rand
 
 let s = Vec<900>.Rand
+
+let vvv = Vec<4>.Rand
+
+let m44 = new Mat<4, 4>()
+
+let jjj = m44 +@. vvv
+
+
 
 //let u = app
 
