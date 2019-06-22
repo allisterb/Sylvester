@@ -4,6 +4,6 @@ module TensorExamples =
 
     open Sylvester.Tensors
 
-    let x = new Vec<400>()
+    //let x = new Vec<400>()
 
     

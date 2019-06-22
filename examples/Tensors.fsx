@@ -13,7 +13,7 @@ open Sylvester.Tensors
     
 let varray(n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = VArray<int, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, Array.zeroCreate((int) n))
 
-let xxxx = new N<100>()
+let xxxx = N<100>.i
 
 let x = varray(xxxx)
 
@@ -22,7 +22,7 @@ x.SetVal(zero, 2)
 x.[N<90>.i]
 
 //let  h = Vector<float, _0, _0>()
-let j = new Vec<700>()
+let j = Vec<700>.Rand
 
 let f = j.[hundred]
 
@@ -34,7 +34,8 @@ let s = Vec<900>.Rand
 
 let vvv = Vec<4>.Rand
 
-let m44 = new Mat<4, 4>()
+vvv
+let m44 = Mat<4, 4>.One
 
 let jjj = m44 +@. vvv
 

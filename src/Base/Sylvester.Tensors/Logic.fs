@@ -1,6 +1,8 @@
 ﻿namespace Sylvester.Tensors
 
+open System
 open MathNet.Numerics.LinearAlgebra
+
 [<AutoOpen>]
 module Logic =
 
@@ -14,6 +16,9 @@ module Logic =
         Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, arr)
 
     let inline vnew n x = vec n (Array.create (n |> int) x)
+
+    let inline vrand (n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>)  =  
+        Vector<float32, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>.Rand
 
     let inline mat (dim0:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) (dim1:N10<'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) (x:'t[,]) =
         Matrix<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> (dim0, dim1, x)
@@ -55,38 +60,38 @@ module Logic =
         checkeq((!+v), !++ m)
         let newdim0 = (!+ m) + one
         let dim1 = !++ m
-        mat newdim0 dim1 ((Matrix.insertRow (p |> int) (!@@ v) (!@@ m)).AsArray())
+        mat newdim0 dim1 ((Matrix.insertRow (p |> int) (!@@ v) (!@@ m)).ToArray())
 
     let inline minscol m p v  = 
         checklt(p, !++ m)
         checkeq((!+v), !+ m)
         let newdim1 = (!++ m) + one
         let dim0 = !+ m
-        mat newdim1 dim0 ((Matrix.insertCol (p |> int) (!@@ v) (!@@ m)).AsArray())
+        mat newdim1 dim0 ((Matrix.insertCol (p |> int) (!@@ v) (!@@ m)).ToArray())
 
     let inline maprow m v  = 
         checkeq((!+v), !++ m)
         let newdim0 = (!+ m) + one
         let dim1 = !++ m
-        mat newdim0 dim1 ((Matrix.appendRow (!@@ v) (!@@ m)).AsArray())
+        mat newdim0 dim1 ((Matrix.appendRow (!@@ v) (!@@ m)).ToArray())
 
     let inline mapcol m v  = 
         checkeq((!+v), !+ m)
         let newdim1 = (!++ m) + one
         let dim0 = !+ m
-        mat newdim1 dim0 ((Matrix.appendCol (!@@ v) (!@@ m)).AsArray())
+        mat dim0 newdim1 ((Matrix.appendCol (!@@ v) (!@@ m)).ToArray())
 
     let inline mpprow m v  = 
         checkeq((!+v), !++ m)
         let newdim0 = (!+ m) + one
         let dim1 = !++ m
-        mat newdim0 dim1 ((Matrix.prependRow (!@@ v) (!@@ m)).AsArray())
+        mat newdim0 dim1 ((Matrix.prependRow (!@@ v) (!@@ m)).ToArray())
 
     let inline mppcol m v  = 
         checkeq((!+v), !+ m)
         let newdim1 = (!++ m) + one
         let dim0 = !+ m
-        mat newdim1 dim0 ((Matrix.prependCol (!@@ v) (!@@ m)).AsArray())
+        mat dim0 newdim1 ((Matrix.prependCol (!@@ v) (!@@ m)).ToArray())
 
     let inline (+@) m (p,v) = minsrow m p v
 

@@ -23,7 +23,24 @@ module MatrixTests =
         let s = a
         let x = five + six
         let zzzz = minsrow a three (vec five (Array.create 5 0.))
-        ()
+        Assert.NotEmpty(zzzz._Array)
+
+    [<Fact>]
+    let ``Matrix operations work``() =
+        let vvv = vrand five
+        Assert.NotEmpty(vvv._Array)
+        let mmm = mnew five five 1.0f
+        Assert.NotEmpty(mmm._Array)
+        let jjj = mmm +@. vvv
+        Assert.NotEmpty(jjj._Array)
+        Assert.IsType<N1<_6>>(jjj.Dim0) |> ignore
+        Assert.IsType<N1<_5>>(jjj.Dim1) |> ignore
+
+        let jjjj = mmm +@@. vvv
+
+        Assert.NotEmpty(jjjj._Array)
+        Assert.IsType<N1<_5>>(jjjj.Dim0) |> ignore
+        Assert.IsType<N1<_6>>(jjjj.Dim1) |> ignore
 
         
     
