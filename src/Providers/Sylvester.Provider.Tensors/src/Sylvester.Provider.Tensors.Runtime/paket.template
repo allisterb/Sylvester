@@ -4,25 +4,18 @@ authors
     Allister Beharry
 owners
     Allister Beharry
-
 projectUrl
-    http://github.com/allisterb//Sylvester
-
-    licenseUrl
+    https://github.com/allisterb/Sylvester/tree/master/src/Providers/Sylvester.Provider.Tensors
+licenseUrl
     https://raw.githubusercontent.com/allisterb/Sylvester/blob/master/LiCENSE
-
 requireLicenseAcceptance
     false
 tags
-    F# math arithmetic type-level
-requireLicenseAcceptance
-    false
-tags
-    F# fsharp math linear-algebra
+    F# fsharp math linear-algebra type-level
 summary
-    Tensors with type-level dimension constraints
+    Tensor types with type-level numeric dimensions and static checking
 description
-    Tensors with type-level dimension constraints
+    Tensor types with type-level numeric dimensions and static checking
 
 files
     bin/Release/net45/Sylvester.Provider.Tensors.Runtime.* ==> lib/net45
@@ -34,7 +27,7 @@ references
     Sylvester.Provider.Tensors.Runtime.dll
 dependencies
   FSharp.Core >= LOCKEDVERSION
-  Sylvester.Arithmetic >= 0.1.5.1
+  Sylvester.Arithmetic >= 0.1.7.0
   MathNet.Numerics >= 4.8.1
   MathNet.Numerics.FSharp >= 4.8.1
 

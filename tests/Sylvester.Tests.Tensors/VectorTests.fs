@@ -47,3 +47,18 @@ module VectorTests =
 
         Assert.Equal(10.0f * v10.[zero], t.[zero])
 
+    [<Fact>]
+    let ``Can add two vectors``() = 
+        let v200 = vrand (two * hundred)
+        let v200b = vrand (two * hundred)
+        let s = v200 + v200b
+        Assert.NotEqual(0.0f, s.[zero])
+        Assert.Equal(v200.[four] + v200b.[four], s.[four])
+
+    [<Fact>]
+    let ``Can subtract two vectors``() = 
+        let v200 = vrand (two * hundred)
+        let v200b = vrand (two * hundred)
+        let s = v200 + v200b
+        Assert.NotEqual(0.0f, s.[zero])
+        Assert.Equal(0.0f, v200.[four] - v200.[four])

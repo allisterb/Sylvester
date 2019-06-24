@@ -19,7 +19,7 @@ tags
 summary
     Type-level natural number arithmetic and constraints
 description
-    This library implements type-level natural number arithmetic and constraints using fixed-point decimal types.
+    This library provides type-level natural number arithmetic and constraints using fixed-point decimal types, and collections with type-level numeric dimensions.
 files
     bin/Release/net45/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/net45
     bin/Release/net45/Sylvester.Provider.Arithmetic.DesignTime.* ==> lib/net45
