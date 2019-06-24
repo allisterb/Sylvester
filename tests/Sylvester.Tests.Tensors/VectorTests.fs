@@ -37,6 +37,7 @@ module VectorTests =
 
         let v15 = vrand (ten * five)
 
+        Assert.NotEqual(0.0f, v10.[zero])
         let s = v10 + v10
 
         Assert.NotEmpty(s._Array)

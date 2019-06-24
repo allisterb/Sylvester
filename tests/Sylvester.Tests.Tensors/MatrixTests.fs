@@ -69,6 +69,24 @@ module MatrixTests =
         let m83' = m83 * scalar 2.0f
 
         Assert.Equal(m83.[five, zero] * 2.0f, m83'.[five, two])
+
+        let m145one = mone (ten + four) five
+        Assert.NotEmpty(m145one._Array)
+        Assert.Equal(1.0f, m145one.[ten + three, four])
+
+    [<Fact>]
+    let ``Can add two matrices``() =
+        let m87 = mrand eight seven
+
+        let m87b = mone eight seven
+
+        let v = m87.[seven, six]
+        let s = m87 + m87b
+
+        Assert.NotEmpty(s._Array)
+        Assert.NotEqual(0.0f, s.[zero, zero])
+        Assert.Equal(m87.[five, five] + 1.0f, s.[five, five])
+
         
         
 
