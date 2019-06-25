@@ -8,3 +8,4 @@ FSharp.Core
 Sylvester.Arithmetic
 MathNet.Numerics
 MathNet.Numerics.FSharp
+CsvHelper

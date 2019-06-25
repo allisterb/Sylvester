@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Data\iris.data">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="FileDataTests.fs" />
     <Compile Include="VectorTests.fs" />
     <Compile Include="MatrixTests.fs" />
   </ItemGroup>
@@ -28,5 +32,7 @@
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.6.2" />
   </ItemGroup>
+
+  <ItemGroup />
 
 </Project>

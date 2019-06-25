@@ -1,6 +1,10 @@
 RESTRICTION: || (== net45) (== netcoreapp2.0) (== netstandard2.0)
 NUGET
   remote: https://www.nuget.org/api/v2
+    CsvHelper (12.1.2)
+      Microsoft.CSharp (>= 4.4) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
+      System.Reflection.TypeExtensions (>= 4.4) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
+      System.ValueTuple (>= 4.4) - restriction: || (== net45) (&& (== netcoreapp2.0) (>= net45)) (&& (== netstandard2.0) (>= net45))
     FSharp.Core (4.3.4)
     MathNet.Numerics (4.8.1)
     MathNet.Numerics.FSharp (4.8.1)
@@ -9,6 +13,7 @@ NUGET
       System.Runtime (>= 4.3) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
       System.Runtime.Numerics (>= 4.3) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
       System.Security.Cryptography.Algorithms (>= 4.3.1) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
+    Microsoft.CSharp (4.5) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
     Microsoft.NETCore.Platforms (2.2.1) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
     Microsoft.NETCore.Targets (2.1) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
     NETStandard.Library.NETFramework (2.0.0-preview2-25405-01)
@@ -97,6 +102,7 @@ NUGET
       Microsoft.NETCore.Platforms (>= 1.1) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
       Microsoft.NETCore.Targets (>= 1.1) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
       System.Runtime (>= 4.3) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
+    System.Reflection.TypeExtensions (4.5.1) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
     System.Resources.ResourceManager (4.3) - restriction: || (== netcoreapp2.0) (== netstandard2.0)
       Microsoft.NETCore.Platforms (>= 1.1) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
       Microsoft.NETCore.Targets (>= 1.1) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
@@ -173,6 +179,7 @@ NUGET
       Microsoft.NETCore.Platforms (>= 1.1) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
       Microsoft.NETCore.Targets (>= 1.1) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
       System.Runtime (>= 4.3) - restriction: || (&& (== net45) (< portable-net45+win8+wp8+wpa81)) (== netcoreapp2.0) (== netstandard2.0)
+    System.ValueTuple (4.5) - restriction: || (== net45) (&& (== netcoreapp2.0) (>= net45)) (&& (== netstandard2.0) (>= net45))
 GITHUB
   remote: fsprojects/FSharp.TypeProviders.SDK
     src/ProvidedTypes.fs (592d23a96db79b4248ed23a062db3a17433282ce)

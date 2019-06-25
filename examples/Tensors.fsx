@@ -25,6 +25,16 @@ let v200 = vrand (two * hundred)
 let v200b = Vec<200>.Rand
 
 v200 + v200b
+
+let vf = new VecF<"D:\\Downloads\\iris.data", false, 0>()
+
+vf
+let mf = new MatF<"D:\\Downloads\\iris.data", false, 0, 1>()
+
+
+//mf.
+
+//let d = vf.
 //five + ten
 (*    
 let varray(n:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = VArray<int, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(n, Array.zeroCreate((int) n))

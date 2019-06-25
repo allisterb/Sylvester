@@ -43,11 +43,19 @@ module Logic =
     let inline mident (dim0:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) (dim1:N10<'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>)  =  
         Matrix<float32, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>.Identity
 
+    
     let inline vconj(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
         v._Vector.Conjugate().ToArray() |> Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> 
 
-    let inline vnorm(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
-        v._Vector.L2Norm() |> Scalar 
+    let inline vl1norm(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
+        v._Vector.L1Norm() |> Scalar 
+
+    let inline vl2norm(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
+        v._Vector.L2Norm() |> Scalar
+        
+    let inline vpnorm(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) p = 
+        v._Vector.Norm(p) |> Scalar 
+
 
     let inline vsum(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
         v._Vector.Sum() |> Scalar 
@@ -72,7 +80,7 @@ module Logic =
 
     let inline vmaxa(v:Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
         v._Vector.AbsoluteMaximum() |> Scalar 
-    
+
     let inline minsrow m p v  = 
         checklt(p, !+ m)
         checkeq((!+v), !++ m)
@@ -111,6 +119,34 @@ module Logic =
         let dim0 = !+ m
         mat dim0 newdim1 ((Matrix.prependCol (!@@ v) (!@@ m)).ToArray())
 
+    let inline (!+?) v = (!?) << (!+) <| v
+
+    let inline (!++?) v = (!?) << (!++) <| v
+
+    let inline (+!>) l r = (+>)  ((!+) l) ((!+) r)
+    
+    let inline (++>) l r = (+>)  ((!++) l) ((!++) r)
+
+    let inline (+!<) l r = (+<)  ((!+) l) ((!+) r)
+    
+    let inline (++<) l r = (+<)  ((!++) l) ((!++) r)
+
+    let inline (+!>=) l r = (+>=)  ((!+) l) ((!+) r)
+    
+    let inline (++>=) l r = (+>=)  ((!++) l) ((!++) r)
+
+    let inline (+!<=) l r = (+<=)  ((!+) l) ((!+) r)
+    
+    let inline (++<=) l r = (+<=)  ((!++) l) ((!++) r)
+
+    let inline (+!==) l r = (+==)  ((!+) l) ((!+) r)
+
+    let inline (+!!=) l r = (+!=)  ((!+) l) ((!+) r)
+
+    let inline (++==) l r = (+==)  ((!++) l) ((!++) r)
+    
+    let inline (++!==>) l r = (+!=)  ((!++) l) ((!++) r)
+
     let inline (+@) m (p,v) = minsrow m p v
 
     let inline (+@.) m v = maprow m v
@@ -133,18 +169,28 @@ module Logic =
     let inline mtrans (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
         let trans = m._Matrix.Transpose() in trans.ToArray() |> mat m.Dim1 m.Dim0
 
-    let inline minv (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
+    let inline minv (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
+        checkeq(m.Dim0, m.Dim1)
         let inv = m._Matrix.Inverse() in inv.ToArray() |> mat m.Dim0 m.Dim1
 
-    let inline mnorm (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
+    let inline ml2norm (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
         let norm = m._Matrix.L2Norm() in norm |> scalar
 
     let inline mrank (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
         let rank = m._Matrix.Rank() in rank |> scalar
 
-    let inline mtrace (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
+    let inline mtrace (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
+        checkeq(m.Dim0, m.Dim1)
         let trace = m._Matrix.Trace() in trace |> scalar
 
-    let inline mdet (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
+    let inline mdet (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
+        checkeq(m.Dim0, m.Dim1)
         let det = m._Matrix.Determinant() in det |> scalar
+
+    let inline mcond (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
+        let cond = m._Matrix.ConditionNumber() in cond |> scalar
+
+    let inline mbasis (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
+        let range = m._Matrix.Range() in Seq.map (fun (v:Vector<'t>) -> Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(v.ToArray())) range  
+
 

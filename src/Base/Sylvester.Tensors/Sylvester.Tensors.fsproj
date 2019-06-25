@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="FileData.fs" />
     <Compile Include="Tensor.fs" />
     <Compile Include="Scalar.fs" />
     <Compile Include="Vector.fs" />
@@ -14,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="MathNet.Numerics" Version="4.8.1" />
     <PackageReference Include="MathNet.Numerics.FSharp" Version="4.8.1" />
   </ItemGroup>

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
+    <Compile Include="..\..\..\..\Base\Sylvester.Tensors\FileData.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Tensors\Tensor.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Tensors\Scalar.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Tensors\Vector.fs" />

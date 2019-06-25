@@ -8,6 +8,7 @@ nuget Sylvester.Arithmetic 0.1.7.0
 nuget MathNet.Numerics
 nuget MathNet.Numerics.FSharp
 nuget NETStandard.Library.NETFramework
+nuget CsvHelper
 # nuget System.Text.Encoding.CodePages
 
 # THis lines are used by Paket to get the latest version of the Type Provider SDK files
