@@ -277,7 +277,7 @@ module N10 =
 
     let eight = N10(d0, d0, d0, d0, d0, d0, d0, d0, d0, d8)
 
-    let nine = N10(d0, d0, d0, d0, d0, d0, d0, d0, d0, d8)
+    let nine = N10(d0, d0, d0, d0, d0, d0, d0, d0, d0, d9)
 
     let ten = N10(d0, d0, d0, d0, d0, d0, d0, d0, d1, d0)
 
