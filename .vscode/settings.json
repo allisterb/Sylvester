@@ -22,5 +22,6 @@
 		"Sylvester.Bindings",
 		"src/Compilers",
 		"src/Loggers/"
-    ]
+    ],
+    "dotnet-test-explorer.testProjectPath": "tests/**/*.fsproj"
 }

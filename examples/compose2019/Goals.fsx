@@ -4,7 +4,6 @@
 #r ".\\..\\..\\src\\Providers\\Sylvester.Provider.Tensors\\src\\Sylvester.Provider.Tensors.Runtime\\bin\\Release\\net45\\Sylvester.Provider.Tensors.Runtime.dll"
 
 
-open Sylvester.Arithmetic.Collections
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 open Sylvester.Tensors
@@ -19,13 +18,13 @@ let v200b = Vec<200>.Rand
 
 let s1 = v200 + v200b
 
-//v200 + v45f //Type error
+//let s2 = v200 + v100 //Type error
 
 let p1 = v200 * v200b
 
 let pv1 = v200 * scalar 4.0f
 
-//let p2 = v100 * v200 //type error
+//let p2 = v200b * v100 //type error
 
 let c1 = v100 +!> v200
 
@@ -39,10 +38,14 @@ let m44 = Mat<4, 4>.Rand
 
 let mnotsquare = Mat<1000, 700>.Rand
 
-let inline foo a b =
+let inline mylinearfunc a b =
     check(a +!> b)
 
-let c4 = foo v9000 v100
+let c4 = mylinearfunc v9000 v100
+
+let vreallybig = Vec<100000>.Rand
+
+
 //let c4 = foo v100 v9000 //Doesn't satisfy constraint
 
 

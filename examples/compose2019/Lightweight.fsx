@@ -11,5 +11,5 @@ open Sylvester.Tensors
 
 let vf = new VecF<"C:\\Projects\\Sylvester\\examples\\data\\iris.data", false, 1>()
 
-vf.Dim0
+let d = vf.Dim0
 
