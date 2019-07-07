@@ -59,6 +59,8 @@ type VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
 
     static member inline (!+) (v:VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = v.Length 
 
-    static member inline (^+^) (x:VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, y: VArray<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) 
-        = x ^+^ y ^+^ VNil   
-    
+module X = 
+    let j =  new VArray<int, _0, _0, _0, _0, _0, _0, _0, _0, _0, _3>(three, 1) ^+^ new VArray<int, _0, _0, _0, _0, _0, _0, _0, _0, _0, _2>(two, 1) ^+^ VNil
+
+
+

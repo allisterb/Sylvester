@@ -7,7 +7,7 @@ open Sylvester.Arithmetic.Collections
 
 [<StructuredFormatDisplay("{Val}")>]
 type Scalar<'t when 't : struct and 't: (new: unit -> 't) and 't:> ValueType and 't :> IEquatable<'t> and 't :> IFormattable>(x:'t) = 
-    inherit Tensor<'t, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0>(zero)
+    inherit Tensor<'t, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0>()
 
     member val Val = x
     

@@ -83,9 +83,4 @@ when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :
     static member inline VArray = _true
 
     static member inline (!+) (v:VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) 
-        = (v.Length0, v.Length1) 
-
-    static member inline (^+^) (x:VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>, 
-                                y:VArray2D<'t, 'zd10, 'zd9, 'zd8, 'zd7, 'zd6, 'zd5, 'zd4, 'zd3, 'zd2, 'zd1, 'ze10, 'ze9, 'ze8, 'ze7, 'ze6, 'ze5, 'ze4, 'ze3, 'ze2, 'ze1>) 
-        = x ^+^ y ^+^ VNil   
-    
+        = (v.Length0, v.Length1)  

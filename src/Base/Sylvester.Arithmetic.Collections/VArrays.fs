@@ -12,7 +12,7 @@ type VCons<'a, 'b when 'b :> VArrays>  = VCons of 'a * 'b with
     static member inline (^+^) (x: 'x when 'x: (static member inline VArray: True), VCons(y, ys)) = VCons(x, VCons(y, ys))
     static member inline (^+^) (VCons(x, xs), y:'y when 'y: (static member inline VArray: True)) = VCons(VCons(x, xs), y)
     static member inline (^+^) (y:VCons<'d, 'e>, VCons(x, xs)) = VCons(y, VCons(x, xs))
-    static member inline (^+++*^) (x, y) = (VAppend $ x) <| y
+    static member inline (^*^) (x, VCons(y, ys)) = (VAppend $ x) <| VCons(y, ys)
     static member inline (^<|^) (mapper:VMapper<'a>, x) = mapper $ x
     static member inline (^<|-^) (folder:VFolder<'a, 'v>, x) = folder $ x
     static member inline (!+)(VCons(x, xs)) = (!+ xs) + one 
@@ -34,7 +34,7 @@ and VNil = VNil with
     static member inline (!?)(VNil) = _true
     static member inline (!+)(VNil) = zero
     static member inline (^+^) (x:'v when 'v: (static member inline VArray: True) , VNil) = VCons(x, VNil)
-   
+ 
 and VAppend = VAppend with
     static member ($) (VAppend, VNil) = id
     static member inline ($) (VAppend, VCons(x, xs)) = fun list ->
@@ -54,20 +54,19 @@ and VLength = VLength with
     static member ($) (VLength, VNil) = zero
     static member inline ($) (VLength, VCons(x, xs)) = (VLength |*| xs) + one
 
-and VArrays<'n when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> = interface end
 
-and VArrays<'n, 'V when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int) 
-                    and 'V : (static member inline (!+) : 'V -> 'n)>  = VArrays of 'n * 'V with 
-        interface VArrays<'n>
-        
+and VArrays<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'v when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
+                        and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
+                        and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
+                        and 'd1 :> Base10Digit and 'v :> VArrays
+                        and 'v : (static member inline (!+) : 'v -> N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>)> = VArrays of N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> * 'v with 
+               
         static member inline Zero = VArrays(zero, VNil)
         
         static member inline Length(VArrays(x, xs)) = (x, xs) |> fst
-
+        
         static member inline Unwrap(VArrays(x, xs)) = (x, xs) |> snd
         
-        static member inline (!+)(VArrays(x, xs)) = !+ xs
-
-        static member inline (+) (VArrays(c, x), VArrays(d, y) ) = VArrays(c + d, VCons(x, y))
-
-        static member inline (|@|) (VArrays(_, l), n) = (l |@| n) 
+        static member inline (!+)(VArrays(n, _)) = n
+        
+        static member inline (|@|) (VArrays(_, v), n) = v |@| n 

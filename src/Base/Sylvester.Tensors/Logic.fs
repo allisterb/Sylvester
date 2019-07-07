@@ -3,6 +3,8 @@
 open System
 open MathNet.Numerics.LinearAlgebra
 
+open Sylvester.Arithmetic.Collections
+
 [<AutoOpen>]
 module Logic =
 
@@ -191,6 +193,10 @@ module Logic =
         let cond = m._Matrix.ConditionNumber() in cond |> scalar
 
     let inline mbasis (m:Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) = 
-        let range = m._Matrix.Range() in Seq.map (fun (v:Vector<'t>) -> Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(v.ToArray())) range  
+        let range = m._Matrix.Range() in Seq.map (fun (v:Vector<'t>) -> Vector<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(v.ToArray())) range 
+        
+
+
+    
 
 
