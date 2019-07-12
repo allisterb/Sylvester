@@ -1,6 +1,3 @@
 [submodule "ext/DiffSharp"]
 	path = ext/DiffSharp
 	url = https://github.com/DiffSharp/DiffSharp.git
-[submodule "ext/FsAlg"]
-	path = ext/FsAlg
-	url = https://github.com/allisterb/FsAlg.git
