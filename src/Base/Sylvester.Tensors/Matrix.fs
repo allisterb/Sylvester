@@ -1,7 +1,9 @@
 namespace Sylvester.Tensors
 
 open System
+
 open MathNet.Numerics.LinearAlgebra
+
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 open Sylvester.Arithmetic.Collections
