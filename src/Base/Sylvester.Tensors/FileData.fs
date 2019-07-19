@@ -29,7 +29,8 @@ module FileData =
     let readCsvCols<'t> (path:string) skipHeader (cols:seq<int>)  =
         let config = Configuration()
         config.HasHeaderRecord <- skipHeader
-        read config path (fun (csv:CsvReader) ->  (Seq.map (fun (c:int) -> csv.GetField<'t>(c)) cols) |> Seq.toArray) 
+        let _cols = (Seq.toArray(cols))
+        read config path (fun csv ->  Array.map (fun (col:int) -> csv.GetField<'t>(col)) _cols) 
 
     let readAllCsvCols<'t> (path:string) skipHeader = 
         
