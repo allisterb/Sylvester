@@ -711,7 +711,7 @@ namespace Sylvester
             {
                 Debug.Assert(Restrictions == BindingRestrictions.Empty, "We don't merge, restrictions are always empty");
 
-                return BindingRestrictions.GetTypeRestriction(Expression, typeof(MetaFrame));
+                return RuntimeHelpers.GetTypeRestriction(this);
             }
 
             public new Frame Value
@@ -1176,6 +1176,8 @@ namespace Sylvester
         private PropertyChangedEventHandler _propertyChanged;
         #endregion
 
+        public int this[int index]  => 0;
+
     }
 
     #region RuntimeHelpers
@@ -1207,6 +1209,18 @@ namespace Sylvester
         public static void FramePromoteClass(Frame frame, object oldClass, object newClass)
         {
             frame.PromoteClass(oldClass, newClass);
+        }
+
+        public static BindingRestrictions GetTypeRestriction(DynamicMetaObject obj)
+        {
+            if (obj.Value == null && obj.HasValue)
+            {
+                return BindingRestrictions.GetInstanceRestriction(obj.Expression, null);
+            }
+            else
+            {
+                return BindingRestrictions.GetTypeRestriction(obj.Expression, obj.LimitType);
+            }
         }
     }
     #endregion
