@@ -35,14 +35,21 @@ namespace Sylvester
     {
 
         #region Constructors
-        /// <summary>
-        /// Creates a new Frame with no members.
-        /// </summary>
         public Frame()
         {
             _data = FrameData.Empty;
             _lockObject = new object();
         }
+
+        public Frame(params ISeries[] data) : this()
+        {
+            Data = data;
+
+        }
+        #endregion
+
+        #region Properties
+        public ISeries[] Data { get; }
         #endregion
 
         #region Get/Set/Delete Members
