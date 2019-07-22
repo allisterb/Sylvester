@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Dynamic;
 
 namespace Sylvester
 {
-    public interface ISeries
+    public interface ISeries : IDynamicMetaObjectProvider
     {
         Type DataType { get; }
 

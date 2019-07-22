@@ -39,260 +39,25 @@ namespace Sylvester
         {
             _data = FrameData.Empty;
             _lockObject = new object();
+            _dynFrame = this;
         }
 
-        public Frame(params ISeries[] data) : this()
+        public Frame(params ISeries[] series) : this()
         {
-            Data = data;
-
+            for (int i = 0; i < series.Length; i++)
+            {
+               TrySetValue(null, -1, series[i], series[i].Label, false, false);
+            }            
+            Series.AddRange(series);
         }
         #endregion
 
         #region Properties
-        public ISeries[] Data { get; }
-        #endregion
+        public dynamic _dynFrame;
+        public List<dynamic> Series { get; } = new List<dynamic>();
 
-        #region Get/Set/Delete Members
-
-        /// <summary>
-        /// Try to get the data stored for the specified class at the specified index.  If the
-        /// class has changed a full lookup for the slot will be performed and the correct
-        /// value will be retrieved.
-        /// </summary>
-        internal bool TryGetValue(object indexClass, int index, string name, bool ignoreCase, out object value)
-        {
-            // read the data now.  The data is immutable so we get a consistent view.
-            // If there's a concurrent writer they will replace data and it just appears
-            // that we won the ----
-            FrameData data = _data;
-            if (data.Class != indexClass || ignoreCase)
-            {
-                /* Re-search for the index matching the name here if
-                 *  1) the class has changed, we need to get the correct index and return
-                 *  the value there.
-                 *  2) the search is case insensitive:
-                 *      a. the member specified by index may be deleted, but there might be other
-                 *      members matching the name if the binder is case insensitive.
-                 *      b. the member that exactly matches the name didn't exist before and exists now,
-                 *      need to find the exact match.
-                 */
-                index = data.Class.GetValueIndex(name, ignoreCase, this);
-                if (index == ambiguousMatchFound)
-                {
-                    throw new AmbiguousMatchInFrameException(name);
-                }
-            }
-
-            if (index == noMatch)
-            {
-                value = null;
-                return false;
-            }
-
-            // Capture the value into a temp, so it doesn't get mutated after we check
-            // for Uninitialized.
-            object temp = data[index];
-            if (temp == _uninitialized)
-            {
-                value = null;
-                return false;
-            }
-
-            // index is now known to be correct
-            value = temp;
-            return true;
-        }
-
-        /// <summary>
-        /// Sets the data for the specified class at the specified index.  If the class has
-        /// changed then a full look for the slot will be performed.  If the new class does
-        /// not have the provided slot then the Frame's class will change. Only case sensitive
-        /// setter is supported in Frame.
-        /// </summary>
-        internal void TrySetValue(object indexClass, int index, object value, string name, bool ignoreCase, bool add)
-        {
-            FrameData data;
-            object oldValue;
-
-            lock (_lockObject)
-            {
-                data = _data;
-
-                if (data.Class != indexClass || ignoreCase)
-                {
-                    // The class has changed or we are doing a case-insensitive search, 
-                    // we need to get the correct index and set the value there.  If we 
-                    // don't have the value then we need to promote the class - that 
-                    // should only happen when we have multiple concurrent writers.
-                    index = data.Class.GetValueIndex(name, ignoreCase, this);
-                    if (index == Frame.ambiguousMatchFound)
-                    {
-                        throw new AmbiguousMatchInFrameException(name);
-                    }
-                    if (index == Frame.noMatch)
-                    {
-                        // Before creating a new class with the new member, need to check 
-                        // if there is the exact same member but is deleted. We should reuse
-                        // the class if there is such a member.
-                        int exactMatch = ignoreCase ?
-                            data.Class.GetValueIndexCaseSensitive(name) :
-                            index;
-                        if (exactMatch != Frame.noMatch)
-                        {
-                            Debug.Assert(data[exactMatch] == _uninitialized);
-                            index = exactMatch;
-                        }
-                        else
-                        {
-                            FrameClass newClass = data.Class.FindNewClass(name);
-                            data = PromoteClassCore(data.Class, newClass);
-                            // After the class promotion, there must be an exact match,
-                            // so we can do case-sensitive search here.
-                            index = data.Class.GetValueIndexCaseSensitive(name);
-                            Debug.Assert(index != Frame.noMatch);
-                        }
-                    }
-                }
-
-                // Setting an uninitialized member increases the count of available members
-                oldValue = data[index];
-                if (oldValue == _uninitialized)
-                {
-                    _count++;
-                }
-                else if (add)
-                {
-                    throw new SameKeyExistsInFrameException(name);
-                }
-
-                data[index] = value;
-            }
-
-            // Notify property changed, outside of the lock.
-            var propertyChanged = _propertyChanged;
-            if (propertyChanged != null && value != oldValue)
-            {
-                // Use the canonical case for the key.
-                propertyChanged(this, new PropertyChangedEventArgs(data.Class.Keys[index]));
-            }
-        }
-
-        /// <summary>
-        /// Deletes the data stored for the specified class at the specified index.
-        /// </summary>
-        internal bool TryDeleteValue(object indexClass, int index, string name, bool ignoreCase, object deleteValue)
-        {
-            FrameData data;
-            lock (_lockObject)
-            {
-                data = _data;
-
-                if (data.Class != indexClass || ignoreCase)
-                {
-                    // the class has changed or we are doing a case-insensitive search,
-                    // we need to get the correct index.  If there is no associated index
-                    // we simply can't have the value and we return false.
-                    index = data.Class.GetValueIndex(name, ignoreCase, this);
-                    if (index == Frame.ambiguousMatchFound)
-                    {
-                        throw new AmbiguousMatchInFrameException(name);
-                    }
-                }
-                if (index == Frame.noMatch)
-                {
-                    return false;
-                }
-
-                object oldValue = data[index];
-                if (oldValue == _uninitialized)
-                {
-                    return false;
-                }
-
-                // Make sure the value matches, if requested.
-                //
-                // It's a shame we have to call Equals with the lock held but
-                // there doesn't seem to be a good way around that, and
-                // ConcurrentDictionary in mscorlib does the same thing.
-                if (deleteValue != _uninitialized && !object.Equals(oldValue, deleteValue))
-                {
-                    return false;
-                }
-
-                data[index] = _uninitialized;
-
-                // Deleting an available member decreases the count of available members
-                _count--;
-            }
-
-            // Notify property changed, outside of the lock.
-            var propertyChanged = _propertyChanged;
-            if (propertyChanged != null)
-            {
-                // Use the canonical case for the key.
-                propertyChanged(this, new PropertyChangedEventArgs(data.Class.Keys[index]));
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Returns true if the member at the specified index has been deleted,
-        /// otherwise false. Call this function holding the lock.
-        /// </summary>
-        internal bool IsDeletedMember(int index)
-        {
-            Debug.Assert(index >= 0 && index <= _data.Length);
-
-            if (index == _data.Length)
-            {
-                // The member is a newly added by SetMemberBinder and not in data yet
-                return false;
-            }
-
-            return _data[index] == _uninitialized;
-        }
-
-        /// <summary>
-        /// Exposes the FrameClass which we've associated with this 
-        /// Frame object.  Used for type checks in rules.
-        /// </summary>
-        internal FrameClass Class
-        {
-            get
-            {
-                return _data.Class;
-            }
-        }
-
-        /// <summary>
-        /// Promotes the class from the old type to the new type and returns the new
-        /// FrameData object.
-        /// </summary>
-        private FrameData PromoteClassCore(FrameClass oldClass, FrameClass newClass)
-        {
-            Debug.Assert(oldClass != newClass);
-
-            lock (_lockObject)
-            {
-                if (_data.Class == oldClass)
-                {
-                    _data = _data.UpdateClass(newClass);
-                }
-                return _data;
-            }
-        }
-
-        /// <summary>
-        /// Internal helper to promote a class.  Called from our RuntimeHelper members.  This
-        /// version simply doesn't expose the FrameData object which is a private
-        /// data structure.
-        /// </summary>
-        internal void PromoteClass(object oldClass, object newClass)
-        {
-            PromoteClassCore((FrameClass)oldClass, (FrameClass)newClass);
-        }
-
+        public int Length { get; protected set; }
+        public bool UnrestrictedMembers { get; set; } = false;
         #endregion
 
         #region IDynamicMetaObjectProvider Members
@@ -303,186 +68,7 @@ namespace Sylvester
         }
         #endregion
 
-        #region IDictionary<string, object> Members
-        ICollection<string> IDictionary<string, object>.Keys
-        {
-            get
-            {
-                return new KeyCollection(this);
-            }
-        }
-
-        ICollection<object> IDictionary<string, object>.Values
-        {
-            get
-            {
-                return new ValueCollection(this);
-            }
-        }
-
-        object IDictionary<string, object>.this[string key]
-        {
-            get
-            {
-                object value;
-                if (!TryGetValueForKey(key, out value))
-                {
-                    throw new KeyDoesNotExistInFrameException(key);
-                }
-                return value;
-            }
-            set
-            {
-                ContractUtils.RequiresNotNull(key, "key");
-                // Pass null to the class, which forces lookup.
-                TrySetValue(null, -1, value, key, false, false);
-            }
-        }
-
-        void IDictionary<string, object>.Add(string key, object value)
-        {
-            this.TryAddMember(key, value);
-        }
-
-        bool IDictionary<string, object>.ContainsKey(string key)
-        {
-            ContractUtils.RequiresNotNull(key, "key");
-
-            FrameData data = _data;
-            int index = data.Class.GetValueIndexCaseSensitive(key);
-            return index >= 0 && data[index] != _uninitialized;
-        }
-
-        bool IDictionary<string, object>.Remove(string key)
-        {
-            ContractUtils.RequiresNotNull(key, "key");
-            // Pass null to the class, which forces lookup.
-            return TryDeleteValue(null, -1, key, false, _uninitialized);
-        }
-
-        bool IDictionary<string, object>.TryGetValue(string key, out object value)
-        {
-            return TryGetValueForKey(key, out value);
-        }
-
-        #endregion
-
-        #region ICollection<KeyValuePair<string, object>> Members
-        int ICollection<KeyValuePair<string, object>>.Count
-        {
-            get
-            {
-                return _count;
-            }
-        }
-
-        bool ICollection<KeyValuePair<string, object>>.IsReadOnly
-        {
-            get { return false; }
-        }
-
-        void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
-        {
-            TryAddMember(item.Key, item.Value);
-        }
-
-        void ICollection<KeyValuePair<string, object>>.Clear()
-        {
-            // We remove both class and data!
-            FrameData data;
-            lock (_lockObject)
-            {
-                data = _data;
-                _data = FrameData.Empty;
-                _count = 0;
-            }
-
-            // Notify property changed for all properties.
-            var propertyChanged = _propertyChanged;
-            if (propertyChanged != null)
-            {
-                for (int i = 0, n = data.Class.Keys.Length; i < n; i++)
-                {
-                    if (data[i] != _uninitialized)
-                    {
-                        propertyChanged(this, new PropertyChangedEventArgs(data.Class.Keys[i]));
-                    }
-                }
-            }
-        }
-
-        bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
-        {
-            object value;
-            if (!TryGetValueForKey(item.Key, out value))
-            {
-                return false;
-            }
-
-            return object.Equals(value, item.Value);
-        }
-
-        void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
-        {
-            ContractUtils.RequiresNotNull(array, "array");
-            ContractUtils.RequiresArrayRange(array, arrayIndex, _count, "arrayIndex", "Count");
-
-            // We want this to be atomic and not throw
-            lock (_lockObject)
-            {
-                foreach (KeyValuePair<string, object> item in this)
-                {
-                    array[arrayIndex++] = item;
-                }
-            }
-        }
-
-        bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
-        {
-            return TryDeleteValue(null, -1, item.Key, false, item.Value);
-        }
-        #endregion
-
-        #region IEnumerable<KeyValuePair<string, object>> Member
-
-        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
-        {
-            FrameData data = _data;
-            return GetFrameEnumerator(data, data.Version);
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            FrameData data = _data;
-            return GetFrameEnumerator(data, data.Version);
-        }
-
-        // Note: takes the data and version as parameters so they will be
-        // captured before the first call to MoveNext().
-        private IEnumerator<KeyValuePair<string, object>> GetFrameEnumerator(FrameData data, int version)
-        {
-            for (int i = 0; i < data.Class.Keys.Length; i++)
-            {
-                if (_data.Version != version || data != _data)
-                {
-                    // The underlying frame object has changed:
-                    // 1) the version of the frame data changed
-                    // 2) the data object is changed 
-                    throw new CollectionModifiedWhileEnumeratingException();
-                }
-                // Capture the value into a temp so we don't inadvertently
-                // return Uninitialized.
-                object temp = data[i];
-                if (temp != _uninitialized)
-                {
-                    yield return new KeyValuePair<string, object>(data.Class.Keys[i], temp);
-                }
-            }
-        }
-        #endregion
-
         #region MetaFrame
-
         private class MetaFrame : DynamicMetaObject
         {
             public MetaFrame(Expression expression, Frame value)
@@ -559,6 +145,10 @@ namespace Sylvester
             {
                 ContractUtils.RequiresNotNull(binder, "binder");
                 ContractUtils.RequiresNotNull(value, "value");
+                if (value.RuntimeType.GetInterface("ISeries") == null)
+                {
+                    throw new FrameUnrestrictedMembersNotEnabledException();
+                }
 
                 FrameClass @class;
                 int index;
@@ -842,6 +432,427 @@ namespace Sylvester
             }
         }
 
+        #endregion
+
+        #region Get/Set/Delete Members
+
+        /// <summary>
+        /// Try to get the data stored for the specified class at the specified index.  If the
+        /// class has changed a full lookup for the slot will be performed and the correct
+        /// value will be retrieved.
+        /// </summary>
+        internal bool TryGetValue(object indexClass, int index, string name, bool ignoreCase, out object value)
+        {
+            // read the data now.  The data is immutable so we get a consistent view.
+            // If there's a concurrent writer they will replace data and it just appears
+            // that we won the ----
+            FrameData data = _data;
+            if (data.Class != indexClass || ignoreCase)
+            {
+                /* Re-search for the index matching the name here if
+                 *  1) the class has changed, we need to get the correct index and return
+                 *  the value there.
+                 *  2) the search is case insensitive:
+                 *      a. the member specified by index may be deleted, but there might be other
+                 *      members matching the name if the binder is case insensitive.
+                 *      b. the member that exactly matches the name didn't exist before and exists now,
+                 *      need to find the exact match.
+                 */
+                index = data.Class.GetValueIndex(name, ignoreCase, this);
+                if (index == ambiguousMatchFound)
+                {
+                    throw new AmbiguousMatchInFrameException(name);
+                }
+            }
+
+            if (index == noMatch)
+            {
+                value = null;
+                return false;
+            }
+
+            // Capture the value into a temp, so it doesn't get mutated after we check
+            // for Uninitialized.
+            object temp = data[index];
+            if (temp == _uninitialized)
+            {
+                value = null;
+                return false;
+            }
+
+            // index is now known to be correct
+            value = temp;
+            return true;
+        }
+
+        /// <summary>
+        /// Sets the data for the specified class at the specified index.  If the class has
+        /// changed then a full look for the slot will be performed.  If the new class does
+        /// not have the provided slot then the Frame's class will change. Only case sensitive
+        /// setter is supported in Frame.
+        /// </summary>
+        internal void TrySetValue(object indexClass, int index, object value, string name, bool ignoreCase, bool add)
+        {
+            FrameData data;
+            object oldValue;
+
+            lock (_lockObject)
+            {
+                data = _data;
+
+                if (data.Class != indexClass || ignoreCase)
+                {
+                    // The class has changed or we are doing a case-insensitive search, 
+                    // we need to get the correct index and set the value there.  If we 
+                    // don't have the value then we need to promote the class - that 
+                    // should only happen when we have multiple concurrent writers.
+                    index = data.Class.GetValueIndex(name, ignoreCase, this);
+                    if (index == Frame.ambiguousMatchFound)
+                    {
+                        throw new AmbiguousMatchInFrameException(name);
+                    }
+                    if (index == Frame.noMatch)
+                    {
+                        // Before creating a new class with the new member, need to check 
+                        // if there is the exact same member but is deleted. We should reuse
+                        // the class if there is such a member.
+                        int exactMatch = ignoreCase ?
+                            data.Class.GetValueIndexCaseSensitive(name) :
+                            index;
+                        if (exactMatch != Frame.noMatch)
+                        {
+                            Debug.Assert(data[exactMatch] == _uninitialized);
+                            index = exactMatch;
+                        }
+                        else
+                        {
+                            FrameClass newClass = data.Class.FindNewClass(name);
+                            data = PromoteClassCore(data.Class, newClass);
+                            // After the class promotion, there must be an exact match,
+                            // so we can do case-sensitive search here.
+                            index = data.Class.GetValueIndexCaseSensitive(name);
+                            Debug.Assert(index != Frame.noMatch);
+                        }
+                    }
+                }
+
+                // Setting an uninitialized member increases the count of available members
+                oldValue = data[index];
+                if (oldValue == _uninitialized)
+                {
+                    _count++;
+                }
+                else if (add)
+                {
+                    throw new SameKeyExistsInFrameException(name);
+                }
+
+                data[index] = value;
+            }
+
+            // Notify property changed, outside of the lock.
+            var propertyChanged = _propertyChanged;
+            if (propertyChanged != null && value != oldValue)
+            {
+                // Use the canonical case for the key.
+                propertyChanged(this, new PropertyChangedEventArgs(data.Class.Keys[index]));
+            }
+        }
+
+        /// <summary>
+        /// Deletes the data stored for the specified class at the specified index.
+        /// </summary>
+        internal bool TryDeleteValue(object indexClass, int index, string name, bool ignoreCase, object deleteValue)
+        {
+            FrameData data;
+            lock (_lockObject)
+            {
+                data = _data;
+
+                if (data.Class != indexClass || ignoreCase)
+                {
+                    // the class has changed or we are doing a case-insensitive search,
+                    // we need to get the correct index.  If there is no associated index
+                    // we simply can't have the value and we return false.
+                    index = data.Class.GetValueIndex(name, ignoreCase, this);
+                    if (index == Frame.ambiguousMatchFound)
+                    {
+                        throw new AmbiguousMatchInFrameException(name);
+                    }
+                }
+                if (index == Frame.noMatch)
+                {
+                    return false;
+                }
+
+                object oldValue = data[index];
+                if (oldValue == _uninitialized)
+                {
+                    return false;
+                }
+
+                // Make sure the value matches, if requested.
+                //
+                // It's a shame we have to call Equals with the lock held but
+                // there doesn't seem to be a good way around that, and
+                // ConcurrentDictionary in mscorlib does the same thing.
+                if (deleteValue != _uninitialized && !object.Equals(oldValue, deleteValue))
+                {
+                    return false;
+                }
+
+                data[index] = _uninitialized;
+
+                // Deleting an available member decreases the count of available members
+                _count--;
+            }
+
+            // Notify property changed, outside of the lock.
+            var propertyChanged = _propertyChanged;
+            if (propertyChanged != null)
+            {
+                // Use the canonical case for the key.
+                propertyChanged(this, new PropertyChangedEventArgs(data.Class.Keys[index]));
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if the member at the specified index has been deleted,
+        /// otherwise false. Call this function holding the lock.
+        /// </summary>
+        internal bool IsDeletedMember(int index)
+        {
+            Debug.Assert(index >= 0 && index <= _data.Length);
+
+            if (index == _data.Length)
+            {
+                // The member is a newly added by SetMemberBinder and not in data yet
+                return false;
+            }
+
+            return _data[index] == _uninitialized;
+        }
+
+        /// <summary>
+        /// Exposes the FrameClass which we've associated with this 
+        /// Frame object.  Used for type checks in rules.
+        /// </summary>
+        internal FrameClass Class
+        {
+            get
+            {
+                return _data.Class;
+            }
+        }
+
+        /// <summary>
+        /// Promotes the class from the old type to the new type and returns the new
+        /// FrameData object.
+        /// </summary>
+        private FrameData PromoteClassCore(FrameClass oldClass, FrameClass newClass)
+        {
+            Debug.Assert(oldClass != newClass);
+
+            lock (_lockObject)
+            {
+                if (_data.Class == oldClass)
+                {
+                    _data = _data.UpdateClass(newClass);
+                }
+                return _data;
+            }
+        }
+
+        /// <summary>
+        /// Internal helper to promote a class.  Called from our RuntimeHelper members.  This
+        /// version simply doesn't expose the FrameData object which is a private
+        /// data structure.
+        /// </summary>
+        internal void PromoteClass(object oldClass, object newClass)
+        {
+            PromoteClassCore((FrameClass)oldClass, (FrameClass)newClass);
+        }
+
+        #endregion
+
+        #region IDictionary<string, object> Members
+        ICollection<string> IDictionary<string, object>.Keys
+        {
+            get
+            {
+                return new KeyCollection(this);
+            }
+        }
+
+        ICollection<object> IDictionary<string, object>.Values
+        {
+            get
+            {
+                return new ValueCollection(this);
+            }
+        }
+
+        object IDictionary<string, object>.this[string key]
+        {
+            get
+            {
+                object value;
+                if (!TryGetValueForKey(key, out value))
+                {
+                    throw new KeyDoesNotExistInFrameException(key);
+                }
+                return value;
+            }
+            set
+            {
+                ContractUtils.RequiresNotNull(key, "key");
+                // Pass null to the class, which forces lookup.
+                TrySetValue(null, -1, value, key, false, false);
+            }
+        }
+
+        void IDictionary<string, object>.Add(string key, object value)
+        {
+            this.TryAddMember(key, value);
+        }
+
+        bool IDictionary<string, object>.ContainsKey(string key)
+        {
+            ContractUtils.RequiresNotNull(key, "key");
+
+            FrameData data = _data;
+            int index = data.Class.GetValueIndexCaseSensitive(key);
+            return index >= 0 && data[index] != _uninitialized;
+        }
+
+        bool IDictionary<string, object>.Remove(string key)
+        {
+            ContractUtils.RequiresNotNull(key, "key");
+            // Pass null to the class, which forces lookup.
+            return TryDeleteValue(null, -1, key, false, _uninitialized);
+        }
+
+        bool IDictionary<string, object>.TryGetValue(string key, out object value)
+        {
+            return TryGetValueForKey(key, out value);
+        }
+
+        #endregion
+
+        #region ICollection<KeyValuePair<string, object>> Members
+        int ICollection<KeyValuePair<string, object>>.Count
+        {
+            get
+            {
+                return _count;
+            }
+        }
+
+        bool ICollection<KeyValuePair<string, object>>.IsReadOnly
+        {
+            get { return false; }
+        }
+
+        void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
+        {
+            TryAddMember(item.Key, item.Value);
+        }
+
+        void ICollection<KeyValuePair<string, object>>.Clear()
+        {
+            // We remove both class and data!
+            FrameData data;
+            lock (_lockObject)
+            {
+                data = _data;
+                _data = FrameData.Empty;
+                _count = 0;
+            }
+
+            // Notify property changed for all properties.
+            var propertyChanged = _propertyChanged;
+            if (propertyChanged != null)
+            {
+                for (int i = 0, n = data.Class.Keys.Length; i < n; i++)
+                {
+                    if (data[i] != _uninitialized)
+                    {
+                        propertyChanged(this, new PropertyChangedEventArgs(data.Class.Keys[i]));
+                    }
+                }
+            }
+        }
+
+        bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
+        {
+            object value;
+            if (!TryGetValueForKey(item.Key, out value))
+            {
+                return false;
+            }
+
+            return object.Equals(value, item.Value);
+        }
+
+        void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+        {
+            ContractUtils.RequiresNotNull(array, "array");
+            ContractUtils.RequiresArrayRange(array, arrayIndex, _count, "arrayIndex", "Count");
+
+            // We want this to be atomic and not throw
+            lock (_lockObject)
+            {
+                foreach (KeyValuePair<string, object> item in this)
+                {
+                    array[arrayIndex++] = item;
+                }
+            }
+        }
+
+        bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
+        {
+            return TryDeleteValue(null, -1, item.Key, false, item.Value);
+        }
+        #endregion
+
+        #region IEnumerable<KeyValuePair<string, object>> Member
+
+        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
+        {
+            FrameData data = _data;
+            return GetFrameEnumerator(data, data.Version);
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            FrameData data = _data;
+            return GetFrameEnumerator(data, data.Version);
+        }
+
+        // Note: takes the data and version as parameters so they will be
+        // captured before the first call to MoveNext().
+        private IEnumerator<KeyValuePair<string, object>> GetFrameEnumerator(FrameData data, int version)
+        {
+            for (int i = 0; i < data.Class.Keys.Length; i++)
+            {
+                if (_data.Version != version || data != _data)
+                {
+                    // The underlying frame object has changed:
+                    // 1) the version of the frame data changed
+                    // 2) the data object is changed 
+                    throw new CollectionModifiedWhileEnumeratingException();
+                }
+                // Capture the value into a temp so we don't inadvertently
+                // return Uninitialized.
+                object temp = data[i];
+                if (temp != _uninitialized)
+                {
+                    yield return new KeyValuePair<string, object>(data.Class.Keys[i], temp);
+                }
+            }
+        }
         #endregion
 
         #region INotifyPropertyChanged Members

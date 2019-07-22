@@ -33,5 +33,8 @@ namespace Sylvester.DataFrame.Dynamic
 
     public class CollectionModifiedWhileEnumeratingException : Exception {}
 
-    //public class CollectionReadOnlyException : Exception { }
+    public class FrameUnrestrictedMembersNotEnabledException : Exception
+    {
+        public FrameUnrestrictedMembersNotEnabledException() : base("Unrestricted members are not allowed for this frame.") {}
+    }
 }
