@@ -1,6 +1,7 @@
 namespace Sylvester.Tensors
 
 open System
+
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 open Sylvester.Arithmetic.Collections

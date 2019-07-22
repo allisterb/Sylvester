@@ -27,7 +27,7 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
     
     member val _Array = items
 
-    member val _Vector = DenseVector.ofArray items
+    member val _Vector = DenseVector.raw items
 
     member val Dim0 = N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
 
