@@ -28,7 +28,6 @@
     <ProjectReference Include="..\..\src\Base\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
     <ProjectReference Include="..\..\src\Base\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
     <ProjectReference Include="..\..\src\Lang\Sylvester.Tensors.AutoDiff\Sylvester.Tensors.AutoDiff.fsproj" />
-    <ProjectReference Include="..\..\src\Providers\Sylvester.Provider.Arithmetic.Internal\src\Sylvester.Provider.Arithmetic.Runtime\Sylvester.Provider.Arithmetic.Runtime.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
