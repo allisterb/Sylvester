@@ -12,15 +12,13 @@ namespace Sylvester
     {
         public Series(T[] data, string label) { Data = data; Label = label; }
 
-        public T[] Data { get; }
-
         public Type DataType { get; } = typeof(T);
-
-        public Array _Data => Data;
 
         public string Label { get; }
 
         public int Length => Data.Length;
+
+        public T[] Data { get; }
 
         public T this[int index] => Data[index];
 

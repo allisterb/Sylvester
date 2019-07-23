@@ -145,11 +145,7 @@ namespace Sylvester
             {
                 ContractUtils.RequiresNotNull(binder, "binder");
                 ContractUtils.RequiresNotNull(value, "value");
-                if (value.RuntimeType.GetInterface("ISeries") == null)
-                {
-                    throw new FrameUnrestrictedMembersNotEnabledException();
-                }
-
+              
                 FrameClass @class;
                 int index;
 
@@ -201,13 +197,13 @@ namespace Sylvester
             public override IEnumerable<string> GetDynamicMemberNames()
             {
                 var frameData = Value._data;
-                var klass = frameData.Class;
-                for (int i = 0; i < klass.Keys.Length; i++)
+                var @class = frameData.Class;
+                for (int i = 0; i < @class.Keys.Length; i++)
                 {
                     object val = frameData[i];
                     if (val != Frame._uninitialized)
                     {
-                        yield return klass.Keys[i];
+                        yield return @class.Keys[i];
                     }
                 }
             }
@@ -216,7 +212,7 @@ namespace Sylvester
             /// Adds a dynamic test which checks if the version has changed.  The test is only necessary for
             /// performance as the methods will do the correct thing if called with an incorrect version.
             /// </summary>
-            private DynamicMetaObject AddDynamicTestAndDefer(DynamicMetaObjectBinder binder, FrameClass klass, FrameClass originalClass, DynamicMetaObject succeeds)
+            private DynamicMetaObject AddDynamicTestAndDefer(DynamicMetaObjectBinder binder, FrameClass @class, FrameClass originalClass, DynamicMetaObject succeeds)
             {
 
                 Expression ifTestSucceeds = succeeds.Expression;
@@ -226,7 +222,7 @@ namespace Sylvester
                     // We force a class promotion after the type check.  If the class changes the 
                     // promotion will fail and the set/delete will do a full lookup using the new
                     // class to discover the name.
-                    Debug.Assert(originalClass != klass);
+                    Debug.Assert(originalClass != @class);
 
                     ifTestSucceeds = Expression.Block(
                         Expression.Call(
@@ -234,7 +230,7 @@ namespace Sylvester
                             typeof(RuntimeHelpers).GetMethod("FramePromoteClass"),
                             GetLimitedSelf(),
                             Expression.Constant(originalClass, typeof(object)),
-                            Expression.Constant(klass, typeof(object))
+                            Expression.Constant(@class, typeof(object))
                         ),
                         succeeds.Expression
                     );
@@ -246,7 +242,7 @@ namespace Sylvester
                             null,
                             typeof(RuntimeHelpers).GetMethod("FrameCheckVersion"),
                             GetLimitedSelf(),
-                            Expression.Constant(originalClass ?? klass, typeof(object))
+                            Expression.Constant(originalClass ?? @class, typeof(object))
                         ),
                         ifTestSucceeds,
                         binder.GetUpdateExpression(ifTestSucceeds.Type)
@@ -260,14 +256,14 @@ namespace Sylvester
             /// this returns both the original and desired new class.  A rule is created which includes the test for the
             /// original class, the promotion to the new class, and the set/delete based on the class post-promotion.
             /// </summary>
-            private FrameClass GetClassEnsureIndex(string name, bool caseInsensitive, Frame obj, out FrameClass klass, out int index)
+            private FrameClass GetClassEnsureIndex(string name, bool caseInsensitive, Frame obj, out FrameClass @class, out int index)
             {
                 FrameClass originalClass = Value.Class;
 
                 index = originalClass.GetValueIndex(name, caseInsensitive, obj);
                 if (index == Frame.ambiguousMatchFound)
                 {
-                    klass = originalClass;
+                    @class = originalClass;
                     return null;
                 }
                 if (index == Frame.noMatch)
@@ -275,7 +271,7 @@ namespace Sylvester
                     // go ahead and find a new class now...
                     FrameClass newClass = originalClass.FindNewClass(name);
 
-                    klass = newClass;
+                    @class = newClass;
                     index = newClass.GetValueIndexCaseSensitive(name);
 
                     Debug.Assert(index != Frame.noMatch);
@@ -283,7 +279,7 @@ namespace Sylvester
                 }
                 else
                 {
-                    klass = originalClass;
+                    @class = originalClass;
                     return null;
                 }
             }
@@ -391,9 +387,9 @@ namespace Sylvester
             /// <summary>
             /// Constructs a new FrameData object with the specified class and data.
             /// </summary>
-            internal FrameData(FrameClass klass, object[] data, int version)
+            internal FrameData(FrameClass @class, object[] data, int version)
             {
-                Class = klass;
+                Class = @class;
                 _dataArray = data;
                 _version = version;
             }
@@ -493,6 +489,11 @@ namespace Sylvester
         /// </summary>
         internal void TrySetValue(object indexClass, int index, object value, string name, bool ignoreCase, bool add)
         {
+            if (!(value is ISeries) && !UnrestrictedMembers)
+            {
+                throw new FrameUnrestrictedMembersNotEnabledException();
+            }
+
             FrameData data;
             object oldValue;
 

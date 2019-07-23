@@ -7,8 +7,6 @@ namespace Sylvester
     {
         Type DataType { get; }
 
-        Array _Data { get; }
-
         string Label { get; }
 
         int Length { get;  }

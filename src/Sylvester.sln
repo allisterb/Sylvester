@@ -66,7 +66,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tensors.AutoDiff"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.DataFrame.Dynamic", "Lang\Sylvester.DataFrame.Dynamic\Sylvester.DataFrame.Dynamic.csproj", "{CD05CADB-D3FC-401D-AFD4-61ED28AE7239}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Tests.DataFrame.Cs", "..\tests\Sylvester.Tests.DataFrame.Cs\Sylvester.Tests.DataFrame.Cs.csproj", "{57AF23B0-3F74-4CCC-8CB2-77B606A1C023}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Tests.DataFrame.Cs", "..\tests\Sylvester.Tests.DataFrame.Cs\Sylvester.Tests.DataFrame.Cs.csproj", "{57AF23B0-3F74-4CCC-8CB2-77B606A1C023}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Base.Backend", "Base\Sylvester.Base.Backend\Sylvester.Base.Backend.csproj", "{4352724E-72C9-4AD2-9B34-B74FCFB60D11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -256,6 +258,18 @@ Global
 		{57AF23B0-3F74-4CCC-8CB2-77B606A1C023}.Release|x64.Build.0 = Release|Any CPU
 		{57AF23B0-3F74-4CCC-8CB2-77B606A1C023}.Release|x86.ActiveCfg = Release|Any CPU
 		{57AF23B0-3F74-4CCC-8CB2-77B606A1C023}.Release|x86.Build.0 = Release|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Debug|x64.Build.0 = Debug|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Debug|x86.Build.0 = Debug|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|x64.ActiveCfg = Release|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|x64.Build.0 = Release|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|x86.ActiveCfg = Release|Any CPU
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -279,6 +293,7 @@ Global
 		{3331CCEE-EEB1-471D-A6DB-319C2F435320} = {1EF4A0C4-252E-480B-959D-4012B88356A4}
 		{CD05CADB-D3FC-401D-AFD4-61ED28AE7239} = {1EF4A0C4-252E-480B-959D-4012B88356A4}
 		{57AF23B0-3F74-4CCC-8CB2-77B606A1C023} = {578D2618-B994-4B73-9838-9E05E0132C26}
+		{4352724E-72C9-4AD2-9B34-B74FCFB60D11} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}
