@@ -21,5 +21,19 @@ namespace Sylvester
         public override ref T Ref(int index) => ref Data[index];
 
         public override IEnumerator GetEnumerator() => Data.GetEnumerator();
+
+        public override bool SetVal(int index, dynamic value)
+        {
+            Data[index] = value;
+            return true;
+        }
+
+        public override ISeries Append(params dynamic[] values)
+        {
+            T[] a = new T[Data.Length + values.Length];
+            Data.CopyTo(a, 0);
+            values.CopyTo(a, Length);
+            return new Sn<T>(a, Label);
+        }
     }
 }

@@ -33,30 +33,41 @@ namespace Sylvester
 {
     public class Frame : IDynamicMetaObjectProvider, IDictionary<string, object>, INotifyPropertyChanged
     {
-
         #region Constructors
         public Frame()
         {
             _data = FrameData.Empty;
             _lockObject = new object();
-            _dynFrame = this;
         }
 
         public Frame(params ISeries[] series) : this()
         {
-            for (int i = 0; i < series.Length; i++)
-            {
-               TrySetValue(null, -1, series[i], series[i].Label, false, false);
-            }            
-            Series.AddRange(series);
+            Add(series);
         }
         #endregion
 
+        #region Methods
+        public Frame Add(params ISeries[] series)
+        {
+            if (series.Length == 0) return this;
+            if (Series.Count == 0)
+            {
+                Length = series[0].Length;
+            }
+            for (int i = 0; i < series.Length; i++)
+            {
+                TrySetValue(null, -1, series[i], series[i].Label, false, false);
+            }
+            Series.AddRange(series);
+            return this;
+        }
+        #endregion
+        
         #region Properties
-        public dynamic _dynFrame;
         public List<dynamic> Series { get; } = new List<dynamic>();
 
-        public int Length { get; protected set; }
+        public int Length { get; protected set; } = -1;
+
         public bool UnrestrictedMembers { get; set; } = false;
         #endregion
 

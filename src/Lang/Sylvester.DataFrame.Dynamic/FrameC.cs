@@ -24,6 +24,12 @@ namespace Sylvester
 
         public abstract T this[int index] { get; }
 
+        public dynamic GetVal(int index) => this[index];
+
+        public abstract bool SetVal(int index, dynamic value);
+
+        public abstract ISeries Append(params dynamic[] values);
+
     }
 
 }

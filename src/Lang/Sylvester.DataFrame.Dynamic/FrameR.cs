@@ -10,25 +10,31 @@ using Microsoft.CSharp.RuntimeBinder;
 
 namespace Sylvester
 {
-    public class FrameWnd<T> : DynamicObject where T : IEquatable<T>
+    public class FrameR : DynamicObject
     {
-        public FrameWnd(Frame f, IDictionary<T, int> index, params ISeries[] columns)
+        public FrameR(Frame f, int index, IDictionary<string, dynamic> columns)
         {
-            _wnd = this;
+            Frame = f;
+            Index = index;
             Columns = columns;
-            for(int i = 0; i < Columns.Length; i++)
+        
+            foreach (var kv in Columns)
             {
-                SetMember(Columns[i].Label, Columns[i]);
+                SetMember(kv.Key, kv.Value);
             }
         }
 
-        public IDictionary<T, int> Index { get; }
+        public Frame Frame { get; }
 
-        public ISeries[] Columns { get; }
+        public int Index { get; }
 
-        dynamic _wnd;
+        public IDictionary<string, dynamic> Columns { get; }
 
-        public object GetMember(string propName)
+        public dynamic this[string column] => Columns[column];
+
+        public dynamic this[int index] => Columns.Values.ElementAt(index);
+
+        protected object GetMember(string propName)
         {
             var binder = Binder.GetMember(CSharpBinderFlags.None,
                   propName, this.GetType(),
@@ -39,7 +45,7 @@ namespace Sylvester
             return callsite.Target(callsite, this);
         }
 
-        public void SetMember(string propName, object val)
+        protected void SetMember(string propName, object val)
         {
             var binder = Binder.SetMember(CSharpBinderFlags.None,
                    propName, this.GetType(),
@@ -53,12 +59,11 @@ namespace Sylvester
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            result = Columns.SingleOrDefault(c => c.Label == binder.Name);
-            return result == null; 
+            result = null;
+            return Columns.TryGetValue(binder.Name, out result);
         }
-
         public override bool TrySetMember(SetMemberBinder binder, object value)
-        { 
+        {
             return false;
         }
     }
