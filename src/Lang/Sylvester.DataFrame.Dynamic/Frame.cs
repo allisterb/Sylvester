@@ -20,7 +20,9 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -31,7 +33,7 @@ using Sylvester.DataFrame.Dynamic;
 
 namespace Sylvester
 {
-    public class Frame : IDynamicMetaObjectProvider, IDictionary<string, object>, INotifyPropertyChanged
+    public class Frame : IDynamicMetaObjectProvider, IDictionary<string, object>, INotifyPropertyChanged, IEnumerable<ISeries>
     {
         #region Constructors
         public Frame()
@@ -44,9 +46,22 @@ namespace Sylvester
         {
             Add(series);
         }
+
+        public Frame(IEnumerable<ISeries> series) : this(series.ToArray()) { }
+       
         #endregion
 
         #region Methods
+        public IEnumerator<ISeries> GetEnumerator() => Series.GetEnumerator();
+
+        public Frame Select(params ISeries[] series) => new Frame(series);
+
+        public Frame Select(params string[] labels) => new Frame(Series.Where(s => labels.Contains(s.Label)));
+
+        public Frame Select(params int[] series) => new Frame(series.Select(i => Series[i]));
+
+        public Frame Except(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
+
         public Frame Add(params ISeries[] series)
         {
             if (series.Length == 0) return this;
@@ -63,7 +78,7 @@ namespace Sylvester
         #endregion
         
         #region Properties
-        public List<dynamic> Series { get; } = new List<dynamic>();
+        public List<ISeries> Series { get; } = new List<ISeries>();
 
         public FrameR this[int index]
         {
@@ -84,7 +99,6 @@ namespace Sylvester
         #endregion
 
         #region IDynamicMetaObjectProvider Members
-
         DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
         {
             return new MetaFrame(parameter, this);
@@ -835,7 +849,7 @@ namespace Sylvester
             // We want this to be atomic and not throw
             lock (_lockObject)
             {
-                foreach (KeyValuePair<string, object> item in this)
+                foreach (KeyValuePair<string, object> item in (IEnumerable<KeyValuePair<string, object>>) this)
                 {
                     array[arrayIndex++] = item;
                 }

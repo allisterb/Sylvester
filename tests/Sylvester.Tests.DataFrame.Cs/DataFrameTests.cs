@@ -2,6 +2,7 @@ using System;
 
 using Microsoft.CSharp;
 using Microsoft.CSharp.RuntimeBinder;
+using System.Linq;
 using Xunit;
 
 using Sylvester.DataFrame.Dynamic;
@@ -36,10 +37,13 @@ namespace Sylvester.Tests
             var r2 = f[2];
             Assert.NotNull(r2.Age);
             Assert.Equal(5.0, r2.Age);
-            dynamic f2 = new Frame(new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 }, "Age"));
-            f2.Children = new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 });
-            Assert.NotNull(f2.Children);
-            Assert.Equal("Children", f2.Children.Label);
+            f.Children = new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 });
+            Assert.NotNull(f.Children);
+            Assert.Equal("Children", f.Children.Label);
+            dynamic g = f.Select("Age");
+            Assert.NotNull(g.Age);
+            dynamic e = f.Except(0);
+            Assert.NotNull(e.Children);
         }
     }
 }
