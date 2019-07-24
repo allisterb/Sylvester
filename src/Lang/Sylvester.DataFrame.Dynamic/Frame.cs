@@ -60,7 +60,11 @@ namespace Sylvester
 
         public Frame Select(params int[] series) => new Frame(series.Select(i => Series[i]));
 
+        public Frame Except(params ISeries[] series) => new Frame(Series.Except(series));
+
         public Frame Except(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
+
+        public Frame Except(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
 
         public Frame Add(params ISeries[] series)
         {

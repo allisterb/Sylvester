@@ -41,7 +41,27 @@ namespace Sylvester
         }
 
         public override ISeries Clone(string label) => new Sn<T>(Data, label);
-         
-        
+
+        public static Sn<double> Rnd(int length, string label)
+        {
+            double[] values = new double[length];
+            var rnd = new Random(DateTime.Now.Millisecond);
+            for (int i = 0; i < length; i++)
+            {
+                values[i] = rnd.NextDouble();
+            }
+            return new Sn<double>(values, label);
+        }
+
+        public static Sn<int> Rnd(int length, int max, string label)
+        {
+            int[] values = new int[length];
+            var rnd = new Random(DateTime.Now.Millisecond);
+            for (int i = 0; i < length; i++)
+            {
+                values[i] = rnd.Next(max);
+            }
+            return new Sn<int>(values, label);
+        }
     }
 }
