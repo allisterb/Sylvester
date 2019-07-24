@@ -7,7 +7,8 @@ namespace Sylvester
 {
     public class Sn<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>, IConvertible, IFormattable
     {
-        public Sn(T[] data, string label) : base(label)
+       
+        public Sn(T[] data, string label, T defaultVal = default) : base(label, defaultVal)
         {
             Data = data;
         }

@@ -30,6 +30,13 @@ namespace Sylvester.Tests
         }
 
         [Fact]
+        public void CanConstructFrameFromAnonymous()
+        {
+            dynamic z = new Frame(new { Name = "test" }, 200);
+            Assert.NotNull(z.Name);
+        }
+
+        [Fact]
         public void CanConstructFrameR()
         {
             dynamic f = new Frame(new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 }, "Age"));

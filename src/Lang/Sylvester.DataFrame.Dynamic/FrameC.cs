@@ -10,7 +10,9 @@ namespace Sylvester
 {
     public abstract class FrameC<T> : DynamicObject, ISeries where T : IEquatable<T>
     {
-        public FrameC(string label) { Label = label; }
+        public FrameC(string label, dynamic defaultVal = null) { Label = label; DefaultVal = defaultVal; }
+
+        public FrameC(string label) : this(label, default) {}
 
         public FrameC() : this("") {}
 
@@ -25,6 +27,8 @@ namespace Sylvester
         public abstract ref T Ref(int index);
 
         public abstract T this[int index] { get; }
+
+        public dynamic DefaultVal { get; protected set; }
 
         public dynamic GetVal(int index) => this[index];
 

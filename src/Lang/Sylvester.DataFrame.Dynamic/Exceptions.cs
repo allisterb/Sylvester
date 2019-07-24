@@ -37,4 +37,9 @@ namespace Sylvester.DataFrame.Dynamic
     {
         public FrameUnrestrictedMembersNotEnabledException() : base("Unrestricted members are not allowed for this frame.") {}
     }
+
+    public class TypeNotAnonymousException : Exception
+    {
+        public TypeNotAnonymousException() : base("The object is not an instance of an anonymous type.") { }
+    }
 }

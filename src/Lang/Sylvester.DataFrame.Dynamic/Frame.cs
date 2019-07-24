@@ -26,6 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 
@@ -48,6 +49,34 @@ namespace Sylvester
         }
 
         public Frame(IEnumerable<ISeries> series) : this(series.ToArray()) { }
+
+        public Frame(object record, int Length) : this()
+        {
+            Type r = record.GetType();
+            if (!r.IsAnonymousType())
+            {
+                throw new TypeNotAnonymousException();
+            }
+            PropertyInfo[] props = r.GetProperties();
+            List<ISeries> series = new List<ISeries>();
+            for (int i = 0; i < props.Length; i++)
+            {
+                PropertyInfo p = props[i];
+                switch(p.PropertyType.Name)
+                {
+                    case "String":
+                        Add(new Ss(new string[Length], p.Name, (string) p.GetValue(record)));
+                        break;
+                    case "Integer":
+                        Add(new Sn<int>(new int[Length], p.Name, (int) p.GetValue(record)));
+                        break;
+
+                    default: throw new NotImplementedException();
+                }
+
+            }
+           
+        }
        
         #endregion
 

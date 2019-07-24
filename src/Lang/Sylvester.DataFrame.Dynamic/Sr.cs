@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Sylvester
+{
+    public class Sr<T> : FrameC<T>, IEnumerable<T> where T : class, IEquatable<T>, IComparable<T>
+    {
+        public Sr(T[] data, string label, object defaultVal = null) : base(label, defaultVal)
+        {
+            Data = data;
+        }
+
+        public Sr(T[] data) : this(data, "") {}
+
+        public T[] Data { get; }
+
+        public override int Length => Data.Length;
+
+        public override T this[int index] => Data[index];
+
+        public override ref T Ref(int index) => ref Data[index];
+
+        public override IEnumerator GetEnumerator() => Data.GetEnumerator();
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => (Data as IEnumerable<T>).GetEnumerator();
+
+        public override bool SetVal(int index, dynamic value)
+        {
+            Data[index] = value;
+            return true;
+        }
+
+        public override ISeries Append(params dynamic[] values)
+        {
+            T[] a = new T[Data.Length + values.Length];
+            Data.CopyTo(a, 0);
+            values.CopyTo(a, Length);
+            return new Sr<T>(a, Label);
+        }
+
+        public override ISeries Clone(string label) => new Sr<T>(Data, label);
+
+
+    }
+}
