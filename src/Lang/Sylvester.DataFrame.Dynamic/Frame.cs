@@ -58,7 +58,6 @@ namespace Sylvester
             {
                 TrySetValue(null, -1, series[i], series[i].Label, false, false);
             }
-            Series.AddRange(series);
             return this;
         }
         #endregion
@@ -66,6 +65,19 @@ namespace Sylvester
         #region Properties
         public List<dynamic> Series { get; } = new List<dynamic>();
 
+        public FrameR this[int index]
+        {
+            get
+            {
+                var r = new Dictionary<string, dynamic>(Series.Count);
+                for (int i = 0; i < Series.Count; i++)
+                {
+                    ISeries s = Series[i];
+                    r.Add(s.Label, s.GetVal(index));
+                }
+                return new FrameR(this, index, r);
+            }
+        }
         public int Length { get; protected set; } = -1;
 
         public bool UnrestrictedMembers { get; set; } = false;
@@ -504,7 +516,14 @@ namespace Sylvester
             {
                 throw new FrameUnrestrictedMembersNotEnabledException();
             }
-
+            else if (value is ISeries s && s.Label == "")
+            {
+                value = s.Clone(name);
+            }
+            else if (value is ISeries ss)
+            {
+                Series.Add(ss);
+            }
             FrameData data;
             object oldValue;
 
@@ -1205,9 +1224,6 @@ namespace Sylvester
         private int _count;                     // the count of available members
         private PropertyChangedEventHandler _propertyChanged;
         #endregion
-
-        public int this[int index]  => 0;
-
     }
 
     #region RuntimeHelpers

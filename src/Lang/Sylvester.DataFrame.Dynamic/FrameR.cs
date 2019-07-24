@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
@@ -10,7 +10,7 @@ using Microsoft.CSharp.RuntimeBinder;
 
 namespace Sylvester
 {
-    public class FrameR : DynamicObject
+    public class FrameR : DynamicObject, IEnumerable
     {
         public FrameR(Frame f, int index, IDictionary<string, dynamic> columns)
         {
@@ -33,6 +33,8 @@ namespace Sylvester
         public dynamic this[string column] => Columns[column];
 
         public dynamic this[int index] => Columns.Values.ElementAt(index);
+
+        public IEnumerator GetEnumerator() => Columns.Values.GetEnumerator();
 
         protected object GetMember(string propName)
         {
@@ -62,9 +64,8 @@ namespace Sylvester
             result = null;
             return Columns.TryGetValue(binder.Name, out result);
         }
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            return false;
-        }
+        public override bool TrySetMember(SetMemberBinder binder, object value) => Columns.ContainsKey(binder.Name);
+            
+        
     }
 }

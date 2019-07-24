@@ -13,8 +13,10 @@ namespace Sylvester
         int Length { get;  }
 
         dynamic GetVal(int index);
-
+ 
         bool SetVal(int index, dynamic value);
+
+        ISeries Clone(string label);
 
         ISeries Append(params dynamic[] values);
     }

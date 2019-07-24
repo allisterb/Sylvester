@@ -27,5 +27,19 @@ namespace Sylvester.Tests
             Assert.Throws<FrameUnrestrictedMembersNotEnabledException>(() => f.P = "foo");
             Assert.Throws<RuntimeBinderException> (() => f.P);
         }
+
+        [Fact]
+        public void CanConstructFrameR()
+        {
+            dynamic f = new Frame(new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 }, "Age"));
+            Assert.Equal(3.0, f.Age[1]);
+            var r2 = f[2];
+            Assert.NotNull(r2.Age);
+            Assert.Equal(5.0, r2.Age);
+            dynamic f2 = new Frame(new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 }, "Age"));
+            f2.Children = new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 });
+            Assert.NotNull(f2.Children);
+            Assert.Equal("Children", f2.Children.Label);
+        }
     }
 }

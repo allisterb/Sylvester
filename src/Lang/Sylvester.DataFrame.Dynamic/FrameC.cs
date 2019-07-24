@@ -12,6 +12,8 @@ namespace Sylvester
     {
         public FrameC(string label) { Label = label; }
 
+        public FrameC() : this("") {}
+
         public Type DataType { get; } = typeof(T);
 
         public string Label { get; }
@@ -30,6 +32,7 @@ namespace Sylvester
 
         public abstract ISeries Append(params dynamic[] values);
 
+        public abstract ISeries Clone(string label);
     }
 
 }
