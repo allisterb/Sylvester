@@ -68,6 +68,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Tests.DataFrame.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Base.Backend", "Base\Sylvester.Base.Backend\Sylvester.Base.Backend.csproj", "{4352724E-72C9-4AD2-9B34-B74FCFB60D11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Data", "Lang\Sylvester.Data\Sylvester.Data.csproj", "{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -246,6 +248,18 @@ Global
 		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|x64.Build.0 = Release|Any CPU
 		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|x86.ActiveCfg = Release|Any CPU
 		{4352724E-72C9-4AD2-9B34-B74FCFB60D11}.Release|x86.Build.0 = Release|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Debug|x64.Build.0 = Debug|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Debug|x86.Build.0 = Debug|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Release|x64.ActiveCfg = Release|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Release|x64.Build.0 = Release|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Release|x86.ActiveCfg = Release|Any CPU
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -268,6 +282,7 @@ Global
 		{CD05CADB-D3FC-401D-AFD4-61ED28AE7239} = {1EF4A0C4-252E-480B-959D-4012B88356A4}
 		{57AF23B0-3F74-4CCC-8CB2-77B606A1C023} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{4352724E-72C9-4AD2-9B34-B74FCFB60D11} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
+		{66CFEC59-94A2-4FBE-9EE5-B75E36BC85AF} = {1EF4A0C4-252E-480B-959D-4012B88356A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

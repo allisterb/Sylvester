@@ -79,22 +79,15 @@ namespace Sylvester
                 throw new ArgumentException("The number of data arrays must be equal to the number of object properties.", "data");
             }
 
-            void AddSn<T>(T[] d, string label, T defaultVal) where T : struct, IEquatable<T>, IComparable<T>, IConvertible, IFormattable
-            {
-                Add(new Sn<T>(d, label, defaultVal));
-            }
-
             for (int i = 0; i < props.Length; i++)
             {
                 PropertyInfo p = props[i];
                 switch(p.PropertyType.Name)
                 {
                     case "String":
-                        string sv = (string)p.GetValue(record);
                         Add(new Ss((string[])data[i], p.Name, (string) p.GetValue(record)));
                         break;
                     case "DateTime":
-                        DateTime dv = (DateTime) p.GetValue(record);
                         Add(new Sd((DateTime[])data[i], p.Name, (DateTime)p.GetValue(record)));
                         break;
 
@@ -127,6 +120,12 @@ namespace Sylvester
                         break;
                     case "Double":
                         Add(new Sn<double>((double[])data[i], p.Name, (double)p.GetValue(record)));
+                        break;
+                    case "Decimal":
+                        Add(new Sn<decimal>((decimal[])data[i], p.Name, (decimal)p.GetValue(record)));
+                        break;
+                    case "Boolean":
+                        Add(new Sn<bool>((bool[])data[i], p.Name, (bool)p.GetValue(record)));
                         break;
 
                     default: throw new NotImplementedException("Series of .NET reference objects can't be set using anonymous types.");
@@ -163,6 +162,7 @@ namespace Sylvester
             for (int i = 0; i < series.Length; i++)
             {
                 TrySetValue(null, -1, series[i], series[i].Label, false, false);
+                series[i].Backend = this.Backend;
             }
             return this;
         }

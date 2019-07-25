@@ -34,6 +34,8 @@ namespace Sylvester
 
         public abstract bool SetVal(int index, dynamic value);
 
+        public IBackend Backend { get; set; }
+
         public abstract ISeries Append(params dynamic[] values);
 
         public abstract ISeries Clone(string label);

@@ -17,6 +17,8 @@ namespace Sylvester
  
         bool SetVal(int index, dynamic value);
 
+        IBackend Backend { get; set; }
+
         ISeries Clone(string label);
 
         ISeries Append(params dynamic[] values);

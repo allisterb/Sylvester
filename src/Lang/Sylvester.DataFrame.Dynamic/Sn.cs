@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sylvester
 {
-    public class Sn<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>, IConvertible, IFormattable
+    public class Sn<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>, IConvertible
     {
        
         public Sn(T[] data, string label, T defaultVal = default) : base(label, defaultVal)
