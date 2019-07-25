@@ -32,8 +32,15 @@ namespace Sylvester.Tests
         [Fact]
         public void CanConstructFrameFromAnonymous()
         {
-            dynamic z = new Frame(new { Name = "test" }, 200);
+            dynamic z = new Frame(new { Name = "", Age = 0, Birthday = DateTime.Now }, new[] { "John Doe" }, new[] { 0 }, new[] { DateTime.Now.Subtract(TimeSpan.FromDays(1)) }) ;
             Assert.NotNull(z.Name);
+            Assert.NotNull(z.Birthday);
+            _ = Assert.IsType<string>(z.Name[0]);
+            Assert.IsType<DateTime>(z.Birthday[0]);
+            dynamic r = z[0];
+            Assert.NotNull(r.Name);
+            Assert.NotNull(r.Birthday);
+
         }
 
         [Fact]

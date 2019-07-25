@@ -10,4 +10,8 @@
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Sylvester.Base.Backend\Sylvester.Base.Backend.csproj" />
+  </ItemGroup>
+
 </Project>

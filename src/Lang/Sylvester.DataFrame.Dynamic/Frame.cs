@@ -41,6 +41,7 @@ namespace Sylvester
         {
             _data = FrameData.Empty;
             _lockObject = new object();
+            Backend = new DefaultBackend();
         }
 
         public Frame(params ISeries[] series) : this()
@@ -50,28 +51,85 @@ namespace Sylvester
 
         public Frame(IEnumerable<ISeries> series) : this(series.ToArray()) { }
 
-        public Frame(object record, int Length) : this()
+        public Frame(object record, params Array[] data) : this()
         {
+            if (data == null || data.Length == 0)
+            {
+                throw new ArgumentException("At least one data array must be passed to this Frame constructor.", "data");
+            }
+
+            int l = data[0].Length;
+            for (int i = 1; i < data.Length; i++)
+            {
+                if (data[i].Length != l)
+                {
+                    throw new ArgumentException($"The data arrays much each have the same size: {l}.", "data");
+                }
+            }
+
             Type r = record.GetType();
             if (!r.IsAnonymousType())
             {
                 throw new TypeNotAnonymousException();
             }
+
             PropertyInfo[] props = r.GetProperties();
-            List<ISeries> series = new List<ISeries>();
+            if (props.Length != data.Length)
+            {
+                throw new ArgumentException("The number of data arrays must be equal to the number of object properties.", "data");
+            }
+
+            void AddSn<T>(T[] d, string label, T defaultVal) where T : struct, IEquatable<T>, IComparable<T>, IConvertible, IFormattable
+            {
+                Add(new Sn<T>(d, label, defaultVal));
+            }
+
             for (int i = 0; i < props.Length; i++)
             {
                 PropertyInfo p = props[i];
                 switch(p.PropertyType.Name)
                 {
                     case "String":
-                        Add(new Ss(new string[Length], p.Name, (string) p.GetValue(record)));
+                        string sv = (string)p.GetValue(record);
+                        Add(new Ss((string[])data[i], p.Name, (string) p.GetValue(record)));
                         break;
-                    case "Integer":
-                        Add(new Sn<int>(new int[Length], p.Name, (int) p.GetValue(record)));
+                    case "DateTime":
+                        DateTime dv = (DateTime) p.GetValue(record);
+                        Add(new Sd((DateTime[])data[i], p.Name, (DateTime)p.GetValue(record)));
                         break;
 
-                    default: throw new NotImplementedException();
+                    case "Byte":
+                        Add(new Sn<byte>((byte[])data[i], p.Name, (byte)p.GetValue(record)));
+                        break;
+                    case "SByte":
+                        Add(new Sn<sbyte>((sbyte[])data[i], p.Name, (sbyte)p.GetValue(record)));
+                        break;
+                    case "Int16":
+                        Add(new Sn<short>((short[])data[i], p.Name, (short)p.GetValue(record)));
+                        break;
+                    case "UInt16":
+                        Add(new Sn<ushort>((ushort[])data[i], p.Name, (ushort)p.GetValue(record)));
+                        break;
+                    case "Int32":
+                        Add(new Sn<int>((int[])data[i], p.Name, (int) p.GetValue(record)));
+                        break;
+                    case "Int64":
+                        Add(new Sn<long>((long[])data[i], p.Name, (long)p.GetValue(record)));
+                        break;
+                    case "UInt32":
+                        Add(new Sn<uint>((uint[])data[i], p.Name, (uint)p.GetValue(record)));
+                        break;
+                    case "UInt64":
+                        Add(new Sn<ulong>((ulong[])data[i], p.Name, (ulong)p.GetValue(record)));
+                        break;
+                    case "Single":
+                        Add(new Sn<float>((float[])data[i], p.Name, (float)p.GetValue(record)));
+                        break;
+                    case "Double":
+                        Add(new Sn<double>((double[])data[i], p.Name, (double)p.GetValue(record)));
+                        break;
+
+                    default: throw new NotImplementedException("Series of .NET reference objects can't be set using anonymous types.");
                 }
 
             }
@@ -128,7 +186,11 @@ namespace Sylvester
         }
         public int Length { get; protected set; } = -1;
 
+        public Backend Backend { get; protected set; }
+
         public bool UnrestrictedMembers { get; set; } = false;
+
+
         #endregion
 
         #region IDynamicMetaObjectProvider Members

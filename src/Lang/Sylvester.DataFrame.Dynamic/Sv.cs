@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Sylvester
 {
-    public class Sr<T> : FrameC<T>, IEnumerable<T> where T : class, IEquatable<T>, IComparable<T>
+    public class Sv<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>
     {
-        public Sr(T[] data, string label, object defaultVal = default) : base(label, defaultVal)
+        public Sv(T[] data, string label, object defaultVal = default) : base(label, defaultVal)
         {
             Data = data;
         }
 
-        public Sr(T[] data) : this(data, "") {}
+        public Sv(T[] data) : this(data, "") { }
 
         public T[] Data { get; }
 
@@ -37,11 +37,9 @@ namespace Sylvester
             T[] a = new T[Data.Length + values.Length];
             Data.CopyTo(a, 0);
             values.CopyTo(a, Length);
-            return new Sr<T>(a, Label);
+            return new Sv<T>(a, Label);
         }
 
-        public override ISeries Clone(string label) => new Sr<T>(Data, label);
-
-
+        public override ISeries Clone(string label) => new Sv<T>(Data, label);
     }
 }

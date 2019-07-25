@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2048
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{6B594C72-1F63-42A3-87DB-CC18B5724753}"
 EndProject
@@ -55,6 +55,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{5A137A1D-E
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lang", "Lang", "{1EF4A0C4-252E-480B-959D-4012B88356A4}"
+	ProjectSection(SolutionItems) = preProject
+		Lang\Sylvester.DataFrame.Dynamic\Sr.cs = Lang\Sylvester.DataFrame.Dynamic\Sr.cs
+		Lang\Sylvester.DataFrame.Dynamic\Ss.cs = Lang\Sylvester.DataFrame.Dynamic\Ss.cs
+	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tensors.AutoDiff", "Lang\Sylvester.Tensors.AutoDiff\Sylvester.Tensors.AutoDiff.fsproj", "{3331CCEE-EEB1-471D-A6DB-319C2F435320}"
 EndProject
