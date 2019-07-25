@@ -32,7 +32,7 @@ namespace Sylvester.Data
                
                 for (int i = 0; i < header.Length; i++)
                 {
-                    Fields.Add(new CsvField(i, typeof(string), header[i]));
+                    Fields.Add(new CsvField(i, typeof(string), header[i] != string.Empty ? header[i] : "Field" + i.ToString()));
                 }
             }
         }
@@ -47,32 +47,27 @@ namespace Sylvester.Data
 
         public List<CsvField> Fields { get; } = new List<CsvField>();
 
-        public string ReadEntireFile()
-        {
-            using (var stream = File.OpenRead(Path))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+        public byte[] ReadEntireFile() => File.ReadAllBytes(Path); 
+        
 
-        public List<string[]> Parse(string fileData)
+        public List<string[]> Parse(byte[] fileData)
         {
-            List<string[]> rows = new List<string[]>(100000);
-            using (var reader = new StringReader(fileData)) 
+            using(var stream = new MemoryStream(fileData))
+            using (var reader = new StreamReader(stream))
             using (var parser = new CsvParser(reader))
             {
+                List<string[]> rows = new List<string[]>(100000);
                 string[] row;
                 if (InferFieldNames || SkipHeader)
                 {
                     parser.Read();
                 }
-                while ((row = parser.Read()) != null) { }
+                while ((row = parser.Read()) != null)
                 {
                     rows.Add(row);
                 }
+                return rows;
             }
-            return rows;
         }
     }
 
