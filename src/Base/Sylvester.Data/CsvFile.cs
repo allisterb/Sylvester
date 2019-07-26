@@ -88,7 +88,7 @@ namespace Sylvester.Data
             Action<int, string>[] parseActions = new Action<int, string>[rows[0].Length];
             for (int i = 0; i < parseActions.Length; i++)
             {
-                if (!Fields.Any(f => f.Index == i))
+                if (Fields.Any(f => f.Index == i))
                 {
                     parseActions[i] = Fields[i].ParseAction;
                 }
@@ -100,7 +100,7 @@ namespace Sylvester.Data
                 {
                     for (int j = 0; j < rows[i].Length; j++)
                     {
-                        if (parseActions[i] != null)
+                        if (parseActions[j] != null)
                         {
                             parseActions[j](i, rows[i][j]);
                         }

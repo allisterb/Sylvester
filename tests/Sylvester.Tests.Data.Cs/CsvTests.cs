@@ -14,8 +14,8 @@ namespace Sylvester.Data.Tests
             CsvFile f = new CsvFile("mtcars.csv");
             Assert.NotEmpty(f.Fields);
             Assert.Equal("Field0", f.Fields[0].Label);
-            List<string[]> rows = f.Parse(f.ReadEntireFile());
-            Assert.NotEmpty(rows);
+            f.Parse();
+            Assert.NotEmpty(f.Fields[3].Data);
         }
     }
 }
