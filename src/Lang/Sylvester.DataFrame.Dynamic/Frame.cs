@@ -135,9 +135,9 @@ namespace Sylvester
            
         }
 
-        public Frame(CsvFile file)
+        public Frame(CsvFile file, int? batchSize)
         {
-            throw new NotImplementedException();
+            
         }
        
         #endregion

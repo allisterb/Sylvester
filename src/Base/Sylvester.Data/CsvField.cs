@@ -8,7 +8,7 @@ namespace Sylvester.Data
     {
         public CsvField(int index, Type type, string label, dynamic defaultVal = default, dynamic constant = default, string boolFalse = "", string boolTrue = "")
         {
-            if (type.Name != "String" && !type.IsValueType)
+            if (!type.IsValueType && type.Name != "String")
             {
                 throw new CsvFieldIsNotValueTypeException(type);
             }
@@ -21,9 +21,14 @@ namespace Sylvester.Data
             BoolTrue = boolTrue;
         }
 
+        public Array Data { get; internal set; }
+
+        public Action<int, string> ParseAction { get; internal set; }
+
         public int Index { get; }
 
         public Type Type { get; }
+
         public string Label { get; set; }
 
         public dynamic DefaultVal { get; set; }

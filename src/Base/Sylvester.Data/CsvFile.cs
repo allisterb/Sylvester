@@ -47,6 +47,8 @@ namespace Sylvester.Data
 
         public List<CsvField> Fields { get; } = new List<CsvField>();
 
+        public HashSet<int> FieldIndices => new HashSet<int>(Fields.Select(f => f.Index));
+
         public byte[] ReadEntireFile() => File.ReadAllBytes(Path); 
         
         public CsvFile Add<T>(int index, string label, T defaultVal = default, T constant = default, string boolFalse = "", string boolTrue = "") where T : struct
@@ -55,7 +57,7 @@ namespace Sylvester.Data
             {
                 throw new CsvFieldAlreadyExistsException(index, Fields[index].Label);
             }
-            if (!typeof(T).IsValueType)
+            if (!typeof(T).IsValueType && !(typeof(T).Name == "String"))
             {
                 throw new CsvFieldIsNotValueTypeException(typeof(T));
             }
@@ -63,14 +65,15 @@ namespace Sylvester.Data
             return this;
         }
             
-        public List<string[]> Parse(byte[] fileData)
+        public void Parse(int threads = 0)
         {
-            using(var stream = new MemoryStream(fileData))
+            byte[] fileData = File.ReadAllBytes(Path);
+            List<string[]> rows = new List<string[]>(100000);
+            string[] row = null;
+            using (var stream = new MemoryStream(fileData))
             using (var reader = new StreamReader(stream))
             using (var parser = new CsvParser(reader))
             {
-                List<string[]> rows = new List<string[]>(100000);
-                string[] row;
                 if (InferFieldNames || SkipHeader)
                 {
                     parser.Read();
@@ -79,55 +82,156 @@ namespace Sylvester.Data
                 {
                     rows.Add(row);
                 }
-                return rows;
             }
-        }
 
-        public void Parse(byte[] fileData, Dictionary<int, Action<string>> parseActions)
-        {
-            if (parseActions.Count != Fields.Count)
+            InitParser(rows.Count);
+            Action<int, string>[] parseActions = new Action<int, string>[rows[0].Length];
+            for (int i = 0; i < parseActions.Length; i++)
             {
-                throw new ArgumentException($"The number of parse actions {parseActions.Count} does not match the number of CSV fields {Fields.Count}.");
-            }
-            List<string[]> rows = Parse(fileData);
-            HashSet<int> fieldIndices = new HashSet<int>(Fields.Select(f => f.Index));
-            for (int i = 0; i < rows.Count; i++)
-            {
-                for (int j = 0; j < rows[i].Length; j++)
+                if (!Fields.Any(f => f.Index == i))
                 {
-                    if (fieldIndices.Contains(j))
+                    parseActions[i] = Fields[i].ParseAction;
+                }
+                
+            }
+            if (threads == 0)
+            {
+                for (int i = 0; i < rows.Count; i++)
+                {
+                    for (int j = 0; j < rows[i].Length; j++)
                     {
-                        parseActions[j](rows[i][j]);
+                        if (parseActions[i] != null)
+                        {
+                            parseActions[j](i, rows[i][j]);
+                        }
                     }
                 }
             }
         }
 
-        public List<string[]> Parse(int batchSize = int.MaxValue)
+        protected void InitParser(int length)
         {
-            using (var reader = File.OpenText(Path))
-            using (var parser = new CsvParser(reader))
+            for (int i = 0; i < Fields.Count; i++)
             {
-                List<string[]> rows = new List<string[]>(100000);
-                string[] row;
-                if (InferFieldNames || SkipHeader)
+                switch(Fields[i].Type.Name)
                 {
-                    parser.Read();
+                    case "String":
+                        var sdata = new string[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            sdata[index] = s == "" ? Fields[i].DefaultVal : s;
+                        };
+                        Fields[i].Data = sdata; 
+                        break;
+                    case "DateTime":
+                        var dtdata = new DateTime[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            dtdata[index] = DateTime.TryParse(s, out DateTime dtv) ? dtv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = dtdata;
+                        break;
+                    case "Byte":
+                        var bdata = new Byte[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            bdata[index] = Byte.TryParse(s, out byte bv) ? bv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = bdata;
+                        break;
+                    case "SByte":
+                        var sbdata = new SByte[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            sbdata[index] = SByte.TryParse(s, out sbyte sbv) ? sbv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = sbdata;
+                        break;
+                    case "UInt16":
+                        var usdata = new ushort[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            usdata[index] = ushort.TryParse(s, out ushort usv) ? usv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = usdata;
+                        break;
+                    case "Int16":
+                        var shdata = new short[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            shdata[index] = short.TryParse(s, out short shv) ? shv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = shdata;
+                        break;
+                    case "UInt32":
+                        var undata = new uint[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            undata[index] = uint.TryParse(s, out uint unv) ? unv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = undata;
+                        break;
+                    case "Int32":
+                        var ndata = new int[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            ndata[index] = int.TryParse(s, out int nv) ? nv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = ndata;
+                        break;
+                    case "UInt64":
+                        var uldata = new ulong[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            uldata[index] = ulong.TryParse(s, out ulong ulv) ? ulv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = uldata;
+                        break;
+                    case "Int64":
+                        var ldata = new long[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            ldata[index] = long.TryParse(s, out long lv) ? lv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = ldata;
+                        break;
+                    case "Single":
+                        var fdata = new float[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            fdata[index] = float.TryParse(s, out float fv) ? fv : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = fdata;
+                        break;
+                    case "Double":
+                        var ddata = new double[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            ddata[index] = double.TryParse(s, out double ddv) ? ddv : Fields[i].DefaultVal;
+
+                        };
+                        Fields[i].Data = ddata;
+                        break;
+                    case "Decimal":
+                        var dedata = new decimal[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            dedata[index] = decimal.TryParse(s, out decimal dev) ? dev : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = dedata;
+                        break;
+                    case "Boolean":
+                        var bodata = new bool[length];
+                        Fields[i].ParseAction = (index, s) =>
+                        {
+                            bodata[index] = bool.TryParse(s, out bool bov) ? bov : Fields[i].DefaultVal;
+                        };
+                        Fields[i].Data = bodata;
+                        break;
+                    default:
+                        throw new NotImplementedException("Field type must be numeric, string, datetime, or boolean.");
                 }
-                int r = 0;
-                while (((row = parser.Read()) != null) && r < batchSize)
-                {
-                    rows.Add(row);
-                    r++;
-                }
-                return rows;
             }
         }
-
-
-    }
-
-    
-
-   
+    }   
 }
