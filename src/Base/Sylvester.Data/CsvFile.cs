@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CsvHelper;
 
 namespace Sylvester.Data
@@ -22,7 +23,6 @@ namespace Sylvester.Data
                 using (var reader = new StreamReader(stream))
                 using (var parser = new CsvParser(reader))
                 {
-                 
                     header = parser.Read();
                 }
                 if (header == null || header.Length == 0)
@@ -49,7 +49,20 @@ namespace Sylvester.Data
 
         public byte[] ReadEntireFile() => File.ReadAllBytes(Path); 
         
-
+        public CsvFile Add<T>(int index, string label, T defaultVal = default, T constant = default, string boolFalse = "", string boolTrue = "") where T : struct
+        {
+            if (Fields.Any(f => f.Index == index))
+            {
+                throw new CsvFieldAlreadyExistsException(index, Fields[index].Label);
+            }
+            if (!typeof(T).IsValueType)
+            {
+                throw new CsvFieldIsNotValueTypeException(typeof(T));
+            }
+            Fields.Add(new CsvField(index, typeof(T), label, defaultVal, constant, boolFalse, boolTrue));
+            return this;
+        }
+            
         public List<string[]> Parse(byte[] fileData)
         {
             using(var stream = new MemoryStream(fileData))
@@ -69,6 +82,49 @@ namespace Sylvester.Data
                 return rows;
             }
         }
+
+        public void Parse(byte[] fileData, Dictionary<int, Action<string>> parseActions)
+        {
+            if (parseActions.Count != Fields.Count)
+            {
+                throw new ArgumentException($"The number of parse actions {parseActions.Count} does not match the number of CSV fields {Fields.Count}.");
+            }
+            List<string[]> rows = Parse(fileData);
+            HashSet<int> fieldIndices = new HashSet<int>(Fields.Select(f => f.Index));
+            for (int i = 0; i < rows.Count; i++)
+            {
+                for (int j = 0; j < rows[i].Length; j++)
+                {
+                    if (fieldIndices.Contains(j))
+                    {
+                        parseActions[j](rows[i][j]);
+                    }
+                }
+            }
+        }
+
+        public List<string[]> Parse(int batchSize = int.MaxValue)
+        {
+            using (var reader = File.OpenText(Path))
+            using (var parser = new CsvParser(reader))
+            {
+                List<string[]> rows = new List<string[]>(100000);
+                string[] row;
+                if (InferFieldNames || SkipHeader)
+                {
+                    parser.Read();
+                }
+                int r = 0;
+                while (((row = parser.Read()) != null) && r < batchSize)
+                {
+                    rows.Add(row);
+                    r++;
+                }
+                return rows;
+            }
+        }
+
+
     }
 
     

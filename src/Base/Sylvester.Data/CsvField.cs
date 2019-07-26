@@ -8,6 +8,10 @@ namespace Sylvester.Data
     {
         public CsvField(int index, Type type, string label, dynamic defaultVal = default, dynamic constant = default, string boolFalse = "", string boolTrue = "")
         {
+            if (type.Name != "String" && !type.IsValueType)
+            {
+                throw new CsvFieldIsNotValueTypeException(type);
+            }
             Index = index;
             Type = type;
             Label = label;

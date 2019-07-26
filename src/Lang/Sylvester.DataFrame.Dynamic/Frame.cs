@@ -1,5 +1,5 @@
 ﻿#region Attribution and License
-// Contains code from https://github.com/microsoft/referencesource/blob/master/System.Core/Microsoft/Scripting/Actions/FrameObject.cs
+// Contains code from https://github.com/microsoft/referencesource/blob/master/System.Core/Microsoft/Scripting/Actions/ExpandoObject.cs
 // ExpandoObject.cs is licensed under the following terms:
 
 /* ****************************************************************************
@@ -16,7 +16,6 @@
  *
  *
  * ***************************************************************************/
-
 #endregion
 
 using System;
@@ -30,7 +29,9 @@ using System.Reflection;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 
+
 using Sylvester.DataFrame.Dynamic;
+using Sylvester.Data;
 
 namespace Sylvester
 {
@@ -90,7 +91,6 @@ namespace Sylvester
                     case "DateTime":
                         Add(new Sd((DateTime[])data[i], p.Name, (DateTime)p.GetValue(record)));
                         break;
-
                     case "Byte":
                         Add(new Sn<byte>((byte[])data[i], p.Name, (byte)p.GetValue(record)));
                         break;
@@ -128,11 +128,16 @@ namespace Sylvester
                         Add(new Sn<bool>((bool[])data[i], p.Name, (bool)p.GetValue(record)));
                         break;
 
-                    default: throw new NotImplementedException("Series of .NET reference objects can't be set using anonymous types.");
+                    default: throw new NotImplementedException("Series of .NET reference objects can't be added to a Frame using anonymous types.");
                 }
 
             }
            
+        }
+
+        public Frame(CsvFile file)
+        {
+            throw new NotImplementedException();
         }
        
         #endregion
