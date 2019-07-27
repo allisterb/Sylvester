@@ -14,6 +14,7 @@ namespace Sylvester.Data.Tests
             CsvFile f = new CsvFile("mtcars.csv");
             Assert.NotEmpty(f.Fields);
             Assert.Equal("Field0", f.Fields[0].Label);
+            f[1].Type = typeof(Single);
             f.Parse();
             Assert.NotEmpty(f.Fields[3].Data);
         }

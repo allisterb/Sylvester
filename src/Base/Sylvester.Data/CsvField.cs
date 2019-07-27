@@ -25,9 +25,9 @@ namespace Sylvester.Data
 
         public Action<int, string> ParseAction { get; internal set; }
 
-        public int Index { get; }
+        public int Index { get; set; }
 
-        public Type Type { get; }
+        public Type Type { get; set; }
 
         public string Label { get; set; }
 
