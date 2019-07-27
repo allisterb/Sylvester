@@ -17,14 +17,19 @@ namespace Sylvester
             Frame = f;
             Index = index;
             _Columns = columns;
+            foreach (var c in _Columns)
+            {
+                AddCallSite(c.Key);
+            }
         }
-
         public Frame Frame { get; }
 
         public int Index { get; }
 
         internal Dictionary<string, ISeries> _Columns { get; }
 
+        internal Dictionary<string, CallSite<Func<CallSite, object, object>>> CallSites =
+            new Dictionary<string, CallSite<Func<CallSite, object, object>>>();
         public dynamic this[string column] => _Columns[column].GetVal(Index);
 
         public dynamic this[int i]
@@ -35,13 +40,18 @@ namespace Sylvester
 
         internal object GetMember(string propName)
         {
-            var binder = Binder.GetMember(CSharpBinderFlags.None,
-                  propName, this.GetType(),
-                  new List<CSharpArgumentInfo>{
+            ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
+            return s.GetVal(Index);
+        }
+
+        internal void AddCallSite(string propName)
+        {
+            var binder = Binder.GetMember(CSharpBinderFlags.None, propName, this.GetType(),
+                new List<CSharpArgumentInfo>{
                        CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)});
             var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
-            ISeries s = (ISeries)callsite.Target(callsite, this.Frame);
-            return s.GetVal(Index);
+            CallSites.Add(propName, callsite);
+
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)

@@ -283,6 +283,7 @@ namespace Sylvester
                         if (!rows[r]._Columns.ContainsKey(Series[i].Label))
                         {
                             rows[r]._Columns.Add(Series[i].Label, Series[i]);
+                            rows[r].AddCallSite(Series[i].Label);
                         }
                     }
                 }
