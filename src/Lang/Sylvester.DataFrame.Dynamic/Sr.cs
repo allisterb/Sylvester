@@ -18,8 +18,6 @@ namespace Sylvester
 
         public override int Length => Data.Length;
 
-        public override T this[int index] => Data[index];
-
         public override ref T Ref(int index) => ref Data[index];
 
         public override IEnumerator GetEnumerator() => Data.GetEnumerator();
@@ -32,6 +30,14 @@ namespace Sylvester
             return true;
         }
 
+        public override T this[int index]
+        {
+            get => Data[index];
+            set
+            {
+                SetVal(index, value);
+            }
+        }
         public override ISeries Append(params dynamic[] values)
         {
             T[] a = new T[Data.Length + values.Length];

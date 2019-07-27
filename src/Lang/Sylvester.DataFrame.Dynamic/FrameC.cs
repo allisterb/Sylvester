@@ -26,7 +26,7 @@ namespace Sylvester
 
         public abstract ref T Ref(int index);
 
-        public abstract T this[int index] { get; }
+        public abstract T this[int index] { get; set; }
 
         public dynamic DefaultVal { get; protected set; }
 

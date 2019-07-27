@@ -6,6 +6,6 @@ namespace Sylvester
 {
     public class Ss : Sr<string>
     {
-        public Ss(string[] data, string label, object defaultVal = null) : base(data, label, defaultVal) {}
+        public Ss(string[] data, string label, string defaultVal = "") : base(data, label, defaultVal) {}
     }
 }

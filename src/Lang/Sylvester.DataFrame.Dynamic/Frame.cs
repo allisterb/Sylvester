@@ -130,9 +130,7 @@ namespace Sylvester
 
                     default: throw new NotImplementedException("Series of .NET reference objects can't be added to a Frame using anonymous types.");
                 }
-
             }
-           
         }
 
         public Frame(CsvFile file)
@@ -685,11 +683,11 @@ namespace Sylvester
             {
                 throw new FrameUnrestrictedMembersNotEnabledException();
             }
-            else if (value is ISeries s && s.Label == "")
+            if (value is ISeries s && s.Label == "")
             {
                 value = s.Clone(name);
             }
-            else if (value is ISeries ss)
+            if (value is ISeries ss)
             {
                 Series.Add(ss);
             }

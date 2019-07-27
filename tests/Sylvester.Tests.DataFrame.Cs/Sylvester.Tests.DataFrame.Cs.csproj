@@ -16,4 +16,10 @@
     <ProjectReference Include="..\..\src\Lang\Sylvester.DataFrame.Dynamic\Sylvester.DataFrame.Dynamic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="mtcars.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
