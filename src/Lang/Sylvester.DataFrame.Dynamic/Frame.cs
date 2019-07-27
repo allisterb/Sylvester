@@ -35,7 +35,7 @@ using Sylvester.Data;
 
 namespace Sylvester
 {
-    public class Frame : IDynamicMetaObjectProvider, IDictionary<string, object>, INotifyPropertyChanged, IEnumerable<ISeries>
+    public class Frame : IDynamicMetaObjectProvider, INotifyPropertyChanged, IEnumerable<FrameR>
     {
         #region Constructors
         public Frame()
@@ -48,6 +48,7 @@ namespace Sylvester
         public Frame(params ISeries[] series) : this()
         {
             Add(series);
+            BuildRows();
         }
 
         public Frame(IEnumerable<ISeries> series) : this(series.ToArray()) { }
@@ -131,6 +132,7 @@ namespace Sylvester
                     default: throw new NotImplementedException("Series of .NET reference objects can't be added to a Frame using anonymous types.");
                 }
             }
+            BuildRows();
         }
 
         public Frame(CsvFile file) : this()
@@ -142,11 +144,41 @@ namespace Sylvester
                 if (f.Data.Length == 0) continue;
                 Add(f.Type, f.Data, f.Label);
             }
+            BuildRows();
         }
         #endregion
 
+        #region Properties
+        public List<ISeries> Series { get; } = new List<ISeries>();
+
+        public FrameR this[int index] => rows[index];
+
+        public ISeries this[string label] => Series.SingleOrDefault(s => s.Label == label);
+        
+        public int Length { get; protected set; } = -1;
+
+        public Backend Backend { get; protected set; }
+
+        public bool UnrestrictedMembers { get; set; } = false;
+
+        #endregion
+
         #region Methods
-        public IEnumerator<ISeries> GetEnumerator() => Series.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for (int i = 0; i < rows.Length; i++)
+            {
+                yield return rows[i];
+            }
+        }
+        public IEnumerator<FrameR> GetEnumerator()
+        {
+            for (int i = 0; i < rows.Length; i++)
+            {
+                yield return rows[i];
+            }
+
+        }
 
         public Frame Select(params ISeries[] series) => new Frame(series);
 
@@ -172,6 +204,7 @@ namespace Sylvester
                 TrySetValue(null, -1, series[i], series[i].Label, false, false);
                 series[i].Backend = this.Backend;
             }
+            UpdateRows();
             return this;
         }
 
@@ -224,31 +257,38 @@ namespace Sylvester
             }
             return this;
         }
-        #endregion
 
-        #region Properties
-        public List<ISeries> Series { get; } = new List<ISeries>();
-
-        public FrameR this[int index]
+        protected void BuildRows()
         {
-            get
+            rows = new FrameR[Length];
+            for (int i = 0; i < Length; i++)
             {
-                var r = new Dictionary<string, dynamic>(Series.Count);
-                for (int i = 0; i < Series.Count; i++)
+                var r = new Dictionary<string, ISeries>(Series.Count);
+                for (int j = 0; j < Series.Count; j++)
                 {
-                    ISeries s = Series[i];
-                    r.Add(s.Label, s.GetVal(index));
+                    r.Add(Series[j].Label, Series[j]);
                 }
-                return new FrameR(this, index, r);
+                rows[i] = new FrameR(this, i, r);
             }
         }
-        public int Length { get; protected set; } = -1;
 
-        public Backend Backend { get; protected set; }
+        protected void UpdateRows()
+        {
+            if (rows != null)
+            {
+                for (int r = 0; r < rows.Length; r++)
+                {
+                    for (int i = 0; i < Series.Count; i++)
+                    {
+                        if (!rows[r]._Columns.ContainsKey(Series[i].Label))
+                        {
+                            rows[r]._Columns.Add(Series[i].Label, Series[i]);
+                        }
+                    }
+                }
 
-        public bool UnrestrictedMembers { get; set; } = false;
-
-
+            }
+        }
         #endregion
 
         #region IDynamicMetaObjectProvider Members
@@ -690,6 +730,8 @@ namespace Sylvester
             if (value is ISeries ss)
             {
                 Series.Add(ss);
+                ss.Backend = this.Backend;
+                UpdateRows();
             }
             FrameData data;
             object oldValue;
@@ -873,184 +915,6 @@ namespace Sylvester
             PromoteClassCore((FrameClass)oldClass, (FrameClass)newClass);
         }
 
-        #endregion
-
-        #region IDictionary<string, object> Members
-        ICollection<string> IDictionary<string, object>.Keys
-        {
-            get
-            {
-                return new KeyCollection(this);
-            }
-        }
-
-        ICollection<object> IDictionary<string, object>.Values
-        {
-            get
-            {
-                return new ValueCollection(this);
-            }
-        }
-
-        object IDictionary<string, object>.this[string key]
-        {
-            get
-            {
-                object value;
-                if (!TryGetValueForKey(key, out value))
-                {
-                    throw new KeyDoesNotExistInFrameException(key);
-                }
-                return value;
-            }
-            set
-            {
-                ContractUtils.RequiresNotNull(key, "key");
-                // Pass null to the class, which forces lookup.
-                TrySetValue(null, -1, value, key, false, false);
-            }
-        }
-
-        void IDictionary<string, object>.Add(string key, object value)
-        {
-            this.TryAddMember(key, value);
-        }
-
-        bool IDictionary<string, object>.ContainsKey(string key)
-        {
-            ContractUtils.RequiresNotNull(key, "key");
-
-            FrameData data = _data;
-            int index = data.Class.GetValueIndexCaseSensitive(key);
-            return index >= 0 && data[index] != _uninitialized;
-        }
-
-        bool IDictionary<string, object>.Remove(string key)
-        {
-            ContractUtils.RequiresNotNull(key, "key");
-            // Pass null to the class, which forces lookup.
-            return TryDeleteValue(null, -1, key, false, _uninitialized);
-        }
-
-        bool IDictionary<string, object>.TryGetValue(string key, out object value)
-        {
-            return TryGetValueForKey(key, out value);
-        }
-
-        #endregion
-
-        #region ICollection<KeyValuePair<string, object>> Members
-        int ICollection<KeyValuePair<string, object>>.Count
-        {
-            get
-            {
-                return _count;
-            }
-        }
-
-        bool ICollection<KeyValuePair<string, object>>.IsReadOnly
-        {
-            get { return false; }
-        }
-
-        void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
-        {
-            TryAddMember(item.Key, item.Value);
-        }
-
-        void ICollection<KeyValuePair<string, object>>.Clear()
-        {
-            // We remove both class and data!
-            FrameData data;
-            lock (_lockObject)
-            {
-                data = _data;
-                _data = FrameData.Empty;
-                _count = 0;
-            }
-
-            // Notify property changed for all properties.
-            var propertyChanged = _propertyChanged;
-            if (propertyChanged != null)
-            {
-                for (int i = 0, n = data.Class.Keys.Length; i < n; i++)
-                {
-                    if (data[i] != _uninitialized)
-                    {
-                        propertyChanged(this, new PropertyChangedEventArgs(data.Class.Keys[i]));
-                    }
-                }
-            }
-        }
-
-        bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
-        {
-            object value;
-            if (!TryGetValueForKey(item.Key, out value))
-            {
-                return false;
-            }
-
-            return object.Equals(value, item.Value);
-        }
-
-        void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
-        {
-            ContractUtils.RequiresNotNull(array, "array");
-            ContractUtils.RequiresArrayRange(array, arrayIndex, _count, "arrayIndex", "Count");
-
-            // We want this to be atomic and not throw
-            lock (_lockObject)
-            {
-                foreach (KeyValuePair<string, object> item in (IEnumerable<KeyValuePair<string, object>>) this)
-                {
-                    array[arrayIndex++] = item;
-                }
-            }
-        }
-
-        bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
-        {
-            return TryDeleteValue(null, -1, item.Key, false, item.Value);
-        }
-        #endregion
-
-        #region IEnumerable<KeyValuePair<string, object>> Member
-
-        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
-        {
-            FrameData data = _data;
-            return GetFrameEnumerator(data, data.Version);
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            FrameData data = _data;
-            return GetFrameEnumerator(data, data.Version);
-        }
-
-        // Note: takes the data and version as parameters so they will be
-        // captured before the first call to MoveNext().
-        private IEnumerator<KeyValuePair<string, object>> GetFrameEnumerator(FrameData data, int version)
-        {
-            for (int i = 0; i < data.Class.Keys.Length; i++)
-            {
-                if (_data.Version != version || data != _data)
-                {
-                    // The underlying frame object has changed:
-                    // 1) the version of the frame data changed
-                    // 2) the data object is changed 
-                    throw new CollectionModifiedWhileEnumeratingException();
-                }
-                // Capture the value into a temp so we don't inadvertently
-                // return Uninitialized.
-                object temp = data[i];
-                if (temp != _uninitialized)
-                {
-                    yield return new KeyValuePair<string, object>(data.Class.Keys[i], temp);
-                }
-            }
-        }
         #endregion
 
         #region INotifyPropertyChanged Members
@@ -1387,6 +1251,7 @@ namespace Sylvester
         internal readonly static object _uninitialized = new object(); // A marker object used to identify that a value is uninitialized.
         internal const int ambiguousMatchFound = -2;        // The value is used to indicate there exists ambiguous match in the Frame object
         internal const int noMatch = -1;                    // The value is used to indicate there is no matching member
+        protected FrameR[] rows;
         private FrameData _data;                // the data currently being held by the Frame object
         private int _count;                     // the count of available members
         private PropertyChangedEventHandler _propertyChanged;

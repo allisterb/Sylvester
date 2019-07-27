@@ -12,60 +12,51 @@ namespace Sylvester
 {
     public class FrameR : DynamicObject, IEnumerable
     {
-        public FrameR(Frame f, int index, IDictionary<string, dynamic> columns)
+        public FrameR(Frame f, int index, Dictionary<string, ISeries> columns)
         {
             Frame = f;
             Index = index;
-            Columns = columns;
-
-            foreach (var kv in Columns)
-            {
-                SetMember(kv.Key, kv.Value);
-            }
+            _Columns = columns;
         }
 
         public Frame Frame { get; }
 
         public int Index { get; }
 
-        public IDictionary<string, dynamic> Columns { get; }
+        internal Dictionary<string, ISeries> _Columns { get; }
 
-        public dynamic this[string column] => Columns[column];
+        public dynamic this[string column] => _Columns[column].GetVal(Index);
 
-        public dynamic this[int index]
+        public dynamic this[int i]
         {
-            get => Columns.Values.ElementAt(index);
+            get => _Columns.Values.ElementAt(i).GetVal(Index);
         }
-        public IEnumerator GetEnumerator() => Columns.Values.GetEnumerator();
+        public IEnumerator GetEnumerator() => _Columns.Values.GetEnumerator();
 
-        protected object GetMember(string propName)
+        internal object GetMember(string propName)
         {
             var binder = Binder.GetMember(CSharpBinderFlags.None,
                   propName, this.GetType(),
                   new List<CSharpArgumentInfo>{
                        CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)});
             var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
-
-            return callsite.Target(callsite, this);
-        }
-
-        protected void SetMember(string propName, object val)
-        {
-            var binder = Binder.SetMember(CSharpBinderFlags.None,
-                   propName, this.GetType(),
-                   new List<CSharpArgumentInfo>{
-                       CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null),
-                       CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)});
-            var callsite = CallSite<Func<CallSite, object, object, object>>.Create(binder);
-
-            callsite.Target(callsite, this, val);
+            ISeries s = (ISeries)callsite.Target(callsite, this.Frame);
+            return s.GetVal(Index);
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
-            return Columns.TryGetValue(binder.Name, out result);
+            if (_Columns.ContainsKey(binder.Name))
+            {
+                result = GetMember(binder.Name);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-        public override bool TrySetMember(SetMemberBinder binder, object value) => Columns.ContainsKey(binder.Name); 
+        public override bool TrySetMember(SetMemberBinder binder, object value) => false; 
     }
 }
