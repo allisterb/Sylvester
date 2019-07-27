@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+
 using CsvHelper;
 
 namespace Sylvester.Data
@@ -19,7 +21,8 @@ namespace Sylvester.Data
             if (InferFieldNames)
             {
                 string[] header = null;
-                using (var stream = File.OpenRead(Path))
+                using (var stream = Path.StartsWith("http") ? HttpClient.GetStreamAsync(Path).Result :
+                    File.OpenRead(Path))
                 using (var reader = new StreamReader(stream))
                 using (var parser = new CsvParser(reader))
                 {
@@ -38,6 +41,7 @@ namespace Sylvester.Data
             }
         }
 
+        static HttpClient HttpClient = new HttpClient();
         public string Path { get; }
 
         public string Delimiter { get; }
@@ -71,7 +75,8 @@ namespace Sylvester.Data
             
         public void Parse(int threads = 0)
         {
-            byte[] fileData = File.ReadAllBytes(Path);
+            byte[] fileData = Path.StartsWith("http") ? HttpClient.GetByteArrayAsync(Path).Result :
+                File.ReadAllBytes(Path);
             List<string[]> rows = new List<string[]>(100000);
             string[] row = null;
             using (var stream = new MemoryStream(fileData))

@@ -18,5 +18,14 @@ namespace Sylvester.Data.Tests
             f.Parse();
             Assert.NotEmpty(f.Fields[3].Data);
         }
+
+        [Fact]
+        public void CanParseFileFromUrl()
+        {
+            CsvFile file = new CsvFile("https://forge.scilab.org/index.php/p/rdataset/source/file/master/csv/datasets/Titanic.csv");
+            Assert.NotEmpty(file.Fields);
+            file.Fields.RemoveAt(1);
+            Assert.Equal("Sex", file[1].Label);
+        }
     }
 }
