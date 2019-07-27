@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sylvester.DataFrame.Dynamic
+namespace Sylvester
 {
     public class AmbiguousMatchInFrameException : Exception
     {
@@ -41,5 +41,10 @@ namespace Sylvester.DataFrame.Dynamic
     public class TypeNotAnonymousException : Exception
     {
         public TypeNotAnonymousException() : base("The object is not an instance of an anonymous type.") { }
+    }
+
+    public class FrameRColumnAddException : Exception
+    {
+        public FrameRColumnAddException(string col) : base($"Could not dynamically add the column ${col} to the FrameR object.") { }
     }
 }

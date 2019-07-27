@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Linq;
@@ -12,11 +13,17 @@ namespace Sylvester
 {
     public class FrameR : DynamicObject, IEnumerable
     {
-        public FrameR(Frame f, int index, Dictionary<string, ISeries> columns)
+        public FrameR(Frame f, int index, List<ISeries> columns)
         {
             Frame = f;
             Index = index;
-            _Columns = columns;
+            _Columns = new Dictionary<string, ISeries>();
+            {
+                for (int i = 0; i < columns.Count; i++)
+                {
+                    _Columns.Add(columns[i].Label, columns[i]);
+                }
+            }
             foreach (var c in _Columns)
             {
                 AddCallSite(c.Key);
@@ -38,22 +45,6 @@ namespace Sylvester
         }
         public IEnumerator GetEnumerator() => _Columns.Values.GetEnumerator();
 
-        internal object GetMember(string propName)
-        {
-            ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
-            return s.GetVal(Index);
-        }
-
-        internal void AddCallSite(string propName)
-        {
-            var binder = Binder.GetMember(CSharpBinderFlags.None, propName, this.GetType(),
-                new List<CSharpArgumentInfo>{
-                       CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)});
-            var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
-            CallSites.Add(propName, callsite);
-
-        }
-
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
@@ -67,6 +58,35 @@ namespace Sylvester
                 return false;
             }
         }
-        public override bool TrySetMember(SetMemberBinder binder, object value) => false; 
+        public override bool TrySetMember(SetMemberBinder binder, object value) => false;
+
+        internal object GetMember(string propName)
+        {
+            ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
+            return s.GetVal(Index);
+        }
+
+        internal void AddColumn(string colName, ISeries column)
+        {
+            lock (_lock)
+            {
+                _Columns.Add(colName, column);
+                AddCallSite(colName);
+            }
+        }
+
+        private void AddCallSite(string propName)
+        {
+            var binder = Binder.GetMember(CSharpBinderFlags.None, propName, this.GetType(),
+                new List<CSharpArgumentInfo>{
+                       CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)});
+            var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
+            CallSites.Add(propName, callsite);
+        }
+
+
+        private object _lock = new object();
+
+
     }
 }

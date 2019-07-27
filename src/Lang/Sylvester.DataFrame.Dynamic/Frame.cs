@@ -263,12 +263,7 @@ namespace Sylvester
             rows = new FrameR[Length];
             for (int i = 0; i < Length; i++)
             {
-                var r = new Dictionary<string, ISeries>(Series.Count);
-                for (int j = 0; j < Series.Count; j++)
-                {
-                    r.Add(Series[j].Label, Series[j]);
-                }
-                rows[i] = new FrameR(this, i, r);
+                rows[i] = new FrameR(this, i, Series);
             }
         }
 
@@ -282,8 +277,7 @@ namespace Sylvester
                     {
                         if (!rows[r]._Columns.ContainsKey(Series[i].Label))
                         {
-                            rows[r]._Columns.Add(Series[i].Label, Series[i]);
-                            rows[r].AddCallSite(Series[i].Label);
+                            rows[r].AddColumn(Series[i].Label, Series[i]);
                         }
                     }
                 }
