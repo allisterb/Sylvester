@@ -55,7 +55,6 @@ namespace Sylvester.Data
         public byte[] ReadEntireFile() => File.ReadAllBytes(Path); 
 
 
-        
         public CsvFile Add<T>(int index, string label, T defaultVal = default, T constant = default, string boolFalse = "", string boolTrue = "") where T : struct
         {
             if (Fields.Any(f => f.Index == index))

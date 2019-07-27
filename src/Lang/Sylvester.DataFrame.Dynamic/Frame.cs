@@ -133,7 +133,7 @@ namespace Sylvester
             }
         }
 
-        public Frame(CsvFile file)
+        public Frame(CsvFile file) : this()
         {
             file.Parse();
             for (int i = 0; i < file.Fields.Count; i++)

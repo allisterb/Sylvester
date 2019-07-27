@@ -6,6 +6,7 @@ using System.Linq;
 using Xunit;
 
 using Sylvester.DataFrame.Dynamic;
+using Sylvester.Data;
 
 namespace Sylvester.Tests
 {
@@ -43,6 +44,21 @@ namespace Sylvester.Tests
             var r = z[0];
             Assert.NotNull(r.Name);
             Assert.NotNull(r.Birthday);
+        }
+
+        [Fact]
+        public void CanConstructFrameFromCsv()
+        {
+            CsvFile file = new CsvFile("mtcars.csv");
+            Assert.NotEmpty(file.Fields);
+            Assert.Equal("Field0", file.Fields[0].Label);
+            file[1].Type = typeof(Single);
+            dynamic f = new Frame(file);
+            Assert.NotNull(f.mpg);
+            dynamic g = f.Select(f.mpg);
+            Assert.NotNull(g.mpg);
+            dynamic e = f.Except(0);
+            Assert.NotNull(e.disp);
 
         }
 
@@ -57,10 +73,6 @@ namespace Sylvester.Tests
             f.Children = new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 });
             Assert.NotNull(f.Children);
             Assert.Equal("Children", f.Children.Label);
-            dynamic g = f.Select("Age");
-            Assert.NotNull(g.Age);
-            dynamic e = f.Except(0);
-            Assert.NotNull(e.Children);
         }
     }
 }

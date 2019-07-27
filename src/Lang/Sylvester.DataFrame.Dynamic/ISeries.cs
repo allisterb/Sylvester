@@ -13,6 +13,7 @@ namespace Sylvester
         int Length { get;  }
 
         dynamic DefaultVal { get; }
+
         dynamic GetVal(int index);
  
         bool SetVal(int index, dynamic value);

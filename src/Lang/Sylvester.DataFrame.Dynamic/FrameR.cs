@@ -17,7 +17,7 @@ namespace Sylvester
             Frame = f;
             Index = index;
             Columns = columns;
-        
+
             foreach (var kv in Columns)
             {
                 SetMember(kv.Key, kv.Value);
@@ -32,8 +32,10 @@ namespace Sylvester
 
         public dynamic this[string column] => Columns[column];
 
-        public dynamic this[int index] => Columns.Values.ElementAt(index);
-
+        public dynamic this[int index]
+        {
+            get => Columns.Values.ElementAt(index);
+        }
         public IEnumerator GetEnumerator() => Columns.Values.GetEnumerator();
 
         protected object GetMember(string propName)
@@ -64,8 +66,6 @@ namespace Sylvester
             result = null;
             return Columns.TryGetValue(binder.Name, out result);
         }
-        public override bool TrySetMember(SetMemberBinder binder, object value) => Columns.ContainsKey(binder.Name);
-            
-        
+        public override bool TrySetMember(SetMemberBinder binder, object value) => Columns.ContainsKey(binder.Name); 
     }
 }
