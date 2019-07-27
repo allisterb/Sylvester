@@ -106,11 +106,11 @@ namespace Sylvester
                     case "Int32":
                         Add(new Sn<int>((int[])data[i], p.Name, (int) p.GetValue(record)));
                         break;
-                    case "Int64":
-                        Add(new Sn<long>((long[])data[i], p.Name, (long)p.GetValue(record)));
-                        break;
                     case "UInt32":
                         Add(new Sn<uint>((uint[])data[i], p.Name, (uint)p.GetValue(record)));
+                        break;
+                    case "Int64":
+                        Add(new Sn<long>((long[])data[i], p.Name, (long)p.GetValue(record)));
                         break;
                     case "UInt64":
                         Add(new Sn<ulong>((ulong[])data[i], p.Name, (ulong)p.GetValue(record)));
@@ -135,11 +135,16 @@ namespace Sylvester
            
         }
 
-        public Frame(CsvFile file, int? batchSize)
+        public Frame(CsvFile file)
         {
-            
+            file.Parse();
+            for (int i = 0; i < file.Fields.Count; i++)
+            {
+                CsvField f = file.Fields[i];
+                if (f.Data.Length == 0) continue;
+                Add(f.Type, f.Data, f.Label);
+            }
         }
-       
         #endregion
 
         #region Methods
@@ -171,8 +176,58 @@ namespace Sylvester
             }
             return this;
         }
+
+        public Frame Add(Type type, Array data, string label)
+        {
+            switch (type.Name)
+            {
+                case "String":
+                    Add(new Ss((string[]) data, label));
+                    break;
+                case "DateTime":
+                    Add(new Sd((DateTime[])data, label));
+                    break;
+                case "Byte":
+                    Add(new Sn<byte>((byte[])data, label));
+                    break;
+                case "SByte":
+                    Add(new Sn<sbyte>((sbyte[])data, label));
+                    break;
+                case "UInt16":
+                    Add(new Sn<ushort>((ushort[])data, label));
+                    break;
+                case "Int16":
+                    Add(new Sn<short>((short[])data, label));
+                    break;
+                case "UInt32":
+                    Add(new Sn<uint>((uint[])data, label));
+                    break;
+                case "Int32":
+                    Add(new Sn<int>((int[])data, label));
+                    break;
+                case "UInt64":
+                    Add(new Sn<ulong>((ulong[])data, label));
+                    break;
+                case "Int64":
+                    Add(new Sn<long>((long[])data, label));
+                    break;
+                case "Single":
+                    Add(new Sn<float>((float[])data, label));
+                    break;
+                case "Double":
+                    Add(new Sn<double>((double[])data, label));
+                    break;
+                case "Decimal":
+                    Add(new Sn<decimal>((decimal[])data, label));
+                    break;
+                case "Boolean":
+                    Add(new Sn<bool>((bool[]) data, label));
+                    break;
+            }
+            return this;
+        }
         #endregion
-        
+
         #region Properties
         public List<ISeries> Series { get; } = new List<ISeries>();
 
