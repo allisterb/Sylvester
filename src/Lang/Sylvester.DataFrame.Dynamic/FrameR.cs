@@ -28,6 +28,7 @@ namespace Sylvester
             {
                 AddCallSite(c.Key);
             }
+            Enumerator = new FrameREnumerator(this);
         }
         public Frame Frame { get; }
 
@@ -37,13 +38,16 @@ namespace Sylvester
 
         internal Dictionary<string, CallSite<Func<CallSite, object, object>>> CallSites =
             new Dictionary<string, CallSite<Func<CallSite, object, object>>>();
+
+        public FrameREnumerator Enumerator { get; }
+
         public dynamic this[string column] => _Columns[column].GetVal(Index);
 
         public dynamic this[int i]
         {
             get => _Columns.Values.ElementAt(i).GetVal(Index);
         }
-        public IEnumerator GetEnumerator() => _Columns.Values.GetEnumerator();
+        public IEnumerator GetEnumerator() => Enumerator;
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
@@ -60,7 +64,7 @@ namespace Sylvester
         }
         public override bool TrySetMember(SetMemberBinder binder, object value) => false;
 
-        internal object GetMember(string propName)
+        internal dynamic GetMember(string propName)
         {
             ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
             return s.GetVal(Index);
@@ -84,9 +88,23 @@ namespace Sylvester
             CallSites.Add(propName, callsite);
         }
 
-
         private object _lock = new object();
-
-
     }
+
+    public class FrameREnumerator : IEnumerator
+    {
+        public FrameREnumerator(FrameR r)
+        {
+            row = r;
+        }
+
+        FrameR row;
+        int position = -1;
+
+        public bool MoveNext() => (++position < row._Columns.Count);
+
+        public void Reset() => position = -1;
+
+        dynamic IEnumerator.Current => row[position];
+    }   
 }

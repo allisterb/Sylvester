@@ -53,7 +53,7 @@ namespace Sylvester
 
         public Frame(IEnumerable<ISeries> series) : this(series.ToArray()) { }
 
-        public Frame(object record, params Array[] data) : this()
+        public Frame(Array[] data, object record) : this()
         {
             if (data == null || data.Length == 0)
             {

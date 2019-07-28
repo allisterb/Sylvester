@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,7 @@ using CsvHelper;
 
 namespace Sylvester.Data
 {
-    public class CsvFile
+    public class CsvFile : IEnumerable<CsvField>
     {
         public CsvFile(string path, string delimiter = ",", bool inferFieldNames = true, bool skipHeader = false)
         {
@@ -42,6 +43,7 @@ namespace Sylvester.Data
         }
 
         static HttpClient HttpClient = new HttpClient();
+
         public string Path { get; }
 
         public string Delimiter { get; }
@@ -54,7 +56,23 @@ namespace Sylvester.Data
 
         public CsvField this[int i] => Fields[i];
 
-        public IEnumerable<CsvField> this[string i] => Fields.Where(f => f.Label == i);
+        public CsvField this[string i] => Fields.Where(f => f.Label == i).First();
+
+        public IEnumerator<CsvField> GetEnumerator()
+        {
+            for (int i = 0; i < Fields.Count; i++)
+            {
+                yield return Fields[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for (int i = 0; i < Fields.Count; i++)
+            {
+                yield return Fields[i];
+            }
+        }
 
         public byte[] ReadEntireFile() => File.ReadAllBytes(Path); 
 
