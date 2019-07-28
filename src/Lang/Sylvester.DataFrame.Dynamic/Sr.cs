@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Sylvester
@@ -13,6 +14,8 @@ namespace Sylvester
         }
 
         public Sr(T[] data) : this(data, "") {}
+
+        public Sr(IEnumerable<T> data) : this(data.ToArray()) {}
 
         public T[] Data { get; }
 

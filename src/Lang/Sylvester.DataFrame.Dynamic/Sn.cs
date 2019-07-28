@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Sylvester
 {
     public class Sn<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>, IConvertible
     {
-
         public Sn(T[] data, string label, T defaultVal = default) : base(label, defaultVal)
         {
             Data = data;
         }
 
         public Sn(T[] data) : this(data, "") { }
+
+        public Sn(IEnumerable<T> data) : this(data.ToArray()) { }
 
         public T[] Data { get; }
 
@@ -49,7 +51,7 @@ namespace Sylvester
 
         public override ISeries Clone(string label) => new Sn<T>(Data, label);
 
-        public static Sn<double> Rnd(int length, string label)
+        public static Sn<double> Rnd(int length, string label = "")
         {
             double[] values = new double[length];
             var rnd = new Random(DateTime.Now.Millisecond);
@@ -60,7 +62,7 @@ namespace Sylvester
             return new Sn<double>(values, label);
         }
 
-        public static Sn<int> Rnd(int length, int max, string label)
+        public static Sn<int> Rnd(int length, int max, string label = "")
         {
             int[] values = new int[length];
             var rnd = new Random(DateTime.Now.Millisecond);

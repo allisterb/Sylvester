@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Sylvester
@@ -14,6 +15,8 @@ namespace Sylvester
 
         public Sv(T[] data) : this(data, "") { }
 
+        public Sv(IEnumerable<T> data) : this(data.ToArray()) { }
+        
         public T[] Data { get; }
 
         public override int Length => Data.Length;

@@ -10,7 +10,6 @@ open FSharp.Interop.Dynamic;
 
 module FsDataFrameTests = 
 
-
     [<Fact>]
     let ``Can construct data frame`` () =
         let msft = new CsvFile("https://raw.githubusercontent.com/matplotlib/sample_data/master/msft.csv")
@@ -20,10 +19,21 @@ module FsDataFrameTests =
         let f = new Frame(msft);
         let d = f?Date;
         Assert.NotNull(d);
-        let gg = f.[55];
         Assert.IsType<DateTime>(f.[0].[0]) |> ignore;
         Assert.IsType<double>(f.[0].[1]) |> ignore;
-        let qi = query {for r in f do select r?Volume}
+        let q1 = query {for r in f do select r?Volume}
+        Assert.NotEmpty(q1);
+        f?Foo<-Sn<float>.Rnd(f.Length);
+        Assert.NotEmpty(f?Foo);
+
+    [<Fact>]
+    let ``Can query data frame``() =
+        //Use the Titanic CSV dataset 
+        let titanic = new CsvFile("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")
+        titanic.["PassengerId"].Type <- typeof<int>
+        titanic.["Survived"].Type <- typeof<int>
+        let dt = new Frame(titanic)
+        dt?Survived2<-new Sn<bool>(dt.Select(fun r -> if r?Survived = 1 then true else false))
+        Assert.NotEmpty(dt?Survived2)
         
-        ()
 
