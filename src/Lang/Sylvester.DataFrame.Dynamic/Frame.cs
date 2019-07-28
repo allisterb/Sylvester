@@ -151,6 +151,8 @@ namespace Sylvester
         #region Properties
         public List<ISeries> Series { get; } = new List<ISeries>();
 
+        public Dictionary<string, ISeries> Columns { get; } = new Dictionary<string, ISeries>();
+
         public FrameR this[int index] => rows[index];
 
         public ISeries this[string label] => Series.SingleOrDefault(s => s.Label == label);
@@ -204,7 +206,6 @@ namespace Sylvester
                 TrySetValue(null, -1, series[i], series[i].Label, false, false);
                 series[i].Backend = this.Backend;
             }
-            UpdateRows();
             return this;
         }
 
@@ -263,25 +264,7 @@ namespace Sylvester
             rows = new FrameR[Length];
             for (int i = 0; i < Length; i++)
             {
-                rows[i] = new FrameR(this, i, Series);
-            }
-        }
-
-        protected void UpdateRows()
-        {
-            if (rows != null)
-            {
-                for (int r = 0; r < rows.Length; r++)
-                {
-                    for (int i = 0; i < Series.Count; i++)
-                    {
-                        if (!rows[r]._Columns.ContainsKey(Series[i].Label))
-                        {
-                            rows[r].AddColumn(Series[i].Label, Series[i]);
-                        }
-                    }
-                }
-
+                rows[i] = new FrameR(this, i);
             }
         }
         #endregion
@@ -714,25 +697,27 @@ namespace Sylvester
         /// </summary>
         internal void TrySetValue(object indexClass, int index, object value, string name, bool ignoreCase, bool add)
         {
-            if (!(value is ISeries) && !UnrestrictedMembers)
-            {
-                throw new FrameUnrestrictedMembersNotEnabledException();
-            }
-            if (value is ISeries s && s.Label == "")
-            {
-                value = s.Clone(name);
-            }
-            if (value is ISeries ss)
-            {
-                Series.Add(ss);
-                ss.Backend = this.Backend;
-                UpdateRows();
-            }
             FrameData data;
             object oldValue;
-
             lock (_lockObject)
             {
+                if (!(value is ISeries) && !UnrestrictedMembers)
+                {
+                    throw new FrameUnrestrictedMembersNotEnabledException();
+                }
+
+                if (value is ISeries s && s.Label == "")
+                {
+                    value = s.Clone(name);
+                }
+
+                if (value is ISeries ss)
+                {
+                    Series.Add(ss);
+                    Columns.Add(ss.Label, ss);
+                    ss.Backend = this.Backend;
+                }
+
                 data = _data;
 
                 if (data.Class != indexClass || ignoreCase)

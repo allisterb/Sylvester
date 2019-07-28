@@ -73,8 +73,6 @@ namespace Sylvester.Tests
             f.Children = new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 });
             Assert.NotNull(f.Children);
             Assert.Equal("Children", f.Children.Label);
-            f.Foo = Sn<double>.Rnd(6, "Foo");
-            Assert.NotNull(r2.Foo);
         }
 
         [Fact]

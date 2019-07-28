@@ -13,18 +13,11 @@ namespace Sylvester
 {
     public class FrameR : DynamicObject, IEnumerable
     {
-        public FrameR(Frame f, int index, List<ISeries> columns)
+        public FrameR(Frame f, int index)
         {
             Frame = f;
             Index = index;
-            _Columns = new Dictionary<string, ISeries>();
-            {
-                for (int i = 0; i < columns.Count; i++)
-                {
-                    _Columns.Add(columns[i].Label, columns[i]);
-                }
-            }
-            foreach (var c in _Columns)
+            foreach (var c in Frame.Columns)
             {
                 AddCallSite(c.Key);
             }
@@ -34,26 +27,28 @@ namespace Sylvester
 
         public int Index { get; }
 
-        internal Dictionary<string, ISeries> _Columns { get; }
-
         internal Dictionary<string, CallSite<Func<CallSite, object, object>>> CallSites =
             new Dictionary<string, CallSite<Func<CallSite, object, object>>>();
 
         public FrameREnumerator Enumerator { get; }
 
-        public dynamic this[string column] => _Columns[column].GetVal(Index);
+        public dynamic this[string column] => Frame.Columns[column].GetVal(Index);
 
         public dynamic this[int i]
         {
-            get => _Columns.Values.ElementAt(i).GetVal(Index);
+            get => Frame.Series[i].GetVal(Index);
         }
         public IEnumerator GetEnumerator() => Enumerator;
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
-            if (_Columns.ContainsKey(binder.Name))
+            if (Frame.Columns.ContainsKey(binder.Name))
             {
+                if (!CallSites.ContainsKey(binder.Name))
+                {
+                    AddCallSite(binder.Name);
+                }
                 result = GetMember(binder.Name);
                 return true;
             }
@@ -68,15 +63,6 @@ namespace Sylvester
         {
             ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
             return s.GetVal(Index);
-        }
-
-        internal void AddColumn(string colName, ISeries column)
-        {
-            lock (_lock)
-            {
-                _Columns.Add(colName, column);
-                AddCallSite(colName);
-            }
         }
 
         private void AddCallSite(string propName)
@@ -101,7 +87,7 @@ namespace Sylvester
         FrameR row;
         int position = -1;
 
-        public bool MoveNext() => (++position < row._Columns.Count);
+        public bool MoveNext() => (++position < row.Frame.Columns.Count);
 
         public void Reset() => position = -1;
 

@@ -35,5 +35,5 @@ module FsDataFrameTests =
         let dt = new Frame(titanic)
         dt?Survived2<-new Sn<bool>(dt.Select(fun r -> if r?Survived = 1 then true else false))
         Assert.NotEmpty(dt?Survived2)
-        
+        Assert.NotNull(dt.[0]?Survived2)
 

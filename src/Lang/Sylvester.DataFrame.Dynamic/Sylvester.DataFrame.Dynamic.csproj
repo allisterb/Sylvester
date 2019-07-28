@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Sylvester.DataFrame</PackageId>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <Authors>Allister Beharry</Authors>
     <Company />
     <Product>Sylvester</Product>
@@ -14,8 +14,9 @@
     <PackageProjectUrl>https://github.com/allisterb/Sylvester</PackageProjectUrl>
     <RepositoryUrl>https://github.com/allisterb/Sylvester</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/allisterb/Sylvester/master/LICENSE</PackageLicenseUrl>
-    <PackageTags>numeric data-science</PackageTags>
-    <AssemblyVersion>0.1.4.0</AssemblyVersion>
+    <PackageTags>numeric data-science f# dataframe statistics</PackageTags>
+    <AssemblyVersion>0.1.5.0</AssemblyVersion>
+    <PackageReleaseNotes></PackageReleaseNotes>
     
   </PropertyGroup>
 
