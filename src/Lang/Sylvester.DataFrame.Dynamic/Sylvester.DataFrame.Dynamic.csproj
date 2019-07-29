@@ -16,7 +16,7 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/allisterb/Sylvester/master/LICENSE</PackageLicenseUrl>
     <PackageTags>numeric data-science f# dataframe statistics</PackageTags>
     <AssemblyVersion>0.1.6.0</AssemblyVersion>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>Add FrameW and FrameDR types, and Wnd, Sel and Ex methods.</PackageReleaseNotes>
     
   </PropertyGroup>
 
