@@ -179,20 +179,50 @@ namespace Sylvester
             {
                 yield return rows[i];
             }
-
         }
 
-        public Frame Select(params ISeries[] series) => new Frame(series);
+        public FrameDR[] SelC(params ISeries[] series)
+        {
+            FrameDR[] rows = new FrameDR[this.Length];
+            for (int i = 0; i < rows.Length; i++)
+            {
+                rows[i] = new FrameDR(this, i, series);
+            }
+            return rows;
+        }
 
-        public Frame Select(params string[] labels) => new Frame(Series.Where(s => labels.Contains(s.Label)));
+        public FrameDR[] SelC(params string[] series) => SelC(Series.Where(s => series.Contains(s.Label)).ToArray());
 
-        public Frame Select(params int[] series) => new Frame(series.Select(i => Series[i]));
+        public FrameDR[] SelC(params int[] series) => SelC(series.Select(i => Series[i]).ToArray());
 
-        public Frame Except(params ISeries[] series) => new Frame(Series.Except(series));
+        public FrameDR[] ExC(params ISeries[] series) => SelC(Series.Where(s => !series.Contains(s)).ToArray());
 
-        public Frame Except(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
+        public FrameDR[] ExC(params string[] series) => SelC(Series.Where(s => !series.Contains(s.Label)).ToArray());
 
-        public Frame Except(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
+        public FrameDR[] ExC(params int[] series) => SelC(Series.Except(series.Select(i => Series[i])).ToArray());
+
+        public Frame SelF(params ISeries[] series) => new Frame(series);
+
+        public Frame SelF(params string[] labels) => new Frame(Series.Where(s => labels.Contains(s.Label)));
+
+        public Frame SelF(params int[] series) => new Frame(series.Select(i => Series[i]));
+
+        public Frame ExF(params ISeries[] series) => new Frame(Series.Except(series));
+
+        public Frame ExF(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
+
+        public Frame ExF(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
+
+        public FrameW<T> Wnd<T>(Func<T, int> index) where T : struct, IEquatable<T> => new FrameW<T>(this, index);
+
+        public FrameW<string> SWnd(ISeries s) => new FrameW<string>(this, (index) =>
+            Array.IndexOf(((Ss)s).Data, index));
+
+        public FrameW<DateTime> DWnd(ISeries s) => new FrameW<DateTime>(this, (index) =>
+            Array.IndexOf(((Sd)s).Data, index));
+
+        public FrameW<T> NWnd<T>(ISeries s) where T : struct, IEquatable<T>, IComparable<T>, IConvertible => 
+            new FrameW<T>(this, (index) => Array.IndexOf(((Sn<T>)s).Data, index));
 
         public Frame Add(params ISeries[] series)
         {

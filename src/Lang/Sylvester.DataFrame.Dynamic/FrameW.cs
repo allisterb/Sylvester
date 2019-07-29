@@ -1,6 +1,6 @@
 ﻿using System;
 
-using System.Collections.Generic;
+using System.Collections;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Linq;
@@ -10,57 +10,32 @@ using Microsoft.CSharp.RuntimeBinder;
 
 namespace Sylvester
 {
-    public class FrameW<T> : DynamicObject where T : IEquatable<T>
+    public class FrameW<T> : IEnumerable where T : IEquatable<T>
     {
-        public FrameW(Frame f, Func<T, int> index, params ISeries[] columns)
+        public FrameW(Frame f, Func<T, int> index)
         {
             Frame = f;
             Index = index;
-            Columns = columns;
-            for(int i = 0; i < Columns.Length; i++)
-            {
-                SetMember(Columns[i].Label, Columns[i]);
-            }
         }
 
         public Frame Frame { get; }
 
         public Func<T, int> Index { get; }
 
-        public ISeries[] Columns { get; }
+        public FrameR this[T t] => Frame[Index(t)];
 
-        protected object GetMember(string propName)
-        {
-            var binder = Binder.GetMember(CSharpBinderFlags.None,
-                  propName, this.GetType(),
-                  new List<CSharpArgumentInfo>{
-                       CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)});
-            var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
+        public IEnumerator GetEnumerator() => Frame.GetEnumerator();
 
-            return callsite.Target(callsite, this);
-        }
+        public FrameDR[] SelC(params ISeries[] series) => Frame.SelC(series);
 
-        protected void SetMember(string propName, object val)
-        {
-            var binder = Binder.SetMember(CSharpBinderFlags.None,
-                   propName, this.GetType(),
-                   new List<CSharpArgumentInfo>{
-                       CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null),
-                       CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)});
-            var callsite = CallSite<Func<CallSite, object, object, object>>.Create(binder);
+        public FrameDR[] SelC(params string[] series) => Frame.SelC(series);
 
-            callsite.Target(callsite, this, val);
-        }
+        public FrameDR[] SelC(params int[] series) => Frame.SelC(series);
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            result = Columns.SingleOrDefault(c => c.Label == binder.Name);
-            return result == null; 
-        }
+        public FrameDR[] ExC(params ISeries[] series) => Frame.ExC(series);
 
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        { 
-            return false;
-        }
+        public FrameDR[] ExC(params string[] series) => Frame.ExC(series);
+
+        public FrameDR[] ExC(params int[] series) => Frame.ExC(series);
     }
 }

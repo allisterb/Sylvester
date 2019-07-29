@@ -37,3 +37,20 @@ module FsDataFrameTests =
         Assert.NotEmpty(dt?Survived2)
         Assert.NotNull(dt.[0]?Survived2)
 
+    [<Fact>]
+    let ``Can construct data frame window``() =
+        let titanic = new CsvFile("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")
+        titanic.["PassengerId"].Type <- typeof<int>
+        titanic.["Survived"].Type <- typeof<int>
+        let dt = new Frame(titanic)
+        let w = new FrameW<string>(dt, fun s -> 
+            let name:Ss = dt?Name in Array.IndexOf<string>(name.Data, s))
+        Assert.NotNull(w.["Braund, Mr. Owen Harris"])
+
+        let w2 = dt.SWnd(dt?Name)
+        Assert.NotNull(w2.["Braund, Mr. Owen Harris"])
+
+        Assert.NotEmpty(w2.SelC("PassengerId"))
+        let dr1 = dt.SelC(dt.["PassengerId"], dt.["Name"])
+        Assert.NotEmpty(dr1)
+  
