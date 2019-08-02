@@ -51,6 +51,6 @@ module FsDataFrameTests =
         Assert.NotNull(w2.["Braund, Mr. Owen Harris"])
 
         Assert.NotEmpty(w2.SelC("PassengerId"))
-        let dr1 = dt.SelC(dt.["PassengerId"], dt.["Name"])
+        let dr1 = dt.SelC("PassengerId", "Survived")
         Assert.NotEmpty(dr1)
   

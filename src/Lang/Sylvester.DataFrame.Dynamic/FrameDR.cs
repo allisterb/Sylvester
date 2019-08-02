@@ -69,6 +69,12 @@ namespace Sylvester
         }
         public override bool TrySetMember(SetMemberBinder binder, object value) => false;
 
+        public FrameDR Sel(params ISeries[] series) => new FrameDR(this.Frame, this.Index, series);
+
+        public FrameDR Sel(params string[] series) => Sel(Series.Where(s => series.Contains(s.Label)).ToArray());
+
+        public FrameDR Sel(params int[] series) => Sel(series.Select(i => Series[i]).ToArray());
+
         internal dynamic GetMember(string propName)
         {
             ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
