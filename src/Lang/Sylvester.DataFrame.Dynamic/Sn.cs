@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public class Sn<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>, IConvertible
     {

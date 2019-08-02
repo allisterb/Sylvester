@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Dynamic;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public interface ISeries : IEnumerable, IDynamicMetaObjectProvider
     {

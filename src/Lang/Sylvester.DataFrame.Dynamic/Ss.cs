@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public class Ss : Sr<string>
     {

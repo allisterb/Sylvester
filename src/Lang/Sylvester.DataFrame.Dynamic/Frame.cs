@@ -29,11 +29,9 @@ using System.Reflection;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 
-
 using Sylvester.DataFrame.Dynamic;
-using Sylvester.Data;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public class Frame : IDynamicMetaObjectProvider, INotifyPropertyChanged, IEnumerable<FrameR>
     {
@@ -181,7 +179,7 @@ namespace Sylvester
             }
         }
 
-        public FrameDR[] SelC(params ISeries[] series)
+        public FrameDR[] Ser(params ISeries[] series)
         {
             FrameDR[] rows = new FrameDR[this.Length];
             for (int i = 0; i < rows.Length; i++)
@@ -191,27 +189,27 @@ namespace Sylvester
             return rows;
         }
 
-        public FrameDR[] SelC(params string[] series) => SelC(Series.Where(s => series.Contains(s.Label)).ToArray());
+        public FrameDR[] Ser(params string[] series) => Ser(Series.Where(s => series.Contains(s.Label)).ToArray());
 
-        public FrameDR[] SelC(params int[] series) => SelC(series.Select(i => Series[i]).ToArray());
+        public FrameDR[] Ser(params int[] series) => Ser(series.Select(i => Series[i]).ToArray());
 
-        public FrameDR[] ExC(params ISeries[] series) => SelC(Series.Where(s => !series.Contains(s)).ToArray());
+        public FrameDR[] SerEx(params ISeries[] series) => Ser(Series.Where(s => !series.Contains(s)).ToArray());
 
-        public FrameDR[] ExC(params string[] series) => SelC(Series.Where(s => !series.Contains(s.Label)).ToArray());
+        public FrameDR[] SerEx(params string[] series) => Ser(Series.Where(s => !series.Contains(s.Label)).ToArray());
 
-        public FrameDR[] ExC(params int[] series) => SelC(Series.Except(series.Select(i => Series[i])).ToArray());
+        public FrameDR[] SerEx(params int[] series) => Ser(Series.Except(series.Select(i => Series[i])).ToArray());
 
-        public Frame SelF(params ISeries[] series) => new Frame(series);
+        public Frame SerF(params ISeries[] series) => new Frame(series);
 
-        public Frame SelF(params string[] labels) => new Frame(Series.Where(s => labels.Contains(s.Label)));
+        public Frame SerF(params string[] labels) => new Frame(Series.Where(s => labels.Contains(s.Label)));
 
-        public Frame SelF(params int[] series) => new Frame(series.Select(i => Series[i]));
+        public Frame SerF(params int[] series) => new Frame(series.Select(i => Series[i]));
 
-        public Frame ExF(params ISeries[] series) => new Frame(Series.Except(series));
+        public Frame SerExF(params ISeries[] series) => new Frame(Series.Except(series));
 
-        public Frame ExF(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
+        public Frame SerExF(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
 
-        public Frame ExF(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
+        public Frame SerExF(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
 
         public FrameW<T> Wnd<T>(Func<T, int> index) where T : struct, IEquatable<T> => new FrameW<T>(this, index);
 

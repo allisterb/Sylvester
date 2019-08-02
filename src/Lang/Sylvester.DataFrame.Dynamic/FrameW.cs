@@ -8,7 +8,7 @@ using System.Text;
 
 using Microsoft.CSharp.RuntimeBinder;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public class FrameW<T> : IEnumerable where T : IEquatable<T>
     {
@@ -26,16 +26,16 @@ namespace Sylvester
 
         public IEnumerator GetEnumerator() => Frame.GetEnumerator();
 
-        public FrameDR[] SelC(params ISeries[] series) => Frame.SelC(series);
+        public FrameDR[] SelC(params ISeries[] series) => Frame.Ser(series);
 
-        public FrameDR[] SelC(params string[] series) => Frame.SelC(series);
+        public FrameDR[] SelC(params string[] series) => Frame.Ser(series);
 
-        public FrameDR[] SelC(params int[] series) => Frame.SelC(series);
+        public FrameDR[] SelC(params int[] series) => Frame.Ser(series);
 
-        public FrameDR[] ExC(params ISeries[] series) => Frame.ExC(series);
+        public FrameDR[] ExC(params ISeries[] series) => Frame.SerEx(series);
 
-        public FrameDR[] ExC(params string[] series) => Frame.ExC(series);
+        public FrameDR[] ExC(params string[] series) => Frame.SerEx(series);
 
-        public FrameDR[] ExC(params int[] series) => Frame.ExC(series);
+        public FrameDR[] ExC(params int[] series) => Frame.SerEx(series);
     }
 }

@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Sylvester {
+namespace Sylvester.DataFrame.Dynamic {
 
     internal static class ContractUtils {
 

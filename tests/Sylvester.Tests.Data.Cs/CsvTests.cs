@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Xunit;
 using Sylvester.Data;
 
-namespace Sylvester.Data.Tests
+namespace Sylvester.Tests.Data
 {
     public class CsvTests
     {
