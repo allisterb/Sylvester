@@ -9,7 +9,7 @@ using System.Text;
 
 using Microsoft.CSharp.RuntimeBinder;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public class FrameR : DynamicObject, IEnumerable
     {
@@ -59,11 +59,11 @@ namespace Sylvester
         }
         public override bool TrySetMember(SetMemberBinder binder, object value) => false;
 
-        public FrameDR Sel(params ISeries[] series) => new FrameDR(this.Frame, this.Index, series);
+        public FrameDR Ser(params ISeries[] series) => new FrameDR(this.Frame, this.Index, series);
 
-        public FrameDR Sel(params string[] series) => Sel(Frame.Series.Where(s => series.Contains(s.Label)).ToArray());
+        public FrameDR Ser(params string[] series) => Ser(Frame.Series.Where(s => series.Contains(s.Label)).ToArray());
 
-        public FrameDR Sel(params int[] series) => Sel(series.Select(i => Frame.Series[i]).ToArray());
+        public FrameDR Ser(params int[] series) => Ser(series.Select(i => Frame.Series[i]).ToArray());
 
         internal dynamic GetMember(string propName)
         {

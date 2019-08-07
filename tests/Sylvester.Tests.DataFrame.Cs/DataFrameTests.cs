@@ -8,9 +8,9 @@ using Xunit;
 using Sylvester.DataFrame.Dynamic;
 using Sylvester.Data;
 
-namespace Sylvester.Tests
+namespace Sylvester.Tests.Data
 {
-    public class DataFrameTests
+    public class CsDataFrameTests
     {
         [Fact]
         public void CanConstructFrame()
@@ -55,9 +55,9 @@ namespace Sylvester.Tests
             file[1].Type = typeof(Single);
             dynamic f = new Frame(file);
             Assert.NotNull(f.mpg);
-            dynamic g = f.Select(f.mpg);
+            dynamic g = f.SerF(f.mpg);
             Assert.NotNull(g.mpg);
-            dynamic e = f.Except(0);
+            dynamic e = f.SerExF(0);
             Assert.NotNull(e.disp);
 
         }

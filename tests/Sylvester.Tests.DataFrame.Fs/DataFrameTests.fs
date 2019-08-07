@@ -1,4 +1,4 @@
-namespace Sylvester.Tests
+namespace Sylvester.Tests.Data
 
 open System;
 open System.Linq;
@@ -51,6 +51,15 @@ module FsDataFrameTests =
         Assert.NotNull(w2.["Braund, Mr. Owen Harris"])
 
         Assert.NotEmpty(w2.SelC("PassengerId"))
-        let dr1 = dt.SelC("PassengerId", "Survived")
+        let dr1 = dt.Ser("PassengerId", "Survived")
         Assert.NotEmpty(dr1)
+        let p = query {
+            for r in dt do 
+            select (
+                let j = new FrameDR()
+                j?Survived <- r?Survived
+                j
+            )}
+        Assert.NotEmpty(p)
+        
   

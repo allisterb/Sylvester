@@ -6,7 +6,7 @@ using System.Text;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public abstract class FrameC<T> : DynamicObject, ISeries where T : IEquatable<T>
     {

@@ -20,7 +20,9 @@ using System.Dynamic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Sylvester {
+using Sylvester.Data;
+
+namespace Sylvester.DataFrame.Dynamic {
     /// <summary>
     /// Represents a dynamically assigned class.  Expando objects which share the same 
     /// members will share the same class.  Classes are dynamically assigned as the
