@@ -23,6 +23,8 @@ namespace Sylvester.Data
 
         public Array Data { get; internal set; }
 
+        public List<Array> BatchData { get; internal set; }
+
         public Action<int, string> ParseAction { get; internal set; }
 
         public int Index { get; set; }
@@ -38,5 +40,7 @@ namespace Sylvester.Data
         public string BoolFalse { get; set; }
 
         public string BoolTrue { get; set; }
+
+        public bool Ignore { get; set; }
     }
 }

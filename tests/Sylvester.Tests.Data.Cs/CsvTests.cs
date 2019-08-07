@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Xunit;
 using Sylvester.Data;
@@ -27,5 +28,19 @@ namespace Sylvester.Data.Tests
             file.Fields.RemoveAt(1);
             Assert.Equal("Sex", file[1].Label);
         }
+
+        [Fact]
+        public void CanBatchParseFile()
+        {
+            var file = new CsvFile("transfusion.data");
+            foreach(var field in file)
+            {
+                field.Type = typeof(int);
+            }
+            file.Parse(70, 0);
+            Assert.Equal(748, file.Fields[0].BatchData.Sum(b => b.Length));
+            Assert.Equal(2250, file.Fields[2].BatchData[8].GetValue(1)); //row 562 3rd field
+        }
+       
     }
 }
