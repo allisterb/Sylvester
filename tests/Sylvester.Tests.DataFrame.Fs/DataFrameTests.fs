@@ -53,6 +53,7 @@ module FsDataFrameTests =
         Assert.NotEmpty(w2.SelC("PassengerId"))
         let dr1 = dt.Ser("PassengerId", "Survived")
         Assert.NotEmpty(dr1)
+        
         let p = query {
             for r in dt do 
             select (

@@ -37,7 +37,8 @@ namespace Sylvester.Tests.Data
             {
                 field.Type = typeof(int);
             }
-            file.Parse(70, 0);
+            file.BatchSize = 70;
+            file.Parse(0);
             Assert.Equal(748, file.Fields[0].BatchData.Sum(b => b.Length));
             Assert.Equal(2250, file.Fields[2].BatchData[8].GetValue(1)); //row 562 3rd field
         }

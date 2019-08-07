@@ -49,6 +49,8 @@ namespace Sylvester.Data
 
         public string BoolTrue { get; set; }
 
+        public bool Ignore { get; set; }
+
         protected Type _type;
 
         protected dynamic GetDefaultValue(Type type)

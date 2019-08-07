@@ -136,11 +136,30 @@ namespace Sylvester.Data
         public Frame(CsvFile file) : this()
         {
             file.Parse();
-            for (int i = 0; i < file.Fields.Count; i++)
+            if (file.BatchParse)
             {
-                CsvField f = file.Fields[i];
-                if (f.Data.Length == 0) continue;
-                Add(f.Type, f.Data, f.Label);
+                for (int i = 0; i < file.Fields.Count; i++)
+                {
+                    CsvField f = file[i];
+                    if (f.BatchData.Count == 0) continue;
+                    Array a = Array.CreateInstance(file[i].Type, f.BatchData.Sum(b => b.Length));
+                    int destIndex = 0;
+                    for (int j = 0; j < f.BatchData.Count; j++)
+                    {
+                        Array.Copy(f.BatchData[j], 0, a, destIndex, f.BatchData[j].Length);
+                        destIndex += f.BatchData[i].Length;
+                    }
+                    Add(f.Type, a, f.Label);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < file.Fields.Count; i++)
+                {
+                    CsvField f = file.Fields[i];
+                    if (f.Data.Length == 0) continue;
+                    Add(f.Type, f.Data, f.Label);
+                }
             }
             BuildRows();
         }

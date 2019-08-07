@@ -19,7 +19,7 @@ namespace Sylvester.Data
             Delimiter = delimiter;
             InferFieldNames = inferFieldNames;
             SkipHeader = skipHeader;
-            
+
             if (InferFieldNames)
             {
                 string[] header = null;
@@ -35,7 +35,7 @@ namespace Sylvester.Data
                 {
                     throw new ArgumentException($"The file {Path} does not contain valid CSV data.");
                 }
-               
+
                 for (int i = 0; i < header.Length; i++)
                 {
                     Fields.Add(new CsvField(i, typeof(string), header[i] != string.Empty ? header[i] : "Field" + i.ToString()));
@@ -59,6 +59,24 @@ namespace Sylvester.Data
 
         public CsvField this[string i] => Fields.Where(f => f.Label == i).First();
 
+        public bool BatchParse { get; protected set; } = false;
+
+        public int BatchSize
+        {
+            get => _batchSize;
+            set
+            {
+                _batchSize = value;
+                if (_batchSize > 0)
+                {
+                    BatchParse = true;
+                }
+                else
+                {
+                    BatchParse = false;
+                }
+            }
+        }
         public IEnumerator<CsvField> GetEnumerator()
         {
             for (int i = 0; i < Fields.Count; i++)
@@ -75,7 +93,7 @@ namespace Sylvester.Data
             }
         }
 
-        public byte[] ReadEntireFile() => File.ReadAllBytes(Path); 
+        public byte[] ReadEntireFile() => File.ReadAllBytes(Path);
 
 
         public CsvFile Add<T>(int index, string label, T defaultVal = default, T constant = default, string boolFalse = "", string boolTrue = "") where T : struct
@@ -91,9 +109,14 @@ namespace Sylvester.Data
             Fields.Add(new CsvField(index, typeof(T), label, defaultVal, constant, boolFalse, boolTrue));
             return this;
         }
-            
+
         public void Parse(int threads = 0)
         {
+            if (BatchParse)
+            {
+                this.Parse(_batchSize, threads);
+                return;
+            }
             byte[] fileData = Path.StartsWith("http") ? HttpClient.GetByteArrayAsync(Path).Result :
                 File.ReadAllBytes(Path);
             List<string[]> rows = new List<string[]>(100000);
@@ -116,7 +139,7 @@ namespace Sylvester.Data
             ParseActions(rows);
         }
 
-        public void Parse(int batchSize, int threads = 0)
+        protected void Parse(int batchSize, int threads = 0)
         {
             foreach (var f in Fields)
             {
@@ -155,6 +178,7 @@ namespace Sylvester.Data
                     rows.Clear();
                     b = 0;
                 }
+                BatchParse = true;
             }
 
         }
@@ -176,7 +200,7 @@ namespace Sylvester.Data
                         {
                             sdata[index] = s == "" ? Fields[i0].DefaultVal : s;
                         };
-                        Fields[i].Data = sdata; 
+                        Fields[i].Data = sdata;
                         break;
                     case "DateTime":
                         var dtdata = new DateTime[length];
@@ -477,5 +501,7 @@ namespace Sylvester.Data
                 });
             }
         }
-    }
+
+        protected int _batchSize = 0;
+    }   
 }

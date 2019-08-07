@@ -71,7 +71,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{B94CF0C7-44C1-4BD2-96C8-34187762187D}"
 	ProjectSection(SolutionItems) = preProject
 		..\tests\data\mtcars.csv = ..\tests\data\mtcars.csv
-		..\..\..\Users\Allister\Downloads\transfusion.data = ..\..\..\Users\Allister\Downloads\transfusion.data
+		..\tests\data\transfusion.data = ..\tests\data\transfusion.data
 	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.DataFrame.Fs", "..\tests\Sylvester.Tests.DataFrame.Fs\Sylvester.Tests.DataFrame.Fs.fsproj", "{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}"

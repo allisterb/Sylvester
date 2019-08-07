@@ -60,6 +60,19 @@ namespace Sylvester.Tests.Data
             dynamic e = f.SerExF(0);
             Assert.NotNull(e.disp);
 
+            CsvFile trans = new CsvFile("transfusion.data");
+            Assert.NotEmpty(trans);
+            Assert.Equal("Frequency (times)", trans[1].Label);
+            foreach(var transf in trans.Fields)
+            {
+                transf.Type = typeof(int);
+                transf.Label = transf.Label.Replace(" ", "");
+            }
+            trans[0].Label = "Recency";
+            trans.BatchSize = 70;
+            dynamic dt = new Frame(trans);
+            Assert.Equal(23, dt.Recency[729]);
+            Assert.Equal(16, dt[714].Recency);
         }
 
         [Fact]
