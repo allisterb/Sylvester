@@ -18,7 +18,6 @@ namespace Sylvester.Data
             Enumerator = new FrameDREnumerator(this);
         }
 
-
         public FrameDR(Frame f, int index, params ISeries[] series) : this()
         {
             Frame = f;
@@ -32,15 +31,21 @@ namespace Sylvester.Data
             {
                 AddCallSite(c.Key);
             }
-            
         }
 
-        
         public FrameDR(Dictionary<string, dynamic> values) : this()
         {
-            this.CustomColumns = values;
+            this.CustomColumns = values ?? throw new ArgumentNullException("values");
         }
 
+        public FrameDR(params ValueTuple<string, dynamic>[] values) :this()
+        {
+            CustomColumns = new Dictionary<string, dynamic>();
+            for (int i = 0; i < values.Length; i++)
+            {
+                CustomColumns.Add(values[i].Item1, values[i].Item2);
+            }
+        }
         public Frame Frame { get; }
 
         public ISeries[] Series { get; }
@@ -159,9 +164,75 @@ namespace Sylvester.Data
 
         public FrameDR Ser(params ISeries[] series) => new FrameDR(this.Frame, this.Index, series);
 
-        public FrameDR Ser(params string[] series) => Ser(Series.Where(s => series.Contains(s.Label)).ToArray());
+        public FrameDR Ser(params string[] series) => Ser(Series.Where(s => series.Contains(s.Label) || series.Contains(s.Label)).ToArray());
 
         public FrameDR Ser(params int[] series) => Ser(series.Select(i => Series[i]).ToArray());
+
+        public FrameDR Ex(params ISeries[] series) => new FrameDR(this.Frame, this.Index, 
+            this.Series.Except(series).ToArray());
+
+        public FrameDR Ex(params string[] series) => new FrameDR(this.Frame, this.Index,
+            this.Series.Where(s => !series.Contains(s.Label)).ToArray());
+
+        public FrameDR Add(Dictionary<string, dynamic> values)
+        {
+            foreach(var kv in values)
+            {
+                if (CustomColumns.ContainsKey(kv.Key))
+                {
+                    CustomColumns[kv.Key] = kv.Value;
+                }
+                else
+                {
+                    CustomColumns.Add(kv.Key, kv.Value);
+                }
+                
+            }
+            return this;
+        }
+
+        public FrameDR Add(params ValueTuple<string, dynamic>[] values)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (CustomColumns.ContainsKey(values[i].Item1))
+                {
+                    CustomColumns[values[i].Item1] = values[i].Item2;
+                }
+                else
+                {
+                    CustomColumns.Add(values[i].Item1, values[i].Item2);
+                }
+            }
+            return this;
+        }
+
+        public FrameDR Sel(params string[] columns)
+        {
+            var notfound = columns.Where(c => !SeriesColumns.ContainsKey(c) || !CustomColumns.ContainsKey(c));
+            if (notfound.Count() != 0)
+            {
+                throw new ArgumentException($"The following columns do not exist in the row: {notfound.Aggregate((s1, s2) => s1 + "," + s2)}.");
+            }
+            var series = SeriesColumns.Where(c => columns.Contains(c.Key));
+            FrameDR dr = null;
+            if (series.Count() != 0)
+            {
+                dr = new FrameDR(this.Frame, this.Index, series.Select(c => c.Value).ToArray());
+
+            }
+            else
+            {
+                dr = new FrameDR();
+            }
+            var custom = CustomColumns.Where(c => columns.Contains(c.Key));
+            foreach (var c in custom)
+            {
+                dr.Add((c.Key, c.Value));
+            }
+            
+            return dr;
+        }
 
         internal dynamic GetSeriesMember(string propName)
         {

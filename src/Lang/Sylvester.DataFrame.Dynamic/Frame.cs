@@ -212,11 +212,11 @@ namespace Sylvester.Data
 
         public FrameDR[] Ser(params int[] series) => Ser(series.Select(i => Series[i]).ToArray());
 
-        public FrameDR[] SerEx(params ISeries[] series) => Ser(Series.Where(s => !series.Contains(s)).ToArray());
+        public FrameDR[] Ex(params ISeries[] series) => Ser(Series.Where(s => !series.Contains(s)).ToArray());
 
-        public FrameDR[] SerEx(params string[] series) => Ser(Series.Where(s => !series.Contains(s.Label)).ToArray());
+        public FrameDR[] Ex(params string[] series) => Ser(Series.Where(s => !series.Contains(s.Label)).ToArray());
 
-        public FrameDR[] SerEx(params int[] series) => Ser(Series.Except(series.Select(i => Series[i])).ToArray());
+        public FrameDR[] Ex(params int[] series) => Ser(Series.Except(series.Select(i => Series[i])).ToArray());
 
         public Frame SerF(params ISeries[] series) => new Frame(series);
 
@@ -224,7 +224,7 @@ namespace Sylvester.Data
 
         public Frame SerF(params int[] series) => new Frame(series.Select(i => Series[i]));
 
-        public Frame SerExF(params ISeries[] series) => new Frame(Series.Except(series));
+        public Frame ExF(params ISeries[] series) => new Frame(Series.Except(series));
 
         public Frame SerExF(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
 

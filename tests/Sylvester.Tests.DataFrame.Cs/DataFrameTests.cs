@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Microsoft.CSharp;
 using Microsoft.CSharp.RuntimeBinder;
@@ -31,22 +32,6 @@ namespace Sylvester.Tests.Data
         }
 
         [Fact]
-        public void CanConstructFrameFromAnonymous()
-        {
-            dynamic z = new Frame(new Array[] { new string[100], new int[100], new DateTime[100], new bool[100] }, new { Name = "John Die", Age = 0, Birthday = DateTime.Now, Active = false }); 
-            Assert.NotNull(z.Name);
-            Assert.NotNull(z.Birthday);
-            z.Name[0] = "John Doe";
-            z.Birthday[0] = DateTime.Now;
-            _ = Assert.IsType<string>(z.Name[0]);
-            Assert.IsType<DateTime>(z.Birthday[0]);
-            Assert.False(z.Active[0]);
-            var r = z[0];
-            Assert.NotNull(r.Name);
-            Assert.NotNull(r.Birthday);
-        }
-
-        [Fact]
         public void CanConstructFrameFromCsv()
         {
             CsvFile file = new CsvFile("mtcars.csv");
@@ -63,7 +48,7 @@ namespace Sylvester.Tests.Data
             CsvFile trans = new CsvFile("transfusion.data");
             Assert.NotEmpty(trans);
             Assert.Equal("Frequency (times)", trans[1].Label);
-            foreach(var transf in trans.Fields)
+            foreach (var transf in trans.Fields)
             {
                 transf.Type = typeof(int);
                 transf.Label = transf.Label.Replace(" ", "");
@@ -76,7 +61,23 @@ namespace Sylvester.Tests.Data
         }
 
         [Fact]
-        public void CanConstructFrameR()
+        public void CanConstructFrameFromAnonymous()
+        {
+            dynamic z = new Frame(new Array[] { new string[100], new int[100], new DateTime[100], new bool[100] }, new { Name = "John Die", Age = 0, Birthday = DateTime.Now, Active = false }); 
+            Assert.NotNull(z.Name);
+            Assert.NotNull(z.Birthday);
+            z.Name[0] = "John Doe";
+            z.Birthday[0] = DateTime.Now;
+            _ = Assert.IsType<string>(z.Name[0]);
+            Assert.IsType<DateTime>(z.Birthday[0]);
+            Assert.False(z.Active[0]);
+            var r = z[0];
+            Assert.NotNull(r.Name);
+            Assert.NotNull(r.Birthday);
+        }
+
+        [Fact]
+        public void CanAddSeriesToFrame()
         {
             dynamic f = new Frame(new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 }, "Age"));
             Assert.Equal(3.0, f.Age[1]);
@@ -97,6 +98,11 @@ namespace Sylvester.Tests.Data
                 from row in f
                 select row["mpg"];
             Assert.NotEmpty(q);
+
+            var q2 =
+                from row in f
+                select row.Ser("mpg").Add(("Foo1", 1));
+            Assert.NotEmpty(q2);
         }
     }
 }
