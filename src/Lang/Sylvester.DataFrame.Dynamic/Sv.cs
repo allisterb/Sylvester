@@ -42,7 +42,6 @@ namespace Sylvester.Data
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => (Data as IEnumerable<T>).GetEnumerator();
 
-
         public override ISeries Append(params dynamic[] values)
         {
             T[] a = new T[Data.Length + values.Length];
@@ -52,5 +51,7 @@ namespace Sylvester.Data
         }
 
         public override ISeries Clone(string label) => new Sv<T>(Data, label);
+
+        public static implicit operator Sv<T>(T[] array) => new Sv<T>(array);
     }
 }

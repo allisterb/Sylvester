@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
 
 namespace Sylvester.Data
 {
@@ -14,5 +14,7 @@ namespace Sylvester.Data
 
         public Sd(IEnumerable<DateTime> data) : this(data.ToArray()) { }
 
+
+        public static implicit operator Sd(DateTime[] array) => new Sd(array);
     }
 }

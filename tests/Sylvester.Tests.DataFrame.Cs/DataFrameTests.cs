@@ -18,10 +18,10 @@ namespace Sylvester.Tests.Data
         {
             dynamic f = new Frame();
             dynamic g = new Sn<float>(new[] { 1.0f, 2.0f, 4.0f }, "A");
-            f.S1 = new Sn<float>(new[] { 1.0f, 2.0f, 4.0f }, "A");
+            f.S1 = new Sn<float>(new[] { 1.0f, 2.0f, 4.0f });
             var s1 = f.S1;
             Assert.NotNull(s1);
-            Assert.Equal("A", s1.Label);
+            Assert.Equal("S1", s1.Label);
             dynamic f2 = new Frame(g);
             Assert.NotNull(f2.A);
             Sn<float> s2 = f2.A;
@@ -101,8 +101,11 @@ namespace Sylvester.Tests.Data
 
             var q2 =
                 from row in f
-                select row.Ser("mpg").Add(("Foo1", 1));
+                select (row.Ser("mpg").Add(("Foo1", 1)));
             Assert.NotEmpty(q2);
+            var v = q2.ToFrameV();
+            Assert.NotEmpty(v);
+
         }
     }
 }

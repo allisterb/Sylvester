@@ -13,5 +13,7 @@ namespace Sylvester.Data
 
         public Ss(IEnumerable<string> data) : this(data.ToArray()) { }
 
+        public static implicit operator Ss(string[] array) => new Ss(array);
+
     }
 }

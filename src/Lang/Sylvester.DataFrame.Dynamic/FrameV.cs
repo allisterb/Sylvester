@@ -13,7 +13,13 @@ namespace Sylvester.Data
 {
     public class FrameV<T> : IEnumerable where T : IEquatable<T>
     {
-        public FrameV(IEnumerable<FrameDR> rows, Func<T, int> index)
+        public FrameV(IEnumerable<FrameDR> rows, Func<T, FrameV<T>, int> index)
+        {
+            Rows = rows.ToList();
+            Index = index;
+        }
+
+        public FrameV(List<FrameDR> rows, Func<T, FrameV<T>, int> index)
         {
             Rows = rows.ToList();
             Index = index;
@@ -21,9 +27,9 @@ namespace Sylvester.Data
 
         public List<FrameDR> Rows { get; }
 
-        public Func<T, int> Index { get; }
+        public Func<T, FrameV<T>, int> Index { get; }
 
-        public FrameDR this[T t] => Rows[Index(t)];
+        public FrameDR this[T t] => Rows[Index(t, this)];
 
         public IEnumerator GetEnumerator() => (IEnumerator) Rows.GetEnumerator();
 
@@ -36,5 +42,8 @@ namespace Sylvester.Data
         public FrameV<T> Ex(params ISeries[] series) => new FrameV<T>(Rows.Select(r => r.Ex(series)), Index);
 
         public FrameV<T> Ex(params string[] series) => new FrameV<T>(Rows.Select(r => r.Ex(series)), Index);
+
+
+        public static implicit operator List<FrameDR>(FrameV<T> view) => view.Rows;
     }
 }

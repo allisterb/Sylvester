@@ -51,6 +51,9 @@ namespace Sylvester.Data
 
         public override ISeries Clone(string label) => new Sn<T>(Data, label);
 
+
+        public static implicit operator Sn<T>(T[] array) => new Sn<T>(array);
+
         public static Sn<double> Rnd(int length, string label = "")
         {
             double[] values = new double[length];

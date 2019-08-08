@@ -226,11 +226,15 @@ namespace Sylvester.Data
 
         public Frame ExF(params ISeries[] series) => new Frame(Series.Except(series));
 
-        public Frame SerExF(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
+        public Frame ExF(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
 
-        public Frame SerExF(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
+        public Frame ExF(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
 
         public FrameW<T> Wnd<T>(Func<T, int> index) where T : struct, IEquatable<T> => new FrameW<T>(this, index);
+
+        public FrameV<T> View<T>(Func<T, FrameV<T>, int> index) where T : IEquatable<T> => new FrameV<T>(this.Ser(this.Series.ToArray()), index);
+
+        public FrameV<int> View() => this.View<int>((index, view) => index);
 
         public FrameW<string> SWnd(ISeries s) => new FrameW<string>(this, (index) =>
             Array.IndexOf(((Ss)s).Data, index));

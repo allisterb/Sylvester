@@ -50,7 +50,7 @@ module FsDataFrameTests =
         let w2 = dt.SWnd(dt?Name)
         Assert.NotNull(w2.["Braund, Mr. Owen Harris"])
 
-        Assert.NotEmpty(w2.SelC("PassengerId"))
+        Assert.NotEmpty(w2.Ser("PassengerId"))
         let dr1 = dt.Ser("PassengerId", "Survived")
         Assert.NotEmpty(dr1)
         
