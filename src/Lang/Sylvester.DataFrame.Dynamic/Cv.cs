@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Sylvester.Data
 {
-    public class Sv<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>
+    public class Cv<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>
     {
-        public Sv(T[] data, string label, object defaultVal = default) : base(label, defaultVal)
+        public Cv(T[] data, string label, object defaultVal = default) : base(label, defaultVal)
         {
             Data = data;
         }
 
-        public Sv(T[] data) : this(data, "") { }
+        public Cv(T[] data) : this(data, "") { }
 
-        public Sv(IEnumerable<T> data) : this(data.ToArray()) { }
+        public Cv(IEnumerable<T> data) : this(data.ToArray()) { }
         
         public T[] Data { get; }
 
@@ -42,16 +42,16 @@ namespace Sylvester.Data
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => (Data as IEnumerable<T>).GetEnumerator();
 
-        public override ISeries Append(params dynamic[] values)
+        public override IColumn Append(params dynamic[] values)
         {
             T[] a = new T[Data.Length + values.Length];
             Data.CopyTo(a, 0);
             values.CopyTo(a, Length);
-            return new Sv<T>(a, Label);
+            return new Cv<T>(a, Label);
         }
 
-        public override ISeries Clone(string label) => new Sv<T>(Data, label);
+        public override IColumn Clone(string label) => new Cv<T>(Data, label);
 
-        public static implicit operator Sv<T>(T[] array) => new Sv<T>(array);
+        public static implicit operator Cv<T>(T[] array) => new Cv<T>(array);
     }
 }

@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace Sylvester.Data
 {
-    public abstract class FrameC<T> : DynamicObject, ISeries where T : IEquatable<T>
+    public abstract class FrameC<T> : DynamicObject, IColumn where T : IEquatable<T>
     {
         public FrameC(string label, dynamic defaultVal = null) { Label = label; DefaultVal = defaultVal; }
 
@@ -36,9 +36,9 @@ namespace Sylvester.Data
 
         public IBackend Backend { get; set; }
 
-        public abstract ISeries Append(params dynamic[] values);
+        public abstract IColumn Append(params dynamic[] values);
 
-        public abstract ISeries Clone(string label);
+        public abstract IColumn Clone(string label);
     }
 
 }

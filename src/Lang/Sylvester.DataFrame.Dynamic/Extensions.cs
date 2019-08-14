@@ -6,14 +6,14 @@ namespace Sylvester.Data
 {
     public static class Extensions
     {
-        public static Sn<T> ToSeries<T>(this IEnumerable<T> values) where T : struct, IEquatable<T>, IComparable<T>, IConvertible
+        public static Cn<T> ToColumn<T>(this IEnumerable<T> values) where T : struct, IEquatable<T>, IComparable<T>, IConvertible
         {
-            return new Sn<T>(values);
+            return new Cn<T>(values);
         }
 
-        public static Ss ToSeries(this IEnumerable<string> values) => new Ss(values);
+        public static Cs ToColumn(this IEnumerable<string> values) => new Cs(values);
 
-        public static Sd ToSeries(this IEnumerable<DateTime> values) => new Sd(values);
+        public static Cd ToColumns(this IEnumerable<DateTime> values) => new Cd(values);
 
         public static FrameV<int> ToFrameV (this IEnumerable<FrameDR> rows)
         {

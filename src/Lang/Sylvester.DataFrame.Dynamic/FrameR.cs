@@ -17,7 +17,7 @@ namespace Sylvester.Data
         {
             Frame = f;
             Index = index;
-            foreach (var c in Frame.Columns)
+            foreach (var c in Frame.ColumnLabels)
             {
                 AddCallSite(c.Key);
             }
@@ -32,18 +32,18 @@ namespace Sylvester.Data
 
         public FrameREnumerator Enumerator { get; }
 
-        public dynamic this[string column] => Frame.Columns[column].GetVal(Index);
+        public dynamic this[string column] => Frame.ColumnLabels[column].GetVal(Index);
 
         public dynamic this[int i]
         {
-            get => Frame.Series[i].GetVal(Index);
+            get => Frame.Columns[i].GetVal(Index);
         }
         public IEnumerator GetEnumerator() => Enumerator;
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
-            if (Frame.Columns.ContainsKey(binder.Name))
+            if (Frame.ColumnLabels.ContainsKey(binder.Name))
             {
                 if (!CallSites.ContainsKey(binder.Name))
                 {
@@ -59,16 +59,16 @@ namespace Sylvester.Data
         }
         public override bool TrySetMember(SetMemberBinder binder, object value) => false;
 
-        public FrameDR Ser(params ISeries[] series) => new FrameDR(this.Frame, this.Index, series);
+        public FrameDR Col(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, columns);
 
-        public FrameDR Ser(params string[] series) => Ser(Frame.Series.Where(s => series.Contains(s.Label)).ToArray());
+        public FrameDR Col(params string[] columns) => Col(Frame.Columns.Where(s => columns.Contains(s.Label)).ToArray());
 
-        public FrameDR Ser(params int[] series) => Ser(series.Select(i => Frame.Series[i]).ToArray());
+        public FrameDR Col(params int[] columns) => Col(columns.Select(i => Frame.Columns[i]).ToArray());
 
         internal dynamic GetMember(string propName)
         {
-            ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
-            return s.GetVal(Index);
+            IColumn c = (IColumn) CallSites[propName].Target(CallSites[propName], this.Frame);
+            return c.GetVal(Index);
         }
 
         private void AddCallSite(string propName)
@@ -93,7 +93,7 @@ namespace Sylvester.Data
         FrameR row;
         int position = -1;
 
-        public bool MoveNext() => (++position < row.Frame.Columns.Count);
+        public bool MoveNext() => (++position < row.Frame.ColumnLabels.Count);
 
         public void Reset() => position = -1;
 

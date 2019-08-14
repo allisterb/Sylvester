@@ -21,7 +21,7 @@ namespace Sylvester.Data
 
         public FrameV(List<FrameDR> rows, Func<T, FrameV<T>, int> index)
         {
-            Rows = rows.ToList();
+            Rows = rows;
             Index = index;
         }
 
@@ -33,15 +33,15 @@ namespace Sylvester.Data
 
         public IEnumerator GetEnumerator() => (IEnumerator) Rows.GetEnumerator();
 
-        public FrameV<T> Ser(params ISeries[] series) => new FrameV<T>(Rows.Select(r => r.Ser(series)), Index);
+        public FrameV<T> Col(params IColumn[] columns) => new FrameV<T>(Rows.Select(r => r.Col(columns)), Index);
 
-        public FrameV<T> Ser(params string[] series) => new FrameV<T>(Rows.Select(r => r.Ser(series)), Index);
+        public FrameV<T> Col(params string[] columns) => new FrameV<T>(Rows.Select(r => r.Col(columns)), Index);
 
-        public FrameV<T> Ser(params int[] series) => new FrameV<T>(Rows.Select(r => r.Ser(series)), Index);
+        public FrameV<T> Col(params int[] columns) => new FrameV<T>(Rows.Select(r => r.Col(columns)), Index);
 
-        public FrameV<T> Ex(params ISeries[] series) => new FrameV<T>(Rows.Select(r => r.Ex(series)), Index);
+        public FrameV<T> Ex(params IColumn[] columns) => new FrameV<T>(Rows.Select(r => r.Ex(columns)), Index);
 
-        public FrameV<T> Ex(params string[] series) => new FrameV<T>(Rows.Select(r => r.Ex(series)), Index);
+        public FrameV<T> Ex(params string[] columns) => new FrameV<T>(Rows.Select(r => r.Ex(columns)), Index);
 
 
         public static implicit operator List<FrameDR>(FrameV<T> view) => view.Rows;

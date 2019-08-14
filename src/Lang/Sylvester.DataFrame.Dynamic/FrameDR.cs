@@ -18,16 +18,16 @@ namespace Sylvester.Data
             Enumerator = new FrameDREnumerator(this);
         }
 
-        public FrameDR(Frame f, int index, params ISeries[] series) : this()
+        public FrameDR(Frame f, int index, params IColumn[] columns) : this()
         {
             Frame = f;
-            Series = series ?? throw new ArgumentNullException();
+            Columns = columns ?? throw new ArgumentNullException();
             Index = index;
-            for (int i = 0; i < Series.Length; i++)
+            for (int i = 0; i < Columns.Length; i++)
             {
-                SeriesColumns.Add(Series[i].Label, Series[i]);
+                FrameColumns.Add(Columns[i].Label, Columns[i]);
             }
-            foreach (var c in SeriesColumns)
+            foreach (var c in FrameColumns)
             {
                 AddCallSite(c.Key);
             }
@@ -48,9 +48,9 @@ namespace Sylvester.Data
         }
         public Frame Frame { get; }
 
-        public ISeries[] Series { get; }
+        public IColumn[] Columns { get; }
 
-        public Dictionary<string, ISeries> SeriesColumns { get; } = new Dictionary<string, ISeries>();
+        public Dictionary<string, IColumn> FrameColumns { get; } = new Dictionary<string, IColumn>();
 
         public Dictionary<string, dynamic> CustomColumns { get; } = new Dictionary<string, dynamic>();
 
@@ -65,9 +65,9 @@ namespace Sylvester.Data
         {
             get
             {
-                if (SeriesColumns.ContainsKey(column))
+                if (FrameColumns.ContainsKey(column))
                 {
-                    return SeriesColumns[column].GetVal(Index); ;
+                    return FrameColumns[column].GetVal(Index); ;
                 }
                 else if (CustomColumns.ContainsKey(column))
                 {
@@ -78,9 +78,9 @@ namespace Sylvester.Data
             }
             set
             {
-                if (SeriesColumns.ContainsKey(column))
+                if (FrameColumns.ContainsKey(column))
                 {
-                    SeriesColumns[column].SetVal(Index, value); ;
+                    FrameColumns[column].SetVal(Index, value); ;
                 }
                 else if (CustomColumns.ContainsKey(column))
                 {
@@ -95,13 +95,13 @@ namespace Sylvester.Data
         {
             get
             {
-                if (i <= (SeriesColumns.Count - 1))
+                if (i <= (FrameColumns.Count - 1))
                 {
-                    return Series[i].GetVal(Index);
+                    return Columns[i].GetVal(Index);
                 }
-                else if (i <= SeriesColumns.Count + CustomColumns.Count - 1)
+                else if (i <= FrameColumns.Count + CustomColumns.Count - 1)
                 {
-                    return CustomColumns.Values.ElementAt(i - SeriesColumns.Count);
+                    return CustomColumns.Values.ElementAt(i - FrameColumns.Count);
                 }
                 else throw new IndexOutOfRangeException($"Index {i} does not exist.");
 
@@ -109,13 +109,13 @@ namespace Sylvester.Data
 
             set
             {
-                if (i <= (SeriesColumns.Count - 1))
+                if (i <= (FrameColumns.Count - 1))
                 {
-                    Series[i].SetVal(Index, value);
+                    Columns[i].SetVal(Index, value);
                 }
-                else if (i <= SeriesColumns.Count + CustomColumns.Count - 1)
+                else if (i <= FrameColumns.Count + CustomColumns.Count - 1)
                 {
-                    CustomColumns[CustomColumns.Keys.ElementAt(i - SeriesColumns.Count)] = value;
+                    CustomColumns[CustomColumns.Keys.ElementAt(i - FrameColumns.Count)] = value;
                 }
                 else throw new IndexOutOfRangeException($"Index {i} does not exist.");
             }
@@ -125,13 +125,13 @@ namespace Sylvester.Data
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
-            if (SeriesColumns.ContainsKey(binder.Name))
+            if (FrameColumns.ContainsKey(binder.Name))
             {
                 if (!CallSites.ContainsKey(binder.Name))
                 {
                     AddCallSite(binder.Name);
                 }
-                result = GetSeriesMember(binder.Name);
+                result = GetColumnMember(binder.Name);
                 return true;
             }
             else if (CustomColumns.ContainsKey(binder.Name))
@@ -146,9 +146,9 @@ namespace Sylvester.Data
         }
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            if (SeriesColumns.ContainsKey(binder.Name))
+            if (FrameColumns.ContainsKey(binder.Name))
             {
-                ISeries s = (ISeries)CallSites[binder.Name].Target(CallSites[binder.Name], this.Frame);
+                IColumn s = (IColumn)CallSites[binder.Name].Target(CallSites[binder.Name], this.Frame);
                 return s.SetVal(Index, value);
             }
             else if (CustomColumns.ContainsKey(binder.Name))
@@ -162,17 +162,17 @@ namespace Sylvester.Data
             }
         }
 
-        public FrameDR Ser(params ISeries[] series) => new FrameDR(this.Frame, this.Index, series);
+        public FrameDR Col(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, columns);
 
-        public FrameDR Ser(params string[] series) => Ser(Series.Where(s => series.Contains(s.Label) || series.Contains(s.Label)).ToArray());
+        public FrameDR Col(params string[] columns) => Col(Columns.Where(s => columns.Contains(s.Label) || columns.Contains(s.Label)).ToArray());
 
-        public FrameDR Ser(params int[] series) => Ser(series.Select(i => Series[i]).ToArray());
+        public FrameDR Col(params int[] columns) => Col(columns.Select(i => Columns[i]).ToArray());
 
-        public FrameDR Ex(params ISeries[] series) => new FrameDR(this.Frame, this.Index, 
-            this.Series.Except(series).ToArray());
+        public FrameDR Ex(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, 
+            this.Columns.Except(columns).ToArray());
 
-        public FrameDR Ex(params string[] series) => new FrameDR(this.Frame, this.Index,
-            this.Series.Where(s => !series.Contains(s.Label)).ToArray());
+        public FrameDR Ex(params string[] columns) => new FrameDR(this.Frame, this.Index,
+            this.Columns.Where(s => !columns.Contains(s.Label)).ToArray());
 
         public FrameDR Add(Dictionary<string, dynamic> values)
         {
@@ -209,24 +209,24 @@ namespace Sylvester.Data
 
         public FrameDR Sel(params string[] columns)
         {
-            var notfound = columns.Where(c => !SeriesColumns.ContainsKey(c) || !CustomColumns.ContainsKey(c));
+            var notfound = columns.Where(c => !FrameColumns.ContainsKey(c) || !CustomColumns.ContainsKey(c));
             if (notfound.Count() != 0)
             {
                 throw new ArgumentException($"The following columns do not exist in the row: {notfound.Aggregate((s1, s2) => s1 + "," + s2)}.");
             }
-            var series = SeriesColumns.Where(c => columns.Contains(c.Key));
+            var frameColumns = FrameColumns.Where(c => columns.Contains(c.Key));
             FrameDR dr = null;
-            if (series.Count() != 0)
+            if (columns.Count() != 0)
             {
-                dr = new FrameDR(this.Frame, this.Index, series.Select(c => c.Value).ToArray());
+                dr = new FrameDR(this.Frame, this.Index, frameColumns.Select(c => c.Value).ToArray());
 
             }
             else
             {
                 dr = new FrameDR();
             }
-            var custom = CustomColumns.Where(c => columns.Contains(c.Key));
-            foreach (var c in custom)
+            var customColumns = CustomColumns.Where(c => columns.Contains(c.Key));
+            foreach (var c in customColumns)
             {
                 dr.Add((c.Key, c.Value));
             }
@@ -234,9 +234,9 @@ namespace Sylvester.Data
             return dr;
         }
 
-        internal dynamic GetSeriesMember(string propName)
+        internal dynamic GetColumnMember(string propName)
         {
-            ISeries s = (ISeries) CallSites[propName].Target(CallSites[propName], this.Frame);
+            IColumn s = (IColumn) CallSites[propName].Target(CallSites[propName], this.Frame);
             return s.GetVal(Index);
         }
 
@@ -262,7 +262,7 @@ namespace Sylvester.Data
         FrameDR row;
         int position = -1;
 
-        public bool MoveNext() => (++position < (row.SeriesColumns.Count + row.CustomColumns.Count));
+        public bool MoveNext() => (++position < (row.FrameColumns.Count + row.CustomColumns.Count));
 
         public void Reset() => position = -1;
 

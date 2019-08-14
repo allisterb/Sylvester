@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Sylvester.Data
 {
-    public class Sr<T> : FrameC<T>, IEnumerable<T> where T : class, IEquatable<T>, IComparable<T>
+    public class Cr<T> : FrameC<T>, IEnumerable<T> where T : class, IEquatable<T>, IComparable<T>
     {
-        public Sr(T[] data, string label, object defaultVal = default) : base(label, defaultVal)
+        public Cr(T[] data, string label, object defaultVal = default) : base(label, defaultVal)
         {
             Data = data;
         }
 
-        public Sr(T[] data) : this(data, "") {}
+        public Cr(T[] data) : this(data, "") {}
 
-        public Sr(IEnumerable<T> data) : this(data.ToArray()) {}
+        public Cr(IEnumerable<T> data) : this(data.ToArray()) {}
 
         public T[] Data { get; }
 
@@ -41,15 +41,15 @@ namespace Sylvester.Data
                 SetVal(index, value);
             }
         }
-        public override ISeries Append(params dynamic[] values)
+        public override IColumn Append(params dynamic[] values)
         {
             T[] a = new T[Data.Length + values.Length];
             Data.CopyTo(a, 0);
             values.CopyTo(a, Length);
-            return new Sr<T>(a, Label);
+            return new Cr<T>(a, Label);
         }
 
-        public override ISeries Clone(string label) => new Sr<T>(Data, label);
+        public override IColumn Clone(string label) => new Cr<T>(Data, label);
 
 
     }

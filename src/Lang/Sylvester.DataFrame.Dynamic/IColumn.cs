@@ -4,7 +4,7 @@ using System.Dynamic;
 
 namespace Sylvester.Data
 {
-    public interface ISeries : IEnumerable, IDynamicMetaObjectProvider
+    public interface IColumn : IEnumerable, IDynamicMetaObjectProvider
     {
         Type DataType { get; }
 
@@ -20,8 +20,8 @@ namespace Sylvester.Data
 
         IBackend Backend { get; set; }
 
-        ISeries Clone(string label);
+        IColumn Clone(string label);
 
-        ISeries Append(params dynamic[] values);
+        IColumn Append(params dynamic[] values);
     }
 }

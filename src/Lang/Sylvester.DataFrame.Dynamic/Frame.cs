@@ -43,13 +43,13 @@ namespace Sylvester.Data
             Backend = new DefaultBackend();
         }
 
-        public Frame(params ISeries[] series) : this()
+        public Frame(params IColumn[] columns) : this()
         {
-            Add(series);
+            Add(columns);
             BuildRows();
         }
 
-        public Frame(IEnumerable<ISeries> series) : this(series.ToArray()) { }
+        public Frame(IEnumerable<IColumn> columns) : this(columns.ToArray()) { }
 
         public Frame(Array[] data, object record) : this()
         {
@@ -85,49 +85,49 @@ namespace Sylvester.Data
                 switch(p.PropertyType.Name)
                 {
                     case "String":
-                        Add(new Ss((string[])data[i], p.Name, (string) p.GetValue(record)));
+                        Add(new Cs((string[])data[i], p.Name, (string) p.GetValue(record)));
                         break;
                     case "DateTime":
-                        Add(new Sd((DateTime[])data[i], p.Name, (DateTime)p.GetValue(record)));
+                        Add(new Cd((DateTime[])data[i], p.Name, (DateTime)p.GetValue(record)));
                         break;
                     case "Byte":
-                        Add(new Sn<byte>((byte[])data[i], p.Name, (byte)p.GetValue(record)));
+                        Add(new Cn<byte>((byte[])data[i], p.Name, (byte)p.GetValue(record)));
                         break;
                     case "SByte":
-                        Add(new Sn<sbyte>((sbyte[])data[i], p.Name, (sbyte)p.GetValue(record)));
+                        Add(new Cn<sbyte>((sbyte[])data[i], p.Name, (sbyte)p.GetValue(record)));
                         break;
                     case "Int16":
-                        Add(new Sn<short>((short[])data[i], p.Name, (short)p.GetValue(record)));
+                        Add(new Cn<short>((short[])data[i], p.Name, (short)p.GetValue(record)));
                         break;
                     case "UInt16":
-                        Add(new Sn<ushort>((ushort[])data[i], p.Name, (ushort)p.GetValue(record)));
+                        Add(new Cn<ushort>((ushort[])data[i], p.Name, (ushort)p.GetValue(record)));
                         break;
                     case "Int32":
-                        Add(new Sn<int>((int[])data[i], p.Name, (int) p.GetValue(record)));
+                        Add(new Cn<int>((int[])data[i], p.Name, (int) p.GetValue(record)));
                         break;
                     case "UInt32":
-                        Add(new Sn<uint>((uint[])data[i], p.Name, (uint)p.GetValue(record)));
+                        Add(new Cn<uint>((uint[])data[i], p.Name, (uint)p.GetValue(record)));
                         break;
                     case "Int64":
-                        Add(new Sn<long>((long[])data[i], p.Name, (long)p.GetValue(record)));
+                        Add(new Cn<long>((long[])data[i], p.Name, (long)p.GetValue(record)));
                         break;
                     case "UInt64":
-                        Add(new Sn<ulong>((ulong[])data[i], p.Name, (ulong)p.GetValue(record)));
+                        Add(new Cn<ulong>((ulong[])data[i], p.Name, (ulong)p.GetValue(record)));
                         break;
                     case "Single":
-                        Add(new Sn<float>((float[])data[i], p.Name, (float)p.GetValue(record)));
+                        Add(new Cn<float>((float[])data[i], p.Name, (float)p.GetValue(record)));
                         break;
                     case "Double":
-                        Add(new Sn<double>((double[])data[i], p.Name, (double)p.GetValue(record)));
+                        Add(new Cn<double>((double[])data[i], p.Name, (double)p.GetValue(record)));
                         break;
                     case "Decimal":
-                        Add(new Sn<decimal>((decimal[])data[i], p.Name, (decimal)p.GetValue(record)));
+                        Add(new Cn<decimal>((decimal[])data[i], p.Name, (decimal)p.GetValue(record)));
                         break;
                     case "Boolean":
-                        Add(new Sn<bool>((bool[])data[i], p.Name, (bool)p.GetValue(record)));
+                        Add(new Cn<bool>((bool[])data[i], p.Name, (bool)p.GetValue(record)));
                         break;
 
-                    default: throw new NotImplementedException("Series of .NET reference objects can't be added to a Frame using anonymous types.");
+                    default: throw new NotImplementedException("columns of .NET reference objects can't be added to a Frame using anonymous types.");
                 }
             }
             BuildRows();
@@ -166,13 +166,13 @@ namespace Sylvester.Data
         #endregion
 
         #region Properties
-        public List<ISeries> Series { get; } = new List<ISeries>();
+        public List<IColumn> Columns { get; } = new List<IColumn>();
 
-        public Dictionary<string, ISeries> Columns { get; } = new Dictionary<string, ISeries>();
+        public Dictionary<string, IColumn> ColumnLabels { get; } = new Dictionary<string, IColumn>();
 
         public FrameR this[int index] => rows[index];
 
-        public ISeries this[string label] => Series.SingleOrDefault(s => s.Label == label);
+        public IColumn this[string label] => Columns.SingleOrDefault(s => s.Label == label);
         
         public int Length { get; protected set; } = -1;
 
@@ -198,64 +198,64 @@ namespace Sylvester.Data
             }
         }
 
-        public FrameDR[] Ser(params ISeries[] series)
+        public FrameV<int> ColsV(params IColumn[] columns)
         {
-            FrameDR[] rows = new FrameDR[this.Length];
-            for (int i = 0; i < rows.Length; i++)
+            List<FrameDR> rows = new List<FrameDR>(this.Length);
+            for (int i = 0; i < rows.Count; i++)
             {
-                rows[i] = new FrameDR(this, i, series);
+                rows.Add(new FrameDR(this, i, columns));
             }
-            return rows;
+            return new FrameV<int>(rows, (index, view) => index);
         }
 
-        public FrameDR[] Ser(params string[] series) => Ser(Series.Where(s => series.Contains(s.Label)).ToArray());
+        public FrameV<int> ColsV(params string[] columns) => ColsV(Columns.Where(s => columns.Contains(s.Label)).ToArray());
 
-        public FrameDR[] Ser(params int[] series) => Ser(series.Select(i => Series[i]).ToArray());
+        public FrameV<int> ColsV(params int[] columns) => ColsV(columns.Select(i => Columns[i]).ToArray());
 
-        public FrameDR[] Ex(params ISeries[] series) => Ser(Series.Where(s => !series.Contains(s)).ToArray());
+        public FrameV<int> ExV(params IColumn[] columns) => ColsV(Columns.Where(s => !columns.Contains(s)).ToArray());
 
-        public FrameDR[] Ex(params string[] series) => Ser(Series.Where(s => !series.Contains(s.Label)).ToArray());
+        public FrameV<int> ExV(params string[] columns) => ColsV(Columns.Where(s => !columns.Contains(s.Label)).ToArray());
 
-        public FrameDR[] Ex(params int[] series) => Ser(Series.Except(series.Select(i => Series[i])).ToArray());
+        public FrameV<int> ExV(params int[] columns) => ColsV(Columns.Except(columns.Select(i => Columns[i])).ToArray());
 
-        public Frame SerF(params ISeries[] series) => new Frame(series);
+        public Frame Cols(params IColumn[] columns) => new Frame(columns);
 
-        public Frame SerF(params string[] labels) => new Frame(Series.Where(s => labels.Contains(s.Label)));
+        public Frame Cols(params string[] labels) => new Frame(Columns.Where(s => labels.Contains(s.Label)));
 
-        public Frame SerF(params int[] series) => new Frame(series.Select(i => Series[i]));
+        public Frame Cols(params int[] columns) => new Frame(columns.Select(i => Columns[i]));
 
-        public Frame ExF(params ISeries[] series) => new Frame(Series.Except(series));
+        public Frame Ex(params IColumn[] columns) => new Frame(Columns.Except(columns));
 
-        public Frame ExF(params int[] series) => new Frame(Series.Except(series.Select(i => Series[i])));
+        public Frame Ex(params int[] columns) => new Frame(Columns.Except(columns.Select(i => Columns[i])));
 
-        public Frame ExF(params string[] labels) => new Frame(Series.Except(Series.Where(s => labels.Contains(s.Label))));
+        public Frame Ex(params string[] labels) => new Frame(Columns.Except(Columns.Where(s => labels.Contains(s.Label))));
 
         public FrameW<T> Wnd<T>(Func<T, int> index) where T : struct, IEquatable<T> => new FrameW<T>(this, index);
 
-        public FrameV<T> View<T>(Func<T, FrameV<T>, int> index) where T : IEquatable<T> => new FrameV<T>(this.Ser(this.Series.ToArray()), index);
+        public FrameV<T> View<T>(Func<T, FrameV<T>, int> index) where T : IEquatable<T> => new FrameV<T>(this.ColsV(this.Columns.ToArray()), index);
 
         public FrameV<int> View() => this.View<int>((index, view) => index);
 
-        public FrameW<string> SWnd(ISeries s) => new FrameW<string>(this, (index) =>
-            Array.IndexOf(((Ss)s).Data, index));
+        public FrameW<string> SWnd(IColumn s) => new FrameW<string>(this, (index) =>
+            Array.IndexOf(((Cs)s).Data, index));
 
-        public FrameW<DateTime> DWnd(ISeries s) => new FrameW<DateTime>(this, (index) =>
-            Array.IndexOf(((Sd)s).Data, index));
+        public FrameW<DateTime> DWnd(IColumn s) => new FrameW<DateTime>(this, (index) =>
+            Array.IndexOf(((Cd)s).Data, index));
 
-        public FrameW<T> NWnd<T>(ISeries s) where T : struct, IEquatable<T>, IComparable<T>, IConvertible => 
-            new FrameW<T>(this, (index) => Array.IndexOf(((Sn<T>)s).Data, index));
+        public FrameW<T> NWnd<T>(IColumn s) where T : struct, IEquatable<T>, IComparable<T>, IConvertible => 
+            new FrameW<T>(this, (index) => Array.IndexOf(((Cn<T>)s).Data, index));
 
-        public Frame Add(params ISeries[] series)
+        public Frame Add(params IColumn[] columns)
         {
-            if (series.Length == 0) return this;
-            if (Series.Count == 0)
+            if (columns.Length == 0) return this;
+            if (Columns.Count == 0)
             {
-                Length = series[0].Length;
+                Length = columns[0].Length;
             }
-            for (int i = 0; i < series.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
-                TrySetValue(null, -1, series[i], series[i].Label, false, false);
-                series[i].Backend = this.Backend;
+                TrySetValue(null, -1, columns[i], columns[i].Label, false, false);
+                columns[i].Backend = this.Backend;
             }
             return this;
         }
@@ -265,46 +265,46 @@ namespace Sylvester.Data
             switch (type.Name)
             {
                 case "String":
-                    Add(new Ss((string[]) data, label));
+                    Add(new Cs((string[]) data, label));
                     break;
                 case "DateTime":
-                    Add(new Sd((DateTime[])data, label));
+                    Add(new Cd((DateTime[])data, label));
                     break;
                 case "Byte":
-                    Add(new Sn<byte>((byte[])data, label));
+                    Add(new Cn<byte>((byte[])data, label));
                     break;
                 case "SByte":
-                    Add(new Sn<sbyte>((sbyte[])data, label));
+                    Add(new Cn<sbyte>((sbyte[])data, label));
                     break;
                 case "UInt16":
-                    Add(new Sn<ushort>((ushort[])data, label));
+                    Add(new Cn<ushort>((ushort[])data, label));
                     break;
                 case "Int16":
-                    Add(new Sn<short>((short[])data, label));
+                    Add(new Cn<short>((short[])data, label));
                     break;
                 case "UInt32":
-                    Add(new Sn<uint>((uint[])data, label));
+                    Add(new Cn<uint>((uint[])data, label));
                     break;
                 case "Int32":
-                    Add(new Sn<int>((int[])data, label));
+                    Add(new Cn<int>((int[])data, label));
                     break;
                 case "UInt64":
-                    Add(new Sn<ulong>((ulong[])data, label));
+                    Add(new Cn<ulong>((ulong[])data, label));
                     break;
                 case "Int64":
-                    Add(new Sn<long>((long[])data, label));
+                    Add(new Cn<long>((long[])data, label));
                     break;
                 case "Single":
-                    Add(new Sn<float>((float[])data, label));
+                    Add(new Cn<float>((float[])data, label));
                     break;
                 case "Double":
-                    Add(new Sn<double>((double[])data, label));
+                    Add(new Cn<double>((double[])data, label));
                     break;
                 case "Decimal":
-                    Add(new Sn<decimal>((decimal[])data, label));
+                    Add(new Cn<decimal>((decimal[])data, label));
                     break;
                 case "Boolean":
-                    Add(new Sn<bool>((bool[]) data, label));
+                    Add(new Cn<bool>((bool[]) data, label));
                     break;
             }
             return this;
@@ -752,20 +752,20 @@ namespace Sylvester.Data
             object oldValue;
             lock (_lockObject)
             {
-                if (!(value is ISeries) && !UnrestrictedMembers)
+                if (!(value is IColumn) && !UnrestrictedMembers)
                 {
                     throw new FrameUnrestrictedMembersNotEnabledException();
                 }
 
-                if (value is ISeries s && s.Label == "")
+                if (value is IColumn s && s.Label == "")
                 {
                     value = s.Clone(name);
                 }
 
-                if (value is ISeries ss)
+                if (value is IColumn ss)
                 {
-                    Series.Add(ss);
-                    Columns.Add(ss.Label, ss);
+                    Columns.Add(ss);
+                    ColumnLabels.Add(ss.Label, ss);
                     ss.Backend = this.Backend;
                 }
 

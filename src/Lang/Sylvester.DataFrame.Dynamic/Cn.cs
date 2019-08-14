@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Sylvester.Data
 {
-    public class Sn<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>, IConvertible
+    public class Cn<T> : FrameC<T>, IEnumerable<T> where T : struct, IEquatable<T>, IComparable<T>, IConvertible
     {
-        public Sn(T[] data, string label, T defaultVal = default) : base(label, defaultVal)
+        public Cn(T[] data, string label, T defaultVal = default) : base(label, defaultVal)
         {
             Data = data;
         }
 
-        public Sn(T[] data) : this(data, "") { }
+        public Cn(T[] data) : this(data, "") { }
 
-        public Sn(IEnumerable<T> data) : this(data.ToArray()) { }
+        public Cn(IEnumerable<T> data) : this(data.ToArray()) { }
 
         public T[] Data { get; }
 
@@ -41,20 +41,20 @@ namespace Sylvester.Data
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => (Data as IEnumerable<T>).GetEnumerator();
 
-        public override ISeries Append(params dynamic[] values)
+        public override IColumn Append(params dynamic[] values)
         {
             T[] a = new T[Data.Length + values.Length];
             Data.CopyTo(a, 0);
             values.CopyTo(a, Length);
-            return new Sn<T>(a, Label);
+            return new Cn<T>(a, Label);
         }
 
-        public override ISeries Clone(string label) => new Sn<T>(Data, label);
+        public override IColumn Clone(string label) => new Cn<T>(Data, label);
 
 
-        public static implicit operator Sn<T>(T[] array) => new Sn<T>(array);
+        public static implicit operator Cn<T>(T[] array) => new Cn<T>(array);
 
-        public static Sn<double> Rnd(int length, string label = "")
+        public static Cn<double> Rnd(int length, string label = "")
         {
             double[] values = new double[length];
             var rnd = new Random(DateTime.Now.Millisecond);
@@ -62,10 +62,10 @@ namespace Sylvester.Data
             {
                 values[i] = rnd.NextDouble();
             }
-            return new Sn<double>(values, label);
+            return new Cn<double>(values, label);
         }
 
-        public static Sn<int> Rnd(int length, int max, string label = "")
+        public static Cn<int> Rnd(int length, int max, string label = "")
         {
             int[] values = new int[length];
             var rnd = new Random(DateTime.Now.Millisecond);
@@ -73,7 +73,7 @@ namespace Sylvester.Data
             {
                 values[i] = rnd.Next(max);
             }
-            return new Sn<int>(values, label);
+            return new Cn<int>(values, label);
         }
     }
 }

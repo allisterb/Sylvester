@@ -17,14 +17,14 @@ namespace Sylvester.Tests.Data
         public void CanConstructFrame()
         {
             dynamic f = new Frame();
-            dynamic g = new Sn<float>(new[] { 1.0f, 2.0f, 4.0f }, "A");
-            f.S1 = new Sn<float>(new[] { 1.0f, 2.0f, 4.0f });
+            dynamic g = new Cn<float>(new[] { 1.0f, 2.0f, 4.0f }, "A");
+            f.S1 = new Cn<float>(new[] { 1.0f, 2.0f, 4.0f });
             var s1 = f.S1;
             Assert.NotNull(s1);
             Assert.Equal("S1", s1.Label);
             dynamic f2 = new Frame(g);
             Assert.NotNull(f2.A);
-            Sn<float> s2 = f2.A;
+            Cn<float> s2 = f2.A;
             Assert.NotNull(s2);
             Assert.Equal("A", s2.Label);
             Assert.Throws<FrameUnrestrictedMembersNotEnabledException>(() => f.P = "foo");
@@ -40,9 +40,9 @@ namespace Sylvester.Tests.Data
             file[1].Type = typeof(Single);
             dynamic f = new Frame(file);
             Assert.NotNull(f.mpg);
-            dynamic g = f.SerF(f.mpg);
+            dynamic g = f.Cols(f.mpg);
             Assert.NotNull(g.mpg);
-            dynamic e = f.SerExF(0);
+            dynamic e = f.Ex(0);
             Assert.NotNull(e.disp);
 
             CsvFile trans = new CsvFile("transfusion.data");
@@ -77,14 +77,14 @@ namespace Sylvester.Tests.Data
         }
 
         [Fact]
-        public void CanAddSeriesToFrame()
+        public void CanAddColumnToFrame()
         {
-            dynamic f = new Frame(new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 }, "Age"));
+            dynamic f = new Frame(new Cn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 }, "Age"));
             Assert.Equal(3.0, f.Age[1]);
             var r2 = f[2];
             Assert.NotNull(r2.Age);
             Assert.Equal(5.0, r2.Age);
-            f.Children = new Sn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 });
+            f.Children = new Cn<double>(new[] { 1.0, 3.0, 5.0, float.NaN, 6.0, 8.0 });
             Assert.NotNull(f.Children);
             Assert.Equal("Children", f.Children.Label);
         }
@@ -101,7 +101,7 @@ namespace Sylvester.Tests.Data
 
             var q2 =
                 from row in f
-                select (row.Ser("mpg").Add(("Foo1", 1)));
+                select (row.Col("mpg").Add(("Foo1", 1)));
             Assert.NotEmpty(q2);
             var v = q2.ToFrameV();
             Assert.NotEmpty(v);
