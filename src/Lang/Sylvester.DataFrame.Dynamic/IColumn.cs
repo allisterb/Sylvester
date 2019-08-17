@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace Sylvester.Data
@@ -17,6 +18,8 @@ namespace Sylvester.Data
         dynamic GetVal(int index);
  
         bool SetVal(int index, dynamic value);
+
+        Dictionary<string, object> Attrs { get; }
 
         IBackend Backend { get; set; }
 

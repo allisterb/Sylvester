@@ -31,13 +31,13 @@ namespace Sylvester.Data
 
         public FrameDR this[T t] => Rows[Index(t, this)];
 
-        public IEnumerator GetEnumerator() => (IEnumerator) Rows.GetEnumerator();
+        public IEnumerator GetEnumerator() => Rows.GetEnumerator();
 
-        public FrameV<T> Col(params IColumn[] columns) => new FrameV<T>(Rows.Select(r => r.Col(columns)), Index);
+        public FrameV<T> Sel(params IColumn[] columns) => new FrameV<T>(Rows.Select(r => r.Sel(columns)), Index);
 
-        public FrameV<T> Col(params string[] columns) => new FrameV<T>(Rows.Select(r => r.Col(columns)), Index);
+        public FrameV<T> Sel(params string[] columns) => new FrameV<T>(Rows.Select(r => r.Sel(columns)), Index);
 
-        public FrameV<T> Col(params int[] columns) => new FrameV<T>(Rows.Select(r => r.Col(columns)), Index);
+        public FrameV<T> Sel(params int[] columns) => new FrameV<T>(Rows.Select(r => r.Sel(columns)), Index);
 
         public FrameV<T> Ex(params IColumn[] columns) => new FrameV<T>(Rows.Select(r => r.Ex(columns)), Index);
 

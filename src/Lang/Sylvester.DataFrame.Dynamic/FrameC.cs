@@ -2,9 +2,7 @@
 using System.Dynamic;
 using System.Reflection;
 using System.Collections;
-using System.Text;
-using System.Linq;
-using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace Sylvester.Data
 {
@@ -21,6 +19,8 @@ namespace Sylvester.Data
         public string Label { get; }
 
         public abstract int Length { get; }
+
+        public Dictionary<string, object> Attrs { get; } = new Dictionary<string, object>();
 
         public abstract IEnumerator GetEnumerator();
 

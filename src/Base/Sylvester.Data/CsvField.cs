@@ -51,6 +51,8 @@ namespace Sylvester.Data
 
         public bool Ignore { get; set; }
 
+        public Dictionary<string, object> Attrs { get; } = new Dictionary<string, object>();
+
         protected Type _type;
 
         protected dynamic GetDefaultValue(Type type)

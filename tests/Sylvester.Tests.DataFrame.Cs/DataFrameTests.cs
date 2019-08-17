@@ -40,7 +40,7 @@ namespace Sylvester.Tests.Data
             file[1].Type = typeof(Single);
             dynamic f = new Frame(file);
             Assert.NotNull(f.mpg);
-            dynamic g = f.Cols(f.mpg);
+            dynamic g = f.Sel(f.mpg);
             Assert.NotNull(g.mpg);
             dynamic e = f.Ex(0);
             Assert.NotNull(e.disp);
@@ -101,7 +101,7 @@ namespace Sylvester.Tests.Data
 
             var q2 =
                 from row in f
-                select (row.Col("mpg").Add(("Foo1", 1)));
+                select (row.Sel("mpg").Add(("Foo1", 1)));
             Assert.NotEmpty(q2);
             var v = q2.ToFrameV();
             Assert.NotEmpty(v);

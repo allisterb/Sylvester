@@ -11,8 +11,9 @@ using Microsoft.CSharp.RuntimeBinder;
 
 namespace Sylvester.Data
 {
-    public class FrameR : DynamicObject, IEnumerable
+    public class FrameR : DynamicObject, IRow
     {
+        #region Constructors
         public FrameR(Frame f, int index)
         {
             Frame = f;
@@ -23,6 +24,9 @@ namespace Sylvester.Data
             }
             Enumerator = new FrameREnumerator(this);
         }
+        #endregion
+
+        #region Properties
         public Frame Frame { get; }
 
         public int Index { get; }
@@ -38,8 +42,13 @@ namespace Sylvester.Data
         {
             get => Frame.Columns[i].GetVal(Index);
         }
-        public IEnumerator GetEnumerator() => Enumerator;
 
+        public IEnumerable<string> ColumnLabels => Frame.ColumnLabels.Keys;
+
+        public IEnumerator GetEnumerator() => Enumerator;
+        #endregion
+
+        #region Overriden Methods
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
@@ -58,12 +67,24 @@ namespace Sylvester.Data
             }
         }
         public override bool TrySetMember(SetMemberBinder binder, object value) => false;
+        #endregion
 
-        public FrameDR Col(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, columns);
+        #region Methods
+        public FrameDR Sel(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, columns);
 
-        public FrameDR Col(params string[] columns) => Col(Frame.Columns.Where(s => columns.Contains(s.Label)).ToArray());
+        public FrameDR Sel(params string[] columns) => Sel(Frame.Columns.Where(s => columns.Contains(s.Label)).ToArray());
 
-        public FrameDR Col(params int[] columns) => Col(columns.Select(i => Frame.Columns[i]).ToArray());
+        public FrameDR Sel(params int[] columns) => Sel(columns.Select(i => Frame.Columns[i]).ToArray());
+
+        public FrameDR Ex(params IColumn[] columns) => new FrameDR(this.Frame, this.Index,
+            this.Frame.Columns.Where(s => !columns.Contains(s)).ToArray());
+
+        public FrameDR Ex(params string[] columns) => new FrameDR(this.Frame, this.Index,
+            this.Frame.Columns.Where(s => !columns.Contains(s.Label)).ToArray());
+
+        public IRow Cols(params string[] columns) => Sel(Frame.Columns.Where(s => columns.Contains(s.Label)).ToArray());
+
+        public IRow ColsEx(params string[] columns) => Ex(columns);
 
         internal dynamic GetMember(string propName)
         {
@@ -79,8 +100,11 @@ namespace Sylvester.Data
             var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
             CallSites.Add(propName, callsite);
         }
+        #endregion
 
+        #region Fields
         private object _lock = new object();
+        #endregion
     }
 
     public class FrameREnumerator : IEnumerator

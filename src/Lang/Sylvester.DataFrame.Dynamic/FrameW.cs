@@ -26,16 +26,16 @@ namespace Sylvester.Data
 
         public IEnumerator GetEnumerator() => Frame.GetEnumerator();
 
-        public FrameV<int> Col(params IColumn[] columns) => Frame.ColsV(columns);
+        public FrameV<int> Col(params IColumn[] columns) => Frame.Cols(columns);
 
-        public FrameV<int> Col(params string[] columns) => Frame.ColsV(columns);
+        public FrameV<int> Col(params string[] columns) => Frame.Cols(columns);
 
-        public FrameV<int> Col(params int[] columns) => Frame.ColsV(columns);
+        public FrameV<int> Col(params int[] columns) => Frame.Cols(columns);
 
-        public FrameV<int> Ex(params IColumn[] columns) => Frame.ExV(columns);
+        public FrameV<int> Ex(params IColumn[] columns) => Frame.ColsEx(columns);
 
-        public FrameV<int> Ex(params string[] columns) => Frame.ExV(columns);
+        public FrameV<int> Ex(params string[] columns) => Frame.ColsEx(columns);
 
-        public FrameV<int> Ex(params int[] columns) => Frame.ExV(columns);
+        public FrameV<int> Ex(params int[] columns) => Frame.ColsEx(columns);
     }
 }

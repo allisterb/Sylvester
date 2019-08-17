@@ -178,11 +178,14 @@ namespace Sylvester.Data
 
         public Backend Backend { get; protected set; }
 
+        public IEnumerable<FrameR> Rows => rows;
+
         public bool UnrestrictedMembers { get; set; } = false;
 
         #endregion
 
         #region Methods
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             for (int i = 0; i < rows.Length; i++)
@@ -198,7 +201,19 @@ namespace Sylvester.Data
             }
         }
 
-        public FrameV<int> ColsV(params IColumn[] columns)
+        public Frame Sel(params IColumn[] columns) => new Frame(columns);
+
+        public Frame Sel(params string[] labels) => new Frame(Columns.Where(s => labels.Contains(s.Label)));
+
+        public Frame Sel(params int[] columns) => new Frame(columns.Select(i => Columns[i]));
+
+        public Frame Ex(params IColumn[] columns) => new Frame(Columns.Except(columns));
+
+        public Frame Ex(params int[] columns) => new Frame(Columns.Except(columns.Select(i => Columns[i])));
+
+        public Frame Ex(params string[] labels) => new Frame(Columns.Except(Columns.Where(s => labels.Contains(s.Label))));
+
+        public FrameV<int> Cols(params IColumn[] columns)
         {
             List<FrameDR> rows = new List<FrameDR>(this.Length);
             for (int i = 0; i < rows.Count; i++)
@@ -208,31 +223,20 @@ namespace Sylvester.Data
             return new FrameV<int>(rows, (index, view) => index);
         }
 
-        public FrameV<int> ColsV(params string[] columns) => ColsV(Columns.Where(s => columns.Contains(s.Label)).ToArray());
+        public FrameV<int> Cols(params string[] columns) => Cols(Columns.Where(s => columns.Contains(s.Label)).ToArray());
 
-        public FrameV<int> ColsV(params int[] columns) => ColsV(columns.Select(i => Columns[i]).ToArray());
+        public FrameV<int> Cols(params int[] columns) => Cols(columns.Select(i => Columns[i]).ToArray());
 
-        public FrameV<int> ExV(params IColumn[] columns) => ColsV(Columns.Where(s => !columns.Contains(s)).ToArray());
+        public FrameV<int> ColsEx(params IColumn[] columns) => Cols(Columns.Where(s => !columns.Contains(s)).ToArray());
 
-        public FrameV<int> ExV(params string[] columns) => ColsV(Columns.Where(s => !columns.Contains(s.Label)).ToArray());
+        public FrameV<int> ColsEx(params string[] columns) => Cols(Columns.Where(s => !columns.Contains(s.Label)).ToArray());
 
-        public FrameV<int> ExV(params int[] columns) => ColsV(Columns.Except(columns.Select(i => Columns[i])).ToArray());
-
-        public Frame Cols(params IColumn[] columns) => new Frame(columns);
-
-        public Frame Cols(params string[] labels) => new Frame(Columns.Where(s => labels.Contains(s.Label)));
-
-        public Frame Cols(params int[] columns) => new Frame(columns.Select(i => Columns[i]));
-
-        public Frame Ex(params IColumn[] columns) => new Frame(Columns.Except(columns));
-
-        public Frame Ex(params int[] columns) => new Frame(Columns.Except(columns.Select(i => Columns[i])));
-
-        public Frame Ex(params string[] labels) => new Frame(Columns.Except(Columns.Where(s => labels.Contains(s.Label))));
+        public FrameV<int> ColsEx(params int[] columns) => Cols(Columns.Except(columns.Select(i => Columns[i])).ToArray());
 
         public FrameW<T> Wnd<T>(Func<T, int> index) where T : struct, IEquatable<T> => new FrameW<T>(this, index);
 
-        public FrameV<T> View<T>(Func<T, FrameV<T>, int> index) where T : IEquatable<T> => new FrameV<T>(this.ColsV(this.Columns.ToArray()), index);
+        public FrameV<T> View<T>(Func<T, FrameV<T>, int> index) where T : IEquatable<T> => 
+                new FrameV<T>(this.rows.Select((r, i) => new FrameDR(this, i, this.Columns.ToArray())), index);
 
         public FrameV<int> View() => this.View<int>((index, view) => index);
 
@@ -1282,7 +1286,7 @@ namespace Sylvester.Data
         internal readonly static object _uninitialized = new object(); // A marker object used to identify that a value is uninitialized.
         internal const int ambiguousMatchFound = -2;        // The value is used to indicate there exists ambiguous match in the Frame object
         internal const int noMatch = -1;                    // The value is used to indicate there is no matching member
-        protected FrameR[] rows;
+        private FrameR[] rows;
         private FrameData _data;                // the data currently being held by the Frame object
         private int _count;                     // the count of available members
         private PropertyChangedEventHandler _propertyChanged;

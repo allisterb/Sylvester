@@ -11,8 +11,9 @@ using Microsoft.CSharp.RuntimeBinder;
 
 namespace Sylvester.Data
 {
-    public class FrameDR : DynamicObject, IEnumerable
+    public class FrameDR : DynamicObject, IRow
     {
+        #region Constructors
         public FrameDR()
         {
             Enumerator = new FrameDREnumerator(this);
@@ -21,11 +22,11 @@ namespace Sylvester.Data
         public FrameDR(Frame f, int index, params IColumn[] columns) : this()
         {
             Frame = f;
-            Columns = columns ?? throw new ArgumentNullException();
+            FrameColumnsArray = columns ?? throw new ArgumentNullException();
             Index = index;
-            for (int i = 0; i < Columns.Length; i++)
+            for (int i = 0; i < FrameColumnsArray.Length; i++)
             {
-                FrameColumns.Add(Columns[i].Label, Columns[i]);
+                FrameColumns.Add(FrameColumnsArray[i].Label, FrameColumnsArray[i]);
             }
             foreach (var c in FrameColumns)
             {
@@ -46,9 +47,20 @@ namespace Sylvester.Data
                 CustomColumns.Add(values[i].Item1, values[i].Item2);
             }
         }
+        #endregion
+
+        #region Properties
         public Frame Frame { get; }
 
-        public IColumn[] Columns { get; }
+        public IColumn[] FrameColumnsArray { get; }
+
+        public IEnumerable<string> ColumnLabels
+        {
+            get
+            {
+                return FrameColumns.Keys.Concat(CustomColumns.Keys);
+            }
+        }
 
         public Dictionary<string, IColumn> FrameColumns { get; } = new Dictionary<string, IColumn>();
 
@@ -97,7 +109,7 @@ namespace Sylvester.Data
             {
                 if (i <= (FrameColumns.Count - 1))
                 {
-                    return Columns[i].GetVal(Index);
+                    return FrameColumnsArray[i].GetVal(Index);
                 }
                 else if (i <= FrameColumns.Count + CustomColumns.Count - 1)
                 {
@@ -111,7 +123,7 @@ namespace Sylvester.Data
             {
                 if (i <= (FrameColumns.Count - 1))
                 {
-                    Columns[i].SetVal(Index, value);
+                    FrameColumnsArray[i].SetVal(Index, value);
                 }
                 else if (i <= FrameColumns.Count + CustomColumns.Count - 1)
                 {
@@ -120,8 +132,9 @@ namespace Sylvester.Data
                 else throw new IndexOutOfRangeException($"Index {i} does not exist.");
             }
         }
-        public IEnumerator GetEnumerator() => Enumerator;
+        #endregion
 
+        #region Overriden members
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
@@ -131,7 +144,7 @@ namespace Sylvester.Data
                 {
                     AddCallSite(binder.Name);
                 }
-                result = GetColumnMember(binder.Name);
+                result = GetFrameColumnMember(binder.Name);
                 return true;
             }
             else if (CustomColumns.ContainsKey(binder.Name))
@@ -161,35 +174,58 @@ namespace Sylvester.Data
                 return true;
             }
         }
+        #endregion
 
-        public FrameDR Col(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, columns);
+        #region Methods
+        public IEnumerator GetEnumerator() => Enumerator;
 
-        public FrameDR Col(params string[] columns) => Col(Columns.Where(s => columns.Contains(s.Label) || columns.Contains(s.Label)).ToArray());
+        public FrameDR Sel(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, columns);
 
-        public FrameDR Col(params int[] columns) => Col(columns.Select(i => Columns[i]).ToArray());
+        public FrameDR Sel(params string[] columns)
+        {
+            var notfound = columns.Where(c => !FrameColumns.ContainsKey(c) || !CustomColumns.ContainsKey(c));
+            if (notfound.Count() != 0)
+            {
+                throw new ArgumentException($"The following columns do not exist in the row: {notfound.Aggregate((s1, s2) => s1 + "," + s2)}.");
+            }
+            var frameColumns = FrameColumns.Where(c => columns.Contains(c.Key));
+            FrameDR dr = null;
+            if (columns.Count() != 0)
+            {
+                dr = new FrameDR(this.Frame, this.Index, frameColumns.Select(c => c.Value).ToArray());
+            }
+            else
+            {
+                dr = new FrameDR();
+            }
+            var customColumns = CustomColumns.Where(c => columns.Contains(c.Key));
+            foreach (var c in customColumns)
+            {
+                dr.Add((c.Key, c.Value));
+            }
+
+            return dr;
+        }
+
+        public FrameDR Sel(params int[] columns) => Sel(columns.Select(i => FrameColumnsArray[i]).ToArray());
+
+        public FrameDR Ex(params string[] columns)
+        {
+            var dr = new FrameDR(this.Frame, this.Index,
+              this.FrameColumns.Where(s => !columns.Contains(s.Key)).Select(c => c.Value).ToArray());
+            foreach (var kv in this.CustomColumns.Where(s => !columns.Contains(s.Key)))
+            {
+                dr.Add((kv.Key, kv.Value));
+            }
+            return dr;
+        }
 
         public FrameDR Ex(params IColumn[] columns) => new FrameDR(this.Frame, this.Index, 
-            this.Columns.Except(columns).ToArray());
+            this.FrameColumnsArray.Except(columns).ToArray());
 
-        public FrameDR Ex(params string[] columns) => new FrameDR(this.Frame, this.Index,
-            this.Columns.Where(s => !columns.Contains(s.Label)).ToArray());
+        public IRow Cols(params string[] columns) => Sel(columns);
 
-        public FrameDR Add(Dictionary<string, dynamic> values)
-        {
-            foreach(var kv in values)
-            {
-                if (CustomColumns.ContainsKey(kv.Key))
-                {
-                    CustomColumns[kv.Key] = kv.Value;
-                }
-                else
-                {
-                    CustomColumns.Add(kv.Key, kv.Value);
-                }
-                
-            }
-            return this;
-        }
+        public IRow ColsEx(params string[] columns) => Ex(columns);
 
         public FrameDR Add(params ValueTuple<string, dynamic>[] values)
         {
@@ -207,34 +243,24 @@ namespace Sylvester.Data
             return this;
         }
 
-        public FrameDR Sel(params string[] columns)
+        public FrameDR Add(Dictionary<string, dynamic> values)
         {
-            var notfound = columns.Where(c => !FrameColumns.ContainsKey(c) || !CustomColumns.ContainsKey(c));
-            if (notfound.Count() != 0)
+            foreach (var kv in values)
             {
-                throw new ArgumentException($"The following columns do not exist in the row: {notfound.Aggregate((s1, s2) => s1 + "," + s2)}.");
-            }
-            var frameColumns = FrameColumns.Where(c => columns.Contains(c.Key));
-            FrameDR dr = null;
-            if (columns.Count() != 0)
-            {
-                dr = new FrameDR(this.Frame, this.Index, frameColumns.Select(c => c.Value).ToArray());
+                if (CustomColumns.ContainsKey(kv.Key))
+                {
+                    CustomColumns[kv.Key] = kv.Value;
+                }
+                else
+                {
+                    CustomColumns.Add(kv.Key, kv.Value);
+                }
 
             }
-            else
-            {
-                dr = new FrameDR();
-            }
-            var customColumns = CustomColumns.Where(c => columns.Contains(c.Key));
-            foreach (var c in customColumns)
-            {
-                dr.Add((c.Key, c.Value));
-            }
-            
-            return dr;
+            return this;
         }
 
-        internal dynamic GetColumnMember(string propName)
+        internal dynamic GetFrameColumnMember(string propName)
         {
             IColumn s = (IColumn) CallSites[propName].Target(CallSites[propName], this.Frame);
             return s.GetVal(Index);
@@ -248,8 +274,11 @@ namespace Sylvester.Data
             var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
             CallSites.Add(propName, callsite);
         }
+        #endregion
 
+        #region Fields
         private object _lock = new object();
+        #endregion
     }
 
     public class FrameDREnumerator : IEnumerator
