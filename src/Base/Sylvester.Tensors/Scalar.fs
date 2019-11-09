@@ -12,8 +12,6 @@ type Scalar<'t when 't : struct and 't: (new: unit -> 't) and 't:> ValueType and
 
     member val Val = x
     
-    member inline x.Dims = VNil
-
     static member inline (+) (l:Scalar<single>, r:Scalar<single>) = Scalar<single>(l.Val + r.Val)
     static member inline (+) (l:Scalar<float>, r:Scalar<float>) = Scalar<float>(l.Val + r.Val)
     static member inline (+) (l:Scalar<int32>, r:Scalar<int32>) = Scalar<int32>(l.Val + r.Val)

@@ -1,13 +1,7 @@
 ﻿using System;
-
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Runtime.CompilerServices;
 using System.Linq;
-using System.Text;
-
-using Microsoft.CSharp.RuntimeBinder;
 
 namespace Sylvester.Data
 {
@@ -25,7 +19,15 @@ namespace Sylvester.Data
             Index = index;
         }
 
+        public FrameV(Frame frame, Func<T, FrameV<T>, int> index)
+        {
+            Rows.AddRange(frame.Select((r, i) => new FrameDR(frame, i, frame.Columns.ToArray())));
+            Index = index;
+        }
+
         public List<FrameDR> Rows { get; }
+
+        public int Length => Rows.Count;
 
         public Func<T, FrameV<T>, int> Index { get; }
 
@@ -42,7 +44,6 @@ namespace Sylvester.Data
         public FrameV<T> Ex(params IColumn[] columns) => new FrameV<T>(Rows.Select(r => r.Ex(columns)), Index);
 
         public FrameV<T> Ex(params string[] columns) => new FrameV<T>(Rows.Select(r => r.Ex(columns)), Index);
-
 
         public static implicit operator List<FrameDR>(FrameV<T> view) => view.Rows;
     }

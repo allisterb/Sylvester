@@ -76,8 +76,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{B94CF0C7-4
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.DataFrame.Fs", "..\tests\Sylvester.Tests.DataFrame.Fs\Sylvester.Tests.DataFrame.Fs.fsproj", "{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.DataFrame.MLnet", "Lang\Sylvester.DataFrame.MLnet\Sylvester.DataFrame.MLnet.csproj", "{5F6411C5-A854-44F1-B995-3D1C8F5785EE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -292,18 +290,6 @@ Global
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}.Release|x64.Build.0 = Release|Any CPU
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}.Release|x86.ActiveCfg = Release|Any CPU
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}.Release|x86.Build.0 = Release|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Debug|x64.Build.0 = Debug|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Debug|x86.Build.0 = Debug|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Release|x64.ActiveCfg = Release|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Release|x64.Build.0 = Release|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Release|x86.ActiveCfg = Release|Any CPU
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -330,7 +316,6 @@ Global
 		{FBE1D7CE-C021-4663-B82E-0DEA03196AD5} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{B94CF0C7-44C1-4BD2-96C8-34187762187D} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C} = {578D2618-B994-4B73-9838-9E05E0132C26}
-		{5F6411C5-A854-44F1-B995-3D1C8F5785EE} = {1EF4A0C4-252E-480B-959D-4012B88356A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}
