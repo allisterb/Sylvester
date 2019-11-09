@@ -1,0 +1,9 @@
+File:ProvidedTypes.fsi
+File:ProvidedTypes.fs
+
+FSharp.Core
+# put any package references here
+# System.Text.Encoding.CodePages framework: netstandard2.0,netcoreapp2.0
+
+Sylvester.Arithmetic
+Numpy.Bare

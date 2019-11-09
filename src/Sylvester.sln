@@ -76,6 +76,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{B94CF0C7-4
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.DataFrame.Fs", "..\tests\Sylvester.Tests.DataFrame.Fs\Sylvester.Tests.DataFrame.Fs.fsproj", "{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fabrics", "Fabrics", "{52BFE1ED-2210-4EF0-A92F-192F2B912A0A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Fabric.Keras", "Fabrics\Sylvester.Fabric.Keras\Sylvester.Fabric.Keras.fsproj", "{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -290,6 +294,18 @@ Global
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}.Release|x64.Build.0 = Release|Any CPU
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}.Release|x86.ActiveCfg = Release|Any CPU
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C}.Release|x86.Build.0 = Release|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Debug|x64.Build.0 = Debug|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Release|x64.ActiveCfg = Release|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Release|x64.Build.0 = Release|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -316,6 +332,7 @@ Global
 		{FBE1D7CE-C021-4663-B82E-0DEA03196AD5} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{B94CF0C7-44C1-4BD2-96C8-34187762187D} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{CA2DD206-B08F-4B75-8AB3-A71D6B23B56C} = {578D2618-B994-4B73-9838-9E05E0132C26}
+		{5D7D9C6E-C422-4294-879E-8E85AEC7AC14} = {52BFE1ED-2210-4EF0-A92F-192F2B912A0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}
