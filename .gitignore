@@ -263,3 +263,4 @@ __pycache__/
 /examples/compose2019/.ionide
 src/Base/Sylvester.Tensors/.ionide/symbolCache.db
 examples/.ionide/symbolCache.db
+/examples/funconf2019/.ionide

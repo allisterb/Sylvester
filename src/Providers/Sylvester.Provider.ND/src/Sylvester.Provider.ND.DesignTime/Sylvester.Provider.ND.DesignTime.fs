@@ -1,4 +1,4 @@
-module Sylvester.Provider.NDArrayImplementation
+module Sylvester.Provider.NDImplementation
 
 open System
 open System.Collections.Generic
@@ -6,6 +6,7 @@ open System.IO
 open System.Reflection
 open FSharp.Quotations
 open FSharp.Core.CompilerServices
+open MyNamespace
 open ProviderImplementation
 open ProviderImplementation.ProvidedTypes
 
@@ -16,12 +17,14 @@ module internal Helpers =
 
 [<TypeProvider>]
 type BasicErasingProvider (config : TypeProviderConfig) as this =
-    inherit TypeProviderForNamespaces (config, assemblyReplacementMap=[("Sylvester.Provider.NDArray.DesignTime", "Sylvester.Provider.NDArray.Runtime")], addDefaultProbingLocation=true)
+    inherit TypeProviderForNamespaces (config, assemblyReplacementMap=[("Sylvester.Provider.ND.DesignTime", "Sylvester.Provider.ND.Runtime")], addDefaultProbingLocation=true)
 
-    let ns = "Sylvester.Fabrics.Keras"
+    let ns = "MyNamespace"
     let asm = Assembly.GetExecutingAssembly()
 
-    
+    // check we contain a copy of runtime files, and are not referencing the runtime DLL
+    do assert (typeof<DataSource>.Assembly.GetName().Name = asm.GetName().Name)  
+
     let createTypes () =
         let myType = ProvidedTypeDefinition(asm, ns, "MyType", Some typeof<obj>)
 
@@ -60,9 +63,9 @@ type BasicErasingProvider (config : TypeProviderConfig) as this =
 
 [<TypeProvider>]
 type BasicGenerativeProvider (config : TypeProviderConfig) as this =
-    inherit TypeProviderForNamespaces (config, assemblyReplacementMap=[("Sylvester.Provider.NDArray.DesignTime", "Sylvester.Provider.NDArray.Runtime")])
+    inherit TypeProviderForNamespaces (config, assemblyReplacementMap=[("Sylvester.Provider.ND.DesignTime", "Sylvester.Provider.ND.Runtime")])
 
-    let ns = "Sylvester.Provider.NDArray"
+    let ns = "Sylvester.Provider.ND"
     let asm = Assembly.GetExecutingAssembly()
 
     // check we contain a copy of runtime files, and are not referencing the runtime DLL

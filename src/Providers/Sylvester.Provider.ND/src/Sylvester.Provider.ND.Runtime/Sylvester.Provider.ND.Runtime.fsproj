@@ -5,8 +5,9 @@
   <Import Project="..\..\netfx.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netstandard2.0; net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
@@ -19,7 +20,7 @@
       <Link>paket-files/ProvidedTypes.fs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Sylvester.Provider.NDArray.Runtime.fs" />
+    <Compile Include="Sylvester.Provider.ND.Runtime.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
@@ -27,21 +28,20 @@
     <PackageReference Include="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
   <Target Name="BeforeBuild">
-    <MSBuild Projects="..\Sylvester.Provider.NDArray.DesignTime\Sylvester.Provider.NDArray.DesignTime.fsproj" Targets="Restore" />
-    <MSBuild Projects="..\Sylvester.Provider.NDArray.DesignTime\Sylvester.Provider.NDArray.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=netcoreapp2.0" />
-    <MSBuild Projects="..\Sylvester.Provider.NDArray.DesignTime\Sylvester.Provider.NDArray.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=netstandard2.0" />
-    <MSBuild Projects="..\Sylvester.Provider.NDArray.DesignTime\Sylvester.Provider.NDArray.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=net45" />
+    <MSBuild Projects="..\Sylvester.Provider.ND.DesignTime\Sylvester.Provider.ND.DesignTime.fsproj" Targets="Restore" />
+    <MSBuild Projects="..\Sylvester.Provider.ND.DesignTime\Sylvester.Provider.ND.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=netcoreapp2.0" />
+    <MSBuild Projects="..\Sylvester.Provider.ND.DesignTime\Sylvester.Provider.ND.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=netstandard2.0" />
   </Target>
   <Target Name="AfterBuild">
-    <CreateItem Include="..\Sylvester.Provider.NDArray.DesignTime\bin\$(Configuration)\netcoreapp2.0\*.dll;..\Sylvester.Provider.NDArray.DesignTime\bin\$(Configuration)\netcoreapp2.0\*.pdb">
+    <CreateItem Include="..\Sylvester.Provider.ND.DesignTime\bin\$(Configuration)\netcoreapp2.0\*.dll;..\Sylvester.Provider.ND.DesignTime\bin\$(Configuration)\netcoreapp2.0\*.pdb">
       <Output TaskParameter="Include" ItemName="DesignTimeBinaries1" />
     </CreateItem>
     <Copy SourceFiles="@(DesignTimeBinaries1)" DestinationFolder="$(OutputPath)/../typeproviders/fsharp41/netcoreapp2.0" />
-    <CreateItem Include="..\Sylvester.Provider.NDArray.DesignTime\bin\$(Configuration)\net45\*.dll;..\Sylvester.Provider.NDArray.DesignTime\bin\$(Configuration)\net45\*.pdb">
+    <CreateItem Include="..\Sylvester.Provider.ND.DesignTime\bin\$(Configuration)\net45\*.dll;..\Sylvester.Provider.ND.DesignTime\bin\$(Configuration)\net45\*.pdb">
       <Output TaskParameter="Include" ItemName="DesignTimeBinaries2" />
     </CreateItem>
     <Copy SourceFiles="@(DesignTimeBinaries2)" DestinationFolder="$(OutputPath)/../typeproviders/fsharp41/net45" />
-    <CreateItem Include="..\Sylvester.Provider.NDArray.DesignTime\bin\$(Configuration)\netstandard2.0\*.dll;..\Sylvester.Provider.NDArray.DesignTime\bin\$(Configuration)\netstandard2.0\*.pdb">
+    <CreateItem Include="..\Sylvester.Provider.ND.DesignTime\bin\$(Configuration)\netstandard2.0\*.dll;..\Sylvester.Provider.ND.DesignTime\bin\$(Configuration)\netstandard2.0\*.pdb">
       <Output TaskParameter="Include" ItemName="DesignTimeBinaries3" />
     </CreateItem>
     <Copy SourceFiles="@(DesignTimeBinaries3)" DestinationFolder="$(OutputPath)/../typeproviders/fsharp41/netstandard2.0" />

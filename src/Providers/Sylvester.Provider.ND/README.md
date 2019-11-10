@@ -9,4 +9,4 @@ Building:
 
     dotnet build -c release
 
-    .paket\paket.exe pack src\Sylvester.Provider.NDArray.Runtime\paket.template --version 0.0.1
+    .paket\paket.exe pack src\Sylvester.Provider.ND.Runtime\paket.template --version 0.0.1
