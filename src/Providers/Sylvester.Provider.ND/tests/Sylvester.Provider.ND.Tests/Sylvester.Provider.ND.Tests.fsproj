@@ -4,7 +4,6 @@
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -13,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0"/>
     <ProjectReference Include="..\..\src\Sylvester.Provider.ND.Runtime\Sylvester.Provider.ND.Runtime.fsproj">
       <Name>Sylvester.Provider.ND.Runtime</Name>
       <Project>{7e90d6ce-a10b-4858-a5bc-41df7250cbca}</Project>

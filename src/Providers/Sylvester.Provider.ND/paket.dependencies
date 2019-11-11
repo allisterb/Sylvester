@@ -4,9 +4,8 @@ frameworks: netcoreapp2.0, netstandard2.0
 
 # Add the nuget packages you use here
 nuget FSharp.Core 4.3.4
-nuget Sylvester.Arithmetic 0.1.7.0
+nuget Sylvester.Arithmetic
 nuget Numpy.Bare
-
 nuget NETStandard.Library.NETFramework
 # nuget System.Text.Encoding.CodePages
 
