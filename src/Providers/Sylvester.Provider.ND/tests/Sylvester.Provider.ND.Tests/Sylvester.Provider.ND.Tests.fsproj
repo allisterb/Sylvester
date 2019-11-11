@@ -6,9 +6,10 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
+  <ItemGroup />
   <ItemGroup>
+    <Compile Include="NDTests.fs" />
     <None Include="app.config" />
-    <Compile Include="Sylvester.Provider.ND.Tests.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

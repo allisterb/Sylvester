@@ -1,18 +1,8 @@
-namespace MyNamespace
+namespace Sylvester.Fabric.Keras
 
-open System
+module Attributes = 
+    open System
 
-// Put any utilities here
-[<AutoOpen>]
-module internal Utilities = 
-
-    let x = 1
-
-// Put any runtime constructs here
-type DataSource(filename:string) = 
-    member this.FileName = filename
-
-
-// Put the TypeProviderAssemblyAttribute in the runtime DLL, pointing to the design-time DLL
-[<assembly:CompilerServices.TypeProviderAssembly("Sylvester.Provider.ND.DesignTime.dll")>]
-do ()
+    // Put the TypeProviderAssemblyAttribute in the runtime DLL, pointing to the design-time DLL
+    [<assembly:CompilerServices.TypeProviderAssembly("Sylvester.Provider.ND.DesignTime.dll")>]
+    do ()
