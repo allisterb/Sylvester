@@ -13,6 +13,7 @@ open ProviderImplementation.ProvidedTypes
 
 open Numpy
 open Numpy.Models
+open Python.Runtime
 
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.Base10
@@ -24,15 +25,16 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
 
     let ns = "Sylvester.Fabric.Keras"
     let asm = Assembly.GetExecutingAssembly()
-
+    
     
     let createTypes () =
-        let ND = ProvidedTypeDefinition(asm, ns, "ND", Some typeof<NDarray>)
+        //PythonEngine.PythonPath <- "C:\\Python\\Python37"
+        //PythonEngine.PythonHome <- "C:\\Python\\Python37\Lib"
+        let ND = ProvidedTypeDefinition(asm, ns, "ND", Some typeof<Sylvester.Fabric.Keras.Z>)
         let helpText = 
             """<summary>N-dimensional tensor with type-level dimension constraints for use with the Keras fabric.</summary>
            <param name=dim0'>The length first dimension.</param>
             """
-        let dtype = ProvidedStaticParameter("dtype", typeof<Dtype>)  
         let dp0 = ProvidedStaticParameter("dim0", typeof<int>)
         let dp1 = ProvidedStaticParameter("dim1", typeof<int>)
         //let dp2 = ProvidedStaticParameter("dim2", typeof<int>)
@@ -48,9 +50,9 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
         //let dp12 = ProvidedStaticParameter("dim12", typeof<int>)
         //let dp13 = ProvidedStaticParameter("dim13", typeof<int>)
         //let dp14 = ProvidedStaticParameter("dim14", typeof<int>)
-        do ND.DefineStaticParameters([dtype; dp0; dp1], fun name args ->
-            let _d0 = args.[1] :?> int
-            let _d1 = args.[2] :?> int
+        do ND.DefineStaticParameters([dp0; dp1], fun name args ->
+            let _d0 = args.[0] :?> int
+            let _d1 = args.[1] :?> int
             //let _d2 = args.[3] :?> int
             //let _d3 = args.[4] :?> int
             //let _d4 = args.[5] :?> int
@@ -94,9 +96,9 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
             //let dv12 = Activator.CreateInstance(dt12);
             //let dv13 = Activator.CreateInstance(dt13);
 
-            let dexpr0 = Expr.Value(dv0, dt0)
+            //let dexpr0 = Expr.Value(dv0, dt0)
             
-            let d0 = ProvidedProperty("dim0", dt0, getterCode = fun args -> <@@ %%(dexpr0) @@>)
+            //let d0 = ProvidedProperty("dim0", dt0, getterCode = fun args -> <@@ %%(dexpr0) @@>)
             // myType.AddMember(innerState)
 
             
@@ -106,11 +108,11 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
             //    <@@ Activator.CreateInstance(typedefof<Matrix<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(Array.concat [[|typeof<single>|];getIntBase10TypeArray(d0, 10); getIntBase10TypeArray(d1, 10)]), (%%(dataExpr) : single[,])) @@>)
   
             //provided.AddMember(ctor)
-            let ndarrayExpr = Expr.Value(np.zeros(_d0), typeof<NDarray>)
-            let ctor = ProvidedConstructor([], invokeCode = fun args -> <@@ %%(ndarrayExpr) :> NDarray @@>)
+            
+            let ctor = ProvidedConstructor([], invokeCode = fun _ -> <@@ new Sylvester.Fabric.Keras.Z(5) @@>)
 
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some typeof<NDarray>, false)
-            provided.AddMember(d0)
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some typeof<Sylvester.Fabric.Keras.Z>, false)
+            //provided.AddMember(d0)
             provided.AddMember(ctor)
             provided
         )
