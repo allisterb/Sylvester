@@ -96,9 +96,9 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
             //let dv12 = Activator.CreateInstance(dt12);
             //let dv13 = Activator.CreateInstance(dt13);
 
-            //let dexpr0 = Expr.Value(dv0, dt0)
+            let dexpr0 = Expr.Value(dv0, dt0)
             
-            //let d0 = ProvidedProperty("dim0", dt0, getterCode = fun args -> <@@ %%(dexpr0) @@>)
+            let d0 = ProvidedProperty("dim0", dt0, getterCode = fun args -> dexpr0)
             // myType.AddMember(innerState)
 
             
@@ -109,11 +109,17 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
   
             //provided.AddMember(ctor)
             
-            let ctor = ProvidedConstructor([], invokeCode = fun _ -> <@@ new Sylvester.Fabric.Keras.Z(5) @@>)
+            let ctor0 = ProvidedConstructor([], invokeCode = fun args -> <@@ new Sylvester.Fabric.Keras.Z(float32.GetDtype(), 5) @@>)
+
+            let ctor = ProvidedConstructor([ProvidedParameter("dtype", typeof<Dtype>)], invokeCode = fun args -> <@@ new Sylvester.Fabric.Keras.Z((%%(args.[0]) : Dtype), 5) @@>)
+            let g = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(_d0, 10))
+            let p = ProvidedProperty(propertyName = "dim0", propertyType = g, isStatic = false, getterCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(_d0, 10))) @@>)
 
             let provided = ProvidedTypeDefinition(asm, ns, name, Some typeof<Sylvester.Fabric.Keras.Z>, false)
-            //provided.AddMember(d0)
+            provided.AddMember(ctor0)
             provided.AddMember(ctor)
+            provided.AddMember(p)
             provided
         )
         // myType.AddMember(ctor)

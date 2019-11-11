@@ -264,3 +264,4 @@ __pycache__/
 src/Base/Sylvester.Tensors/.ionide/symbolCache.db
 examples/.ionide/symbolCache.db
 /examples/funconf2019/.ionide
+/src/Providers/Sylvester.Provider.ND/tests/Sylvester.Provider.ND.Tests/.ionide

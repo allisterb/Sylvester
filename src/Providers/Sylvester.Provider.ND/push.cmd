@@ -1,0 +1,1 @@
+.nuget\nuget push %1 %SYLVESTER_NUGET_API_KEY% -Source nuget.org
