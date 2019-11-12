@@ -8,7 +8,7 @@
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 open Sylvester.Tensors
-open Sylvester.
+
 let v100 = vnew hundred 5.0f 
 
 let v9000 = vrand (nine * thousand)
