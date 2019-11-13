@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +19,16 @@
 
   <ItemGroup>
     <PackageReference Include="Numpy.Bare" Version="3.7.1.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Sylvester.Provider.ND.Runtime">
+      <HintPath>..\..\Providers\Sylvester.Provider.ND\src\Sylvester.Provider.ND.Runtime\bin\x64\Release\netstandard2.0\Sylvester.Provider.ND.Runtime.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
