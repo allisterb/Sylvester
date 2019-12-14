@@ -5,7 +5,7 @@ frameworks: netcoreapp2.0, netstandard2.0
 # Add the nuget packages you use here
 nuget FSharp.Core 4.3.4
 nuget Sylvester.Arithmetic
-nuget Numpy.Bare
+nuget Numpy.Bare 3.6.1.10
 nuget NETStandard.Library.NETFramework
 # nuget System.Text.Encoding.CodePages
 
@@ -21,4 +21,4 @@ group Test
   nuget NUnit.Console 3.6.1
   nuget NUnit3TestAdapter 3.7.0 version_in_path: true
   nuget FSharp.Core 4.3.4
-  nuget Numpy.Bare
+  nuget Numpy.Bare 3.6.1.10

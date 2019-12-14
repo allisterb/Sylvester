@@ -23,7 +23,7 @@ module FsDataFrameTests =
         Assert.IsType<double>(f.[0].[1]) |> ignore;
         let q1 = query {for r in f do select r?Volume}
         Assert.NotEmpty(q1);
-        f?Foo<-Sn<float>.Rnd(f.Length);
+        f?Foo<-Cn<float>.Rnd(f.Length);
         Assert.NotEmpty(f?Foo);
 
     [<Fact>]
@@ -33,7 +33,7 @@ module FsDataFrameTests =
         titanic.["PassengerId"].Type <- typeof<int>
         titanic.["Survived"].Type <- typeof<int>
         let dt = new Frame(titanic)
-        dt?Survived2<-new Sn<bool>(dt.Select(fun r -> if r?Survived = 1 then true else false))
+        dt?Survived2<-new Cv<bool>(dt.Select(fun r -> if r?Survived = 1 then true else false))
         Assert.NotEmpty(dt?Survived2)
         Assert.NotNull(dt.[0]?Survived2)
 
@@ -44,14 +44,14 @@ module FsDataFrameTests =
         titanic.["Survived"].Type <- typeof<int>
         let dt = new Frame(titanic)
         let w = new FrameW<string>(dt, fun s -> 
-            let name:Ss = dt?Name in Array.IndexOf<string>(name.Data, s))
+            let name:Cs = dt?Name in Array.IndexOf<string>(name.Data, s))
         Assert.NotNull(w.["Braund, Mr. Owen Harris"])
 
         let w2 = dt.SWnd(dt?Name)
         Assert.NotNull(w2.["Braund, Mr. Owen Harris"])
 
-        Assert.NotEmpty(w2.Ser("PassengerId"))
-        let dr1 = dt.Ser("PassengerId", "Survived")
+        Assert.NotEmpty(w2.Col("PassengerId"))
+        let dr1 = dt.Cols("PassengerId", "Survived")
         Assert.NotEmpty(dr1)
         
         let p = query {

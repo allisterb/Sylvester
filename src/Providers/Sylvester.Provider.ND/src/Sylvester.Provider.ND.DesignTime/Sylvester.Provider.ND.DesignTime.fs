@@ -149,6 +149,22 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
             provided.AddMember(dim12)
             provided.AddMember(dim13)
             provided.AddMember(dim14)
+
+            let nameOf =
+                let param = ProvidedParameter("p", typeof<Microsoft.FSharp.Quotations.Expr<int>>)
+                param.AddCustomAttribute {
+                    new CustomAttributeData() with
+                        member __.Constructor = typeof<ReflectedDefinitionAttribute>.GetConstructor([||])
+                        member __.ConstructorArguments = [||] :> _
+                        member __.NamedArguments = [||] :> _
+                }
+                ProvidedMethod("NameOf", [ param ], typeof<string>, isStatic = true, invokeCode = fun args ->
+                    <@@
+                        match (%%args.[0]) : Microsoft.FSharp.Quotations.Expr<int> with
+                        | Microsoft.FSharp.Quotations.Patterns.ValueWithName (_, _, n) -> "tests"
+                        | e -> failwithf "Invalid quotation argument (expected ValueWithName): %A" e
+                    @@>)
+            provided.AddMember(nameOf)
             provided
             // let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
             // myType.AddMember(meth)

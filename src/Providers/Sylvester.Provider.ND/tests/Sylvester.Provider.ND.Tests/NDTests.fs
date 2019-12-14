@@ -5,14 +5,12 @@ open Sylvester.Arithmetic
 
 open Numpy
 
-open NUnit.Framework
-
-[<Test>]
 let ``Default constructor should create instance`` () =
     let f = new ND<2, 1>(int32.GetDtype())
+    
     //let x = new ND<4,6>()
-    let x = new ND<0,1, 2,3>()
- 
+    //let x =ND<0>.
+    //let y = x
     ()
     
 
