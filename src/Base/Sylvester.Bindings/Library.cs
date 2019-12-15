@@ -14,11 +14,15 @@ namespace Sylvester.Bindings
 {
     public abstract class Library : ILibrary
     {
+        #region Enums
         public enum LibraryKind
         {
-            PlaidML
+            PlaidML,
+            TensorFlow
         }
+        #endregion
 
+        #region Properties
         protected static DirectoryInfo AssemblyDirectory = new FileInfo(Ref.Assembly.GetExecutingAssembly().Location).Directory;
 
 
@@ -42,8 +46,9 @@ namespace Sylvester.Bindings
         public string Namespace { get; internal set; }
         public bool WithoutCommon { get; protected set; }
         public bool Verbose { get; internal set; }
-        
+        #endregion
 
+        #region Constructors
         public Library(Dictionary<string, object> options)
         {
             BindOptions = options;
@@ -89,8 +94,9 @@ namespace Sylvester.Bindings
                 Info($"Module file is {F}.");
             }
         }
+        #endregion
 
- 
+        #region Methods
         /// Setup the driver options here.
         public virtual void Setup(Driver driver)
         {
@@ -107,8 +113,7 @@ namespace Sylvester.Bindings
         /// Setup your passes here.
         public virtual void SetupPasses(Driver driver)
         {
-            driver.AddTranslationUnitPass(new GetAllClassDeclsPass(this, driver.Generator));
-            driver.AddTranslationUnitPass(new ConvertFunctionParameterDeclsPass(this, driver.Generator));
+
         }
 
         /// Do transformations that should happen before passes are processed.
@@ -123,47 +128,11 @@ namespace Sylvester.Bindings
         }
         
 
-        public virtual bool CleanAndFixup()
-        {
-            if (File.Exists(Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp")))
-            {
-                File.Delete(Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp"));
-                Info($"Removing unneeded file {Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp")}");
-            }
-            if (File.Exists(Path.Combine(OutputDirName, "Std.cs")))
-            {
-                File.Delete(Path.Combine(OutputDirName, "Std.cs"));
-                Info($"Removing unneeded file {Path.Combine(OutputDirName, "Std.cs")}");
-            }
-            if (!string.IsNullOrEmpty(OutputFileName))
-            {
-                string f = Path.Combine(Path.GetFullPath(OutputDirName), OutputFileName);
-                if (!string.IsNullOrEmpty(OutputFileName) && F != f)
-                {
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT && F.ToLowerInvariant() == f.ToLowerInvariant())
-                    {
-
-                    }
-                    else if (File.Exists(f))
-                    {
-                        Warn($"Overwriting file {f}.");
-                        File.Delete(f);
-                    }
-                    File.Move(F, f);
-                    F = f;
-                }
-            }
-            if (!string.IsNullOrEmpty(Class))
-            {
-                string s = File.ReadAllText(F);
-                s = Regex.Replace(s, $"public unsafe partial class {ModuleName}\\r?$", "public unsafe partial class " + Class, RegexOptions.Multiline);
-                File.WriteAllText(F, s);
-            }
-            return true;
-        }
-
+        public virtual bool CleanAndFixup() => true;
+        
         protected void Info(string m, params object[] o) => L.Information(m, o);
         protected void Warn(string m, params object[] o) => L.Warning(m, o);
         protected void Error(string m, params object[] o) => L.Error(m, o);
+        #endregion
     }
 }

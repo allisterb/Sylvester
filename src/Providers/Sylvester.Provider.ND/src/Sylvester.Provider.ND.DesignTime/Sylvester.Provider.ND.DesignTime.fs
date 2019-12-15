@@ -130,7 +130,7 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
 
             let ctor = ProvidedConstructor([ProvidedParameter("dtype", typeof<Dtype>)], invokeCode = fun args -> <@@ new Sylvester.Fabric.Keras.Z((%%(args.[0]) : Dtype), 5) @@>)
 
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some typeof<Sylvester.Fabric.Keras.Z>, false)
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some typeof<Sylvester.Fabric.Keras.Z>, true)
 
             provided.AddMember(ctor0)
             provided.AddMember(ctor)
@@ -164,7 +164,18 @@ type NDArrayProvider (config : TypeProviderConfig) as this =
                         | Microsoft.FSharp.Quotations.Patterns.ValueWithName (_, _, n) -> "tests"
                         | e -> failwithf "Invalid quotation argument (expected ValueWithName): %A" e
                     @@>)
+
+            let testm =  
+                let lparam = ProvidedParameter("left", provided)
+                let rparam = ProvidedParameter("right", provided)
+                ProvidedMethod("op_Addition", [lparam; rparam], provided, isStatic = true, invokeCode = fun args ->
+                <@@
+                    null
+                @@>)
+
             provided.AddMember(nameOf)
+            provided.AddMember(testm)
+
             provided
             // let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
             // myType.AddMember(meth)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public interface IBackend
     {

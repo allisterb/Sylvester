@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sylvester
+namespace Sylvester.Data
 {
     public abstract class Backend : IBackend
     {

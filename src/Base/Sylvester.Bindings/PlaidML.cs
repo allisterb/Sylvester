@@ -16,14 +16,16 @@ namespace Sylvester.Bindings
 {
     public class PlaidML : Library
     {
-        public override LibraryKind Kind { get; } = LibraryKind.PlaidML;
-
-
+        #region Constructors
         public PlaidML(Dictionary<string, object> options) : base(options)
         {
 
         }
-       
+        #endregion
+
+        #region Overriden members
+        public override LibraryKind Kind { get; } = LibraryKind.PlaidML;
+
         public override void Setup(Driver driver)
         {
             base.Setup(driver);
@@ -32,14 +34,50 @@ namespace Sylvester.Bindings
             Info("Creating bindings for PlaidML functions...");
         }
 
+        /// Setup your passes here.
         public override void SetupPasses(Driver driver)
         {
-
+            driver.AddTranslationUnitPass(new GetAllClassDeclsPass(this, driver.Generator));
+            driver.AddTranslationUnitPass(new ConvertFunctionParameterDeclsPass(this, driver.Generator));
         }
-        /// Do transformations that should happen before passes are processed.
-        public override void Preprocess(Driver driver, ASTContext ctx)
-        {
 
+        public override bool CleanAndFixup()
+        {
+            if (File.Exists(Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp")))
+            {
+                File.Delete(Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp"));
+                Info($"Removing unneeded file {Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp")}");
+            }
+            if (File.Exists(Path.Combine(OutputDirName, "Std.cs")))
+            {
+                File.Delete(Path.Combine(OutputDirName, "Std.cs"));
+                Info($"Removing unneeded file {Path.Combine(OutputDirName, "Std.cs")}");
+            }
+            if (!string.IsNullOrEmpty(OutputFileName))
+            {
+                string f = Path.Combine(Path.GetFullPath(OutputDirName), OutputFileName);
+                if (!string.IsNullOrEmpty(OutputFileName) && F != f)
+                {
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT && F.ToLowerInvariant() == f.ToLowerInvariant())
+                    {
+
+                    }
+                    else if (File.Exists(f))
+                    {
+                        Warn($"Overwriting file {f}.");
+                        File.Delete(f);
+                    }
+                    File.Move(F, f);
+                    F = f;
+                }
+            }
+            if (!string.IsNullOrEmpty(Class))
+            {
+                string s = File.ReadAllText(F);
+                s = Regex.Replace(s, $"public unsafe partial class {ModuleName}\\r?$", "public unsafe partial class " + Class, RegexOptions.Multiline);
+                File.WriteAllText(F, s);
+            }
+            return true;
         }
 
         /// Do transformations that should happen after passes are processed.
@@ -69,6 +107,6 @@ namespace Sylvester.Bindings
                 ctx.SetClassAsValueType(c.Name);
             }   
         }
-        
+        #endregion
     }
 }

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Lang\Sylvester.DataFrame.Dynamic\Sylvester.DataFrame.Dynamic.csproj" />
+    <ProjectReference Include="..\..\src\Data\Sylvester.DataFrame.Dynamic\Sylvester.DataFrame.Dynamic.csproj" />
   </ItemGroup>
 
   <ItemGroup>

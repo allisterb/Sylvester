@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AutoDiffTests.fs" />
     <None Include="Data\iris.data">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -27,7 +26,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Base\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj" />
     <ProjectReference Include="..\..\src\Base\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
-    <ProjectReference Include="..\..\src\Lang\Sylvester.Tensors.AutoDiff\Sylvester.Tensors.AutoDiff.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

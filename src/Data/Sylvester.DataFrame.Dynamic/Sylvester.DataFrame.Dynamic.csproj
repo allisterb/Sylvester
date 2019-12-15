@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Base\Sylvester.Base.Backend\Sylvester.Base.Backend.csproj" />
     <ProjectReference Include="..\..\Base\Sylvester.Data\Sylvester.Data.csproj" />
   </ItemGroup>
 

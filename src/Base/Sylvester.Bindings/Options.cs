@@ -43,4 +43,13 @@ namespace Sylvester.Bindings
             ModuleName = "plaidml";
         }
     }
+
+    [Verb("tf", HelpText = "Generate bindings for the TensorFlow 2 framework.")]
+    class TensorFlowOptions : Options
+    {
+        public TensorFlowOptions()
+        {
+            ModuleName = "tf";
+        }
+    }
 }

@@ -37,6 +37,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Base\Sylvester.Base.Compiler\Sylvester.Base.Compiler.csproj" />
+    <ProjectReference Include="..\..\Base\Sylvester.Compiler\Sylvester.Compiler.csproj" />
   </ItemGroup>
 </Project>
