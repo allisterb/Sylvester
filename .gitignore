@@ -265,3 +265,4 @@ src/Base/Sylvester.Tensors/.ionide/symbolCache.db
 examples/.ionide/symbolCache.db
 /examples/funconf2019/.ionide
 /src/Providers/Sylvester.Provider.ND/tests/Sylvester.Provider.ND.Tests/.ionide
+/src/Fabrics/tf/Sylvester.tf.Native.Win/native/tensorflow.dll

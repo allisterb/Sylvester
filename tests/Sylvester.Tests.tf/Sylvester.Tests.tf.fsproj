@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Fabrics\tf\Sylvester.Bindings.tf\Sylvester.Bindings.tf.csproj" />
+    <ProjectReference Include="..\..\src\Fabrics\tf\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
   </ItemGroup>
 
 </Project>

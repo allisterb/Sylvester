@@ -1,7 +1,3 @@
 #!/bin/bash
-if [[ ${DEVAUDIT_TRACE+x} ]]
-then 
-	mono --trace=$DEVAUDIT_TRACE ./DevAudit.CommandLine/bin/Debug/devaudit.exe "$@"
-else
-	mono --debug ./DevAudit.CommandLine/bin/Debug/devaudit.exe "$@"
+mono --debug ./bin/x64/Debug/Sylvester.Bindings.exe "$@"
 fi
