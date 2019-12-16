@@ -62,12 +62,16 @@ namespace Sylvester.Bindings
                     {
                         help.AddVerbs(error.Type);
                     }
+                    else
+                    {
+                        help.AddVerbs(BindOptionTypes);
+                    }
                     Log.Information(help);
                     Exit(ExitResult.SUCCESS);
                 }
                 else if (errors.Any(e => e.Tag == ErrorType.HelpRequestedError))
                 {
-                    help.AddVerbs(BindOptionTypes);
+                    help.AddOptions(result);
                     L.Information(help);
                     Exit(ExitResult.SUCCESS);
                 }
