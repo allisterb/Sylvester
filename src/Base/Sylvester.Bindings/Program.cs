@@ -134,14 +134,14 @@ namespace Sylvester.Bindings
             })
             .WithParsed<PlaidMLOptions>(o =>
             {
-                if (!File.Exists(Path.Combine(AssemblyDirectory.FullName, "base.h")))
+                if (!File.Exists(Path.Combine(AssemblyDirectory.FullName, "plaidml", "base.h")))
                 {
-                    L.Error($"The PlaidML header file {Path.Combine(AssemblyDirectory.FullName, "base.h")} was not found.");
+                    L.Error($"The PlaidML header file {Path.Combine(AssemblyDirectory.FullName, "plaidml", "base.h")} was not found.");
                     Exit(ExitResult.FILE_MISSING);
                 }
-                else if (!File.Exists(Path.Combine(AssemblyDirectory.FullName, "plaidml.h")))
+                else if (!File.Exists(Path.Combine(AssemblyDirectory.FullName, "plaidml", "plaidml.h")))
                 {
-                    L.Error($"The PlaidML header file {Path.Combine(AssemblyDirectory.FullName, "plaidml.h")} was not found.");
+                    L.Error($"The PlaidML header file {Path.Combine(AssemblyDirectory.FullName, "plaidml", "plaidml.h")} was not found.");
                     Exit(ExitResult.FILE_MISSING);
                 }
                 ProgramLibrary = new PlaidML(ProgramOptions);
@@ -155,6 +155,24 @@ namespace Sylvester.Bindings
                     Exit(ExitResult.ERROR_DURING_CLEANUP);
                 }
 
+            })
+            .WithParsed<TensorFlowOptions>(o =>
+            {
+                if (!File.Exists(Path.Combine(AssemblyDirectory.FullName, "tf", "c_api.h")))
+                {
+                    L.Error($"The TensorFlow header file {Path.Combine(AssemblyDirectory.FullName, "tf", "c_api.h")} was not found.");
+                    Exit(ExitResult.FILE_MISSING);
+                }
+                ProgramLibrary = new TensorFlow(ProgramOptions);
+                ConsoleDriver.Run(ProgramLibrary);
+                if (ProgramLibrary.CleanAndFixup())
+                {
+                    Exit(ExitResult.SUCCESS);
+                }
+                else
+                {
+                    Exit(ExitResult.ERROR_DURING_CLEANUP);
+                }
             });
         }
 

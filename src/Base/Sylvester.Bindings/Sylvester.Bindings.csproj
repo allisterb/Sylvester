@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="Library.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="TensorFlow.cs" />
     <Compile Include="PlaidML.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -113,9 +114,24 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="base.h" />
-    <Content Include="plaidml++.h" />
-    <Content Include="plaidml.h" />
+    <Content Include="plaidml\base.h" />
+    <Content Include="plaidml\plaidml++.h" />
+    <Content Include="plaidml\plaidml.h" />
+    <Content Include="tf\c_api.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tf\tf_attrtype.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tf\tf_datatype.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tf\tf_status.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tf\tf_tensor.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Baseclass.Contrib.Nuget.Output.2.4.3\build\Baseclass.Contrib.Nuget.Output.targets" Condition="Exists('..\packages\Baseclass.Contrib.Nuget.Output.2.4.3\build\Baseclass.Contrib.Nuget.Output.targets')" />

@@ -29,8 +29,8 @@ namespace Sylvester.Bindings
         public override void Setup(Driver driver)
         {
             base.Setup(driver);
-            this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "base.h"));
-            this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "plaidml.h"));
+            this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "plaidml", "base.h"));
+            this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "plaidml", "plaidml.h"));
             Info("Creating bindings for PlaidML functions...");
         }
 
@@ -39,45 +39,6 @@ namespace Sylvester.Bindings
         {
             driver.AddTranslationUnitPass(new GetAllClassDeclsPass(this, driver.Generator));
             driver.AddTranslationUnitPass(new ConvertFunctionParameterDeclsPass(this, driver.Generator));
-        }
-
-        public override bool CleanAndFixup()
-        {
-            if (File.Exists(Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp")))
-            {
-                File.Delete(Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp"));
-                Info($"Removing unneeded file {Path.Combine(OutputDirName, Module.OutputNamespace + "-symbols.cpp")}");
-            }
-            if (File.Exists(Path.Combine(OutputDirName, "Std.cs")))
-            {
-                File.Delete(Path.Combine(OutputDirName, "Std.cs"));
-                Info($"Removing unneeded file {Path.Combine(OutputDirName, "Std.cs")}");
-            }
-            if (!string.IsNullOrEmpty(OutputFileName))
-            {
-                string f = Path.Combine(Path.GetFullPath(OutputDirName), OutputFileName);
-                if (!string.IsNullOrEmpty(OutputFileName) && F != f)
-                {
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT && F.ToLowerInvariant() == f.ToLowerInvariant())
-                    {
-
-                    }
-                    else if (File.Exists(f))
-                    {
-                        Warn($"Overwriting file {f}.");
-                        File.Delete(f);
-                    }
-                    File.Move(F, f);
-                    F = f;
-                }
-            }
-            if (!string.IsNullOrEmpty(Class))
-            {
-                string s = File.ReadAllText(F);
-                s = Regex.Replace(s, $"public unsafe partial class {ModuleName}\\r?$", "public unsafe partial class " + Class, RegexOptions.Multiline);
-                File.WriteAllText(F, s);
-            }
-            return true;
         }
 
         /// Do transformations that should happen after passes are processed.
