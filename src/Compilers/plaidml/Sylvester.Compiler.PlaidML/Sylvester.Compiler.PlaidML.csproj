@@ -37,6 +37,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Base\Sylvester.Compiler\Sylvester.Compiler.csproj" />
+    <ProjectReference Include="..\Sylvester.Compiler.PlaidML.Api\Sylvester.Compiler.PlaidML.Api.csproj" />
   </ItemGroup>
 </Project>
