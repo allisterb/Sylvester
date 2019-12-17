@@ -7,5 +7,5 @@ module BindingsTests =
     open TensorFlow
 
     [<Fact>]
-    let ``Can get Version`` () =
-        Assert.NotNull(c_api.TF_Version())
+    let ``Can get version`` () =
+        Assert.Equal("2.0.0", c_api.TF_Version())
