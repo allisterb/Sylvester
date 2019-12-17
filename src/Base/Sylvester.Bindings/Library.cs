@@ -41,6 +41,7 @@ namespace Sylvester.Bindings
         public string OutputDirName { get; internal set; }
         public string OutputFileName { get; internal set; }
         public string ModuleName { get; internal set; }
+        public string LibraryName { get; internal set; }
         public Module Module { get; internal set; }
         public string Class { get; internal set; }
         public string Namespace { get; internal set; }
@@ -52,7 +53,7 @@ namespace Sylvester.Bindings
         public Library(Dictionary<string, object> options)
         {
             BindOptions = options;
-            foreach (System.Reflection.PropertyInfo prop in this.GetType().GetProperties())
+            foreach (Ref.PropertyInfo prop in this.GetType().GetProperties())
             {
                 if (BindOptions.ContainsKey(prop.Name) && prop.CanWrite)
                 {
@@ -73,18 +74,23 @@ namespace Sylvester.Bindings
             {
                 Namespace = Name;
             }
-            
+            if (string.IsNullOrEmpty(LibraryName))
+            {
+                LibraryName = Name;
+            }
             Contract.Requires(!string.IsNullOrEmpty(ModuleName));
             Contract.Requires(!string.IsNullOrEmpty(OutputDirName));
             Contract.Requires(!string.IsNullOrEmpty(Class));
             Contract.Requires(!string.IsNullOrEmpty(Namespace));
+            Contract.Requires(!string.IsNullOrEmpty(LibraryName));
             F = Path.Combine(Path.GetFullPath(OutputDirName), ModuleName + ".cs");
 
             Info($"Binding library module {ModuleName}.");
             Info($"Using {R} as library directory.");
             Info($"Using {Path.GetFullPath(OutputDirName)} as output directory.");
             Info($"Using {Namespace} as library namespace.");
-            
+            Info($"Using {LibraryName} as shared library name.");
+
             if (File.Exists(F))
             {
                 Warn($"Module file {F} will be overwritten.");
@@ -106,6 +112,7 @@ namespace Sylvester.Bindings
             options.MarshalCharAsManagedChar = false;
             Module = options.AddModule(ModuleName);
             Module.OutputNamespace = Namespace;
+            Module.SharedLibraryName = LibraryName;
             options.OutputDir = OutputDirName;
             options.GenerateSingleCSharpFile = true;
         }

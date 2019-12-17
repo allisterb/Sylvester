@@ -56,7 +56,7 @@ namespace TensorFlow
         public partial struct __Internal
         {
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DataTypeSize")]
             internal static extern ulong TF_DataTypeSize(global::TensorFlow.TF_DataType dt);
         }
@@ -141,27 +141,27 @@ namespace TensorFlow
         public partial struct __Internal
         {
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewStatus")]
             internal static extern global::System.IntPtr TF_NewStatus();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteStatus")]
             internal static extern void TF_DeleteStatus(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetStatus")]
             internal static extern void TF_SetStatus(global::System.IntPtr s, global::TensorFlow.TF_Code code, [MarshalAs(UnmanagedType.LPStr)] string msg);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GetCode")]
             internal static extern global::TensorFlow.TF_Code TF_GetCode(global::System.IntPtr s);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_Message")]
             internal static extern global::System.IntPtr TF_Message(global::System.IntPtr s);
         }
@@ -256,77 +256,77 @@ namespace TensorFlow
         public partial struct __Internal
         {
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewTensor")]
             internal static extern global::System.IntPtr TF_NewTensor(global::TensorFlow.TF_DataType _0, long* dims, int num_dims, global::System.IntPtr data, ulong len, global::System.IntPtr deallocator, global::System.IntPtr deallocator_arg);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_AllocateTensor")]
             internal static extern global::System.IntPtr TF_AllocateTensor(global::TensorFlow.TF_DataType _0, long* dims, int num_dims, ulong len);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TensorMaybeMove")]
             internal static extern global::System.IntPtr TF_TensorMaybeMove(global::System.IntPtr tensor);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteTensor")]
             internal static extern void TF_DeleteTensor(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TensorType")]
             internal static extern global::TensorFlow.TF_DataType TF_TensorType(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NumDims")]
             internal static extern int TF_NumDims(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_Dim")]
             internal static extern long TF_Dim(global::System.IntPtr tensor, int dim_index);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TensorByteSize")]
             internal static extern ulong TF_TensorByteSize(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TensorData")]
             internal static extern global::System.IntPtr TF_TensorData(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TensorElementCount")]
             internal static extern long TF_TensorElementCount(global::System.IntPtr tensor);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TensorBitcastFrom")]
             internal static extern void TF_TensorBitcastFrom(global::System.IntPtr from, global::TensorFlow.TF_DataType type, global::System.IntPtr to, long* new_dims, int num_new_dims, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_StringEncode")]
             internal static extern ulong TF_StringEncode([MarshalAs(UnmanagedType.LPStr)] string src, ulong src_len, sbyte* dst, ulong dst_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_StringDecode")]
             internal static extern ulong TF_StringDecode([MarshalAs(UnmanagedType.LPStr)] string src, ulong src_len, sbyte** dst, ulong* dst_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_StringEncodedSize")]
             internal static extern ulong TF_StringEncodedSize(ulong len);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TensorIsAligned")]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool TF_TensorIsAligned(global::System.IntPtr _0);
@@ -482,7 +482,7 @@ namespace TensorFlow
             internal global::System.IntPtr data_deallocator;
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="??0TF_Buffer@@QEAA@AEBU0@@Z")]
             internal static extern global::System.IntPtr cctor(global::System.IntPtr __instance, global::System.IntPtr _0);
         }
@@ -1268,7 +1268,7 @@ namespace TensorFlow
             internal int index;
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="??0TF_Input@@QEAA@AEBU0@@Z")]
             internal static extern global::System.IntPtr cctor(global::System.IntPtr __instance, global::System.IntPtr _0);
         }
@@ -1387,7 +1387,7 @@ namespace TensorFlow
             internal int index;
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="??0TF_Output@@QEAA@AEBU0@@Z")]
             internal static extern global::System.IntPtr cctor(global::System.IntPtr __instance, global::System.IntPtr _0);
         }
@@ -1512,7 +1512,7 @@ namespace TensorFlow
             internal long total_size;
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="??0TF_AttrMetadata@@QEAA@AEBU0@@Z")]
             internal static extern global::System.IntPtr cctor(global::System.IntPtr __instance, global::System.IntPtr _0);
         }
@@ -1670,7 +1670,7 @@ namespace TensorFlow
             internal global::System.IntPtr name;
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="??0TF_WhileParams@@QEAA@AEBU0@@Z")]
             internal static extern global::System.IntPtr cctor(global::System.IntPtr __instance, global::System.IntPtr _0);
         }
@@ -1852,792 +1852,792 @@ namespace TensorFlow
         public partial struct __Internal
         {
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_Version")]
             internal static extern global::System.IntPtr TF_Version();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewBufferFromString")]
             internal static extern global::System.IntPtr TF_NewBufferFromString(global::System.IntPtr proto, ulong proto_len);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewBuffer")]
             internal static extern global::System.IntPtr TF_NewBuffer();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteBuffer")]
             internal static extern void TF_DeleteBuffer(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GetBuffer")]
             internal static extern void TF_GetBuffer(global::System.IntPtr @return, global::System.IntPtr buffer);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewSessionOptions")]
             internal static extern global::System.IntPtr TF_NewSessionOptions();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetTarget")]
             internal static extern void TF_SetTarget(global::System.IntPtr options, [MarshalAs(UnmanagedType.LPStr)] string target);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetConfig")]
             internal static extern void TF_SetConfig(global::System.IntPtr options, global::System.IntPtr proto, ulong proto_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteSessionOptions")]
             internal static extern void TF_DeleteSessionOptions(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewGraph")]
             internal static extern global::System.IntPtr TF_NewGraph();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteGraph")]
             internal static extern void TF_DeleteGraph(global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphSetTensorShape")]
             internal static extern void TF_GraphSetTensorShape(global::System.IntPtr graph, global::TensorFlow.TF_Output.__Internal output, long* dims, int num_dims, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphGetTensorNumDims")]
             internal static extern int TF_GraphGetTensorNumDims(global::System.IntPtr graph, global::TensorFlow.TF_Output.__Internal output, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphGetTensorShape")]
             internal static extern void TF_GraphGetTensorShape(global::System.IntPtr graph, global::TensorFlow.TF_Output.__Internal output, long* dims, int num_dims, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewOperation")]
             internal static extern global::System.IntPtr TF_NewOperation(global::System.IntPtr graph, [MarshalAs(UnmanagedType.LPStr)] string op_type, [MarshalAs(UnmanagedType.LPStr)] string oper_name);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetDevice")]
             internal static extern void TF_SetDevice(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string device);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_AddInput")]
             internal static extern void TF_AddInput(global::System.IntPtr desc, global::TensorFlow.TF_Output.__Internal input);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_AddInputList")]
             internal static extern void TF_AddInputList(global::System.IntPtr desc, global::System.IntPtr inputs, int num_inputs);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_AddControlInput")]
             internal static extern void TF_AddControlInput(global::System.IntPtr desc, global::System.IntPtr input);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ColocateWith")]
             internal static extern void TF_ColocateWith(global::System.IntPtr desc, global::System.IntPtr op);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrString")]
             internal static extern void TF_SetAttrString(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr value, ulong length);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrStringList")]
             internal static extern void TF_SetAttrStringList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, void** values, ulong* lengths, int num_values);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrInt")]
             internal static extern void TF_SetAttrInt(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long value);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrIntList")]
             internal static extern void TF_SetAttrIntList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long* values, int num_values);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrFloat")]
             internal static extern void TF_SetAttrFloat(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, float value);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrFloatList")]
             internal static extern void TF_SetAttrFloatList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, float* values, int num_values);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrBool")]
             internal static extern void TF_SetAttrBool(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, byte value);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrBoolList")]
             internal static extern void TF_SetAttrBoolList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, byte* values, int num_values);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrType")]
             internal static extern void TF_SetAttrType(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::TensorFlow.TF_DataType value);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrTypeList")]
             internal static extern void TF_SetAttrTypeList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::TensorFlow.TF_DataType* values, int num_values);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrPlaceholder")]
             internal static extern void TF_SetAttrPlaceholder(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, [MarshalAs(UnmanagedType.LPStr)] string placeholder);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrFuncName")]
             internal static extern void TF_SetAttrFuncName(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, [MarshalAs(UnmanagedType.LPStr)] string value, ulong length);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrShape")]
             internal static extern void TF_SetAttrShape(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long* dims, int num_dims);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrShapeList")]
             internal static extern void TF_SetAttrShapeList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long** dims, int* num_dims, int num_shapes);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrTensorShapeProto")]
             internal static extern void TF_SetAttrTensorShapeProto(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr proto, ulong proto_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrTensorShapeProtoList")]
             internal static extern void TF_SetAttrTensorShapeProtoList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, void** protos, ulong* proto_lens, int num_shapes, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrTensor")]
             internal static extern void TF_SetAttrTensor(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrTensorList")]
             internal static extern void TF_SetAttrTensorList(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr values, int num_values, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SetAttrValueProto")]
             internal static extern void TF_SetAttrValueProto(global::System.IntPtr desc, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr proto, ulong proto_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_FinishOperation")]
             internal static extern global::System.IntPtr TF_FinishOperation(global::System.IntPtr desc, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationName")]
             internal static extern global::System.IntPtr TF_OperationName(global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationOpType")]
             internal static extern global::System.IntPtr TF_OperationOpType(global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationDevice")]
             internal static extern global::System.IntPtr TF_OperationDevice(global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationNumOutputs")]
             internal static extern int TF_OperationNumOutputs(global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationOutputType")]
             internal static extern global::TensorFlow.TF_DataType TF_OperationOutputType(global::System.IntPtr oper_out);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationOutputListLength")]
             internal static extern int TF_OperationOutputListLength(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string arg_name, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationNumInputs")]
             internal static extern int TF_OperationNumInputs(global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationInputType")]
             internal static extern global::TensorFlow.TF_DataType TF_OperationInputType(global::System.IntPtr oper_in);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationInputListLength")]
             internal static extern int TF_OperationInputListLength(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string arg_name, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationInput")]
             internal static extern void TF_OperationInput(global::System.IntPtr @return, global::System.IntPtr oper_in);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationOutputNumConsumers")]
             internal static extern int TF_OperationOutputNumConsumers(global::System.IntPtr oper_out);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationOutputConsumers")]
             internal static extern int TF_OperationOutputConsumers(global::System.IntPtr oper_out, global::System.IntPtr consumers, int max_consumers);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationNumControlInputs")]
             internal static extern int TF_OperationNumControlInputs(global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetControlInputs")]
             internal static extern int TF_OperationGetControlInputs(global::System.IntPtr oper, global::System.IntPtr control_inputs, int max_control_inputs);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationNumControlOutputs")]
             internal static extern int TF_OperationNumControlOutputs(global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetControlOutputs")]
             internal static extern int TF_OperationGetControlOutputs(global::System.IntPtr oper, global::System.IntPtr control_outputs, int max_control_outputs);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrMetadata")]
             internal static extern global::TensorFlow.TF_AttrMetadata.__Internal TF_OperationGetAttrMetadata(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrString")]
             internal static extern void TF_OperationGetAttrString(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr value, ulong max_length, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrStringList")]
             internal static extern void TF_OperationGetAttrStringList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, void** values, ulong* lengths, int max_values, global::System.IntPtr storage, ulong storage_size, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrInt")]
             internal static extern void TF_OperationGetAttrInt(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long* value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrIntList")]
             internal static extern void TF_OperationGetAttrIntList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long* values, int max_values, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrFloat")]
             internal static extern void TF_OperationGetAttrFloat(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, float* value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrFloatList")]
             internal static extern void TF_OperationGetAttrFloatList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, float* values, int max_values, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrBool")]
             internal static extern void TF_OperationGetAttrBool(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, byte* value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrBoolList")]
             internal static extern void TF_OperationGetAttrBoolList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, byte* values, int max_values, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrType")]
             internal static extern void TF_OperationGetAttrType(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::TensorFlow.TF_DataType* value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrTypeList")]
             internal static extern void TF_OperationGetAttrTypeList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::TensorFlow.TF_DataType* values, int max_values, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrShape")]
             internal static extern void TF_OperationGetAttrShape(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long* value, int num_dims, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrShapeList")]
             internal static extern void TF_OperationGetAttrShapeList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, long** dims, int* num_dims, int num_shapes, long* storage, int storage_size, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrTensorShapeProto")]
             internal static extern void TF_OperationGetAttrTensorShapeProto(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrTensorShapeProtoList")]
             internal static extern void TF_OperationGetAttrTensorShapeProtoList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr values, int max_values, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrTensor")]
             internal static extern void TF_OperationGetAttrTensor(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrTensorList")]
             internal static extern void TF_OperationGetAttrTensorList(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr values, int max_values, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationGetAttrValueProto")]
             internal static extern void TF_OperationGetAttrValueProto(global::System.IntPtr oper, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr output_attr_value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphOperationByName")]
             internal static extern global::System.IntPtr TF_GraphOperationByName(global::System.IntPtr graph, [MarshalAs(UnmanagedType.LPStr)] string oper_name);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphNextOperation")]
             internal static extern global::System.IntPtr TF_GraphNextOperation(global::System.IntPtr graph, ulong* pos);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphToGraphDef")]
             internal static extern void TF_GraphToGraphDef(global::System.IntPtr graph, global::System.IntPtr output_graph_def, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphGetOpDef")]
             internal static extern void TF_GraphGetOpDef(global::System.IntPtr graph, [MarshalAs(UnmanagedType.LPStr)] string op_name, global::System.IntPtr output_op_def, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphVersions")]
             internal static extern void TF_GraphVersions(global::System.IntPtr graph, global::System.IntPtr output_version_def, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewImportGraphDefOptions")]
             internal static extern global::System.IntPtr TF_NewImportGraphDefOptions();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteImportGraphDefOptions")]
             internal static extern void TF_DeleteImportGraphDefOptions(global::System.IntPtr opts);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsSetPrefix")]
             internal static extern void TF_ImportGraphDefOptionsSetPrefix(global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string prefix);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsSetDefaultDevice")]
             internal static extern void TF_ImportGraphDefOptionsSetDefaultDevice(global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string device);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsSetUniquifyNames")]
             internal static extern void TF_ImportGraphDefOptionsSetUniquifyNames(global::System.IntPtr opts, byte uniquify_names);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsSetUniquifyPrefix")]
             internal static extern void TF_ImportGraphDefOptionsSetUniquifyPrefix(global::System.IntPtr opts, byte uniquify_prefix);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsAddInputMapping")]
             internal static extern void TF_ImportGraphDefOptionsAddInputMapping(global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string src_name, int src_index, global::TensorFlow.TF_Output.__Internal dst);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsRemapControlDependency")]
             internal static extern void TF_ImportGraphDefOptionsRemapControlDependency(global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string src_name, global::System.IntPtr dst);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsAddControlDependency")]
             internal static extern void TF_ImportGraphDefOptionsAddControlDependency(global::System.IntPtr opts, global::System.IntPtr oper);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsAddReturnOutput")]
             internal static extern void TF_ImportGraphDefOptionsAddReturnOutput(global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string oper_name, int index);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsNumReturnOutputs")]
             internal static extern int TF_ImportGraphDefOptionsNumReturnOutputs(global::System.IntPtr opts);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsAddReturnOperation")]
             internal static extern void TF_ImportGraphDefOptionsAddReturnOperation(global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string oper_name);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefOptionsNumReturnOperations")]
             internal static extern int TF_ImportGraphDefOptionsNumReturnOperations(global::System.IntPtr opts);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefResultsReturnOutputs")]
             internal static extern void TF_ImportGraphDefResultsReturnOutputs(global::System.IntPtr results, int* num_outputs, global::System.IntPtr outputs);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefResultsReturnOperations")]
             internal static extern void TF_ImportGraphDefResultsReturnOperations(global::System.IntPtr results, int* num_opers, global::System.IntPtr opers);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ImportGraphDefResultsMissingUnusedInputMappings")]
             internal static extern void TF_ImportGraphDefResultsMissingUnusedInputMappings(global::System.IntPtr results, int* num_missing_unused_input_mappings, sbyte*** src_names, int** src_indexes);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteImportGraphDefResults")]
             internal static extern void TF_DeleteImportGraphDefResults(global::System.IntPtr results);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphImportGraphDefWithResults")]
             internal static extern global::System.IntPtr TF_GraphImportGraphDefWithResults(global::System.IntPtr graph, global::System.IntPtr graph_def, global::System.IntPtr options, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphImportGraphDefWithReturnOutputs")]
             internal static extern void TF_GraphImportGraphDefWithReturnOutputs(global::System.IntPtr graph, global::System.IntPtr graph_def, global::System.IntPtr options, global::System.IntPtr return_outputs, int num_return_outputs, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphImportGraphDef")]
             internal static extern void TF_GraphImportGraphDef(global::System.IntPtr graph, global::System.IntPtr graph_def, global::System.IntPtr options, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphCopyFunction")]
             internal static extern void TF_GraphCopyFunction(global::System.IntPtr g, global::System.IntPtr func, global::System.IntPtr grad, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphNumFunctions")]
             internal static extern int TF_GraphNumFunctions(global::System.IntPtr g);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphGetFunctions")]
             internal static extern int TF_GraphGetFunctions(global::System.IntPtr g, global::System.IntPtr funcs, int max_func, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_OperationToNodeDef")]
             internal static extern void TF_OperationToNodeDef(global::System.IntPtr oper, global::System.IntPtr output_node_def, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewWhile")]
             internal static extern global::TensorFlow.TF_WhileParams.__Internal TF_NewWhile(global::System.IntPtr g, global::System.IntPtr inputs, int ninputs, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_FinishWhile")]
             internal static extern void TF_FinishWhile(global::System.IntPtr @params, global::System.IntPtr status, global::System.IntPtr outputs);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_AbortWhile")]
             internal static extern void TF_AbortWhile(global::System.IntPtr @params);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_AddGradients")]
             internal static extern void TF_AddGradients(global::System.IntPtr g, global::System.IntPtr y, int ny, global::System.IntPtr x, int nx, global::System.IntPtr dx, global::System.IntPtr status, global::System.IntPtr dy);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_AddGradientsWithPrefix")]
             internal static extern void TF_AddGradientsWithPrefix(global::System.IntPtr g, [MarshalAs(UnmanagedType.LPStr)] string prefix, global::System.IntPtr y, int ny, global::System.IntPtr x, int nx, global::System.IntPtr dx, global::System.IntPtr status, global::System.IntPtr dy);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphToFunction")]
             internal static extern global::System.IntPtr TF_GraphToFunction(global::System.IntPtr fn_body, [MarshalAs(UnmanagedType.LPStr)] string fn_name, byte append_hash_to_fn_name, int num_opers, global::System.IntPtr opers, int ninputs, global::System.IntPtr inputs, int noutputs, global::System.IntPtr outputs, sbyte** output_names, global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string description, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GraphToFunctionWithControlOutputs")]
             internal static extern global::System.IntPtr TF_GraphToFunctionWithControlOutputs(global::System.IntPtr fn_body, [MarshalAs(UnmanagedType.LPStr)] string fn_name, byte append_hash_to_fn_name, int num_opers, global::System.IntPtr opers, int ninputs, global::System.IntPtr inputs, int noutputs, global::System.IntPtr outputs, sbyte** output_names, int ncontrol_outputs, global::System.IntPtr control_outputs, sbyte** control_output_names, global::System.IntPtr opts, [MarshalAs(UnmanagedType.LPStr)] string description, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_FunctionName")]
             internal static extern global::System.IntPtr TF_FunctionName(global::System.IntPtr func);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_FunctionToFunctionDef")]
             internal static extern void TF_FunctionToFunctionDef(global::System.IntPtr func, global::System.IntPtr output_func_def, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_FunctionImportFunctionDef")]
             internal static extern global::System.IntPtr TF_FunctionImportFunctionDef(global::System.IntPtr proto, ulong proto_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_FunctionSetAttrValueProto")]
             internal static extern void TF_FunctionSetAttrValueProto(global::System.IntPtr func, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr proto, ulong proto_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_FunctionGetAttrValueProto")]
             internal static extern void TF_FunctionGetAttrValueProto(global::System.IntPtr func, [MarshalAs(UnmanagedType.LPStr)] string attr_name, global::System.IntPtr output_attr_value, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteFunction")]
             internal static extern void TF_DeleteFunction(global::System.IntPtr func);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_TryEvaluateConstant")]
             internal static extern byte TF_TryEvaluateConstant(global::System.IntPtr graph, global::TensorFlow.TF_Output.__Internal output, global::System.IntPtr result, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewSession")]
             internal static extern global::System.IntPtr TF_NewSession(global::System.IntPtr graph, global::System.IntPtr opts, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_LoadSessionFromSavedModel")]
             internal static extern global::System.IntPtr TF_LoadSessionFromSavedModel(global::System.IntPtr session_options, global::System.IntPtr run_options, [MarshalAs(UnmanagedType.LPStr)] string export_dir, sbyte** tags, int tags_len, global::System.IntPtr graph, global::System.IntPtr meta_graph_def, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_CloseSession")]
             internal static extern void TF_CloseSession(global::System.IntPtr _0, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteSession")]
             internal static extern void TF_DeleteSession(global::System.IntPtr _0, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SessionRun")]
             internal static extern void TF_SessionRun(global::System.IntPtr session, global::System.IntPtr run_options, global::System.IntPtr inputs, global::System.IntPtr input_values, int ninputs, global::System.IntPtr outputs, global::System.IntPtr output_values, int noutputs, global::System.IntPtr target_opers, int ntargets, global::System.IntPtr run_metadata, global::System.IntPtr _0);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SessionPRunSetup")]
             internal static extern void TF_SessionPRunSetup(global::System.IntPtr _0, global::System.IntPtr inputs, int ninputs, global::System.IntPtr outputs, int noutputs, global::System.IntPtr target_opers, int ntargets, sbyte** handle, global::System.IntPtr _1);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SessionPRun")]
             internal static extern void TF_SessionPRun(global::System.IntPtr _0, [MarshalAs(UnmanagedType.LPStr)] string handle, global::System.IntPtr inputs, global::System.IntPtr input_values, int ninputs, global::System.IntPtr outputs, global::System.IntPtr output_values, int noutputs, global::System.IntPtr target_opers, int ntargets, global::System.IntPtr _1);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeletePRunHandle")]
             internal static extern void TF_DeletePRunHandle([MarshalAs(UnmanagedType.LPStr)] string handle);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewDeprecatedSession")]
             internal static extern global::System.IntPtr TF_NewDeprecatedSession(global::System.IntPtr _0, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_CloseDeprecatedSession")]
             internal static extern void TF_CloseDeprecatedSession(global::System.IntPtr _0, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteDeprecatedSession")]
             internal static extern void TF_DeleteDeprecatedSession(global::System.IntPtr _0, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_Reset")]
             internal static extern void TF_Reset(global::System.IntPtr opt, sbyte** containers, int ncontainers, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ExtendGraph")]
             internal static extern void TF_ExtendGraph(global::System.IntPtr _0, global::System.IntPtr proto, ulong proto_len, global::System.IntPtr _1);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_Run")]
             internal static extern void TF_Run(global::System.IntPtr _0, global::System.IntPtr run_options, sbyte** input_names, global::System.IntPtr inputs, int ninputs, sbyte** output_names, global::System.IntPtr outputs, int noutputs, sbyte** target_oper_names, int ntargets, global::System.IntPtr run_metadata, global::System.IntPtr _1);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_PRunSetup")]
             internal static extern void TF_PRunSetup(global::System.IntPtr _0, sbyte** input_names, int ninputs, sbyte** output_names, int noutputs, sbyte** target_oper_names, int ntargets, sbyte** handle, global::System.IntPtr _1);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_PRun")]
             internal static extern void TF_PRun(global::System.IntPtr _0, [MarshalAs(UnmanagedType.LPStr)] string handle, sbyte** input_names, global::System.IntPtr inputs, int ninputs, sbyte** output_names, global::System.IntPtr outputs, int noutputs, sbyte** target_oper_names, int ntargets, global::System.IntPtr _1);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_SessionListDevices")]
             internal static extern global::System.IntPtr TF_SessionListDevices(global::System.IntPtr session, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeprecatedSessionListDevices")]
             internal static extern global::System.IntPtr TF_DeprecatedSessionListDevices(global::System.IntPtr session, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteDeviceList")]
             internal static extern void TF_DeleteDeviceList(global::System.IntPtr list);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeviceListCount")]
             internal static extern int TF_DeviceListCount(global::System.IntPtr list);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeviceListName")]
             internal static extern global::System.IntPtr TF_DeviceListName(global::System.IntPtr list, int index, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeviceListType")]
             internal static extern global::System.IntPtr TF_DeviceListType(global::System.IntPtr list, int index, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeviceListMemoryBytes")]
             internal static extern long TF_DeviceListMemoryBytes(global::System.IntPtr list, int index, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeviceListIncarnation")]
             internal static extern ulong TF_DeviceListIncarnation(global::System.IntPtr list, int index, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_LoadLibrary")]
             internal static extern global::System.IntPtr TF_LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string library_filename, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GetOpList")]
             internal static extern global::TensorFlow.TF_Buffer.__Internal TF_GetOpList(global::System.IntPtr lib_handle);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteLibraryHandle")]
             internal static extern void TF_DeleteLibraryHandle(global::System.IntPtr lib_handle);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GetAllOpList")]
             internal static extern global::System.IntPtr TF_GetAllOpList();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewApiDefMap")]
             internal static extern global::System.IntPtr TF_NewApiDefMap(global::System.IntPtr op_list_buffer, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteApiDefMap")]
             internal static extern void TF_DeleteApiDefMap(global::System.IntPtr apimap);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ApiDefMapPut")]
             internal static extern void TF_ApiDefMapPut(global::System.IntPtr api_def_map, [MarshalAs(UnmanagedType.LPStr)] string text, ulong text_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ApiDefMapGet")]
             internal static extern global::System.IntPtr TF_ApiDefMapGet(global::System.IntPtr api_def_map, [MarshalAs(UnmanagedType.LPStr)] string name, ulong name_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GetAllRegisteredKernels")]
             internal static extern global::System.IntPtr TF_GetAllRegisteredKernels(global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_GetRegisteredKernelsForOp")]
             internal static extern global::System.IntPtr TF_GetRegisteredKernelsForOp([MarshalAs(UnmanagedType.LPStr)] string name, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_NewServer")]
             internal static extern global::System.IntPtr TF_NewServer(global::System.IntPtr proto, ulong proto_len, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ServerStart")]
             internal static extern void TF_ServerStart(global::System.IntPtr server, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ServerStop")]
             internal static extern void TF_ServerStop(global::System.IntPtr server, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ServerJoin")]
             internal static extern void TF_ServerJoin(global::System.IntPtr server, global::System.IntPtr status);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_ServerTarget")]
             internal static extern global::System.IntPtr TF_ServerTarget(global::System.IntPtr server);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_DeleteServer")]
             internal static extern void TF_DeleteServer(global::System.IntPtr server);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport("tf", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+            [DllImport("tensorflow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                 EntryPoint="TF_RegisterLogListener")]
             internal static extern void TF_RegisterLogListener(global::System.IntPtr listener);
         }

@@ -8,4 +8,4 @@ module BindingsTests =
 
     [<Fact>]
     let ``Can get Version`` () =
-        ()
+        Assert.NotNull(c_api.TF_Version())

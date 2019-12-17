@@ -24,6 +24,9 @@ namespace Sylvester.Bindings
         [Option('n', "namespace", Required = false, HelpText = "Specify the namespace that the bindings class will belong to.")]
         public string Namespace { get; set; }
 
+        [Option('l', "library-name", Required = false, HelpText = "Specify the shared library name for the DllImport attribute.")]
+        public string LibraryName { get; set; }
+
         [Option("without-common", Required = false, HelpText = "Do not generate bindings for common MKL data structures and functions", Default = false)]
         public bool WithoutCommon { get; set; }
 
