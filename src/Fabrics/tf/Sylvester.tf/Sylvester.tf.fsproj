@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
-    <ProjectReference Include="..\..\Base\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
+    <ProjectReference Include="..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
+    <ProjectReference Include="..\..\..\Lang\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
   </ItemGroup>
 
 </Project>

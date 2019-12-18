@@ -1,11 +1,11 @@
-namespace Sylvester.Tests.Arithmetic.Collections
+namespace Sylvester.Tests.Collections
 
 module VArrayTests =
 
     open Xunit
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
-    open Sylvester.Arithmetic.Collections
+    open Sylvester.Collections
 
     [<Fact>]
     let ``Can create VArray``() =

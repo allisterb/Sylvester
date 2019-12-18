@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Compiler.PlaidML"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Arithmetic", "..\tests\Sylvester.Tests.Arithmetic\Sylvester.Tests.Arithmetic.fsproj", "{A15214CE-5DE5-454C-8F7B-1B645C871E84}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tensors", "Base\Sylvester.Tensors\Sylvester.Tensors.fsproj", "{7210C64B-76A0-4937-AF89-C10970777E5A}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tensors", "Lang\Sylvester.Tensors\Sylvester.Tensors.fsproj", "{7210C64B-76A0-4937-AF89-C10970777E5A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interactive", "Interactive"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Examples", "..\tests\Sylvester.Tests.Examples\Sylvester.Tests.Examples.fsproj", "{D69ECDC9-6EAA-4A40-B27E-E3E7FA1B4F76}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Arithmetic.Collections", "Base\Sylvester.Arithmetic.Collections\Sylvester.Arithmetic.Collections.fsproj", "{F5E850DF-69BE-4A1E-8E7B-144A144DF025}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Collections", "Base\Sylvester.Collections\Sylvester.Collections.fsproj", "{F5E850DF-69BE-4A1E-8E7B-144A144DF025}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}"
 EndProject
@@ -91,7 +91,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.tf.Native.Win", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plaidml", "plaidml", "{7C6BDF1F-FC47-4C92-AE2E-5F76D51339E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.tf.OpGen", "Fabrics\tf\Sylvester.tf.OpGen\Sylvester.tf.OpGen.csproj", "{2BF11B0E-5F8F-474E-9C6B-A7373302C335}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.tf.OpGen", "Fabrics\tf\Sylvester.tf.OpGen\Sylvester.tf.OpGen.csproj", "{2BF11B0E-5F8F-474E-9C6B-A7373302C335}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Collections", "..\tests\Sylvester.Tests.Collections\Sylvester.Tests.Collections.fsproj", "{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lang", "Lang", "{E0E37582-2ECB-4B62-9ACA-B797A22A6704}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -343,6 +347,18 @@ Global
 		{2BF11B0E-5F8F-474E-9C6B-A7373302C335}.Release|x64.Build.0 = Release|Any CPU
 		{2BF11B0E-5F8F-474E-9C6B-A7373302C335}.Release|x86.ActiveCfg = Release|Any CPU
 		{2BF11B0E-5F8F-474E-9C6B-A7373302C335}.Release|x86.Build.0 = Release|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Debug|x64.Build.0 = Debug|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Debug|x86.Build.0 = Debug|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Release|x64.ActiveCfg = Release|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Release|x64.Build.0 = Release|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -353,7 +369,7 @@ Global
 		{3FE81F5C-8518-488E-93A5-98E64974F1A0} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
 		{AC1D3D9E-F4CE-4963-9D27-0C210AE99A8A} = {7C6BDF1F-FC47-4C92-AE2E-5F76D51339E3}
 		{A15214CE-5DE5-454C-8F7B-1B645C871E84} = {578D2618-B994-4B73-9838-9E05E0132C26}
-		{7210C64B-76A0-4937-AF89-C10970777E5A} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
+		{7210C64B-76A0-4937-AF89-C10970777E5A} = {E0E37582-2ECB-4B62-9ACA-B797A22A6704}
 		{1BBCE66D-39C7-4576-8F60-1526BCD478A6} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{D69ECDC9-6EAA-4A40-B27E-E3E7FA1B4F76} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{F5E850DF-69BE-4A1E-8E7B-144A144DF025} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
@@ -375,6 +391,7 @@ Global
 		{CD33D86F-14F6-4EA1-BA88-74AD34332E5B} = {0C40457E-4586-422A-A161-3ADE8618354F}
 		{7C6BDF1F-FC47-4C92-AE2E-5F76D51339E3} = {382469D4-786B-46FC-AFD3-00FEE4BE2FBD}
 		{2BF11B0E-5F8F-474E-9C6B-A7373302C335} = {0C40457E-4586-422A-A161-3ADE8618354F}
+		{E8DE4694-6ED5-4D5C-81B0-6A23EF218A62} = {578D2618-B994-4B73-9838-9E05E0132C26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

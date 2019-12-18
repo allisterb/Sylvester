@@ -1,4 +1,4 @@
-namespace Sylvester.Arithmetic.Collections
+namespace Sylvester.Collections
  
 open System
 open System.Collections.Generic

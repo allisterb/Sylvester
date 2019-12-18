@@ -6,7 +6,7 @@ open MathNet.Numerics.LinearAlgebra
 
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
-open Sylvester.Arithmetic.Collections
+open Sylvester.Collections
 
 [<StructuredFormatDisplay("{_Array}")>]
 type Matrix<'t, 'd10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1 

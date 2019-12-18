@@ -5,7 +5,6 @@ module VectorTests =
     open Xunit
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
-    open Sylvester.Arithmetic.Collections
     open Sylvester.Tensors
 
     [<Fact>]

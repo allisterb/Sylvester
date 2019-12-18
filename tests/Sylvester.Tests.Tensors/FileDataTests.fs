@@ -7,7 +7,6 @@ module FileDataTests =
 
     open Sylvester.Arithmetic
     open Sylvester.Arithmetic.N10
-    open Sylvester.Arithmetic.Collections
     open Sylvester.Tensors
     open Sylvester.Tensors.IO
 

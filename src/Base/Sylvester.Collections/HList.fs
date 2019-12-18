@@ -1,4 +1,4 @@
-namespace Sylvester.Arithmetic.Collections
+namespace Sylvester.Collections
 
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
@@ -19,16 +19,16 @@ type HCons<'a, 'b when 'b :> HList>  = HCons of 'a * 'b with
     static member inline (^<|-^) (folder:HFolder<'a, 'v>, x) = folder $ x
     static member inline (!+)(HCons(x, xs)) = (!+ xs) + one
       
-    static member inline (|@|) (HCons(x, _), _:N1<_0>) = x
-    static member inline (|@|) (HCons(_, HCons(y, _)), _:N1<_1>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(y, _))), _:N1<_2>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(y, _)))), _:N1<_3>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))), _:N1<_4>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))), _:N1<_5>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))), _:N1<_6>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))), _:N1<_7>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))))), _:N1<_8>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))))), _:N1<_9>) = y
+    static member inline (|@|) (HCons(x, _), _:N1<``0``>) = x
+    static member inline (|@|) (HCons(_, HCons(y, _)), _:N1<``1``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(y, _))), _:N1<``2``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(y, _)))), _:N1<``3``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))), _:N1<``4``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))), _:N1<``5``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))), _:N1<``6``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))), _:N1<``7``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))))), _:N1<``8``>) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))))), _:N1<``9``>) = y
      
 and HNil = HNil with
     interface HList
