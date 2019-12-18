@@ -4,7 +4,7 @@ open System
 
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
-open Sylvester.Collections
+
 
 [<StructuredFormatDisplay("{Val}")>]
 type Scalar<'t when 't : struct and 't: (new: unit -> 't) and 't:> ValueType and 't :> IEquatable<'t> and 't :> IFormattable>(x:'t) = 

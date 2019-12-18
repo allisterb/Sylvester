@@ -5,7 +5,6 @@ open MathNet.Numerics.LinearAlgebra
 
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
-open Sylvester.Collections
 
 [<StructuredFormatDisplay("{_Array}")>]
 type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
@@ -23,8 +22,6 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
     
     new(x:'t) = Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(Array.create (N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>().IntVal) x)
    
-    member val Array = varray n items
-    
     member val _Array = items
 
     member val _Vector = DenseVector.raw items
@@ -43,10 +40,10 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
     static member inline (!@)  (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = l._Array
 
     static member inline (!@@)  (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = l._Vector
-
-    member inline x.SetVal(i:'i, item: 't) = x.Array.SetVal(i, item)
     
-    member inline x.Item(i:'i) = x.Array.[i]
+    member inline x.Item(i:'i) = 
+        checkidx(i, x.Dim0)
+        x._Array.[(int) i]
 
     member inline x.GetSlice(start: 'a option, finish : 'b option) = 
         checkidx(start.Value, x.Dim0)
@@ -59,9 +56,17 @@ type Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> B
 
         x.Create(length, x._Array.[intstart..intfinish])
  
-    member inline x.For(start, finish, f: int -> 't -> unit) = x.Array.For(start, finish, f)
+    member inline x.SetVal(i:'i, item: 't) = 
+        checkidx(i, x.Dim0)
+        x._Array.SetValue(item, (int) i)
 
-    member inline x.ForAll(f: int -> 't -> unit) = x.Array.ForAll(f)
+    member inline x.For(start, finish, f: int -> 't -> unit) = 
+        checkidx(start, x.Length)
+        checkidx(finish, x.Length)
+        checklt(start, finish)
+        for i in ((int) start)..((int)finish) do f i x._Array.[i]
+
+    member inline x.ForAll(f: int -> 't -> unit) = for i in 0..x._Array.Length - 1 do f i x._Array.[i]
 
     static member inline (+) (l:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, r:Vector<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) =
        let res = DenseVector.zero<'t>(l.Length.IntVal)

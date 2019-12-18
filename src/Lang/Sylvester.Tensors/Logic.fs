@@ -6,7 +6,6 @@ open MathNet.Numerics.LinearAlgebra
 
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
-open Sylvester.Collections
 
 [<AutoOpen>]
 module Logic =
