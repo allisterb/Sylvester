@@ -35,23 +35,4 @@ module Logic =
 
     let inline va2darray (dim0:N10<'d10,'d9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) (dim1:N10<'e10,'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) (x:'t[,]) =
         VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> (dim0, dim1, x)
-    
-    let inline varrays (list) = VArrays(!+list, list) 
-
-    let inline hlistn(list) = HList(!+ list, list)
-
-    let inline hlist x = x ^+^ HNil |> hlistn 
-    
-    let inline hlist2 x y = x ^+^ y ^+^ HNil |> hlistn
-    
-    let inline hlist3 x y z = x ^+^ y ^+^ z ^+^ HNil |> hlistn
-
-    let inline hlist4 x y z a = x ^+^ y ^+^ z ^+^ a ^+^ HNil |> hlistn
-
-    let inline hlist5 x y z a b = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ HNil |> hlistn
-
-    let inline hlist6 x y z a b c = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ c ^+^ HNil |> hlistn
-
-    let inline hlist7 x y z a b c d = x ^+^ y ^+^ z ^+^ a ^+^ b ^+^ c ^+^ d ^+^ HNil |> hlistn
-
-    let inline hh x n = x |@| n
+   

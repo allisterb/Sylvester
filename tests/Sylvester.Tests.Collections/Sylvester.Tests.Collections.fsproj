@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="HListTests.fs" />
     <Compile Include="VArrayTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

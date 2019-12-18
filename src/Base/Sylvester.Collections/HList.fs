@@ -11,9 +11,6 @@ type HCons<'a, 'b when 'b :> HList>  = HCons of 'a * 'b with
     static member inline (!?) (HCons(x, xs)) = _false
     static member inline (^+^) (HCons(x, xs), y) = HCons(HCons(x, xs), y)
     static member inline (^+^) (y, HCons(x, xs)) = HCons(y, HCons(x, xs))
-    static member inline (^++^) (HCons(x, xs), HList(c, y)) = HList(c + one, HCons(x, xs) ^+^ y)
-    static member inline (^++^) (HList(c, l), HCons(x, xs)) = HList(c + one, l ^+^ HCons(x, xs))
-    static member inline (^++^) (x, HList(c, l)) = HList(c + one, x ^+^ l)
     static member inline (^*^) (x, y) = (HAppend $ x) <| y
     static member inline (^<|^) (mapper:HMapper<'a>, x) = mapper $ x
     static member inline (^<|-^) (folder:HFolder<'a, 'v>, x) = folder $ x
@@ -36,7 +33,6 @@ and HNil = HNil with
     static member inline (!?)(HNil) = _true
     static member inline (!+)(HNil) = zero
     static member inline (^+^) (x, HNil) = HCons(x, HNil)
-    static member inline (^++^) (x, HNil) = HList(one, HCons(x, HNil))
    
 and HAppend = HAppend with
     static member ($) (HAppend, HNil) = id
@@ -51,15 +47,3 @@ and HMapper<'a> = HMapper of 'a with
 and HFolder<'a, 'v> = HFolder of 'a * 'v with
     static member ($) (HFolder(_, v), HNil) = v
     static member inline ($) (HFolder(F, v), HCons(x, xs)) = HFolder(F, F $ (v,x)) |*| xs
-
-and HList<'n when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int)> = interface end
-
-and HList<'n, 'h when 'n: (static member Zero : N0) and 'n : (static member op_Explicit: 'n -> int) 
-                    and 'h : (static member inline (!+) : 'h -> 'n)>  = HList of 'n * 'h with 
-                    interface HList<'n>
-
-                    static member inline Zero = HList(zero, HNil)
-
-                    static member inline Length(HList(x, xs)) = (x, xs) |> fst
-
-                    static member inline Unwrap(HList(x, xs)) = (x, xs) |> snd
