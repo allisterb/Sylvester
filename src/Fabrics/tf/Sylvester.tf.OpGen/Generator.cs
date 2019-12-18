@@ -30,13 +30,15 @@ namespace Sylvester.tf.OpGen
 			{
 				throw new Exception($"Could not create ApiDefMap: {tf_status.TF_Message(status)}");
 			}
+			outputWriter = new StringWriter(OutputBuilder);
 		}
         #endregion
 
         #region Properties
         public TF_ApiDefMap ApiDefMap { get; }
-
 		public List<OpDef> OpDefs { get; }
+		public StringBuilder OutputBuilder { get; } = new StringBuilder();
+		public string Output => OutputBuilder.ToString();
 		#endregion
 
         #region Methods
@@ -367,16 +369,16 @@ namespace Sylvester.tf.OpGen
 				case "bool[]":
 					p($"desc.SetAttr (\"{attrName}\", {csAttrName});");
 					break;
-				case "TFDataType":
-				case "TFDataType[]":
+				case "TF_DataType":
+				case "TF_DataType[]":
 					p($"desc.SetAttrType (\"{attrName}\", {csAttrName});");
 					break;
 
 				// This should pass the cstatus, but requires the 
 				// function to take a TFStatus as well, so need to weave that
 				// in the parameters
-				case "TFTensor":
-				case "TFTensor[]":
+				case "TF_Tensor":
+				case "TF_Tensor[]":
 					p($"desc.SetAttr (\"{attrName}\", {csAttrName} /* cstatus */);");
 					break;
 				default:
@@ -388,9 +390,8 @@ namespace Sylvester.tf.OpGen
 		/// Generate the specified oper.
 		/// </summary>
 		/// <param name="oper">Oper.</param>
-		void Generate(OpDef oper)
+		public void Generate(OpDef oper)
 		{
-
 			SetupArguments(oper);
 			GenDocs(oper);
 
@@ -404,22 +405,22 @@ namespace Sylvester.tf.OpGen
 					var rb = new StringBuilder("(");
 					foreach (var arg in oper.output_arg)
 					{
-						rb.AppendFormat("TFOutput{0} {1}, ", IsListArg(arg) ? "[]" : "", ParamMap(arg.name));
+						rb.AppendFormat("TF_Output{0} {1}, ", IsListArg(arg) ? "[]" : "", ParamMap(arg.name));
 					}
 					rb.Remove(rb.Length - 2, 2);
 					rb.Append(")");
 					retType = rb.ToString();
 				}
 				else
-					retType = "TFOutput" + (IsListArg(oper.output_arg.First()) ? "[]" : "");
+					retType = "TF_Output" + (IsListArg(oper.output_arg.First()) ? "[]" : "");
 			}
 			else
-				retType = "TFOperation";
+				retType = "TF_Operation";
 
 			p($"public {retType} {name} ({FillArguments(oper)}string operName = null)");
 			pi("{");
-			bool needStatus = required_attrs.Concat(optional_attrs).Any(attr => attr.type.Contains("TFTensor"));
-			p($"var desc = new TFOperationDesc (this, \"{oper.name}\", MakeName (\"{oper.name}\", operName));");
+			bool needStatus = required_attrs.Concat(optional_attrs).Any(attr => attr.type.Contains("TF_Tensor"));
+			p($"var desc = new TF_OperationDesc (this, \"{oper.name}\", MakeName (\"{oper.name}\", operName));");
 			foreach (var arg in oper.input_arg)
 			{
 				if (IsListArg(arg))
@@ -428,7 +429,7 @@ namespace Sylvester.tf.OpGen
 					p($"desc.AddInput ({ParamMap(arg.name)});");
 			}
 
-			pi("foreach ( TFOperation control in CurrentDependencies )");
+			pi("foreach ( TF_Operation control in CurrentDependencies )");
 			p("desc.AddControlInput (control);");
 			pd("");
 
@@ -465,14 +466,14 @@ namespace Sylvester.tf.OpGen
 				{
 					var outputs = new StringBuilder();
 					p($"_n = op.OutputListLength (\"{ParamMap(arg.name)}\");");
-					p($"var {ParamMap(arg.name)} = new TFOutput [_n];");
+					p($"var {ParamMap(arg.name)} = new TF_Output [_n];");
 					pi("for (int i = 0; i < _n; i++)");
-					p($"{ParamMap(arg.name)} [i] = new TFOutput (op, _idx++);");
+					p($"{ParamMap(arg.name)} [i] = new TF_Output (op, _idx++);");
 					pd("");
 				}
 				else
 				{
-					p($"var {ParamMap(arg.name)} = new TFOutput (op, _idx++);");
+					p($"var {ParamMap(arg.name)} = new TF_Output (op, _idx++);");
 				}
 			}
 
@@ -494,20 +495,8 @@ namespace Sylvester.tf.OpGen
 			}
 			pd("}\n");
 		}
-        #endregion
 
-        #region Fields
-        //ApiDefMap apimap;
-        //TF_Status status;
-        //TF_ApiDefMap handle;
-        // The output file
-        StreamWriter output;
-		int indent = 0;
-        #endregion
-
-        #region Methods
-        // Convenience methods to generate output
-        void pi(string fmt, params object[] args)
+		void pi(string fmt, params object[] args)
 		{
 			p(fmt, args);
 			indent++;
@@ -522,12 +511,18 @@ namespace Sylvester.tf.OpGen
 		void p(string fmt, params object[] args)
 		{
 			for (int i = 0; i < indent; i++)
-				output.Write("\t");
+				outputWriter.Write("\t");
 			if (args.Length == 0)
-				output.WriteLine(fmt);
+				outputWriter.WriteLine(fmt);
 			else
-				output.WriteLine(fmt, args);
+				outputWriter.WriteLine(fmt, args);
 		}
+
+		#endregion
+
+		#region Fields
+		StringWriter outputWriter;
+		int indent = 0;
         #endregion
     }
 }
