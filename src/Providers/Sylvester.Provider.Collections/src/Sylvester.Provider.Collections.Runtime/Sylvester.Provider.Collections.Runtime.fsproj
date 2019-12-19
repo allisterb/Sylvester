@@ -19,6 +19,10 @@
       <Link>paket-files/ProvidedTypes.fs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Collections\HList.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Collections\VArray.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Collections\VArray2D.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Collections\Logic.fs" />
     <Compile Include="Sylvester.Provider.Collections.Runtime.fs" />
     <None Include="paket.references" />
   </ItemGroup>

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="dtype.fs" />
     <Compile Include="FileData.fs" />
     <Compile Include="Tensor.fs" />
     <Compile Include="Scalar.fs" />
