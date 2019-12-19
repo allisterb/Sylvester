@@ -22,33 +22,16 @@ type CollectionsProvider (config : TypeProviderConfig) as this =
     let asm = Assembly.GetExecutingAssembly()
 
     let arrayType  =
-        let _type = ProvidedTypeDefinition(asm, ns, "Array", Some typeof<Array<_,_,_,_,_,_,_,_,_,_>>)
+        let _type = ProvidedTypeDefinition(asm, ns, "Array", Some typeof<VArray<_,_,_,_,_,_,_,_,_,_>>, true)
         let lengthParam = ProvidedStaticParameter("Length", typeof<int>)
-        
+
         do _type.DefineStaticParameters([lengthParam], fun name args ->
             let _length = args.[0] :?> int
-            let p = typedefof<Array<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(_length, 10))
+            let p = typedefof<VArray<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(_length, 10))
             let provided = ProvidedTypeDefinition(asm, ns, name, Some p, false)
-            //provided.GetGenericTypeDefinition().
-            //provided.AddXmlDoc <| (sprintf "<summary>A typed array of length %d.</summary>" <| _length)
-            
+            provided.AddXmlDoc <| (sprintf "<summary>A typed array of length %d.</summary>" <| _length)    
             provided
         )
-        //let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
-        //varrayType.Def
-
-
-        //let ctor = ProvidedConstructor([], invokeCode = fun args -> <@@ "My internal state" :> obj @@>)
-        //myType.AddMember(ctor)
-
-        //let ctor2 = ProvidedConstructor([ProvidedParameter("InnerState", typeof<string>)], invokeCode = fun args -> <@@ (%%(args.[0]):string) :> obj @@>)
-        //myType.AddMember(ctor2)
-
-        //let innerState = ProvidedProperty("InnerState", typeof<string>, getterCode = fun args -> <@@ (%%(args.[0]) :> obj) :?> string @@>)
-        //myType.AddMember(innerState)
-
-        //let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
-        //myType.AddMember(meth)
 
         let nameOf =
             let param = ProvidedParameter("p", typeof<Expr<int>>)
@@ -64,10 +47,9 @@ type CollectionsProvider (config : TypeProviderConfig) as this =
                     | Microsoft.FSharp.Quotations.Patterns.ValueWithName (_, _, n) -> n
                     | e -> failwithf "Invalid quotation argument (expected ValueWithName): %A" e
                 @@>)
+        
         _type.AddMember(nameOf)
-
         _type
-
     do
         this.AddNamespace(ns, [arrayType])
 
