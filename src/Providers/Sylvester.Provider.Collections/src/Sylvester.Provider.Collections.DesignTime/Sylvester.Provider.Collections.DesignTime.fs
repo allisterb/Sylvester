@@ -21,23 +21,19 @@ type CollectionsProvider (config : TypeProviderConfig) as this =
     let ns = "Sylvester.Collections"
     let asm = Assembly.GetExecutingAssembly()
 
-    let createTypes () =
-        let varrayType = ProvidedTypeDefinition(asm, ns, "MyType", Some typeof<VArray<_,_,_,_,_,_,_,_,_,_,_>>)
-        let typeParam = ProvidedStaticParameter("Type", typeof<string>)
+    let arrayType  =
+        let _type = ProvidedTypeDefinition(asm, ns, "Array", Some typeof<Array<_,_,_,_,_,_,_,_,_,_>>)
         let lengthParam = ProvidedStaticParameter("Length", typeof<int>)
         
-        do varrayType.DefineStaticParameters([lengthParam], fun name args ->
+        do _type.DefineStaticParameters([lengthParam], fun name args ->
             let _length = args.[0] :?> int
-            let length = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(_length, 10))
-            let g = typedefof<VArray<_,_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(length)
-            //g.Def
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
+            let p = typedefof<Array<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(_length, 10))
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some p, false)
             //provided.GetGenericTypeDefinition().
             //provided.AddXmlDoc <| (sprintf "<summary>A typed array of length %d.</summary>" <| _length)
             
             provided
         )
-        let j = ProvidedTypeBuilder.
         //let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
         //varrayType.Def
 
@@ -68,12 +64,12 @@ type CollectionsProvider (config : TypeProviderConfig) as this =
                     | Microsoft.FSharp.Quotations.Patterns.ValueWithName (_, _, n) -> n
                     | e -> failwithf "Invalid quotation argument (expected ValueWithName): %A" e
                 @@>)
-        varrayType.AddMember(nameOf)
+        _type.AddMember(nameOf)
 
-        [varrayType]
+        _type
 
     do
-        this.AddNamespace(ns, createTypes())
+        this.AddNamespace(ns, [arrayType])
 
 [<TypeProviderAssembly>]
 do ()

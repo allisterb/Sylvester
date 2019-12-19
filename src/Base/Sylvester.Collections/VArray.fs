@@ -10,7 +10,6 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
                 and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
                 and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
                 and 'd1 :> Base10Digit>(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, items:'t[]) = 
-
     member val _Array = if items.Length = n.IntVal then items else raise(ArgumentOutOfRangeException("items", sprintf "The initializing array length %i does not match %i." items.Length n.IntVal))
     
     member val Length = n
@@ -42,7 +41,7 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
         checkidx(i, x.Length)
         x._Array.[i |> int]
            
-    member inline x.GetSlice(start: 'a option, finish : 'b option) = //: VArray<'t, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1> = 
+    member inline x.GetSlice(start: 'a option, finish : 'b option) = 
         let inline create(c:'c, items: 't[] when 'c :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1>) = 
             VArray<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 't>(c, items)
 
@@ -59,5 +58,17 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
 
     static member inline (!+) (v:VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>) = v.Length 
 
+type Array<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
+    and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
+    and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
+    and 'd1 :> Base10Digit>() =
+    
+    static member create(arr: 't[]) = new VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(new N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(), arr)
+ 
+ type VArray<'d1, 't when 'd1 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd1, 't>
+
+ type VArray<'d2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd2, 'd1, 't>
+
+ type VArray<'d3, 'd2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit and 'd3 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd3, 'd2, 'd1, 't>
 
 
