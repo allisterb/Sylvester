@@ -72,13 +72,53 @@ namespace Sylvester.tf.OpGen
 			{
 				L.Information("Generating code for op {0}.", opName);
 				var op = OpDefs.First(o => o.name == opName);
-				Generate(op);
+				try
+				{
+					Generate(op);
+				}
+				catch (OpGenException e)
+				{
+					L.Error(e.Message);
+				}
 			}
 			else
 			{
 				foreach( var op in OpDefs)
 				{
-					Generate(op);
+					// Skip internal operations
+					if (op.name.StartsWith("_"))
+						continue;
+
+					// Ignore functions where we lack a C# type mapping
+					if (op.attr.Any(attr => CSharpType(attr.type) == null))
+					{
+						var attr = op.attr.First(a => CSharpType(a.type) == null);
+
+						L.Error($"SkipTYPE: {op.name} due to attribute ({attr.type} {attr.name}) lacking a mapping to C#");
+						continue;
+					}
+
+					/*
+					var def = ApiDefMap.(oper.name);
+
+					// Undocumented operation, perhaps we should not surface
+					if (def.Summary == "")
+						continue;
+					*/
+					try
+					{
+						Generate(op);
+					}
+					catch(OpGenException e)
+					{
+						L.Error(e.Message);
+						continue;
+					}
+					catch(UnknownTypeException te)
+					{
+						L.Error(te.Message);
+						continue;
+					}
 				}
 			}
 			pd("}");
@@ -110,7 +150,7 @@ namespace Sylvester.tf.OpGen
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
 				L.Error("Could not get api definition {0} from map.", tf_status.TF_Message(status));
-				return null; ;
+				return null;
 			}
 			var ret = new byte[(int)buffer.Length];
 			Marshal.Copy(buffer.Data, ret, 0, (int) buffer.Length);
@@ -163,7 +203,6 @@ namespace Sylvester.tf.OpGen
 				case "string":
 					cstype = "string"; break;
 				default:
-					Console.WriteLine("Unknown data TensorFlow type: {0}", tfType);
 					return null;
 			}
 
@@ -459,7 +498,8 @@ namespace Sylvester.tf.OpGen
 					p($"desc.SetAttr (\"{attrName}\", {csAttrName} /* cstatus */);");
 					break;
 				default:
-					throw new Exception("Unexpected type: " + cstype);
+					L.Error("Unknown TF type: {0}", cstype);
+					break;
 			}
 		}
 
@@ -542,7 +582,7 @@ namespace Sylvester.tf.OpGen
 			{
 				if (IsListArg(arg))
 				{
-					L.Error("List output type not yet supported");
+					throw new OpGenException(oper, "List output type not yet supported");
 					/*var outputs = new StringBuilder();
 					p($"_n = op.OutputListLength (\"{ParamMap(arg.name)}\");");
 					p($"var {ParamMap(arg.name)} = new TF_Output [_n];");
