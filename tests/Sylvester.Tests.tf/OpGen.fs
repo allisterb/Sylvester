@@ -26,3 +26,9 @@ module OpGenTests =
         let ad = gen.OpDefs.Single(fun o -> o.name = "Add")
         gen.Generate(ad) |> ignore
         Assert.NotNull(gen.Output)
+
+    [<Fact>]
+    let ``Can generate to file`` () =
+        //let ad = gen.OpDefs.Single(fun o -> o.name = "Add")
+        gen.Run("Add") |> ignore
+        Assert.NotNull(gen.Output)

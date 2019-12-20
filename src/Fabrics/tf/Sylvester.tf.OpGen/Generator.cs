@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using System.Text;
 
+using Serilog;
 using ProtoBuf;
 using TensorFlow;
 using tensorflow;
@@ -14,13 +15,24 @@ namespace Sylvester.tf.OpGen
     public class Generator
     {
 		#region Constructors
-		public Generator()
+		public Generator(string outputFile = "Ops.cs")
 		{
+			OutputFile = new FileInfo(outputFile);
+			if (OutputFile.Exists)
+			{
+				L.Warning("The output file {0} exists and will be overwritten.", OutputFile.FullName);
+			}
+			else
+			{
+				L.Information("Using output file {0}.", OutputFile.FullName);
+			}
 			var status = tf_status.TF_NewStatus();
 			TF_Buffer opsBuffer = c_api.TF_GetAllOpList();
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
-				throw new Exception($"Could not get op list: {tf_status.TF_Message(status)}");
+				L.Error("Could not get op list: {0}.", tf_status.TF_Message(status));
+				Program.Exit(Program.ExitResult.ERROR_DURING_CLEANUP);
+
 			}
 			var ret = new byte[(int)opsBuffer.Length];
 			Marshal.Copy(opsBuffer.Data, ret, 0, (int)opsBuffer.Length);
@@ -28,26 +40,60 @@ namespace Sylvester.tf.OpGen
 			ApiDefMap = c_api.TF_NewApiDefMap(opsBuffer, status);
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
-				throw new Exception($"Could not create ApiDefMap: {tf_status.TF_Message(status)}");
+				L.Error("Could not create new ApiDefMap: {0}.", tf_status.TF_Message(status));
+				Program.Exit(Program.ExitResult.ERROR_DURING_CLEANUP);
 			}
 			outputWriter = new StringWriter(OutputBuilder);
+			
 		}
-        #endregion
+		#endregion
 
-        #region Properties
-        public TF_ApiDefMap ApiDefMap { get; }
+		#region Properties
+		ILogger L = Log.Logger;
+		public TF_ApiDefMap ApiDefMap { get; }
 		public List<OpDef> OpDefs { get; }
 		public StringBuilder OutputBuilder { get; } = new StringBuilder();
 		public string Output => OutputBuilder.ToString();
+
+		public FileInfo OutputFile { get; }
 		#endregion
 
         #region Methods
+		public void Run(string opName)
+		{
+			//UpdateApis(dirs);
+			var op = OpDefs.First(o => o.name == opName);
+			p("using System;\n");
+			pi("namespace TensorFlow {");
+			pi("public partial class TFGraph {");
+			Generate(op);
+			pd("}");
+			pd("}");
+			outputWriter.Close();
+			outputWriter.Flush();
+			File.WriteAllText(OutputFile.FullName, Output);
+			L.Information("Wrote {0} lines to {1}.", OutputBuilder.Length, OutputFile.FullName);
+		}
+
+		void UpdateApis(string[] dirs)
+		{
+			foreach (var dir in dirs)
+			{
+				foreach (var f in Directory.GetFiles(dir))
+				{
+					var s = File.ReadAllText(f);
+					PutApiDef(s);
+				}
+			}
+		}
+
 		public unsafe ApiDef GetApiDef(string name)
 		{
 			var status = tf_status.TF_NewStatus();
 			var buffer = c_api.TF_ApiDefMapGet(ApiDefMap, name, (ulong) name.Length, status);
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
+				L.Error("Could not get Api definition: {0}.", tf_status.TF_Message(status));
 				return null; ;
 			}
 			var ret = new byte[(int)buffer.Length];
@@ -55,7 +101,22 @@ namespace Sylvester.tf.OpGen
 			var str = new MemoryStream(ret);
 			return Serializer.Deserialize<ApiDef>(str);	
 		}
-		
+
+		public unsafe bool PutApiDef(string text)
+		{
+			var status = tf_status.TF_NewStatus();
+			c_api.TF_ApiDefMapPut(ApiDefMap, text, (ulong)text.Length, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+				L.Error("Could not put Api definition: {0}.", tf_status.TF_Message(status));
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+
 		//
 		// Maps a TensorFlow type to a C# type
 		//
@@ -129,7 +190,7 @@ namespace Sylvester.tf.OpGen
 		// 
 		// These values are the result of calling SetupArguments
 		//
-		Dictionary<string, bool> inferred_input_args;
+
 		List<OpDef.AttrDef> required_attrs, optional_attrs;
 		bool have_return_value;
 
