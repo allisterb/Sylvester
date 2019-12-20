@@ -17,8 +17,7 @@ namespace Sylvester.tf.OpGen
             SUCCESS = 0,
             UNHANDLED_EXCEPTION = 1,
             INVALID_OPTIONS = 2,
-            ERROR_DURING_CLEANUP = 3,
-            FILE_MISSING
+            TF_ERROR = 3
         }
 
         static DirectoryInfo AssemblyDirectory = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
@@ -102,8 +101,15 @@ namespace Sylvester.tf.OpGen
                     L.Information(help);
                     Exit(ExitResult.INVALID_OPTIONS);
                 }
+            })
+            .WithParsed(o =>
+            {
+                Generator = new Generator(o.OutputFileName);
+                var dirs = !string.IsNullOrEmpty(o.Dirs) ? o.Dirs.Split(',') : Array.Empty<string>();
+                L.Information("Using {0} TensorFlow op def directories.", dirs.Length);
+                Generator.Run(dirs, o.Op);
+                Exit(ExitResult.SUCCESS);
             });
-            Generator = new Generator(args.FirstOrDefault());
         }
 
         public static void Exit(ExitResult result)

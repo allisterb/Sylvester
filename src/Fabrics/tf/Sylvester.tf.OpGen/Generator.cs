@@ -15,7 +15,7 @@ namespace Sylvester.tf.OpGen
     public class Generator
     {
 		#region Constructors
-		public Generator(string outputFile = "Ops.cs")
+		public Generator(string outputFile = "Ops.g.cs")
 		{
 			OutputFile = new FileInfo(outputFile);
 			if (OutputFile.Exists)
@@ -31,7 +31,7 @@ namespace Sylvester.tf.OpGen
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
 				L.Error("Could not get op list: {0}.", tf_status.TF_Message(status));
-				Program.Exit(Program.ExitResult.ERROR_DURING_CLEANUP);
+				Program.Exit(Program.ExitResult.TF_ERROR);
 
 			}
 			var ret = new byte[(int)opsBuffer.Length];
@@ -41,10 +41,10 @@ namespace Sylvester.tf.OpGen
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
 				L.Error("Could not create new ApiDefMap: {0}.", tf_status.TF_Message(status));
-				Program.Exit(Program.ExitResult.ERROR_DURING_CLEANUP);
+				Program.Exit(Program.ExitResult.TF_ERROR);
 			}
 			outputWriter = new StringWriter(OutputBuilder);
-			
+			L.Information("Created generator.");
 		}
 		#endregion
 
@@ -59,26 +59,42 @@ namespace Sylvester.tf.OpGen
 		#endregion
 
         #region Methods
-		public void Run(string opName)
-		{
-			//UpdateApis(dirs);
-			var op = OpDefs.First(o => o.name == opName);
+		public void Run(string[] dirs, string opName)
+		{			
+			if (dirs.Length > 0)
+			{
+				UpdateApis(dirs);
+			}
 			p("using System;\n");
 			pi("namespace TensorFlow {");
-			pi("public partial class TFGraph {");
-			Generate(op);
+			pi("public partial class TF_Graph {");
+			if (!string.IsNullOrEmpty(opName))
+			{
+				L.Information("Generating code for op {0}.", opName);
+				var op = OpDefs.First(o => o.name == opName);
+				Generate(op);
+			}
+			else
+			{
+				foreach( var op in OpDefs)
+				{
+					Generate(op);
+				}
+			}
 			pd("}");
 			pd("}");
 			outputWriter.Close();
 			outputWriter.Flush();
 			File.WriteAllText(OutputFile.FullName, Output);
-			L.Information("Wrote {0} lines to {1}.", OutputBuilder.Length, OutputFile.FullName);
+			L.Information("Wrote {0} characters to {1}.", OutputBuilder.Length, OutputFile.FullName);
 		}
 
 		void UpdateApis(string[] dirs)
 		{
 			foreach (var dir in dirs)
 			{
+				var files = Directory.GetFiles(dir);
+				L.Information("Adding {0} op defs from directory {1}.", files.Length, dir);
 				foreach (var f in Directory.GetFiles(dir))
 				{
 					var s = File.ReadAllText(f);
@@ -93,7 +109,7 @@ namespace Sylvester.tf.OpGen
 			var buffer = c_api.TF_ApiDefMapGet(ApiDefMap, name, (ulong) name.Length, status);
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
-				L.Error("Could not get Api definition: {0}.", tf_status.TF_Message(status));
+				L.Error("Could not get api definition {0} from map.", tf_status.TF_Message(status));
 				return null; ;
 			}
 			var ret = new byte[(int)buffer.Length];
@@ -108,7 +124,7 @@ namespace Sylvester.tf.OpGen
 			c_api.TF_ApiDefMapPut(ApiDefMap, text, (ulong)text.Length, status);
 			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
 			{
-				L.Error("Could not put Api definition: {0}.", tf_status.TF_Message(status));
+				L.Error("Could not put api definition {0} in map.", tf_status.TF_Message(status));
 				return false;
 			}
 			else
@@ -233,7 +249,7 @@ namespace Sylvester.tf.OpGen
 			string comma = "";
 			foreach (var inarg in def.input_arg)
 			{
-				string type = "TFOutput" + (IsListArg(inarg) ? "[]" : "");
+				string type = "TF_Output" + (IsListArg(inarg) ? "[]" : "");
 
 				sb.AppendFormat($"{comma}{type} {ParamMap(inarg.name)}");
 				comma = ", ";
@@ -376,7 +392,7 @@ namespace Sylvester.tf.OpGen
 				if (oper.output_arg.Count == 1)
 				{
 					Comment(api.OutArgs.First().Description);
-					Comment("The TFOperation can be fetched from the resulting TFOutput, by fethching the Operation property from the result.");
+					Comment("The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.");
 				}
 				else
 				{
@@ -387,7 +403,7 @@ namespace Sylvester.tf.OpGen
 						Comment(ParamMap(arg.name) + ": " + oapi.Description);
 					}
 
-					Comment("The TFOperation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.");
+					Comment("The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.");
 				}
 			}
 			else
@@ -481,17 +497,18 @@ namespace Sylvester.tf.OpGen
 			p($"public {retType} {name} ({FillArguments(oper)}string operName = null)");
 			pi("{");
 			bool needStatus = required_attrs.Concat(optional_attrs).Any(attr => attr.type.Contains("TF_Tensor"));
-			p($"var desc = new TF_OperationDesc (this, \"{oper.name}\", MakeName (\"{oper.name}\", operName));");
+			p("var status = tf_status.TF_NewStatus();");
+			p($"var desc = c_api.TF_NewOperation(this, \"{oper.name}\", MakeName (\"{oper.name}\", operName));");
 			foreach (var arg in oper.input_arg)
 			{
 				if (IsListArg(arg))
-					p($"desc.AddInputs ({ParamMap(arg.name)});");
+					p($"c_api.TF_AddInput(desc, {ParamMap(arg.name)});");
 				else
-					p($"desc.AddInput ({ParamMap(arg.name)});");
+					p($"c_api.TF_AddInput(desc, {ParamMap(arg.name)});");
 			}
 
-			pi("foreach ( TF_Operation control in CurrentDependencies )");
-			p("desc.AddControlInput (control);");
+			pi("foreach ( TF_Operation control in Dependencies )");
+			p("c_api.TF_AddControlInput(desc, control);");
 			pd("");
 
 			// If we have attributes
@@ -516,7 +533,7 @@ namespace Sylvester.tf.OpGen
 				}
 			}
 
-			p("var op = desc.FinishOperation ();");
+			p("var op = c_api.TF_FinishOperation(desc, status);");
 			if (oper.output_arg.Count() > 0)
 				p("int _idx = 0;");
 			if (oper.output_arg.Any(x => IsListArg(x)))
@@ -525,12 +542,13 @@ namespace Sylvester.tf.OpGen
 			{
 				if (IsListArg(arg))
 				{
-					var outputs = new StringBuilder();
+					L.Error("List output type not yet supported");
+					/*var outputs = new StringBuilder();
 					p($"_n = op.OutputListLength (\"{ParamMap(arg.name)}\");");
 					p($"var {ParamMap(arg.name)} = new TF_Output [_n];");
 					pi("for (int i = 0; i < _n; i++)");
 					p($"{ParamMap(arg.name)} [i] = new TF_Output (op, _idx++);");
-					pd("");
+					pd("");*/
 				}
 				else
 				{
