@@ -94,19 +94,25 @@ namespace Sylvester.tf.OpGen
 					{
 						var attr = op.attr.First(a => CSharpType(a.type) == null);
 
-						L.Error($"SkipTYPE: {op.name} due to attribute ({attr.type} {attr.name}) lacking a mapping to C#");
+						L.Error($"Skipping {op.name} due to attribute {attr.type} {attr.name} lacking a mapping to a C# type");
 						continue;
 					}
-
-					/*
-					var def = ApiDefMap.(oper.name);
-
-					// Undocumented operation, perhaps we should not surface
-					if (def.Summary == "")
-						continue;
-					*/
-					try
+					if (op.output_arg.Any(arg => IsListArg(arg)))
 					{
+					
+							L.Error($"Skipping {op.name} due to output arg ({op.output_arg.First(arg => IsListArg(arg)).name}) being a list type.");
+							continue;
+						
+					}
+							/*
+							var def = ApiDefMap.(oper.name);
+
+							// Undocumented operation, perhaps we should not surface
+							if (def.Summary == "")
+								continue;
+							*/
+							try
+							{
 						Generate(op);
 					}
 					catch(OpGenException e)
@@ -463,12 +469,12 @@ namespace Sylvester.tf.OpGen
 		{
 			if (type == "shape")
 			{
-				p($"desc.SetAttrShape (\"{attrName}\", {csAttrName});");
+				p($"c_apt.TF_SetAttrShape (desc, \"{attrName}\", {csAttrName});");
 				return;
 			}
 			if (type.StartsWith("list(shape"))
 			{
-				p($"desc.SetAttrShape (\"{attrName}\", {csAttrName});");
+				p($"desc.SetAttrShapeList (desc, \"{attrName}\", {csAttrName});");
 				return;
 			}
 
@@ -476,30 +482,47 @@ namespace Sylvester.tf.OpGen
 			switch (cstype)
 			{
 				case "long":
+					p($"c_api.TF_SetAttrInt (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "long[]":
+					p($"c_api.TF_SetAttrIntList (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "string":
+					p($"c_api.TF_SetAttrString (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "string[]":
+					p($"c_api.TF_SetAttrIntStringList (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "float":
+					p($"c_api.TF_SetAttrFloat (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "float[]":
+					p($"c_api.TF_SetAttrFloatList (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "bool":
+					p($"c_api.TF_SetAttrBool (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "bool[]":
-					p($"desc.SetAttr (\"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrBoolList (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "TF_DataType":
+					p($"c_api.TF_SetAttrType (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "TF_DataType[]":
 					p($"desc.SetAttrType (\"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrTypeList (desc, \"{attrName}\", {csAttrName});");
 					break;
-
 				// This should pass the cstatus, but requires the 
 				// function to take a TFStatus as well, so need to weave that
 				// in the parameters
 				case "TF_Tensor":
+					p($"c_api.TF_SetAttrTensor (desc, \"{attrName}\", {csAttrName});");
+					break;
 				case "TF_Tensor[]":
-					p($"desc.SetAttr (\"{attrName}\", {csAttrName} /* cstatus */);");
+					p($"c_api.TF_SetTensorList (desc, \"{attrName}\", {csAttrName});");
 					break;
 				default:
-					L.Error("Unknown TF type: {0}", cstype);
-					break;
+					throw new UnknownTypeException(cstype);
 			}
 		}
 
