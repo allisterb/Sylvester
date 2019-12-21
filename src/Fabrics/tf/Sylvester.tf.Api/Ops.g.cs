@@ -38,6 +38,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "exit_without_error", Convert.ToByte(exit_without_error.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -66,6 +70,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -106,6 +114,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sum = new TF_Output (op, _idx++);
 			return sum;
@@ -143,6 +155,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -168,6 +184,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var num_accumulated = new TF_Output (op, _idx++);
 			return num_accumulated;
@@ -202,6 +222,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -243,6 +267,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var average = new TF_Output (op, _idx++);
 			return average;
@@ -268,6 +296,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -302,6 +334,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -334,6 +370,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -413,6 +453,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sparse_handles = new TF_Output (op, _idx++);
 			return sparse_handles;
@@ -446,6 +490,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sum = new TF_Output (op, _idx++);
 			return sum;
@@ -513,6 +561,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sparse_handle = new TF_Output (op, _idx++);
 			return sparse_handle;
@@ -545,6 +597,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -579,6 +635,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -621,6 +681,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -660,6 +724,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -699,6 +767,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -744,6 +816,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -822,6 +898,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -888,6 +968,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "split_dimension", split_dimension);
 			c_api.TF_SetAttrInt (desc, "split_count", split_count);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -938,6 +1022,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tout", Tout.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -970,6 +1058,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -1004,6 +1096,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1029,6 +1125,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1067,6 +1167,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1098,6 +1202,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1144,6 +1252,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1209,6 +1321,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1267,6 +1383,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1330,6 +1450,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1392,6 +1516,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1477,6 +1605,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1550,6 +1682,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1615,6 +1751,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1702,6 +1842,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1773,6 +1917,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1849,6 +1997,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1892,6 +2044,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1959,6 +2115,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2024,6 +2184,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2084,6 +2248,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2139,6 +2307,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2214,6 +2386,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2248,6 +2424,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "tolerance", tolerance.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -2298,6 +2478,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "output_type", output_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2348,6 +2532,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "output_type", output_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2391,6 +2579,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -2426,6 +2618,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -2467,6 +2663,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "summarize", summarize.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -2498,6 +2698,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -2551,6 +2755,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -2595,6 +2803,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -2629,6 +2841,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -2671,6 +2887,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -2705,6 +2925,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -2737,6 +2961,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -2807,6 +3035,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "fill", fill);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2850,6 +3082,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -2885,6 +3121,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -2922,6 +3162,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -2993,6 +3237,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "magnitude_squared", Convert.ToByte(magnitude_squared.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var spectrogram = new TF_Output (op, _idx++);
 			return spectrogram;
@@ -3048,6 +3296,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "max_outputs", max_outputs.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -3103,6 +3355,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "max_outputs", max_outputs.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -3152,6 +3408,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -3206,6 +3466,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3258,6 +3522,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3314,6 +3582,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3369,6 +3641,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3439,6 +3715,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -3482,6 +3762,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "cancel_pending_enqueues", Convert.ToByte(cancel_pending_enqueues.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -3508,6 +3792,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -3553,6 +3841,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "component_index", component_index);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -3579,6 +3871,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -3653,6 +3949,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			var indices = new TF_Output (op, _idx++);
@@ -3769,6 +4069,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "batching_queue", batching_queue);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "batched_tensors", status);
@@ -3800,6 +4104,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3827,6 +4135,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3863,6 +4175,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -3909,6 +4225,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "parallel_copy", Convert.ToByte(parallel_copy.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -3933,6 +4253,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3957,6 +4281,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3981,6 +4309,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4005,6 +4337,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4029,6 +4365,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4053,6 +4393,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4118,6 +4462,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adj_y", Convert.ToByte(adj_y.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4188,6 +4536,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adj_y", Convert.ToByte(adj_y.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4218,6 +4570,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var band = new TF_Output (op, _idx++);
 			return band;
@@ -4242,6 +4598,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4266,6 +4626,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4290,6 +4654,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -4320,6 +4688,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adjoint", Convert.ToByte(adjoint.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4347,6 +4719,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4380,6 +4756,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adjoint", Convert.ToByte(adjoint.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4416,6 +4796,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "fast", Convert.ToByte(fast.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4455,6 +4839,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adjoint", Convert.ToByte(adjoint.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4516,6 +4904,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrFloat (desc, "variance_epsilon", variance_epsilon);
 			c_api.TF_SetAttrBool (desc, "scale_after_normalization", Convert.ToByte(scale_after_normalization));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var result = new TF_Output (op, _idx++);
 			return result;
@@ -4582,6 +4974,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrFloat (desc, "variance_epsilon", variance_epsilon);
 			c_api.TF_SetAttrBool (desc, "scale_after_normalization", Convert.ToByte(scale_after_normalization));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var dx = new TF_Output (op, _idx++);
 			var dm = new TF_Output (op, _idx++);
@@ -4610,6 +5006,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4643,6 +5043,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "compute_v", Convert.ToByte(compute_v.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var e = new TF_Output (op, _idx++);
 			var v = new TF_Output (op, _idx++);
@@ -4684,6 +5088,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "full_matrices", Convert.ToByte(full_matrices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var s = new TF_Output (op, _idx++);
 			var u = new TF_Output (op, _idx++);
@@ -4802,6 +5210,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "block_size", block_size);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4953,6 +5365,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4984,6 +5400,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -5015,6 +5435,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -5061,6 +5485,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -5109,6 +5537,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5154,6 +5586,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5191,6 +5627,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5238,6 +5678,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var bins = new TF_Output (op, _idx++);
 			return bins;
@@ -5317,6 +5761,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "type", type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5367,6 +5815,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -5417,6 +5869,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -5467,6 +5923,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -5574,6 +6034,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_peephole", Convert.ToByte(use_peephole.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var i = new TF_Output (op, _idx++);
 			var cs = new TF_Output (op, _idx++);
@@ -5691,6 +6155,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrBool (desc, "use_peephole", Convert.ToByte(use_peephole));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var x_grad = new TF_Output (op, _idx++);
 			var cs_prev_grad = new TF_Output (op, _idx++);
@@ -5749,6 +6217,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "max_splits", max_splits);
 			c_api.TF_SetAttrInt (desc, "num_buckets", num_buckets);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var stats_summary = new TF_Output (op, _idx++);
 			return stats_summary;
@@ -5785,6 +6257,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "buckets", status);
@@ -5865,6 +6341,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "split_type", split_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var node_ids = new TF_Output (op, _idx++);
 			var gains = new TF_Output (op, _idx++);
@@ -5937,6 +6417,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "max_splits", max_splits);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "node_ids_list", status);
@@ -6005,6 +6489,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var continue_centering = new TF_Output (op, _idx++);
 			return continue_centering;
@@ -6039,6 +6527,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -6078,6 +6570,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "max_elements", max_elements.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -6113,6 +6609,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -6145,6 +6645,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -6186,6 +6690,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "logits_dimension", logits_dimension);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var examples_debug_outputs_serialized = new TF_Output (op, _idx++);
 			return examples_debug_outputs_serialized;
@@ -6220,6 +6728,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_features", num_features);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "summaries", status);
@@ -6258,6 +6770,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var stamp_token = new TF_Output (op, _idx++);
 			var num_trees = new TF_Output (op, _idx++);
@@ -6302,6 +6818,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "summaries", status);
@@ -6357,6 +6877,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "max_splits", max_splits);
 			c_api.TF_SetAttrInt (desc, "num_buckets", num_buckets);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var stats_summary = new TF_Output (op, _idx++);
 			return stats_summary;
@@ -6397,6 +6921,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "logits_dimension", logits_dimension);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var logits = new TF_Output (op, _idx++);
 			return logits;
@@ -6432,6 +6960,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -6463,6 +6995,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -6506,6 +7042,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "generate_quantiles", Convert.ToByte(generate_quantiles.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -6539,6 +7079,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_features", num_features);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "bucket_boundaries", status);
@@ -6578,6 +7122,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -6607,6 +7155,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var stamp_token = new TF_Output (op, _idx++);
 			var tree_ensemble_serialized = new TF_Output (op, _idx++);
@@ -6682,6 +7234,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "max_splits", max_splits);
 			c_api.TF_SetAttrInt (desc, "num_buckets", num_buckets);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var stats_summary_indices = new TF_Output (op, _idx++);
 			var stats_summary_values = new TF_Output (op, _idx++);
@@ -6768,6 +7324,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "split_type", split_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var node_ids = new TF_Output (op, _idx++);
 			var gains = new TF_Output (op, _idx++);
@@ -6829,6 +7389,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "logits_dimension", logits_dimension);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var partial_logits = new TF_Output (op, _idx++);
 			var tree_ids = new TF_Output (op, _idx++);
@@ -6904,6 +7468,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "pruning_mode", pruning_mode);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -6934,6 +7502,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var r0 = new TF_Output (op, _idx++);
 			return r0;
@@ -6968,6 +7540,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var r0 = new TF_Output (op, _idx++);
 			var r1 = new TF_Output (op, _idx++);
@@ -7021,6 +7597,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7068,6 +7648,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrFloatList (desc, "boundaries", ref boundaries[0], boundaries.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7102,6 +7686,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -7144,6 +7732,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -7180,6 +7772,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -7214,6 +7810,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "Truncate", Convert.ToByte(Truncate.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -7239,6 +7839,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -7272,6 +7876,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "message", message);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7314,6 +7922,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7353,6 +7965,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7386,6 +8002,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -7429,6 +8049,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7453,6 +8077,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -7488,6 +8116,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "instance_key", instance_key);
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -7525,6 +8157,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "instance_key", instance_key);
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -7562,6 +8198,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "instance_key", instance_key);
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -7601,6 +8241,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7650,6 +8294,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "wait_for", ref wait_for[0], wait_for.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -7748,6 +8396,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "clip_boxes", Convert.ToByte(clip_boxes.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var nmsed_boxes = new TF_Output (op, _idx++);
 			var nmsed_scores = new TF_Output (op, _idx++);
@@ -7807,6 +8459,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7857,6 +8513,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tout", Tout.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7894,6 +8554,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tout", Tout.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -7956,6 +8620,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var ids = new TF_Output (op, _idx++);
@@ -7993,6 +8661,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8027,6 +8699,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -8071,6 +8747,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "offset", status);
@@ -8111,6 +8791,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8172,6 +8856,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "reduction_type", reduction_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -8218,6 +8906,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_global_init", Convert.ToByte(is_global_init.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var topology = new TF_Output (op, _idx++);
 			return topology;
@@ -8245,6 +8937,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "config", config);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -8283,6 +8979,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8316,6 +9016,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -8345,6 +9049,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTensor (desc, "value", value, status);
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8380,6 +9088,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -8403,6 +9115,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -8506,6 +9222,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8594,6 +9314,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8681,6 +9405,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8750,6 +9478,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8801,6 +9533,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8870,6 +9606,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8921,6 +9661,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8990,6 +9734,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9045,6 +9793,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrStringList (desc, "debug_ops_spec", debug_ops_spec);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9098,6 +9850,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrStringList (desc, "debug_ops_spec", debug_ops_spec);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9134,6 +9890,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -9169,6 +9929,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -9202,6 +9966,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "limit", limit);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9238,6 +10006,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -9272,6 +10044,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -9356,6 +10132,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "extrapolation_value", extrapolation_value.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var crops = new TF_Output (op, _idx++);
 			return crops;
@@ -9414,6 +10194,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "method", method);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9476,6 +10260,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "method", method);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9512,6 +10300,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -9553,6 +10345,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9604,6 +10400,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -9668,6 +10468,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "merge_repeated", Convert.ToByte(merge_repeated.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "decoded_indices", status);
@@ -9741,6 +10545,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "merge_repeated", Convert.ToByte(merge_repeated.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var decoded_indices = new TF_Output (op, _idx++);
 			var decoded_values = new TF_Output (op, _idx++);
@@ -9818,6 +10626,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "ignore_longer_outputs_than_inputs", Convert.ToByte(ignore_longer_outputs_than_inputs.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var loss = new TF_Output (op, _idx++);
 			var gradient = new TF_Output (op, _idx++);
@@ -9932,6 +10744,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_h = new TF_Output (op, _idx++);
@@ -10072,6 +10888,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var input_backprop = new TF_Output (op, _idx++);
 			var input_h_backprop = new TF_Output (op, _idx++);
@@ -10218,6 +11038,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var input_backprop = new TF_Output (op, _idx++);
 			var input_h_backprop = new TF_Output (op, _idx++);
@@ -10384,6 +11208,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "time_major", Convert.ToByte(time_major.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var input_backprop = new TF_Output (op, _idx++);
 			var input_h_backprop = new TF_Output (op, _idx++);
@@ -10491,6 +11319,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			return parameters;
@@ -10602,6 +11434,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "num_proj", num_proj.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			return parameters;
@@ -10704,6 +11540,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "num_proj", num_proj.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var params_size = new TF_Output (op, _idx++);
 			return params_size;
@@ -10811,6 +11651,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "weights", status);
@@ -10938,6 +11782,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "num_proj", num_proj.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "weights", status);
@@ -11065,6 +11913,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_h = new TF_Output (op, _idx++);
@@ -11205,6 +12057,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "time_major", Convert.ToByte(time_major.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_h = new TF_Output (op, _idx++);
@@ -11286,6 +12142,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "reverse", Convert.ToByte(reverse.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -11363,6 +12223,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "reverse", Convert.ToByte(reverse.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -11428,6 +12292,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "reverse", Convert.ToByte(reverse.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -11473,6 +12341,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "dst_format", dst_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -11517,6 +12389,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "dst_format", dst_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -11548,6 +12424,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var cardinality = new TF_Output (op, _idx++);
 			return cardinality;
@@ -11578,6 +12458,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -11608,6 +12492,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var graph = new TF_Output (op, _idx++);
 			return graph;
@@ -11641,6 +12529,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -11681,6 +12573,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -11709,6 +12605,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -11739,6 +12639,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -11802,6 +12706,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "gated_grpc", Convert.ToByte(gated_grpc.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -11865,6 +12773,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "gated_grpc", Convert.ToByte(gated_grpc.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -11979,6 +12891,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "gated_grpc", Convert.ToByte(gated_grpc.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12080,6 +12996,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "dct_method", dct_method);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -12111,6 +13031,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12154,6 +13078,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "channels", channels.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -12198,6 +13126,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "compression_type", compression_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12266,6 +13198,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "select_cols", ref select_cols[0], select_cols.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -12308,6 +13244,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -12405,6 +13345,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "dct_method", dct_method);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -12442,6 +13386,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var binary_examples = new TF_Output (op, _idx++);
 			return binary_examples;
@@ -12492,6 +13440,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "little_endian", Convert.ToByte(little_endian.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12549,6 +13501,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -12666,6 +13622,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "sanitize", Convert.ToByte(sanitize.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			var sizes = new TF_Output (op, _idx++);
@@ -12713,6 +13673,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "little_endian", Convert.ToByte(little_endian.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12772,6 +13736,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "desired_samples", desired_samples.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var audio = new TF_Output (op, _idx++);
 			var sample_rate = new TF_Output (op, _idx++);
@@ -12801,6 +13769,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -12831,6 +13803,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -12856,6 +13832,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -12888,6 +13868,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -12913,6 +13897,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -12937,6 +13925,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -12991,6 +13983,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "validate_indices", Convert.ToByte(validate_indices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var result_indices = new TF_Output (op, _idx++);
 			var result_values = new TF_Output (op, _idx++);
@@ -13036,6 +14032,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -13111,6 +14111,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "validate_indices", Convert.ToByte(validate_indices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var result_indices = new TF_Output (op, _idx++);
 			var result_values = new TF_Output (op, _idx++);
@@ -13239,6 +14243,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13318,6 +14326,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13393,6 +14405,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13468,6 +14484,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13582,6 +14602,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "mode", mode);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13613,6 +14637,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -13689,6 +14717,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
@@ -13769,6 +14801,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
@@ -13809,6 +14845,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "ignore_lookup_error", Convert.ToByte(ignore_lookup_error.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -13847,6 +14887,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "var_name", var_name);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -13892,6 +14936,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13939,6 +14987,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -13967,6 +15019,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -14037,6 +15093,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "rates", ref rates[0], rates.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14086,6 +15146,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "rates", ref rates[0], rates.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var filter_backprop = new TF_Output (op, _idx++);
 			return filter_backprop;
@@ -14135,6 +15199,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "rates", ref rates[0], rates.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var in_backprop = new TF_Output (op, _idx++);
 			return in_backprop;
@@ -14173,6 +15241,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -14205,6 +15277,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -14238,6 +15314,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -14284,6 +15364,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14334,6 +15418,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14406,6 +15494,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_partitions", num_partitions);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -14503,6 +15595,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var merged = new TF_Output (op, _idx++);
 			return merged;
@@ -14538,6 +15634,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrString (desc, "token", token);
 			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -14641,6 +15741,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "normalize", Convert.ToByte(normalize.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14750,6 +15854,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "equation", equation);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14779,6 +15887,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -14811,6 +15923,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -14850,6 +15966,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "init", Convert.ToByte(init.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14889,6 +16009,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "element_dtype", element_dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -14931,6 +16055,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "pad", Convert.ToByte(pad.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15040,6 +16168,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "xmp_metadata", xmp_metadata);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -15076,6 +16208,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -15123,6 +16259,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "compression", compression.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -15210,6 +16350,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "descriptor_source", descriptor_source);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var bytes = new TF_Output (op, _idx++);
 			return bytes;
@@ -15250,6 +16394,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -15292,6 +16440,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "device_ordinal", device_ordinal.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -15367,6 +16519,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrStringList (desc, "combiners", combiners);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -15455,6 +16611,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "max_sequence_lengths", ref max_sequence_lengths[0], max_sequence_lengths.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -15488,6 +16648,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15540,6 +16704,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "parallel_iterations", parallel_iterations.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15588,6 +16756,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "incompatible_shape_error", Convert.ToByte(incompatible_shape_error.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -15613,6 +16785,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -15638,6 +16814,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -15683,6 +16863,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15713,6 +16897,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15766,6 +16954,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -15831,6 +17023,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15864,6 +17060,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -15913,6 +17113,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -15947,6 +17151,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -15980,6 +17188,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16031,6 +17243,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16062,6 +17278,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var cardinality = new TF_Output (op, _idx++);
 			return cardinality;
@@ -16097,6 +17317,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -16138,6 +17362,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16176,6 +17404,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16207,6 +17439,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16232,6 +17468,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var device = new TF_Output (op, _idx++);
 			return device;
@@ -16266,6 +17506,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16296,6 +17540,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16320,6 +17568,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16355,6 +17607,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16385,6 +17641,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16460,6 +17720,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "sloppy", Convert.ToByte(sloppy.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16495,6 +17759,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16533,6 +17801,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16581,6 +17853,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_fallback", Convert.ToByte(use_fallback.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16620,6 +17896,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16653,6 +17933,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16699,6 +17983,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16739,6 +18027,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16773,6 +18065,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16798,6 +18094,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -16833,6 +18133,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16887,6 +18191,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16918,6 +18226,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16949,6 +18261,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16989,6 +18305,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -17085,6 +18405,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "noise", noise);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var glimpse = new TF_Output (op, _idx++);
 			return glimpse;
@@ -17137,6 +18461,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "rates", ref rates[0], rates.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var patches = new TF_Output (op, _idx++);
 			return patches;
@@ -17175,6 +18503,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "output_type", output_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var image_shape = new TF_Output (op, _idx++);
 			return image_shape;
@@ -17226,6 +18558,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "strides", ref strides[0], strides.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var patches = new TF_Output (op, _idx++);
 			return patches;
@@ -17248,6 +18584,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var fact = new TF_Output (op, _idx++);
 			return fact;
@@ -17283,6 +18623,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -17350,6 +18694,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var outputs = new TF_Output (op, _idx++);
 			return outputs;
@@ -17406,6 +18754,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -17470,6 +18822,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var outputs = new TF_Output (op, _idx++);
 			return outputs;
@@ -17528,6 +18884,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops_wrt_input = new TF_Output (op, _idx++);
 			var backprop_wrt_min = new TF_Output (op, _idx++);
@@ -17595,6 +18955,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var outputs = new TF_Output (op, _idx++);
 			return outputs;
@@ -17656,6 +19020,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops_wrt_input = new TF_Output (op, _idx++);
 			var backprop_wrt_min = new TF_Output (op, _idx++);
@@ -17683,6 +19051,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17719,6 +19091,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -17755,6 +19131,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -17791,6 +19171,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -17852,6 +19236,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17913,6 +19301,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17968,6 +19360,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -17999,6 +19395,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -18065,6 +19465,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var fingerprint = new TF_Output (op, _idx++);
 			return fingerprint;
@@ -18110,6 +19514,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18149,6 +19557,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18214,6 +19626,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -18287,6 +19703,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "encoding", encoding);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -18433,6 +19853,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -18460,6 +19884,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -18492,6 +19920,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -18527,6 +19959,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -18551,6 +19987,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -18644,6 +20084,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var row_pooling_sequence = new TF_Output (op, _idx++);
@@ -18710,6 +20154,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "overlapping", Convert.ToByte(overlapping.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -18829,6 +20277,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var row_pooling_sequence = new TF_Output (op, _idx++);
@@ -18892,6 +20344,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "overlapping", Convert.ToByte(overlapping.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -18972,6 +20428,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var batch_mean = new TF_Output (op, _idx++);
@@ -19059,6 +20519,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var x_backprop = new TF_Output (op, _idx++);
 			var scale_backprop = new TF_Output (op, _idx++);
@@ -19146,6 +20610,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var x_backprop = new TF_Output (op, _idx++);
 			var scale_backprop = new TF_Output (op, _idx++);
@@ -19239,6 +20707,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var x_backprop = new TF_Output (op, _idx++);
 			var scale_backprop = new TF_Output (op, _idx++);
@@ -19323,6 +20795,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var batch_mean = new TF_Output (op, _idx++);
@@ -19409,6 +20885,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "is_training", Convert.ToByte(is_training.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var batch_mean = new TF_Output (op, _idx++);
@@ -19475,6 +20955,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "strides", ref strides[0], strides.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19548,6 +21032,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "resize_align_corners", Convert.ToByte(resize_align_corners.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19609,6 +21097,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "validate_indices", Convert.ToByte(validate_indices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19747,6 +21239,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19820,6 +21316,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "batch_dims", batch_dims.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19901,6 +21401,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "old_vocab_size", old_vocab_size.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var remapping = new TF_Output (op, _idx++);
 			var num_present = new TF_Output (op, _idx++);
@@ -19930,6 +21434,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -19958,6 +21466,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -19989,6 +21501,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -20021,6 +21537,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -20053,6 +21573,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -20144,6 +21668,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var r = new TF_Output (op, _idx++);
 			var u = new TF_Output (op, _idx++);
@@ -20286,6 +21814,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var d_x = new TF_Output (op, _idx++);
 			var d_h_prev = new TF_Output (op, _idx++);
@@ -20322,6 +21854,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20382,6 +21918,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_node_name_sharing", Convert.ToByte(use_node_name_sharing.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -20442,6 +21982,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_node_name_sharing", Convert.ToByte(use_node_name_sharing.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -20502,6 +22046,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20540,6 +22088,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -20569,6 +22121,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTensor (desc, "value", value, status);
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20603,6 +22159,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20628,6 +22188,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20670,6 +22234,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -20718,6 +22286,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -20761,6 +22333,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -20797,6 +22373,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20833,6 +22413,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20869,6 +22453,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20912,6 +22500,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -20954,6 +22546,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -20982,6 +22578,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -21013,6 +22613,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -21057,6 +22661,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tout", Tout.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21138,6 +22746,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrTensor (desc, "bad_color", bad_color, status);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -21176,6 +22788,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			c_api.TF_SetAttrString (desc, "memory_region_name", memory_region_name);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -21203,6 +22819,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21232,6 +22852,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21263,6 +22887,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
 			c_api.TF_SetAttrShapeList (desc, "shapes", shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -21319,6 +22947,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "device_ordinal", device_ordinal.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21351,6 +22983,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "device_ordinal", device_ordinal.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21398,6 +23034,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "device_ordinal", device_ordinal.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21430,6 +23070,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21493,6 +23137,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "delimiter", delimiter);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21556,6 +23204,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "delimiter", delimiter);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21588,6 +23240,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -21623,6 +23279,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -21660,6 +23320,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -21697,6 +23361,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -21748,6 +23416,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "k", k);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var precision = new TF_Output (op, _idx++);
 			return precision;
@@ -21799,6 +23471,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var precision = new TF_Output (op, _idx++);
 			return precision;
@@ -21827,6 +23503,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -21893,6 +23573,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -21937,6 +23621,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -21969,6 +23657,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -22021,6 +23713,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22074,6 +23770,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22127,6 +23827,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22154,6 +23858,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -22184,6 +23892,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -22214,6 +23926,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -22244,6 +23960,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -22274,6 +23994,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -22303,6 +24027,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -22339,6 +24067,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -22382,6 +24114,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resource_handle = new TF_Output (op, _idx++);
 			return resource_handle;
@@ -22418,6 +24154,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resource_handle = new TF_Output (op, _idx++);
 			return resource_handle;
@@ -22443,6 +24183,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var device = new TF_Output (op, _idx++);
 			return device;
@@ -22474,6 +24218,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -22510,6 +24258,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var optional = new TF_Output (op, _idx++);
 			return optional;
@@ -22547,6 +24299,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -22579,6 +24335,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var string_handle = new TF_Output (op, _idx++);
 			return string_handle;
@@ -22612,6 +24372,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -22650,6 +24414,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var index = new TF_Output (op, _idx++);
 			return index;
@@ -22698,6 +24466,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var samples = new TF_Output (op, _idx++);
 			return samples;
@@ -22730,6 +24502,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22764,6 +24540,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -22795,6 +24575,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "alpha", alpha.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -22833,6 +24617,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "alpha", alpha.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -22915,6 +24703,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -22978,6 +24770,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -23010,6 +24806,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -23042,6 +24842,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -23067,6 +24871,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23113,6 +24921,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -23175,6 +24987,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_idx", out_idx.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -23206,6 +25022,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -23245,6 +25065,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -23350,6 +25174,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "max_rows_in_memory", max_rows_in_memory.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_matrix = new TF_Output (op, _idx++);
 			return output_matrix;
@@ -23409,6 +25237,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23470,6 +25302,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23523,6 +25359,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23580,6 +25420,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23637,6 +25481,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23698,6 +25546,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23759,6 +25611,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23816,6 +25672,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23877,6 +25737,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23938,6 +25802,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -23991,6 +25859,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24048,6 +25920,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24101,6 +25977,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24158,6 +26038,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24215,6 +26099,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24276,6 +26164,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24325,6 +26217,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24351,6 +26247,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -24379,6 +26279,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -24411,6 +26315,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -24436,6 +26344,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -24468,6 +26380,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -24509,6 +26425,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sign = new TF_Output (op, _idx++);
 			var log_abs_determinant = new TF_Output (op, _idx++);
@@ -24542,6 +26462,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var logsoftmax = new TF_Output (op, _idx++);
 			return logsoftmax;
@@ -24624,6 +26548,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -24661,6 +26589,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrType (desc, "Tkeys", Tkeys);
 			c_api.TF_SetAttrType (desc, "Tvalues", Tvalues);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -24697,6 +26629,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrType (desc, "Tkeys", Tkeys);
 			c_api.TF_SetAttrType (desc, "Tvalues", Tvalues);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -24740,6 +26676,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -24782,6 +26722,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -24820,6 +26764,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24856,6 +26804,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24892,6 +26844,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24928,6 +26884,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24960,6 +26920,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -24985,6 +26949,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -25012,6 +26980,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -25043,6 +27015,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -25102,6 +27078,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -25169,6 +27149,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "beta", beta.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -25232,6 +27216,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "beta", beta.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -25341,6 +27329,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_peephole", Convert.ToByte(use_peephole.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var i = new TF_Output (op, _idx++);
 			var cs = new TF_Output (op, _idx++);
@@ -25446,6 +27438,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrBool (desc, "use_peephole", Convert.ToByte(use_peephole));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var cs_prev_grad = new TF_Output (op, _idx++);
 			var dicfo = new TF_Output (op, _idx++);
@@ -25514,6 +27510,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "output_idx_type", output_idx_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var lu = new TF_Output (op, _idx++);
 			var p = new TF_Output (op, _idx++);
@@ -25547,6 +27547,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -25594,6 +27598,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -25641,6 +27649,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -25700,6 +27712,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -25754,6 +27770,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -25820,6 +27840,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -25877,6 +27901,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -25941,6 +27969,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			var key = new TF_Output (op, _idx++);
@@ -25979,6 +28011,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var filenames = new TF_Output (op, _idx++);
 			return filenames;
@@ -26003,6 +28039,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -26054,6 +28094,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "transpose_b", Convert.ToByte(transpose_b.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -26132,6 +28176,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var band = new TF_Output (op, _idx++);
 			return band;
@@ -26164,6 +28212,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26219,6 +28271,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26277,6 +28333,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -26386,6 +28446,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -26526,6 +28590,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26551,6 +28619,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26601,6 +28673,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adjoint", Convert.ToByte(adjoint.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26649,6 +28725,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26694,6 +28774,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26806,6 +28890,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26853,6 +28941,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adjoint", Convert.ToByte(adjoint.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26934,6 +29026,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "fast", Convert.ToByte(fast.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -26982,6 +29078,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27079,6 +29179,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adjoint", Convert.ToByte(adjoint.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27124,6 +29228,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27156,6 +29264,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -27191,6 +29303,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -27242,6 +29358,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27294,6 +29414,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27353,6 +29477,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27413,6 +29541,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27472,6 +29604,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27531,6 +29667,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27590,6 +29730,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27646,6 +29790,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "include_batch_in_index", Convert.ToByte(include_batch_in_index.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27705,6 +29853,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27761,6 +29913,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "include_batch_in_index", Convert.ToByte(include_batch_in_index.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27812,6 +29968,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27878,6 +30038,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "include_batch_in_index", Convert.ToByte(include_batch_in_index.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var argmax = new TF_Output (op, _idx++);
@@ -27924,6 +30088,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27960,6 +30128,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var value_index = new TF_Output (op, _idx++);
@@ -27998,6 +30170,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -28046,6 +30222,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "delete_old_dirs", Convert.ToByte(delete_old_dirs.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -28113,6 +30293,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "dct_coefficient_count", dct_coefficient_count.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28158,6 +30342,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28190,6 +30378,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -28257,6 +30449,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "mode", mode);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28313,6 +30509,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "mode", mode);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28348,6 +30548,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -28395,6 +30599,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "cpu_budget", cpu_budget.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -28427,6 +30635,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -28459,6 +30671,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -28504,6 +30720,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -28545,6 +30765,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var multi_device_iterator = new TF_Output (op, _idx++);
 			return multi_device_iterator;
@@ -28588,6 +30812,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -28629,6 +30857,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var incarnation_id = new TF_Output (op, _idx++);
 			return incarnation_id;
@@ -28656,6 +30888,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var string_handle = new TF_Output (op, _idx++);
 			return string_handle;
@@ -28710,6 +30946,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "output_dtype", output_dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28795,6 +31035,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "max_load_factor", max_load_factor.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -28883,6 +31127,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "max_load_factor", max_load_factor.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -28943,6 +31191,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_node_name_sharing", Convert.ToByte(use_node_name_sharing.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -29007,6 +31259,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "value_shape", ref value_shape[0], value_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -29071,6 +31327,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "value_shape", ref value_shape[0], value_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -29131,6 +31391,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_node_name_sharing", Convert.ToByte(use_node_name_sharing.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -29200,6 +31464,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var mutex_lock = new TF_Output (op, _idx++);
 			return mutex_lock;
@@ -29239,6 +31507,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -29287,6 +31559,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "num_devices", num_devices);
 			c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -29326,6 +31602,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29364,6 +31644,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "reduction", reduction);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -29409,6 +31693,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var nearest_center_indices = new TF_Output (op, _idx++);
 			var nearest_center_distances = new TF_Output (op, _idx++);
@@ -29438,6 +31726,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -29487,6 +31779,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "vocab_count", ref vocab_count[0], vocab_count.Length);
 			c_api.TF_SetAttrInt (desc, "num_negative_samples", num_negative_samples);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -29522,6 +31818,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29549,6 +31849,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29586,6 +31890,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29650,6 +31958,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "iou_threshold", iou_threshold.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -29713,6 +32025,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -29780,6 +32096,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -29858,6 +32178,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "pad_to_max_output_size", Convert.ToByte(pad_to_max_output_size.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			var valid_outputs = new TF_Output (op, _idx++);
@@ -29952,6 +32276,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "pad_to_max_output_size", Convert.ToByte(pad_to_max_output_size.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			var selected_scores = new TF_Output (op, _idx++);
@@ -30019,6 +32347,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -30049,6 +32381,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -30071,6 +32407,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -30107,6 +32447,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "incompatible_shape_error", Convert.ToByte(incompatible_shape_error.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -30156,6 +32500,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "reverse", Convert.ToByte(reverse.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -30291,6 +32639,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "axis", axis.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30318,6 +32670,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -30363,6 +32719,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrStringList (desc, "optimization_configs", optimization_configs);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -30388,6 +32748,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var optional = new TF_Output (op, _idx++);
 			return optional;
@@ -30419,6 +32783,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -30449,6 +32817,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var has_value = new TF_Output (op, _idx++);
 			return has_value;
@@ -30471,6 +32843,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var optional = new TF_Output (op, _idx++);
 			return optional;
@@ -30520,6 +32896,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -30567,6 +32947,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -30627,6 +33011,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -30681,6 +33069,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -30750,6 +33142,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -30807,6 +33203,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -30871,6 +33271,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			var key = new TF_Output (op, _idx++);
@@ -30920,6 +33324,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "device_ordinal", device_ordinal.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30964,6 +33372,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "device_ordinal", device_ordinal.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -30995,6 +33407,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -31020,6 +33436,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -31074,6 +33494,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "axis", axis.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31127,6 +33551,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31172,6 +33600,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -31228,6 +33660,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "parallel_copy", Convert.ToByte(parallel_copy.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -31298,6 +33734,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -31368,6 +33808,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -31425,6 +33869,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31476,6 +33924,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31567,6 +34019,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var merged = new TF_Output (op, _idx++);
 			return merged;
@@ -31632,6 +34088,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31719,6 +34179,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "sparse_types", sparse_types);
 			c_api.TF_SetAttrShapeList (desc, "dense_shapes", dense_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "sparse_indices", status);
@@ -31814,6 +34278,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "sloppy", Convert.ToByte(sloppy.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -31972,6 +34440,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShapeList (desc, "feature_list_dense_shapes", feature_list_dense_shapes);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_indices", status);
@@ -32095,6 +34567,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "sparse_types", sparse_types);
 			c_api.TF_SetAttrShapeList (desc, "dense_shapes", dense_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "sparse_indices", status);
@@ -32248,6 +34724,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShapeList (desc, "feature_list_dense_shapes", feature_list_dense_shapes);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_indices", status);
@@ -32320,6 +34800,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "out_type", out_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32360,6 +34844,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32397,6 +34885,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32428,6 +34920,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShape (desc, "shape", ref shape[0], shape.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32465,6 +34961,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -32498,6 +34998,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -32536,6 +35040,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -32578,6 +35086,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "slack_period", slack_period.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -32620,6 +35132,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "layout", ref layout[0], layout.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32660,6 +35176,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "layouts", ref layouts[0], layouts.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32704,6 +35224,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "message", message);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32759,6 +35283,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "summarize", summarize.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -32801,6 +35329,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "end", end);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -32867,6 +35399,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -32935,6 +35471,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -32970,6 +35510,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -33015,6 +35559,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33055,6 +35603,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrString (desc, "token", token);
 			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -33091,6 +35643,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrString (desc, "token", token);
 			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -33149,6 +35705,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "full_matrices", Convert.ToByte(full_matrices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var q = new TF_Output (op, _idx++);
 			var r = new TF_Output (op, _idx++);
@@ -33205,6 +35765,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "input_max", input_max.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33342,6 +35906,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33398,6 +35966,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "narrow_range", Convert.ToByte(narrow_range.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33455,6 +36027,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Toutput", Toutput.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			var min_z = new TF_Output (op, _idx++);
@@ -33509,6 +36085,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "strides", ref strides[0], strides.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -33620,6 +36200,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrFloat (desc, "variance_epsilon", variance_epsilon);
 			c_api.TF_SetAttrBool (desc, "scale_after_normalization", Convert.ToByte(scale_after_normalization));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var result = new TF_Output (op, _idx++);
 			var result_min = new TF_Output (op, _idx++);
@@ -33677,6 +36261,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "out_type", out_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -33725,6 +36313,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -33808,6 +36400,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -33877,6 +36473,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -33952,6 +36552,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34027,6 +36631,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34100,6 +36708,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34172,6 +36784,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34244,6 +36860,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34322,6 +36942,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34400,6 +37024,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34487,6 +37115,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34562,6 +37194,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34649,6 +37285,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "padding_list", ref padding_list[0], padding_list.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34722,6 +37362,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34799,6 +37443,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34876,6 +37524,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -34961,6 +37613,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "dilations", ref dilations[0], dilations.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -35038,6 +37694,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "min_separation", min_separation.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var y_min = new TF_Output (op, _idx++);
@@ -35124,6 +37784,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tactivation", Tactivation.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -35216,6 +37880,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "input_quant_mode", input_quant_mode);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -35309,6 +37977,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "input_quant_mode", input_quant_mode);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -35410,6 +38082,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "input_quant_mode", input_quant_mode);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -35464,6 +38140,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrIntList (desc, "strides", ref strides[0], strides.Length);
 			c_api.TF_SetAttrString (desc, "padding", padding);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -35523,6 +38203,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Toutput", Toutput.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			var min_z = new TF_Output (op, _idx++);
@@ -35590,6 +38274,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "out_type", out_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -35635,6 +38323,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			var min_activations = new TF_Output (op, _idx++);
@@ -35680,6 +38372,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			var min_activations = new TF_Output (op, _idx++);
@@ -35728,6 +38424,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			var min_activations = new TF_Output (op, _idx++);
@@ -35774,6 +38474,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -35835,6 +38539,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "half_pixel_centers", Convert.ToByte(half_pixel_centers.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			var out_min = new TF_Output (op, _idx++);
@@ -35989,6 +38697,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "round_mode", round_mode);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -36032,6 +38744,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "cancel_pending_enqueues", Convert.ToByte(cancel_pending_enqueues.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -36071,6 +38787,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "cancel_pending_enqueues", Convert.ToByte(cancel_pending_enqueues.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -36117,6 +38837,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -36181,6 +38905,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -36245,6 +38973,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -36313,6 +39045,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -36381,6 +39117,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -36434,6 +39174,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -36485,6 +39229,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -36534,6 +39282,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -36583,6 +39335,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -36627,6 +39383,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -36655,6 +39415,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var is_closed = new TF_Output (op, _idx++);
 			return is_closed;
@@ -36685,6 +39449,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var is_closed = new TF_Output (op, _idx++);
 			return is_closed;
@@ -36712,6 +39480,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -36739,6 +39511,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -36812,6 +39588,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "OUTPUT_RAGGED_RANK", OUTPUT_RAGGED_RANK);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output_nested_splits", status);
@@ -36881,6 +39661,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tsplits", Tsplits.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var rt_nested_splits = new TF_Output (op, _idx++);
 			var rt_dense_values = new TF_Output (op, _idx++);
@@ -36942,6 +39726,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrType (desc, "Tvalues", Tvalues);
 			c_api.TF_SetAttrType (desc, "Tsplits", Tsplits);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output_nested_splits", status);
@@ -36987,6 +39775,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
@@ -37039,6 +39831,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrBool (desc, "batched_input", Convert.ToByte(batched_input));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var encoded_ragged = new TF_Output (op, _idx++);
 			return encoded_ragged;
@@ -37094,6 +39890,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37132,6 +39932,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -37188,6 +39992,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37216,6 +40024,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37256,6 +40068,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37324,6 +40140,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37379,6 +40199,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37464,6 +40288,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -37549,6 +40377,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -37599,6 +40431,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37650,6 +40486,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37710,6 +40550,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37758,6 +40602,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37798,6 +40646,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -37838,6 +40690,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -37868,6 +40724,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var records_produced = new TF_Output (op, _idx++);
 			return records_produced;
@@ -37898,6 +40758,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var records_produced = new TF_Output (op, _idx++);
 			return records_produced;
@@ -37924,6 +40788,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var units_completed = new TF_Output (op, _idx++);
 			return units_completed;
@@ -37950,6 +40818,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var units_completed = new TF_Output (op, _idx++);
 			return units_completed;
@@ -37988,6 +40860,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var key = new TF_Output (op, _idx++);
 			var value = new TF_Output (op, _idx++);
@@ -38032,6 +40908,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -38076,6 +40956,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -38115,6 +40999,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var key = new TF_Output (op, _idx++);
 			var value = new TF_Output (op, _idx++);
@@ -38142,6 +41030,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -38166,6 +41058,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -38199,6 +41095,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -38232,6 +41132,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -38260,6 +41164,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var state = new TF_Output (op, _idx++);
 			return state;
@@ -38290,6 +41198,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var state = new TF_Output (op, _idx++);
 			return state;
@@ -38315,6 +41227,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -38353,6 +41269,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -38397,6 +41317,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tout", Tout.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -38431,6 +41355,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -38479,6 +41407,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_fallback", Convert.ToByte(use_fallback.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -38507,6 +41439,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -38539,6 +41475,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -38610,6 +41550,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "compression_type", compression_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var records = new TF_Output (op, _idx++);
 			return records;
@@ -38651,6 +41595,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "num_outputs", num_outputs);
 			c_api.TF_SetAttrString (desc, "config", config);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -38729,6 +41677,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "separator", separator);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -38780,6 +41732,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "parallel_iterations", parallel_iterations.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -38810,6 +41766,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -38835,6 +41795,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -38871,6 +41835,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var value_index = new TF_Output (op, _idx++);
@@ -38899,6 +41867,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -38930,6 +41902,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -38969,6 +41945,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_false = new TF_Output (op, _idx++);
 			var output_true = new TF_Output (op, _idx++);
@@ -39009,6 +41989,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -39058,6 +42042,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "replace_global", Convert.ToByte(replace_global.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -39083,6 +42071,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -39108,6 +42100,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -39141,6 +42137,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -39173,6 +42173,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -39217,6 +42221,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "Toutputs", Toutputs);
 			c_api.TF_SetAttrString (desc, "serialized_remote_fused_graph_execute_info", serialized_remote_fused_graph_execute_info);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -39258,6 +42266,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -39300,6 +42312,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_min = new TF_Output (op, _idx++);
 			var output_max = new TF_Output (op, _idx++);
@@ -39343,6 +42359,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrFloat (desc, "clip_value_max", clip_value_max);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_min = new TF_Output (op, _idx++);
 			var output_max = new TF_Output (op, _idx++);
@@ -39402,6 +42422,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "out_type", out_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -39457,6 +42481,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -39546,6 +42574,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -39600,6 +42632,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "align_corners", Convert.ToByte(align_corners.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -39650,6 +42686,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "half_pixel_centers", Convert.ToByte(half_pixel_centers.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -39698,6 +42738,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "half_pixel_centers", Convert.ToByte(half_pixel_centers.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -39748,6 +42792,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "half_pixel_centers", Convert.ToByte(half_pixel_centers.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -39796,6 +42844,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "half_pixel_centers", Convert.ToByte(half_pixel_centers.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -39843,6 +42895,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "half_pixel_centers", Convert.ToByte(half_pixel_centers.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -39890,6 +42946,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "half_pixel_centers", Convert.ToByte(half_pixel_centers.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -39927,6 +42987,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -39952,6 +43016,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var num_accumulated = new TF_Output (op, _idx++);
 			return num_accumulated;
@@ -39986,6 +43054,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40027,6 +43099,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var average = new TF_Output (op, _idx++);
 			return average;
@@ -40091,6 +43167,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40146,6 +43226,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40206,6 +43290,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40265,6 +43353,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40347,6 +43439,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40417,6 +43513,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40497,6 +43597,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40559,6 +43663,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40643,6 +43751,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40711,6 +43823,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40784,6 +43900,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40824,6 +43944,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40888,6 +44012,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -40952,6 +44080,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41014,6 +44146,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41071,6 +44207,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41123,6 +44263,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41195,6 +44339,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41256,6 +44404,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "reduction_type", reduction_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -41292,6 +44444,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "limit", limit);
 			c_api.TF_SetAttrType (desc, "T", T);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41350,6 +44506,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "validate_indices", Convert.ToByte(validate_indices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41380,6 +44540,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41435,6 +44599,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41488,6 +44656,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41541,6 +44713,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41594,6 +44770,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41647,6 +44827,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41725,6 +44909,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41803,6 +44991,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41883,6 +45075,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41936,6 +45132,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -41980,6 +45180,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42039,6 +45243,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42099,6 +45307,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42163,6 +45375,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42227,6 +45443,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42313,6 +45533,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42386,6 +45610,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42464,6 +45692,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42534,6 +45766,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42604,6 +45840,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42667,6 +45907,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42724,6 +45968,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42800,6 +46048,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42873,6 +46125,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "shrink_axis_mask", shrink_axis_mask.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -42934,6 +46190,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "preferred_shard", preferred_shard.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -42992,6 +46252,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "preferred_shard", preferred_shard.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -43049,6 +46313,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "tensors", status);
@@ -43104,6 +46372,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43157,6 +46429,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43209,6 +46485,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43260,6 +46540,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43312,6 +46596,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -43365,6 +46653,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -43419,6 +46711,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var ms = new TF_Output (op, _idx++);
@@ -43472,6 +46768,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43525,6 +46825,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43579,6 +46883,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43631,6 +46939,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -43682,6 +46994,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -43733,6 +47049,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43784,6 +47104,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -43836,6 +47160,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var ms = new TF_Output (op, _idx++);
@@ -43889,6 +47217,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var ms = new TF_Output (op, _idx++);
@@ -43939,6 +47271,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "table_name", table_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			return parameters;
@@ -44016,6 +47352,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44115,6 +47455,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "batch_dim", batch_dim.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44195,6 +47539,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44244,6 +47592,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44295,6 +47647,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44346,6 +47702,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44382,6 +47742,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44446,6 +47810,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -44482,6 +47850,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -44522,6 +47894,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -44584,6 +47960,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44613,6 +47993,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -44729,6 +48113,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_in_ms", timeout_in_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var response = new TF_Output (op, _idx++);
 			return response;
@@ -44757,6 +48145,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -44789,6 +48181,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -44927,6 +48323,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_image_if_no_bounding_boxes", Convert.ToByte(use_image_if_no_bounding_boxes.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var begin = new TF_Output (op, _idx++);
 			var size = new TF_Output (op, _idx++);
@@ -45064,6 +48464,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_image_if_no_bounding_boxes", Convert.ToByte(use_image_if_no_bounding_boxes.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var begin = new TF_Output (op, _idx++);
 			var size = new TF_Output (op, _idx++);
@@ -45110,6 +48514,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -45151,6 +48559,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -45212,6 +48624,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -45255,6 +48671,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -45288,6 +48708,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -45333,6 +48757,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "antialias", Convert.ToByte(antialias.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -45378,6 +48806,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "antialias", Convert.ToByte(antialias.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -45446,6 +48878,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -45512,6 +48948,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -45580,6 +49020,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -45648,6 +49092,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -45714,6 +49162,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -45834,6 +49286,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -45916,6 +49372,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -45989,6 +49449,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -46073,6 +49537,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -46157,6 +49625,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -46225,6 +49697,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -46298,6 +49774,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -46326,6 +49806,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -46449,6 +49933,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adaptative", Convert.ToByte(adaptative.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			var out_example_state_data = new TF_Output (op, _idx++);
@@ -46583,6 +50071,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adaptive", Convert.ToByte(adaptive.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			var out_example_state_data = new TF_Output (op, _idx++);
@@ -46629,6 +50121,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrFloat (desc, "l1", l1);
 			c_api.TF_SetAttrFloat (desc, "l2", l2);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -46684,6 +50180,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -46742,6 +50242,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -46798,6 +50302,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -46855,6 +50363,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -46912,6 +50424,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -46988,6 +50504,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47018,6 +50538,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47054,6 +50578,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47104,6 +50632,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "compute_v", Convert.ToByte(compute_v.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var e = new TF_Output (op, _idx++);
 			var v = new TF_Output (op, _idx++);
@@ -47139,6 +50671,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -47171,6 +50707,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -47215,6 +50755,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "config", config);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -47241,6 +50785,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var serialized = new TF_Output (op, _idx++);
 			return serialized;
@@ -47292,6 +50840,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var serialized_sparse = new TF_Output (op, _idx++);
 			return serialized_sparse;
@@ -47334,6 +50886,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var serialized_sparse = new TF_Output (op, _idx++);
 			return serialized_sparse;
@@ -47361,6 +50917,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var serialized = new TF_Output (op, _idx++);
 			return serialized;
@@ -47412,6 +50972,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "validate_indices", Convert.ToByte(validate_indices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -47451,6 +51015,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -47492,6 +51060,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47526,6 +51098,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -47576,6 +51152,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "require_non_empty", Convert.ToByte(require_non_empty.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -47610,6 +51190,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var filename = new TF_Output (op, _idx++);
 			return filename;
@@ -47638,6 +51222,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var filename = new TF_Output (op, _idx++);
 			return filename;
@@ -47693,6 +51281,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -47751,6 +51343,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "reshuffle_each_iteration", Convert.ToByte(reshuffle_each_iteration.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -47787,6 +51383,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -47812,6 +51412,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -47838,6 +51442,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -47870,6 +51478,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -47900,6 +51512,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -47935,6 +51551,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -47970,6 +51590,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -48012,6 +51636,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -48048,6 +51676,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -48109,6 +51741,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrFloat (desc, "subsample", subsample.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var vocab_word = new TF_Output (op, _idx++);
 			var vocab_freq = new TF_Output (op, _idx++);
@@ -48148,6 +51784,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -48193,6 +51833,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -48239,6 +51883,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -48264,6 +51912,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -48360,6 +52012,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "writer_buffer_size", writer_buffer_size.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -48392,6 +52048,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var softmax = new TF_Output (op, _idx++);
 			return softmax;
@@ -48430,6 +52090,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var loss = new TF_Output (op, _idx++);
 			var backprop = new TF_Output (op, _idx++);
@@ -48456,6 +52120,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -48487,6 +52155,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -48512,6 +52184,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -48543,6 +52219,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -48669,6 +52349,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "block_size", block_size);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -48821,6 +52505,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -48941,6 +52629,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "data_format", data_format);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -48995,6 +52687,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrBool (desc, "has_known_shape", Convert.ToByte(has_known_shape));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -49040,6 +52736,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -49112,6 +52812,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sum_indices = new TF_Output (op, _idx++);
 			var sum_values = new TF_Output (op, _idx++);
@@ -49165,6 +52869,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var a_val_grad = new TF_Output (op, _idx++);
 			var b_val_grad = new TF_Output (op, _idx++);
@@ -49228,6 +52936,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49291,6 +53003,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49358,6 +53074,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49425,6 +53145,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "update_slots", Convert.ToByte(update_slots.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49514,6 +53238,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49590,6 +53318,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49671,6 +53403,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49744,6 +53480,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_nesterov", Convert.ToByte(use_nesterov.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49810,6 +53550,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49870,6 +53614,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49949,6 +53697,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "use_locking", Convert.ToByte(use_locking.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50035,6 +53787,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "concat_dim", concat_dim);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -50098,6 +53854,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "reduction_type", reduction_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -50200,6 +53960,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrType (desc, "out_type", out_type);
 			c_api.TF_SetAttrType (desc, "internal_type", internal_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -50252,6 +54016,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50296,6 +54064,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50344,6 +54116,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50428,6 +54204,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -50474,6 +54254,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var d_values = new TF_Output (op, _idx++);
 			var d_default_value = new TF_Output (op, _idx++);
@@ -50538,6 +54322,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "b_is_sparse", Convert.ToByte(b_is_sparse.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -50599,6 +54387,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50663,6 +54455,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -50726,6 +54522,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50790,6 +54590,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -50841,6 +54645,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -50900,6 +54708,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_shape = new TF_Output (op, _idx++);
@@ -50942,6 +54754,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50984,6 +54800,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51031,6 +54851,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51072,6 +54896,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51114,6 +54942,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51163,6 +54995,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51229,6 +55065,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51297,6 +55137,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51364,6 +55208,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -51411,6 +55259,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var val_grad = new TF_Output (op, _idx++);
 			return val_grad;
@@ -51464,6 +55316,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51506,6 +55362,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var loss = new TF_Output (op, _idx++);
 			var backprop = new TF_Output (op, _idx++);
@@ -51560,6 +55420,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -51614,6 +55478,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -51685,6 +55553,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_split", num_split);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output_indices", status);
@@ -51741,6 +55613,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51806,6 +55682,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "adjoint_b", Convert.ToByte(adjoint_b.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -51837,6 +55717,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51908,6 +55792,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "validate_indices", Convert.ToByte(validate_indices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var dense = new TF_Output (op, _idx++);
 			return dense;
@@ -52002,6 +55890,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "validate_indices", Convert.ToByte(validate_indices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var result_indices = new TF_Output (op, _idx++);
 			var result_values = new TF_Output (op, _idx++);
@@ -52043,6 +55935,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_split", num_split);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -52091,6 +55987,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_split", num_split);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -52136,6 +56036,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -52164,6 +56068,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -52196,6 +56104,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -52224,6 +56136,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -52256,6 +56172,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -52313,6 +56233,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrIntList (desc, "squeeze_dims", ref squeeze_dims[0], squeeze_dims.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52344,6 +56268,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "stack_name", stack_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -52369,6 +56297,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -52393,6 +56325,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -52419,6 +56355,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "elem_type", elem_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var elem = new TF_Output (op, _idx++);
 			return elem;
@@ -52450,6 +56390,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "elem_type", elem_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var elem = new TF_Output (op, _idx++);
 			return elem;
@@ -52484,6 +56428,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "swap_memory", Convert.ToByte(swap_memory.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52522,6 +56470,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "swap_memory", Convert.ToByte(swap_memory.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52562,6 +56514,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "stack_name", stack_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -52624,6 +56580,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -52671,6 +56631,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -52726,6 +56690,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -52780,6 +56748,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -52822,6 +56794,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52863,6 +56839,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52908,6 +56888,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52955,6 +56939,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53001,6 +56989,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53046,6 +57038,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53098,6 +57094,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53141,6 +57141,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "output_dtype", output_dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53184,6 +57188,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53228,6 +57236,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53272,6 +57284,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53317,6 +57333,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "dtype", dtype.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53356,6 +57376,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "pattern", pattern);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53402,6 +57426,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "replace_global", Convert.ToByte(replace_global.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53436,6 +57464,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -53469,6 +57501,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -53497,6 +57533,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -53520,6 +57560,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -53566,6 +57610,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53753,6 +57801,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "shrink_axis_mask", shrink_axis_mask.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53828,6 +57880,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "shrink_axis_mask", shrink_axis_mask.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -53905,6 +57961,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "shrink_axis_mask", shrink_axis_mask.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53956,6 +58016,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "summarize", summarize.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53994,6 +58058,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "separator", separator);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54036,6 +58104,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "unit", unit);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54066,6 +58138,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "encoding", encoding);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54133,6 +58209,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "pad_width", pad_width);
 			c_api.TF_SetAttrBool (desc, "preserve_short_sequences", Convert.ToByte(preserve_short_sequences));
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var ngrams = new TF_Output (op, _idx++);
 			var ngrams_splits = new TF_Output (op, _idx++);
@@ -54199,6 +58279,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "skip_empty", Convert.ToByte(skip_empty.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -54268,6 +58352,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "maxsplit", maxsplit.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -54297,6 +58385,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54335,6 +58427,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_buckets", num_buckets);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54374,6 +58470,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_buckets", num_buckets);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54425,6 +58525,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "num_buckets", num_buckets);
 			c_api.TF_SetAttrIntList (desc, "key", ref key[0], key.Length);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54462,6 +58566,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54492,6 +58600,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "encoding", encoding);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54524,6 +58636,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -54647,6 +58763,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "unit", unit);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54692,6 +58812,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "keep_dims", Convert.ToByte(keep_dims.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54725,6 +58849,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "container", container);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var writer = new TF_Output (op, _idx++);
 			return writer;
@@ -54791,6 +58919,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "full_matrices", Convert.ToByte(full_matrices.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var s = new TF_Output (op, _idx++);
 			var u = new TF_Output (op, _idx++);
@@ -54832,6 +58964,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_false = new TF_Output (op, _idx++);
 			var output_true = new TF_Output (op, _idx++);
@@ -54870,6 +59006,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -54972,6 +59112,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
@@ -55010,6 +59154,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -55045,6 +59193,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -55077,6 +59229,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -55132,6 +59288,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "var_name", var_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reference = new TF_Output (op, _idx++);
 			return reference;
@@ -55183,6 +59343,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape", ref element_shape[0], element_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -55207,6 +59371,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -55230,6 +59398,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -55258,6 +59430,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -55295,6 +59471,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape_except0", ref element_shape_except0[0], element_shape_except0.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -55336,6 +59516,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape_except0", ref element_shape_except0[0], element_shape_except0.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -55402,6 +59586,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape_except0", ref element_shape_except0[0], element_shape_except0.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -55442,6 +59630,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape", ref element_shape[0], element_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -55482,6 +59674,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape", ref element_shape[0], element_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -55534,6 +59730,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape", ref element_shape[0], element_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -55564,6 +59764,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "source", source);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			return grad_handle;
@@ -55595,6 +59799,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "source", source);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			return grad_handle;
@@ -55671,6 +59879,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "source", source);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			var flow_out = new TF_Output (op, _idx++);
@@ -55722,6 +59934,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrString (desc, "source", source);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			var flow_out = new TF_Output (op, _idx++);
@@ -55759,6 +59975,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape", ref element_shape[0], element_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -55792,6 +60012,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -55826,6 +60050,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -55864,6 +60092,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "dtype", dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -55897,6 +60129,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -55931,6 +60167,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -55973,6 +60213,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56000,6 +60244,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -56028,6 +60276,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -56059,6 +60311,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -56092,6 +60348,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56126,6 +60386,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56192,6 +60456,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56222,6 +60490,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56274,6 +60546,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "tensor_array_name", tensor_array_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -56357,6 +60633,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "tensor_array_name", tensor_array_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var flow = new TF_Output (op, _idx++);
@@ -56391,6 +60671,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56425,6 +60709,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56464,6 +60752,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -56492,6 +60784,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -56522,6 +60818,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -56550,6 +60850,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -56575,6 +60879,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -56610,6 +60918,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "logits_dimension", logits_dimension);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var logits = new TF_Output (op, _idx++);
 			return logits;
@@ -56644,6 +60956,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -56671,6 +60987,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tree_config = new TF_Output (op, _idx++);
 			return tree_config;
@@ -56698,6 +61018,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tree_size = new TF_Output (op, _idx++);
 			return tree_size;
@@ -56743,6 +61067,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrShape (desc, "element_shape", ref element_shape[0], element_shape.Length);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -56774,6 +61102,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "element_dtype", element_dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56825,6 +61157,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "element_dtype", element_dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -56858,6 +61194,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "shape_type", shape_type);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var element_shape = new TF_Output (op, _idx++);
 			return element_shape;
@@ -56892,6 +61232,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -56934,6 +61278,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "element_dtype", element_dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -56975,6 +61323,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "element_dtype", element_dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var item = new TF_Output (op, _idx++);
 			return item;
@@ -57004,6 +61356,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var length = new TF_Output (op, _idx++);
 			return length;
@@ -57046,6 +61402,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "element_dtype", element_dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			var tensor = new TF_Output (op, _idx++);
@@ -57082,6 +61442,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -57109,6 +61473,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handles = new TF_Output (op, _idx++);
 			return output_handles;
@@ -57146,6 +61514,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrType (desc, "element_dtype", element_dtype);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -57180,6 +61552,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -57221,6 +61597,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -57261,6 +61641,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -57308,6 +61692,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -57346,6 +61734,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -57386,6 +61778,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -57431,6 +61827,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "num_elements", num_elements.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -57532,6 +61932,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57633,6 +62037,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57746,6 +62154,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57774,6 +62186,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -57849,6 +62265,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "shrink_axis_mask", shrink_axis_mask.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57901,6 +62321,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "display_name", display_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -57936,6 +62360,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -57972,6 +62400,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -58018,6 +62450,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -58064,6 +62500,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -58101,6 +62541,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -58146,6 +62590,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "compression_type", compression_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -58191,6 +62639,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "compression_type", compression_type);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -58226,6 +62678,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -58280,6 +62736,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -58362,6 +62822,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -58401,6 +62865,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58434,6 +62902,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58462,6 +62934,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var ts = new TF_Output (op, _idx++);
 			return ts;
@@ -58518,6 +62994,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "sorted", Convert.ToByte(sorted.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			var indices = new TF_Output (op, _idx++);
@@ -58573,6 +63053,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "sorted", Convert.ToByte(sorted.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			var indices = new TF_Output (op, _idx++);
@@ -58596,6 +63080,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58643,6 +63131,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrInt (desc, "table_id", table_id);
 			c_api.TF_SetAttrInt (desc, "lookup_id", lookup_id);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58671,6 +63163,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var device_ordinals = new TF_Output (op, _idx++);
 			return device_ordinals;
@@ -58696,6 +63192,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58724,6 +63224,10 @@ namespace TensorFlow {
 			
 			c_api.TF_SetAttrInt (desc, "num_replicas", num_replicas);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -58814,6 +63318,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "allow_soft_placement", Convert.ToByte(allow_soft_placement.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -58844,6 +63352,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -58890,6 +63402,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58941,6 +63457,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "partial_pivoting", Convert.ToByte(partial_pivoting.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58978,6 +63498,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -59031,6 +63555,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -59066,6 +63594,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -59188,6 +63720,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "timeout_in_ms", timeout_in_ms.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var response = new TF_Output (op, _idx++);
 			var status_code = new TF_Output (op, _idx++);
@@ -59256,6 +63792,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var unbatched_tensor = new TF_Output (op, _idx++);
 			return unbatched_tensor;
@@ -59287,6 +63827,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -59349,6 +63893,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var batched_grad = new TF_Output (op, _idx++);
 			return batched_grad;
@@ -59436,6 +63984,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tsplits", Tsplits.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var row_splits = new TF_Output (op, _idx++);
 			var char_values = new TF_Output (op, _idx++);
@@ -59530,6 +64082,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "Tsplits", Tsplits.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var row_splits = new TF_Output (op, _idx++);
 			var char_values = new TF_Output (op, _idx++);
@@ -59610,6 +64166,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "replacement_char", replacement_char.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -59644,6 +64204,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -59743,6 +64307,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrBool (desc, "replace_control_characters", Convert.ToByte(replace_control_characters.Value));
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -59825,6 +64393,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -59879,6 +64451,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_idx", out_idx.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -59911,6 +64487,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -59997,6 +64577,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_idx", out_idx.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -60053,6 +64637,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_idx", out_idx.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -60146,6 +64734,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_idx", out_idx.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -60200,6 +64792,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "axis", axis.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -60246,6 +64842,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60316,6 +64916,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "separator", separator);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60385,6 +64989,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60449,6 +65057,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60512,6 +65124,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60577,6 +65193,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60630,6 +65250,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -60659,6 +65283,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -60718,6 +65346,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60763,6 +65395,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -60803,6 +65439,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reference = new TF_Output (op, _idx++);
 			return reference;
@@ -60844,6 +65484,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -60896,6 +65540,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reference = new TF_Output (op, _idx++);
 			return reference;
@@ -60924,6 +65572,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -61010,6 +65662,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var index = new TF_Output (op, _idx++);
 			return index;
@@ -61053,6 +65709,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -61096,6 +65756,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -61146,6 +65810,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -61177,6 +65845,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var response = new TF_Output (op, _idx++);
 			return response;
@@ -61201,6 +65873,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61243,6 +65919,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "max_outputs", max_outputs.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61274,6 +65954,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61302,6 +65986,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61333,6 +66021,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61373,6 +66065,10 @@ namespace TensorFlow {
 				c_api.TF_SetAttrInt (desc, "max_images", max_images.Value);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61401,6 +66097,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61432,6 +66132,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61466,6 +66170,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			return op;
 		}
 
@@ -61492,6 +66200,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -61520,6 +66232,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -61547,6 +66263,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -61581,6 +66301,10 @@ namespace TensorFlow {
 				c_api.TF_AddControlInput(desc, control);
 			
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -61612,6 +66336,10 @@ namespace TensorFlow {
 			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
 			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
 			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;

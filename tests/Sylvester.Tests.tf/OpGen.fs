@@ -30,5 +30,5 @@ module OpGenTests =
     [<Fact>]
     let ``Can generate to file`` () =
         //let ad = gen.OpDefs.Single(fun o -> o.name = "Add")
-        gen.Run("Add") |> ignore
+        gen.Run(Array.Empty<string>(), "Add") |> ignore
         Assert.NotNull(gen.Output)

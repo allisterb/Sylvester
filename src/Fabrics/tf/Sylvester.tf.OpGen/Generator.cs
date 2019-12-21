@@ -585,8 +585,11 @@ namespace Sylvester.tf.OpGen
 
 				}
 			}
-
 			p("var op = c_api.TF_FinishOperation(desc, status);");
+			p("if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)");
+			p("{");
+			p("    throw new OpException(op, status);");
+			p("}");
 			if (oper.output_arg.Count() > 0)
 				p("int _idx = 0;");
 			if (oper.output_arg.Any(x => IsListArg(x)))
@@ -595,7 +598,6 @@ namespace Sylvester.tf.OpGen
 			{
 				if (IsListArg(arg))
 				{
-					//throw new OpGenException(oper, "List output type not yet supported");
 					var outputs = new StringBuilder();
 					p($"_n = c_api.TF_OperationOutputListLength(op, \"{ParamMap(arg.name)}\", status);");
 					p($"var {ParamMap(arg.name)} = new TF_Output [_n];");

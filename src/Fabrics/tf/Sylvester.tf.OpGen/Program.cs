@@ -34,7 +34,8 @@ namespace Sylvester.tf.OpGen
             LConfig = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Debug()
-                .WriteTo.Console(outputTemplate: "{Timestamp:HH:mm:ss}<{ThreadId:d2}> [{Level:u3}] {Message}{NewLine}{Exception}");
+                .WriteTo.Console(outputTemplate: "{Timestamp:HH:mm:ss}<{ThreadId:d2}> [{Level:u3}] {Message}{NewLine}{Exception}")
+                .WriteTo.File("OpGen.log");
             L = Log.Logger = LConfig.CreateLogger();
             Parser p = new Parser();
             ParserResult<Options> result = p.ParseArguments<Options>(args);
