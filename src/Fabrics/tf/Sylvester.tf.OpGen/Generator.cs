@@ -515,10 +515,10 @@ namespace Sylvester.tf.OpGen
 				// function to take a TFStatus as well, so need to weave that
 				// in the parameters
 				case "TF_Tensor":
-					p($"c_api.TF_SetAttrTensor (desc, \"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrTensor (desc, \"{attrName}\", {csAttrName}, status);");
 					break;
 				case "TF_Tensor[]":
-					p($"c_api.TF_SetTensorList (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length);");
+					p($"c_api.TF_SetTensorList (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length, status);");
 					break;
 				default:
 					throw new UnknownTypeException(cstype);
