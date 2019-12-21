@@ -1,0 +1,2 @@
+#!/bin/bash
+dotnet ./bin/x64/Debug/netcoreapp3.1/Sylvester.tf.OpGen.exe "$@"

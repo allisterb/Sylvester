@@ -8,3 +8,8 @@
 2019-12-21 11:42:48.597 -04:00 [INF] Using 1 TensorFlow op def directory.
 2019-12-21 11:42:48.607 -04:00 [INF] Adding 1215 op defs from directory C:\Projects\tensorflow\tensorflow\core\api_def\base_api.
 2019-12-21 11:42:49.162 -04:00 [INF] Wrote 1218 ops to c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs.
+2019-12-21 11:47:53.522 -04:00 [WRN] The output file c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs exists and will be overwritten.
+2019-12-21 11:47:53.763 -04:00 [INF] Created generator.
+2019-12-21 11:47:53.765 -04:00 [INF] Using 1 TensorFlow op def directory.
+2019-12-21 11:47:53.774 -04:00 [INF] Adding 1215 op defs from directory C:\Projects\tensorflow\tensorflow\core\api_def\base_api.
+2019-12-21 11:47:54.243 -04:00 [INF] Wrote 1218 ops to c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs.

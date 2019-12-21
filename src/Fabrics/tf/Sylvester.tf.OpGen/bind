@@ -1,3 +1,0 @@
-#!/bin/bash
-mono --debug ./bin/x64/Debug/Sylvester.Bindings.exe "$@"
-fi
