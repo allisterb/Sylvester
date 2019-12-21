@@ -203,7 +203,7 @@ namespace Sylvester.tf.OpGen
 				case "type":
 					cstype = "TF_DataType"; break;
 				case "shape":
-					cstype = "TF_Shape"; break;
+					cstype = "long[]"; break;
 				case "tensor":
 					cstype = "TF_Tensor"; break;
 				case "string":
@@ -469,12 +469,12 @@ namespace Sylvester.tf.OpGen
 		{
 			if (type == "shape")
 			{
-				p($"c_apt.TF_SetAttrShape (desc, \"{attrName}\", {csAttrName});");
+				p($"c_api.TF_SetAttrShape (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length);");
 				return;
 			}
 			if (type.StartsWith("list(shape"))
 			{
-				p($"desc.SetAttrShapeList (desc, \"{attrName}\", {csAttrName});");
+				p($"c_api.TF_SetAttrShapeList (desc, \"{attrName}\", {csAttrName});");
 				return;
 			}
 
@@ -485,31 +485,30 @@ namespace Sylvester.tf.OpGen
 					p($"c_api.TF_SetAttrInt (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "long[]":
-					p($"c_api.TF_SetAttrIntList (desc, \"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrIntList (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length);");
 					break;
 				case "string":
 					p($"c_api.TF_SetAttrString (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "string[]":
-					p($"c_api.TF_SetAttrIntStringList (desc, \"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrStringList (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "float":
 					p($"c_api.TF_SetAttrFloat (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "float[]":
-					p($"c_api.TF_SetAttrFloatList (desc, \"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrFloatList (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length);");
 					break;
 				case "bool":
 					p($"c_api.TF_SetAttrBool (desc, \"{attrName}\", Convert.ToByte({csAttrName}));");
 					break;
 				case "bool[]":
-					p($"c_api.TF_SetAttrBoolList (desc, \"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrBoolList (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length);");
 					break;
 				case "TF_DataType":
 					p($"c_api.TF_SetAttrType (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "TF_DataType[]":
-					p($"desc.SetAttrType (\"{attrName}\", {csAttrName});");
 					p($"c_api.TF_SetAttrTypeList (desc, \"{attrName}\", {csAttrName});");
 					break;
 				// This should pass the cstatus, but requires the 
@@ -519,7 +518,7 @@ namespace Sylvester.tf.OpGen
 					p($"c_api.TF_SetAttrTensor (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "TF_Tensor[]":
-					p($"c_api.TF_SetTensorList (desc, \"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetTensorList (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length);");
 					break;
 				default:
 					throw new UnknownTypeException(cstype);
@@ -565,7 +564,7 @@ namespace Sylvester.tf.OpGen
 			foreach (var arg in oper.input_arg)
 			{
 				if (IsListArg(arg))
-					p($"c_api.TF_AddInput(desc, {ParamMap(arg.name)});");
+					p($"c_api.TF_AddInputList(desc, {ParamMap(arg.name)}[0], {ParamMap(arg.name)}.Length);");
 				else
 					p($"c_api.TF_AddInput(desc, {ParamMap(arg.name)});");
 			}
