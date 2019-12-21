@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using System.Linq;
@@ -43,6 +44,15 @@ namespace TensorFlow
 	}
 
 
+	public unsafe partial  class c_api
+	{
+		public static void TF_SetAttrString(global::TensorFlow.TF_OperationDescription desc, string attr_name, string attr_value)
+		{
+			ulong length = Convert.ToUInt64(attr_value.Length);
+			var ptr = Marshal.StringToHGlobalUni(attr_value);
+			TF_SetAttrString(desc, attr_name, ptr, length);
+		}
+	}
 	public unsafe partial class TF_Graph
     {
 		public TF_Operation[] Dependencies { get; internal set; }

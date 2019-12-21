@@ -500,7 +500,7 @@ namespace Sylvester.tf.OpGen
 					p($"c_api.TF_SetAttrFloatList (desc, \"{attrName}\", {csAttrName});");
 					break;
 				case "bool":
-					p($"c_api.TF_SetAttrBool (desc, \"{attrName}\", {csAttrName});");
+					p($"c_api.TF_SetAttrBool (desc, \"{attrName}\", Convert.ToByte({csAttrName}));");
 					break;
 				case "bool[]":
 					p($"c_api.TF_SetAttrBoolList (desc, \"{attrName}\", {csAttrName});");
