@@ -32,6 +32,27 @@ namespace TensorFlow
 			}
 		}
 
+		public static string[] TF_FunctionNames(global::TensorFlow.TF_Function[] funcs)
+		{
+			string[] names = new string[funcs.Length];
+			for(int i = 0; i < names.Length; i++)
+			{
+				names[i] = c_api.TF_FunctionName(funcs[i]);
+			}
+			return names;
+		}
+		public static void TF_SetAttrFuncName(TF_OperationDescription desc, string attr_name, string attr_value)
+		{
+			TF_SetAttrFuncName(desc, attr_name, attr_value, Convert.ToUInt64(attr_value.Length));
+		}
+
+		public static void TF_SetAttrFuncNames(TF_OperationDescription desc, string attr_name, string[] attr_values)
+		{
+			for (int i = 0; i < attr_values.Length; i++)
+			{
+				TF_SetAttrFuncName(desc, attr_name, attr_values[i], Convert.ToUInt64(attr_values[i].Length));
+			}
+		}
 		public static void TF_SetAttrTypeList(TF_OperationDescription desc, string attr_name, TF_DataType[] values)
 		{
 			fixed (TF_DataType* ptr = &values[0])

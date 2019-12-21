@@ -42,6 +42,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -74,6 +75,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -118,6 +120,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sum = new TF_Output (op, _idx++);
 			return sum;
@@ -159,6 +162,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -188,6 +192,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var num_accumulated = new TF_Output (op, _idx++);
 			return num_accumulated;
@@ -226,6 +231,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -271,6 +277,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var average = new TF_Output (op, _idx++);
 			return average;
@@ -300,6 +307,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -338,6 +346,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -374,6 +383,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -457,6 +467,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sparse_handles = new TF_Output (op, _idx++);
 			return sparse_handles;
@@ -494,6 +505,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sum = new TF_Output (op, _idx++);
 			return sum;
@@ -565,6 +577,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sparse_handle = new TF_Output (op, _idx++);
 			return sparse_handle;
@@ -601,6 +614,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -639,6 +653,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -685,6 +700,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -728,6 +744,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -771,6 +788,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -820,6 +838,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -902,6 +921,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -972,6 +992,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1026,6 +1047,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1062,6 +1084,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -1100,6 +1123,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1129,6 +1153,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1171,6 +1196,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1206,6 +1232,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var deleter = new TF_Output (op, _idx++);
@@ -1256,6 +1283,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1325,6 +1353,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1387,6 +1416,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1454,6 +1484,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1520,6 +1551,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1609,6 +1641,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1686,6 +1719,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1755,6 +1789,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1846,6 +1881,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -1921,6 +1957,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2001,6 +2038,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2048,6 +2086,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2119,6 +2158,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2188,6 +2228,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2252,6 +2293,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2311,6 +2353,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2390,6 +2433,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2428,6 +2472,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -2482,6 +2527,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2536,6 +2582,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -2583,6 +2630,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -2622,6 +2670,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -2667,6 +2716,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -2702,6 +2752,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -2759,6 +2810,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -2807,6 +2859,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -2845,6 +2898,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -2891,6 +2945,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -2929,6 +2984,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -2965,6 +3021,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -3039,6 +3096,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3086,6 +3144,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -3125,6 +3184,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -3166,6 +3226,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -3241,6 +3302,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var spectrogram = new TF_Output (op, _idx++);
 			return spectrogram;
@@ -3300,6 +3362,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -3359,6 +3422,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -3412,6 +3476,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -3470,6 +3535,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3526,6 +3592,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3586,6 +3653,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3645,6 +3713,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -3719,6 +3788,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -3766,6 +3836,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -3796,6 +3867,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -3845,6 +3917,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -3875,6 +3948,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -3953,6 +4027,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			var indices = new TF_Output (op, _idx++);
@@ -4073,6 +4148,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "batched_tensors", status);
@@ -4108,6 +4184,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4139,6 +4216,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4179,6 +4257,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -4229,6 +4308,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -4257,6 +4337,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4285,6 +4366,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4313,9 +4395,150 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		///   Batches all the inputs tensors to the computation done by the function.
+		/// </summary>
+		/// <param name="in_tensors">
+		///   The tensors to be batched.
+		/// </param>
+		/// <param name="captured_tensors">
+		///   The tensors which are captured in the function, and don't need
+		///   to be batched.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'BatchFunction'.
+		/// </param>
+		/// <param name="max_enqueued_batches">
+		///   Optional argument
+		///   Maximum number of batches enqueued. Default: 10.
+		/// </param>
+		/// <param name="allowed_batch_sizes">
+		///   Optional argument
+		///   Optional list of allowed batch sizes. If left empty, does
+		///   nothing. Otherwise, supplies a list of batch sizes, causing the op to pad
+		///   batches up to one of those sizes. The entries must increase monotonically, and
+		///   the final entry must equal max_batch_size.
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		///   Controls the scope of sharing of this batch.
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		///   Concurrently running instances of batch in the same device with the
+		///   same container and shared_name will batch their elements together. If left
+		///   empty, the op name will be used as the shared name.
+		/// </param>
+		/// <param name="batching_queue">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		/// </param>
+		/// <param name="num_batch_threads">
+		///   Number of scheduling threads for processing batches of work.
+		///   Determines the number of batches processed in parallel.
+		/// </param>
+		/// <param name="max_batch_size">
+		///   Batch sizes will never be bigger than this.
+		/// </param>
+		/// <param name="batch_timeout_micros">
+		///   Maximum number of microseconds to wait before outputting
+		///   an incomplete batch.
+		/// </param>
+		/// <param name="Tout">
+		///   the types of the output tensors.
+		/// </param>
+		/// <returns>
+		///   The output tensors.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   So, for example, in the following code
+		///   
+		///    <code>
+		///   
+		///   # This input will be captured.
+		///   y = tf.placeholder_with_default(1.0, shape=[])
+		///   
+		///   @tf.Defun(tf.float32)
+		///   def computation(a):
+		///   return tf.matmul(a, a) + y
+		///   
+		///   b = gen_batch_ops.batch_function(
+		///   f=computation
+		///   in_tensors=[a],
+		///   captured_tensors=computation.captured_inputs,
+		///   Tout=[o.type for o in computation.definition.signature.output_arg],
+		///   num_batch_threads=1,
+		///   max_batch_size=10,
+		///   batch_timeout_micros=100000,  # 100ms
+		///   allowed_batch_sizes=[3, 10],
+		///   batching_queue="")
+		///   
+		///   If more than one session.run call is simultaneously trying to compute <c>b</c>
+		///   the values of <c>a</c> will be gathered, non-deterministically concatenated
+		///   along the first axis, and only one thread will run the computation.
+		///   
+		///   Assumes that all arguments of the function are Tensors which will be batched
+		///   along their first dimension.
+		///   
+		///   Arguments that are captured, are not batched. The session.run call which does
+		///   the concatenation, will use the values of the captured tensors available to it.
+		///   Therefore, typical uses of captured tensors should involve values which remain
+		///   unchanged across session.run calls. Inference is a good example of this.
+		///   
+		///   SparseTensor is not supported. The return value of the decorated function
+		///   must be a Tensor or a list/tuple of Tensors.
+		/// </remarks>
+		public TF_Output[] BatchFunction (TF_Output[] in_tensors, TF_Output[] captured_tensors, TF_Function f, long num_batch_threads, long max_batch_size, long batch_timeout_micros, TF_DataType[] Tout, long? max_enqueued_batches = null, long[] allowed_batch_sizes = null, string container = null, string shared_name = null, string batching_queue = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "BatchFunction", MakeName ("BatchFunction", operName));
+			c_api.TF_AddInputList(desc, in_tensors[0], in_tensors.Length);
+			c_api.TF_AddInputList(desc, captured_tensors[0], captured_tensors.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrInt (desc, "num_batch_threads", num_batch_threads);
+			c_api.TF_SetAttrInt (desc, "max_batch_size", max_batch_size);
+			c_api.TF_SetAttrInt (desc, "batch_timeout_micros", batch_timeout_micros);
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			if (max_enqueued_batches.HasValue)
+				c_api.TF_SetAttrInt (desc, "max_enqueued_batches", max_enqueued_batches.Value);
+			
+			if (allowed_batch_sizes != null)
+				c_api.TF_SetAttrIntList (desc, "allowed_batch_sizes", ref allowed_batch_sizes[0], allowed_batch_sizes.Length);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			if (batching_queue != null)
+				c_api.TF_SetAttrString (desc, "batching_queue", batching_queue);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "out_tensors", status);
+			var out_tensors = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				out_tensors [i] = new TF_Output (op, _idx++);
+			
+			return out_tensors;
 		}
 
 		/// <summary>
@@ -4341,6 +4564,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4369,6 +4593,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4397,6 +4622,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4466,6 +4692,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4540,6 +4767,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4574,6 +4802,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var band = new TF_Output (op, _idx++);
 			return band;
@@ -4602,6 +4831,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4630,6 +4860,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4658,6 +4889,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -4692,6 +4924,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4723,6 +4956,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4760,6 +4994,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4800,6 +5035,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4843,6 +5079,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -4908,6 +5145,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var result = new TF_Output (op, _idx++);
 			return result;
@@ -4978,6 +5216,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var dx = new TF_Output (op, _idx++);
 			var dm = new TF_Output (op, _idx++);
@@ -5010,6 +5249,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5047,6 +5287,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var e = new TF_Output (op, _idx++);
 			var v = new TF_Output (op, _idx++);
@@ -5092,6 +5333,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var s = new TF_Output (op, _idx++);
 			var u = new TF_Output (op, _idx++);
@@ -5214,6 +5456,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5369,6 +5612,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5404,6 +5648,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -5439,6 +5684,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -5489,6 +5735,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -5541,6 +5788,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5590,6 +5838,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5631,6 +5880,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5682,6 +5932,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var bins = new TF_Output (op, _idx++);
 			return bins;
@@ -5765,6 +6016,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -5819,6 +6071,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -5873,6 +6126,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -5927,6 +6181,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -6038,6 +6293,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var i = new TF_Output (op, _idx++);
 			var cs = new TF_Output (op, _idx++);
@@ -6159,6 +6415,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var x_grad = new TF_Output (op, _idx++);
 			var cs_prev_grad = new TF_Output (op, _idx++);
@@ -6221,6 +6478,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var stats_summary = new TF_Output (op, _idx++);
 			return stats_summary;
@@ -6261,6 +6519,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "buckets", status);
@@ -6345,6 +6604,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var node_ids = new TF_Output (op, _idx++);
 			var gains = new TF_Output (op, _idx++);
@@ -6421,6 +6681,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "node_ids_list", status);
@@ -6493,6 +6754,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var continue_centering = new TF_Output (op, _idx++);
 			return continue_centering;
@@ -6531,6 +6793,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -6574,6 +6837,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -6613,6 +6877,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -6649,6 +6914,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -6694,6 +6960,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var examples_debug_outputs_serialized = new TF_Output (op, _idx++);
 			return examples_debug_outputs_serialized;
@@ -6732,6 +6999,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "summaries", status);
@@ -6774,6 +7042,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var stamp_token = new TF_Output (op, _idx++);
 			var num_trees = new TF_Output (op, _idx++);
@@ -6822,6 +7091,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "summaries", status);
@@ -6881,6 +7151,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var stats_summary = new TF_Output (op, _idx++);
 			return stats_summary;
@@ -6925,6 +7196,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var logits = new TF_Output (op, _idx++);
 			return logits;
@@ -6964,6 +7236,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -6999,6 +7272,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -7046,6 +7320,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -7083,6 +7358,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "bucket_boundaries", status);
@@ -7126,6 +7402,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -7159,6 +7436,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var stamp_token = new TF_Output (op, _idx++);
 			var tree_ensemble_serialized = new TF_Output (op, _idx++);
@@ -7238,6 +7516,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var stats_summary_indices = new TF_Output (op, _idx++);
 			var stats_summary_values = new TF_Output (op, _idx++);
@@ -7328,6 +7607,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var node_ids = new TF_Output (op, _idx++);
 			var gains = new TF_Output (op, _idx++);
@@ -7393,6 +7673,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var partial_logits = new TF_Output (op, _idx++);
 			var tree_ids = new TF_Output (op, _idx++);
@@ -7472,6 +7753,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -7506,6 +7788,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var r0 = new TF_Output (op, _idx++);
 			return r0;
@@ -7544,6 +7827,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var r0 = new TF_Output (op, _idx++);
 			var r1 = new TF_Output (op, _idx++);
@@ -7601,6 +7885,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7652,6 +7937,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7690,6 +7976,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -7736,6 +8023,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -7776,9 +8064,84 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
+		}
+
+		/// <summary>
+		///   An n-way switch statement which calls a single branch function.
+		/// </summary>
+		/// <param name="branch_index">
+		///   The branch selector, an int32 Tensor.
+		/// </param>
+		/// <param name="input">
+		///   A list of input tensors passed to the branch function.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'Case'.
+		/// </param>
+		/// <param name="output_shapes">
+		///   Optional argument
+		/// </param>
+		/// <param name="Tout">
+		///   A list of output types.
+		/// </param>
+		/// <param name="branches">
+		///   A list of functions each of which takes 'inputs' and returns a list of
+		///   tensors, whose types are the same as what every other branch returns.
+		/// </param>
+		/// <returns>
+		///   A list of return values.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   An n-way switch statement, implementing the following:
+		///    <code>
+		///   switch (branch_index) {
+		///   case 0:
+		///   output = branches[0](input);
+		///   break;
+		///   case 1:
+		///   output = branches[1](input);
+		///   break;
+		///   ...
+		///   case [[nbranches-1]]:
+		///   default:
+		///   output = branches[nbranches-1](input);
+		///   break;
+		///   }
+		///    </code>
+		/// </remarks>
+		public TF_Output[] Case (TF_Output branch_index, TF_Output[] input, TF_DataType[] Tout, TF_Function[] branches, long[][] output_shapes = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "Case", MakeName ("Case", operName));
+			c_api.TF_AddInput(desc, branch_index);
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncNames (desc, "branches", c_api.TF_FunctionNames(branches));
+			if (output_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -7814,6 +8177,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -7843,6 +8207,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -7880,6 +8245,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7926,6 +8292,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -7969,9 +8336,63 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="ratio_numerator">
+		/// </param>
+		/// <param name="ratio_denominator">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ChooseFastestBranchDataset'.
+		/// </param>
+		/// <param name="num_elements_per_branch">
+		/// </param>
+		/// <param name="branches">
+		/// </param>
+		/// <param name="other_arguments_lengths">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output ChooseFastestBranchDataset (TF_Output input_dataset, TF_Output ratio_numerator, TF_Output ratio_denominator, TF_Output[] other_arguments, long num_elements_per_branch, TF_Function[] branches, long[] other_arguments_lengths, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ChooseFastestBranchDataset", MakeName ("ChooseFastestBranchDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInput(desc, ratio_numerator);
+			c_api.TF_AddInput(desc, ratio_denominator);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_elements_per_branch", num_elements_per_branch);
+			c_api.TF_SetAttrFuncNames (desc, "branches", c_api.TF_FunctionNames(branches));
+			c_api.TF_SetAttrIntList (desc, "other_arguments_lengths", ref other_arguments_lengths[0], other_arguments_lengths.Length);
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -8006,6 +8427,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -8053,6 +8475,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8081,6 +8504,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -8120,6 +8544,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -8161,6 +8586,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -8202,6 +8628,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -8245,6 +8672,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8298,6 +8726,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -8400,6 +8829,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var nmsed_boxes = new TF_Output (op, _idx++);
 			var nmsed_scores = new TF_Output (op, _idx++);
@@ -8463,6 +8893,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8517,6 +8948,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8558,6 +8990,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -8624,6 +9057,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var ids = new TF_Output (op, _idx++);
@@ -8665,6 +9099,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8703,6 +9138,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -8751,6 +9187,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "offset", status);
@@ -8795,6 +9232,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -8860,6 +9298,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -8910,6 +9349,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var topology = new TF_Output (op, _idx++);
 			return topology;
@@ -8941,6 +9381,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -8983,6 +9424,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9020,6 +9462,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -9053,6 +9496,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9092,6 +9536,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -9119,6 +9564,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -9226,6 +9672,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9318,6 +9765,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9409,6 +9857,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9482,6 +9931,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9537,6 +9987,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9610,6 +10061,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9665,6 +10117,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9738,6 +10191,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9797,6 +10251,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9854,6 +10309,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -9894,6 +10350,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -9933,6 +10390,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -9970,6 +10428,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -10010,6 +10469,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -10048,6 +10508,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -10136,6 +10597,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var crops = new TF_Output (op, _idx++);
 			return crops;
@@ -10198,6 +10660,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -10264,6 +10727,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -10304,6 +10768,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -10349,6 +10814,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -10404,6 +10870,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -10472,6 +10939,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "decoded_indices", status);
@@ -10549,6 +11017,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var decoded_indices = new TF_Output (op, _idx++);
 			var decoded_values = new TF_Output (op, _idx++);
@@ -10630,6 +11099,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var loss = new TF_Output (op, _idx++);
 			var gradient = new TF_Output (op, _idx++);
@@ -10748,6 +11218,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_h = new TF_Output (op, _idx++);
@@ -10892,6 +11363,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var input_backprop = new TF_Output (op, _idx++);
 			var input_h_backprop = new TF_Output (op, _idx++);
@@ -11042,6 +11514,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var input_backprop = new TF_Output (op, _idx++);
 			var input_h_backprop = new TF_Output (op, _idx++);
@@ -11212,6 +11685,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var input_backprop = new TF_Output (op, _idx++);
 			var input_h_backprop = new TF_Output (op, _idx++);
@@ -11323,6 +11797,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			return parameters;
@@ -11438,6 +11913,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			return parameters;
@@ -11544,6 +12020,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var params_size = new TF_Output (op, _idx++);
 			return params_size;
@@ -11655,6 +12132,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "weights", status);
@@ -11786,6 +12264,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "weights", status);
@@ -11917,6 +12396,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_h = new TF_Output (op, _idx++);
@@ -12061,6 +12541,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_h = new TF_Output (op, _idx++);
@@ -12146,6 +12627,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12227,6 +12709,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12296,6 +12779,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12345,6 +12829,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -12393,6 +12878,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -12428,6 +12914,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var cardinality = new TF_Output (op, _idx++);
 			return cardinality;
@@ -12462,6 +12949,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -12496,6 +12984,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var graph = new TF_Output (op, _idx++);
 			return graph;
@@ -12533,6 +13022,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -12577,6 +13067,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -12609,6 +13100,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12643,6 +13135,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12710,6 +13203,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12777,6 +13271,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -12895,6 +13390,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13000,6 +13496,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -13035,6 +13532,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13082,6 +13580,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -13130,6 +13629,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13202,6 +13702,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -13248,6 +13749,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -13349,6 +13851,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -13390,6 +13893,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var binary_examples = new TF_Output (op, _idx++);
 			return binary_examples;
@@ -13444,6 +13948,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13505,6 +14010,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
@@ -13626,6 +14132,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			var sizes = new TF_Output (op, _idx++);
@@ -13677,6 +14184,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -13740,6 +14248,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var audio = new TF_Output (op, _idx++);
 			var sample_rate = new TF_Output (op, _idx++);
@@ -13773,6 +14282,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -13807,6 +14317,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -13836,6 +14347,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -13872,6 +14384,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -13901,6 +14414,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -13929,6 +14443,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -13987,6 +14502,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var result_indices = new TF_Output (op, _idx++);
 			var result_values = new TF_Output (op, _idx++);
@@ -14036,6 +14552,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -14115,6 +14632,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var result_indices = new TF_Output (op, _idx++);
 			var result_values = new TF_Output (op, _idx++);
@@ -14247,6 +14765,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14330,6 +14849,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14409,6 +14929,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14488,6 +15009,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14606,6 +15128,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14641,6 +15164,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -14721,6 +15245,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
@@ -14805,6 +15330,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
@@ -14849,6 +15375,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -14891,6 +15418,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -14940,6 +15468,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -14991,6 +15520,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -15023,6 +15553,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -15097,6 +15628,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15150,6 +15682,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var filter_backprop = new TF_Output (op, _idx++);
 			return filter_backprop;
@@ -15203,6 +15736,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var in_backprop = new TF_Output (op, _idx++);
 			return in_backprop;
@@ -15245,6 +15779,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -15281,6 +15816,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -15318,6 +15854,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -15368,6 +15905,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15422,6 +15960,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15498,6 +16037,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -15599,6 +16139,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var merged = new TF_Output (op, _idx++);
 			return merged;
@@ -15638,6 +16179,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -15745,6 +16287,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15858,6 +16401,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -15891,6 +16435,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -15927,6 +16472,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -15970,6 +16516,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -16013,6 +16560,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -16059,6 +16607,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -16172,6 +16721,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -16212,6 +16762,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -16263,6 +16814,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -16354,6 +16906,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var bytes = new TF_Output (op, _idx++);
 			return bytes;
@@ -16398,6 +16951,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -16444,6 +16998,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -16523,6 +17078,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -16615,6 +17171,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -16652,6 +17209,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -16708,6 +17266,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -16760,6 +17319,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -16789,6 +17349,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -16818,6 +17379,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -16867,6 +17429,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -16901,6 +17464,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -16958,6 +17522,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -17027,6 +17592,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -17064,6 +17630,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17117,6 +17684,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17155,6 +17723,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17192,6 +17761,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17247,6 +17817,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17282,6 +17853,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var cardinality = new TF_Output (op, _idx++);
 			return cardinality;
@@ -17321,6 +17893,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -17366,6 +17939,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17408,6 +17982,145 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that computes a group-by on <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		///   A variant tensor representing the input dataset.
+		/// </param>
+		/// <param name="key_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>key_func</c>.
+		/// </param>
+		/// <param name="init_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>init_func</c>.
+		/// </param>
+		/// <param name="reduce_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>reduce_func</c>.
+		/// </param>
+		/// <param name="finalize_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>finalize_func</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ExperimentalGroupByReducerDataset'.
+		/// </param>
+		/// <param name="key_func">
+		///   A function mapping an element of <c>input_dataset</c>, concatenated
+		///   with <c>key_func_other_arguments</c> to a scalar value of type DT_INT64.
+		/// </param>
+		/// <param name="init_func">
+		///   A function mapping a key of type DT_INT64, concatenated with
+		///   <c>init_func_other_arguments</c> to the initial reducer state.
+		/// </param>
+		/// <param name="reduce_func">
+		///   A function mapping the current reducer state and an element of <c>input_dataset</c>,
+		///   concatenated with <c>reduce_func_other_arguments</c> to a new reducer state.
+		/// </param>
+		/// <param name="finalize_func">
+		///   A function mapping the final reducer state to an output element.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Creates a dataset that computes a group-by on <c>input_dataset</c>.
+		/// </remarks>
+		public TF_Output ExperimentalGroupByReducerDataset (TF_Output input_dataset, TF_Output[] key_func_other_arguments, TF_Output[] init_func_other_arguments, TF_Output[] reduce_func_other_arguments, TF_Output[] finalize_func_other_arguments, TF_Function key_func, TF_Function init_func, TF_Function reduce_func, TF_Function finalize_func, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ExperimentalGroupByReducerDataset", MakeName ("ExperimentalGroupByReducerDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, key_func_other_arguments[0], key_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, init_func_other_arguments[0], init_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, reduce_func_other_arguments[0], reduce_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, finalize_func_other_arguments[0], finalize_func_other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "key_func", c_api.TF_FunctionName(key_func));
+			c_api.TF_SetAttrFuncName (desc, "init_func", c_api.TF_FunctionName(init_func));
+			c_api.TF_SetAttrFuncName (desc, "reduce_func", c_api.TF_FunctionName(reduce_func));
+			c_api.TF_SetAttrFuncName (desc, "finalize_func", c_api.TF_FunctionName(finalize_func));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that computes a windowed group-by on <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="key_func_other_arguments">
+		/// </param>
+		/// <param name="reduce_func_other_arguments">
+		/// </param>
+		/// <param name="window_size_func_other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ExperimentalGroupByWindowDataset'.
+		/// </param>
+		/// <param name="key_func">
+		///   A function mapping an element of <c>input_dataset</c>, concatenated
+		///   with <c>key_func_other_arguments</c> to a scalar value of type DT_INT64.
+		/// </param>
+		/// <param name="reduce_func">
+		/// </param>
+		/// <param name="window_size_func">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   // TODO(mrry): Support non-int64 keys.
+		/// </remarks>
+		public TF_Output ExperimentalGroupByWindowDataset (TF_Output input_dataset, TF_Output[] key_func_other_arguments, TF_Output[] reduce_func_other_arguments, TF_Output[] window_size_func_other_arguments, TF_Function key_func, TF_Function reduce_func, TF_Function window_size_func, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ExperimentalGroupByWindowDataset", MakeName ("ExperimentalGroupByWindowDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, key_func_other_arguments[0], key_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, reduce_func_other_arguments[0], reduce_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, window_size_func_other_arguments[0], window_size_func_other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "key_func", c_api.TF_FunctionName(key_func));
+			c_api.TF_SetAttrFuncName (desc, "reduce_func", c_api.TF_FunctionName(reduce_func));
+			c_api.TF_SetAttrFuncName (desc, "window_size_func", c_api.TF_FunctionName(window_size_func));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17443,6 +18156,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17472,6 +18186,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var device = new TF_Output (op, _idx++);
 			return device;
@@ -17510,6 +18225,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17544,6 +18260,137 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that fuses mapping with batching.
+		/// </summary>
+		/// <param name="input_dataset">
+		///   A variant tensor representing the input dataset.
+		/// </param>
+		/// <param name="other_arguments">
+		///   A list of tensors, typically values that were captured when building a closure
+		///   for <c>f</c>.
+		/// </param>
+		/// <param name="batch_size">
+		///   A scalar representing the number of elements to accumulate in a
+		///   batch. It determines the number of concurrent invocations of <c>f</c> that process
+		///   elements from <c>input_dataset</c> in parallel.
+		/// </param>
+		/// <param name="num_parallel_calls">
+		///   A scalar representing the maximum number of parallel invocations of the <c>map_fn</c>
+		///   function. Applying the <c>map_fn</c> on consecutive input elements in parallel has
+		///   the potential to improve input pipeline throughput.
+		/// </param>
+		/// <param name="drop_remainder">
+		///   A scalar representing whether the last batch should be dropped in case its size
+		///   is smaller than desired.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ExperimentalMapAndBatchDataset'.
+		/// </param>
+		/// <param name="preserve_cardinality">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		///   A function to apply to the outputs of <c>input_dataset</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c> and then
+		///   batches <c>batch_size</c> of them.
+		///   
+		///   Unlike a "MapDataset", which applies <c>f</c> sequentially, this dataset invokes up
+		///   to <c>batch_size * num_parallel_batches</c> copies of <c>f</c> in parallel.
+		/// </remarks>
+		public TF_Output ExperimentalMapAndBatchDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Output batch_size, TF_Output num_parallel_calls, TF_Output drop_remainder, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? preserve_cardinality = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ExperimentalMapAndBatchDataset", MakeName ("ExperimentalMapAndBatchDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			c_api.TF_AddInput(desc, batch_size);
+			c_api.TF_AddInput(desc, num_parallel_calls);
+			c_api.TF_AddInput(desc, drop_remainder);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (preserve_cardinality.HasValue)
+				c_api.TF_SetAttrBool (desc, "preserve_cardinality", Convert.ToByte(preserve_cardinality.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ExperimentalMapDataset'.
+		/// </param>
+		/// <param name="use_inter_op_parallelism">
+		///   Optional argument
+		/// </param>
+		/// <param name="preserve_cardinality">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output ExperimentalMapDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? use_inter_op_parallelism = null, bool? preserve_cardinality = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ExperimentalMapDataset", MakeName ("ExperimentalMapDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (use_inter_op_parallelism.HasValue)
+				c_api.TF_SetAttrBool (desc, "use_inter_op_parallelism", Convert.ToByte(use_inter_op_parallelism.Value));
+			
+			if (preserve_cardinality.HasValue)
+				c_api.TF_SetAttrBool (desc, "preserve_cardinality", Convert.ToByte(preserve_cardinality.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17572,6 +18419,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17611,6 +18459,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17645,6 +18494,76 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="cycle_length">
+		/// </param>
+		/// <param name="block_length">
+		/// </param>
+		/// <param name="sloppy">
+		/// </param>
+		/// <param name="buffer_output_elements">
+		/// </param>
+		/// <param name="prefetch_input_elements">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ExperimentalParallelInterleaveDataset'.
+		/// </param>
+		/// <param name="f">
+		///   A function mapping elements of <c>input_dataset</c>, concatenated with
+		///   <c>other_arguments</c>, to a Dataset variant that contains elements matching
+		///   <c>output_types</c> and <c>output_shapes</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The resulting dataset is similar to the <c>InterleaveDataset</c>, with the exception
+		///   that if retrieving the next value from a dataset would cause the requester to
+		///   block, it will skip that input dataset. This dataset is especially useful
+		///   when loading data from a variable-latency datastores (e.g. HDFS, GCS), as it
+		///   allows the training step to proceed so long as some data is available.
+		///   
+		///   !! WARNING !! This dataset is not deterministic!
+		/// </remarks>
+		public TF_Output ExperimentalParallelInterleaveDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Output cycle_length, TF_Output block_length, TF_Output sloppy, TF_Output buffer_output_elements, TF_Output prefetch_input_elements, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ExperimentalParallelInterleaveDataset", MakeName ("ExperimentalParallelInterleaveDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			c_api.TF_AddInput(desc, cycle_length);
+			c_api.TF_AddInput(desc, block_length);
+			c_api.TF_AddInput(desc, sloppy);
+			c_api.TF_AddInput(desc, buffer_output_elements);
+			c_api.TF_AddInput(desc, prefetch_input_elements);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17724,6 +18643,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17763,6 +18683,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17805,6 +18726,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17857,6 +18779,58 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset successively reduces <c>f</c> over the elements of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="initial_state">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ExperimentalScanDataset'.
+		/// </param>
+		/// <param name="preserve_cardinality">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output ExperimentalScanDataset (TF_Output input_dataset, TF_Output[] initial_state, TF_Output[] other_arguments, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? preserve_cardinality = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ExperimentalScanDataset", MakeName ("ExperimentalScanDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, initial_state[0], initial_state.Length);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (preserve_cardinality.HasValue)
+				c_api.TF_SetAttrBool (desc, "preserve_cardinality", Convert.ToByte(preserve_cardinality.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17900,6 +18874,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17937,6 +18912,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -17987,6 +18963,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18031,6 +19008,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18069,6 +19047,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18098,9 +19077,62 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
+		}
+
+		/// <summary>
+		///   Creates a dataset that stops iteration when predicate<c> is false.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>predicate</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ExperimentalTakeWhileDataset'.
+		/// </param>
+		/// <param name="predicate">
+		///   A function returning a scalar boolean.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The <c>predicate</c> function must return a scalar boolean and accept the
+		///   following arguments:
+		///   
+		///   * One tensor for each component of an element of <c>input_dataset</c>.
+		///   * One tensor for each value in <c>other_arguments</c>.
+		/// </remarks>
+		public TF_Output ExperimentalTakeWhileDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Function predicate, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ExperimentalTakeWhileDataset", MakeName ("ExperimentalTakeWhileDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "predicate", c_api.TF_FunctionName(predicate));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -18137,6 +19169,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18195,6 +19228,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18230,6 +19264,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18265,6 +19300,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -18309,6 +19345,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -18409,6 +19446,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var glimpse = new TF_Output (op, _idx++);
 			return glimpse;
@@ -18465,6 +19503,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var patches = new TF_Output (op, _idx++);
 			return patches;
@@ -18507,6 +19546,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var image_shape = new TF_Output (op, _idx++);
 			return image_shape;
@@ -18562,6 +19602,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var patches = new TF_Output (op, _idx++);
 			return patches;
@@ -18588,6 +19629,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var fact = new TF_Output (op, _idx++);
 			return fact;
@@ -18627,6 +19669,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -18698,6 +19741,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var outputs = new TF_Output (op, _idx++);
 			return outputs;
@@ -18758,6 +19802,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -18826,6 +19871,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var outputs = new TF_Output (op, _idx++);
 			return outputs;
@@ -18888,6 +19934,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops_wrt_input = new TF_Output (op, _idx++);
 			var backprop_wrt_min = new TF_Output (op, _idx++);
@@ -18959,6 +20006,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var outputs = new TF_Output (op, _idx++);
 			return outputs;
@@ -19024,6 +20072,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops_wrt_input = new TF_Output (op, _idx++);
 			var backprop_wrt_min = new TF_Output (op, _idx++);
@@ -19055,6 +20104,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -19095,6 +20145,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19135,6 +20186,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19175,6 +20227,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19240,6 +20293,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -19305,6 +20359,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -19364,6 +20419,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -19399,9 +20455,62 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		///   Creates a dataset containing elements of <c>input_dataset</c> matching <c>predicate</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>predicate</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'FilterDataset'.
+		/// </param>
+		/// <param name="predicate">
+		///   A function returning a scalar boolean.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The <c>predicate</c> function must return a scalar boolean and accept the
+		///   following arguments:
+		///   
+		///   * One tensor for each component of an element of <c>input_dataset</c>.
+		///   * One tensor for each value in <c>other_arguments</c>.
+		/// </remarks>
+		public TF_Output FilterDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Function predicate, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "FilterDataset", MakeName ("FilterDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "predicate", c_api.TF_FunctionName(predicate));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -19469,6 +20578,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var fingerprint = new TF_Output (op, _idx++);
 			return fingerprint;
@@ -19518,6 +20628,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -19561,6 +20672,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -19630,6 +20742,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -19707,6 +20820,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -19857,11 +20971,62 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
 			var sampled_expected_count = new TF_Output (op, _idx++);
 			return (sampled_candidates, true_expected_count, sampled_expected_count);
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'FlatMapDataset'.
+		/// </param>
+		/// <param name="f">
+		///   A function mapping elements of <c>input_dataset</c>, concatenated with
+		///   <c>other_arguments</c>, to a Dataset variant that contains elements matching
+		///   <c>output_types</c> and <c>output_shapes</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Unlike MapDataset, the <c>f</c> in FlatMapDataset is expected to return a
+		///   Dataset variant, and FlatMapDataset will flatten successive results
+		///   into a single Dataset.
+		/// </remarks>
+		public TF_Output FlatMapDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "FlatMapDataset", MakeName ("FlatMapDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -19888,6 +21053,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -19924,6 +21090,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -19963,6 +21130,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -19991,7 +21159,66 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
+		}
+
+		/// <summary>
+		///    <code>
+		///   output = input;
+		///   for i in range(start, limit, delta)
+		///   output = body(i, output);
+		///    </code>
+		/// </summary>
+		/// <param name="start">
+		///   The lower bound. An int32
+		/// </param>
+		/// <param name="limit">
+		///   The upper bound. An int32
+		/// </param>
+		/// <param name="delta">
+		///   The increment. An int32
+		/// </param>
+		/// <param name="input">
+		///   A list of input tensors whose types are T.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'For'.
+		/// </param>
+		/// <param name="body">
+		///   A function that takes a list of tensors (int32, T) and returns another
+		///   list of tensors (T).
+		/// </param>
+		/// <returns>
+		///   A list of output tensors whose types are T.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] For (TF_Output start, TF_Output limit, TF_Output delta, TF_Output[] input, TF_Function body, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "For", MakeName ("For", operName));
+			c_api.TF_AddInput(desc, start);
+			c_api.TF_AddInput(desc, limit);
+			c_api.TF_AddInput(desc, delta);
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "body", c_api.TF_FunctionName(body));
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -20088,6 +21315,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var row_pooling_sequence = new TF_Output (op, _idx++);
@@ -20158,6 +21386,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20281,6 +21510,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var row_pooling_sequence = new TF_Output (op, _idx++);
@@ -20348,6 +21578,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -20432,6 +21663,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var batch_mean = new TF_Output (op, _idx++);
@@ -20523,6 +21755,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var x_backprop = new TF_Output (op, _idx++);
 			var scale_backprop = new TF_Output (op, _idx++);
@@ -20614,6 +21847,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var x_backprop = new TF_Output (op, _idx++);
 			var scale_backprop = new TF_Output (op, _idx++);
@@ -20711,6 +21945,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var x_backprop = new TF_Output (op, _idx++);
 			var scale_backprop = new TF_Output (op, _idx++);
@@ -20799,6 +22034,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var batch_mean = new TF_Output (op, _idx++);
@@ -20889,6 +22125,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var batch_mean = new TF_Output (op, _idx++);
@@ -20959,6 +22196,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21036,6 +22274,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21101,6 +22340,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21243,6 +22483,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21320,6 +22561,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21405,10 +22647,62 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var remapping = new TF_Output (op, _idx++);
 			var num_present = new TF_Output (op, _idx++);
 			return (remapping, num_present);
+		}
+
+		/// <summary>
+		///   Creates a dataset that invokes a function to generate elements.
+		/// </summary>
+		/// <param name="init_func_other_args">
+		/// </param>
+		/// <param name="next_func_other_args">
+		/// </param>
+		/// <param name="finalize_func_other_args">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'GeneratorDataset'.
+		/// </param>
+		/// <param name="init_func">
+		/// </param>
+		/// <param name="next_func">
+		/// </param>
+		/// <param name="finalize_func">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output GeneratorDataset (TF_Output[] init_func_other_args, TF_Output[] next_func_other_args, TF_Output[] finalize_func_other_args, TF_Function init_func, TF_Function next_func, TF_Function finalize_func, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "GeneratorDataset", MakeName ("GeneratorDataset", operName));
+			c_api.TF_AddInputList(desc, init_func_other_args[0], init_func_other_args.Length);
+			c_api.TF_AddInputList(desc, next_func_other_args[0], next_func_other_args.Length);
+			c_api.TF_AddInputList(desc, finalize_func_other_args[0], finalize_func_other_args.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "init_func", c_api.TF_FunctionName(init_func));
+			c_api.TF_SetAttrFuncName (desc, "next_func", c_api.TF_FunctionName(next_func));
+			c_api.TF_SetAttrFuncName (desc, "finalize_func", c_api.TF_FunctionName(finalize_func));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -21438,6 +22732,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -21470,6 +22765,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -21505,6 +22801,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -21541,6 +22838,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -21577,9 +22875,148 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
+		}
+
+		/// <summary>
+		///   Creates a dataset that computes a group-by on <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		///   A variant tensor representing the input dataset.
+		/// </param>
+		/// <param name="key_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>key_func</c>.
+		/// </param>
+		/// <param name="init_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>init_func</c>.
+		/// </param>
+		/// <param name="reduce_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>reduce_func</c>.
+		/// </param>
+		/// <param name="finalize_func_other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>finalize_func</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'GroupByReducerDataset'.
+		/// </param>
+		/// <param name="key_func">
+		///   A function mapping an element of <c>input_dataset</c>, concatenated
+		///   with <c>key_func_other_arguments</c> to a scalar value of type DT_INT64.
+		/// </param>
+		/// <param name="init_func">
+		///   A function mapping a key of type DT_INT64, concatenated with
+		///   <c>init_func_other_arguments</c> to the initial reducer state.
+		/// </param>
+		/// <param name="reduce_func">
+		///   A function mapping the current reducer state and an element of <c>input_dataset</c>,
+		///   concatenated with <c>reduce_func_other_arguments</c> to a new reducer state.
+		/// </param>
+		/// <param name="finalize_func">
+		///   A function mapping the final reducer state to an output element.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Creates a dataset that computes a group-by on <c>input_dataset</c>.
+		/// </remarks>
+		public TF_Output GroupByReducerDataset (TF_Output input_dataset, TF_Output[] key_func_other_arguments, TF_Output[] init_func_other_arguments, TF_Output[] reduce_func_other_arguments, TF_Output[] finalize_func_other_arguments, TF_Function key_func, TF_Function init_func, TF_Function reduce_func, TF_Function finalize_func, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "GroupByReducerDataset", MakeName ("GroupByReducerDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, key_func_other_arguments[0], key_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, init_func_other_arguments[0], init_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, reduce_func_other_arguments[0], reduce_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, finalize_func_other_arguments[0], finalize_func_other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "key_func", c_api.TF_FunctionName(key_func));
+			c_api.TF_SetAttrFuncName (desc, "init_func", c_api.TF_FunctionName(init_func));
+			c_api.TF_SetAttrFuncName (desc, "reduce_func", c_api.TF_FunctionName(reduce_func));
+			c_api.TF_SetAttrFuncName (desc, "finalize_func", c_api.TF_FunctionName(finalize_func));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that computes a windowed group-by on <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="key_func_other_arguments">
+		/// </param>
+		/// <param name="reduce_func_other_arguments">
+		/// </param>
+		/// <param name="window_size_func_other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'GroupByWindowDataset'.
+		/// </param>
+		/// <param name="key_func">
+		///   A function mapping an element of <c>input_dataset</c>, concatenated
+		///   with <c>key_func_other_arguments</c> to a scalar value of type DT_INT64.
+		/// </param>
+		/// <param name="reduce_func">
+		/// </param>
+		/// <param name="window_size_func">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   // TODO(mrry): Support non-int64 keys.
+		/// </remarks>
+		public TF_Output GroupByWindowDataset (TF_Output input_dataset, TF_Output[] key_func_other_arguments, TF_Output[] reduce_func_other_arguments, TF_Output[] window_size_func_other_arguments, TF_Function key_func, TF_Function reduce_func, TF_Function window_size_func, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "GroupByWindowDataset", MakeName ("GroupByWindowDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, key_func_other_arguments[0], key_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, reduce_func_other_arguments[0], reduce_func_other_arguments.Length);
+			c_api.TF_AddInputList(desc, window_size_func_other_arguments[0], window_size_func_other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "key_func", c_api.TF_FunctionName(key_func));
+			c_api.TF_SetAttrFuncName (desc, "reduce_func", c_api.TF_FunctionName(reduce_func));
+			c_api.TF_SetAttrFuncName (desc, "window_size_func", c_api.TF_FunctionName(window_size_func));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -21672,6 +23109,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var r = new TF_Output (op, _idx++);
 			var u = new TF_Output (op, _idx++);
@@ -21818,6 +23256,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var d_x = new TF_Output (op, _idx++);
 			var d_h_prev = new TF_Output (op, _idx++);
@@ -21858,6 +23297,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -21922,6 +23362,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -21986,6 +23427,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -22050,6 +23492,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22092,6 +23535,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -22125,6 +23569,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22163,6 +23608,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22192,6 +23638,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22238,6 +23685,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -22290,6 +23738,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -22337,9 +23786,76 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
+		}
+
+		/// <summary>
+		///   output = cond ? then_branch(input) : else_branch(input)
+		/// </summary>
+		/// <param name="cond">
+		///   A Tensor. If the tensor is a scalar of non-boolean type, the
+		///   scalar is converted to a boolean according to the
+		///   following rule: if the scalar is a numerical value, non-zero means
+		///   <c>True</c> and zero means False; if the scalar is a string, non-empty
+		///   means <c>True</c> and empty means <c>False</c>. If the tensor is not a scalar,
+		///   being empty means False and being non-empty means True.
+		/// </param>
+		/// <param name="input">
+		///   A list of input tensors.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'If'.
+		/// </param>
+		/// <param name="output_shapes">
+		///   Optional argument
+		/// </param>
+		/// <param name="Tout">
+		///   A list of output types.
+		/// </param>
+		/// <param name="then_branch">
+		///   A function that takes 'inputs' and returns a list of tensors, whose
+		///   types are the same as what else_branch returns.
+		/// </param>
+		/// <param name="else_branch">
+		///   A function that takes 'inputs' and returns a list of tensors, whose
+		///   types are the same as what then_branch returns.
+		/// </param>
+		/// <returns>
+		///   A list of return values.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] If (TF_Output cond, TF_Output[] input, TF_DataType[] Tout, TF_Function then_branch, TF_Function else_branch, long[][] output_shapes = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "If", MakeName ("If", operName));
+			c_api.TF_AddInput(desc, cond);
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncName (desc, "then_branch", c_api.TF_FunctionName(then_branch));
+			c_api.TF_SetAttrFuncName (desc, "else_branch", c_api.TF_FunctionName(else_branch));
+			if (output_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -22377,6 +23893,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22417,6 +23934,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22457,6 +23975,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22504,6 +24023,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -22550,6 +24070,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -22582,6 +24103,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -22617,6 +24139,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -22665,6 +24188,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22750,6 +24274,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -22792,6 +24317,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -22823,6 +24349,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -22856,6 +24383,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -22891,6 +24419,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -22951,6 +24480,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -22987,6 +24517,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -23038,6 +24569,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -23074,6 +24606,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -23141,6 +24674,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -23208,6 +24742,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -23244,6 +24779,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -23283,6 +24819,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23324,6 +24861,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23365,9 +24903,68 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="cycle_length">
+		/// </param>
+		/// <param name="block_length">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'InterleaveDataset'.
+		/// </param>
+		/// <param name="f">
+		///   A function mapping elements of <c>input_dataset</c>, concatenated with
+		///   <c>other_arguments</c>, to a Dataset variant that contains elements matching
+		///   <c>output_types</c> and <c>output_shapes</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Unlike MapDataset, the <c>f</c> in InterleaveDataset is expected to return
+		///   a Dataset variant, and InterleaveDataset will flatten successive
+		///   results into a single Dataset. Unlike FlatMapDataset,
+		///   InterleaveDataset will interleave sequences of up to <c>block_length</c>
+		///   consecutive elements from <c>cycle_length</c> input elements.
+		/// </remarks>
+		public TF_Output InterleaveDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Output cycle_length, TF_Output block_length, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "InterleaveDataset", MakeName ("InterleaveDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			c_api.TF_AddInput(desc, cycle_length);
+			c_api.TF_AddInput(desc, block_length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -23420,6 +25017,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var precision = new TF_Output (op, _idx++);
 			return precision;
@@ -23475,6 +25073,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var precision = new TF_Output (op, _idx++);
 			return precision;
@@ -23507,6 +25106,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23577,6 +25177,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23625,6 +25226,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23661,6 +25263,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -23717,6 +25320,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -23774,6 +25378,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -23831,6 +25436,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -23862,6 +25468,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -23896,6 +25503,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -23930,6 +25538,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23964,6 +25573,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -23998,6 +25608,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -24031,6 +25642,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -24071,6 +25683,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -24118,6 +25731,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resource_handle = new TF_Output (op, _idx++);
 			return resource_handle;
@@ -24158,6 +25772,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resource_handle = new TF_Output (op, _idx++);
 			return resource_handle;
@@ -24187,6 +25802,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var device = new TF_Output (op, _idx++);
 			return device;
@@ -24222,6 +25838,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -24262,6 +25879,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var optional = new TF_Output (op, _idx++);
 			return optional;
@@ -24303,6 +25921,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -24339,6 +25958,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var string_handle = new TF_Output (op, _idx++);
 			return string_handle;
@@ -24376,6 +25996,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -24418,6 +26039,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var index = new TF_Output (op, _idx++);
 			return index;
@@ -24470,6 +26092,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var samples = new TF_Output (op, _idx++);
 			return samples;
@@ -24506,6 +26129,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -24544,6 +26168,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -24579,6 +26204,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -24621,6 +26247,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -24707,6 +26334,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -24774,6 +26402,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -24810,6 +26439,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -24846,6 +26476,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -24875,6 +26506,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -24925,6 +26557,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -24991,6 +26624,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -25026,6 +26660,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -25069,6 +26704,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -25178,6 +26814,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_matrix = new TF_Output (op, _idx++);
 			return output_matrix;
@@ -25241,6 +26878,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25306,6 +26944,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25363,6 +27002,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25424,6 +27064,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25485,6 +27126,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25550,6 +27192,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25615,6 +27258,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25676,6 +27320,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25741,6 +27386,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25806,6 +27452,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25863,6 +27510,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25924,6 +27572,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -25981,6 +27630,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26042,6 +27692,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26103,6 +27754,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26168,6 +27820,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26221,6 +27874,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26251,6 +27905,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -26283,6 +27938,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -26319,6 +27975,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -26348,6 +28005,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -26384,6 +28042,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -26429,6 +28088,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sign = new TF_Output (op, _idx++);
 			var log_abs_determinant = new TF_Output (op, _idx++);
@@ -26466,6 +28126,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var logsoftmax = new TF_Output (op, _idx++);
 			return logsoftmax;
@@ -26552,6 +28213,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -26593,6 +28255,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -26633,6 +28296,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -26680,6 +28344,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -26726,6 +28391,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -26768,6 +28434,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26808,6 +28475,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26848,6 +28516,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26888,6 +28557,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26924,6 +28594,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -26953,6 +28624,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -26984,6 +28656,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -27019,6 +28692,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27082,6 +28756,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27153,6 +28828,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27220,6 +28896,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -27333,6 +29010,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var i = new TF_Output (op, _idx++);
 			var cs = new TF_Output (op, _idx++);
@@ -27442,6 +29120,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var cs_prev_grad = new TF_Output (op, _idx++);
 			var dicfo = new TF_Output (op, _idx++);
@@ -27514,6 +29193,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var lu = new TF_Output (op, _idx++);
 			var p = new TF_Output (op, _idx++);
@@ -27551,7 +29231,84 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
+		}
+
+		/// <summary>
+		///   Creates a dataset that fuses mapping with batching.
+		/// </summary>
+		/// <param name="input_dataset">
+		///   A variant tensor representing the input dataset.
+		/// </param>
+		/// <param name="other_arguments">
+		///   A list of tensors, typically values that were captured when building a closure
+		///   for <c>f</c>.
+		/// </param>
+		/// <param name="batch_size">
+		///   A scalar representing the number of elements to accumulate in a
+		///   batch. It determines the number of concurrent invocations of <c>f</c> that process
+		///   elements from <c>input_dataset</c> in parallel.
+		/// </param>
+		/// <param name="num_parallel_calls">
+		///   A scalar representing the maximum number of parallel invocations of the <c>map_fn</c>
+		///   function. Applying the <c>map_fn</c> on consecutive input elements in parallel has
+		///   the potential to improve input pipeline throughput.
+		/// </param>
+		/// <param name="drop_remainder">
+		///   A scalar representing whether the last batch should be dropped in case its size
+		///   is smaller than desired.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'MapAndBatchDataset'.
+		/// </param>
+		/// <param name="preserve_cardinality">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		///   A function to apply to the outputs of <c>input_dataset</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c> and then
+		///   batches <c>batch_size</c> of them.
+		///   
+		///   Unlike a "MapDataset", which applies <c>f</c> sequentially, this dataset invokes up
+		///   to <c>batch_size * num_parallel_batches</c> copies of <c>f</c> in parallel.
+		/// </remarks>
+		public TF_Output MapAndBatchDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Output batch_size, TF_Output num_parallel_calls, TF_Output drop_remainder, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? preserve_cardinality = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "MapAndBatchDataset", MakeName ("MapAndBatchDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			c_api.TF_AddInput(desc, batch_size);
+			c_api.TF_AddInput(desc, num_parallel_calls);
+			c_api.TF_AddInput(desc, drop_remainder);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (preserve_cardinality.HasValue)
+				c_api.TF_SetAttrBool (desc, "preserve_cardinality", Convert.ToByte(preserve_cardinality.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -27602,7 +29359,135 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'MapDataset'.
+		/// </param>
+		/// <param name="use_inter_op_parallelism">
+		///   Optional argument
+		/// </param>
+		/// <param name="preserve_cardinality">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output MapDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? use_inter_op_parallelism = null, bool? preserve_cardinality = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "MapDataset", MakeName ("MapDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (use_inter_op_parallelism.HasValue)
+				c_api.TF_SetAttrBool (desc, "use_inter_op_parallelism", Convert.ToByte(use_inter_op_parallelism.Value));
+			
+			if (preserve_cardinality.HasValue)
+				c_api.TF_SetAttrBool (desc, "preserve_cardinality", Convert.ToByte(preserve_cardinality.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Maps a function on the list of tensors unpacked from arguments on dimension 0.
+		///   The function given by <c>f</c> is assumed to be stateless, and is executed
+		///   concurrently on all the slices; up to batch_size (i.e. the size of the 0th
+		///   dimension of each argument) functions will be scheduled at once.
+		///   
+		///   The <c>max_intra_op_parallelism</c> attr, which defaults to 1, can be used to
+		///   limit the intra op parallelism. To limit inter-op parallelism, a user can
+		///   set a private threadpool on the dataset using <c>tf.data.Options</c>'s
+		///   <c>ThreadingOptions</c>.
+		///   
+		///   Note that this op is not exposed to users directly, but is invoked in tf.data
+		///   rewrites.
+		/// </summary>
+		/// <param name="arguments">
+		///   A list of tensors whose types are <c>Targuments</c>, corresponding to the inputs
+		///   the function should be mapped over.
+		/// </param>
+		/// <param name="captured_inputs">
+		///   A list of tensors whose types are <c>Tcaptured</c>, corresponding to the captured
+		///   inputs of the defun.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'MapDefun'.
+		/// </param>
+		/// <param name="max_intra_op_parallelism">
+		///   Optional argument
+		/// </param>
+		/// <param name="output_types">
+		///   A list of types.
+		/// </param>
+		/// <param name="output_shapes">
+		///   A list of shapes.
+		/// </param>
+		/// <param name="f">
+		/// </param>
+		/// <returns>
+		///   A list of output tensors whose types are <c>output_types</c> and whose dimensions
+		///   0 are the same as the dimensions 0 of the tensors in <c>arguments</c>, and whose
+		///   remaining dimensions correspond to those in <c>output_shapes</c>.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] MapDefun (TF_Output[] arguments, TF_Output[] captured_inputs, TF_DataType[] output_types, long[][] output_shapes, TF_Function f, long? max_intra_op_parallelism = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "MapDefun", MakeName ("MapDefun", operName));
+			c_api.TF_AddInputList(desc, arguments[0], arguments.Length);
+			c_api.TF_AddInputList(desc, captured_inputs[0], captured_inputs.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			if (max_intra_op_parallelism.HasValue)
+				c_api.TF_SetAttrInt (desc, "max_intra_op_parallelism", max_intra_op_parallelism.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -27653,6 +29538,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -27716,6 +29602,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -27774,6 +29661,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -27844,6 +29732,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -27905,6 +29794,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -27973,6 +29863,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			var key = new TF_Output (op, _idx++);
@@ -28015,6 +29906,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var filenames = new TF_Output (op, _idx++);
 			return filenames;
@@ -28043,6 +29935,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -28098,6 +29991,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -28180,6 +30074,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var band = new TF_Output (op, _idx++);
 			return band;
@@ -28216,6 +30111,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28275,6 +30171,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28337,6 +30234,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -28450,6 +30348,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var diagonal = new TF_Output (op, _idx++);
 			return diagonal;
@@ -28594,6 +30493,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28623,6 +30523,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28677,6 +30578,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28729,6 +30631,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28778,6 +30681,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28894,6 +30798,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -28945,6 +30850,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29030,6 +30936,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29082,6 +30989,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29183,6 +31091,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29232,6 +31141,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29268,6 +31178,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -29307,6 +31218,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -29362,6 +31274,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29418,6 +31331,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29481,6 +31395,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29545,6 +31460,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29608,6 +31524,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29671,6 +31588,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29734,6 +31652,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29794,6 +31713,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29857,6 +31777,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29917,6 +31838,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -29972,6 +31894,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30042,6 +31965,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var argmax = new TF_Output (op, _idx++);
@@ -30092,6 +32016,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30132,6 +32057,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var value_index = new TF_Output (op, _idx++);
@@ -30174,6 +32100,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -30226,6 +32153,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -30297,6 +32225,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30346,6 +32275,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30382,6 +32312,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -30453,6 +32384,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30513,6 +32445,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -30552,6 +32485,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -30603,6 +32537,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -30639,6 +32574,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -30675,6 +32611,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -30724,6 +32661,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -30769,6 +32707,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var multi_device_iterator = new TF_Output (op, _idx++);
 			return multi_device_iterator;
@@ -30816,6 +32755,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -30861,6 +32801,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var incarnation_id = new TF_Output (op, _idx++);
 			return incarnation_id;
@@ -30892,6 +32833,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var string_handle = new TF_Output (op, _idx++);
 			return string_handle;
@@ -30950,6 +32892,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31039,6 +32982,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -31131,6 +33075,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -31195,6 +33140,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -31263,6 +33209,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -31331,6 +33278,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -31395,6 +33343,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var table_handle = new TF_Output (op, _idx++);
 			return table_handle;
@@ -31468,6 +33417,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var mutex_lock = new TF_Output (op, _idx++);
 			return mutex_lock;
@@ -31511,6 +33461,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -31563,6 +33514,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -31606,6 +33558,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31648,6 +33601,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var data = new TF_Output (op, _idx++);
 			return data;
@@ -31697,6 +33651,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var nearest_center_indices = new TF_Output (op, _idx++);
 			var nearest_center_distances = new TF_Output (op, _idx++);
@@ -31730,6 +33685,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -31783,6 +33739,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -31822,6 +33779,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31853,6 +33811,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31894,6 +33853,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -31962,6 +33922,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -32029,6 +33990,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -32100,6 +34062,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -32182,6 +34145,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			var valid_outputs = new TF_Output (op, _idx++);
@@ -32280,6 +34244,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			var selected_scores = new TF_Output (op, _idx++);
@@ -32351,6 +34316,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var selected_indices = new TF_Output (op, _idx++);
 			return selected_indices;
@@ -32385,6 +34351,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -32411,6 +34378,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -32451,6 +34419,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -32504,6 +34473,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -32643,9 +34613,81 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		///   Makes a "one-shot" iterator that can be iterated only once.
+		/// </summary>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'OneShotIterator'.
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dataset_factory">
+		///   A function of type <c>() -&amp;gt; DT_VARIANT</c>, where the returned
+		///   DT_VARIANT is a dataset.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   A handle to the iterator that can be passed to an "IteratorGetNext"
+		///   op.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   A one-shot iterator bundles the logic for defining the dataset and
+		///   the state of the iterator in a single op, which allows simple input
+		///   pipelines to be defined without an additional initialization
+		///   ("MakeIterator") step.
+		///   
+		///   One-shot iterators have the following limitations:
+		///   
+		///   * They do not support parameterization: all logic for creating the underlying
+		///   dataset must be bundled in the <c>dataset_factory</c> function.
+		///   * They are not resettable. Once a one-shot iterator reaches the end of its
+		///   underlying dataset, subsequent "IteratorGetNext" operations on that
+		///   iterator will always produce an <c>OutOfRange</c> error.
+		///   
+		///   For greater flexibility, use "Iterator" and "MakeIterator" to define
+		///   an iterator using an arbitrary subgraph, which may capture tensors
+		///   (including fed values) as parameters, and which may be reset multiple
+		///   times by rerunning "MakeIterator".
+		/// </remarks>
+		public TF_Output OneShotIterator (TF_Function dataset_factory, TF_DataType[] output_types, long[][] output_shapes, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "OneShotIterator", MakeName ("OneShotIterator", operName));
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "dataset_factory", c_api.TF_FunctionName(dataset_factory));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -32674,6 +34716,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -32723,6 +34766,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -32752,6 +34796,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var optional = new TF_Output (op, _idx++);
 			return optional;
@@ -32787,6 +34832,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -32821,6 +34867,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var has_value = new TF_Output (op, _idx++);
 			return has_value;
@@ -32847,6 +34894,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var optional = new TF_Output (op, _idx++);
 			return optional;
@@ -32900,6 +34948,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -32951,6 +35000,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -33015,6 +35065,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -33073,6 +35124,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -33146,6 +35198,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -33207,6 +35260,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -33275,6 +35329,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			var key = new TF_Output (op, _idx++);
@@ -33328,6 +35383,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33376,6 +35432,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -33411,6 +35468,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -33440,6 +35498,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -33498,6 +35557,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33555,6 +35615,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33604,6 +35665,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -33664,6 +35726,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -33738,6 +35801,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -33812,6 +35876,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -33873,6 +35938,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -33928,6 +35994,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -34023,9 +36090,208 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var merged = new TF_Output (op, _idx++);
 			return merged;
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="cycle_length">
+		/// </param>
+		/// <param name="block_length">
+		/// </param>
+		/// <param name="sloppy">
+		/// </param>
+		/// <param name="buffer_output_elements">
+		/// </param>
+		/// <param name="prefetch_input_elements">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ParallelInterleaveDataset'.
+		/// </param>
+		/// <param name="f">
+		///   A function mapping elements of <c>input_dataset</c>, concatenated with
+		///   <c>other_arguments</c>, to a Dataset variant that contains elements matching
+		///   <c>output_types</c> and <c>output_shapes</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The resulting dataset is similar to the <c>InterleaveDataset</c>, with the exception
+		///   that if retrieving the next value from a dataset would cause the requester to
+		///   block, it will skip that input dataset. This dataset is especially useful
+		///   when loading data from a variable-latency datastores (e.g. HDFS, GCS), as it
+		///   allows the training step to proceed so long as some data is available.
+		///   
+		///   !! WARNING !! This dataset is not deterministic!
+		/// </remarks>
+		public TF_Output ParallelInterleaveDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Output cycle_length, TF_Output block_length, TF_Output sloppy, TF_Output buffer_output_elements, TF_Output prefetch_input_elements, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ParallelInterleaveDataset", MakeName ("ParallelInterleaveDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			c_api.TF_AddInput(desc, cycle_length);
+			c_api.TF_AddInput(desc, block_length);
+			c_api.TF_AddInput(desc, sloppy);
+			c_api.TF_AddInput(desc, buffer_output_elements);
+			c_api.TF_AddInput(desc, prefetch_input_elements);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="cycle_length">
+		/// </param>
+		/// <param name="block_length">
+		/// </param>
+		/// <param name="num_parallel_calls">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ParallelInterleaveDatasetV2'.
+		/// </param>
+		/// <param name="sloppy">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		///   A function mapping elements of <c>input_dataset</c>, concatenated with
+		///   <c>other_arguments</c>, to a Dataset variant that contains elements matching
+		///   <c>output_types</c> and <c>output_shapes</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output ParallelInterleaveDatasetV2 (TF_Output input_dataset, TF_Output[] other_arguments, TF_Output cycle_length, TF_Output block_length, TF_Output num_parallel_calls, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? sloppy = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ParallelInterleaveDatasetV2", MakeName ("ParallelInterleaveDatasetV2", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			c_api.TF_AddInput(desc, cycle_length);
+			c_api.TF_AddInput(desc, block_length);
+			c_api.TF_AddInput(desc, num_parallel_calls);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (sloppy.HasValue)
+				c_api.TF_SetAttrBool (desc, "sloppy", Convert.ToByte(sloppy.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
+		}
+
+		/// <summary>
+		///   Creates a dataset that applies <c>f</c> to the outputs of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="num_parallel_calls">
+		///   The number of concurrent invocations of <c>f</c> that process
+		///   elements from <c>input_dataset</c> in parallel.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ParallelMapDataset'.
+		/// </param>
+		/// <param name="use_inter_op_parallelism">
+		///   Optional argument
+		/// </param>
+		/// <param name="sloppy">
+		///   Optional argument
+		/// </param>
+		/// <param name="preserve_cardinality">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Unlike a "MapDataset", which applies <c>f</c> sequentially, this dataset invokes up
+		///   to <c>num_parallel_calls</c> copies of <c>f</c> in parallel.
+		/// </remarks>
+		public TF_Output ParallelMapDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Output num_parallel_calls, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? use_inter_op_parallelism = null, bool? sloppy = null, bool? preserve_cardinality = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ParallelMapDataset", MakeName ("ParallelMapDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			c_api.TF_AddInput(desc, num_parallel_calls);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (use_inter_op_parallelism.HasValue)
+				c_api.TF_SetAttrBool (desc, "use_inter_op_parallelism", Convert.ToByte(use_inter_op_parallelism.Value));
+			
+			if (sloppy.HasValue)
+				c_api.TF_SetAttrBool (desc, "sloppy", Convert.ToByte(sloppy.Value));
+			
+			if (preserve_cardinality.HasValue)
+				c_api.TF_SetAttrBool (desc, "preserve_cardinality", Convert.ToByte(preserve_cardinality.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -34092,6 +36358,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -34183,6 +36450,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "sparse_indices", status);
@@ -34282,6 +36550,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -34444,6 +36713,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_indices", status);
@@ -34571,6 +36841,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "sparse_indices", status);
@@ -34728,6 +36999,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_indices", status);
@@ -34804,8 +37076,75 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
+			return output;
+		}
+
+		/// <summary>
+		///   returns <c>f(inputs)</c>, where <c>f</c>'s body is placed and partitioned.
+		/// </summary>
+		/// <param name="args">
+		///   A list of input tensors.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'PartitionedCall'.
+		/// </param>
+		/// <param name="config">
+		///   Optional argument
+		/// </param>
+		/// <param name="config_proto">
+		///   Optional argument
+		/// </param>
+		/// <param name="executor_type">
+		///   Optional argument
+		/// </param>
+		/// <param name="Tout">
+		///   A list of output types.
+		/// </param>
+		/// <param name="f">
+		///   A function that takes 'args', a list of tensors, and returns 'output',
+		///   another list of tensors. Input and output types are specified by 'Tin'
+		///   and 'Tout'. The function body of f will be placed and partitioned across
+		///   devices, setting this op apart from the regular Call op.
+		/// </param>
+		/// <returns>
+		///   A list of return values.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] PartitionedCall (TF_Output[] args, TF_DataType[] Tout, TF_Function f, string config = null, string config_proto = null, string executor_type = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "PartitionedCall", MakeName ("PartitionedCall", operName));
+			c_api.TF_AddInputList(desc, args[0], args.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			if (config != null)
+				c_api.TF_SetAttrString (desc, "config", config);
+			
+			if (config_proto != null)
+				c_api.TF_SetAttrString (desc, "config_proto", config_proto);
+			
+			if (executor_type != null)
+				c_api.TF_SetAttrString (desc, "executor_type", executor_type);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
 			return output;
 		}
 
@@ -34848,6 +37187,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -34889,6 +37229,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -34924,6 +37265,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -34965,6 +37307,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -35002,6 +37345,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -35044,6 +37388,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -35090,6 +37435,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -35136,6 +37482,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -35180,6 +37527,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -35228,6 +37576,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -35287,6 +37636,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -35333,6 +37683,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -35403,6 +37754,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -35475,6 +37827,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -35514,6 +37867,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -35563,6 +37917,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -35607,6 +37962,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -35647,6 +38003,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -35709,6 +38066,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var q = new TF_Output (op, _idx++);
 			var r = new TF_Output (op, _idx++);
@@ -35769,6 +38127,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -35910,6 +38269,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -35970,6 +38330,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -36031,6 +38392,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			var min_z = new TF_Output (op, _idx++);
@@ -36089,6 +38451,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36204,6 +38567,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var result = new TF_Output (op, _idx++);
 			var result_min = new TF_Output (op, _idx++);
@@ -36265,6 +38629,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -36317,6 +38682,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -36404,6 +38770,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36477,6 +38844,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36556,6 +38924,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36635,6 +39004,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36712,6 +39082,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36788,6 +39159,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36864,6 +39236,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -36946,6 +39319,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37028,6 +39402,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37119,6 +39494,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37198,6 +39574,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37289,6 +39666,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37366,6 +39744,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37447,6 +39826,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37528,6 +39908,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37617,6 +39998,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -37698,6 +40080,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var y_min = new TF_Output (op, _idx++);
@@ -37788,6 +40171,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -37884,6 +40268,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -37981,6 +40366,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -38086,6 +40472,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_out = new TF_Output (op, _idx++);
@@ -38144,6 +40531,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var min_output = new TF_Output (op, _idx++);
@@ -38207,6 +40595,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			var min_z = new TF_Output (op, _idx++);
@@ -38278,6 +40667,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -38327,6 +40717,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			var min_activations = new TF_Output (op, _idx++);
@@ -38376,6 +40767,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			var min_activations = new TF_Output (op, _idx++);
@@ -38428,6 +40820,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			var min_activations = new TF_Output (op, _idx++);
@@ -38478,6 +40871,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -38543,6 +40937,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			var out_min = new TF_Output (op, _idx++);
@@ -38701,6 +41096,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -38748,6 +41144,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -38791,6 +41188,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -38841,6 +41239,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -38909,6 +41308,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -38977,6 +41377,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -39049,6 +41450,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -39121,6 +41523,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -39178,6 +41581,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "components", status);
@@ -39233,6 +41637,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -39286,6 +41691,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -39339,6 +41745,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -39387,6 +41794,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -39419,6 +41827,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var is_closed = new TF_Output (op, _idx++);
 			return is_closed;
@@ -39453,6 +41862,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var is_closed = new TF_Output (op, _idx++);
 			return is_closed;
@@ -39484,6 +41894,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -39515,6 +41926,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -39592,6 +42004,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output_nested_splits", status);
@@ -39665,6 +42078,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var rt_nested_splits = new TF_Output (op, _idx++);
 			var rt_dense_values = new TF_Output (op, _idx++);
@@ -39730,6 +42144,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output_nested_splits", status);
@@ -39779,6 +42194,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
@@ -39835,6 +42251,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var encoded_ragged = new TF_Output (op, _idx++);
 			return encoded_ragged;
@@ -39894,6 +42311,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -39936,6 +42354,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -39996,6 +42415,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40028,6 +42448,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40072,6 +42493,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40144,6 +42566,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40203,6 +42626,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40292,6 +42716,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -40381,6 +42806,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -40435,6 +42861,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40490,6 +42917,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40554,6 +42982,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40606,6 +43035,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40650,6 +43080,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -40694,6 +43125,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -40728,6 +43160,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var records_produced = new TF_Output (op, _idx++);
 			return records_produced;
@@ -40762,6 +43195,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var records_produced = new TF_Output (op, _idx++);
 			return records_produced;
@@ -40792,6 +43226,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var units_completed = new TF_Output (op, _idx++);
 			return units_completed;
@@ -40822,6 +43257,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var units_completed = new TF_Output (op, _idx++);
 			return units_completed;
@@ -40864,6 +43300,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var key = new TF_Output (op, _idx++);
 			var value = new TF_Output (op, _idx++);
@@ -40912,6 +43349,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -40960,6 +43398,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var keys = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -41003,6 +43442,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var key = new TF_Output (op, _idx++);
 			var value = new TF_Output (op, _idx++);
@@ -41034,6 +43474,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -41062,6 +43503,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -41099,6 +43541,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -41136,6 +43579,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -41168,6 +43612,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var state = new TF_Output (op, _idx++);
 			return state;
@@ -41202,6 +43647,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var state = new TF_Output (op, _idx++);
 			return state;
@@ -41231,6 +43677,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var contents = new TF_Output (op, _idx++);
 			return contents;
@@ -41273,6 +43720,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -41321,6 +43769,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41359,6 +43808,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -41411,6 +43861,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -41443,6 +43894,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -41479,6 +43931,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -41554,6 +44007,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var records = new TF_Output (op, _idx++);
 			return records;
@@ -41599,6 +44053,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -41607,6 +44062,68 @@ namespace TensorFlow {
 				outputs [i] = new TF_Output (op, _idx++);
 			
 			return outputs;
+		}
+
+		/// <summary>
+		///   Reduces the input dataset to a singleton using a reduce function.
+		/// </summary>
+		/// <param name="input_dataset">
+		///   A variant tensor representing the input dataset.
+		/// </param>
+		/// <param name="initial_state">
+		///   A nested structure of tensors, representing the initial state of the
+		///   transformation.
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ReduceDataset'.
+		/// </param>
+		/// <param name="use_inter_op_parallelism">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		///   A function that maps <c>(old_state, input_element)</c> to <c>new_state</c>. It must take
+		///   two arguments and return a nested structures of tensors. The structure of
+		///   <c>new_state</c> must match the structure of <c>initial_state</c>.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] ReduceDataset (TF_Output input_dataset, TF_Output[] initial_state, TF_Output[] other_arguments, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? use_inter_op_parallelism = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ReduceDataset", MakeName ("ReduceDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, initial_state[0], initial_state.Length);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (use_inter_op_parallelism.HasValue)
+				c_api.TF_SetAttrBool (desc, "use_inter_op_parallelism", Convert.ToByte(use_inter_op_parallelism.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
 		}
 
 		/// <summary>
@@ -41681,6 +44198,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41736,6 +44254,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41770,6 +44289,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41799,6 +44319,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41839,6 +44360,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var value_index = new TF_Output (op, _idx++);
@@ -41871,6 +44393,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41906,6 +44429,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -41949,6 +44473,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_false = new TF_Output (op, _idx++);
 			var output_true = new TF_Output (op, _idx++);
@@ -41993,6 +44518,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -42046,6 +44572,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -42075,6 +44602,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -42104,6 +44632,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -42141,6 +44670,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -42177,9 +44707,59 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
+		}
+
+		/// <summary>
+		///   Runs function <c>f</c> on a remote device indicated by <c>target</c>.
+		/// </summary>
+		/// <param name="target">
+		///   A fully specified device name where we want to run the function.
+		/// </param>
+		/// <param name="args">
+		///   A list of arguments for the function.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'RemoteCall'.
+		/// </param>
+		/// <param name="Tout">
+		///   The type list for the return values.
+		/// </param>
+		/// <param name="f">
+		///   The function to run remotely.
+		/// </param>
+		/// <returns>
+		///   A list of return values.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] RemoteCall (TF_Output target, TF_Output[] args, TF_DataType[] Tout, TF_Function f, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "RemoteCall", MakeName ("RemoteCall", operName));
+			c_api.TF_AddInput(desc, target);
+			c_api.TF_AddInputList(desc, args[0], args.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -42225,6 +44805,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -42270,6 +44851,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -42316,6 +44898,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_min = new TF_Output (op, _idx++);
 			var output_max = new TF_Output (op, _idx++);
@@ -42363,6 +44946,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_min = new TF_Output (op, _idx++);
 			var output_max = new TF_Output (op, _idx++);
@@ -42426,6 +45010,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -42485,6 +45070,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			var output_min = new TF_Output (op, _idx++);
@@ -42578,6 +45164,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -42636,6 +45223,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -42690,6 +45278,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -42742,6 +45331,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -42796,6 +45386,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -42848,6 +45439,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -42899,6 +45491,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -42950,6 +45543,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -42991,6 +45585,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43020,6 +45615,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var num_accumulated = new TF_Output (op, _idx++);
 			return num_accumulated;
@@ -43058,6 +45654,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43103,6 +45700,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var average = new TF_Output (op, _idx++);
 			return average;
@@ -43171,6 +45769,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43230,6 +45829,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43294,6 +45894,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43357,6 +45958,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43443,6 +46045,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43517,6 +46120,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43601,6 +46205,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43667,6 +46272,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43755,6 +46361,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43827,6 +46434,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43904,6 +46512,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -43948,6 +46557,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44016,6 +46626,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44084,6 +46695,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44150,6 +46762,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44211,6 +46824,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44267,6 +46881,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44343,6 +46958,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44408,6 +47024,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -44448,6 +47065,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44510,6 +47128,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44544,6 +47163,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -44603,6 +47223,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44660,6 +47281,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44717,6 +47339,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44774,6 +47397,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44831,6 +47455,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44913,6 +47538,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -44995,6 +47621,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45079,6 +47706,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45136,6 +47764,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45184,6 +47813,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45247,6 +47877,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45311,6 +47942,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45379,6 +48011,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45447,6 +48080,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45537,6 +48171,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45614,6 +48249,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45696,6 +48332,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45770,6 +48407,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45844,6 +48482,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45911,6 +48550,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -45972,6 +48612,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -46052,6 +48693,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -46129,6 +48771,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -46194,6 +48837,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -46256,6 +48900,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -46317,6 +48962,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "tensors", status);
@@ -46376,6 +49022,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -46433,6 +49080,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -46489,6 +49137,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -46544,6 +49193,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -46600,6 +49250,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -46657,6 +49308,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -46715,6 +49367,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var ms = new TF_Output (op, _idx++);
@@ -46772,6 +49425,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -46829,6 +49483,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -46887,6 +49542,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -46943,6 +49599,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -46998,6 +49655,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var momenta = new TF_Output (op, _idx++);
@@ -47053,6 +49711,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -47108,6 +49767,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var accumulators = new TF_Output (op, _idx++);
@@ -47164,6 +49824,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var ms = new TF_Output (op, _idx++);
@@ -47221,6 +49882,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			var ms = new TF_Output (op, _idx++);
@@ -47275,6 +49937,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var parameters = new TF_Output (op, _idx++);
 			return parameters;
@@ -47356,6 +50019,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47459,6 +50123,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47543,6 +50208,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47596,6 +50262,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47651,6 +50318,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47706,6 +50374,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47746,6 +50415,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47814,6 +50484,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -47854,6 +50525,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -47898,6 +50570,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -47964,6 +50637,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -47997,6 +50671,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -48117,6 +50792,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var response = new TF_Output (op, _idx++);
 			return response;
@@ -48149,6 +50825,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -48185,6 +50862,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -48327,6 +51005,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var begin = new TF_Output (op, _idx++);
 			var size = new TF_Output (op, _idx++);
@@ -48468,6 +51147,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var begin = new TF_Output (op, _idx++);
 			var size = new TF_Output (op, _idx++);
@@ -48518,6 +51198,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -48563,6 +51244,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -48628,6 +51310,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -48675,6 +51358,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -48712,6 +51396,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -48761,6 +51446,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resized_images = new TF_Output (op, _idx++);
 			return resized_images;
@@ -48810,9 +51496,61 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		///   Creates a dataset successively reduces <c>f</c> over the elements of <c>input_dataset</c>.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="initial_state">
+		/// </param>
+		/// <param name="other_arguments">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ScanDataset'.
+		/// </param>
+		/// <param name="preserve_cardinality">
+		///   Optional argument
+		/// </param>
+		/// <param name="f">
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output ScanDataset (TF_Output input_dataset, TF_Output[] initial_state, TF_Output[] other_arguments, TF_Function f, TF_DataType[] output_types, long[][] output_shapes, bool? preserve_cardinality = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ScanDataset", MakeName ("ScanDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, initial_state[0], initial_state.Length);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			if (preserve_cardinality.HasValue)
+				c_api.TF_SetAttrBool (desc, "preserve_cardinality", Convert.ToByte(preserve_cardinality.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -48882,6 +51620,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -48952,6 +51691,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49024,6 +51764,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49096,6 +51837,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49166,6 +51908,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49290,6 +52033,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49376,6 +52120,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49453,6 +52198,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49541,6 +52287,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49629,6 +52376,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49701,6 +52449,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49778,6 +52527,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -49810,6 +52560,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -49937,6 +52688,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			var out_example_state_data = new TF_Output (op, _idx++);
@@ -50075,6 +52827,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			var out_example_state_data = new TF_Output (op, _idx++);
@@ -50125,6 +52878,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -50184,6 +52938,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50246,6 +53001,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50306,6 +53062,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50367,6 +53124,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50428,6 +53186,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50508,6 +53267,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50542,6 +53302,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50582,6 +53343,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -50636,6 +53398,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var e = new TF_Output (op, _idx++);
 			var v = new TF_Output (op, _idx++);
@@ -50675,6 +53438,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -50711,6 +53475,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -50759,6 +53524,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -50789,6 +53555,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var serialized = new TF_Output (op, _idx++);
 			return serialized;
@@ -50844,6 +53611,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var serialized_sparse = new TF_Output (op, _idx++);
 			return serialized_sparse;
@@ -50890,6 +53658,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var serialized_sparse = new TF_Output (op, _idx++);
 			return serialized_sparse;
@@ -50921,6 +53690,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var serialized = new TF_Output (op, _idx++);
 			return serialized;
@@ -50976,6 +53746,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -51019,6 +53790,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51064,6 +53836,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51102,6 +53875,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -51156,6 +53930,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51194,6 +53969,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var filename = new TF_Output (op, _idx++);
 			return filename;
@@ -51226,6 +54002,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var filename = new TF_Output (op, _idx++);
 			return filename;
@@ -51285,6 +54062,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51347,6 +54125,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51387,6 +54166,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51416,6 +54196,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -51446,6 +54227,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -51482,6 +54264,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -51516,6 +54299,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -51555,6 +54339,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -51594,6 +54379,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -51640,6 +54426,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51680,6 +54467,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51745,6 +54533,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var vocab_word = new TF_Output (op, _idx++);
 			var vocab_freq = new TF_Output (op, _idx++);
@@ -51788,6 +54577,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51837,6 +54627,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -51887,6 +54678,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -51916,6 +54708,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52016,6 +54809,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -52052,6 +54846,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var softmax = new TF_Output (op, _idx++);
 			return softmax;
@@ -52094,6 +54889,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var loss = new TF_Output (op, _idx++);
 			var backprop = new TF_Output (op, _idx++);
@@ -52124,6 +54920,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -52159,6 +54956,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -52188,6 +54986,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var activations = new TF_Output (op, _idx++);
 			return activations;
@@ -52223,6 +55022,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
@@ -52353,6 +55153,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52509,6 +55310,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52633,6 +55435,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -52691,6 +55494,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -52740,6 +55544,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -52816,6 +55621,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sum_indices = new TF_Output (op, _idx++);
 			var sum_values = new TF_Output (op, _idx++);
@@ -52873,6 +55679,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var a_val_grad = new TF_Output (op, _idx++);
 			var b_val_grad = new TF_Output (op, _idx++);
@@ -52940,6 +55747,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53007,6 +55815,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53078,6 +55887,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53149,6 +55959,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53242,6 +56053,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53322,6 +56134,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53407,6 +56220,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53484,6 +56298,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53554,6 +56369,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53618,6 +56434,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53701,6 +56518,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -53791,6 +56609,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -53858,6 +56677,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -53964,6 +56784,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -54020,6 +56841,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54068,6 +56890,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54120,6 +56943,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54208,6 +57032,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -54258,6 +57083,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var d_values = new TF_Output (op, _idx++);
 			var d_default_value = new TF_Output (op, _idx++);
@@ -54326,6 +57152,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -54391,6 +57218,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54459,6 +57287,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -54526,6 +57355,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54594,6 +57424,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -54649,6 +57480,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -54712,6 +57544,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_shape = new TF_Output (op, _idx++);
@@ -54758,6 +57591,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54804,6 +57638,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54855,6 +57690,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54900,6 +57736,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54946,6 +57783,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -54999,6 +57837,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -55069,6 +57908,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -55141,6 +57981,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -55212,6 +58053,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -55263,6 +58105,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var val_grad = new TF_Output (op, _idx++);
 			return val_grad;
@@ -55320,6 +58163,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -55366,6 +58210,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var loss = new TF_Output (op, _idx++);
 			var backprop = new TF_Output (op, _idx++);
@@ -55424,6 +58269,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -55482,6 +58328,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_indices = new TF_Output (op, _idx++);
 			var output_values = new TF_Output (op, _idx++);
@@ -55557,6 +58404,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output_indices", status);
@@ -55617,6 +58465,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -55686,6 +58535,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var product = new TF_Output (op, _idx++);
 			return product;
@@ -55721,6 +58571,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -55796,6 +58647,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var dense = new TF_Output (op, _idx++);
 			return dense;
@@ -55894,6 +58746,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var result_indices = new TF_Output (op, _idx++);
 			var result_values = new TF_Output (op, _idx++);
@@ -55939,6 +58792,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -55991,6 +58845,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -56040,6 +58895,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -56072,6 +58928,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -56108,6 +58965,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -56140,6 +58998,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -56176,6 +59035,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -56237,6 +59097,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56272,6 +59133,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -56301,6 +59163,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -56329,6 +59192,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -56359,6 +59223,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var elem = new TF_Output (op, _idx++);
 			return elem;
@@ -56394,6 +59259,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var elem = new TF_Output (op, _idx++);
 			return elem;
@@ -56432,6 +59298,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56474,6 +59341,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56518,6 +59386,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -56584,6 +59453,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -56635,6 +59505,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -56694,6 +59565,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -56752,9 +59624,77 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
+		}
+
+		/// <summary>
+		///   returns <c>f(inputs)</c>, where <c>f</c>'s body is placed and partitioned.
+		/// </summary>
+		/// <param name="args">
+		///   A list of input tensors.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'StatefulPartitionedCall'.
+		/// </param>
+		/// <param name="config">
+		///   Optional argument
+		/// </param>
+		/// <param name="config_proto">
+		///   Optional argument
+		/// </param>
+		/// <param name="executor_type">
+		///   Optional argument
+		/// </param>
+		/// <param name="Tout">
+		///   A list of output types.
+		/// </param>
+		/// <param name="f">
+		///   A function that takes 'args', a list of tensors, and returns 'output',
+		///   another list of tensors. Input and output types are specified by 'Tin'
+		///   and 'Tout'. The function body of f will be placed and partitioned across
+		///   devices, setting this op apart from the regular Call op. This op is
+		///   stateful.
+		/// </param>
+		/// <returns>
+		///   A list of return values.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] StatefulPartitionedCall (TF_Output[] args, TF_DataType[] Tout, TF_Function f, string config = null, string config_proto = null, string executor_type = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "StatefulPartitionedCall", MakeName ("StatefulPartitionedCall", operName));
+			c_api.TF_AddInputList(desc, args[0], args.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			if (config != null)
+				c_api.TF_SetAttrString (desc, "config", config);
+			
+			if (config_proto != null)
+				c_api.TF_SetAttrString (desc, "config_proto", config_proto);
+			
+			if (executor_type != null)
+				c_api.TF_SetAttrString (desc, "executor_type", executor_type);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -56798,6 +59738,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56843,6 +59784,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56892,6 +59834,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56943,6 +59886,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -56993,6 +59937,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57042,6 +59987,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57098,8 +60044,78 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
+			return output;
+		}
+
+		/// <summary>
+		///   output = cond ? then_branch(input) : else_branch(input)
+		/// </summary>
+		/// <param name="cond">
+		///   A Tensor. If the tensor is a scalar of non-boolean type, the
+		///   scalar is converted to a boolean according to the
+		///   following rule: if the scalar is a numerical value, non-zero means
+		///   <c>True</c> and zero means False; if the scalar is a string, non-empty
+		///   means <c>True</c> and empty means <c>False</c>. If the tensor is not a scalar,
+		///   being empty means False and being non-empty means True.
+		///   
+		///   This should only be used when the if then/else body functions do not
+		///   have stateful ops.
+		/// </param>
+		/// <param name="input">
+		///   A list of input tensors.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'StatelessIf'.
+		/// </param>
+		/// <param name="output_shapes">
+		///   Optional argument
+		/// </param>
+		/// <param name="Tout">
+		///   A list of output types.
+		/// </param>
+		/// <param name="then_branch">
+		///   A function that takes 'inputs' and returns a list of tensors, whose
+		///   types are the same as what else_branch returns.
+		/// </param>
+		/// <param name="else_branch">
+		///   A function that takes 'inputs' and returns a list of tensors, whose
+		///   types are the same as what then_branch returns.
+		/// </param>
+		/// <returns>
+		///   A list of return values.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] StatelessIf (TF_Output cond, TF_Output[] input, TF_DataType[] Tout, TF_Function then_branch, TF_Function else_branch, long[][] output_shapes = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "StatelessIf", MakeName ("StatelessIf", operName));
+			c_api.TF_AddInput(desc, cond);
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncName (desc, "then_branch", c_api.TF_FunctionName(then_branch));
+			c_api.TF_SetAttrFuncName (desc, "else_branch", c_api.TF_FunctionName(else_branch));
+			if (output_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
 			return output;
 		}
 
@@ -57145,6 +60161,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57192,6 +60209,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57240,6 +60258,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57288,6 +60307,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57337,8 +60357,77 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
+			return output;
+		}
+
+		/// <summary>
+		///   output = input; While (Cond(output)) { output = Body(output) }
+		/// </summary>
+		/// <param name="input">
+		///   A list of input tensors whose types are T.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'StatelessWhile'.
+		/// </param>
+		/// <param name="output_shapes">
+		///   Optional argument
+		/// </param>
+		/// <param name="parallel_iterations">
+		///   Optional argument
+		/// </param>
+		/// <param name="cond">
+		///   A function takes 'input' and returns a tensor.  If the tensor is
+		///   a scalar of non-boolean, the scalar is converted to a boolean
+		///   according to the following rule: if the scalar is a numerical
+		///   value, non-zero means True and zero means False; if the scalar is
+		///   a string, non-empty means True and empty means False. If the
+		///   tensor is not a scalar, non-emptiness means True and False
+		///   otherwise.
+		///   
+		///   This should only be used when the while condition and body functions
+		///   do not have stateful ops.
+		/// </param>
+		/// <param name="body">
+		///   A function that takes a list of tensors and returns another
+		///   list of tensors. Both lists have the same types as specified
+		///   by T.
+		/// </param>
+		/// <returns>
+		///   A list of output tensors whose types are T.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] StatelessWhile (TF_Output[] input, TF_Function cond, TF_Function body, long[][] output_shapes = null, long? parallel_iterations = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "StatelessWhile", MakeName ("StatelessWhile", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "cond", c_api.TF_FunctionName(cond));
+			c_api.TF_SetAttrFuncName (desc, "body", c_api.TF_FunctionName(body));
+			if (output_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			
+			if (parallel_iterations.HasValue)
+				c_api.TF_SetAttrInt (desc, "parallel_iterations", parallel_iterations.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
 			return output;
 		}
 
@@ -57380,6 +60469,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57430,6 +60520,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57468,6 +60559,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -57505,6 +60597,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -57537,6 +60630,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -57564,6 +60658,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -57614,6 +60709,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57805,6 +60901,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -57884,6 +60981,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_ref = new TF_Output (op, _idx++);
 			return output_ref;
@@ -57965,6 +61063,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58020,6 +61119,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58062,6 +61162,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58108,6 +61209,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58142,6 +61244,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58213,6 +61316,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var ngrams = new TF_Output (op, _idx++);
 			var ngrams_splits = new TF_Output (op, _idx++);
@@ -58283,6 +61387,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -58356,6 +61461,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var indices = new TF_Output (op, _idx++);
 			var values = new TF_Output (op, _idx++);
@@ -58389,6 +61495,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58431,6 +61538,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58474,6 +61582,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58529,6 +61638,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58570,6 +61680,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58604,6 +61715,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58640,6 +61752,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -58767,6 +61880,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58816,6 +61930,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -58853,6 +61968,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var writer = new TF_Output (op, _idx++);
 			return writer;
@@ -58923,6 +62039,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var s = new TF_Output (op, _idx++);
 			var u = new TF_Output (op, _idx++);
@@ -58968,10 +62085,73 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_false = new TF_Output (op, _idx++);
 			var output_true = new TF_Output (op, _idx++);
 			return (output_false, output_true);
+		}
+
+		/// <summary>
+		///   Computes the gradient function for function f via backpropagation.
+		/// </summary>
+		/// <param name="input">
+		///   a list of input tensors of size N + M;
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'SymbolicGradient'.
+		/// </param>
+		/// <param name="Tout">
+		///   the type list for the input list.
+		/// </param>
+		/// <param name="f">
+		///   The function we want to compute the gradient for.
+		///   
+		///   The function 'f' must be a numerical function which takes N inputs and
+		///   produces M outputs. Its gradient function 'g', which is computed by
+		///   this SymbolicGradient op is a function taking N + M inputs and
+		///   produces N outputs.
+		///   
+		///   I.e. if we have
+		///   (y1, y2, ..., y_M) = f(x1, x2, ..., x_N),
+		///   then, g is
+		///   (dL/dx1, dL/dx2, ..., dL/dx_N) = g(x1, x2, ..., x_N,
+		///   dL/dy1, dL/dy2, ..., dL/dy_M),
+		///   
+		///   where L is a scalar-value function of (x1, x2, ..., xN) (e.g., the
+		///   loss function). dL/dx_i is the partial derivative of L with respect
+		///   to x_i.
+		///   
+		///   (Needs some math expert to say the comment above better.)
+		/// </param>
+		/// <returns>
+		///   a list of output tensors of size N;
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] SymbolicGradient (TF_Output[] input, TF_DataType[] Tout, TF_Function f, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "SymbolicGradient", MakeName ("SymbolicGradient", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -59010,6 +62190,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -59116,11 +62297,64 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sparse_indices = new TF_Output (op, _idx++);
 			var sparse_values = new TF_Output (op, _idx++);
 			var sparse_shape = new TF_Output (op, _idx++);
 			return (sparse_indices, sparse_values, sparse_shape);
+		}
+
+		/// <summary>
+		///   Creates a dataset that stops iteration when predicate<c> is false.
+		/// </summary>
+		/// <param name="input_dataset">
+		/// </param>
+		/// <param name="other_arguments">
+		///   A list of tensors, typically values that were captured when
+		///   building a closure for <c>predicate</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'TakeWhileDataset'.
+		/// </param>
+		/// <param name="predicate">
+		///   A function returning a scalar boolean.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The <c>predicate</c> function must return a scalar boolean and accept the
+		///   following arguments:
+		///   
+		///   * One tensor for each component of an element of <c>input_dataset</c>.
+		///   * One tensor for each value in <c>other_arguments</c>.
+		/// </remarks>
+		public TF_Output TakeWhileDataset (TF_Output input_dataset, TF_Output[] other_arguments, TF_Function predicate, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "TakeWhileDataset", MakeName ("TakeWhileDataset", operName));
+			c_api.TF_AddInput(desc, input_dataset);
+			c_api.TF_AddInputList(desc, other_arguments[0], other_arguments.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "predicate", c_api.TF_FunctionName(predicate));
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			var handle = new TF_Output (op, _idx++);
+			return handle;
 		}
 
 		/// <summary>
@@ -59158,6 +62392,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -59197,6 +62432,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -59233,6 +62469,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -59292,6 +62529,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reference = new TF_Output (op, _idx++);
 			return reference;
@@ -59347,6 +62585,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -59375,6 +62614,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -59402,6 +62642,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -59434,6 +62675,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -59475,6 +62717,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -59520,6 +62763,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -59590,6 +62834,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -59634,6 +62879,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -59678,6 +62924,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -59734,6 +62981,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -59768,6 +63016,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			return grad_handle;
@@ -59803,6 +63052,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			return grad_handle;
@@ -59883,6 +63133,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			var flow_out = new TF_Output (op, _idx++);
@@ -59938,6 +63189,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var grad_handle = new TF_Output (op, _idx++);
 			var flow_out = new TF_Output (op, _idx++);
@@ -59979,6 +63231,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -60016,6 +63269,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -60054,6 +63308,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -60096,6 +63351,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var value = new TF_Output (op, _idx++);
 			return value;
@@ -60133,6 +63389,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60171,6 +63428,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60217,6 +63475,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60248,6 +63507,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -60280,6 +63540,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -60315,6 +63576,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var size = new TF_Output (op, _idx++);
 			return size;
@@ -60352,6 +63614,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60390,6 +63653,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60460,6 +63724,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60494,6 +63759,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60550,6 +63816,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -60637,6 +63904,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			var flow = new TF_Output (op, _idx++);
@@ -60675,6 +63943,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60713,6 +63982,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60756,6 +64026,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var flow_out = new TF_Output (op, _idx++);
 			return flow_out;
@@ -60788,6 +64059,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -60822,6 +64094,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -60854,6 +64127,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -60883,6 +64157,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -60922,6 +64197,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var logits = new TF_Output (op, _idx++);
 			return logits;
@@ -60960,6 +64236,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -60991,6 +64268,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tree_config = new TF_Output (op, _idx++);
 			return tree_config;
@@ -61022,6 +64300,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tree_size = new TF_Output (op, _idx++);
 			return tree_size;
@@ -61071,6 +64350,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -61106,6 +64386,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -61161,6 +64442,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			var lengths = new TF_Output (op, _idx++);
@@ -61198,6 +64480,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var element_shape = new TF_Output (op, _idx++);
 			return element_shape;
@@ -61236,6 +64519,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61282,6 +64566,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			return values;
@@ -61327,6 +64612,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var item = new TF_Output (op, _idx++);
 			return item;
@@ -61360,6 +64646,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var length = new TF_Output (op, _idx++);
 			return length;
@@ -61406,6 +64693,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			var tensor = new TF_Output (op, _idx++);
@@ -61446,6 +64734,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61477,6 +64766,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handles = new TF_Output (op, _idx++);
 			return output_handles;
@@ -61518,6 +64808,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -61556,6 +64847,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61601,6 +64893,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61645,6 +64938,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61696,6 +64990,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61738,6 +65033,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61782,6 +65078,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -61831,6 +65128,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var tensor = new TF_Output (op, _idx++);
 			return tensor;
@@ -61936,6 +65234,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -62041,6 +65340,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -62158,6 +65458,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -62190,6 +65491,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -62269,6 +65571,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -62325,6 +65628,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -62364,6 +65668,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var summary = new TF_Output (op, _idx++);
 			return summary;
@@ -62404,6 +65709,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -62454,6 +65760,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -62504,6 +65811,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -62545,6 +65853,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -62594,6 +65903,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -62643,6 +65953,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -62682,6 +65993,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -62740,6 +66052,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -62826,6 +66139,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -62869,6 +66183,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -62906,6 +66221,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -62938,6 +66254,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var ts = new TF_Output (op, _idx++);
 			return ts;
@@ -62998,6 +66315,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			var indices = new TF_Output (op, _idx++);
@@ -63057,6 +66375,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var values = new TF_Output (op, _idx++);
 			var indices = new TF_Output (op, _idx++);
@@ -63084,6 +66403,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -63135,6 +66455,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -63167,9 +66488,59 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var device_ordinals = new TF_Output (op, _idx++);
 			return device_ordinals;
+		}
+
+		/// <summary>
+		///   Calls a function placed on a specified TPU device.
+		/// </summary>
+		/// <param name="args">
+		///   The arguments to the function.
+		/// </param>
+		/// <param name="device_ordinal">
+		///   The TPU device ordinal to run the function on.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'TPUPartitionedCall'.
+		/// </param>
+		/// <param name="Tout">
+		///   The types of the outputs of the function.
+		/// </param>
+		/// <param name="f">
+		///   The function to call.
+		/// </param>
+		/// <returns>
+		///   The output of the function call.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] TPUPartitionedCall (TF_Output[] args, TF_Output device_ordinal, TF_DataType[] Tout, TF_Function f, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "TPUPartitionedCall", MakeName ("TPUPartitionedCall", operName));
+			c_api.TF_AddInputList(desc, args[0], args.Length);
+			c_api.TF_AddInput(desc, device_ordinal);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			c_api.TF_SetAttrFuncName (desc, "f", c_api.TF_FunctionName(f));
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -63196,6 +66567,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -63228,6 +66600,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
@@ -63322,6 +66695,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -63356,6 +66730,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -63406,6 +66781,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -63461,6 +66837,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -63502,6 +66879,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -63559,6 +66937,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -63598,6 +66977,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -63724,6 +67104,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var response = new TF_Output (op, _idx++);
 			var status_code = new TF_Output (op, _idx++);
@@ -63796,6 +67177,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var unbatched_tensor = new TF_Output (op, _idx++);
 			return unbatched_tensor;
@@ -63831,6 +67213,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -63897,6 +67280,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var batched_grad = new TF_Output (op, _idx++);
 			return batched_grad;
@@ -63988,6 +67372,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var row_splits = new TF_Output (op, _idx++);
 			var char_values = new TF_Output (op, _idx++);
@@ -64086,6 +67471,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var row_splits = new TF_Output (op, _idx++);
 			var char_values = new TF_Output (op, _idx++);
@@ -64170,6 +67556,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -64208,6 +67595,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -64311,6 +67699,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -64397,6 +67786,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var sampled_candidates = new TF_Output (op, _idx++);
 			var true_expected_count = new TF_Output (op, _idx++);
@@ -64455,6 +67845,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -64491,6 +67882,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -64581,6 +67973,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -64641,6 +68034,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -64738,6 +68132,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			var idx = new TF_Output (op, _idx++);
@@ -64796,6 +68191,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "output", status);
@@ -64846,6 +68242,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -64920,6 +68317,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -64993,6 +68391,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -65061,6 +68460,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -65128,6 +68528,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -65197,6 +68598,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -65254,6 +68656,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			int _n = 0;
 			_n = c_api.TF_OperationOutputListLength(op, "values", status);
@@ -65287,6 +68690,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -65350,6 +68754,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -65399,6 +68804,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var resource = new TF_Output (op, _idx++);
 			return resource;
@@ -65443,6 +68849,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reference = new TF_Output (op, _idx++);
 			return reference;
@@ -65488,6 +68895,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
@@ -65544,6 +68952,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reference = new TF_Output (op, _idx++);
 			return reference;
@@ -65576,6 +68985,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var is_initialized = new TF_Output (op, _idx++);
 			return is_initialized;
@@ -65666,9 +69076,75 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var index = new TF_Output (op, _idx++);
 			return index;
+		}
+
+		/// <summary>
+		///   output = input; While (Cond(output)) { output = Body(output) }
+		/// </summary>
+		/// <param name="input">
+		///   A list of input tensors whose types are T.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'While'.
+		/// </param>
+		/// <param name="output_shapes">
+		///   Optional argument
+		/// </param>
+		/// <param name="parallel_iterations">
+		///   Optional argument
+		/// </param>
+		/// <param name="cond">
+		///   A function takes 'input' and returns a tensor.  If the tensor is
+		///   a scalar of non-boolean, the scalar is converted to a boolean
+		///   according to the following rule: if the scalar is a numerical
+		///   value, non-zero means True and zero means False; if the scalar is
+		///   a string, non-empty means True and empty means False. If the
+		///   tensor is not a scalar, non-emptiness means True and False
+		///   otherwise.
+		/// </param>
+		/// <param name="body">
+		///   A function that takes a list of tensors and returns another
+		///   list of tensors. Both lists have the same types as specified
+		///   by T.
+		/// </param>
+		/// <returns>
+		///   A list of output tensors whose types are T.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] While (TF_Output[] input, TF_Function cond, TF_Function body, long[][] output_shapes = null, long? parallel_iterations = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "While", MakeName ("While", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrFuncName (desc, "cond", c_api.TF_FunctionName(cond));
+			c_api.TF_SetAttrFuncName (desc, "body", c_api.TF_FunctionName(body));
+			if (output_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			
+			if (parallel_iterations.HasValue)
+				c_api.TF_SetAttrInt (desc, "parallel_iterations", parallel_iterations.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			if (tf_status.TF_GetCode(status) != TF_Code.TF_OK)
+			{
+			    throw new OpException(op, status);
+			}
+			
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -65713,6 +69189,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -65760,6 +69237,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var reader_handle = new TF_Output (op, _idx++);
 			return reader_handle;
@@ -65814,6 +69292,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
@@ -65849,6 +69328,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var response = new TF_Output (op, _idx++);
 			return response;
@@ -65877,6 +69357,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var output_handle = new TF_Output (op, _idx++);
 			return output_handle;
@@ -65923,6 +69404,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -65958,6 +69440,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -65990,6 +69473,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -66025,6 +69509,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -66069,6 +69554,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -66101,6 +69587,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -66136,6 +69623,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -66174,6 +69662,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			return op;
 		}
 
@@ -66204,6 +69693,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -66236,6 +69726,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -66267,6 +69758,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var y = new TF_Output (op, _idx++);
 			return y;
@@ -66305,6 +69797,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var z = new TF_Output (op, _idx++);
 			return z;
@@ -66340,6 +69833,7 @@ namespace TensorFlow {
 			{
 			    throw new OpException(op, status);
 			}
+			
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;

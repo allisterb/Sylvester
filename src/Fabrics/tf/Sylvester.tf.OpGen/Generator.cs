@@ -94,7 +94,6 @@ namespace Sylvester.tf.OpGen
 					if (op.attr.Any(attr => CSharpType(attr.type) == null))
 					{
 						var attr = op.attr.First(a => CSharpType(a.type) == null);
-
 						L.Error("Skipping op {0} due to attribute {1} of TF type {2} lacking a mapping to a C# type", op.name, attr.name, attr.type);
 						continue;
 					}/*
@@ -210,6 +209,8 @@ namespace Sylvester.tf.OpGen
 					cstype = "TF_Tensor"; break;
 				case "string":
 					cstype = "string"; break;
+				case "func":
+					cstype = "TF_Function"; break;
 				default:
 					return null;
 			}
@@ -221,7 +222,7 @@ namespace Sylvester.tf.OpGen
 		{
 			if (tfType.StartsWith("list("))
 				return true;
-			if (tfType == "tensor" || tfType == "string" || tfType == "shape")
+			if (tfType == "tensor" || tfType == "string" || tfType == "shape" || tfType == "func")
 				return true;
 			return false;
 		}
@@ -511,6 +512,12 @@ namespace Sylvester.tf.OpGen
 				case "TF_Tensor[]":
 					p($"c_api.TF_SetTensorList (desc, \"{attrName}\", ref {csAttrName}[0], {csAttrName}.Length, status);");
 					break;
+				case "TF_Function":
+					p($"c_api.TF_SetAttrFuncName (desc, \"{attrName}\", c_api.TF_FunctionName({csAttrName}));");
+					break;
+				case "TF_Function[]":
+					p($"c_api.TF_SetAttrFuncNames (desc, \"{attrName}\", c_api.TF_FunctionNames({csAttrName}));");
+					break;
 				default:
 					throw new UnknownTypeException(cstype);
 			}
@@ -549,7 +556,6 @@ namespace Sylvester.tf.OpGen
 
 			p($"public {retType} {name} ({FillArguments(oper)}string operName = null)");
 			pi("{");
-			bool needStatus = required_attrs.Concat(optional_attrs).Any(attr => attr.type.Contains("TF_Tensor"));
 			p("var status = tf_status.TF_NewStatus();");
 			p($"var desc = c_api.TF_NewOperation(this, \"{oper.name}\", MakeName (\"{oper.name}\", operName));");
 			foreach (var arg in oper.input_arg)
@@ -590,6 +596,7 @@ namespace Sylvester.tf.OpGen
 			p("{");
 			p("    throw new OpException(op, status);");
 			p("}");
+			p("");
 			if (oper.output_arg.Count() > 0)
 				p("int _idx = 0;");
 			if (oper.output_arg.Any(x => IsListArg(x)))

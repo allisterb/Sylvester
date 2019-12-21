@@ -1,82 +1,10 @@
-2019-12-21 10:51:48.267 -04:00 [WRN] The output file c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs exists and will be overwritten.
-2019-12-21 10:51:48.556 -04:00 [INF] Created generator.
-2019-12-21 10:51:48.559 -04:00 [INF] Using 1 TensorFlow op def directory.
-2019-12-21 10:51:48.571 -04:00 [INF] Adding 1215 op defs from directory C:\Projects\tensorflow\tensorflow\core\api_def\base_api.
-2019-12-21 10:51:48.790 -04:00 [ERR] Skipping op BatchFunction due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.795 -04:00 [ERR] Skipping op Case due to attribute branches of TF type list(func) lacking a mapping to a C# type
-2019-12-21 10:51:48.798 -04:00 [ERR] Skipping op ChooseFastestBranchDataset due to attribute branches of TF type list(func) lacking a mapping to a C# type
-2019-12-21 10:51:48.825 -04:00 [ERR] Skipping op ExperimentalGroupByReducerDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.828 -04:00 [ERR] Skipping op ExperimentalGroupByWindowDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.831 -04:00 [ERR] Skipping op ExperimentalMapAndBatchDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.834 -04:00 [ERR] Skipping op ExperimentalMapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.837 -04:00 [ERR] Skipping op ExperimentalParallelInterleaveDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.839 -04:00 [ERR] Skipping op ExperimentalScanDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.842 -04:00 [ERR] Skipping op ExperimentalTakeWhileDataset due to attribute predicate of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.849 -04:00 [ERR] Skipping op FilterDataset due to attribute predicate of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.852 -04:00 [ERR] Skipping op FlatMapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.855 -04:00 [ERR] Skipping op For due to attribute body of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.860 -04:00 [ERR] Skipping op GeneratorDataset due to attribute init_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.864 -04:00 [ERR] Skipping op GroupByReducerDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.867 -04:00 [ERR] Skipping op GroupByWindowDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.871 -04:00 [ERR] Skipping op If due to attribute then_branch of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.875 -04:00 [ERR] Skipping op InterleaveDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.882 -04:00 [ERR] Skipping op MapAndBatchDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.886 -04:00 [ERR] Skipping op MapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.889 -04:00 [ERR] Skipping op MapDefun due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.897 -04:00 [ERR] Skipping op OneShotIterator due to attribute dataset_factory of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.904 -04:00 [ERR] Skipping op ParallelInterleaveDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.907 -04:00 [ERR] Skipping op ParallelInterleaveDatasetV2 due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.910 -04:00 [ERR] Skipping op ParallelMapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.914 -04:00 [ERR] Skipping op PartitionedCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.925 -04:00 [ERR] Skipping op ReduceDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.928 -04:00 [ERR] Skipping op RemoteCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.939 -04:00 [ERR] Skipping op ScanDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.959 -04:00 [ERR] Skipping op StatefulPartitionedCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.962 -04:00 [ERR] Skipping op StatelessIf due to attribute then_branch of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.966 -04:00 [ERR] Skipping op StatelessWhile due to attribute cond of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.970 -04:00 [ERR] Skipping op SymbolicGradient due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.973 -04:00 [ERR] Skipping op TakeWhileDataset due to attribute predicate of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.979 -04:00 [ERR] Skipping op TPUPartitionedCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:48.986 -04:00 [ERR] Skipping op While due to attribute cond of TF type func lacking a mapping to a C# type
-2019-12-21 10:51:49.228 -04:00 [INF] Wrote 1182 ops to c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs.
-2019-12-21 10:56:22.408 -04:00 [WRN] The output file c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs exists and will be overwritten.
-2019-12-21 10:56:22.661 -04:00 [INF] Created generator.
-2019-12-21 10:56:22.663 -04:00 [INF] Using 1 TensorFlow op def directory.
-2019-12-21 10:56:22.672 -04:00 [INF] Adding 1215 op defs from directory C:\Projects\tensorflow\tensorflow\core\api_def\base_api.
-2019-12-21 10:56:22.846 -04:00 [ERR] Skipping op BatchFunction due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.852 -04:00 [ERR] Skipping op Case due to attribute branches of TF type list(func) lacking a mapping to a C# type
-2019-12-21 10:56:22.855 -04:00 [ERR] Skipping op ChooseFastestBranchDataset due to attribute branches of TF type list(func) lacking a mapping to a C# type
-2019-12-21 10:56:22.866 -04:00 [ERR] Skipping op ExperimentalGroupByReducerDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.870 -04:00 [ERR] Skipping op ExperimentalGroupByWindowDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.873 -04:00 [ERR] Skipping op ExperimentalMapAndBatchDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.877 -04:00 [ERR] Skipping op ExperimentalMapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.883 -04:00 [ERR] Skipping op ExperimentalParallelInterleaveDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.885 -04:00 [ERR] Skipping op ExperimentalScanDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.889 -04:00 [ERR] Skipping op ExperimentalTakeWhileDataset due to attribute predicate of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.896 -04:00 [ERR] Skipping op FilterDataset due to attribute predicate of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.899 -04:00 [ERR] Skipping op FlatMapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.902 -04:00 [ERR] Skipping op For due to attribute body of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.907 -04:00 [ERR] Skipping op GeneratorDataset due to attribute init_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.910 -04:00 [ERR] Skipping op GroupByReducerDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.914 -04:00 [ERR] Skipping op GroupByWindowDataset due to attribute key_func of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.918 -04:00 [ERR] Skipping op If due to attribute then_branch of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.922 -04:00 [ERR] Skipping op InterleaveDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.930 -04:00 [ERR] Skipping op MapAndBatchDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.934 -04:00 [ERR] Skipping op MapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.936 -04:00 [ERR] Skipping op MapDefun due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.945 -04:00 [ERR] Skipping op OneShotIterator due to attribute dataset_factory of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.951 -04:00 [ERR] Skipping op ParallelInterleaveDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.953 -04:00 [ERR] Skipping op ParallelInterleaveDatasetV2 due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.956 -04:00 [ERR] Skipping op ParallelMapDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.960 -04:00 [ERR] Skipping op PartitionedCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.971 -04:00 [ERR] Skipping op ReduceDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.974 -04:00 [ERR] Skipping op RemoteCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:22.986 -04:00 [ERR] Skipping op ScanDataset due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.009 -04:00 [ERR] Skipping op StatefulPartitionedCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.013 -04:00 [ERR] Skipping op StatelessIf due to attribute then_branch of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.016 -04:00 [ERR] Skipping op StatelessWhile due to attribute cond of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.020 -04:00 [ERR] Skipping op SymbolicGradient due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.022 -04:00 [ERR] Skipping op TakeWhileDataset due to attribute predicate of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.033 -04:00 [ERR] Skipping op TPUPartitionedCall due to attribute f of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.040 -04:00 [ERR] Skipping op While due to attribute cond of TF type func lacking a mapping to a C# type
-2019-12-21 10:56:23.300 -04:00 [INF] Wrote 1182 ops to c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs.
+2019-12-21 11:41:57.073 -04:00 [WRN] The output file c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs exists and will be overwritten.
+2019-12-21 11:41:57.364 -04:00 [INF] Created generator.
+2019-12-21 11:41:57.366 -04:00 [INF] Using 1 TensorFlow op def directory.
+2019-12-21 11:41:57.381 -04:00 [INF] Adding 1215 op defs from directory C:\Projects\tensorflow\tensorflow\core\api_def\base_api.
+2019-12-21 11:41:57.896 -04:00 [INF] Wrote 1218 ops to c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs.
+2019-12-21 11:42:48.312 -04:00 [INF] Using output file c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs.
+2019-12-21 11:42:48.585 -04:00 [INF] Created generator.
+2019-12-21 11:42:48.597 -04:00 [INF] Using 1 TensorFlow op def directory.
+2019-12-21 11:42:48.607 -04:00 [INF] Adding 1215 op defs from directory C:\Projects\tensorflow\tensorflow\core\api_def\base_api.
+2019-12-21 11:42:49.162 -04:00 [INF] Wrote 1218 ops to c:\Projects\Sylvester.git\src\Fabrics\tf\Sylvester.tf.Api\Ops.g.cs.
