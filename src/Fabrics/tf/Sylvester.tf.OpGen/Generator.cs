@@ -32,7 +32,6 @@ namespace Sylvester.tf.OpGen
 			{
 				L.Error("Could not get op list: {0}.", tf_status.TF_Message(status));
 				Program.Exit(Program.ExitResult.TF_ERROR);
-
 			}
 			var ret = new byte[(int)opsBuffer.Length];
 			Marshal.Copy(opsBuffer.Data, ret, 0, (int)opsBuffer.Length);
@@ -63,7 +62,7 @@ namespace Sylvester.tf.OpGen
 		{			
 			if (dirs.Length > 0)
 			{
-				UpdateApis(dirs);
+				UpdateApiDefs(dirs);
 			}
 			p("using System;\n");
 			pi("namespace TensorFlow {");
@@ -83,7 +82,7 @@ namespace Sylvester.tf.OpGen
 			}
 			else
 			{
-				foreach( var op in OpDefs)
+				foreach( var op in OpDefs.OrderBy(_op => _op.name))
 				{
 					// Skip internal operations
 					if (op.name.StartsWith("_"))
@@ -135,7 +134,7 @@ namespace Sylvester.tf.OpGen
 			L.Information("Wrote {0} characters to {1}.", OutputBuilder.Length, OutputFile.FullName);
 		}
 
-		void UpdateApis(string[] dirs)
+		void UpdateApiDefs(string[] dirs)
 		{
 			foreach (var dir in dirs)
 			{
@@ -361,7 +360,7 @@ namespace Sylvester.tf.OpGen
 			{
 				if (line.IndexOf("in image height coordinates.") != -1)
 				{
-					Console.WriteLine("Hello");
+					//Console.WriteLine("Hello");
 				}
 
 				var line2 = line.Trim().Replace("<", "&lt;").Replace(">", "&gt;").Replace("&", "&amp;");

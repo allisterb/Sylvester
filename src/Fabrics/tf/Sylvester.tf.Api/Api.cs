@@ -9,14 +9,14 @@ namespace TensorFlow
 {
 	public unsafe partial  class c_api
 	{
-		public static void TF_SetAttrString(global::TensorFlow.TF_OperationDescription desc, string attr_name, string attr_value)
+		public static void TF_SetAttrString(TF_OperationDescription desc, string attr_name, string attr_value)
 		{
 			ulong length = Convert.ToUInt64(attr_value.Length);
 			var ptr = Marshal.StringToHGlobalAnsi(attr_value);
 			TF_SetAttrString(desc, attr_name, ptr, length);
 		}
 
-		public static void TF_SetAttrStringList(global::TensorFlow.TF_OperationDescription desc, string attr_name, string[] attr_values)
+		public static void TF_SetAttrStringList(TF_OperationDescription desc, string attr_name, string[] attr_values)
 		{
 			IntPtr[] ptrs = new IntPtr[attr_values.Length];
 			ulong[] lengths = new ulong[attr_values.Length];
@@ -32,7 +32,7 @@ namespace TensorFlow
 			}
 		}
 
-		public static void TF_SetAttrTypeList(global::TensorFlow.TF_OperationDescription desc, string attr_name, global::TensorFlow.TF_DataType[] values)
+		public static void TF_SetAttrTypeList(TF_OperationDescription desc, string attr_name, TF_DataType[] values)
 		{
 			fixed (TF_DataType* ptr = &values[0])
 			{
@@ -42,12 +42,15 @@ namespace TensorFlow
 
 		public static void TF_SetAttrShapeList(TF_OperationDescription desc, string attr_name, long[][] dims)
 		{
-			int[] num_dims = new int[dims.Length];
-			for (int i = 0; i < dims.Length; i++)
+			int[] num_dims = new int[dims.GetLength(0)];
+			IntPtr[] ptr_dims = new IntPtr[dims.GetLength(0)];
+			for (int i = 0; i < dims.GetLength(0); i++)
 			{
 				num_dims[i] = dims[i].Length;
+				ptr_dims[i] = Marshal.AllocHGlobal(sizeof(int) * dims[i].Length);
+				Marshal.Copy(dims[i], 0, ptr_dims[i], dims[i].Length);
 			}
-			fixed(long* ptr = &dims[0][0])
+			fixed (IntPtr* ptr = &ptr_dims[0])
 			{
 				c_api.TF_SetAttrShapeList(desc, attr_name, (long**)ptr, ref num_dims[0], dims.Length);
 			}
