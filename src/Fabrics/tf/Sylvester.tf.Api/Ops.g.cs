@@ -3585,6 +3585,203 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Takes the given number of completed elements from a barrier.
+		/// </summary>
+		/// <param name="handle">
+		///   The handle to a barrier.
+		/// </param>
+		/// <param name="num_elements">
+		///   A single-element tensor containing the number of elements to
+		///   take.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'BarrierTakeMany'.
+		/// </param>
+		/// <param name="allow_small_batch">
+		///   Optional argument
+		///   Allow to return less than num_elements items if barrier is
+		///   already closed.
+		/// </param>
+		/// <param name="wait_for_incomplete">
+		///   Optional argument
+		/// </param>
+		/// <param name="timeout_ms">
+		///   Optional argument
+		///   If the queue is empty, this operation will block for up to
+		///   timeout_ms milliseconds.
+		///   Note: This option is not supported yet.
+		/// </param>
+		/// <param name="component_types">
+		///   The type of each component in a value.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   indices: A one-dimensional tensor of indices, with length num_elems.
+		///   These indices refer to the batch in which the values were placed into the
+		///   barrier (starting with MIN_LONG and increasing with each BarrierInsertMany).
+		///   keys: A one-dimensional tensor of keys, with length num_elements.
+		///   values: One any-dimensional tensor per component in a barrier element. All
+		///   values have length num_elements in the 0th dimension.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   This operation concatenates completed-element component tensors along
+		///   the 0th dimension to make a single component tensor.
+		///   
+		///   Elements come out of the barrier when they are complete, and in the order
+		///   in which they were placed into the barrier.  The indices output provides
+		///   information about the batch in which each element was originally inserted
+		///   into the barrier.
+		/// </remarks>
+		public (TF_Output indices, TF_Output keys, TF_Output[] values) BarrierTakeMany (TF_Output handle, TF_Output num_elements, TF_DataType[] component_types, bool? allow_small_batch = null, bool? wait_for_incomplete = null, long? timeout_ms = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "BarrierTakeMany", MakeName ("BarrierTakeMany", operName));
+			c_api.TF_AddInput(desc, handle);
+			c_api.TF_AddInput(desc, num_elements);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "component_types", component_types);
+			if (allow_small_batch.HasValue)
+				c_api.TF_SetAttrBool (desc, "allow_small_batch", Convert.ToByte(allow_small_batch.Value));
+			
+			if (wait_for_incomplete.HasValue)
+				c_api.TF_SetAttrBool (desc, "wait_for_incomplete", Convert.ToByte(wait_for_incomplete.Value));
+			
+			if (timeout_ms.HasValue)
+				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			var indices = new TF_Output (op, _idx++);
+			var keys = new TF_Output (op, _idx++);
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return (indices, keys, values);
+		}
+
+		/// <summary>
+		///   Batches all input tensors nondeterministically.
+		/// </summary>
+		/// <param name="in_tensors">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'Batch'.
+		/// </param>
+		/// <param name="max_enqueued_batches">
+		///   Optional argument
+		/// </param>
+		/// <param name="allowed_batch_sizes">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="batching_queue">
+		///   Optional argument
+		/// </param>
+		/// <param name="num_batch_threads">
+		/// </param>
+		/// <param name="max_batch_size">
+		/// </param>
+		/// <param name="batch_timeout_micros">
+		/// </param>
+		/// <param name="grad_timeout_micros">
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   batched_tensors:
+		///   batch_index:
+		///   id:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   When many instances of this Op are being run concurrently with the same
+		///   container/shared_name in the same device, some will output zero-shaped Tensors
+		///   and others will output Tensors of size up to max_batch_size.
+		///   
+		///   All Tensors in in_tensors are batched together (so, for example, labels and
+		///   features should be batched with a single instance of this operation.
+		///   
+		///   Each invocation of batch emits an <c>id</c> scalar which will be used to identify
+		///   this particular invocation when doing unbatch or its gradient.
+		///   
+		///   Each op which emits a non-empty batch will also emit a non-empty batch_index
+		///   Tensor, which, is a [K, 3] matrix where each row contains the invocation's id,
+		///   start, and length of elements of each set of Tensors present in batched_tensors.
+		///   
+		///   Batched tensors are concatenated along the first dimension, and all tensors in
+		///   in_tensors must have the first dimension of the same size.
+		///   
+		///   in_tensors: The tensors to be batched.
+		///   num_batch_threads: Number of scheduling threads for processing batches of work.
+		///   Determines the number of batches processed in parallel.
+		///   max_batch_size: Batch sizes will never be bigger than this.
+		///   batch_timeout_micros: Maximum number of microseconds to wait before outputting
+		///   an incomplete batch.
+		///   allowed_batch_sizes: Optional list of allowed batch sizes. If left empty, does
+		///   nothing. Otherwise, supplies a list of batch sizes, causing the op to pad
+		///   batches up to one of those sizes. The entries must increase monotonically, and
+		///   the final entry must equal max_batch_size.
+		///   grad_timeout_micros: The timeout to use for the gradient. See Unbatch.
+		///   batched_tensors: Either empty tensors or a batch of concatenated Tensors.
+		///   batch_index: If out_tensors is non-empty, has information to invert it.
+		///   container: Controls the scope of sharing of this batch.
+		///   id: always contains a scalar with a unique ID for this invocation of Batch.
+		///   shared_name: Concurrently running instances of batch in the same device with the
+		///   same container and shared_name will batch their elements together. If left
+		///   empty, the op name will be used as the shared name.
+		///   T: the types of tensors to be batched.
+		/// </remarks>
+		public (TF_Output[] batched_tensors, TF_Output batch_index, TF_Output id) Batch (TF_Output[] in_tensors, long num_batch_threads, long max_batch_size, long batch_timeout_micros, long grad_timeout_micros, long? max_enqueued_batches = null, long[] allowed_batch_sizes = null, string container = null, string shared_name = null, string batching_queue = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "Batch", MakeName ("Batch", operName));
+			c_api.TF_AddInputList(desc, in_tensors[0], in_tensors.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_batch_threads", num_batch_threads);
+			c_api.TF_SetAttrInt (desc, "max_batch_size", max_batch_size);
+			c_api.TF_SetAttrInt (desc, "batch_timeout_micros", batch_timeout_micros);
+			c_api.TF_SetAttrInt (desc, "grad_timeout_micros", grad_timeout_micros);
+			if (max_enqueued_batches.HasValue)
+				c_api.TF_SetAttrInt (desc, "max_enqueued_batches", max_enqueued_batches.Value);
+			
+			if (allowed_batch_sizes != null)
+				c_api.TF_SetAttrIntList (desc, "allowed_batch_sizes", ref allowed_batch_sizes[0], allowed_batch_sizes.Length);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			if (batching_queue != null)
+				c_api.TF_SetAttrString (desc, "batching_queue", batching_queue);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "batched_tensors", status);
+			var batched_tensors = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				batched_tensors [i] = new TF_Output (op, _idx++);
+			
+			var batch_index = new TF_Output (op, _idx++);
+			var id = new TF_Output (op, _idx++);
+			return (batched_tensors, batch_index, id);
+		}
+
+		/// <summary>
 		/// </summary>
 		/// <param name="input">
 		/// </param>
@@ -5558,6 +5755,47 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Bucketize each feature based on bucket boundaries.
+		/// </summary>
+		/// <param name="float_values">
+		///   float; List of Rank 1 Tensor each containing float values for a single feature.
+		/// </param>
+		/// <param name="bucket_boundaries">
+		///   float; List of Rank 1 Tensors each containing the bucket boundaries for a single
+		///   feature.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'BoostedTreesBucketize'.
+		/// </param>
+		/// <returns>
+		///   int; List of Rank 1 Tensors each containing the bucketized values for a single feature.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   An op that returns a list of float tensors, where each tensor represents the
+		///   bucketized values for a single feature.
+		/// </remarks>
+		public TF_Output[] BoostedTreesBucketize (TF_Output[] float_values, TF_Output[] bucket_boundaries, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "BoostedTreesBucketize", MakeName ("BoostedTreesBucketize", operName));
+			c_api.TF_AddInputList(desc, float_values[0], float_values.Length);
+			c_api.TF_AddInputList(desc, bucket_boundaries[0], bucket_boundaries.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "buckets", status);
+			var buckets = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				buckets [i] = new TF_Output (op, _idx++);
+			
+			return buckets;
+		}
+
+		/// <summary>
 		///   Calculates gains for each feature and returns the best possible split information for the feature.
 		/// </summary>
 		/// <param name="node_id_range">
@@ -5636,6 +5874,97 @@ namespace TensorFlow {
 			var right_node_contribs = new TF_Output (op, _idx++);
 			var split_with_default_directions = new TF_Output (op, _idx++);
 			return (node_ids, gains, feature_dimensions, thresholds, left_node_contribs, right_node_contribs, split_with_default_directions);
+		}
+
+		/// <summary>
+		///   Calculates gains for each feature and returns the best possible split information for the feature.
+		/// </summary>
+		/// <param name="node_id_range">
+		///   A Rank 1 tensor (shape=[2]) to specify the range [first, last) of node ids to process within <c>stats_summary_list</c>. The nodes are iterated between the two nodes specified by the tensor, as like <c>for node_id in range(node_id_range[0], node_id_range[1])</c> (Note that the last index node_id_range[1] is exclusive).
+		/// </param>
+		/// <param name="stats_summary_list">
+		///   A list of Rank 3 tensor (#shape=[max_splits, bucket, 2]) for accumulated stats summary (gradient/hessian) per node per buckets for each feature. The first dimension of the tensor is the maximum number of splits, and thus not all elements of it will be used, but only the indexes specified by node_ids will be used.
+		/// </param>
+		/// <param name="l1">
+		///   l1 regularization factor on leaf weights, per instance based.
+		/// </param>
+		/// <param name="l2">
+		///   l2 regularization factor on leaf weights, per instance based.
+		/// </param>
+		/// <param name="tree_complexity">
+		///   adjustment to the gain, per leaf based.
+		/// </param>
+		/// <param name="min_node_weight">
+		///   mininum avg of hessians in a node before required for the node to be considered for splitting.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'BoostedTreesCalculateBestGainsPerFeature'.
+		/// </param>
+		/// <param name="max_splits">
+		///   the number of nodes that can be split in the whole tree. Used as a dimension of output tensors.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   node_ids_list: An output list of Rank 1 tensors indicating possible split node ids for each feature. The length of the list is num_features, but each tensor has different size as each feature provides different possible nodes. See above for details like shapes and sizes.
+		///   gains_list: An output list of Rank 1 tensors indicating the best gains for each feature to split for certain nodes. See above for details like shapes and sizes.
+		///   thresholds_list: An output list of Rank 1 tensors indicating the bucket id to compare with (as a threshold) for split in each node. See above for details like shapes and sizes.
+		///   left_node_contribs_list: A list of Rank 2 tensors indicating the contribution of the left nodes when branching from parent nodes (given by the tensor element in the output node_ids_list) to the left direction by the given threshold for each feature. This value will be used to make the left node value by adding to the parent node value. Second dimension size is 1 for 1-dimensional logits, but would be larger for multi-class problems. See above for details like shapes and sizes.
+		///   right_node_contribs_list: A list of Rank 2 tensors, with the same shape/conditions as left_node_contribs_list, but just that the value is for the right node.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   The split information is the best threshold (bucket id), gains and left/right node contributions per node for each feature.
+		///   
+		///   It is possible that not all nodes can be split on each feature. Hence, the list of possible nodes can differ between the features. Therefore, we return <c>node_ids_list</c> for each feature, containing the list of nodes that this feature can be used to split.
+		///   
+		///   In this manner, the output is the best split per features and per node, so that it needs to be combined later to produce the best split for each node (among all possible features).
+		///   
+		///   The length of output lists are all of the same length, <c>num_features</c>.
+		///   The output shapes are compatible in a way that the first dimension of all tensors of all lists are the same and equal to the number of possible split nodes for each feature.
+		/// </remarks>
+		public (TF_Output[] node_ids_list, TF_Output[] gains_list, TF_Output[] thresholds_list, TF_Output[] left_node_contribs_list, TF_Output[] right_node_contribs_list) BoostedTreesCalculateBestGainsPerFeature (TF_Output node_id_range, TF_Output[] stats_summary_list, TF_Output l1, TF_Output l2, TF_Output tree_complexity, TF_Output min_node_weight, long max_splits, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "BoostedTreesCalculateBestGainsPerFeature", MakeName ("BoostedTreesCalculateBestGainsPerFeature", operName));
+			c_api.TF_AddInput(desc, node_id_range);
+			c_api.TF_AddInputList(desc, stats_summary_list[0], stats_summary_list.Length);
+			c_api.TF_AddInput(desc, l1);
+			c_api.TF_AddInput(desc, l2);
+			c_api.TF_AddInput(desc, tree_complexity);
+			c_api.TF_AddInput(desc, min_node_weight);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "max_splits", max_splits);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "node_ids_list", status);
+			var node_ids_list = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				node_ids_list [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "gains_list", status);
+			var gains_list = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				gains_list [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "thresholds_list", status);
+			var thresholds_list = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				thresholds_list [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "left_node_contribs_list", status);
+			var left_node_contribs_list = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				left_node_contribs_list [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "right_node_contribs_list", status);
+			var right_node_contribs_list = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				right_node_contribs_list [i] = new TF_Output (op, _idx++);
+			
+			return (node_ids_list, gains_list, thresholds_list, left_node_contribs_list, right_node_contribs_list);
 		}
 
 		/// <summary>
@@ -5863,6 +6192,45 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Flush the quantile summaries from each quantile stream resource.
+		/// </summary>
+		/// <param name="quantile_stream_resource_handle">
+		///   resource handle referring to a QuantileStreamResource.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'BoostedTreesFlushQuantileSummaries'.
+		/// </param>
+		/// <param name="num_features">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   An op that outputs a list of quantile summaries of a quantile stream resource.
+		///   Each summary Tensor is rank 2, containing summaries (value, weight, min_rank,
+		///   max_rank) for a single feature.
+		/// </remarks>
+		public TF_Output[] BoostedTreesFlushQuantileSummaries (TF_Output quantile_stream_resource_handle, long num_features, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "BoostedTreesFlushQuantileSummaries", MakeName ("BoostedTreesFlushQuantileSummaries", operName));
+			c_api.TF_AddInput(desc, quantile_stream_resource_handle);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_features", num_features);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "summaries", status);
+			var summaries = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				summaries [i] = new TF_Output (op, _idx++);
+			
+			return summaries;
+		}
+
+		/// <summary>
 		///   Retrieves the tree ensemble resource stamp token, number of trees and growing statistics.
 		/// </summary>
 		/// <param name="tree_ensemble_handle">
@@ -5897,6 +6265,51 @@ namespace TensorFlow {
 			var num_attempted_layers = new TF_Output (op, _idx++);
 			var last_layer_nodes_range = new TF_Output (op, _idx++);
 			return (stamp_token, num_trees, num_finalized_trees, num_attempted_layers, last_layer_nodes_range);
+		}
+
+		/// <summary>
+		///   Makes the summary of quantiles for the batch.
+		/// </summary>
+		/// <param name="float_values">
+		///   float; List of Rank 1 Tensors each containing values for a single feature.
+		/// </param>
+		/// <param name="example_weights">
+		///   float; Rank 1 Tensor with weights per instance.
+		/// </param>
+		/// <param name="epsilon">
+		///   float; The required maximum approximation error.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'BoostedTreesMakeQuantileSummaries'.
+		/// </param>
+		/// <returns>
+		///   float; List of Rank 2 Tensors each containing the quantile summary
+		///   (value, weight, min_rank, max_rank) of a single feature.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   An op that takes a list of tensors (one tensor per feature) and outputs the
+		///   quantile summaries for each tensor.
+		/// </remarks>
+		public TF_Output[] BoostedTreesMakeQuantileSummaries (TF_Output[] float_values, TF_Output example_weights, TF_Output epsilon, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "BoostedTreesMakeQuantileSummaries", MakeName ("BoostedTreesMakeQuantileSummaries", operName));
+			c_api.TF_AddInputList(desc, float_values[0], float_values.Length);
+			c_api.TF_AddInput(desc, example_weights);
+			c_api.TF_AddInput(desc, epsilon);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "summaries", status);
+			var summaries = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				summaries [i] = new TF_Output (op, _idx++);
+			
+			return summaries;
 		}
 
 		/// <summary>
@@ -6094,6 +6507,46 @@ namespace TensorFlow {
 			
 			var op = c_api.TF_FinishOperation(desc, status);
 			return op;
+		}
+
+		/// <summary>
+		///   Generate the bucket boundaries for each feature based on accumulated summaries.
+		/// </summary>
+		/// <param name="quantile_stream_resource_handle">
+		///   resource handle referring to a QuantileStreamResource.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'BoostedTreesQuantileStreamResourceGetBucketBoundaries'.
+		/// </param>
+		/// <param name="num_features">
+		///   inferred int; number of features to get bucket boundaries for.
+		/// </param>
+		/// <returns>
+		///   float; List of Rank 1 Tensors each containing the bucket boundaries for a feature.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   An op that returns a list of float tensors for a quantile stream resource. Each
+		///   tensor is Rank 1 containing bucket boundaries for a single feature.
+		/// </remarks>
+		public TF_Output[] BoostedTreesQuantileStreamResourceGetBucketBoundaries (TF_Output quantile_stream_resource_handle, long num_features, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "BoostedTreesQuantileStreamResourceGetBucketBoundaries", MakeName ("BoostedTreesQuantileStreamResourceGetBucketBoundaries", operName));
+			c_api.TF_AddInput(desc, quantile_stream_resource_handle);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_features", num_features);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "bucket_boundaries", status);
+			var bucket_boundaries = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				bucket_boundaries [i] = new TF_Output (op, _idx++);
+			
+			return bucket_boundaries;
 		}
 
 		/// <summary>
@@ -7577,6 +8030,55 @@ namespace TensorFlow {
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
+		}
+
+		/// <summary>
+		///   Computes offsets of concat inputs within its output.
+		/// </summary>
+		/// <param name="concat_dim">
+		///   The dimension along which to concatenate.
+		/// </param>
+		/// <param name="shape">
+		///   The <c>N</c> int32 vectors representing shape of tensors being concatenated.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ConcatOffset'.
+		/// </param>
+		/// <returns>
+		///   The <c>N</c> int32 vectors representing the starting offset
+		///   of input tensors within the concatenated output.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   For example:
+		///   
+		///    <code>
+		///   # 'x' is [2, 2, 7]
+		///   # 'y' is [2, 3, 7]
+		///   # 'z' is [2, 5, 7]
+		///   concat_offset(2, [x, y, z]) =&amp;gt; [0, 0, 0], [0, 2, 0], [0, 5, 0]
+		///    </code>
+		///   
+		///   This is typically used by gradient computations for a concat operation.
+		/// </remarks>
+		public TF_Output[] ConcatOffset (TF_Output concat_dim, TF_Output[] shape, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ConcatOffset", MakeName ("ConcatOffset", operName));
+			c_api.TF_AddInput(desc, concat_dim);
+			c_api.TF_AddInputList(desc, shape[0], shape.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "offset", status);
+			var offset = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				offset [i] = new TF_Output (op, _idx++);
+			
+			return offset;
 		}
 
 		/// <summary>
@@ -9108,6 +9610,86 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Performs beam search decoding on the logits given in input.
+		/// </summary>
+		/// <param name="inputs">
+		///   3-D, shape: <c>(max_time x batch_size x num_classes)</c>, the logits.
+		/// </param>
+		/// <param name="sequence_length">
+		///   A vector containing sequence lengths, size <c>(batch)</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'CTCBeamSearchDecoder'.
+		/// </param>
+		/// <param name="merge_repeated">
+		///   Optional argument
+		///   If true, merge repeated classes in output.
+		/// </param>
+		/// <param name="beam_width">
+		///   A scalar &amp;gt;= 0 (beam search beam width).
+		/// </param>
+		/// <param name="top_paths">
+		///   A scalar &amp;gt;= 0, &amp;lt;= beam_width (controls output size).
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   decoded_indices: A list (length: top_paths) of indices matrices.  Matrix j,
+		///   size <c>(total_decoded_outputs[j] x 2)</c>, has indices of a
+		///   <c>SparseTensor&amp;lt;int64, 2&amp;gt;</c>.  The rows store: [batch, time].
+		///   decoded_values: A list (length: top_paths) of values vectors.  Vector j,
+		///   size <c>(length total_decoded_outputs[j])</c>, has the values of a
+		///   <c>SparseTensor&amp;lt;int64, 2&amp;gt;</c>.  The vector stores the decoded classes for beam j.
+		///   decoded_shape: A list (length: top_paths) of shape vector.  Vector j,
+		///   size <c>(2)</c>, stores the shape of the decoded <c>SparseTensor[j]</c>.
+		///   Its values are: <c>[batch_size, max_decoded_length[j]]</c>.
+		///   log_probability: A matrix, shaped: <c>(batch_size x top_paths)</c>.  The
+		///   sequence log-probabilities.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   A note about the attribute merge_repeated: For the beam search decoder,
+		///   this means that if consecutive entries in a beam are the same, only
+		///   the first of these is emitted.  That is, when the top path is "A B B B B",
+		///   "A B" is returned if merge_repeated = True but "A B B B B" is
+		///   returned if merge_repeated = False.
+		/// </remarks>
+		public (TF_Output[] decoded_indices, TF_Output[] decoded_values, TF_Output[] decoded_shape, TF_Output log_probability) CTCBeamSearchDecoder (TF_Output inputs, TF_Output sequence_length, long beam_width, long top_paths, bool? merge_repeated = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "CTCBeamSearchDecoder", MakeName ("CTCBeamSearchDecoder", operName));
+			c_api.TF_AddInput(desc, inputs);
+			c_api.TF_AddInput(desc, sequence_length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "beam_width", beam_width);
+			c_api.TF_SetAttrInt (desc, "top_paths", top_paths);
+			if (merge_repeated.HasValue)
+				c_api.TF_SetAttrBool (desc, "merge_repeated", Convert.ToByte(merge_repeated.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "decoded_indices", status);
+			var decoded_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				decoded_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "decoded_values", status);
+			var decoded_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				decoded_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "decoded_shape", status);
+			var decoded_shape = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				decoded_shape [i] = new TF_Output (op, _idx++);
+			
+			var log_probability = new TF_Output (op, _idx++);
+			return (decoded_indices, decoded_values, decoded_shape, log_probability);
+		}
+
+		/// <summary>
 		///   Performs greedy decoding on the logits given in inputs.
 		/// </summary>
 		/// <param name="inputs">
@@ -10128,6 +10710,250 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Retrieves CudnnRNN params in canonical form.
+		/// </summary>
+		/// <param name="num_layers">
+		/// </param>
+		/// <param name="num_units">
+		/// </param>
+		/// <param name="input_size">
+		/// </param>
+		/// <param name="parameters">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'CudnnRNNParamsToCanonical'.
+		/// </param>
+		/// <param name="rnn_mode">
+		///   Optional argument
+		/// </param>
+		/// <param name="input_mode">
+		///   Optional argument
+		/// </param>
+		/// <param name="direction">
+		///   Optional argument
+		/// </param>
+		/// <param name="dropout">
+		///   Optional argument
+		/// </param>
+		/// <param name="seed">
+		///   Optional argument
+		/// </param>
+		/// <param name="seed2">
+		///   Optional argument
+		/// </param>
+		/// <param name="num_params">
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   weights:
+		///   biases:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   Retrieves a set of weights from the opaque params buffer that can be saved and
+		///   restored in a way compatible with future runs.
+		///   
+		///   Note that the params buffer may not be compatible across different GPUs. So any
+		///   save and restoration should be converted to and from the canonical weights and
+		///   biases.
+		///   
+		///   num_layers: Specifies the number of layers in the RNN model.
+		///   num_units: Specifies the size of the hidden state.
+		///   input_size: Specifies the size of the input state.
+		///   num_params: number of parameter sets for all layers.
+		///   Each layer may contain multiple parameter sets, with each set consisting of
+		///   a weight matrix and a bias vector.
+		///   weights: the canonical form of weights that can be used for saving
+		///   and restoration. They are more likely to be compatible across different
+		///   generations.
+		///   biases: the canonical form of biases that can be used for saving
+		///   and restoration. They are more likely to be compatible across different
+		///   generations.
+		///   rnn_mode: Indicates the type of the RNN model.
+		///   input_mode: Indicate whether there is a linear projection between the input and
+		///   The actual computation before the first layer. 'skip_input' is only allowed
+		///   when input_size == num_units; 'auto_select' implies 'skip_input' when
+		///   input_size == num_units; otherwise, it implies 'linear_input'.
+		///   direction: Indicates whether a bidirectional model will be used.
+		///   dir = (direction == bidirectional) ? 2 : 1
+		///   dropout: dropout probability. When set to 0., dropout is disabled.
+		///   seed: the 1st part of a seed to initialize dropout.
+		///   seed2: the 2nd part of a seed to initialize dropout.
+		/// </remarks>
+		public (TF_Output[] weights, TF_Output[] biases) CudnnRNNParamsToCanonical (TF_Output num_layers, TF_Output num_units, TF_Output input_size, TF_Output parameters, long num_params, string rnn_mode = null, string input_mode = null, string direction = null, float? dropout = null, long? seed = null, long? seed2 = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "CudnnRNNParamsToCanonical", MakeName ("CudnnRNNParamsToCanonical", operName));
+			c_api.TF_AddInput(desc, num_layers);
+			c_api.TF_AddInput(desc, num_units);
+			c_api.TF_AddInput(desc, input_size);
+			c_api.TF_AddInput(desc, parameters);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_params", num_params);
+			if (rnn_mode != null)
+				c_api.TF_SetAttrString (desc, "rnn_mode", rnn_mode);
+			
+			if (input_mode != null)
+				c_api.TF_SetAttrString (desc, "input_mode", input_mode);
+			
+			if (direction != null)
+				c_api.TF_SetAttrString (desc, "direction", direction);
+			
+			if (dropout.HasValue)
+				c_api.TF_SetAttrFloat (desc, "dropout", dropout.Value);
+			
+			if (seed.HasValue)
+				c_api.TF_SetAttrInt (desc, "seed", seed.Value);
+			
+			if (seed2.HasValue)
+				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "weights", status);
+			var weights = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				weights [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "biases", status);
+			var biases = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				biases [i] = new TF_Output (op, _idx++);
+			
+			return (weights, biases);
+		}
+
+		/// <summary>
+		///   Retrieves CudnnRNN params in canonical form. It supports the projection in LSTM.
+		/// </summary>
+		/// <param name="num_layers">
+		/// </param>
+		/// <param name="num_units">
+		/// </param>
+		/// <param name="input_size">
+		/// </param>
+		/// <param name="parameters">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'CudnnRNNParamsToCanonicalV2'.
+		/// </param>
+		/// <param name="rnn_mode">
+		///   Optional argument
+		/// </param>
+		/// <param name="input_mode">
+		///   Optional argument
+		/// </param>
+		/// <param name="direction">
+		///   Optional argument
+		/// </param>
+		/// <param name="dropout">
+		///   Optional argument
+		/// </param>
+		/// <param name="seed">
+		///   Optional argument
+		/// </param>
+		/// <param name="seed2">
+		///   Optional argument
+		/// </param>
+		/// <param name="num_proj">
+		///   Optional argument
+		/// </param>
+		/// <param name="num_params_weights">
+		/// </param>
+		/// <param name="num_params_biases">
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   weights:
+		///   biases:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   Retrieves a set of weights from the opaque params buffer that can be saved and
+		///   restored in a way compatible with future runs.
+		///   
+		///   Note that the params buffer may not be compatible across different GPUs. So any
+		///   save and restoration should be converted to and from the canonical weights and
+		///   biases.
+		///   
+		///   num_layers: Specifies the number of layers in the RNN model.
+		///   num_units: Specifies the size of the hidden state.
+		///   input_size: Specifies the size of the input state.
+		///   num_params_weigths: number of weight parameter matrix for all layers.
+		///   num_params_biases: number of bias parameter vector for all layers.
+		///   weights: the canonical form of weights that can be used for saving
+		///   and restoration. They are more likely to be compatible across different
+		///   generations.
+		///   biases: the canonical form of biases that can be used for saving
+		///   and restoration. They are more likely to be compatible across different
+		///   generations.
+		///   rnn_mode: Indicates the type of the RNN model.
+		///   input_mode: Indicate whether there is a linear projection between the input and
+		///   The actual computation before the first layer. 'skip_input' is only allowed
+		///   when input_size == num_units; 'auto_select' implies 'skip_input' when
+		///   input_size == num_units; otherwise, it implies 'linear_input'.
+		///   direction: Indicates whether a bidirectional model will be used.
+		///   dir = (direction == bidirectional) ? 2 : 1
+		///   dropout: dropout probability. When set to 0., dropout is disabled.
+		///   seed: the 1st part of a seed to initialize dropout.
+		///   seed2: the 2nd part of a seed to initialize dropout.
+		///   num_proj: The output dimensionality for the projection matrices. If None or 0,
+		///   no projection is performed.
+		/// </remarks>
+		public (TF_Output[] weights, TF_Output[] biases) CudnnRNNParamsToCanonicalV2 (TF_Output num_layers, TF_Output num_units, TF_Output input_size, TF_Output parameters, long num_params_weights, long num_params_biases, string rnn_mode = null, string input_mode = null, string direction = null, float? dropout = null, long? seed = null, long? seed2 = null, long? num_proj = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "CudnnRNNParamsToCanonicalV2", MakeName ("CudnnRNNParamsToCanonicalV2", operName));
+			c_api.TF_AddInput(desc, num_layers);
+			c_api.TF_AddInput(desc, num_units);
+			c_api.TF_AddInput(desc, input_size);
+			c_api.TF_AddInput(desc, parameters);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_params_weights", num_params_weights);
+			c_api.TF_SetAttrInt (desc, "num_params_biases", num_params_biases);
+			if (rnn_mode != null)
+				c_api.TF_SetAttrString (desc, "rnn_mode", rnn_mode);
+			
+			if (input_mode != null)
+				c_api.TF_SetAttrString (desc, "input_mode", input_mode);
+			
+			if (direction != null)
+				c_api.TF_SetAttrString (desc, "direction", direction);
+			
+			if (dropout.HasValue)
+				c_api.TF_SetAttrFloat (desc, "dropout", dropout.Value);
+			
+			if (seed.HasValue)
+				c_api.TF_SetAttrInt (desc, "seed", seed.Value);
+			
+			if (seed2.HasValue)
+				c_api.TF_SetAttrInt (desc, "seed2", seed2.Value);
+			
+			if (num_proj.HasValue)
+				c_api.TF_SetAttrInt (desc, "num_proj", num_proj.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "weights", status);
+			var weights = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				weights [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "biases", status);
+			var biases = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				biases [i] = new TF_Output (op, _idx++);
+			
+			return (weights, biases);
+		}
+
+		/// <summary>
 		///   A RNN backed by cuDNN.
 		/// </summary>
 		/// <param name="input">
@@ -10788,6 +11614,44 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Outputs the single element from the given dataset.
+		/// </summary>
+		/// <param name="dataset">
+		///   A handle to a dataset that contains a single element.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'DatasetToSingleElement'.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The components of the single element of <c>input</c>.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] DatasetToSingleElement (TF_Output dataset, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "DatasetToSingleElement", MakeName ("DatasetToSingleElement", operName));
+			c_api.TF_AddInput(desc, dataset);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
 		///   Writes the given dataset to the given file using the TFRecord format.
 		/// </summary>
 		/// <param name="input_dataset">
@@ -11340,6 +12204,79 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Convert CSV records to tensors. Each column maps to one tensor.
+		/// </summary>
+		/// <param name="records">
+		///   Each string is a record/row in the csv and all records should have
+		///   the same format.
+		/// </param>
+		/// <param name="record_defaults">
+		///   One tensor per column of the input record, with either a
+		///   scalar default value for that column or an empty vector if the column is
+		///   required.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'DecodeCSV'.
+		/// </param>
+		/// <param name="field_delim">
+		///   Optional argument
+		///   char delimiter to separate fields in a record.
+		/// </param>
+		/// <param name="use_quote_delim">
+		///   Optional argument
+		///   If false, treats double quotation marks as regular
+		///   characters inside of the string fields (ignoring RFC 4180, Section 2,
+		///   Bullet 5).
+		/// </param>
+		/// <param name="na_value">
+		///   Optional argument
+		///   Additional string to recognize as NA/NaN.
+		/// </param>
+		/// <param name="select_cols">
+		///   Optional argument
+		/// </param>
+		/// <returns>
+		///   Each tensor will have the same shape as records.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   RFC 4180 format is expected for the CSV records.
+		///   (https://tools.ietf.org/html/rfc4180)
+		///   Note that we allow leading and trailing spaces with int or float field.
+		/// </remarks>
+		public TF_Output[] DecodeCSV (TF_Output records, TF_Output[] record_defaults, string field_delim = null, bool? use_quote_delim = null, string na_value = null, long[] select_cols = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "DecodeCSV", MakeName ("DecodeCSV", operName));
+			c_api.TF_AddInput(desc, records);
+			c_api.TF_AddInputList(desc, record_defaults[0], record_defaults.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			if (field_delim != null)
+				c_api.TF_SetAttrString (desc, "field_delim", field_delim);
+			
+			if (use_quote_delim.HasValue)
+				c_api.TF_SetAttrBool (desc, "use_quote_delim", Convert.ToByte(use_quote_delim.Value));
+			
+			if (na_value != null)
+				c_api.TF_SetAttrString (desc, "na_value", na_value);
+			
+			if (select_cols != null)
+				c_api.TF_SetAttrIntList (desc, "select_cols", ref select_cols[0], select_cols.Length);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
+		}
+
+		/// <summary>
 		///   Decode the frame(s) of a GIF-encoded image to a uint8 tensor.
 		/// </summary>
 		/// <param name="contents">
@@ -11615,6 +12552,129 @@ namespace TensorFlow {
 			int _idx = 0;
 			var image = new TF_Output (op, _idx++);
 			return image;
+		}
+
+		/// <summary>
+		///   The op extracts fields from a serialized protocol buffers message into tensors.
+		/// </summary>
+		/// <param name="bytes">
+		///   Tensor of serialized protos with shape <c>batch_shape</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'DecodeProtoV2'.
+		/// </param>
+		/// <param name="descriptor_source">
+		///   Optional argument
+		///   Either the special value <c>local://</c> or a path to a file containing
+		///   a serialized <c>FileDescriptorSet</c>.
+		/// </param>
+		/// <param name="message_format">
+		///   Optional argument
+		///   Either <c>binary</c> or <c>text</c>.
+		/// </param>
+		/// <param name="sanitize">
+		///   Optional argument
+		///   Whether to sanitize the result or not.
+		/// </param>
+		/// <param name="message_type">
+		///   Name of the proto message type to decode.
+		/// </param>
+		/// <param name="field_names">
+		///   List of strings containing proto field names. An extension field can be decoded
+		///   by using its full name, e.g. EXT_PACKAGE.EXT_FIELD_NAME.
+		/// </param>
+		/// <param name="output_types">
+		///   List of TF types to use for the respective field in field_names.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   sizes: Tensor of int32 with shape <c>[batch_shape, len(field_names)]</c>.
+		///   Each entry is the number of values found for the corresponding field.
+		///   Optional fields may have 0 or 1 values.
+		///   values: List of tensors containing values for the corresponding field.
+		///   <c>values[i]</c> has datatype <c>output_types[i]</c>
+		///   and shape <c>[batch_shape, max(sizes[...,i])]</c>.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   The <c>decode_proto</c> op extracts fields from a serialized protocol buffers
+		///   message into tensors.  The fields in <c>field_names</c> are decoded and converted
+		///   to the corresponding <c>output_types</c> if possible.
+		///   
+		///   A <c>message_type</c> name must be provided to give context for the field names.
+		///   The actual message descriptor can be looked up either in the linked-in
+		///   descriptor pool or a filename provided by the caller using the
+		///   <c>descriptor_source</c> attribute.
+		///   
+		///   Each output tensor is a dense tensor. This means that it is padded to hold
+		///   the largest number of repeated elements seen in the input minibatch. (The
+		///   shape is also padded by one to prevent zero-sized dimensions). The actual
+		///   repeat counts for each example in the minibatch can be found in the <c>sizes</c>
+		///   output. In many cases the output of <c>decode_proto</c> is fed immediately into
+		///   tf.squeeze if missing values are not a concern. When using tf.squeeze, always
+		///   pass the squeeze dimension explicitly to avoid surprises.
+		///   
+		///   For the most part, the mapping between Proto field types and TensorFlow dtypes
+		///   is straightforward. However, there are a few special cases:
+		///   
+		///   - A proto field that contains a submessage or group can only be converted
+		///   to <c>DT_STRING</c> (the serialized submessage). This is to reduce the complexity
+		///   of the API. The resulting string can be used as input to another instance of
+		///   the decode_proto op.
+		///   
+		///   - TensorFlow lacks support for unsigned integers. The ops represent uint64
+		///   types as a <c>DT_INT64</c> with the same twos-complement bit pattern (the obvious
+		///   way). Unsigned int32 values can be represented exactly by specifying type
+		///   <c>DT_INT64</c>, or using twos-complement if the caller specifies <c>DT_INT32</c> in
+		///   the <c>output_types</c> attribute.
+		///   
+		///   Both binary and text proto serializations are supported, and can be
+		///   chosen using the <c>format</c> attribute.
+		///   
+		///   The <c>descriptor_source</c> attribute selects the source of protocol
+		///   descriptors to consult when looking up <c>message_type</c>. This may be:
+		///   
+		///   - An empty string  or "local://", in which case protocol descriptors are
+		///   created for C++ (not Python) proto definitions linked to the binary.
+		///   
+		///   - A file, in which case protocol descriptors are created from the file,
+		///   which is expected to contain a <c>FileDescriptorSet</c> serialized as a string.
+		///   NOTE: You can build a <c>descriptor_source</c> file using the <c>--descriptor_set_out</c>
+		///   and <c>--include_imports</c> options to the protocol compiler <c>protoc</c>.
+		///   
+		///   - A "bytes://&amp;lt;bytes&amp;gt;", in which protocol descriptors are created from <c>&amp;lt;bytes&amp;gt;</c>,
+		///   which is expected to be a <c>FileDescriptorSet</c> serialized as a string.
+		/// </remarks>
+		public (TF_Output sizes, TF_Output[] values) DecodeProtoV2 (TF_Output bytes, string message_type, string[] field_names, TF_DataType[] output_types, string descriptor_source = null, string message_format = null, bool? sanitize = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "DecodeProtoV2", MakeName ("DecodeProtoV2", operName));
+			c_api.TF_AddInput(desc, bytes);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrString (desc, "message_type", message_type);
+			c_api.TF_SetAttrStringList (desc, "field_names", field_names);
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			if (descriptor_source != null)
+				c_api.TF_SetAttrString (desc, "descriptor_source", descriptor_source);
+			
+			if (message_format != null)
+				c_api.TF_SetAttrString (desc, "message_format", message_format);
+			
+			if (sanitize.HasValue)
+				c_api.TF_SetAttrBool (desc, "sanitize", Convert.ToByte(sanitize.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			var sizes = new TF_Output (op, _idx++);
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return (sizes, values);
 		}
 
 		/// <summary>
@@ -13280,6 +14340,83 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Partitions <c>data</c> into <c>num_partitions</c> tensors using indices from <c>partitions</c>.
+		/// </summary>
+		/// <param name="data">
+		/// </param>
+		/// <param name="partitions">
+		///   Any shape.  Indices in the range <c>[0, num_partitions)</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'DynamicPartition'.
+		/// </param>
+		/// <param name="num_partitions">
+		///   The number of partitions to output.
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   For each index tuple <c>js</c> of size <c>partitions.ndim</c>, the slice <c>data[js, ...]</c>
+		///   becomes part of <c>outputs[partitions[js]]</c>.  The slices with <c>partitions[js] = i</c>
+		///   are placed in <c>outputs[i]</c> in lexicographic order of <c>js</c>, and the first
+		///   dimension of <c>outputs[i]</c> is the number of entries in <c>partitions</c> equal to <c>i</c>.
+		///   In detail,
+		///   
+		///    <code>
+		///   outputs[i].shape = [sum(partitions == i)] + data.shape[partitions.ndim:]
+		///   
+		///   outputs[i] = pack([data[js, ...] for js if partitions[js] == i])
+		///    </code>
+		///   
+		///   <c>data.shape</c> must start with <c>partitions.shape</c>.
+		///   
+		///   For example:
+		///   
+		///    <code>
+		///   # Scalar partitions.
+		///   partitions = 1
+		///   num_partitions = 2
+		///   data = [10, 20]
+		///   outputs[0] = []  # Empty with shape [0, 2]
+		///   outputs[1] = [[10, 20]]
+		///   
+		///   # Vector partitions.
+		///   partitions = [0, 0, 1, 1, 0]
+		///   num_partitions = 2
+		///   data = [10, 20, 30, 40, 50]
+		///   outputs[0] = [10, 20, 50]
+		///   outputs[1] = [30, 40]
+		///    </code>
+		///   
+		///   See <c>dynamic_stitch</c> for an example on how to merge partitions back.
+		///   
+		///   &amp;lt;div style="width:70%; margin:auto; margin-bottom:10px; margin-top:20px;"&amp;gt;
+		///   &amp;lt;img style="width:100%" src="https://www.tensorflow.org/images/DynamicPartition.png" alt&amp;gt;
+		///   &amp;lt;/div&amp;gt;
+		/// </remarks>
+		public TF_Output[] DynamicPartition (TF_Output data, TF_Output partitions, long num_partitions, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "DynamicPartition", MakeName ("DynamicPartition", operName));
+			c_api.TF_AddInput(desc, data);
+			c_api.TF_AddInput(desc, partitions);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_partitions", num_partitions);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
+			var outputs = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				outputs [i] = new TF_Output (op, _idx++);
+			
+			return outputs;
+		}
+
+		/// <summary>
 		///   Interleave the values from the <c>data</c> tensors into a single tensor.
 		/// </summary>
 		/// <param name="indices">
@@ -13369,6 +14506,46 @@ namespace TensorFlow {
 			int _idx = 0;
 			var merged = new TF_Output (op, _idx++);
 			return merged;
+		}
+
+		/// <summary>
+		///   Eagerly executes a python function to compute func(input)-&amp;gt;output. The
+		/// </summary>
+		/// <param name="input">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'EagerPyFunc'.
+		/// </param>
+		/// <param name="token">
+		/// </param>
+		/// <param name="Tout">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   semantics of the input, output, and attributes are the same as those for
+		///   PyFunc.
+		/// </remarks>
+		public TF_Output[] EagerPyFunc (TF_Output[] input, string token, TF_DataType[] Tout, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "EagerPyFunc", MakeName ("EagerPyFunc", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrString (desc, "token", token);
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -19457,6 +20634,53 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Returns a list of tensors with the same shapes and contents as the input
+		/// </summary>
+		/// <param name="input">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'IdentityN'.
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   tensors.
+		///   
+		///   This op can be used to override the gradient for complicated functions. For
+		///   example, suppose y = f(x) and we wish to apply a custom function g for backprop
+		///   such that dx = g(dy). In Python,
+		///   
+		///    <code>
+		///   with tf.get_default_graph().gradient_override_map(
+		///   {'IdentityN': 'OverrideGradientWithG'}):
+		///   y, _ = identity_n([f(x), x])
+		///   
+		///   @tf.RegisterGradient('OverrideGradientWithG')
+		///   def ApplyG(op, dy, _):
+		///   return [None, g(dy)]  # Do not backprop to f(x).
+		///    </code>
+		/// </remarks>
+		public TF_Output[] IdentityN (TF_Output[] input, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "IdentityN", MakeName ("IdentityN", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
+		}
+
+		/// <summary>
 		///   A Reader that outputs the queued work as both the key and value.
 		/// </summary>
 		/// <param name="operName">
@@ -20011,6 +21235,42 @@ namespace TensorFlow {
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		///   Fetches multiple values from infeed as an XLA tuple.
+		/// </summary>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'InfeedDequeueTuple'.
+		/// </param>
+		/// <param name="dtypes">
+		///   The element types of each element in <c>outputs</c>.
+		/// </param>
+		/// <param name="shapes">
+		///   The shapes of each tensor in <c>outputs</c>.
+		/// </param>
+		/// <returns>
+		///   A list of tensors that will be provided using the infeed mechanism.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] InfeedDequeueTuple (TF_DataType[] dtypes, long[][] shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "InfeedDequeueTuple", MakeName ("InfeedDequeueTuple", operName));
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			c_api.TF_SetAttrShapeList (desc, "shapes", shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
+			var outputs = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				outputs [i] = new TF_Output (op, _idx++);
+			
+			return outputs;
 		}
 
 		/// <summary>
@@ -21189,6 +22449,42 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Gets the next output from the given iterator .
+		/// </summary>
+		/// <param name="iterator">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'IteratorGetNext'.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] IteratorGetNext (TF_Output iterator, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "IteratorGetNext", MakeName ("IteratorGetNext", operName));
+			c_api.TF_AddInput(desc, iterator);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
 		///   Gets the next output from the given iterator as an Optional variant.
 		/// </summary>
 		/// <param name="iterator">
@@ -21217,6 +22513,48 @@ namespace TensorFlow {
 			int _idx = 0;
 			var optional = new TF_Output (op, _idx++);
 			return optional;
+		}
+
+		/// <summary>
+		///   Gets the next output from the given iterator.
+		/// </summary>
+		/// <param name="iterator">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'IteratorGetNextSync'.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation is a synchronous version IteratorGetNext. It should only be used
+		///   in situations where the iterator does not block the calling thread, or where
+		///   the calling thread is not a member of the thread pool used to execute parallel
+		///   operations (e.g. in eager mode).
+		/// </remarks>
+		public TF_Output[] IteratorGetNextSync (TF_Output iterator, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "IteratorGetNextSync", MakeName ("IteratorGetNextSync", operName));
+			c_api.TF_AddInput(desc, iterator);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
 		}
 
 		/// <summary>
@@ -24309,6 +25647,70 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Op peeks at the values at the specified key.  If the
+		/// </summary>
+		/// <param name="key">
+		/// </param>
+		/// <param name="indices">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'MapPeek'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   underlying container does not contain this key
+		///   this op will block until it does.
+		/// </remarks>
+		public TF_Output[] MapPeek (TF_Output key, TF_Output indices, TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "MapPeek", MakeName ("MapPeek", operName));
+			c_api.TF_AddInput(desc, key);
+			c_api.TF_AddInput(desc, indices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return values;
+		}
+
+		/// <summary>
 		///   Op returns the number of elements in the underlying container.
 		/// </summary>
 		/// <param name="operName">
@@ -24419,6 +25821,135 @@ namespace TensorFlow {
 			
 			var op = c_api.TF_FinishOperation(desc, status);
 			return op;
+		}
+
+		/// <summary>
+		///   Op removes and returns the values associated with the key
+		/// </summary>
+		/// <param name="key">
+		/// </param>
+		/// <param name="indices">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'MapUnstage'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   from the underlying container.   If the underlying container
+		///   does not contain this key, the op will block until it does.
+		/// </remarks>
+		public TF_Output[] MapUnstage (TF_Output key, TF_Output indices, TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "MapUnstage", MakeName ("MapUnstage", operName));
+			c_api.TF_AddInput(desc, key);
+			c_api.TF_AddInput(desc, indices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return values;
+		}
+
+		/// <summary>
+		///   Op removes and returns a random (key, value)
+		/// </summary>
+		/// <param name="indices">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'MapUnstageNoKey'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   key:
+		///   values:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   from the underlying container.   If the underlying container
+		///   does not contain elements, the op will block until it does.
+		/// </remarks>
+		public (TF_Output key, TF_Output[] values) MapUnstageNoKey (TF_Output indices, TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "MapUnstageNoKey", MakeName ("MapUnstageNoKey", operName));
+			c_api.TF_AddInput(desc, indices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			var key = new TF_Output (op, _idx++);
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return (key, values);
 		}
 
 		/// <summary>
@@ -27020,6 +28551,54 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Gets next element for the provided shard number.
+		/// </summary>
+		/// <param name="multi_device_iterator">
+		///   A MultiDeviceIterator resource.
+		/// </param>
+		/// <param name="shard_num">
+		///   Integer representing which shard to fetch data for.
+		/// </param>
+		/// <param name="incarnation_id">
+		///   Which incarnation of the MultiDeviceIterator is running.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'MultiDeviceIteratorGetNextFromShard'.
+		/// </param>
+		/// <param name="output_types">
+		///   The type list for the return values.
+		/// </param>
+		/// <param name="output_shapes">
+		///   The list of shapes being produced.
+		/// </param>
+		/// <returns>
+		///   Result of the get_next on the dataset.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] MultiDeviceIteratorGetNextFromShard (TF_Output multi_device_iterator, TF_Output shard_num, TF_Output incarnation_id, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "MultiDeviceIteratorGetNextFromShard", MakeName ("MultiDeviceIteratorGetNextFromShard", operName));
+			c_api.TF_AddInput(desc, multi_device_iterator);
+			c_api.TF_AddInput(desc, shard_num);
+			c_api.TF_AddInput(desc, incarnation_id);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
 		///   Initializes the multi device iterator with the given dataset.
 		/// </summary>
 		/// <param name="dataset">
@@ -28815,6 +30394,42 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Returns the value stored in an Optional variant or raises an error if none exists.
+		/// </summary>
+		/// <param name="optional">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'OptionalGetValue'.
+		/// </param>
+		/// <param name="output_types">
+		/// </param>
+		/// <param name="output_shapes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] OptionalGetValue (TF_Output optional, TF_DataType[] output_types, long[][] output_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "OptionalGetValue", MakeName ("OptionalGetValue", operName));
+			c_api.TF_AddInput(desc, optional);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "output_types", output_types);
+			c_api.TF_SetAttrShapeList (desc, "output_shapes", output_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
 		///   Returns true if and only if the given Optional variant has a value.
 		/// </summary>
 		/// <param name="optional">
@@ -28958,6 +30573,71 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Op peeks at the values at the specified key.  If the
+		/// </summary>
+		/// <param name="key">
+		/// </param>
+		/// <param name="indices">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'OrderedMapPeek'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   underlying container does not contain this key
+		///   this op will block until it does.   This Op is optimized for
+		///   performance.
+		/// </remarks>
+		public TF_Output[] OrderedMapPeek (TF_Output key, TF_Output indices, TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "OrderedMapPeek", MakeName ("OrderedMapPeek", operName));
+			c_api.TF_AddInput(desc, key);
+			c_api.TF_AddInput(desc, indices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return values;
+		}
+
+		/// <summary>
 		///   Op returns the number of elements in the underlying container.
 		/// </summary>
 		/// <param name="operName">
@@ -29074,6 +30754,135 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Op removes and returns the values associated with the key
+		/// </summary>
+		/// <param name="key">
+		/// </param>
+		/// <param name="indices">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'OrderedMapUnstage'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   from the underlying container.   If the underlying container
+		///   does not contain this key, the op will block until it does.
+		/// </remarks>
+		public TF_Output[] OrderedMapUnstage (TF_Output key, TF_Output indices, TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "OrderedMapUnstage", MakeName ("OrderedMapUnstage", operName));
+			c_api.TF_AddInput(desc, key);
+			c_api.TF_AddInput(desc, indices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return values;
+		}
+
+		/// <summary>
+		///   Op removes and returns the (key, value) element with the smallest
+		/// </summary>
+		/// <param name="indices">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'OrderedMapUnstageNoKey'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   key:
+		///   values:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   key from the underlying container.   If the underlying container
+		///   does not contain elements, the op will block until it does.
+		/// </remarks>
+		public (TF_Output key, TF_Output[] values) OrderedMapUnstageNoKey (TF_Output indices, TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "OrderedMapUnstageNoKey", MakeName ("OrderedMapUnstageNoKey", operName));
+			c_api.TF_AddInput(desc, indices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			var key = new TF_Output (op, _idx++);
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return (key, values);
+		}
+
+		/// <summary>
 		///   Retrieves a single tensor from the computation outfeed.
 		/// </summary>
 		/// <param name="operName">
@@ -29114,6 +30923,55 @@ namespace TensorFlow {
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		///   Retrieve multiple values from the computation outfeed.
+		/// </summary>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'OutfeedDequeueTuple'.
+		/// </param>
+		/// <param name="device_ordinal">
+		///   Optional argument
+		///   The TPU device to use. This should be -1 when the Op
+		///   is running on a TPU device, and &amp;gt;= 0 when the Op is running on the CPU
+		///   device.
+		/// </param>
+		/// <param name="dtypes">
+		///   The element types of each element in <c>outputs</c>.
+		/// </param>
+		/// <param name="shapes">
+		///   The shapes of each tensor in <c>outputs</c>.
+		/// </param>
+		/// <returns>
+		///   A list of tensors that will be read from the outfeed.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation will block indefinitely until data is available. Output <c>i</c>
+		///   corresponds to XLA tuple element <c>i</c>.
+		/// </remarks>
+		public TF_Output[] OutfeedDequeueTuple (TF_DataType[] dtypes, long[][] shapes, long? device_ordinal = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "OutfeedDequeueTuple", MakeName ("OutfeedDequeueTuple", operName));
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			c_api.TF_SetAttrShapeList (desc, "shapes", shapes);
+			if (device_ordinal.HasValue)
+				c_api.TF_SetAttrInt (desc, "device_ordinal", device_ordinal.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
+			var outputs = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				outputs [i] = new TF_Output (op, _idx++);
+			
+			return outputs;
 		}
 
 		/// <summary>
@@ -29780,6 +31638,113 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Transforms a vector of brain.Example protos (as strings) into typed tensors.
+		/// </summary>
+		/// <param name="serialized">
+		///   A vector containing a batch of binary serialized Example protos.
+		/// </param>
+		/// <param name="names">
+		///   A vector containing the names of the serialized protos.
+		///   May contain, for example, table key (descriptive) names for the
+		///   corresponding serialized protos.  These are purely useful for debugging
+		///   purposes, and the presence of values here has no effect on the output.
+		///   May also be an empty vector if no names are available.
+		///   If non-empty, this vector must be the same length as "serialized".
+		/// </param>
+		/// <param name="sparse_keys">
+		///   A list of Nsparse string Tensors (scalars).
+		///   The keys expected in the Examples' features associated with sparse values.
+		/// </param>
+		/// <param name="dense_keys">
+		///   A list of Ndense string Tensors (scalars).
+		///   The keys expected in the Examples' features associated with dense values.
+		/// </param>
+		/// <param name="dense_defaults">
+		///   A list of Ndense Tensors (some may be empty).
+		///   dense_defaults[j] provides default values
+		///   when the example's feature_map lacks dense_key[j].  If an empty Tensor is
+		///   provided for dense_defaults[j], then the Feature dense_keys[j] is required.
+		///   The input type is inferred from dense_defaults[j], even when it's empty.
+		///   If dense_defaults[j] is not empty, and dense_shapes[j] is fully defined,
+		///   then the shape of dense_defaults[j] must match that of dense_shapes[j].
+		///   If dense_shapes[j] has an undefined major dimension (variable strides dense
+		///   feature), dense_defaults[j] must contain a single element:
+		///   the padding element.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ParseExample'.
+		/// </param>
+		/// <param name="sparse_types">
+		///   A list of Nsparse types; the data types of data in each Feature
+		///   given in sparse_keys.
+		///   Currently the ParseExample supports DT_FLOAT (FloatList),
+		///   DT_INT64 (Int64List), and DT_STRING (BytesList).
+		/// </param>
+		/// <param name="dense_shapes">
+		///   A list of Ndense shapes; the shapes of data in each Feature
+		///   given in dense_keys.
+		///   The number of elements in the Feature corresponding to dense_key[j]
+		///   must always equal dense_shapes[j].NumEntries().
+		///   If dense_shapes[j] == (D0, D1, ..., DN) then the shape of output
+		///   Tensor dense_values[j] will be (|serialized|, D0, D1, ..., DN):
+		///   The dense outputs are just the inputs row-stacked by batch.
+		///   This works for dense_shapes[j] = (-1, D1, ..., DN).  In this case
+		///   the shape of the output Tensor dense_values[j] will be
+		///   (|serialized|, M, D1, .., DN), where M is the maximum number of blocks
+		///   of elements of length D1 * .... * DN, across all minibatch entries
+		///   in the input.  Any minibatch entry with less than M blocks of elements of
+		///   length D1 * ... * DN will be padded with the corresponding default_value
+		///   scalar element along the second dimension.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   sparse_indices:
+		///   sparse_values:
+		///   sparse_shapes:
+		///   dense_values:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		public (TF_Output[] sparse_indices, TF_Output[] sparse_values, TF_Output[] sparse_shapes, TF_Output[] dense_values) ParseExample (TF_Output serialized, TF_Output names, TF_Output[] sparse_keys, TF_Output[] dense_keys, TF_Output[] dense_defaults, TF_DataType[] sparse_types, long[][] dense_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ParseExample", MakeName ("ParseExample", operName));
+			c_api.TF_AddInput(desc, serialized);
+			c_api.TF_AddInput(desc, names);
+			c_api.TF_AddInputList(desc, sparse_keys[0], sparse_keys.Length);
+			c_api.TF_AddInputList(desc, dense_keys[0], dense_keys.Length);
+			c_api.TF_AddInputList(desc, dense_defaults[0], dense_defaults.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "sparse_types", sparse_types);
+			c_api.TF_SetAttrShapeList (desc, "dense_shapes", dense_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "sparse_indices", status);
+			var sparse_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				sparse_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "sparse_values", status);
+			var sparse_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				sparse_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "sparse_shapes", status);
+			var sparse_shapes = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				sparse_shapes [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "dense_values", status);
+			var dense_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				dense_values [i] = new TF_Output (op, _idx++);
+			
+			return (sparse_indices, sparse_values, sparse_shapes, dense_values);
+		}
+
+		/// <summary>
 		///   Transforms <c>input_dataset</c> containing <c>Example</c> protos as vectors of DT_STRING into a dataset of <c>Tensor</c> or <c>SparseTensor</c> objects representing the parsed features.
 		/// </summary>
 		/// <param name="input_dataset">
@@ -29852,6 +31817,480 @@ namespace TensorFlow {
 			int _idx = 0;
 			var handle = new TF_Output (op, _idx++);
 			return handle;
+		}
+
+		/// <summary>
+		///   Transforms a vector of brain.SequenceExample protos (as strings) into typed tensors.
+		/// </summary>
+		/// <param name="serialized">
+		///   A vector containing binary serialized SequenceExample protos.
+		/// </param>
+		/// <param name="debug_name">
+		///   A vector containing the names of the serialized protos.
+		///   May contain, for example, table key (descriptive) name for the
+		///   corresponding serialized proto.  This is purely useful for debugging
+		///   purposes, and the presence of values here has no effect on the output.
+		///   May also be an empty vector if no name is available.
+		/// </param>
+		/// <param name="context_dense_defaults">
+		///   A list of Ncontext_dense Tensors (some may be empty).
+		///   context_dense_defaults[j] provides default values
+		///   when the SequenceExample's context map lacks context_dense_key[j].
+		///   If an empty Tensor is provided for context_dense_defaults[j],
+		///   then the Feature context_dense_keys[j] is required.
+		///   The input type is inferred from context_dense_defaults[j], even when it's
+		///   empty.  If context_dense_defaults[j] is not empty, its shape must match
+		///   context_dense_shapes[j].
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ParseSequenceExample'.
+		/// </param>
+		/// <param name="Ncontext_sparse">
+		///   Optional argument
+		/// </param>
+		/// <param name="Ncontext_dense">
+		///   Optional argument
+		/// </param>
+		/// <param name="Nfeature_list_sparse">
+		///   Optional argument
+		/// </param>
+		/// <param name="Nfeature_list_dense">
+		///   Optional argument
+		/// </param>
+		/// <param name="context_sparse_types">
+		///   Optional argument
+		///   A list of Ncontext_sparse types; the data types of data in
+		///   each context Feature given in context_sparse_keys.
+		///   Currently the ParseSingleSequenceExample supports DT_FLOAT (FloatList),
+		///   DT_INT64 (Int64List), and DT_STRING (BytesList).
+		/// </param>
+		/// <param name="feature_list_dense_types">
+		///   Optional argument
+		/// </param>
+		/// <param name="context_dense_shapes">
+		///   Optional argument
+		///   A list of Ncontext_dense shapes; the shapes of data in
+		///   each context Feature given in context_dense_keys.
+		///   The number of elements in the Feature corresponding to context_dense_key[j]
+		///   must always equal context_dense_shapes[j].NumEntries().
+		///   The shape of context_dense_values[j] will match context_dense_shapes[j].
+		/// </param>
+		/// <param name="feature_list_sparse_types">
+		///   Optional argument
+		///   A list of Nfeature_list_sparse types; the data types
+		///   of data in each FeatureList given in feature_list_sparse_keys.
+		///   Currently the ParseSingleSequenceExample supports DT_FLOAT (FloatList),
+		///   DT_INT64 (Int64List), and DT_STRING (BytesList).
+		/// </param>
+		/// <param name="feature_list_dense_shapes">
+		///   Optional argument
+		///   A list of Nfeature_list_dense shapes; the shapes of
+		///   data in each FeatureList given in feature_list_dense_keys.
+		///   The shape of each Feature in the FeatureList corresponding to
+		///   feature_list_dense_key[j] must always equal
+		///   feature_list_dense_shapes[j].NumEntries().
+		/// </param>
+		/// <param name="feature_list_dense_missing_assumed_empty">
+		///   A vector listing the
+		///   FeatureList keys which may be missing from the SequenceExamples.  If the
+		///   associated FeatureList is missing, it is treated as empty.  By default,
+		///   any FeatureList not listed in this vector must exist in the SequenceExamples.
+		/// </param>
+		/// <param name="context_sparse_keys">
+		///   A list of Ncontext_sparse string Tensors (scalars).
+		///   The keys expected in the Examples' features associated with context_sparse
+		///   values.
+		/// </param>
+		/// <param name="context_dense_keys">
+		///   A list of Ncontext_dense string Tensors (scalars).
+		///   The keys expected in the SequenceExamples' context features associated with
+		///   dense values.
+		/// </param>
+		/// <param name="feature_list_sparse_keys">
+		///   A list of Nfeature_list_sparse string Tensors
+		///   (scalars).  The keys expected in the FeatureLists associated with sparse
+		///   values.
+		/// </param>
+		/// <param name="feature_list_dense_keys">
+		///   A list of Nfeature_list_dense string Tensors (scalars).
+		///   The keys expected in the SequenceExamples' feature_lists associated
+		///   with lists of dense values.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   context_sparse_indices:
+		///   context_sparse_values:
+		///   context_sparse_shapes:
+		///   context_dense_values:
+		///   feature_list_sparse_indices:
+		///   feature_list_sparse_values:
+		///   feature_list_sparse_shapes:
+		///   feature_list_dense_values:
+		///   feature_list_dense_lengths:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		public (TF_Output[] context_sparse_indices, TF_Output[] context_sparse_values, TF_Output[] context_sparse_shapes, TF_Output[] context_dense_values, TF_Output[] feature_list_sparse_indices, TF_Output[] feature_list_sparse_values, TF_Output[] feature_list_sparse_shapes, TF_Output[] feature_list_dense_values, TF_Output[] feature_list_dense_lengths) ParseSequenceExample (TF_Output serialized, TF_Output debug_name, TF_Output[] context_dense_defaults, string[] feature_list_dense_missing_assumed_empty, string[] context_sparse_keys, string[] context_dense_keys, string[] feature_list_sparse_keys, string[] feature_list_dense_keys, long? Ncontext_sparse = null, long? Ncontext_dense = null, long? Nfeature_list_sparse = null, long? Nfeature_list_dense = null, TF_DataType[] context_sparse_types = null, TF_DataType[] feature_list_dense_types = null, long[][] context_dense_shapes = null, TF_DataType[] feature_list_sparse_types = null, long[][] feature_list_dense_shapes = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ParseSequenceExample", MakeName ("ParseSequenceExample", operName));
+			c_api.TF_AddInput(desc, serialized);
+			c_api.TF_AddInput(desc, debug_name);
+			c_api.TF_AddInputList(desc, context_dense_defaults[0], context_dense_defaults.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrStringList (desc, "feature_list_dense_missing_assumed_empty", feature_list_dense_missing_assumed_empty);
+			c_api.TF_SetAttrStringList (desc, "context_sparse_keys", context_sparse_keys);
+			c_api.TF_SetAttrStringList (desc, "context_dense_keys", context_dense_keys);
+			c_api.TF_SetAttrStringList (desc, "feature_list_sparse_keys", feature_list_sparse_keys);
+			c_api.TF_SetAttrStringList (desc, "feature_list_dense_keys", feature_list_dense_keys);
+			if (Ncontext_sparse.HasValue)
+				c_api.TF_SetAttrInt (desc, "Ncontext_sparse", Ncontext_sparse.Value);
+			
+			if (Ncontext_dense.HasValue)
+				c_api.TF_SetAttrInt (desc, "Ncontext_dense", Ncontext_dense.Value);
+			
+			if (Nfeature_list_sparse.HasValue)
+				c_api.TF_SetAttrInt (desc, "Nfeature_list_sparse", Nfeature_list_sparse.Value);
+			
+			if (Nfeature_list_dense.HasValue)
+				c_api.TF_SetAttrInt (desc, "Nfeature_list_dense", Nfeature_list_dense.Value);
+			
+			if (context_sparse_types != null)
+				c_api.TF_SetAttrTypeList (desc, "context_sparse_types", context_sparse_types);
+			
+			if (feature_list_dense_types != null)
+				c_api.TF_SetAttrTypeList (desc, "feature_list_dense_types", feature_list_dense_types);
+			
+			if (context_dense_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "context_dense_shapes", context_dense_shapes);
+			
+			if (feature_list_sparse_types != null)
+				c_api.TF_SetAttrTypeList (desc, "feature_list_sparse_types", feature_list_sparse_types);
+			
+			if (feature_list_dense_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "feature_list_dense_shapes", feature_list_dense_shapes);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_indices", status);
+			var context_sparse_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_sparse_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_values", status);
+			var context_sparse_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_sparse_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_shapes", status);
+			var context_sparse_shapes = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_sparse_shapes [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "context_dense_values", status);
+			var context_dense_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_dense_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_sparse_indices", status);
+			var feature_list_sparse_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_sparse_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_sparse_values", status);
+			var feature_list_sparse_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_sparse_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_sparse_shapes", status);
+			var feature_list_sparse_shapes = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_sparse_shapes [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_dense_values", status);
+			var feature_list_dense_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_dense_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_dense_lengths", status);
+			var feature_list_dense_lengths = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_dense_lengths [i] = new TF_Output (op, _idx++);
+			
+			return (context_sparse_indices, context_sparse_values, context_sparse_shapes, context_dense_values, feature_list_sparse_indices, feature_list_sparse_values, feature_list_sparse_shapes, feature_list_dense_values, feature_list_dense_lengths);
+		}
+
+		/// <summary>
+		///   Transforms a tf.Example proto (as a string) into typed tensors.
+		/// </summary>
+		/// <param name="serialized">
+		///   A vector containing a batch of binary serialized Example protos.
+		/// </param>
+		/// <param name="dense_defaults">
+		///   A list of Tensors (some may be empty), whose length matches
+		///   the length of <c>dense_keys</c>. dense_defaults[j] provides default values
+		///   when the example's feature_map lacks dense_key[j].  If an empty Tensor is
+		///   provided for dense_defaults[j], then the Feature dense_keys[j] is required.
+		///   The input type is inferred from dense_defaults[j], even when it's empty.
+		///   If dense_defaults[j] is not empty, and dense_shapes[j] is fully defined,
+		///   then the shape of dense_defaults[j] must match that of dense_shapes[j].
+		///   If dense_shapes[j] has an undefined major dimension (variable strides dense
+		///   feature), dense_defaults[j] must contain a single element:
+		///   the padding element.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ParseSingleExample'.
+		/// </param>
+		/// <param name="num_sparse">
+		///   The number of sparse features to be parsed from the example. This
+		///   must match the lengths of <c>sparse_keys</c> and <c>sparse_types</c>.
+		/// </param>
+		/// <param name="sparse_keys">
+		///   A list of <c>num_sparse</c> strings.
+		///   The keys expected in the Examples' features associated with sparse values.
+		/// </param>
+		/// <param name="dense_keys">
+		///   The keys expected in the Examples' features associated with dense
+		///   values.
+		/// </param>
+		/// <param name="sparse_types">
+		///   A list of <c>num_sparse</c> types; the data types of data in each
+		///   Feature given in sparse_keys.
+		///   Currently the ParseSingleExample op supports DT_FLOAT (FloatList),
+		///   DT_INT64 (Int64List), and DT_STRING (BytesList).
+		/// </param>
+		/// <param name="dense_shapes">
+		///   The shapes of data in each Feature given in dense_keys.
+		///   The length of this list must match the length of <c>dense_keys</c>.  The
+		///   number of elements in the Feature corresponding to dense_key[j] must
+		///   always equal dense_shapes[j].NumEntries().  If dense_shapes[j] ==
+		///   (D0, D1, ..., DN) then the shape of output Tensor dense_values[j]
+		///   will be (D0, D1, ..., DN): In the case dense_shapes[j] = (-1, D1,
+		///   ..., DN), the shape of the output Tensor dense_values[j] will be (M,
+		///   D1, .., DN), where M is the number of blocks of elements of length
+		///   D1 * .... * DN, in the input.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   sparse_indices:
+		///   sparse_values:
+		///   sparse_shapes:
+		///   dense_values:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		public (TF_Output[] sparse_indices, TF_Output[] sparse_values, TF_Output[] sparse_shapes, TF_Output[] dense_values) ParseSingleExample (TF_Output serialized, TF_Output[] dense_defaults, long num_sparse, string[] sparse_keys, string[] dense_keys, TF_DataType[] sparse_types, long[][] dense_shapes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ParseSingleExample", MakeName ("ParseSingleExample", operName));
+			c_api.TF_AddInput(desc, serialized);
+			c_api.TF_AddInputList(desc, dense_defaults[0], dense_defaults.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_sparse", num_sparse);
+			c_api.TF_SetAttrStringList (desc, "sparse_keys", sparse_keys);
+			c_api.TF_SetAttrStringList (desc, "dense_keys", dense_keys);
+			c_api.TF_SetAttrTypeList (desc, "sparse_types", sparse_types);
+			c_api.TF_SetAttrShapeList (desc, "dense_shapes", dense_shapes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "sparse_indices", status);
+			var sparse_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				sparse_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "sparse_values", status);
+			var sparse_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				sparse_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "sparse_shapes", status);
+			var sparse_shapes = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				sparse_shapes [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "dense_values", status);
+			var dense_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				dense_values [i] = new TF_Output (op, _idx++);
+			
+			return (sparse_indices, sparse_values, sparse_shapes, dense_values);
+		}
+
+		/// <summary>
+		///   Transforms a scalar brain.SequenceExample proto (as strings) into typed tensors.
+		/// </summary>
+		/// <param name="serialized">
+		///   A scalar containing a binary serialized SequenceExample proto.
+		/// </param>
+		/// <param name="feature_list_dense_missing_assumed_empty">
+		///   A vector listing the
+		///   FeatureList keys which may be missing from the SequenceExample.  If the
+		///   associated FeatureList is missing, it is treated as empty.  By default,
+		///   any FeatureList not listed in this vector must exist in the SequenceExample.
+		/// </param>
+		/// <param name="context_sparse_keys">
+		///   A list of Ncontext_sparse string Tensors (scalars).
+		///   The keys expected in the Examples' features associated with context_sparse
+		///   values.
+		/// </param>
+		/// <param name="context_dense_keys">
+		///   A list of Ncontext_dense string Tensors (scalars).
+		///   The keys expected in the SequenceExamples' context features associated with
+		///   dense values.
+		/// </param>
+		/// <param name="feature_list_sparse_keys">
+		///   A list of Nfeature_list_sparse string Tensors
+		///   (scalars).  The keys expected in the FeatureLists associated with sparse
+		///   values.
+		/// </param>
+		/// <param name="feature_list_dense_keys">
+		///   A list of Nfeature_list_dense string Tensors (scalars).
+		///   The keys expected in the SequenceExamples' feature_lists associated
+		///   with lists of dense values.
+		/// </param>
+		/// <param name="context_dense_defaults">
+		///   A list of Ncontext_dense Tensors (some may be empty).
+		///   context_dense_defaults[j] provides default values
+		///   when the SequenceExample's context map lacks context_dense_key[j].
+		///   If an empty Tensor is provided for context_dense_defaults[j],
+		///   then the Feature context_dense_keys[j] is required.
+		///   The input type is inferred from context_dense_defaults[j], even when it's
+		///   empty.  If context_dense_defaults[j] is not empty, its shape must match
+		///   context_dense_shapes[j].
+		/// </param>
+		/// <param name="debug_name">
+		///   A scalar containing the name of the serialized proto.
+		///   May contain, for example, table key (descriptive) name for the
+		///   corresponding serialized proto.  This is purely useful for debugging
+		///   purposes, and the presence of values here has no effect on the output.
+		///   May also be an empty scalar if no name is available.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ParseSingleSequenceExample'.
+		/// </param>
+		/// <param name="context_sparse_types">
+		///   Optional argument
+		///   A list of Ncontext_sparse types; the data types of data in
+		///   each context Feature given in context_sparse_keys.
+		///   Currently the ParseSingleSequenceExample supports DT_FLOAT (FloatList),
+		///   DT_INT64 (Int64List), and DT_STRING (BytesList).
+		/// </param>
+		/// <param name="feature_list_dense_types">
+		///   Optional argument
+		/// </param>
+		/// <param name="context_dense_shapes">
+		///   Optional argument
+		///   A list of Ncontext_dense shapes; the shapes of data in
+		///   each context Feature given in context_dense_keys.
+		///   The number of elements in the Feature corresponding to context_dense_key[j]
+		///   must always equal context_dense_shapes[j].NumEntries().
+		///   The shape of context_dense_values[j] will match context_dense_shapes[j].
+		/// </param>
+		/// <param name="feature_list_sparse_types">
+		///   Optional argument
+		///   A list of Nfeature_list_sparse types; the data types
+		///   of data in each FeatureList given in feature_list_sparse_keys.
+		///   Currently the ParseSingleSequenceExample supports DT_FLOAT (FloatList),
+		///   DT_INT64 (Int64List), and DT_STRING (BytesList).
+		/// </param>
+		/// <param name="feature_list_dense_shapes">
+		///   Optional argument
+		///   A list of Nfeature_list_dense shapes; the shapes of
+		///   data in each FeatureList given in feature_list_dense_keys.
+		///   The shape of each Feature in the FeatureList corresponding to
+		///   feature_list_dense_key[j] must always equal
+		///   feature_list_dense_shapes[j].NumEntries().
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   context_sparse_indices:
+		///   context_sparse_values:
+		///   context_sparse_shapes:
+		///   context_dense_values:
+		///   feature_list_sparse_indices:
+		///   feature_list_sparse_values:
+		///   feature_list_sparse_shapes:
+		///   feature_list_dense_values:
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		public (TF_Output[] context_sparse_indices, TF_Output[] context_sparse_values, TF_Output[] context_sparse_shapes, TF_Output[] context_dense_values, TF_Output[] feature_list_sparse_indices, TF_Output[] feature_list_sparse_values, TF_Output[] feature_list_sparse_shapes, TF_Output[] feature_list_dense_values) ParseSingleSequenceExample (TF_Output serialized, TF_Output feature_list_dense_missing_assumed_empty, TF_Output[] context_sparse_keys, TF_Output[] context_dense_keys, TF_Output[] feature_list_sparse_keys, TF_Output[] feature_list_dense_keys, TF_Output[] context_dense_defaults, TF_Output debug_name, TF_DataType[] context_sparse_types = null, TF_DataType[] feature_list_dense_types = null, long[][] context_dense_shapes = null, TF_DataType[] feature_list_sparse_types = null, long[][] feature_list_dense_shapes = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ParseSingleSequenceExample", MakeName ("ParseSingleSequenceExample", operName));
+			c_api.TF_AddInput(desc, serialized);
+			c_api.TF_AddInput(desc, feature_list_dense_missing_assumed_empty);
+			c_api.TF_AddInputList(desc, context_sparse_keys[0], context_sparse_keys.Length);
+			c_api.TF_AddInputList(desc, context_dense_keys[0], context_dense_keys.Length);
+			c_api.TF_AddInputList(desc, feature_list_sparse_keys[0], feature_list_sparse_keys.Length);
+			c_api.TF_AddInputList(desc, feature_list_dense_keys[0], feature_list_dense_keys.Length);
+			c_api.TF_AddInputList(desc, context_dense_defaults[0], context_dense_defaults.Length);
+			c_api.TF_AddInput(desc, debug_name);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			if (context_sparse_types != null)
+				c_api.TF_SetAttrTypeList (desc, "context_sparse_types", context_sparse_types);
+			
+			if (feature_list_dense_types != null)
+				c_api.TF_SetAttrTypeList (desc, "feature_list_dense_types", feature_list_dense_types);
+			
+			if (context_dense_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "context_dense_shapes", context_dense_shapes);
+			
+			if (feature_list_sparse_types != null)
+				c_api.TF_SetAttrTypeList (desc, "feature_list_sparse_types", feature_list_sparse_types);
+			
+			if (feature_list_dense_shapes != null)
+				c_api.TF_SetAttrShapeList (desc, "feature_list_dense_shapes", feature_list_dense_shapes);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_indices", status);
+			var context_sparse_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_sparse_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_values", status);
+			var context_sparse_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_sparse_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "context_sparse_shapes", status);
+			var context_sparse_shapes = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_sparse_shapes [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "context_dense_values", status);
+			var context_dense_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				context_dense_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_sparse_indices", status);
+			var feature_list_sparse_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_sparse_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_sparse_values", status);
+			var feature_list_sparse_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_sparse_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_sparse_shapes", status);
+			var feature_list_sparse_shapes = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_sparse_shapes [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "feature_list_dense_values", status);
+			var feature_list_dense_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				feature_list_dense_values [i] = new TF_Output (op, _idx++);
+			
+			return (context_sparse_indices, context_sparse_values, context_sparse_shapes, context_dense_values, feature_list_sparse_indices, feature_list_sparse_values, feature_list_sparse_shapes, feature_list_dense_values);
 		}
 
 		/// <summary>
@@ -30578,6 +33017,87 @@ namespace TensorFlow {
 			var op = c_api.TF_FinishOperation(desc, status);
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
+			return output;
+		}
+
+		/// <summary>
+		///   Invokes a python function to compute func(input)-&amp;gt;output.
+		/// </summary>
+		/// <param name="input">
+		///   List of Tensors that will provide input to the Op.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'PyFunc'.
+		/// </param>
+		/// <param name="token">
+		///   A token representing a registered python function in this address space.
+		/// </param>
+		/// <param name="Tout">
+		///   Data types of the outputs from the op.
+		///   The length of the list specifies the number of outputs.
+		/// </param>
+		/// <returns>
+		///   The outputs from the Op.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation is considered stateful. For a stateless version, see
+		///   PyFuncStateless.
+		/// </remarks>
+		public TF_Output[] PyFunc (TF_Output[] input, string token, TF_DataType[] Tout, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "PyFunc", MakeName ("PyFunc", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrString (desc, "token", token);
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
+		}
+
+		/// <summary>
+		///   A stateless version of PyFunc.
+		/// </summary>
+		/// <param name="input">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'PyFuncStateless'.
+		/// </param>
+		/// <param name="token">
+		/// </param>
+		/// <param name="Tout">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] PyFuncStateless (TF_Output[] input, string token, TF_DataType[] Tout, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "PyFuncStateless", MakeName ("PyFuncStateless", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrString (desc, "token", token);
+			c_api.TF_SetAttrTypeList (desc, "Tout", Tout);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
 			return output;
 		}
 
@@ -33555,6 +36075,376 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Dequeues a tuple of one or more tensors from the given queue.
+		/// </summary>
+		/// <param name="handle">
+		///   The handle to a queue.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'QueueDequeue'.
+		/// </param>
+		/// <param name="timeout_ms">
+		///   Optional argument
+		///   If the queue is empty, this operation will block for up to
+		///   timeout_ms milliseconds.
+		///   Note: This option is not supported yet.
+		/// </param>
+		/// <param name="component_types">
+		///   The type of each component in a tuple.
+		/// </param>
+		/// <returns>
+		///   One or more tensors that were dequeued as a tuple.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation has k outputs, where k is the number of components
+		///   in the tuples stored in the given queue, and output i is the ith
+		///   component of the dequeued tuple.
+		///   
+		///   N.B. If the queue is empty, this operation will block until an element
+		///   has been dequeued (or 'timeout_ms' elapses, if specified).
+		/// </remarks>
+		public TF_Output[] QueueDequeue (TF_Output handle, TF_DataType[] component_types, long? timeout_ms = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "QueueDequeue", MakeName ("QueueDequeue", operName));
+			c_api.TF_AddInput(desc, handle);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "component_types", component_types);
+			if (timeout_ms.HasValue)
+				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
+		///   Dequeues <c>n</c> tuples of one or more tensors from the given queue.
+		/// </summary>
+		/// <param name="handle">
+		///   The handle to a queue.
+		/// </param>
+		/// <param name="n">
+		///   The number of tuples to dequeue.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'QueueDequeueMany'.
+		/// </param>
+		/// <param name="timeout_ms">
+		///   Optional argument
+		///   If the queue has fewer than n elements, this operation
+		///   will block for up to timeout_ms milliseconds.
+		///   Note: This option is not supported yet.
+		/// </param>
+		/// <param name="component_types">
+		///   The type of each component in a tuple.
+		/// </param>
+		/// <returns>
+		///   One or more tensors that were dequeued as a tuple.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   If the queue is closed and there are fewer than <c>n</c> elements, then an
+		///   OutOfRange error is returned.
+		///   
+		///   This operation concatenates queue-element component tensors along the
+		///   0th dimension to make a single component tensor.  All of the components
+		///   in the dequeued tuple will have size <c>n</c> in the 0th dimension.
+		///   
+		///   This operation has <c>k</c> outputs, where <c>k</c> is the number of components in
+		///   the tuples stored in the given queue, and output <c>i</c> is the ith
+		///   component of the dequeued tuple.
+		///   
+		///   N.B. If the queue is empty, this operation will block until <c>n</c> elements
+		///   have been dequeued (or 'timeout_ms' elapses, if specified).
+		/// </remarks>
+		public TF_Output[] QueueDequeueMany (TF_Output handle, TF_Output n, TF_DataType[] component_types, long? timeout_ms = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "QueueDequeueMany", MakeName ("QueueDequeueMany", operName));
+			c_api.TF_AddInput(desc, handle);
+			c_api.TF_AddInput(desc, n);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "component_types", component_types);
+			if (timeout_ms.HasValue)
+				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
+		///   Dequeues <c>n</c> tuples of one or more tensors from the given queue.
+		/// </summary>
+		/// <param name="handle">
+		///   The handle to a queue.
+		/// </param>
+		/// <param name="n">
+		///   The number of tuples to dequeue.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'QueueDequeueManyV2'.
+		/// </param>
+		/// <param name="timeout_ms">
+		///   Optional argument
+		///   If the queue has fewer than n elements, this operation
+		///   will block for up to timeout_ms milliseconds.
+		///   Note: This option is not supported yet.
+		/// </param>
+		/// <param name="component_types">
+		///   The type of each component in a tuple.
+		/// </param>
+		/// <returns>
+		///   One or more tensors that were dequeued as a tuple.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   If the queue is closed and there are fewer than <c>n</c> elements, then an
+		///   OutOfRange error is returned.
+		///   
+		///   This operation concatenates queue-element component tensors along the
+		///   0th dimension to make a single component tensor.  All of the components
+		///   in the dequeued tuple will have size <c>n</c> in the 0th dimension.
+		///   
+		///   This operation has <c>k</c> outputs, where <c>k</c> is the number of components in
+		///   the tuples stored in the given queue, and output <c>i</c> is the ith
+		///   component of the dequeued tuple.
+		///   
+		///   N.B. If the queue is empty, this operation will block until <c>n</c> elements
+		///   have been dequeued (or 'timeout_ms' elapses, if specified).
+		/// </remarks>
+		public TF_Output[] QueueDequeueManyV2 (TF_Output handle, TF_Output n, TF_DataType[] component_types, long? timeout_ms = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "QueueDequeueManyV2", MakeName ("QueueDequeueManyV2", operName));
+			c_api.TF_AddInput(desc, handle);
+			c_api.TF_AddInput(desc, n);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "component_types", component_types);
+			if (timeout_ms.HasValue)
+				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
+		///   Dequeues <c>n</c> tuples of one or more tensors from the given queue.
+		/// </summary>
+		/// <param name="handle">
+		///   The handle to a queue.
+		/// </param>
+		/// <param name="n">
+		///   The number of tuples to dequeue.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'QueueDequeueUpTo'.
+		/// </param>
+		/// <param name="timeout_ms">
+		///   Optional argument
+		///   If the queue has fewer than n elements, this operation
+		///   will block for up to timeout_ms milliseconds.
+		///   Note: This option is not supported yet.
+		/// </param>
+		/// <param name="component_types">
+		///   The type of each component in a tuple.
+		/// </param>
+		/// <returns>
+		///   One or more tensors that were dequeued as a tuple.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation is not supported by all queues.  If a queue does not support
+		///   DequeueUpTo, then an Unimplemented error is returned.
+		///   
+		///   If the queue is closed and there are more than 0 but less than <c>n</c>
+		///   elements remaining, then instead of returning an OutOfRange error like
+		///   QueueDequeueMany, less than <c>n</c> elements are returned immediately.  If
+		///   the queue is closed and there are 0 elements left in the queue, then
+		///   an OutOfRange error is returned just like in QueueDequeueMany.
+		///   Otherwise the behavior is identical to QueueDequeueMany:
+		///   
+		///   This operation concatenates queue-element component tensors along the
+		///   0th dimension to make a single component tensor.  All of the components
+		///   in the dequeued tuple will have size <c>n</c> in the 0th dimension.
+		///   
+		///   This operation has k outputs, where <c>k</c> is the number of components in
+		///   the tuples stored in the given queue, and output <c>i</c> is the ith
+		///   component of the dequeued tuple.
+		/// </remarks>
+		public TF_Output[] QueueDequeueUpTo (TF_Output handle, TF_Output n, TF_DataType[] component_types, long? timeout_ms = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "QueueDequeueUpTo", MakeName ("QueueDequeueUpTo", operName));
+			c_api.TF_AddInput(desc, handle);
+			c_api.TF_AddInput(desc, n);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "component_types", component_types);
+			if (timeout_ms.HasValue)
+				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
+		///   Dequeues <c>n</c> tuples of one or more tensors from the given queue.
+		/// </summary>
+		/// <param name="handle">
+		///   The handle to a queue.
+		/// </param>
+		/// <param name="n">
+		///   The number of tuples to dequeue.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'QueueDequeueUpToV2'.
+		/// </param>
+		/// <param name="timeout_ms">
+		///   Optional argument
+		///   If the queue has fewer than n elements, this operation
+		///   will block for up to timeout_ms milliseconds.
+		///   Note: This option is not supported yet.
+		/// </param>
+		/// <param name="component_types">
+		///   The type of each component in a tuple.
+		/// </param>
+		/// <returns>
+		///   One or more tensors that were dequeued as a tuple.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation is not supported by all queues.  If a queue does not support
+		///   DequeueUpTo, then an Unimplemented error is returned.
+		///   
+		///   If the queue is closed and there are more than 0 but less than <c>n</c>
+		///   elements remaining, then instead of returning an OutOfRange error like
+		///   QueueDequeueMany, less than <c>n</c> elements are returned immediately.  If
+		///   the queue is closed and there are 0 elements left in the queue, then
+		///   an OutOfRange error is returned just like in QueueDequeueMany.
+		///   Otherwise the behavior is identical to QueueDequeueMany:
+		///   
+		///   This operation concatenates queue-element component tensors along the
+		///   0th dimension to make a single component tensor.  All of the components
+		///   in the dequeued tuple will have size n in the 0th dimension.
+		///   
+		///   This operation has <c>k</c> outputs, where <c>k</c> is the number of components in
+		///   the tuples stored in the given queue, and output <c>i</c> is the ith
+		///   component of the dequeued tuple.
+		/// </remarks>
+		public TF_Output[] QueueDequeueUpToV2 (TF_Output handle, TF_Output n, TF_DataType[] component_types, long? timeout_ms = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "QueueDequeueUpToV2", MakeName ("QueueDequeueUpToV2", operName));
+			c_api.TF_AddInput(desc, handle);
+			c_api.TF_AddInput(desc, n);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "component_types", component_types);
+			if (timeout_ms.HasValue)
+				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
+		///   Dequeues a tuple of one or more tensors from the given queue.
+		/// </summary>
+		/// <param name="handle">
+		///   The handle to a queue.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'QueueDequeueV2'.
+		/// </param>
+		/// <param name="timeout_ms">
+		///   Optional argument
+		///   If the queue is empty, this operation will block for up to
+		///   timeout_ms milliseconds.
+		///   Note: This option is not supported yet.
+		/// </param>
+		/// <param name="component_types">
+		///   The type of each component in a tuple.
+		/// </param>
+		/// <returns>
+		///   One or more tensors that were dequeued as a tuple.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation has k outputs, where k is the number of components
+		///   in the tuples stored in the given queue, and output i is the ith
+		///   component of the dequeued tuple.
+		///   
+		///   N.B. If the queue is empty, this operation will block until an element
+		///   has been dequeued (or 'timeout_ms' elapses, if specified).
+		/// </remarks>
+		public TF_Output[] QueueDequeueV2 (TF_Output handle, TF_DataType[] component_types, long? timeout_ms = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "QueueDequeueV2", MakeName ("QueueDequeueV2", operName));
+			c_api.TF_AddInput(desc, handle);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "component_types", component_types);
+			if (timeout_ms.HasValue)
+				c_api.TF_SetAttrInt (desc, "timeout_ms", timeout_ms.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "components", status);
+			var components = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				components [i] = new TF_Output (op, _idx++);
+			
+			return components;
+		}
+
+		/// <summary>
 		///   Enqueues a tuple of one or more tensors in the given queue.
 		/// </summary>
 		/// <param name="handle">
@@ -33855,6 +36745,85 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Gather ragged slices from <c>params</c> axis <c>0</c> according to <c>indices</c>.
+		/// </summary>
+		/// <param name="params_nested_splits">
+		///   The <c>nested_row_splits</c> tensors that define the row-partitioning for the
+		///   <c>params</c> RaggedTensor input.
+		/// </param>
+		/// <param name="params_dense_values">
+		///   The <c>flat_values</c> for the <c>params</c> RaggedTensor. There was a terminology change
+		///   at the python level from dense_values to flat_values, so dense_values is the
+		///   deprecated name.
+		/// </param>
+		/// <param name="indices">
+		///   Indices in the outermost dimension of <c>params</c> of the values that should be
+		///   gathered.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'RaggedGather'.
+		/// </param>
+		/// <param name="OUTPUT_RAGGED_RANK">
+		///   The ragged rank of the output RaggedTensor. <c>output_nested_splits</c> will contain
+		///   this number of <c>row_splits</c> tensors. This value should equal
+		///   <c>indices.shape.ndims + params.ragged_rank - 1</c>.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   output_nested_splits: The <c>nested_row_splits</c> tensors that define the row-partitioning for the
+		///   returned RaggedTensor.
+		///   output_dense_values: The <c>flat_values</c> for the returned RaggedTensor.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   Outputs a <c>RaggedTensor</c> output composed from <c>output_dense_values</c> and
+		///   <c>output_nested_splits</c>, such that:
+		///   
+		///    <code>
+		///   output.shape = indices.shape + params.shape[1:]
+		///   output.ragged_rank = indices.shape.ndims + params.ragged_rank
+		///   output[i...j, d0...dn] = params[indices[i...j], d0...dn]
+		///    </code>
+		///   
+		///   where
+		///   
+		///   * <c>params =
+		///   ragged.from_nested_row_splits(params_dense_values, params_nested_splits)</c>
+		///   provides the values that should be gathered.
+		///   * <c>indices</c> ia a dense tensor with dtype <c>int32</c> or <c>int64</c>, indicating which
+		///   values should be gathered.
+		///   * <c>output =
+		///   ragged.from_nested_row_splits(output_dense_values, output_nested_splits)</c>
+		///   is the output tensor.
+		///   
+		///   (Note: This c++ op is used to implement the higher-level python
+		///   <c>tf.ragged.gather</c> op, which also supports ragged indices.)
+		///   
+		/// </remarks>
+		public (TF_Output[] output_nested_splits, TF_Output output_dense_values) RaggedGather (TF_Output[] params_nested_splits, TF_Output params_dense_values, TF_Output indices, long OUTPUT_RAGGED_RANK, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "RaggedGather", MakeName ("RaggedGather", operName));
+			c_api.TF_AddInputList(desc, params_nested_splits[0], params_nested_splits.Length);
+			c_api.TF_AddInput(desc, params_dense_values);
+			c_api.TF_AddInput(desc, indices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "OUTPUT_RAGGED_RANK", OUTPUT_RAGGED_RANK);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output_nested_splits", status);
+			var output_nested_splits = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output_nested_splits [i] = new TF_Output (op, _idx++);
+			
+			var output_dense_values = new TF_Output (op, _idx++);
+			return (output_nested_splits, output_dense_values);
+		}
+
+		/// <summary>
 		///   Returns a <c>RaggedTensor</c> containing the specified sequences of numbers.
 		/// </summary>
 		/// <param name="starts">
@@ -33916,6 +36885,72 @@ namespace TensorFlow {
 			var rt_nested_splits = new TF_Output (op, _idx++);
 			var rt_dense_values = new TF_Output (op, _idx++);
 			return (rt_nested_splits, rt_dense_values);
+		}
+
+		/// <summary>
+		///   Decodes a <c>variant</c> Tensor into a <c>RaggedTensor</c>.
+		/// </summary>
+		/// <param name="encoded_ragged">
+		///   A <c>variant</c> Tensor containing encoded <c>RaggedTensor</c>s.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'RaggedTensorFromVariant'.
+		/// </param>
+		/// <param name="input_ragged_rank">
+		///   The ragged rank of each encoded <c>RaggedTensor</c> component in the input. If set to
+		///   -1, this is inferred as <c>output_ragged_rank</c> - <c>rank(encoded_ragged)</c>
+		/// </param>
+		/// <param name="output_ragged_rank">
+		///   The expected ragged rank of the output <c>RaggedTensor</c>. The following must hold:
+		///   <c>output_ragged_rank = rank(encoded_ragged) + input_ragged_rank</c>.
+		/// </param>
+		/// <param name="Tvalues">
+		/// </param>
+		/// <param name="Tsplits">
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   output_nested_splits: A list of one or more Tensors representing the splits of the output
+		///   <c>RaggedTensor</c>.
+		///   output_dense_values: A Tensor representing the values of the output <c>RaggedTensor</c>.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   Decodes the given <c>variant</c> Tensor and returns a <c>RaggedTensor</c>. The input
+		///   could be a scalar, meaning it encodes a single <c>RaggedTensor</c> with ragged_rank
+		///   <c>output_ragged_rank</c>. It could also have an arbitrary rank, in which case each
+		///   element is decoded into a <c>RaggedTensor</c> with ragged_rank <c>input_ragged_rank</c>
+		///   and these are then stacked according to the input shape to output a single
+		///   <c>RaggedTensor</c> with ragged_rank <c>output_ragged_rank</c>. Each <c>variant</c> element in
+		///   the input Tensor is decoded by retrieving from the element a 1-D <c>variant</c>
+		///   Tensor with <c>input_ragged_rank + 1</c> Tensors, corresponding to the splits and
+		///   values of the decoded <c>RaggedTensor</c>. If <c>input_ragged_rank</c> is -1, then it is
+		///   inferred as <c>output_ragged_rank</c> - <c>rank(encoded_ragged)</c>. See
+		///   <c>RaggedTensorToVariant</c> for the corresponding encoding logic.
+		///   
+		/// </remarks>
+		public (TF_Output[] output_nested_splits, TF_Output output_dense_values) RaggedTensorFromVariant (TF_Output encoded_ragged, long input_ragged_rank, long output_ragged_rank, TF_DataType Tvalues, TF_DataType Tsplits, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "RaggedTensorFromVariant", MakeName ("RaggedTensorFromVariant", operName));
+			c_api.TF_AddInput(desc, encoded_ragged);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "input_ragged_rank", input_ragged_rank);
+			c_api.TF_SetAttrInt (desc, "output_ragged_rank", output_ragged_rank);
+			c_api.TF_SetAttrType (desc, "Tvalues", Tvalues);
+			c_api.TF_SetAttrType (desc, "Tsplits", Tsplits);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output_nested_splits", status);
+			var output_nested_splits = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output_nested_splits [i] = new TF_Output (op, _idx++);
+			
+			var output_dense_values = new TF_Output (op, _idx++);
+			return (output_nested_splits, output_dense_values);
 		}
 
 		/// <summary>
@@ -35581,6 +38616,52 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   An op that receives embedding activations on the TPU.
+		/// </summary>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'RecvTPUEmbeddingActivations'.
+		/// </param>
+		/// <param name="num_outputs">
+		///   The number of output activation tensors, equal to the number of
+		///   embedding tables in the model.
+		/// </param>
+		/// <param name="config">
+		///   Serialized TPUEmbeddingConfiguration proto.
+		/// </param>
+		/// <returns>
+		///   A TensorList of embedding activations containing one Tensor per
+		///   embedding table in the model.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The TPU system performs the embedding lookups and aggregations specified by
+		///   the arguments to TPUEmbeddingEnqueue(Integer/Sparse/SparseTensor)Batch. The
+		///   results of these aggregations are visible to the Tensorflow Graph as the
+		///   outputs of a RecvTPUEmbeddingActivations op. This op returns a list containing
+		///   one Tensor of activations per table specified in the model. There can be at
+		///   most one RecvTPUEmbeddingActivations op in the TPU graph.
+		/// </remarks>
+		public TF_Output[] RecvTPUEmbeddingActivations (long num_outputs, string config, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "RecvTPUEmbeddingActivations", MakeName ("RecvTPUEmbeddingActivations", operName));
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_outputs", num_outputs);
+			c_api.TF_SetAttrString (desc, "config", config);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
+			var outputs = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				outputs [i] = new TF_Output (op, _idx++);
+			
+			return outputs;
+		}
+
+		/// <summary>
 		///   Joins a string Tensor across the given dimensions.
 		/// </summary>
 		/// <param name="inputs">
@@ -36095,6 +39176,55 @@ namespace TensorFlow {
 			int _idx = 0;
 			var backprops = new TF_Output (op, _idx++);
 			return backprops;
+		}
+
+		/// <summary>
+		///   Execute a sub graph on a remote processor.
+		/// </summary>
+		/// <param name="inputs">
+		///   Arbitrary number of tensors with arbitrary data types
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'RemoteFusedGraphExecute'.
+		/// </param>
+		/// <param name="Toutputs">
+		/// </param>
+		/// <param name="serialized_remote_fused_graph_execute_info">
+		///   Serialized protocol buffer
+		///   of RemoteFusedGraphExecuteInfo which contains graph specifications.
+		/// </param>
+		/// <returns>
+		///   Arbitrary number of tensors with arbitrary data types
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The graph specifications(such as graph itself, input tensors and output names)
+		///   are stored as a serialized protocol buffer of RemoteFusedGraphExecuteInfo
+		///   as serialized_remote_fused_graph_execute_info.
+		///   The specifications will be passed to a dedicated registered
+		///   remote fused graph executor.  The executor will send the graph specifications
+		///   to a remote processor and execute that graph.  The execution results
+		///   will be passed to consumer nodes as outputs of this node.
+		/// </remarks>
+		public TF_Output[] RemoteFusedGraphExecute (TF_Output[] inputs, TF_DataType[] Toutputs, string serialized_remote_fused_graph_execute_info, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "RemoteFusedGraphExecute", MakeName ("RemoteFusedGraphExecute", operName));
+			c_api.TF_AddInputList(desc, inputs[0], inputs.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "Toutputs", Toutputs);
+			c_api.TF_SetAttrString (desc, "serialized_remote_fused_graph_execute_info", serialized_remote_fused_graph_execute_info);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
+			var outputs = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				outputs [i] = new TF_Output (op, _idx++);
+			
+			return outputs;
 		}
 
 		/// <summary>
@@ -39868,6 +42998,68 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Restores tensors from a V2 checkpoint.
+		/// </summary>
+		/// <param name="prefix">
+		///   Must have a single element.  The prefix of a V2 checkpoint.
+		/// </param>
+		/// <param name="tensor_names">
+		///   shape {N}.  The names of the tensors to be restored.
+		/// </param>
+		/// <param name="shape_and_slices">
+		///   shape {N}.  The slice specs of the tensors to be restored.
+		///   Empty strings indicate that they are non-partitioned tensors.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'RestoreV2'.
+		/// </param>
+		/// <param name="dtypes">
+		///   shape {N}.  The list of expected dtype for the tensors.  Must match
+		///   those stored in the checkpoint.
+		/// </param>
+		/// <returns>
+		///   shape {N}.  The restored tensors, whose shapes are read from the
+		///   checkpoint directly.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   For backward compatibility with the V1 format, this Op currently allows
+		///   restoring from a V1 checkpoint as well:
+		///   - This Op first attempts to find the V2 index file pointed to by "prefix", and
+		///   if found proceed to read it as a V2 checkpoint;
+		///   - Otherwise the V1 read path is invoked.
+		///   Relying on this behavior is not recommended, as the ability to fall back to read
+		///   V1 might be deprecated and eventually removed.
+		///   
+		///   By default, restores the named tensors in full.  If the caller wishes to restore
+		///   specific slices of stored tensors, "shape_and_slices" should be non-empty
+		///   strings and correspondingly well-formed.
+		///   
+		///   Callers must ensure all the named tensors are indeed stored in the checkpoint.
+		/// </remarks>
+		public TF_Output[] RestoreV2 (TF_Output prefix, TF_Output tensor_names, TF_Output shape_and_slices, TF_DataType[] dtypes, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "RestoreV2", MakeName ("RestoreV2", operName));
+			c_api.TF_AddInput(desc, prefix);
+			c_api.TF_AddInput(desc, tensor_names);
+			c_api.TF_AddInput(desc, shape_and_slices);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "tensors", status);
+			var tensors = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				tensors [i] = new TF_Output (op, _idx++);
+			
+			return tensors;
+		}
+
+		/// <summary>
 		///   Retrieve Adadelta embedding parameters.
 		/// </summary>
 		/// <param name="operName">
@@ -43140,6 +46332,274 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Distributed version of Stochastic Dual Coordinate Ascent (SDCA) optimizer for
+		/// </summary>
+		/// <param name="sparse_example_indices">
+		///   a list of vectors which contain example indices.
+		/// </param>
+		/// <param name="sparse_feature_indices">
+		///   a list of vectors which contain feature indices.
+		/// </param>
+		/// <param name="sparse_feature_values">
+		///   a list of vectors which contains feature value
+		///   associated with each feature group.
+		/// </param>
+		/// <param name="dense_features">
+		///   a list of matrices which contains the dense feature values.
+		/// </param>
+		/// <param name="example_weights">
+		///   a vector which contains the weight associated with each
+		///   example.
+		/// </param>
+		/// <param name="example_labels">
+		///   a vector which contains the label/target associated with each
+		///   example.
+		/// </param>
+		/// <param name="sparse_indices">
+		///   a list of vectors where each value is the indices which has
+		///   corresponding weights in sparse_weights. This field maybe omitted for the
+		///   dense approach.
+		/// </param>
+		/// <param name="sparse_weights">
+		///   a list of vectors where each value is the weight associated with
+		///   a sparse feature group.
+		/// </param>
+		/// <param name="dense_weights">
+		///   a list of vectors where the values are the weights associated
+		///   with a dense feature group.
+		/// </param>
+		/// <param name="example_state_data">
+		///   a list of vectors containing the example state data.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'SdcaOptimizer'.
+		/// </param>
+		/// <param name="adaptative">
+		///   Optional argument
+		///   Whether to use Adaptive SDCA for the inner loop.
+		/// </param>
+		/// <param name="loss_type">
+		///   Type of the primal loss. Currently SdcaSolver supports logistic,
+		///   squared and hinge losses.
+		/// </param>
+		/// <param name="l1">
+		///   Symmetric l1 regularization strength.
+		/// </param>
+		/// <param name="l2">
+		///   Symmetric l2 regularization strength.
+		/// </param>
+		/// <param name="num_loss_partitions">
+		///   Number of partitions of the global loss function.
+		/// </param>
+		/// <param name="num_inner_iterations">
+		///   Number of iterations per mini-batch.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   out_example_state_data: a list of vectors containing the updated example state
+		///   data.
+		///   out_delta_sparse_weights: a list of vectors where each value is the delta
+		///   weights associated with a sparse feature group.
+		///   out_delta_dense_weights: a list of vectors where the values are the delta
+		///   weights associated with a dense feature group.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   linear models with L1 + L2 regularization. As global optimization objective is
+		///   strongly-convex, the optimizer optimizes the dual objective at each step. The
+		///   optimizer applies each update one example at a time. Examples are sampled
+		///   uniformly, and the optimizer is learning rate free and enjoys linear convergence
+		///   rate.
+		///   
+		///   [Proximal Stochastic Dual Coordinate Ascent](http://arxiv.org/pdf/1211.2717v1.pdf).&amp;lt;br&amp;gt;
+		///   Shai Shalev-Shwartz, Tong Zhang. 2012
+		///   
+		///   $$Loss Objective = \sum f_{i} (wx_{i}) + (l2 / 2) * |w|^2 + l1 * |w|$$
+		///   
+		///   [Adding vs. Averaging in Distributed Primal-Dual Optimization](http://arxiv.org/abs/1502.03508).&amp;lt;br&amp;gt;
+		///   Chenxin Ma, Virginia Smith, Martin Jaggi, Michael I. Jordan,
+		///   Peter Richtarik, Martin Takac. 2015
+		///   
+		///   [Stochastic Dual Coordinate Ascent with Adaptive Probabilities](https://arxiv.org/abs/1502.08053).&amp;lt;br&amp;gt;
+		///   Dominik Csiba, Zheng Qu, Peter Richtarik. 2015
+		/// </remarks>
+		public (TF_Output out_example_state_data, TF_Output[] out_delta_sparse_weights, TF_Output[] out_delta_dense_weights) SdcaOptimizer (TF_Output[] sparse_example_indices, TF_Output[] sparse_feature_indices, TF_Output[] sparse_feature_values, TF_Output[] dense_features, TF_Output example_weights, TF_Output example_labels, TF_Output[] sparse_indices, TF_Output[] sparse_weights, TF_Output[] dense_weights, TF_Output example_state_data, string loss_type, float l1, float l2, long num_loss_partitions, long num_inner_iterations, bool? adaptative = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "SdcaOptimizer", MakeName ("SdcaOptimizer", operName));
+			c_api.TF_AddInputList(desc, sparse_example_indices[0], sparse_example_indices.Length);
+			c_api.TF_AddInputList(desc, sparse_feature_indices[0], sparse_feature_indices.Length);
+			c_api.TF_AddInputList(desc, sparse_feature_values[0], sparse_feature_values.Length);
+			c_api.TF_AddInputList(desc, dense_features[0], dense_features.Length);
+			c_api.TF_AddInput(desc, example_weights);
+			c_api.TF_AddInput(desc, example_labels);
+			c_api.TF_AddInputList(desc, sparse_indices[0], sparse_indices.Length);
+			c_api.TF_AddInputList(desc, sparse_weights[0], sparse_weights.Length);
+			c_api.TF_AddInputList(desc, dense_weights[0], dense_weights.Length);
+			c_api.TF_AddInput(desc, example_state_data);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrString (desc, "loss_type", loss_type);
+			c_api.TF_SetAttrFloat (desc, "l1", l1);
+			c_api.TF_SetAttrFloat (desc, "l2", l2);
+			c_api.TF_SetAttrInt (desc, "num_loss_partitions", num_loss_partitions);
+			c_api.TF_SetAttrInt (desc, "num_inner_iterations", num_inner_iterations);
+			if (adaptative.HasValue)
+				c_api.TF_SetAttrBool (desc, "adaptative", Convert.ToByte(adaptative.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			var out_example_state_data = new TF_Output (op, _idx++);
+			_n = c_api.TF_OperationOutputListLength(op, "out_delta_sparse_weights", status);
+			var out_delta_sparse_weights = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				out_delta_sparse_weights [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "out_delta_dense_weights", status);
+			var out_delta_dense_weights = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				out_delta_dense_weights [i] = new TF_Output (op, _idx++);
+			
+			return (out_example_state_data, out_delta_sparse_weights, out_delta_dense_weights);
+		}
+
+		/// <summary>
+		///   Distributed version of Stochastic Dual Coordinate Ascent (SDCA) optimizer for
+		/// </summary>
+		/// <param name="sparse_example_indices">
+		///   a list of vectors which contain example indices.
+		/// </param>
+		/// <param name="sparse_feature_indices">
+		///   a list of vectors which contain feature indices.
+		/// </param>
+		/// <param name="sparse_feature_values">
+		///   a list of vectors which contains feature value
+		///   associated with each feature group.
+		/// </param>
+		/// <param name="dense_features">
+		///   a list of matrices which contains the dense feature values.
+		/// </param>
+		/// <param name="example_weights">
+		///   a vector which contains the weight associated with each
+		///   example.
+		/// </param>
+		/// <param name="example_labels">
+		///   a vector which contains the label/target associated with each
+		///   example.
+		/// </param>
+		/// <param name="sparse_indices">
+		///   a list of vectors where each value is the indices which has
+		///   corresponding weights in sparse_weights. This field maybe omitted for the
+		///   dense approach.
+		/// </param>
+		/// <param name="sparse_weights">
+		///   a list of vectors where each value is the weight associated with
+		///   a sparse feature group.
+		/// </param>
+		/// <param name="dense_weights">
+		///   a list of vectors where the values are the weights associated
+		///   with a dense feature group.
+		/// </param>
+		/// <param name="example_state_data">
+		///   a list of vectors containing the example state data.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'SdcaOptimizerV2'.
+		/// </param>
+		/// <param name="adaptive">
+		///   Optional argument
+		///   Whether to use Adaptive SDCA for the inner loop.
+		/// </param>
+		/// <param name="loss_type">
+		///   Type of the primal loss. Currently SdcaSolver supports logistic,
+		///   squared and hinge losses.
+		/// </param>
+		/// <param name="l1">
+		///   Symmetric l1 regularization strength.
+		/// </param>
+		/// <param name="l2">
+		///   Symmetric l2 regularization strength.
+		/// </param>
+		/// <param name="num_loss_partitions">
+		///   Number of partitions of the global loss function.
+		/// </param>
+		/// <param name="num_inner_iterations">
+		///   Number of iterations per mini-batch.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   out_example_state_data: a list of vectors containing the updated example state
+		///   data.
+		///   out_delta_sparse_weights: a list of vectors where each value is the delta
+		///   weights associated with a sparse feature group.
+		///   out_delta_dense_weights: a list of vectors where the values are the delta
+		///   weights associated with a dense feature group.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   linear models with L1 + L2 regularization. As global optimization objective is
+		///   strongly-convex, the optimizer optimizes the dual objective at each step. The
+		///   optimizer applies each update one example at a time. Examples are sampled
+		///   uniformly, and the optimizer is learning rate free and enjoys linear convergence
+		///   rate.
+		///   
+		///   [Proximal Stochastic Dual Coordinate Ascent](http://arxiv.org/pdf/1211.2717v1.pdf).&amp;lt;br&amp;gt;
+		///   Shai Shalev-Shwartz, Tong Zhang. 2012
+		///   
+		///   $$Loss Objective = \sum f_{i} (wx_{i}) + (l2 / 2) * |w|^2 + l1 * |w|$$
+		///   
+		///   [Adding vs. Averaging in Distributed Primal-Dual Optimization](http://arxiv.org/abs/1502.03508).&amp;lt;br&amp;gt;
+		///   Chenxin Ma, Virginia Smith, Martin Jaggi, Michael I. Jordan,
+		///   Peter Richtarik, Martin Takac. 2015
+		///   
+		///   [Stochastic Dual Coordinate Ascent with Adaptive Probabilities](https://arxiv.org/abs/1502.08053).&amp;lt;br&amp;gt;
+		///   Dominik Csiba, Zheng Qu, Peter Richtarik. 2015
+		/// </remarks>
+		public (TF_Output out_example_state_data, TF_Output[] out_delta_sparse_weights, TF_Output[] out_delta_dense_weights) SdcaOptimizerV2 (TF_Output[] sparse_example_indices, TF_Output[] sparse_feature_indices, TF_Output[] sparse_feature_values, TF_Output[] dense_features, TF_Output example_weights, TF_Output example_labels, TF_Output[] sparse_indices, TF_Output[] sparse_weights, TF_Output[] dense_weights, TF_Output example_state_data, string loss_type, float l1, float l2, long num_loss_partitions, long num_inner_iterations, bool? adaptive = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "SdcaOptimizerV2", MakeName ("SdcaOptimizerV2", operName));
+			c_api.TF_AddInputList(desc, sparse_example_indices[0], sparse_example_indices.Length);
+			c_api.TF_AddInputList(desc, sparse_feature_indices[0], sparse_feature_indices.Length);
+			c_api.TF_AddInputList(desc, sparse_feature_values[0], sparse_feature_values.Length);
+			c_api.TF_AddInputList(desc, dense_features[0], dense_features.Length);
+			c_api.TF_AddInput(desc, example_weights);
+			c_api.TF_AddInput(desc, example_labels);
+			c_api.TF_AddInputList(desc, sparse_indices[0], sparse_indices.Length);
+			c_api.TF_AddInputList(desc, sparse_weights[0], sparse_weights.Length);
+			c_api.TF_AddInputList(desc, dense_weights[0], dense_weights.Length);
+			c_api.TF_AddInput(desc, example_state_data);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrString (desc, "loss_type", loss_type);
+			c_api.TF_SetAttrFloat (desc, "l1", l1);
+			c_api.TF_SetAttrFloat (desc, "l2", l2);
+			c_api.TF_SetAttrInt (desc, "num_loss_partitions", num_loss_partitions);
+			c_api.TF_SetAttrInt (desc, "num_inner_iterations", num_inner_iterations);
+			if (adaptive.HasValue)
+				c_api.TF_SetAttrBool (desc, "adaptive", Convert.ToByte(adaptive.Value));
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			var out_example_state_data = new TF_Output (op, _idx++);
+			_n = c_api.TF_OperationOutputListLength(op, "out_delta_sparse_weights", status);
+			var out_delta_sparse_weights = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				out_delta_sparse_weights [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "out_delta_dense_weights", status);
+			var out_delta_dense_weights = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				out_delta_dense_weights [i] = new TF_Output (op, _idx++);
+			
+			return (out_example_state_data, out_delta_sparse_weights, out_delta_dense_weights);
+		}
+
+		/// <summary>
 		///   Applies L1 regularization shrink step on the parameters.
 		/// </summary>
 		/// <param name="weights">
@@ -44034,6 +47494,45 @@ namespace TensorFlow {
 			var op = c_api.TF_FinishOperation(desc, status);
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
+			return output;
+		}
+
+		/// <summary>
+		///   Returns shape of tensors.
+		/// </summary>
+		/// <param name="input">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'ShapeN'.
+		/// </param>
+		/// <param name="out_type">
+		///   Optional argument
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   This operation returns N 1-D integer tensors representing shape of <c>input[i]s</c>.
+		/// </remarks>
+		public TF_Output[] ShapeN (TF_Output[] input, TF_DataType? out_type = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "ShapeN", MakeName ("ShapeN", operName));
+			c_api.TF_AddInputList(desc, input[0], input.Length);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			if (out_type.HasValue)
+				c_api.TF_SetAttrType (desc, "out_type", out_type.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
 			return output;
 		}
 
@@ -48122,6 +51621,91 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Split a <c>SparseTensor</c> into <c>num_split</c> tensors along one dimension.
+		/// </summary>
+		/// <param name="split_dim">
+		///   0-D.  The dimension along which to split.  Must be in the range
+		///   <c>[0, rank(shape))</c>.
+		/// </param>
+		/// <param name="indices">
+		///   2-D tensor represents the indices of the sparse tensor.
+		/// </param>
+		/// <param name="values">
+		///   1-D tensor represents the values of the sparse tensor.
+		/// </param>
+		/// <param name="shape">
+		///   1-D. tensor represents the shape of the sparse tensor.
+		///   output indices: A list of 1-D tensors represents the indices of the output
+		///   sparse tensors.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'SparseSplit'.
+		/// </param>
+		/// <param name="num_split">
+		///   The number of ways to split.
+		/// </param>
+		/// <returns>
+		///   Returns a tuple with multiple values, as follows:
+		///   output_indices:
+		///   output_values: A list of 1-D tensors represents the values of the output sparse
+		///   tensors.
+		///   output_shape: A list of 1-D tensors represents the shape of the output sparse
+		///   tensors.
+		///   The TF_Operation can be fetched from any of the TFOutputs returned in the tuple values, by fethching the Operation property.
+		/// </returns>
+		/// <remarks>
+		///   If the <c>shape[split_dim]</c> is not an integer multiple of <c>num_split</c>. Slices
+		///   <c>[0 : shape[split_dim] % num_split]</c> gets one extra dimension.
+		///   For example, if <c>split_dim = 1</c> and <c>num_split = 2</c> and the input is
+		///   
+		///   input_tensor = shape = [2, 7]
+		///   [    a   d e  ]
+		///   [b c          ]
+		///   
+		///   Graphically the output tensors are:
+		///   
+		///   output_tensor[0] = shape = [2, 4]
+		///   [    a  ]
+		///   [b c    ]
+		///   
+		///   output_tensor[1] = shape = [2, 3]
+		///   [ d e  ]
+		///   [      ]
+		/// </remarks>
+		public (TF_Output[] output_indices, TF_Output[] output_values, TF_Output[] output_shape) SparseSplit (TF_Output split_dim, TF_Output indices, TF_Output values, TF_Output shape, long num_split, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "SparseSplit", MakeName ("SparseSplit", operName));
+			c_api.TF_AddInput(desc, split_dim);
+			c_api.TF_AddInput(desc, indices);
+			c_api.TF_AddInput(desc, values);
+			c_api.TF_AddInput(desc, shape);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_split", num_split);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output_indices", status);
+			var output_indices = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output_indices [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "output_values", status);
+			var output_values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output_values [i] = new TF_Output (op, _idx++);
+			
+			_n = c_api.TF_OperationOutputListLength(op, "output_shape", status);
+			var output_shape = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output_shape [i] = new TF_Output (op, _idx++);
+			
+			return (output_indices, output_values, output_shape);
+		}
+
+		/// <summary>
 		///   Adds up a <c>SparseTensor</c> and a dense <c>Tensor</c>, producing a dense <c>Tensor</c>.
 		/// </summary>
 		/// <param name="a_indices">
@@ -48423,6 +52007,98 @@ namespace TensorFlow {
 			var result_values = new TF_Output (op, _idx++);
 			var result_shape = new TF_Output (op, _idx++);
 			return (result_indices, result_values, result_shape);
+		}
+
+		/// <summary>
+		///   Splits a tensor into <c>num_split</c> tensors along one dimension.
+		/// </summary>
+		/// <param name="split_dim">
+		///   0-D.  The dimension along which to split.  Must be in the range
+		///   <c>[-rank(value), rank(value))</c>.
+		/// </param>
+		/// <param name="value">
+		///   The tensor to split.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'Split'.
+		/// </param>
+		/// <param name="num_split">
+		///   The number of ways to split.  Must evenly divide
+		///   <c>value.shape[split_dim]</c>.
+		/// </param>
+		/// <returns>
+		///   They are identically shaped tensors, whose shape matches that of <c>value</c>
+		///   except along <c>axis</c>, where their sizes are
+		///   <c>values.shape[split_dim] / num_split</c>.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] Split (TF_Output split_dim, TF_Output value, long num_split, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "Split", MakeName ("Split", operName));
+			c_api.TF_AddInput(desc, split_dim);
+			c_api.TF_AddInput(desc, value);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_split", num_split);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
+		}
+
+		/// <summary>
+		///   Splits a tensor into <c>num_split</c> tensors along one dimension.
+		/// </summary>
+		/// <param name="value">
+		///   The tensor to split.
+		/// </param>
+		/// <param name="size_splits">
+		///   list containing the sizes of each output tensor along the split
+		///   dimension. Must sum to the dimension of value along split_dim.
+		///   Can contain one -1 indicating that dimension is to be inferred.
+		/// </param>
+		/// <param name="split_dim">
+		///   0-D.  The dimension along which to split.  Must be in the range
+		///   <c>[-rank(value), rank(value))</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'SplitV'.
+		/// </param>
+		/// <param name="num_split">
+		/// </param>
+		/// <returns>
+		///   Tensors whose shape matches that of <c>value</c>
+		///   except along <c>axis</c>, where their sizes are
+		///   <c>size_splits[i]</c>.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] SplitV (TF_Output value, TF_Output size_splits, TF_Output split_dim, long num_split, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "SplitV", MakeName ("SplitV", operName));
+			c_api.TF_AddInput(desc, value);
+			c_api.TF_AddInput(desc, size_splits);
+			c_api.TF_AddInput(desc, split_dim);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_split", num_split);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
 		}
 
 		/// <summary>
@@ -48996,6 +52672,68 @@ namespace TensorFlow {
 			
 			var op = c_api.TF_FinishOperation(desc, status);
 			return op;
+		}
+
+		/// <summary>
+		///   Op peeks at the values at the specified index.  If the
+		/// </summary>
+		/// <param name="index">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'StagePeek'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   underlying container does not contain sufficient elements
+		///   this op will block until it does.   This Op is optimized for
+		///   performance.
+		/// </remarks>
+		public TF_Output[] StagePeek (TF_Output index, TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "StagePeek", MakeName ("StagePeek", operName));
+			c_api.TF_AddInput(desc, index);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return values;
 		}
 
 		/// <summary>
@@ -54964,6 +58702,39 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Connects outputs of an N-way replicated computation to N outputs.
+		/// </summary>
+		/// <param name="input">
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'TPUReplicatedOutput'.
+		/// </param>
+		/// <param name="num_replicas">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		public TF_Output[] TPUReplicatedOutput (TF_Output input, long num_replicas, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "TPUReplicatedOutput", MakeName ("TPUReplicatedOutput", operName));
+			c_api.TF_AddInput(desc, input);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num_replicas", num_replicas);
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "outputs", status);
+			var outputs = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				outputs [i] = new TF_Output (op, _idx++);
+			
+			return outputs;
+		}
+
+		/// <summary>
 		///   Metadata indicaitng how the TPU computation should be replicated.
 		/// </summary>
 		/// <param name="operName">
@@ -56383,6 +60154,63 @@ namespace TensorFlow {
 		}
 
 		/// <summary>
+		///   Unpacks a given dimension of a rank-<c>R</c> tensor into <c>num</c> rank-<c>(R-1)</c> tensors.
+		/// </summary>
+		/// <param name="value">
+		///   1-D or higher, with <c>axis</c> dimension size equal to <c>num</c>.
+		/// </param>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'Unpack'.
+		/// </param>
+		/// <param name="axis">
+		///   Optional argument
+		///   Dimension along which to unpack.  Negative values wrap around, so the
+		///   valid range is <c>[-R, R)</c>.
+		/// </param>
+		/// <param name="num">
+		/// </param>
+		/// <returns>
+		///   The list of tensors unpacked from <c>value</c>.
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   Unpacks <c>num</c> tensors from <c>value</c> by chipping it along the <c>axis</c> dimension.
+		///   For example, given a tensor of shape <c>(A, B, C, D)</c>;
+		///   
+		///   If <c>axis == 0</c> then the i'th tensor in <c>output</c> is the slice <c>value[i, :, :, :]</c>
+		///   and each tensor in <c>output</c> will have shape <c>(B, C, D)</c>. (Note that the
+		///   dimension unpacked along is gone, unlike <c>split</c>).
+		///   
+		///   If <c>axis == 1</c> then the i'th tensor in <c>output</c> is the slice <c>value[:, i, :, :]</c>
+		///   and each tensor in <c>output</c> will have shape <c>(A, C, D)</c>.
+		///   Etc.
+		///   
+		///   This is the opposite of <c>pack</c>.
+		/// </remarks>
+		public TF_Output[] Unpack (TF_Output value, long num, long? axis = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "Unpack", MakeName ("Unpack", operName));
+			c_api.TF_AddInput(desc, value);
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrInt (desc, "num", num);
+			if (axis.HasValue)
+				c_api.TF_SetAttrInt (desc, "axis", axis.Value);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "output", status);
+			var output = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				output [i] = new TF_Output (op, _idx++);
+			
+			return output;
+		}
+
+		/// <summary>
 		///   Converts a flat index or array of flat indices into a tuple of
 		/// </summary>
 		/// <param name="indices">
@@ -56752,6 +60580,64 @@ namespace TensorFlow {
 			int _idx = 0;
 			var output = new TF_Output (op, _idx++);
 			return output;
+		}
+
+		/// <summary>
+		///   Op is similar to a lightweight Dequeue.
+		/// </summary>
+		/// <param name="operName">
+		///   If specified, the created operation in the graph will be this one, otherwise it will be named 'Unstage'.
+		/// </param>
+		/// <param name="capacity">
+		///   Optional argument
+		/// </param>
+		/// <param name="memory_limit">
+		///   Optional argument
+		/// </param>
+		/// <param name="container">
+		///   Optional argument
+		/// </param>
+		/// <param name="shared_name">
+		///   Optional argument
+		/// </param>
+		/// <param name="dtypes">
+		/// </param>
+		/// <returns>
+		///   The TF_Operation can be fetched from the resulting TF_Output, by fethching the Operation property from the result.
+		/// </returns>
+		/// <remarks>
+		///   The basic functionality is similar to dequeue with many fewer
+		///   capabilities and options.  This Op is optimized for performance.
+		/// </remarks>
+		public TF_Output[] Unstage (TF_DataType[] dtypes, long? capacity = null, long? memory_limit = null, string container = null, string shared_name = null, string operName = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var desc = c_api.TF_NewOperation(this, "Unstage", MakeName ("Unstage", operName));
+			foreach ( TF_Operation control in Dependencies )
+				c_api.TF_AddControlInput(desc, control);
+			
+			c_api.TF_SetAttrTypeList (desc, "dtypes", dtypes);
+			if (capacity.HasValue)
+				c_api.TF_SetAttrInt (desc, "capacity", capacity.Value);
+			
+			if (memory_limit.HasValue)
+				c_api.TF_SetAttrInt (desc, "memory_limit", memory_limit.Value);
+			
+			if (container != null)
+				c_api.TF_SetAttrString (desc, "container", container);
+			
+			if (shared_name != null)
+				c_api.TF_SetAttrString (desc, "shared_name", shared_name);
+			
+			var op = c_api.TF_FinishOperation(desc, status);
+			int _idx = 0;
+			int _n = 0;
+			_n = c_api.TF_OperationOutputListLength(op, "values", status);
+			var values = new TF_Output [_n];
+			for (int i = 0; i < _n; i++)
+				values [i] = new TF_Output (op, _idx++);
+			
+			return values;
 		}
 
 		/// <summary>

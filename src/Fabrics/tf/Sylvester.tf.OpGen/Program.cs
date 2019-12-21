@@ -106,7 +106,14 @@ namespace Sylvester.tf.OpGen
             {
                 Generator = new Generator(o.OutputFileName);
                 var dirs = !string.IsNullOrEmpty(o.Dirs) ? o.Dirs.Split(',') : Array.Empty<string>();
-                L.Information("Using {0} TensorFlow op def directories.", dirs.Length);
+                if (dirs.Length == 1)
+                {
+                    L.Information("Using {0} TensorFlow op def directory.", 1);
+                }
+                else
+                {
+                    L.Information("Using {0} TensorFlow op def directories.", dirs.Length);
+                }
                 Generator.Run(dirs, o.Op);
                 Exit(ExitResult.SUCCESS);
             });

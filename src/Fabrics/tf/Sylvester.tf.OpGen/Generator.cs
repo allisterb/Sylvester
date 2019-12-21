@@ -59,7 +59,8 @@ namespace Sylvester.tf.OpGen
 
         #region Methods
 		public void Run(string[] dirs, string opName)
-		{			
+		{
+			int opCount = 0;
 			if (dirs.Length > 0)
 			{
 				UpdateApiDefs(dirs);
@@ -74,6 +75,7 @@ namespace Sylvester.tf.OpGen
 				try
 				{
 					Generate(op);
+					opCount++;
 				}
 				catch (OpGenException e)
 				{
@@ -93,16 +95,16 @@ namespace Sylvester.tf.OpGen
 					{
 						var attr = op.attr.First(a => CSharpType(a.type) == null);
 
-						L.Error($"Skipping {op.name} due to attribute {attr.type} {attr.name} lacking a mapping to a C# type");
+						L.Error("Skipping op {0} due to attribute {1} of TF type {2} lacking a mapping to a C# type", op.name, attr.name, attr.type);
 						continue;
-					}
+					}/*
 					if (op.output_arg.Any(arg => IsListArg(arg)))
 					{
 					
 							L.Error($"Skipping {op.name} due to output arg ({op.output_arg.First(arg => IsListArg(arg)).name}) being a list type.");
 							continue;
 						
-					}
+					}*/
 							/*
 							var def = ApiDefMap.(oper.name);
 
@@ -110,9 +112,10 @@ namespace Sylvester.tf.OpGen
 							if (def.Summary == "")
 								continue;
 							*/
-							try
-							{
+					try
+					{
 						Generate(op);
+						opCount++;
 					}
 					catch(OpGenException e)
 					{
@@ -131,7 +134,7 @@ namespace Sylvester.tf.OpGen
 			outputWriter.Close();
 			outputWriter.Flush();
 			File.WriteAllText(OutputFile.FullName, Output);
-			L.Information("Wrote {0} characters to {1}.", OutputBuilder.Length, OutputFile.FullName);
+			L.Information("Wrote {0} ops to {1}.", opCount, OutputFile.FullName);
 		}
 
 		void UpdateApiDefs(string[] dirs)
@@ -304,17 +307,6 @@ namespace Sylvester.tf.OpGen
 				comma = ", ";
 			}
 
-#if false
-		if (!return_is_tfoutput) {
-			foreach (var arg in def.output_arg) {
-				string type = "TFOutput" + (IsListArg (arg) ? "[]" : "");
-
-				sb.AppendFormat ($"{comma}ref {type} {ParamMap (arg.name)}");
-				comma = ", ";
-			}
-		}
-#endif
-			int n = 0;
 			foreach (var attr in optional_attrs)
 			{
 				bool reftype = IsReferenceType(attr.type);
@@ -603,13 +595,13 @@ namespace Sylvester.tf.OpGen
 			{
 				if (IsListArg(arg))
 				{
-					throw new OpGenException(oper, "List output type not yet supported");
-					/*var outputs = new StringBuilder();
-					p($"_n = op.OutputListLength (\"{ParamMap(arg.name)}\");");
+					//throw new OpGenException(oper, "List output type not yet supported");
+					var outputs = new StringBuilder();
+					p($"_n = c_api.TF_OperationOutputListLength(op, \"{ParamMap(arg.name)}\", status);");
 					p($"var {ParamMap(arg.name)} = new TF_Output [_n];");
 					pi("for (int i = 0; i < _n; i++)");
 					p($"{ParamMap(arg.name)} [i] = new TF_Output (op, _idx++);");
-					pd("");*/
+					pd("");
 				}
 				else
 				{
