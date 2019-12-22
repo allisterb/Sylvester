@@ -79,45 +79,74 @@ namespace TensorFlow
 	}
 	public unsafe partial class TF_Graph
     {
+		#region Properties
 		public TF_Operation[] Dependencies { get; internal set; }
 
-		public string CurrentNameScope { get; internal set; }
+		public TF_Status Status { get; internal set; }
 
-		
-		internal string MakeName(string operName, string userName)
+		public string NameScope { get; internal set; }
+
+		#endregion
+
+		#region Methods
+		public void SetScope(string s)
 		{
-			if (userName == null)
+			if (string.IsNullOrEmpty(NameScope))
 			{
-				var k = CurrentNameScope == "" ? operName : CurrentNameScope + "/" + operName;
-
-				return MakeUnique(k);
+				NameScope = s;
 			}
-			if (CurrentNameScope == "")
-				return userName;
-			return CurrentNameScope + "/" + userName;
+			else
+			{
+				throw new InvalidOperationException($"The scope name for this graph is already set to {NameScope}");
+			}
 		}
 
-		string MakeUnique(string name)
+		public void SetStatus(string scope, TF_Status s)
+		{
+			if(this.Status != null)
+			{
+				throw new InvalidOperationException("The status object for this graph is already set.");
+			}
+			else if (this.NameScope != scope)
+			{
+				throw new InvalidOperationException($"The name scope for this graph {this.NameScope} does not match the specified scope {scope}.");
+			}
+			else
+			{
+				this.Status = s;
+			}
+		}
+
+		internal string MakeName(string operName, string userOperName)
+		{
+			if (userOperName == null)
+			{
+				var k = NameScope == "" ? operName : NameScope + "/" + operName;
+
+				return MakeUniqueName(k);
+			}
+			if (NameScope == "")
+				return userOperName;
+			return NameScope + "/" + userOperName;
+		}
+
+		
+		string MakeUniqueName(string name)
 		{
 			int val = 0;
 
-			if (!values.TryGetValue(name, out val))
+			if (!ids.TryGetValue(name, out val))
 				val = 0;
 			else
 				val++;
-			values[name] = val;
+			ids[name] = val;
 			return name + val;
 		}
-
-		#region Fields
-		Dictionary<string, int> values = new Dictionary<string, int>();
-		internal int LastId;
         #endregion
-        internal int GetNextId()
-		{
-			return LastId++;
-		}
 
+        #region Fields
+        Dictionary<string, int> ids = new Dictionary<string, int>();
+        #endregion
 	}
 
 	public unsafe partial class TF_Output
@@ -126,42 +155,6 @@ namespace TensorFlow
 		{
 			Oper = oper;
 			Index = index;
-		}
-	}
-
-	/// <summary>
-	/// TFGraph variable dependencies handle.
-	/// </summary>
-	/// <remarks>
-	/// Instances of this class, when disposed, restore <see cref="TFGraph.CurrentDependencies"/>
-	/// to the value it had before the <see cref="TFGraph.WithDependencies(TFOperation[])"/> method
-	/// was called.
-	/// </remarks>
-	/// <seealso cref="System.IDisposable" />
-	public class Dependencies : IDisposable
-	{
-		TF_Graph container;
-		TF_Operation[] parentDependencies;
-		TF_Operation[] dependencies;
-
-		internal Dependencies(TF_Graph container, TF_Operation[] dependencies)
-		{
-			this.container = container;
-			this.parentDependencies = container.Dependencies;
-			this.dependencies = dependencies;
-
-			container.Dependencies = container.Dependencies.Concat(dependencies).Distinct().ToArray();
-		}
-
-		/// <summary>
-		/// Pops the variable dependencies to the previous dependencies in use.
-		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="T:TensorFlow.TFDependencies"/>
-		/// to restore the previous variable dependencies in use in the <see cref="T:TensorFlow.TFGraph"/>.
-		/// </remarks>
-		public void Dispose()
-		{
-			container.Dependencies = parentDependencies;
 		}
 	}
 }
