@@ -8,6 +8,8 @@ module GraphTests =
     
     open Sylvester.tf
 
+    do Sylvester.Api.SetDefaultLoggerIfNone()
+
     [<Fact>]
     let ``Can create graph`` () =
         Assert.NotNull(new Graph())

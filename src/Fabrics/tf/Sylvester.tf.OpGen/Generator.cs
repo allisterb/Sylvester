@@ -81,6 +81,10 @@ namespace Sylvester.tf.OpGen
 				{
 					L.Error(e.Message);
 				}
+				pd("}");
+				pd("}");
+				outputWriter.Close();
+				outputWriter.Flush();
 			}
 			else
 			{
@@ -127,13 +131,13 @@ namespace Sylvester.tf.OpGen
 						continue;
 					}
 				}
+				pd("}");
+				pd("}");
+				outputWriter.Close();
+				outputWriter.Flush();
+				File.WriteAllText(OutputFile.FullName, Output);
+				L.Information("Wrote {0} ops to {1}.", opCount, OutputFile.FullName);
 			}
-			pd("}");
-			pd("}");
-			outputWriter.Close();
-			outputWriter.Flush();
-			File.WriteAllText(OutputFile.FullName, Output);
-			L.Information("Wrote {0} ops to {1}.", opCount, OutputFile.FullName);
 		}
 
 		void UpdateApiDefs(string[] dirs)

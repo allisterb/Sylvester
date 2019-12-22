@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="core\Scope.fs" />
     <Compile Include="core\Graph.fs" />
     <Compile Include="core\Session.fs" />
   </ItemGroup>

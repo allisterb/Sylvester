@@ -82,14 +82,11 @@ namespace TensorFlow
 		#region Properties
 		public TF_Operation[] Dependencies { get; internal set; }
 
-		public TF_Status Status { get; internal set; }
-
 		public string NameScope { get; internal set; }
-
 		#endregion
 
 		#region Methods
-		public void SetScope(string s)
+		public void SetNameScope(string s)
 		{
 			if (string.IsNullOrEmpty(NameScope))
 			{
@@ -98,22 +95,6 @@ namespace TensorFlow
 			else
 			{
 				throw new InvalidOperationException($"The scope name for this graph is already set to {NameScope}");
-			}
-		}
-
-		public void SetStatus(string scope, TF_Status s)
-		{
-			if(this.Status != null)
-			{
-				throw new InvalidOperationException("The status object for this graph is already set.");
-			}
-			else if (this.NameScope != scope)
-			{
-				throw new InvalidOperationException($"The name scope for this graph {this.NameScope} does not match the specified scope {scope}.");
-			}
-			else
-			{
-				this.Status = s;
 			}
 		}
 
