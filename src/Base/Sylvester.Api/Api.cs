@@ -51,11 +51,7 @@ namespace Sylvester
 
         public static HttpClient HttpClient { get; } = new HttpClient();
 
-        public static string YY = DateTime.Now.Year.ToString().Substring(2, 2);
-
         public bool Initialized { get; protected set; }
-
-        public static bool IsAzureFunction { get; set; }
 
         public CancellationToken CancellationToken { get; protected set; }
 
@@ -87,15 +83,7 @@ namespace Sylvester
 
         public static string Config(string i)
         {
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CANAAN_PRODUCTION")) || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FUNCTIONS_WORKER_RUNTIME")) || IsAzureFunction)
-            {
-                i = i.Replace(":", "_");
-                return Api.Configuration[i];
-            }
-            else
-            {
-                return Api.Configuration[i];
-            }
+            return Api.Configuration[i];   
         }
 
         public static void Info(string messageTemplate, params object[] args) => Logger.Info(messageTemplate, args);

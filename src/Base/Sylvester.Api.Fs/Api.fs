@@ -29,7 +29,7 @@ module Api =
             f x |> Success
         with
         | ex -> 
-            err "jj" []
+            err "The API operation failed." []
             Failure ex
 
     let inline tryCatch' f x =
@@ -126,6 +126,6 @@ module Api =
         static member Coalesce(a: 'a when 'a:null, b: 'a Lazy) = match a with null -> b.Value | _ -> a
     
     let inline nullCoalesceHelper< ^t, ^a, ^b, ^c when (^t or ^a) : (static member Coalesce : ^a * ^b -> ^c)> a b = 
-                                                ((^t or ^a) : (static member Coalesce : ^a * ^b -> ^c) (a, b))
+        ((^t or ^a) : (static member Coalesce : ^a * ^b -> ^c) (a, b))
    
     let inline (|??) a b = nullCoalesceHelper<NullCoalesce, _, _, _> a b

@@ -1,15 +1,20 @@
 ﻿namespace Sylvester.Tests.tf
 
-module GraphTests =
+open System
 
-    open System
+open Xunit
 
-    open Xunit
-    
-    open Sylvester.tf
+open Sylvester
+open Sylvester.tf
+open Sylvester.Tests
 
-    do Sylvester.Api.SetDefaultLoggerIfNone()
+type GraphTests() =
+    inherit BaseTest()
 
     [<Fact>]
     let ``Can create graph`` () =
-        Assert.NotNull(new Graph())
+      
+        let g = new Graph()
+        
+        Assert.NotNull(g)
+        Assert.True(g.Initialized)
