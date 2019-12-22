@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Include="core\Graph.fs" />
+    <Compile Include="core\Operation.fs" />
     <Compile Include="core\Session.fs" />
   </ItemGroup>
 

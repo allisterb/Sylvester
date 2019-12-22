@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Graph.fs" />
+    <Compile Include="GraphBase.fs" />
+    <Compile Include="OperationBase.fs" />
   </ItemGroup>
 
   <ItemGroup>

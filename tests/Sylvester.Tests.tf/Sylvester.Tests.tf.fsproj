@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Graph.fs" />
-    <Compile Include="OpGen.fs" />
-    <Compile Include="Bindings.fs" />
+    <Compile Include="GraphTests.fs" />
+    <Compile Include="OpGenTests.fs" />
+    <Compile Include="BindingsTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

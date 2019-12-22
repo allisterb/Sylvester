@@ -1,4 +1,4 @@
 ﻿namespace Sylvester
 
-type Graph() = 
+type GraphBase() = 
     inherit Api()

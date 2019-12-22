@@ -4,7 +4,7 @@ open TensorFlow
 open Sylvester
 
 type Graph(scope:Scope) = 
-    inherit Sylvester.Graph()
+    inherit GraphBase()
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
     
@@ -14,15 +14,19 @@ type Graph(scope:Scope) =
 
     new () = Graph(Scope.root())
 
-    member __.Scope = scope
+    member internal x._Graph = tfGraph
 
-    member __.NameScope = scope.Name
+    member x.Scope = scope
 
-    member __.SubScope = __.Scope.NewSubScope
+    member x.SubScope = x.Scope.NewSubScope
 
-    member __.UpdateStatus(status:TF_Status) = 
-          __.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
-          do if __.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
+    member x.NameScope = scope.Name
+
+    member x.MakeName = tfGraph.MakeName
+
+    member x.UpdateStatus(status:TF_Status) = 
+          x.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
+          do if x.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
 
 
     member val Status = {Code = TF_Code.TF_UNKNOWN; Message = ""} with get, set

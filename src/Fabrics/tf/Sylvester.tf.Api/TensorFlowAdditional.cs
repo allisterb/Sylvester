@@ -98,17 +98,21 @@ namespace TensorFlow
 			}
 		}
 
-		internal string MakeName(string operName, string userOperName)
+		public string MakeName(string operName, string customOperName = null)
 		{
-			if (userOperName == null)
+			if (string.IsNullOrEmpty(customOperName))
 			{
-				var k = NameScope == "" ? operName : NameScope + "/" + operName;
+				return MakeUniqueName(NameScope == "" ? operName : NameScope + "/" + operName);
 
-				return MakeUniqueName(k);
 			}
-			if (NameScope == "")
-				return userOperName;
-			return NameScope + "/" + userOperName;
+			else if (NameScope == "")
+			{
+				return customOperName;
+			}
+			else
+			{
+				return NameScope + "/" + customOperName;
+			}
 		}
 
 		
