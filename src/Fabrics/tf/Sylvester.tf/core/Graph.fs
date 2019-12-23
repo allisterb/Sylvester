@@ -1,10 +1,11 @@
 ﻿namespace Sylvester.tf
 
 open TensorFlow
+
 open Sylvester
 
 type Graph(scope:Scope) = 
-    inherit GraphBase()
+    inherit Sylvester.Graphs.Graph()
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
     
@@ -31,6 +32,10 @@ type Graph(scope:Scope) =
 
     member val Status = {Code = TF_Code.TF_UNKNOWN; Message = ""} with get, set
 
+    static member create() = Graph()
+
+    static member create(scope:Scope) = Graph(scope)
+    
 and Scope(name:string) = 
     inherit Api()
     

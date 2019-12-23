@@ -1,32 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="dtype.fs" />
     <Compile Include="FileData.fs" />
     <Compile Include="Tensor.fs" />
     <Compile Include="Scalar.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Matrix.fs" />
-    <Compile Include="Logic.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="12.1.2" />
-    <PackageReference Include="MathNet.Numerics" Version="4.8.1" />
-    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.8.1" />
+    <PackageReference Include="CsvHelper" Version="12.2.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
+    <ProjectReference Include="..\..\Base\Sylvester.Api\Sylvester.Api.csproj" />
     <ProjectReference Include="..\..\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.6.2" />
+    <PackageReference Update="FSharp.Core" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

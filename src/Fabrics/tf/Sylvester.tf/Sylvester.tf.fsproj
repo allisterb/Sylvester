@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="core\Tensor.fs" />
     <Compile Include="core\Graph.fs" />
     <Compile Include="core\Operation.fs" />
     <Compile Include="core\Session.fs" />

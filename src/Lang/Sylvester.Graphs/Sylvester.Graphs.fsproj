@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="GraphBase.fs" />
-    <Compile Include="OperationBase.fs" />
+    <Compile Include="Graph.fs" />
+    <Compile Include="Operation.fs" />
   </ItemGroup>
 
   <ItemGroup>

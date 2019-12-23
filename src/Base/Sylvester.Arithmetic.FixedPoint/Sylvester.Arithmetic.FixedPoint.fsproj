@@ -1,7 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
+    <Product>Sylvester</Product>
+    <Description>Base type-level fixed-point arithmetic class for Sylvester</Description>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <FileVersion>0.0.2.0</FileVersion>
+    <Authors>Allister Beharry</Authors>
+    <Copyright>Copyright 2019 Allister Beharry</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">

@@ -1,10 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <FileVersion>0.2.0.0</FileVersion>
+    <Authors>Allister Beharry</Authors>
+    <Product>Sylvester</Product>
+    <Description>Base API class for Sylvester</Description>
+    <Version>0.2.0</Version>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+  
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration">
       <Version>3.1.0</Version>
     </PackageReference>
@@ -15,5 +21,4 @@
       <Version>3.1.0</Version>
     </PackageReference>
   </ItemGroup>
-
 </Project>

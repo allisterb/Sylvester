@@ -4,16 +4,16 @@ open TensorFlow
 
 open Sylvester
 
-type Operation(g:Sylvester.tf.Graph, tfOperation: TF_Operation) = 
-    inherit OperationBase()
+type Operation(g:Graph, tfOperation: TF_Operation) = 
+    inherit Sylvester.Graphs.Operation()
     
-    let name = c_api.TF_OperationName(tfOperation) 
+    let name = c_api.TF_OperationName(tfOperation) |?? lazy failwith "Could not get name of operation." 
     
+    let opType = c_api.TF_OperationOpType(tfOperation) |?? lazy failwith "Could not get type of operation."
+
     let numInputs = c_api.TF_OperationNumInputs(tfOperation)
 
     let numOutputs = c_api.TF_OperationNumOutputs(tfOperation)
-    
-    let opType = c_api.TF_OperationOpType(tfOperation)
     
     do base.Initialized <- name <> null && opType <> null
     
