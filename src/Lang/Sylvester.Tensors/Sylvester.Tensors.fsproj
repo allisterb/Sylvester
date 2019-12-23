@@ -7,10 +7,10 @@
 
   <ItemGroup>
     <Compile Include="FileData.fs" />
-    <Compile Include="Tensor.fs" />
-    <Compile Include="Scalar.fs" />
-    <Compile Include="Vector.fs" />
-    <Compile Include="Matrix.fs" />
+    <Compile Include="ITensor.fs" />
+    <Compile Include="IScalar.fs" />
+    <Compile Include="IVector.fs" />
+    <Compile Include="IMatrix.fs" />
   </ItemGroup>
 
   <ItemGroup>
