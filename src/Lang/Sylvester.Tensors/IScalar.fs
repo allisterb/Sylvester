@@ -5,4 +5,5 @@ open System
 open Sylvester.Arithmetic
 
 type IScalar<'t when 't : struct and 't: (new: unit -> 't) and 't:> ValueType and 't :> IEquatable<'t> and 't :> IFormattable> = 
-    inherit ITensor<'t, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0>
+    
+    inherit IPartialShape<'t, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0>
