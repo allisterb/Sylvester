@@ -98,34 +98,28 @@ namespace TensorFlow
 			}
 		}
 
-		public string MakeName(string operName, string customOperName = null)
+		public string MakeName(string opName, string customOpName = null)
 		{
-			if (string.IsNullOrEmpty(customOperName))
+			if (string.IsNullOrEmpty(customOpName))
 			{
-				return MakeUniqueName(NameScope == "" ? operName : NameScope + "/" + operName);
+				return MakeUniqueName(NameScope == "" ? opName : NameScope + "/" + opName);
 
-			}
-			else if (NameScope == "")
-			{
-				return customOperName;
 			}
 			else
 			{
-				return NameScope + "/" + customOperName;
-			}
+				return MakeUniqueName(NameScope == "" ? opName : NameScope + "/" + customOpName);
+			}	
 		}
 
-		
-		string MakeUniqueName(string name)
+		public string MakeUniqueName(string name)
 		{
 			int val = 0;
-
-			if (!ids.TryGetValue(name, out val))
-				val = 0;
-			else
+			if (ids.TryGetValue(name, out val))
+			{
 				val++;
+			}
 			ids[name] = val;
-			return name + val;
+			return name + "_" + val;
 		}
         #endregion
 
