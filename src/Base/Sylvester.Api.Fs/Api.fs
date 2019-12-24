@@ -57,7 +57,6 @@ module Api =
         | Success value -> f value |> Success
         | Failure failure -> Failure failure
 
-
     let test = 
         function
         | Success _ -> true
@@ -129,3 +128,6 @@ module Api =
         ((^t or ^a) : (static member Coalesce : ^a * ^b -> ^c) (a, b))
    
     let inline (|??) a b = nullCoalesceHelper<NullCoalesce, _, _, _> a b
+
+    //Strings
+    let empty (s:string) = String.IsNullOrEmpty s
