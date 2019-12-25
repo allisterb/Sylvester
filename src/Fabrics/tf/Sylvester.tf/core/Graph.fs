@@ -5,16 +5,21 @@ open System
 open TensorFlow
 
 open Sylvester
+open Sylvester.Arithmetic
+open Sylvester.Arithmetic.N10
+open Sylvester.Collections
 
-type Graph(nameScope:string) = 
-    inherit Sylvester.Graphs.Graph()
+
+type Graph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and 'c :> Base10Digit and 'd :> Base10Digit>(scope:string) = 
+    inherit Sylvester.Graphs.Graph<'a, 'b, 'c, 'd>(scope)
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
     
-    do tfGraph.SetNameScope(nameScope)
+    do tfGraph.SetNameScope(scope)
 
     do base.Initialized <- tfGraph <> null
 
+    override x.Inputs = VArray<'a, 'b, UnknownTensor>(getN<'a, 'b>())
     member internal x._Graph = tfGraph
 
     member x.NameScope with get() = tfGraph.NameScope
@@ -37,6 +42,11 @@ type Graph(nameScope:string) =
     static member create(nameScope:string) = Graph(nameScope)
     
 and GraphStatus = {Code: TF_Code; Message: string}     
+
+[<AutoOpen>]
+module Graph =
+
+    let DefaultGraph = Graph<``9``, ``9``, ``9``, ``9``>()
 
 
   

@@ -22,10 +22,6 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
 
     member val IntLength = n.IntVal
          
-    new(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, x:'t) = 
-        VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(n, 
-            Array.create (getN<N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>>.IntVal) x)
-
     member inline x.SetVal(i:'i, item:'t) =
         checkidx(i, x.Length)
         x._Array.[i |> int] <- item
@@ -60,21 +56,26 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
 
         create(length, x._Array.[intstart..intfinish])
         
+    new(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, x:'t) = 
+        VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(n, 
+            Array.create (getN<N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>>.IntVal) x)
+
+    new(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
+        VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(n, 
+            Array.create (getN<N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>>.IntVal) Unchecked.defaultof<'t>)
+
     static member inline VArray = _true
 
     static member inline (!+) (v:VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>) = v.Length 
-
 
  type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
  and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
  and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
  and 'd1 :> Base10Digit> with
-    static member create(arr: 't[]) = new VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(new N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(), arr)
+    static member create(arr: 't[]) = new VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(), arr)
  
  type VArray<'d1, 't  when 'd1 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd1, 't>
 
  type VArray<'d2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd2, 'd1, 't>
 
  type Varray<'d3, 'd2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit and 'd3 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd3, 'd2, 'd1, 't>
-
-
