@@ -36,13 +36,8 @@ type Graph(nameScope:string) =
 
     static member create(nameScope:string) = Graph(nameScope)
     
+and GraphStatus = {Code: TF_Code; Message: string}     
 
-and Status = {Code: TF_Code; Message: string}     
 
-
-        
-
-    
-   
   
  

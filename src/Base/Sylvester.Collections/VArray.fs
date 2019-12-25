@@ -71,10 +71,10 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
  and 'd1 :> Base10Digit> with
     static member create(arr: 't[]) = new VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(new N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>(), arr)
  
- type VArray<'d1 when 'd1 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd1>
+ type VArray<'d1, 't  when 'd1 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd1, 't>
 
- type VArray<'d2, 'd1 when 'd1 :> Base10Digit and 'd2 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd2, 'd1>
+ type VArray<'d2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd2, 'd1, 't>
 
- type VArray<'d3, 'd2, 'd1 when 'd1 :> Base10Digit and 'd2 :> Base10Digit and 'd3 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd3, 'd2, 'd1>
+ type Varray<'d3, 'd2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit and 'd3 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd3, 'd2, 'd1, 't>
 
 

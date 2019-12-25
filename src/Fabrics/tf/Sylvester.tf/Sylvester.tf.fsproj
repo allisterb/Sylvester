@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="tensors\" />
+  </ItemGroup>
+
 </Project>
