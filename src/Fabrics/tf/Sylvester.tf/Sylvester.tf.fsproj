@@ -8,10 +8,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="tensors\Tensor.fs" />
-    <Compile Include="tensors\Input.fs" />
-    <Compile Include="tensors\Output.fs" />
-    <Compile Include="graph\Graph.fs" />
-    <Compile Include="graph\Operation.fs" />
+    <Compile Include="graph\TensorGraph.fs" />
+    <Compile Include="graph\Edges.fs" />
   </ItemGroup>
 
   <ItemGroup>
