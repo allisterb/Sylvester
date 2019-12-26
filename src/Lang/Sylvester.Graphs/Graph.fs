@@ -11,16 +11,16 @@ open Sylvester.Tensors
 
 [<AbstractClass>]
 type Graph<'a, 'b, 'c, 'd, 'e, 'f when 'a :> Base10Digit and 'b :> Base10Digit and 'c:> Base10Digit and 'd:> Base10Digit
-and 'e :> IGraphInput and 'f :> IGraphOutput>(scope:string) as this = 
+and 'e :> IGraphInput and 'f :> IGraphOutput>(scope:string) = 
     inherit Api()
     
     member x.NumInputs = N2<'a, 'b>()
 
     member x.NumOutputs = N2<'c, 'd>()
 
-    member val Inputs:VArray<'a, 'b, 'e> = VArray<'a, 'b, 'e>(Array.create ((int) this.NumInputs) (Unchecked.defaultof<'e>)) with get,set
+    member x.Inputs:VArray<'a, 'b, 'e> = VArray<'a, 'b, 'e>(Array.create ((int) x.NumInputs) (Unchecked.defaultof<'e>))
     
-    member val Outputs:VArray<'c, 'd, 'f> = VArray<'c, 'd, 'f>(Array.create ((int) this.NumOutputs) (Unchecked.defaultof<'f>)) with get,set
+    member x.Outputs:VArray<'c, 'd, 'f> = VArray<'c, 'd, 'f>(Array.create ((int) x.NumOutputs) (Unchecked.defaultof<'f>))
 
     interface IGraph with
         member x.NameScope = scope
@@ -63,7 +63,3 @@ and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> 
 and 'd1 :> Base10Digit> = 
     inherit IGraphOutput
     inherit IPartialShape<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>
-
-
-    
-    

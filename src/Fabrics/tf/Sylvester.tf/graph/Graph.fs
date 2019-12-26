@@ -1,6 +1,7 @@
 ﻿namespace Sylvester.tf
 
 open System
+open System.Runtime.CompilerServices
 
 open TensorFlow
 
@@ -9,6 +10,7 @@ open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 open Sylvester.Tensors
+
 
 type Graph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and 'c :> Base10Digit and 'd :> Base10Digit>(scope:string) = 
     inherit Graphs.Graph<'a, 'b, 'c, 'd, Input, Output>(scope)
@@ -39,8 +41,8 @@ type Graph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and 'c :>
     static member create() = Graph()
 
     static member create(nameScope:string) = Graph(nameScope)
-    
+
 and GraphStatus = {Code: TF_Code; Message: string}
 
-  
+type Graph<'b, 'd when 'b :> Base10Digit and 'd:> Base10Digit> = Graph<``0``, 'b, ``0``, 'd>  
  

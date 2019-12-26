@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="tensors\Tensor.fs" />
     <Compile Include="tensors\Input.fs" />
     <Compile Include="tensors\Output.fs" />
