@@ -51,7 +51,7 @@ namespace Sylvester
 
         public static HttpClient HttpClient { get; } = new HttpClient();
 
-        public bool Initialized { get; protected set; }
+        public virtual bool Initialized { get; protected set; }
 
         public CancellationToken CancellationToken { get; protected set; }
 

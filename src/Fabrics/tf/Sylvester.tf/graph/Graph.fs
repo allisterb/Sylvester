@@ -11,7 +11,6 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 open Sylvester.Tensors
 
-
 type Graph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and 'c :> Base10Digit and 'd :> Base10Digit>(scope:string) = 
     inherit Graphs.Graph<'a, 'b, 'c, 'd, Input, Output>(scope)
     
