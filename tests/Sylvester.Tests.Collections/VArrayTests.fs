@@ -9,8 +9,11 @@ module VArrayTests =
 
     [<Fact>]
     let ``Can create VArray``() =
-        let v = VArray(two * hundred + three * ten + four, 0)
-        Assert.IsType<N3<_2, _3, _4>>(v.Length) |> ignore
+        let t = typeof<VArray<_,_,_,_,_,_,_,_,_,_>>
+        let c = t.GetMethod("create")
+        ()
+        //let v = VArray(two * hundred + three * ten + four, 0)
+        //Assert.IsType<N3<_2, _3, _4>>(v.Length) |> ignore
 
         
 

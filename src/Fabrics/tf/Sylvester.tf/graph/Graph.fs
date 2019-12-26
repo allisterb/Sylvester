@@ -10,8 +10,9 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
 
-type Graph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and 'c :> Base10Digit and 'd :> Base10Digit>(scope:string) = 
-    inherit Sylvester.Graphs.Graph<'a, 'b, 'c, 'd>(scope)
+type Graph<'a, 'b, 'c, 'd, 'e, 'f when 'a :> Base10Digit and 'b :> Base10Digit and 'c :> Base10Digit and 'd :> Base10Digit
+and 'e :> Graphs.IGraphInput and 'f :> Graphs.IGraphOutput>(scope:string) = 
+    inherit Graphs.Graph<'a, 'b, 'c, 'd, 'e, 'f>(scope)
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
     

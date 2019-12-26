@@ -79,8 +79,15 @@ namespace TensorFlow
 	}
 	public unsafe partial class TF_Graph
     {
-		#region Properties
-		public TF_Operation[] Dependencies { get; internal set; }
+        #region Constructors
+        public TF_Graph(IntPtr ptr)
+		{
+			TF_Graph.__CreateInstance(ptr);
+		}
+		#endregion
+
+        #region Properties
+        public TF_Operation[] Dependencies { get; internal set; }
 
 		public string NameScope { get; internal set; }
 		#endregion

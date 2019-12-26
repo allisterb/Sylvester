@@ -6,10 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="core\Tensor.fs" />
-    <Compile Include="core\Graph.fs" />
-    <Compile Include="core\Operation.fs" />
-    <Compile Include="core\Session.fs" />
+    <Compile Include="tensors\Tensor.fs" />
+    <Compile Include="graph\Graph.fs" />
+    <Compile Include="graph\Placeholder.fs" />
+    <Compile Include="graph\Operation.fs" />
+    <Compile Include="graph\Session.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,10 +19,6 @@
     <ProjectReference Include="..\..\..\Lang\Sylvester.Graphs\Sylvester.Graphs.fsproj" />
     <ProjectReference Include="..\..\..\Lang\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
     <ProjectReference Include="..\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="tensors\" />
   </ItemGroup>
 
 </Project>
