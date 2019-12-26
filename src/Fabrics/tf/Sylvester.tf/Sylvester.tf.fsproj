@@ -7,10 +7,10 @@
 
   <ItemGroup>
     <Compile Include="tensors\Tensor.fs" />
+    <Compile Include="tensors\Input.fs" />
+    <Compile Include="tensors\Output.fs" />
     <Compile Include="graph\Graph.fs" />
-    <Compile Include="graph\Placeholder.fs" />
     <Compile Include="graph\Operation.fs" />
-    <Compile Include="graph\Session.fs" />
   </ItemGroup>
 
   <ItemGroup>

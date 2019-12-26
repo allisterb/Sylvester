@@ -4,7 +4,7 @@ open TensorFlow
 
 open Sylvester
 
-type Operation(g:Graph, tfOperation: TF_Operation) = 
+type Operation(g:Graph<_,_,_,_>, tfOperation: TF_Operation) = 
     inherit Sylvester.Graphs.Operation()
     
     let name = c_api.TF_OperationName(tfOperation) |?? lazy failwith "Could not get name of operation." 

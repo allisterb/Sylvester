@@ -9,7 +9,7 @@ open Sylvester.Collections
 
 type IUnknownShape =
     abstract member Rank:Option<int> with get,set
-    abstract member Dims:Option<int[]> with get,set
+    abstract member Dims:Option<int64[]> with get,set
 
 type IPartialShape<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
                 and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
