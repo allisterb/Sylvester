@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -20,7 +21,7 @@ namespace Sylvester.tf
             var dims = GetDims(values);
             Dims = dims;
             NumDims = Dims.Length;
-            Length = checked(ElementCount(values) * GetDataTypeByteSize());
+            Length = checked(Convert.ToUInt64(values.Length) * GetDataTypeByteSize());
             DataType = GetDataType();
             Deallocate = DeallocateMethod;
             _Tensor = tf_tensor.TF_NewTensor(DataType, ref dims[0], NumDims, Ptr, Length, Deallocate, IntPtr.Zero) ??
@@ -28,7 +29,7 @@ namespace Sylvester.tf
             Initialized = _Tensor != null;
         }
 
-        public Tensor(params long[] dims) : this(Array.CreateInstance(typeof(T), dims)) {}
+        public Tensor(params int[] dims) : this(Array.CreateInstance(typeof(T), dims.Length)) {}
         #endregion
 
         #region Properties
@@ -60,15 +61,10 @@ namespace Sylvester.tf
             else
             {
                 MemoryHandle.Dispose();
-                Initialized = false;
+                this.Initialized = false;
             }
         }
         
-        public void Delete()
-        {
-            ThrowIfNotInitialized();
-            tf_tensor.TF_DeleteTensor(this._Tensor);
-        }
         public static ulong GetDataTypeByteSize()
         {
             switch (typeof(T).Name)
@@ -120,18 +116,12 @@ namespace Sylvester.tf
             return dims;
         }
 
-        protected ulong ElementCount(Array values)
-        {
-            int count = 1;
-            for (int i = 1; i <= values.Rank; i++)
-            {
-                count *= values.GetLength(i - 1);
-            }
-            return Convert.ToUInt64(count);
-        }
         #endregion
 
         #region Operators
+        public ref T this[params int[] indexes] => ref Unsafe.Add(ref Unsafe.AsRef<T>((void *) Ptr), indexes.Length); 
+        
+
         public static implicit operator TF_Tensor(Tensor<T> tensor)
         {
             if (!tensor.Initialized)

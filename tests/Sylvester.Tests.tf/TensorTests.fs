@@ -16,9 +16,11 @@ type TensorTests() =
 
     [<Fact>]
     let ``Can create new empty tensor``() =
-        let t = new Tensor<int>([|2;3;4|])
+        let t = new Tensor<int64>(2, 3, 5)
         Assert.True(t.Initialized);
-        tf_tensor.TF_DeleteTensor(t._Tensor)
+        Assert.Equal(0L, t.[0])
+        t.[1] <- 66L
+        Assert.Equal(66L, t.[1])
         ()
 
     [<Fact>]
@@ -30,8 +32,9 @@ type TensorTests() =
         let d2 = Array3D.create (700) (1) (44) 7.32
         let t2 = new Tensor<float>(d2)
         Assert.True(t2.Initialized);
+        Assert.Equal(8.0f, t.[0]); 
         Assert.Equal(700 * 44 * 8, int t2.Length)
-        tf_tensor.TF_DeleteTensor(t2._Tensor);
-        Assert.False(t2.Initialized)
+        //tf_tensor.TF_DeleteTensor(t2._Tensor);
+        //Assert.False(t2.Initialized)
         ()
         
