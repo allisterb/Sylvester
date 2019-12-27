@@ -22,4 +22,11 @@ type TensorTests() =
         Assert.Equal(250, arrayTotalLength arr)
         let arr3 = Array3D.create 16 5 7 4
         Assert.Equal(560, arrayTotalLength arr3)
+
+    [<Fact>]
+    let ``Can create tensor``() =
+        let t = new Tensor<int>([|2;3;4|])
+        Assert.True(t.Initialized);
+        tf_tensor.TF_DeleteTensor(t._Tensor)
+        ()
         
