@@ -37,8 +37,8 @@ namespace TensorFlow
             Ptr = Marshal.AllocHGlobal(Marshal.SizeOf<T>());
             Unsafe.Write((void*)Ptr, value);
             MemoryHandle = new MemoryHandle((void*)Ptr);
-            var dims = new long[0];
-            Dims = dims;
+            Dims = new long[0];
+            NumDims = 0;
             Length = Convert.ToUInt64(Marshal.SizeOf<T>());
             DataType = GetDataType();
             Deallocate = DeallocateMethod;
@@ -46,7 +46,6 @@ namespace TensorFlow
             _Tensor = tf_tensor.TF_NewTensor(DataType, ref d, NumDims, Ptr, Length, Deallocate, IntPtr.Zero) ??
                 throw new Exception($"Could not create new TF_Tensor with data type {DataType.ToString()} and {NumDims} dimensions.");
             Initialized = Ptr != IntPtr.Zero;
-
         }
         #endregion
 
@@ -86,7 +85,27 @@ namespace TensorFlow
                 this.Initialized = false;
             }
         }
-        
+
+        public static Tensor<T> From(T[] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,,,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,,,,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,,,,,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,,,,,,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,,,,,,,] arr) => new Tensor<T>(arr);
+
+        public static Tensor<T> From(T[,,,,,,,,,] arr) => new Tensor<T>(arr);
+
         public static ulong GetDataTypeByteSize()
         {
             switch (typeof(T).Name)
