@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Buffers;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Numerics.Tensors;
 
 using TensorFlow;
 using TensorFlow.Delegates;
@@ -12,29 +12,28 @@ namespace Sylvester.tf
     public unsafe class Tensor<T> : Api where T : struct, IComparable, IConvertible, IFormattable 
     {
         #region Constructors
-        public Tensor(long[] dims) : base()
+        public Tensor(Array values) : base()
         {
-            __Tensor = new DenseTensor<T>(dims.ToInt32());
-            MemoryHandle = __Tensor.Buffer.Pin();
-            Ptr = new IntPtr(MemoryHandle.Pointer);
+            var h = GCHandle.Alloc(values, GCHandleType.Pinned);
+            Ptr = Marshal.UnsafeAddrOfPinnedArrayElement(values, 0);
+            MemoryHandle = new MemoryHandle((void*)h.AddrOfPinnedObject(), h);
+            var dims = GetDims(values);
             Dims = dims;
-            NumDims = dims.Length;
-            Length = Convert.ToUInt64(__Tensor.Length) * GetDataTypeByteSize();
+            NumDims = Dims.Length;
+            Length = checked(ElementCount(values) * GetDataTypeByteSize());
             DataType = GetDataType();
             Deallocate = DeallocateMethod;
-            _Tensor = tf_tensor.TF_NewTensor(DataType, ref dims[0], NumDims, Ptr, Length, Deallocate, IntPtr.Zero) ?? 
+            _Tensor = tf_tensor.TF_NewTensor(DataType, ref dims[0], NumDims, Ptr, Length, Deallocate, IntPtr.Zero) ??
                 throw new Exception($"Could not create new TF_Tensor with data type {DataType.ToString()} and {NumDims} dimensions.");
             Initialized = _Tensor != null;
         }
 
-        public Tensor(int[] dims) : this(dims.ToInt64()) {}
+        public Tensor(params long[] dims) : this(Array.CreateInstance(typeof(T), dims)) {}
         #endregion
 
         #region Properties
         public TF_Tensor _Tensor { get; }
         
-        public DenseTensor<T> __Tensor { get; protected set; }
-
         public MemoryHandle MemoryHandle { get; }
 
         public IntPtr Ptr { get; }
@@ -48,23 +47,28 @@ namespace Sylvester.tf
         public TF_DataType DataType { get; }
 
         protected Action_IntPtr_ulong_IntPtr Deallocate;
+
         #endregion
 
         #region Methods
         public void DeallocateMethod (IntPtr data, ulong len, IntPtr arg)
         {
-            if (data != Ptr && len != Convert.ToUInt64(__Tensor.Length))
+            if (data != Ptr && len != Length)
             {
                 throw new InvalidOperationException("The pointer for deallocation is not the pinned handle pointer.");
             }
             else
             {
                 MemoryHandle.Dispose();
-                __Tensor = null;
                 Initialized = false;
             }
         }
         
+        public void Delete()
+        {
+            ThrowIfNotInitialized();
+            tf_tensor.TF_DeleteTensor(this._Tensor);
+        }
         public static ulong GetDataTypeByteSize()
         {
             switch (typeof(T).Name)
@@ -81,8 +85,7 @@ namespace Sylvester.tf
                 case "Single": return 4L;
                 case "Double": return 8L;
                 case "Complex": return 16L;
-                default: throw new ArgumentException($"Type {typeof(T).Name} is not a tensor numeric type.");
-
+                default: throw new ArgumentException($"Type {typeof(T).Name} is not a supported tensor numeric type.");
             }
         }
 
@@ -106,6 +109,26 @@ namespace Sylvester.tf
 
             }
         }
+
+        protected long[] GetDims(Array values)
+        {
+            long[] dims = new long[values.Rank];
+            for(int i = 1; i <= values.Rank; i++)
+            {
+                dims[i - 1] = Convert.ToInt64(values.GetLength(i - 1));
+            }
+            return dims;
+        }
+
+        protected ulong ElementCount(Array values)
+        {
+            int count = 1;
+            for (int i = 1; i <= values.Rank; i++)
+            {
+                count *= values.GetLength(i - 1);
+            }
+            return Convert.ToUInt64(count);
+        }
         #endregion
 
         #region Operators
@@ -113,13 +136,14 @@ namespace Sylvester.tf
         {
             if (!tensor.Initialized)
             {
-                throw new InvalidOperationException("The tensor is not initialized.");
+                throw new InvalidOperationException("This tensor is not initialized.");
             }
             else
             {
                 return tensor._Tensor;
             }
         }
+       
         #endregion
     }
 }
