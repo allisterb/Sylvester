@@ -20,7 +20,7 @@ type TensorGraph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and
     
     do tfGraph.SetNameScope(scope)
 
-    do base.Initialized <- tfGraph <> null
+    do base.Initialized <- tfGraph <> null && tfGraph.NameScope = scope
 
     member internal x._Graph = tfGraph
 
@@ -46,16 +46,16 @@ type TensorGraph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and
 and GraphStatus = {Code: TF_Code; Message: string}
 
 /// Represents a tensor graph node consisting of an operation with input and output tensors
-and [<AbstractClass>] Node(graph: TensorGraph<_,_,_,_>, inputs: Edge list, outputs: Edge list) = 
+and Node(graph: TensorGraph<_,_,_,_>, inputs: Edge list, outputs:TF_Output[]) = 
     inherit Api()
     
     member x.Graph = graph
 
     member x._Graph = graph._Graph
 
-    member x.Inputs = inputs
-
     member x.Outputs = outputs
+
+    new(graph: TensorGraph<_,_,_,_>, inputs: Edge list, output:TF_Output) = Node(graph, inputs, [|output|])
 
 /// Represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
 and Edge(graph: TensorGraph<_,_,_,_>, name:string, head:TF_Output, dt:TF_DataType, ?shape:int64[]) = 

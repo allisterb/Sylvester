@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TensorTests.fs" />
     <Compile Include="GraphTests.fs" />
     <Compile Include="OpGenTests.fs" />
     <Compile Include="BindingsTests.fs" />

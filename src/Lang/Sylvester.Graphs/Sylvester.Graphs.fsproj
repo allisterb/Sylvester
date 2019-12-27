@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <Compile Include="Graph.fs" />
-    <Compile Include="Node.fs" />
   </ItemGroup>
 
   <ItemGroup>
