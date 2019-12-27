@@ -37,4 +37,12 @@ type TensorTests() =
         //tf_tensor.TF_DeleteTensor(t2._Tensor);
         //Assert.False(t2.Initialized)
         ()
+
+    [<Fact>]
+    let ``Can create new tensor from scalar``() =
+        let s = new Tensor<float32>(5.66f)
+        Assert.True(s.Initialized)
+        Assert.Equal(5.66f, s.[0])
+
+        
         

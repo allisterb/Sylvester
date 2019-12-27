@@ -1,8 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
+    <PackageId>tf.NET</PackageId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.2.0-r2.0</Version>
+    <Product>tf.NET</Product>
+    <Authors>Allister Beharry</Authors>
+    <Description>.NET bindings for the TensorFlow 2 C API.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -14,12 +20,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sylvester.tf.Native.Win" Version="2.0.0.1" />
+    <PackageReference Condition="'$(OS)' != 'Windows_NT'" Include="Sylvester.tf.Native.Win" Version="2.0.0.1">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Buffers" Version="4.5.0" />
+    <PackageReference Include="System.Memory" Version="4.5.3" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Base\Sylvester.Api\Sylvester.Api.csproj" />
   </ItemGroup>
 
 </Project>

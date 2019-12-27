@@ -41,7 +41,7 @@ type TensorGraph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and
 
     static member create() = TensorGraph()
 
-    static member create(nameScope:string) = TensorGraph(nameScope)
+    static member create (nameScope:string) = TensorGraph(nameScope)
 
 and GraphStatus = {Code: TF_Code; Message: string}
 

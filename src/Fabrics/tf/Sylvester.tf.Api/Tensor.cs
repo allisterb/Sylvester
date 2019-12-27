@@ -8,12 +8,12 @@ using System.Text;
 using TensorFlow;
 using TensorFlow.Delegates;
 
-namespace Sylvester.tf
+namespace TensorFlow
 {
-    public unsafe class Tensor<T> : Api where T : struct, IComparable, IConvertible, IFormattable 
+    public unsafe class Tensor<T> where T : struct, IComparable, IConvertible, IFormattable 
     {
         #region Constructors
-        public Tensor(Array values) : base()
+        public Tensor(Array values)
         {
             var h = GCHandle.Alloc(values, GCHandleType.Pinned);
             Ptr = Marshal.UnsafeAddrOfPinnedArrayElement(values, 0);
@@ -22,6 +22,7 @@ namespace Sylvester.tf
             Dims = dims;
             NumDims = Dims.Length;
             Length = checked(Convert.ToUInt64(values.Length) * GetDataTypeByteSize());
+            Strides = ArrayUtilities.GetStrides(dims.ToInt32());
             DataType = GetDataType();
             Deallocate = DeallocateMethod;
             _Tensor = tf_tensor.TF_NewTensor(DataType, ref dims[0], NumDims, Ptr, Length, Deallocate, IntPtr.Zero) ??
@@ -30,6 +31,23 @@ namespace Sylvester.tf
         }
 
         public Tensor(params int[] dims) : this(Array.CreateInstance(typeof(T), dims.Length)) {}
+
+        public Tensor(T value) : base()
+        {
+            Ptr = Marshal.AllocHGlobal(Marshal.SizeOf<T>());
+            Unsafe.Write((void*)Ptr, value);
+            MemoryHandle = new MemoryHandle((void*)Ptr);
+            var dims = new long[0];
+            Dims = dims;
+            Length = Convert.ToUInt64(Marshal.SizeOf<T>());
+            DataType = GetDataType();
+            Deallocate = DeallocateMethod;
+            var d = 0L;
+            _Tensor = tf_tensor.TF_NewTensor(DataType, ref d, NumDims, Ptr, Length, Deallocate, IntPtr.Zero) ??
+                throw new Exception($"Could not create new TF_Tensor with data type {DataType.ToString()} and {NumDims} dimensions.");
+            Initialized = Ptr != IntPtr.Zero;
+
+        }
         #endregion
 
         #region Properties
@@ -45,8 +63,12 @@ namespace Sylvester.tf
 
         public long[] Dims { get; }
 
+        public int[] Strides { get; protected set; }
+        
         public TF_DataType DataType { get; }
 
+        public bool Initialized { get; protected set; }
+        
         protected Action_IntPtr_ulong_IntPtr Deallocate;
 
         #endregion
@@ -119,7 +141,8 @@ namespace Sylvester.tf
         #endregion
 
         #region Operators
-        public ref T this[params int[] indexes] => ref Unsafe.Add(ref Unsafe.AsRef<T>((void *) Ptr), indexes.Length); 
+        public ref T this[params int[] indices] => 
+            ref Unsafe.Add(ref Unsafe.AsRef<T>((void *) Ptr), ArrayUtilities.GetIndex(Strides, indices)); 
         
 
         public static implicit operator TF_Tensor(Tensor<T> tensor)

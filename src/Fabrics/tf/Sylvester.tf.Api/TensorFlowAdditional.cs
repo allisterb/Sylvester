@@ -143,4 +143,11 @@ namespace TensorFlow
 			Index = index;
 		}
 	}
+
+	public unsafe partial class TF_Tensor
+	{
+			
+	}
+
+
 }
