@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using TensorFlow;
 using TensorFlow.Delegates;
 
 namespace TensorFlow

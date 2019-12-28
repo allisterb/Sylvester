@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -77,15 +78,10 @@ namespace TensorFlow
 			}
 		}
 	}
+
+
 	public unsafe partial class TF_Graph
     {
-        #region Constructors
-        public TF_Graph(IntPtr ptr)
-		{
-			TF_Graph.__CreateInstance(ptr);
-		}
-		#endregion
-
         #region Properties
         public TF_Operation[] Dependencies { get; internal set; }
 
@@ -128,10 +124,40 @@ namespace TensorFlow
 			ids[name] = val;
 			return name + "_" + val;
 		}
-        #endregion
 
-        #region Fields
-        Dictionary<string, int> ids = new Dictionary<string, int>();
+		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out TF_Status status)
+		{
+			var b = new Buffer(buffer);
+			var graph = c_api.TF_NewGraph();
+			status = tf_status.TF_NewStatus();
+			c_api.TF_GraphImportGraphDef(graph, b, options, status);
+			return graph;
+		}
+		public static TF_Graph Import(byte[] buffer, out TF_Status status, string prefix = null, bool uniquify = false, bool uniquifyPrefix = false)
+		{
+			var options = c_api.TF_NewImportGraphDefOptions();
+			if (!string.IsNullOrEmpty(prefix))
+			{
+				c_api.TF_ImportGraphDefOptionsSetPrefix(options, prefix);
+			}
+			if (uniquify)
+			{
+				c_api.TF_ImportGraphDefOptionsSetUniquifyNames(options, 1);
+			}
+			if(uniquifyPrefix)
+			{
+				c_api.TF_ImportGraphDefOptionsSetUniquifyPrefix(options, 1);
+			}
+			return Import(buffer, options, out status);
+		}
+
+		public static TF_Graph Import(string filePath, TF_ImportGraphDefOptions options, out TF_Status status) =>
+			Import(File.ReadAllBytes(filePath), options, out status);
+		
+		#endregion
+
+		#region Fields
+		Dictionary<string, int> ids = new Dictionary<string, int>();
         #endregion
 	}
 
@@ -143,11 +169,4 @@ namespace TensorFlow
 			Index = index;
 		}
 	}
-
-	public unsafe partial class TF_Tensor
-	{
-			
-	}
-
-
 }
