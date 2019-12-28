@@ -10,6 +10,7 @@
     <Compile Include="IScalar.fs" />
     <Compile Include="IVector.fs" />
     <Compile Include="IMatrix.fs" />
+    <Compile Include="ITensor.fs" />
     <Compile Include="FileData.fs" />
   </ItemGroup>
 

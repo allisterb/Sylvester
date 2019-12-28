@@ -24,7 +24,7 @@ type VArray2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'
         if x.Dim0.IntVal = l0 && x.Dim1.IntVal = l1 then 
             items 
         else 
-            raise (new ArgumentOutOfRangeException(sprintf "The dimensions of the array %i %i do not match the dimensions of the type." l0 l1))
+            raise (new ArgumentOutOfRangeException(sprintf "The dimensions of the initializer array %ix%i do not match the dimensions of the type." l0 l1))
     
     member inline x.SetVal(i:'i, j:'j, item:'t) =
         checkidx(i, x.Dim0)
@@ -79,6 +79,5 @@ type VArray2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'
         
     new(x:'t) = VArray2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (x))
     
-    static member inline VArray = _true
-
+    new() = VArray2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (Unchecked.defaultof<'t>))
       

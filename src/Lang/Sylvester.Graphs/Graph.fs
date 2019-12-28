@@ -10,32 +10,24 @@ open Sylvester.Collections
 open Sylvester.Tensors
 
 [<AbstractClass>]
-type Graph<'a, 'b, 'e when 'a :> Number and 'b :> Number and 'e :> IEdge>(scope:string) = 
+type Graph<'input, 'output, 'edge when 'input :> Number and 'output :> Number and 'edge :> IEdge>(scope:string) = 
     inherit Api()
     
-    member x.NumInputs = number<'a>
+    member x.NumInputs = number<'input>
 
-    member x.NumOutputs = number<'b>
+    member x.NumOutputs = number<'input>
 
-    member x.Inputs:VArray<'a, 'b, 'e> = VArray<'a, 'b, 'e>(Array.create ((int) x.NumInputs) (Unchecked.defaultof<'e>))
+    member x.Inputs:VArray<'input, 'edge> = VArray<'input, 'edge>()
     
-    member x.Outputs:VArray<'c, 'd, 'e> = VArray<'c, 'd, 'e>(Array.create ((int) x.NumOutputs) (Unchecked.defaultof<'e>))
-
+    member x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
+ 
     interface IGraph with
         member x.NameScope = scope
         member val Handle = IntPtr.Zero with get 
-        member x.NumInputs = x.NumInputs.IntVal
-        member x.NumOutputs = x.NumOutputs.IntVal
-        member x.Inputs = x.Inputs._Array.Cast<IEdge>().ToArray()
-        member x.Outputs = x.Outputs._Array.Cast<IEdge>().ToArray()
 
-and IGraph =
-    abstract member Handle:nativeint with get
-    abstract member NameScope:string with get
-    abstract member NumInputs:int
-    abstract member NumOutputs:int
-    abstract member Inputs:array<IEdge>
-    abstract member Outputs:array<IEdge>
+and IGraph = 
+    abstract member NameScope:string
+    abstract member Handle:nativeint
 
 and IEdge = 
     inherit IUnknownShape
@@ -43,22 +35,14 @@ and IEdge =
     abstract member Name:string
     abstract member _DataType:int64
 
-and IEdge<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
-    and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
-    and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
-    and 'd1 :> Base10Digit> = 
+and IEdge<'n when 'n :> Number> = 
         inherit IEdge
-        inherit IPartialShape<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>
+        inherit IPartialShape<'n>
 
 and IOutputEdge = 
     inherit IUnknownShape
-    abstract member Graph:IGraph
-    abstract member Name:string
-    abstract member _Type:int64
+    inherit IEdge
 
-and IOutputEdge<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
-and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
-and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
-and 'd1 :> Base10Digit> = 
+and IOutputEdge<'n when 'n :> Number> = 
     inherit IOutputEdge
-    inherit IPartialShape<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>
+    inherit IPartialShape<'n>

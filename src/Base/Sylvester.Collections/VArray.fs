@@ -13,11 +13,13 @@ type VArray<'n when 'n :> Number>() =
     
     member x.IntLength = x.Length.IntVal
 
+    static member inline (!+) (v:VArray<'n>) = v.Length
+
 [<StructuredFormatDisplay("{_Array}")>]
 type VArray<'n, 't when 'n :> Number >(items:'t[]) = 
     inherit VArray<'n>()
     
-    member x._Array = if items.Length = x.IntLength then items else raise (ArgumentOutOfRangeException("items", sprintf "The initializing array length %i does not match %i." items.Length x.IntLength))
+    member x._Array = if items.Length = x.IntLength then items else raise (ArgumentOutOfRangeException("items", sprintf "The initializing array length %i does not match the type legth %i." items.Length x.IntLength))
          
     member inline x.SetVal(i:'i, item:'t) =
         checkidx(i, x.Length)
@@ -33,7 +35,7 @@ type VArray<'n, 't when 'n :> Number >(items:'t[]) =
         for i in 0..x._Array.Length - 1 do f i x._Array.[i]
 
     member inline x.SetVals(items: IEnumerable<'t> ) = 
-        do if Seq.length items <> x.IntLength then raise(ArgumentOutOfRangeException("items"))
+        do if Seq.length items <> x.IntLength then raise(ArgumentOutOfRangeException("The length of the sequence argument does not match the type length."))
         x.ForAll(fun i a -> x._Array.SetValue(a, i))
 
     member inline x.Item(i:'i) : 't = 
@@ -53,15 +55,11 @@ type VArray<'n, 't when 'n :> Number >(items:'t[]) =
 
         create(length, x._Array.[intstart..intfinish])
         
-    new(n:'n, x:'t) = 
-        VArray<'n, 't>(Array.create (n.IntVal) x)
+    new(x:'t) = 
+        VArray<'n, 't>(Array.create (number<'n>.IntVal) x)
 
-    new(n:'n when 'n :> Number) = 
-        VArray<'n, 't>(Array.create n.IntVal Unchecked.defaultof<'t>)
+    new() = 
+        VArray<'n, 't>(Array.create number<'n>.IntVal Unchecked.defaultof<'t>)
 
-    static member inline VArray = _true
-
-    static member inline (!+) (v:VArray<'n, 't>) = v.Length 
-   
  type VArray<'n when 'n :> Number> with
     static member create(arr: 't[]) = new VArray<'n, 't>(arr)
