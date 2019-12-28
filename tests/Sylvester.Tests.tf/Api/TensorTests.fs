@@ -1,12 +1,9 @@
-﻿namespace Sylvester.Tests.tf
+﻿namespace Sylvester.Tests.tf.Api
 
 open System
 
 open Xunit
 
-open Sylvester
-open Sylvester.Arithmetic.Base10
-open Sylvester.tf
 open Sylvester.Tests
 
 open TensorFlow

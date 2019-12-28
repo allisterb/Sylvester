@@ -8,7 +8,7 @@ open Sylvester
 open Sylvester.Arithmetic.Base10
 open Sylvester.tf
 open Sylvester.Tests
-open Sylvester.tf
+
 open TensorFlow
 
 type GraphTests() =

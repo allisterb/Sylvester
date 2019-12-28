@@ -9,10 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TensorTests.fs" />
+    <Compile Include="Api\TFGraphTests.fs" />
+    <Compile Include="Api\BindingsTests.fs" />
+    <Compile Include="Api\TensorTests.fs" />
     <Compile Include="GraphTests.fs" />
     <Compile Include="OpGenTests.fs" />
-    <Compile Include="BindingsTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
