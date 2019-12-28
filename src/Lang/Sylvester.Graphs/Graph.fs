@@ -10,13 +10,12 @@ open Sylvester.Collections
 open Sylvester.Tensors
 
 [<AbstractClass>]
-type Graph<'a, 'b, 'c, 'd, 'e when 'a :> Base10Digit and 'b :> Base10Digit and 'c:> Base10Digit and 'd:> Base10Digit
-and 'e :> IEdge>(scope:string) = 
+type Graph<'a, 'b, 'e when 'a :> Number and 'b :> Number and 'e :> IEdge>(scope:string) = 
     inherit Api()
     
-    member x.NumInputs = N2<'a, 'b>()
+    member x.NumInputs = number<'a>
 
-    member x.NumOutputs = N2<'c, 'd>()
+    member x.NumOutputs = number<'b>
 
     member x.Inputs:VArray<'a, 'b, 'e> = VArray<'a, 'b, 'e>(Array.create ((int) x.NumInputs) (Unchecked.defaultof<'e>))
     

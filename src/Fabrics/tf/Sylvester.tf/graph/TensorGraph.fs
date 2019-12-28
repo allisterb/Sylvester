@@ -12,7 +12,7 @@ open Sylvester.Collections
 open Sylvester.Graphs
 open Sylvester.Tensors
 
-/// Represents a graph of tensor operations.
+/// A graph of tensor operations.
 type TensorGraph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and 'c :> Base10Digit and 'd :> Base10Digit>(scope:string) = 
     inherit Graph<'a, 'b, 'c, 'd, Edge>(scope)
     
@@ -45,7 +45,7 @@ type TensorGraph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and
 
 and GraphStatus = {Code: TF_Code; Message: string}
 
-/// Represents a tensor graph node consisting of an operation with input and output tensors
+/// A tensor graph node consists of an operation with input and edges
 and Node(graph: TensorGraph<_,_,_,_>, inputs: Edge list, outputs:TF_Output[]) = 
     inherit Api()
     
@@ -57,8 +57,8 @@ and Node(graph: TensorGraph<_,_,_,_>, inputs: Edge list, outputs:TF_Output[]) =
 
     new(graph: TensorGraph<_,_,_,_>, inputs: Edge list, output:TF_Output) = Node(graph, inputs, [|output|])
 
-/// Represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
-and Edge(graph: TensorGraph<_,_,_,_>, name:string, head:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
+/// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
+and Edge(graph: TensorGraph<_,_,_,_>, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
     member x.Graph = graph
@@ -83,12 +83,10 @@ and Edge(graph: TensorGraph<_,_,_,_>, name:string, head:TF_Output, dt:TF_DataTyp
     member x.Shape = x :> IUnknownShape
     
 
-    member x.Head = head
-/// Represents tensor data with partialy known shape flowing into or out of a graph or node
-type Edge<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
-and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
-and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
-and 'd1 :> Base10Digit>(graph:TensorGraph<_,_,_,_>, name:string, output:TF_Output, dt:TF_DataType, shape:int64[]) =
+    member x.Tensor = tensor
+
+/// A tensor graph edge with partially known shape
+type Edge<'r when 'r :> Number>(graph:TensorGraph<_,_,_,_>, name:string, output:TF_Output, dt:TF_DataType, shape:int64[]) =
     inherit Edge(graph, name, output, dt, shape)
 
     interface IPartialShape<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> with
@@ -96,3 +94,12 @@ and 'd1 :> Base10Digit>(graph:TensorGraph<_,_,_,_>, name:string, output:TF_Outpu
 
 /// Alias for TensorGraph with max 9 inputs and 9 outputs.
 type TensorGraph<'b, 'd when 'b :> Base10Digit and 'd:> Base10Digit> = TensorGraph<``0``, 'b, ``0``, 'd>  
+
+type E<'n when 'n :> Number>() = 
+    member x.N = Activator.CreateInstance<'n>()
+
+module X =
+    let e = E<N1<_9>>()
+    let j = e.N + five
+
+

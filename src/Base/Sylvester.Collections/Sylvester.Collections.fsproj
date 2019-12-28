@@ -7,6 +7,8 @@
     <Version>0.2.0</Version>
     <Authors>Allister Beharry</Authors>
     <Product>Sylvester</Product>
+    <Copyright>Copyright © 2019, 2020 Allister Beharry</Copyright>
+    <Description>Base dependently typed collection classes for Sylvester</Description>
   </PropertyGroup>
 
   <ItemGroup>

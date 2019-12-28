@@ -5,40 +5,37 @@ open System
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 
-[<StructuredFormatDisplay("{_Array}")>]
-type VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1 
-when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
-                and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
-                and 'd1 :> Base10Digit and 'e10 :> Base10Digit and 'e9 :> Base10Digit and 'e8 :> Base10Digit and 'e7 :> Base10Digit and 'e6 :> Base10Digit
-                and 'e5 :> Base10Digit and 'e4 :> Base10Digit and 'e3 :> Base10Digit and 'e2 :> Base10Digit 
-                and 'e1 :> Base10Digit>(dim0:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, 
-                                        dim1:N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>, items:'t[,]) = 
-
-    member val _Array = if items.Length = dim0.IntVal * dim1.IntVal then items else raise(ArgumentOutOfRangeException("items"))
+[<AbstractClass>]
+type VArray2D<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number>() = 
     
-    member val Length0 = dim0
+    member x.Dim0 = number<'dim0>
 
-    member val Length1 = dim1
+    member x.Dim1 = number<'dim1>
 
-    member val IntLength0 = dim0.IntVal
+    static member inline (!+) (v:VArray2D<'dim0, 'dim1>) = (v.Dim0, v.Dim1)
 
-    member val IntLength1 = dim1.IntVal
-         
-    new(dim0:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, 
-        dim1:N10<'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>, x:'t) = 
-        VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 
-                 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>(dim0, dim1, Array2D.create dim0.IntVal dim1.IntVal x)
+[<StructuredFormatDisplay("{_Array}")>]
+type VArray2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'t[,]) = 
+    inherit VArray2D<'dim0, 'dim1>()
+    let l0 = items.GetLength(0)
+    let l1 = items.GetLength(1)
 
+    member x._Array = 
+        if x.Dim0.IntVal = l0 && x.Dim1.IntVal = l1 then 
+            items 
+        else 
+            raise (new ArgumentOutOfRangeException(sprintf "The dimensions of the array %i %i do not match the dimensions of the type." l0 l1))
+    
     member inline x.SetVal(i:'i, j:'j, item:'t) =
-        checkidx(i, x.Length0)
-        checkidx(j, x.Length1)
+        checkidx(i, x.Dim0)
+        checkidx(j, x.Dim1)
         x._Array.[i |> int, j |> int] <- item
 
     member inline x.For(start0:'start0, finish0:'finish0, start1:'start1, finish1:'finish1, f: int -> int -> 't -> unit) =
-        checkidx(start0, x.Length0)
-        checkidx(finish0, x.Length0)
-        checkidx(start1, x.Length1)
-        checkidx(finish1, x.Length1)
+        checkidx(start0, x.Dim0)
+        checkidx(finish0, x.Dim0)
+        checkidx(start1, x.Dim1)
+        checkidx(finish1, x.Dim1)
         checklt(start0, finish0)
         checklt(start1, finish1)
         for i in ((int) start0)..((int)finish0) do
@@ -46,29 +43,29 @@ when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :
                 f i j x._Array.[i, j]
       
     member inline x.ForAll(f: int -> int -> 't -> unit) =
-        for i in 0..(x.IntLength0 - 1) do 
-            for j in 0..(x.IntLength1 - 1) do
+        for i in 0..(x.Dim0.IntVal - 1) do 
+            for j in 0..(x.Dim1.IntVal - 1) do
                 f i j x._Array.[i, j]
 
     member inline x.SetVals(items: 't[,] ) = 
-        do if items.Length <> x.IntLength0 then raise(ArgumentOutOfRangeException("items"))
-        x.ForAll(fun i j a -> x._Array.SetValue(a, i, j))
+        do 
+            if not(x.Dim0.IntVal = items.GetLength(0) && x.Dim1.IntVal = items.GetLength(1)) then 
+                raise(ArgumentOutOfRangeException("items"))
+            else
+                x.ForAll(fun i j a -> x._Array.SetValue(a, i, j))
 
     member inline x.Item(i:'i, j: 'j) : 't = 
-        checkidx(i, x.Length0)
-        checkidx(j, x.Length1)
+        checkidx(i, x.Dim0)
+        checkidx(j, x.Dim1)
         x._Array.[i |> int, j |> int]
            
-    member inline x.GetSlice(start0: 'a option, finish0 : 'b option, start1: 'c option, finish1 : 'd option) : 
-        VArray2D<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1> =  
-        let inline create(z0:'z0, z1:'z1, items: 't[,] when 'z0 :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1> 
-                                                    and 'z1 :> N10<'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>) = 
-            VArray2D<'t, 'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 'g10, 'g9, 'g8, 'g7, 'g6, 'g5, 'g4, 'g3, 'g2, 'g1>(z0, z1, items)
+    member inline x.GetSlice(start0: 'a option, finish0 : 'b option, start1: 'c option, finish1 : 'd option) : VArray2D<'x, 'y, 't> =  
+        let inline create(z0:'z0, z1:'z1, items: 't[,] when 'z0 :> Number and 'z1 :> Number) = VArray2D<'z0, 'z1, 't>(items)
 
-        checkidx(start0.Value, x.Length0)
-        checkidx(finish0.Value, x.Length0)
-        checkidx(start1.Value, x.Length1)
-        checkidx(finish1.Value, x.Length1)
+        checkidx(start0.Value, x.Dim0)
+        checkidx(finish0.Value, x.Dim0)
+        checkidx(start1.Value, x.Dim1)
+        checkidx(finish1.Value, x.Dim1)
         checklt(start0.Value, finish0.Value)
         checklt(start1.Value, finish1.Value)
         let _start0, _finish0 = start0.Value, finish0.Value
@@ -80,7 +77,8 @@ when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :
 
         create(length0, length1, x._Array.[intstart0..intfinish0, intstart1..intfinish1])
         
+    new(x:'t) = VArray2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (x))
+    
     static member inline VArray = _true
 
-    static member inline (!+) (v:VArray2D<'t, 'd10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 'e10, 'e9, 'e8, 'e7, 'e6, 'e5, 'e4, 'e3, 'e2, 'e1>) 
-        = (v.Length0, v.Length1)  
+      

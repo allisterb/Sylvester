@@ -6,21 +6,16 @@ open System.Collections.Generic
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 
-type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
-and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
-and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
-and 'd1 :> Base10Digit>() = 
+[<AbstractClass>]
+type VArray<'n when 'n :> Number>() = 
     
-    member x.Length = N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+    member x.Length = number<'n>
     
     member x.IntLength = x.Length.IntVal
 
 [<StructuredFormatDisplay("{_Array}")>]
-type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
-                and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
-                and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
-                and 'd1 :> Base10Digit>(items:'t[]) = 
-    inherit VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+type VArray<'n, 't when 'n :> Number >(items:'t[]) = 
+    inherit VArray<'n>()
     
     member x._Array = if items.Length = x.IntLength then items else raise (ArgumentOutOfRangeException("items", sprintf "The initializing array length %i does not match %i." items.Length x.IntLength))
          
@@ -46,8 +41,8 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
         x._Array.[i |> int]
            
     member inline x.GetSlice(start: 'a option, finish : 'b option) = 
-        let inline create(c:'c, items: 't[] when 'c :> N10<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1>) = 
-            VArray<'f10, 'f9, 'f8, 'f7, 'f6, 'f5, 'f4, 'f3, 'f2, 'f1, 't>(items)
+        let inline create(c:'c, items: 't[] when 'c :> Number) = 
+            VArray<'n, 't>(items)
 
         checkidx(start.Value, x.Length)
         checkidx(finish.Value, x.Length)
@@ -58,24 +53,15 @@ type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't when 'd10 :> B
 
         create(length, x._Array.[intstart..intfinish])
         
-    new(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>, x:'t) = 
-        VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(Array.create (getN<N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>>.IntVal) x)
+    new(n:'n, x:'t) = 
+        VArray<'n, 't>(Array.create (n.IntVal) x)
 
-    new(n:N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>) = 
-        VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(Array.create n.IntVal Unchecked.defaultof<'t>)
+    new(n:'n when 'n :> Number) = 
+        VArray<'n, 't>(Array.create n.IntVal Unchecked.defaultof<'t>)
 
     static member inline VArray = _true
 
-    static member inline (!+) (v:VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>) = v.Length 
+    static member inline (!+) (v:VArray<'n, 't>) = v.Length 
    
- type VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit 
- and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
- and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit 
- and 'd1 :> Base10Digit> with
-    static member create(arr: 't[]) = new VArray<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1, 't>(arr)
-     
- type VArray<'d1, 't  when 'd1 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd1, 't>
-
- type VArray<'d2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd2, 'd1, 't>
-
- type Varray<'d3, 'd2, 'd1, 't when 'd1 :> Base10Digit and 'd2 :> Base10Digit and 'd3 :> Base10Digit> = VArray<``0``, ``0``, ``0``, ``0``, ``0``, ``0``, ``0``, 'd3, 'd2, 'd1, 't>
+ type VArray<'n when 'n :> Number> with
+    static member create(arr: 't[]) = new VArray<'n, 't>(arr)

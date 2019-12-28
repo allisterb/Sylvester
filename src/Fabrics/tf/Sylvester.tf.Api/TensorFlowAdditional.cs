@@ -142,6 +142,10 @@ namespace TensorFlow
 					ops.Add(op);
 				}
 			}
+			if (ops != null && ops.Count > 0)
+			{
+				var names = ops.Select(o => new { Name = c_api.TF_OperationName(o), Type = c_api.TF_OperationOpType(o) });
+			}
 			return graph;
 		}
 

@@ -18,9 +18,10 @@ module N10 =
         and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit and 'd1 :> Base10Digit> 
         (n10: 'd10, n9:'d9, n8:'d8, n7:'d7, n6:'d6, n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 
 
-        member x.Val = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)
-        
-        member x.IntVal = Checked.int(x.Val)
+        interface Number with 
+
+            member x.Val = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)
+            member x.IntVal = Checked.int(n1.Val * 1 + n2.Val * 10 + n3.Val * 100 + n4.Val * 1000 + n5.Val * 10000 + n6.Val * 100000 + n7.Val * (1000000) + n8.Val * (10000000) + n9.Val * (100000000) + n10.Val * (1000000000))
 
         member x.Digits = (n10, n9, n8, n7, n6, n5, n4, n3, n2, n1)
 
@@ -171,11 +172,11 @@ module N10 =
         static member inline (+@!=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
             (l +!= r) <?> (NotEqual(r), Equal(r))
 
-        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : int = Checked.int(l.Val)
+        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : int = Checked.int(let n = l :> Number in n.IntVal)
 
-        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : uint32 = Checked.uint32(l.Val)
+        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : uint32 = Checked.uint32(let n = l :> Number in n.IntVal)
 
-        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : uint64 = l.Val
+        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : uint64 = let n = l :> Number in n.Val
         
         static member inline (+) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:int) = Checked.int((int) l +  r)
 
@@ -215,27 +216,27 @@ module N10 =
 
     type N0 = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _0>
 
-    type NZero = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _0>
+    type zero = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _0>
 
-    type NOne = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _1>
+    type one = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _1>
 
-    type NTwo = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _2>
+    type two = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _2>
 
-    type NThree = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _3>
+    type three = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _3>
 
-    type NFour = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _4>
+    type four = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _4>
 
-    type NFive = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _5>
+    type five = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _5>
 
-    type NSix = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _6>
+    type six = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _6>
 
-    type NSeven = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _7>
+    type seven = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _7>
 
-    type NEight = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _8>
+    type eight = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _8>
 
-    type NNine = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _9>
+    type nine = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, _9>
 
-    type NTen = N10<_0, _0, _0, _0, _0, _0, _0, _0, _1, _0>
+    type ten = N10<_0, _0, _0, _0, _0, _0, _0, _0, _1, _0>
 
     type N1<'d1 when 'd1:>Base10Digit> = N10<_0, _0, _0, _0, _0, _0, _0, _0, _0, 'd1>
     

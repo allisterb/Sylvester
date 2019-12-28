@@ -48,8 +48,7 @@ module Base10 =
   type I8 = interface inherit NonZeroDigit inherit PowerOf2Digit end
 
   type I9 = interface inherit NonZeroDigit inherit PowerOf3Digit inherit SquareDigit end
-
-
+    
   type ``0``() = interface I0 with member x.Val = 0 member x.Val_ = 0UL
   type ``1``() = interface I1 with member x.Val = 1 member x.Val_ = 1UL
   type ``2``() = interface I2 with member x.Val = 2 member x.Val_ = 2UL
@@ -474,10 +473,15 @@ module Base10 =
   type ``8`` with static member inline (++*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
   type ``9`` with static member inline (++*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
 
+  type Number = 
+    abstract IntVal:int
+    abstract Val:uint64
+
   let digit<'d when 'd :>Base10Digit>() :'d = Activator.CreateInstance<'d>()
+
+  let number<'n when 'n :> Number> = Activator.CreateInstance<'n>()
    
   let _val(d:Base10Digit) = (uint64) d.Val
-
 
   let isEqualTo<'d when 'd :> Base10Digit>(b: obj) =
     match b with 
