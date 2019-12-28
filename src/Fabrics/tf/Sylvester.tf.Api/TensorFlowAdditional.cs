@@ -125,35 +125,31 @@ namespace TensorFlow
 			return name + "_" + val;
 		}
 
-		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out TF_Status status)
+		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)
 		{
 			var b = new Buffer(buffer);
 			var graph = c_api.TF_NewGraph();
 			status = tf_status.TF_NewStatus();
+			ops = null;
 			c_api.TF_GraphImportGraphDef(graph, b, options, status);
+			if (graph != null)
+			{
+				ulong pos = 0;
+				TF_Operation op;
+				ops = new List<TF_Operation>();
+				while((op = c_api.TF_GraphNextOperation(graph, ref pos)) != null)
+				{
+					ops.Add(op);
+				}
+			}
 			return graph;
 		}
-		public static TF_Graph Import(byte[] buffer, out TF_Status status, string prefix = null, bool uniquify = false, bool uniquifyPrefix = false)
-		{
-			var options = c_api.TF_NewImportGraphDefOptions();
-			if (!string.IsNullOrEmpty(prefix))
-			{
-				c_api.TF_ImportGraphDefOptionsSetPrefix(options, prefix);
-			}
-			if (uniquify)
-			{
-				c_api.TF_ImportGraphDefOptionsSetUniquifyNames(options, 1);
-			}
-			if(uniquifyPrefix)
-			{
-				c_api.TF_ImportGraphDefOptionsSetUniquifyPrefix(options, 1);
-			}
-			return Import(buffer, options, out status);
-		}
 
-		public static TF_Graph Import(string filePath, TF_ImportGraphDefOptions options, out TF_Status status) =>
-			Import(File.ReadAllBytes(filePath), options, out status);
+		public static TF_Graph Import(string filePath, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status) => 
+			Import(File.ReadAllBytes(filePath), options, out ops, out status);
 		
+		
+	
 		#endregion
 
 		#region Fields

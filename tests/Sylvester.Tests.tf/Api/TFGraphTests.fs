@@ -20,3 +20,8 @@ type TFGraphTests() =
     [<Fact>]
     let ``Can import graph from file``() =
         Assert.True(File.Exists("graph1.pb"))
+        let (graph, ops, status) = TF_Graph.Import("graph1.pb", c_api.TF_NewImportGraphDefOptions());
+        Assert.Equal(TF_Code.TF_OK, tf_status.TF_GetCode(status))
+        Assert.NotNull(graph)
+        Assert.NotNull(ops) 
+        Assert.NotEmpty(ops)
