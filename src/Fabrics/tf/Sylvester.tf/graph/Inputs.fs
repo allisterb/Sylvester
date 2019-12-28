@@ -2,14 +2,15 @@
 
 open TensorFlow
 
-open Sylvester
+open Sylvester.Arithmetic
 open Sylvester.Graphs
 
-module Inputs = 
+module Nodes = 
 
-    type Edge with
-        static member Input(graph:TensorGraph<_,_,_,_>, name:string, dt:TF_DataType,  ?shape:int64[]) = 
-            Edge(graph, name, graph._Graph.Placeholder(dt, defaultArg shape null, name), dt, defaultArg shape null)
+    type Node with
+        static member Input<'t>(graph:TensorGraph<_,_>, name:string, ?shape:int64[]) =
+            let t = graph._Graph.Placeholder(dataType<'t>, defaultArg shape null, name) in
+            Node(graph, name, t, [new Edge(graph, name, t, dataType<'t>, defaultArg shape null])
             
 
     

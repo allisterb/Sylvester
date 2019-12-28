@@ -1,6 +1,7 @@
 ﻿namespace Sylvester.tf
 
 open System
+open System.Collections.Generic;
 open System.Runtime.CompilerServices
 
 open TensorFlow
@@ -13,8 +14,8 @@ open Sylvester.Graphs
 open Sylvester.Tensors
 
 /// A graph of tensor operations.
-type TensorGraph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and 'c :> Base10Digit and 'd :> Base10Digit>(scope:string) = 
-    inherit Graph<'a, 'b, 'c, 'd, Edge>(scope)
+type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string, inputs:VArray<'input, Node>) = 
+    inherit Graph<'input, 'output, Edge>(scope)
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
     
@@ -36,29 +37,35 @@ type TensorGraph<'a, 'b, 'c, 'd when 'a :> Base10Digit and 'b :> Base10Digit and
     member x.UpdateStatus(status:TF_Status) = 
           x.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
           do if x.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
-  
-    new ()  = TensorGraph("")
 
-    static member create() = TensorGraph()
+    member val Nodes: Node list = [] with get, set
 
-    static member create (nameScope:string) = TensorGraph(nameScope)
+    member val Edges: Edge list = [] with get, set
+
+    new (inputs:VArray<'input, Node>)  = TensorGraph("", inputs)
+
+    static member create(inputs:VArray<'input, Node>) = TensorGraph("", inputs)
+
+    static member create (nameScope:string, inputs:VArray<'input, Node>) = TensorGraph(nameScope, inputs)
 
 and GraphStatus = {Code: TF_Code; Message: string}
 
 /// A tensor graph node consists of an operation with input and edges
-and Node(graph: TensorGraph<_,_,_,_>, inputs: Edge list, outputs:TF_Output[]) = 
+and Node(graph: TensorGraph<_,_>, name:string, outputs:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
     member x.Graph = graph
 
     member x._Graph = graph._Graph
 
+    member x.Name = name
+
     member x.Outputs = outputs
 
-    new(graph: TensorGraph<_,_,_,_>, inputs: Edge list, output:TF_Output) = Node(graph, inputs, [|output|])
+    new(graph: TensorGraph<_,_>, name:string, inputs: Edge list, output:TF_Output) = Node(graph, name, [|output|], inputs)
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
-and Edge(graph: TensorGraph<_,_,_,_>, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
+and Edge(graph: TensorGraph<_,_>, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
     member x.Graph = graph
@@ -82,24 +89,29 @@ and Edge(graph: TensorGraph<_,_,_,_>, name:string, tensor:TF_Output, dt:TF_DataT
 
     member x.Shape = x :> IUnknownShape
     
-
     member x.Tensor = tensor
 
 /// A tensor graph edge with partially known shape
-type Edge<'r when 'r :> Number>(graph:TensorGraph<_,_,_,_>, name:string, output:TF_Output, dt:TF_DataType, shape:int64[]) =
+type Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, output:TF_Output, dt:TF_DataType, shape:int64[]) =
     inherit Edge(graph, name, output, dt, shape)
 
-    interface IPartialShape<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1> with
-        member x.Rank = N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1>()
+    interface IPartialShape<'r> with
+        member x.Rank = number<'r>
 
-/// Alias for TensorGraph with max 9 inputs and 9 outputs.
-type TensorGraph<'b, 'd when 'b :> Base10Digit and 'd:> Base10Digit> = TensorGraph<``0``, 'b, ``0``, 'd>  
-
-type E<'n when 'n :> Number>() = 
-    member x.N = Activator.CreateInstance<'n>()
-
-module X =
-    let e = E<N1<_9>>()
-    let j = e.N + five
-
-
+[<AutoOpen>]
+module TensorGraph = 
+    let dataType<'t> =
+        match typeof<'t>.Name with
+        | "Boolean" -> TF_DataType.TF_BOOL;
+        | "SByte" -> TF_DataType.TF_INT8;
+        | "Byte" -> TF_DataType.TF_UINT8;
+        | "Int16" -> TF_DataType.TF_INT16;
+        | "UInt16"-> TF_DataType.TF_UINT16;
+        | "Int32" -> TF_DataType.TF_INT32;
+        | "UInt32" -> TF_DataType.TF_UINT32;
+        | "Int64" -> TF_DataType.TF_INT64;
+        | "UInt64" -> TF_DataType.TF_UINT64;
+        | "Single" -> TF_DataType.TF_FLOAT;
+        | "Double" -> TF_DataType.TF_DOUBLE;
+        | "Complex" -> TF_DataType.TF_COMPLEX128;
+        | _ -> failwithf "The type %s cannot be converted to a TensorFlow type" typeof<'t>.Name
