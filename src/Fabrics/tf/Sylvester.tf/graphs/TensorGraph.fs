@@ -51,6 +51,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
             failwithf "The edge with name %s already exists in this graph." e.Name
         else
             x.Edges.Add(e.Name, e)
+            if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
             e
 
     member x.AddNode(n:Node) =
@@ -59,7 +60,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
         else
             x.Nodes.Add(n.Name, n)
             Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.Edges.Add(e.Name, e)) n.Inputs
-            n.Op
+            ()
                    
     new (inputs:VArray<'input, Node>)  = TensorGraph("", inputs)
 
@@ -88,7 +89,7 @@ and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list) =
     new(graph: IGraph, name:string, op:TF_Output, inputs: Edge list) = Node(graph, name, [|op|], inputs)
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
-and Edge(graph: IGraph, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
+and Edge(graph: IGraph, name:string, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
     member x.Graph = graph
@@ -112,11 +113,13 @@ and Edge(graph: IGraph, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:in
 
     member x.Shape = x :> IUnknownShape
     
-    member x.Tensor = tensor
+    member x.Head:Node = head
+
+    member x.Output = x.Head.Op.[output]
 
 /// A tensor graph edge with partially known shape
-and Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, output:TF_Output, dt:TF_DataType, shape:int64[]) =
-    inherit Edge(graph, name, output, dt, shape)
+and Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
+    inherit Edge(graph, name, head, output, dt, shape)
 
     interface IPartialShape<'r> with
         member x.Rank = number<'r>

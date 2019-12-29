@@ -16,7 +16,6 @@ open Sylvester.Tensors
 [<AutoOpen>]
 module Inputs =
     type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number> with
-        member graph.AddInput<'t>(name:string) = 
-            let e = Edge(graph, name, Node(graph, "Placeholder", graph._Graph.Placeholder(TF_DataType.TF_BFLOAT16), []).Op.[0], dataType<'t>)
-            ()
+        member graph.AddInput<'t>(name:string) = graph.AddEdge(Edge(graph, name, Node(graph, "Placeholder", graph._Graph.Placeholder(dataType<'t>), []), 0, dataType<'t>))
+            
             
