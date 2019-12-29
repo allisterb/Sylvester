@@ -42,7 +42,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
           x.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
           do if x.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
 
-    member val Inputs = vanew<'input, Edge> with get,set
+    member val Inputs = vanew<'input, Edge> with get,set 
 
     member val Outputs = vanew<'input, Edge> with get,set
 
@@ -68,12 +68,9 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
                    
     new() = TensorGraph("")
 
-    new(scope:string, [<ParamArray>] inputs: VArray<'input, 'Edge>) as graph = 
-        new TensorGraph<'input, 'output>() then
-            let i = Seq.map (fun i -> Edge(graph, i.Name, new Node(graph, "Placeholder", graph._Graph.Placeholder(i.DataType), []), 0, i.DataType)) (inputs)
-            let inp = vainit (i) (graph.Inputs)
-            graph.Inputs <- inp
-        
+    new(scope:string, inputs: VArray<'input, Input>) as graph = 
+        new TensorGraph<'input, 'output>(scope) then
+            graph.Inputs <- inputs.Map (fun i -> Edge(graph, i.Name, new Node(graph, "Placeholder", graph._Graph.Placeholder(i.DataType), []), 0, i.DataType)) 
             
 and GraphStatus = {Code: TF_Code; Message: string}
 
