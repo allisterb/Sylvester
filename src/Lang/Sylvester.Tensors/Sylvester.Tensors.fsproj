@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <Compile Include="IShape.fs" />
-    <Compile Include="IScalar.fs" />
     <Compile Include="IVector.fs" />
     <Compile Include="IMatrix.fs" />
     <Compile Include="ITensor.fs" />

@@ -20,3 +20,25 @@ type IPartialShape<'n when 'n :> Number> =
 /// A tensor whose rank and dimensions are known at compile time    
 type IFullShape<'n when 'n :> Number> = 
     inherit IPartialShape<'n>
+
+type IScalar = IFullShape<zero>
+
+type IVector = IFullShape<one>
+
+type IMatrix = IFullShape<two>
+
+type ITensor3 = IFullShape<three>
+
+type ITensor4 = IFullShape<four>
+
+type ITensor5 = IFullShape<five>
+
+type ITensor6 = IFullShape<six>
+
+type ITensor7 = IFullShape<seven>
+
+type ITensor8 = IFullShape<eight>
+
+type ITensor9 = IFullShape<nine>
+
+type ITensor10 = IFullShape<ten>

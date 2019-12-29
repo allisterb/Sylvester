@@ -7,7 +7,8 @@
 
   <ItemGroup>
     <Compile Include="graphs\TensorGraph.fs" />
-    <Compile Include="ops\Inputs.fs" />
+    <Compile Include="graphs\Tensors.fs" />
+    <Compile Include="nodes\Inputs.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
 

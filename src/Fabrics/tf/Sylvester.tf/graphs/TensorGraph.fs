@@ -44,7 +44,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 
     member val Inputs = vanew<'input, Edge> with get,set 
 
-    member val Outputs = vanew<'input, Edge> with get,set
+    member val Outputs = vanew<'Output, Edge> with get,set
 
     member x.Nodes = new Dictionary<string, Node>()
         
@@ -120,7 +120,7 @@ and Edge(graph: IGraph, name:string, head:Node, output:int, dt:TF_DataType, ?sha
     member x.Output = x.Head.Op.[output]
 
 /// A tensor graph edge with partially known shape
-and Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
+and Edge<'r when 'r :> Number>(graph:IGraph, name:string, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
     inherit Edge(graph, name, head, output, dt, shape)
 
     interface IPartialShape<'r> with
