@@ -13,6 +13,7 @@ open Sylvester.Collections
 open Sylvester.Graphs
 open Sylvester.Tensors
 
+[<AutoOpen>]
 module Tensors = 
     /// A graph of tensor operations.
     type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number> with
