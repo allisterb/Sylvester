@@ -12,24 +12,6 @@ open Sylvester.Collections
 open Sylvester.Graphs
 open Sylvester.Tensors
 
-[<AutoOpen>]
-module TensorGraph = 
-    let dataType<'t> =
-        match typeof<'t>.Name with
-        | "Boolean" -> TF_DataType.TF_BOOL;
-        | "SByte" -> TF_DataType.TF_INT8;
-        | "Byte" -> TF_DataType.TF_UINT8;
-        | "Int16" -> TF_DataType.TF_INT16;
-        | "UInt16"-> TF_DataType.TF_UINT16;
-        | "Int32" -> TF_DataType.TF_INT32;
-        | "UInt32" -> TF_DataType.TF_UINT32;
-        | "Int64" -> TF_DataType.TF_INT64;
-        | "UInt64" -> TF_DataType.TF_UINT64;
-        | "Single" -> TF_DataType.TF_FLOAT;
-        | "Double" -> TF_DataType.TF_DOUBLE;
-        | "Complex" -> TF_DataType.TF_COMPLEX128;
-        | _ -> failwithf "The type %s cannot be converted to a TensorFlow type" typeof<'t>.Name
-
 /// A graph of tensor operations.
 type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string, inputs:VArray<'input, Node>) = 
     inherit Graph<'input, 'output, Edge>(scope)
@@ -75,13 +57,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
             x.Nodes.Add(n.Name, n)
             Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.Edges.Add(e.Name, e)) n.Inputs
             n.Op
-           
-    member x.AddInput<'t>(name:string, ?shape:int64[]) =
-        let _shape = defaultArg shape null
-        let op = x._Graph.Placeholder(dataType<'t>, _shape)
-        let n = Node(x, x.GetName("Placeholder"), op, [])
-        x.AddNode(n)
-        
+                   
     new (inputs:VArray<'input, Node>)  = TensorGraph("", inputs)
 
     new() = TensorGraph("", vanew<'input, Node>)
@@ -93,23 +69,24 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 and GraphStatus = {Code: TF_Code; Message: string}
 
 /// A tensor graph node consists of an operation with input and edges
-and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list) = 
+and Node(graph: TensorGraph<_,_>, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
     member x.Graph = graph
 
     member x._Graph = graph
 
-    member x.Name = name
+    member x.Name = x.Graph.GetName(name)
 
     member x.Op = op
 
     member x.Inputs = inputs
 
-    new(graph: IGraph, name:string, op:TF_Output, inputs: Edge list) = Node(graph, name, [|op|], inputs)
+
+    new(graph: TensorGraph<_,_>, name:string, op:TF_Output, inputs: Edge list) = Node(graph, name, [|op|], inputs)
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
-and Edge(graph: IGraph, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
+and Edge(graph: TensorGraph<_,_>, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
     member x.Graph = graph
@@ -127,7 +104,7 @@ and Edge(graph: IGraph, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:in
         member val Dims:Option<int64[]> = shape with get, set
 
     interface IEdge with
-        member x.Graph = graph
+        member x.Graph = graph :> IGraph
         member x.Name = name
         member x._DataType = Convert.ToInt64(int dt)
 
@@ -142,3 +119,20 @@ type Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, output:TF_O
     interface IPartialShape<'r> with
         member x.Rank = number<'r>
 
+[<AutoOpen>]
+module TensorGraph = 
+    let dataType<'t> =
+        match typeof<'t>.Name with
+        | "Boolean" -> TF_DataType.TF_BOOL;
+        | "SByte" -> TF_DataType.TF_INT8;
+        | "Byte" -> TF_DataType.TF_UINT8;
+        | "Int16" -> TF_DataType.TF_INT16;
+        | "UInt16"-> TF_DataType.TF_UINT16;
+        | "Int32" -> TF_DataType.TF_INT32;
+        | "UInt32" -> TF_DataType.TF_UINT32;
+        | "Int64" -> TF_DataType.TF_INT64;
+        | "UInt64" -> TF_DataType.TF_UINT64;
+        | "Single" -> TF_DataType.TF_FLOAT;
+        | "Double" -> TF_DataType.TF_DOUBLE;
+        | "Complex" -> TF_DataType.TF_COMPLEX128;
+        | _ -> failwithf "The type %s cannot be converted to a TensorFlow tensor type" typeof<'t>.Name
