@@ -18,6 +18,8 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
     
+    do tfGraph.Dependencies <- Array.empty<TF_Operation>
+
     do tfGraph.SetNameScope(scope)
 
     do base.Initialized <- tfGraph <> null && tfGraph.NameScope = scope
@@ -42,13 +44,13 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
           x.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
           do if x.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
 
-    member val Inputs = vanew<'input, Edge> with get,set 
-
-    member val Outputs = vanew<'output, Edge> with get,set
-
     member x.Nodes = new Dictionary<string, Node>()
         
     member x.Edges = new Dictionary<string, Edge>()
+
+    member val Inputs = vanew<'input, Edge> with get,set 
+
+    member val Outputs = vanew<'output, Edge> with get,set
 
     member x.AddEdge(e:Edge) =
         if x.Edges.ContainsKey(e.Name) then
@@ -68,9 +70,9 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
                    
     new() = TensorGraph("")
 
-    new(scope:string, inputs: VArray<'input, Input>) as graph = 
-        new TensorGraph<'input, 'output>(scope) then
-            graph.Inputs <- inputs.Map (fun i -> Edge(graph, i.Name, new Node(graph, "Placeholder", graph._Graph.Placeholder(i.DataType), []), 0, i.DataType)) 
+//    new(scope:string, inputs: VArray<'input, Input>) as graph = 
+//        new TensorGraph<'input, 'output>(scope) then
+//            graph.Inputs <- inputs.Map (fun i -> Edge(graph, i.Name, new Node(graph, "Placeholder", graph._Graph.Placeholder(i.DataType), []), 0, i.DataType)) 
             
 and GraphStatus = {Code: TF_Code; Message: string}
 

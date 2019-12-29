@@ -29,7 +29,7 @@ module Tensors =
 
     /// Scalar
     and Scalar<'t when 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) = 
-        inherit Tensor<zero, 't>(graph, name, head, output, Array.Empty<int64>())
+        inherit Tensor<zero, 't>(graph, name, head, output, [|0L|])
         interface IScalar
 
     /// Vector
