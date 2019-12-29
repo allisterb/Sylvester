@@ -44,7 +44,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 
     member val Inputs = vanew<'input, Edge> with get,set 
 
-    member val Outputs = vanew<'Output, Edge> with get,set
+    member val Outputs = vanew<'output, Edge> with get,set
 
     member x.Nodes = new Dictionary<string, Node>()
         

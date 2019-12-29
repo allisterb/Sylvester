@@ -28,20 +28,37 @@ module Tensors =
 
     /// Scalar
     and Scalar<'t when 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) = 
-        inherit Edge<zero>(graph, name, head, output, dataType<'t>, Array.Empty<int64>())
+        inherit Tensor<zero, 't>(graph, name, head, output, Array.Empty<int64>())
         interface IScalar
 
     /// Vector
     and Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) =
-        inherit Edge<one>(graph, name, head, output, dataType<'t>, [|number<'dim0>.Val|])
+        inherit Tensor<one, 't>(graph, name, head, output, [|number<'dim0>.Val|])
         interface IVector
         member x.Dim0:'dim0 = number<'dim0>
 
     /// Matrix
     and Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) =
-        inherit Edge<two>(graph, name, head, output, dataType<'t>, [|number<'dim0>.Val; number<'dim1>.Val|])
+        inherit Tensor<two, 't>(graph, name, head, output, [|number<'dim0>.Val; number<'dim1>.Val|])
+        interface IMatrix
         member x.Dim0 = number<'dim0>
         member x.Dim1 = number<'dim1>
 
+    /// 3-D Tensor
+    and Tensor<'dim0, 'dim1, 'dim2, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) =
+        inherit Tensor<three, 't>(graph, name, head, output, [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val|])
+        interface ITensor3
+        member x.Dim0 = number<'dim0>
+        member x.Dim1 = number<'dim1>
+        member x.Dim2 = number<'dim2>
+
+    /// 4-D Tensor
+    and Tensor<'dim0, 'dim1, 'dim2, 'dim3, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 'dim3 :> Number and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) =
+        inherit Tensor<four, 't>(graph, name, head, output, [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val|])
+        interface ITensor4
+        member x.Dim0 = number<'dim0>
+        member x.Dim1 = number<'dim1>
+        member x.Dim2 = number<'dim2>
+        member x.Dim3 = number<'dim3>
 //and
 
