@@ -31,7 +31,10 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 
     member x.WithOpName(opName:string) = tfGraph.MakeUniqueName(opName) 
     
-    member x.GetName = tfGraph.GetName
+    interface IGraph with
+        member x.NameScope = scope
+        member x.Handle = tfGraph.__Instance
+        member x.GetName s = tfGraph.GetName s
 
     member val Status = {Code = TF_Code.TF_UNKNOWN; Message = ""} with get, set
     
@@ -69,7 +72,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 and GraphStatus = {Code: TF_Code; Message: string}
 
 /// A tensor graph node consists of an operation with input and edges
-and Node(graph: TensorGraph<_,_>, name:string, op:TF_Output[], inputs: Edge list) = 
+and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
     member x.Graph = graph
@@ -82,11 +85,10 @@ and Node(graph: TensorGraph<_,_>, name:string, op:TF_Output[], inputs: Edge list
 
     member x.Inputs = inputs
 
-
-    new(graph: TensorGraph<_,_>, name:string, op:TF_Output, inputs: Edge list) = Node(graph, name, [|op|], inputs)
+    new(graph: IGraph, name:string, op:TF_Output, inputs: Edge list) = Node(graph, name, [|op|], inputs)
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
-and Edge(graph: TensorGraph<_,_>, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
+and Edge(graph: IGraph, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
     member x.Graph = graph
@@ -104,7 +106,7 @@ and Edge(graph: TensorGraph<_,_>, name:string, tensor:TF_Output, dt:TF_DataType,
         member val Dims:Option<int64[]> = shape with get, set
 
     interface IEdge with
-        member x.Graph = graph :> IGraph
+        member x.Graph = graph
         member x.Name = name
         member x._DataType = Convert.ToInt64(int dt)
 
@@ -113,7 +115,7 @@ and Edge(graph: TensorGraph<_,_>, name:string, tensor:TF_Output, dt:TF_DataType,
     member x.Tensor = tensor
 
 /// A tensor graph edge with partially known shape
-type Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, output:TF_Output, dt:TF_DataType, shape:int64[]) =
+and Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, output:TF_Output, dt:TF_DataType, shape:int64[]) =
     inherit Edge(graph, name, output, dt, shape)
 
     interface IPartialShape<'r> with
@@ -136,3 +138,4 @@ module TensorGraph =
         | "Double" -> TF_DataType.TF_DOUBLE;
         | "Complex" -> TF_DataType.TF_COMPLEX128;
         | _ -> failwithf "The type %s cannot be converted to a TensorFlow tensor type" typeof<'t>.Name
+

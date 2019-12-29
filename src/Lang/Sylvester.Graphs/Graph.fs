@@ -20,14 +20,15 @@ type Graph<'input, 'output, 'edge when 'input :> Number and 'output :> Number an
     member x.Inputs:VArray<'input, 'edge> = VArray<'input, 'edge>()
     
     member x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
- 
-    interface IGraph with
-        member x.NameScope = scope
-        member val Handle = IntPtr.Zero with get 
-
+        
 and IGraph = 
     abstract member NameScope:string
+    abstract member GetName:string->string
     abstract member Handle:nativeint
+
+and INode<'n> = 
+    abstract member Name:string
+    abstract member Output:'n
 
 and IEdge = 
     inherit IUnknownShape
