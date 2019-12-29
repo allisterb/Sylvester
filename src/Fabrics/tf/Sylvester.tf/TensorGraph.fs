@@ -61,19 +61,27 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 
     member x.Edges = new Dictionary<string, Edge>()
 
-    member x.Add(n:Node) =
+    member x.AddEdge(e:Edge) =
+        if x.Edges.ContainsKey(e.Name) then
+            failwithf "The edge with name %s already exists in this graph." e.Name
+        else
+            x.Edges.Add(e.Name, e)
+            e
+
+    member x.AddNode(n:Node) =
         if x.Nodes.ContainsKey(n.Name) then
             failwithf "The node with name %s already exists in this graph." n.Name
         else
             x.Nodes.Add(n.Name, n)
-            n
-
+            Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.Edges.Add(e.Name, e)) n.Inputs
+            x.AddEdge(n.Output)
+           
     member x.AddInput<'t>(name:string, ?shape:int64[]) =
         let _shape = defaultArg shape null
         let op = x._Graph.Placeholder(dataType<'t>, _shape)
-        let n = Node(x, x.GetName("Placeholder"), op, [new Edge(x, name, op, dataType<'t>, _shape)])
-        x.Add(n)
-
+        let n = Node(x, x.GetName("Placeholder"), op, [], new Edge(x, name, op, dataType<'t>, _shape))
+        x.AddNode(n)
+        
     new (inputs:VArray<'input, Node>)  = TensorGraph("", inputs)
             
     static member create(inputs:VArray<'input, Node>) = TensorGraph("", inputs)
@@ -83,7 +91,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 and GraphStatus = {Code: TF_Code; Message: string}
 
 /// A tensor graph node consists of an operation with input and edges
-and Node(graph: IGraph, name:string, outputs:TF_Output[], inputs: Edge list) = 
+and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list, output: Edge) = 
     inherit Api()
     
     member x.Graph = graph
@@ -92,9 +100,13 @@ and Node(graph: IGraph, name:string, outputs:TF_Output[], inputs: Edge list) =
 
     member x.Name = name
 
-    member x.Outputs = outputs
+    member x.Op = op
 
-    new(graph: IGraph, name:string, output:TF_Output, inputs: Edge list) = Node(graph, name, [|output|], inputs)
+    member x.Inputs = inputs
+
+    member x.Output = output
+
+    new(graph: IGraph, name:string, op:TF_Output, inputs: Edge list, output: Edge) = Node(graph, name, [|op|], inputs, output)
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
 and Edge(graph: IGraph, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
