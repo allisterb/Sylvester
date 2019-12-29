@@ -13,7 +13,7 @@ open Sylvester.Graphs
 open Sylvester.Tensors
 
 /// A graph of tensor operations.
-type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string, inputs:VArray<'input, Node>) = 
+type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string) = 
     inherit Graph<'input, 'output, Edge>(scope)
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
@@ -42,8 +42,12 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
           x.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
           do if x.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
 
-    member x.Nodes = new Dictionary<string, Node>()
+    member val Inputs = vanew<'input, Edge> with get,set
 
+    member val Outputs = vanew<'input, Edge> with get,set
+
+    member x.Nodes = new Dictionary<string, Node>()
+        
     member x.Edges = new Dictionary<string, Edge>()
 
     member x.AddEdge(e:Edge) =
@@ -62,14 +66,15 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
             Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.Edges.Add(e.Name, e)) n.Inputs
             ()
                    
-    new (inputs:VArray<'input, Node>)  = TensorGraph("", inputs)
+    new() = TensorGraph("")
 
-    new() = TensorGraph("", vanew<'input, Node>)
+    new(scope:string, [<ParamArray>] inputs: VArray<'input, 'Edge>) as graph = 
+        new TensorGraph<'input, 'output>() then
+            let i = Seq.map (fun i -> Edge(graph, i.Name, new Node(graph, "Placeholder", graph._Graph.Placeholder(i.DataType), []), 0, i.DataType)) (inputs)
+            let inp = vainit (i) (graph.Inputs)
+            graph.Inputs <- inp
+        
             
-    static member create(inputs:VArray<'input, Node>) = TensorGraph("", inputs)
-
-    static member create (nameScope:string, inputs:VArray<'input, Node>) = TensorGraph(nameScope, inputs)
-
 and GraphStatus = {Code: TF_Code; Message: string}
 
 /// A tensor graph node consists of an operation with input and edges
@@ -123,6 +128,8 @@ and Edge<'r when 'r :> Number>(graph:TensorGraph<_,_>, name:string, head: Node, 
 
     interface IPartialShape<'r> with
         member x.Rank = number<'r>
+
+and Input = { Name: string; DataType: TF_DataType; Shape: int64[] option }
 
 [<AutoOpen>]
 module TensorGraph = 

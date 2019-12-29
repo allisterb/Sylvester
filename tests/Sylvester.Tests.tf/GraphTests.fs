@@ -17,9 +17,12 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can create graph`` () =
-        let g = TensorGraph<three, one>()
+        let g = TensorGraph<seven, one>("foo")
+        //g.Inputs.[zero] <- g.Input("ff")
+        let rr = g.Inputs.[three]
+        checklt(two, g.NumInputs)
         Assert.True(g.Initialized)
         Assert.NotNull(g._Graph)
-        Assert.Equal((int) g.NumInputs, 3)
+        Assert.Equal((int) g.NumInputs, 7)
         ()
         

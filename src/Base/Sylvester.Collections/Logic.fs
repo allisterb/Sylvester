@@ -7,7 +7,9 @@ module Logic =
     open System.Collections.Generic
     open Sylvester.Arithmetic
     
-    let inline vainit (items:IEnumerable<'t>) (vl:VArray<'n, 't>) = vl.SetVals items
+    let inline vainit (items:IEnumerable<'t>) (vl:VArray<'n, 't>) = 
+        do vl.SetVals items
+        vl
     
     let inline varray (n: 'n when 'n :> Number) (arr:'t[]) = VArray<'n, 't>(arr)
     

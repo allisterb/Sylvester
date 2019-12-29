@@ -476,7 +476,7 @@ module Base10 =
   type Number = 
     abstract IntVal:int
     abstract Val:uint64
-
+    
   let digit<'d when 'd :>Base10Digit>() :'d = Activator.CreateInstance<'d>()
 
   let number<'n when 'n :> Number> = Activator.CreateInstance<'n>()

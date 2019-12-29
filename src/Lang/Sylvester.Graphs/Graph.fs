@@ -13,13 +13,13 @@ open Sylvester.Tensors
 type Graph<'input, 'output, 'edge when 'input :> Number and 'output :> Number and 'edge :> IEdge>(scope:string) = 
     inherit Api()
     
-    member x.NumInputs = number<'input>
+    member inline x.NumInputs = number<'input>
 
-    member x.NumOutputs = number<'input>
+    member inline x.NumOutputs = number<'output>
 
-    member x.Inputs:VArray<'input, 'edge> = VArray<'input, 'edge>()
+    member inline x.Inputs:VArray<'input, 'edge> = VArray<'input, 'edge>()
     
-    member x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
+    member inline x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
         
 and IGraph = 
     abstract member NameScope:string

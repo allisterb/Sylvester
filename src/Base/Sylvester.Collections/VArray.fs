@@ -54,6 +54,9 @@ type VArray<'n, 't when 'n :> Number >(items:'t[]) =
         let length = (_finish - _start) + one  
 
         create(length, x._Array.[intstart..intfinish])
+
+    member inline x.Map(m:'t->'t) = 
+        let arr = VArray<'n, 't()
     
     new(x:'t) = 
         VArray<'n, 't>(Array.create (number<'n>.IntVal) x)
