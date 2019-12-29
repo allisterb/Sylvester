@@ -54,7 +54,7 @@ type VArray<'n, 't when 'n :> Number >(items:'t[]) =
         let length = (_finish - _start) + one  
 
         create(length, x._Array.[intstart..intfinish])
-        
+    
     new(x:'t) = 
         VArray<'n, 't>(Array.create (number<'n>.IntVal) x)
 
@@ -63,3 +63,4 @@ type VArray<'n, 't when 'n :> Number >(items:'t[]) =
 
  type VArray<'n when 'n :> Number> with
     static member create(arr: 't[]) = new VArray<'n, 't>(arr)
+

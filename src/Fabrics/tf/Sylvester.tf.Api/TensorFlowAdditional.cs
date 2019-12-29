@@ -79,7 +79,6 @@ namespace TensorFlow
 		}
 	}
 
-
 	public unsafe partial class TF_Graph
     {
         #region Properties
@@ -97,7 +96,7 @@ namespace TensorFlow
 			}
 			else
 			{
-				throw new InvalidOperationException($"The scope name for this graph is already set to {NameScope}");
+				throw new InvalidOperationException($"The name scope for this graph is already set to {NameScope}");
 			}
 		}
 
@@ -105,12 +104,11 @@ namespace TensorFlow
 		{
 			if (string.IsNullOrEmpty(customOpName))
 			{
-				return MakeUniqueName(NameScope == "" ? opName : NameScope + "/" + opName);
-
+				return MakeUniqueName(string.IsNullOrEmpty(NameScope) ? opName : NameScope + "/" + opName);
 			}
 			else
 			{
-				return MakeUniqueName(NameScope == "" ? opName : NameScope + "/" + customOpName);
+				return MakeUniqueName(string.IsNullOrEmpty(NameScope) ? opName : NameScope + "/" + customOpName);
 			}	
 		}
 
@@ -123,6 +121,12 @@ namespace TensorFlow
 			}
 			ids[name] = val;
 			return name + "_" + val;
+		}
+
+		public string GetName(string name)
+		{
+			var n = string.IsNullOrEmpty(NameScope) ? name : NameScope + "/" + name;
+			return n + "_" + ids[n];
 		}
 
 		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)
@@ -151,8 +155,6 @@ namespace TensorFlow
 
 		public static TF_Graph Import(string filePath, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status) => 
 			Import(File.ReadAllBytes(filePath), options, out ops, out status);
-		
-		
 	
 		#endregion
 

@@ -7,8 +7,7 @@
 
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="graph\TensorGraph.fs" />
-    <Compile Include="graph\Inputs.fs" />
+    <Compile Include="TensorGraph.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,10 +16,6 @@
     <ProjectReference Include="..\..\..\Lang\Sylvester.Graphs\Sylvester.Graphs.fsproj" />
     <ProjectReference Include="..\..\..\Lang\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
     <ProjectReference Include="..\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="tensors\" />
   </ItemGroup>
 
 </Project>
