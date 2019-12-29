@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="TensorGraph.fs" />
+    <Compile Include="Inputs.fs" />
   </ItemGroup>
 
   <ItemGroup>

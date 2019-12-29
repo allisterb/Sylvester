@@ -5,7 +5,8 @@ open System
 open Xunit
 
 open Sylvester
-open Sylvester.Arithmetic.Base10
+open Sylvester.Arithmetic
+open Sylvester.Arithmetic.N10
 open Sylvester.tf
 open Sylvester.Tests
 
@@ -16,9 +17,9 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can create graph`` () =
-        let g = TensorGraph<_3, _1>()
+        let g = TensorGraph<three, one>()
         Assert.True(g.Initialized)
         Assert.NotNull(g._Graph)
-        Assert.Equal(g.NumInputs.IntVal, 3)
+        Assert.Equal((int) g.NumInputs, 3)
         ()
         

@@ -74,15 +74,17 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
         else
             x.Nodes.Add(n.Name, n)
             Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.Edges.Add(e.Name, e)) n.Inputs
-            x.AddEdge(n.Output)
+            n.Op
            
     member x.AddInput<'t>(name:string, ?shape:int64[]) =
         let _shape = defaultArg shape null
         let op = x._Graph.Placeholder(dataType<'t>, _shape)
-        let n = Node(x, x.GetName("Placeholder"), op, [], new Edge(x, name, op, dataType<'t>, _shape))
+        let n = Node(x, x.GetName("Placeholder"), op, [])
         x.AddNode(n)
         
     new (inputs:VArray<'input, Node>)  = TensorGraph("", inputs)
+
+    new() = TensorGraph("", vanew<'input, Node>)
             
     static member create(inputs:VArray<'input, Node>) = TensorGraph("", inputs)
 
@@ -91,7 +93,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 and GraphStatus = {Code: TF_Code; Message: string}
 
 /// A tensor graph node consists of an operation with input and edges
-and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list, output: Edge) = 
+and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
     member x.Graph = graph
@@ -104,9 +106,7 @@ and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list, output: 
 
     member x.Inputs = inputs
 
-    member x.Output = output
-
-    new(graph: IGraph, name:string, op:TF_Output, inputs: Edge list, output: Edge) = Node(graph, name, [|op|], inputs, output)
+    new(graph: IGraph, name:string, op:TF_Output, inputs: Edge list) = Node(graph, name, [|op|], inputs)
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
 and Edge(graph: IGraph, name:string, tensor:TF_Output, dt:TF_DataType, ?shape:int64[]) = 
