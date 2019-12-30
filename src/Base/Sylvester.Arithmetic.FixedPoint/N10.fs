@@ -153,25 +153,25 @@ module N10 =
             (!! (l +> r))
 
         static member inline (+@<<) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +< r) <?> (IndexInRange(r), IndexOutOfRange(r))
+            (l +< r) <?> (IndexInRange(r), l)
         
         static member inline (+@<) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +< r) <?> (LessThan(r), GreaterThanOrEqual(r))
+            (l +< r) <?> (LessThan(r), l)
         
         static member inline (+@<=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +<= r) <?> (LessThanOrEqual(r), GreaterThan(r))
+            (l +<= r) <?> (LessThanOrEqual(r), l)
 
         static member inline (+@>) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +> r) <?> (GreaterThan(r), LessThanOrEqual(r))
+            (l +> r) <?> (GreaterThan(r), l)
 
         static member inline (+@>=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +>= r) <?> (GreaterThanOrEqual(r), LessThan(r))
+            (l +>= r) <?> (GreaterThanOrEqual(r), l)
 
         static member inline (+@==) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +== r) <?> (Equal(r), NotEqual(r))
+            (l +== r) <?> (Equal(r), l)
 
         static member inline (+@!=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +!= r) <?> (NotEqual(r), Equal(r))
+            (l +!= r) <?> (NotEqual(r), l)
 
         static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : int = Checked.int(let n = l :> Number in n.IntVal)
 

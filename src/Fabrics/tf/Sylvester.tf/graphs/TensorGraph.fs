@@ -149,5 +149,5 @@ module TensorGraph =
         | "Complex" -> TF_DataType.TF_COMPLEX128;
         | _ -> failwithf "The type %s cannot be converted to a TensorFlow tensor type" typeof<'t>.Name
 
-    let resetEnv() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_") 
+    let resetDefaultGraph() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_") 
 

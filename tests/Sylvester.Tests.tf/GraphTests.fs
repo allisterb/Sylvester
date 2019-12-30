@@ -41,7 +41,7 @@ type GraphTests() =
     let ``Can create default graph inputs`` () =
         let A = new Matrix<five, one, int>("A")
         Assert.Equal("A", A.Name)
-        //A.D
+        Assert.Equal("_", A.Graph.NameScope)
         
 
 

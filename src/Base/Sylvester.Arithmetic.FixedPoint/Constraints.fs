@@ -1,12 +1,14 @@
 ﻿namespace Sylvester.Arithmetic
 
 [<AutoOpen>]
-module Constraint =
+module Constraints =
     
     type Success = Success
     
     type Failure = Failure
     
+    type Constraint<'n> = Constraint of 'n
+
     type IndexInRange<'n> = IndexInRange of 'n
 
     type IndexOutOfRange<'n> = IndexOutOfRange of 'n
@@ -24,11 +26,11 @@ module Constraint =
     type NotEqual<'n> = NotEqual of 'n
    
     let inline check q = 
-        let _:Success = q <?> (Success, Failure)
+        let _:Constraint<Success> = q <?> (Constraint(Success), Constraint(Failure))
         ()
 
     let inline checkres (result:'r, condition) = 
-        let res:'r = condition <?> (result, Failure)
+        let res:'r = condition <?> (result, Constraint(Failure))
         res        
 
     let inline checkidx(a: 'a, l:'n  when 'a: (static member (+@<<): 'a ->'n -> IndexInRange<'n>)) = ()
