@@ -8,6 +8,7 @@ open TensorFlow
 
 open Sylvester
 open Sylvester.Arithmetic
+open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 open Sylvester.Graphs
 open Sylvester.Tensors
@@ -70,9 +71,9 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
                    
     new() = TensorGraph("")
 
-//    new(scope:string, inputs: VArray<'input, Input>) as graph = 
-//        new TensorGraph<'input, 'output>(scope) then
-//            graph.Inputs <- inputs.Map (fun i -> Edge(graph, i.Name, new Node(graph, "Placeholder", graph._Graph.Placeholder(i.DataType), []), 0, i.DataType)) 
+    static member val DefaultGraph = TensorGraph<zero, zero>("_") with get, set
+
+    member x.IsDefaultGraph = x.NameScope = "_"
             
 and GraphStatus = {Code: TF_Code; Message: string}
 
@@ -147,4 +148,6 @@ module TensorGraph =
         | "Double" -> TF_DataType.TF_DOUBLE;
         | "Complex" -> TF_DataType.TF_COMPLEX128;
         | _ -> failwithf "The type %s cannot be converted to a TensorFlow tensor type" typeof<'t>.Name
+
+    let resetEnv() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_") 
 
