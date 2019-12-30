@@ -27,12 +27,13 @@ and IGraph =
     abstract member Handle:nativeint
 
 and INode<'n> = 
+    abstract member Graph:IGraph with get,set
     abstract member Name:string
     abstract member Output:'n
 
 and IEdge = 
     inherit IUnknownShape
-    abstract member Graph:IGraph
+    abstract member Graph:IGraph with get,set
     abstract member Name:string
     abstract member _DataType:int64
 

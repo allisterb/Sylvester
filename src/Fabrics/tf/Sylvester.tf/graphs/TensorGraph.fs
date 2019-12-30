@@ -57,6 +57,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
         if x.Edges.ContainsKey(e.Name) then
             failwithf "The edge with name %s already exists in this graph." e.Name
         else
+            do if e.Graph <> (x :> IGraph) && e.Graph.NameScope = "_" then e.Graph <- (x :> IGraph)
             x.Edges.Add(e.Name, e)
             if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
             e
@@ -64,9 +65,10 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
     member x.AddNode(n:Node) =
         if x.Nodes.ContainsKey(n.Name) then
             failwithf "The node with name %s already exists in this graph." n.Name
-        else
+        else        
+            do if n.Graph <> (x :> IGraph) && n.Graph.NameScope = "_" then n.Graph <- (x :> IGraph)
             x.Nodes.Add(n.Name, n)
-            Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.Edges.Add(e.Name, e)) n.Inputs
+            Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.AddEdge(e) |> ignore) n.Inputs
             ()
                    
     new() = TensorGraph("")
@@ -81,11 +83,16 @@ and GraphStatus = {Code: TF_Code; Message: string}
 and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
-    member x.Graph = graph
+    member val Graph = graph with get,set
 
-    member x._Graph = graph
+    interface INode<TF_Output[]> with
+        member val Graph = graph with get,set
+        member x.Name = name
+        member x.Output = op
 
-    member x.Name = x.Graph.GetName(name)
+    member x._Node = x:> INode<TF_Output[]>
+
+    member x.Name = x._Node.Graph.GetName(name)
 
     member x.Op = op
 
@@ -97,9 +104,7 @@ and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list) =
 and Edge(graph: IGraph, name:string, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
-    member x.Graph = graph
-
-    member x._Graph = graph
+    member val Graph = graph with get,set
 
     member x.DataType = dt
 
@@ -112,7 +117,7 @@ and Edge(graph: IGraph, name:string, head:Node, output:int, dt:TF_DataType, ?sha
         member val Dims:Option<int64[]> = shape with get, set
 
     interface IEdge with
-        member x.Graph = graph
+        member val Graph = graph with get,set
         member x.Name = name
         member x._DataType = Convert.ToInt64(int dt)
 
