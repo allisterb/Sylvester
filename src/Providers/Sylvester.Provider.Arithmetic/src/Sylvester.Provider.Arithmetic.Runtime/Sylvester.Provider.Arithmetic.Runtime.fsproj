@@ -5,7 +5,7 @@
   <Import Project="..\..\netfx.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;netcoreapp2.0</TargetFrameworks>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
   </PropertyGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
@@ -20,7 +20,7 @@
     </Compile>
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Bool.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Base10.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Constraint.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Constraints.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\N10.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Sylvester.Provider.Arithmetic.Runtime.fs" />

@@ -18,17 +18,21 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
     let asm = Assembly.GetExecutingAssembly()
 
     let createTypes () =
-        let N = ProvidedTypeDefinition(asm, ns, "N", Some typeof<N10<_,_,_,_,_,_,_,_,_,_>>, false)
-        
+        let N = ProvidedTypeDefinition(asm, ns, "n", Some typeof<N10<_,_,_,_,_,_,_,_,_,_>>, false)
+        let dim = ProvidedTypeDefinition(asm, ns, "dim", Some typeof<N10<_,_,_,_,_,_,_,_,_,_>>, false)
         let helpText = 
             """<summary>Typed representation of a natural number.</summary>
-           <param name='Val'>The number to represent.</param>
+               <param name='Val'>The number to represent.</param>
+            """
+        let helpText2 = 
+            """<summary>Typed representation of a natural number dimension.</summary>
+               <param name='Val'>The numeric dimension to represent.</param>
             """
         N.AddXmlDoc helpText
-
+        dim.AddXmlDoc helpText2
         let valueParam = ProvidedStaticParameter("Val", typeof<int>)
 
-        do N.DefineStaticParameters([valueParam], fun name args ->
+        let createN (name:string) (args:obj[]) =
             let n = args.[0] :?> int
             let g = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
             let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
@@ -38,15 +42,34 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
                 <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))) @@>)
             provided.AddMember(ctor)
 
-            let p = ProvidedProperty(propertyName = "i", propertyType = g, isStatic = true, getterCode = fun args -> 
+            let p = ProvidedMethod("create", [], g, isStatic = true, invokeCode = fun args -> 
                 <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))) @@>)
 
-            p.AddXmlDocDelayed(fun () -> sprintf "An instance of the typed representation of %d" n)
+            p.AddXmlDocDelayed(fun () -> sprintf "Create an instance of the typed representation of %d." n)
             provided.AddMember(p)
 
             provided
-        )
-        [N]
+
+        let createDim (name:string) (args:obj[]) =
+            let n = args.[0] :?> int
+            let g = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
+            provided.AddXmlDoc <| (sprintf "<summary>A typed representation of the natural number dimension %d.</summary>" <| n)   
+            
+            let ctor = ProvidedConstructor([], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))) @@>)
+            provided.AddMember(ctor)
+
+            let p = ProvidedMethod("create", [], g, isStatic = true, invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))) @@>)
+
+            p.AddXmlDocDelayed(fun () -> sprintf "Create an instance of the typed representation of %d." n)
+            provided.AddMember(p)
+
+            provided
+        do N.DefineStaticParameters([valueParam], createN)
+        do dim.DefineStaticParameters([valueParam], createDim)
+        [N; dim]
 
     do
         this.AddNamespace(ns, createTypes())
