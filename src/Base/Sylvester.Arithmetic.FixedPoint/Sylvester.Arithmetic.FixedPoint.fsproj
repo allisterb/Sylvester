@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <Product>Sylvester</Product>
     <Description>Base type-level fixed-point arithmetic class for Sylvester.</Description>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>

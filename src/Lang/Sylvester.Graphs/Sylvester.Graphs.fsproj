@@ -11,9 +11,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
-    <ProjectReference Include="..\..\Base\Sylvester.Arithmetic.FixedPoint\Sylvester.Arithmetic.FixedPoint.fsproj" />
     <ProjectReference Include="..\..\Base\Sylvester.Collections\Sylvester.Collections.fsproj" />
     <ProjectReference Include="..\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Sylvester.Provider.Arithmetic.Runtime">
+      <HintPath>..\..\Providers\Sylvester.Provider.Arithmetic\src\Sylvester.Provider.Arithmetic.Runtime\bin\Release\net45\Sylvester.Provider.Arithmetic.Runtime.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
