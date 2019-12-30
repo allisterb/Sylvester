@@ -41,12 +41,15 @@ type GraphTests() =
     [<Fact>]
     let ``Can create default graph inputs`` () =
         let A = new Matrix<five, one, int>("A")
-        Assert.Equal("A", A.Name)
+        Assert.Equal("A_0", A.Name)
         Assert.Equal("_", A.Graph.NameScope)
         let B = new Matrix<n<5>, n<10>, int>("B")
         checkgt(seven, B.Dim0)
-
         let D = Mat<dim<4>, dim<3>>("D")
+        let g = TensorGraph<n<5>, n<1>>()
+        let a = g.MatrixInput<n<10>, n<5>, int>("a")
+        Assert.Equal("a_0", a.Name)
+        Assert.Equal(a.Graph.NameScope, g.NameScope)
         ()
         
 

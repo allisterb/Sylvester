@@ -23,6 +23,7 @@ type Graph<'input, 'output, 'edge when 'input :> Number and 'output :> Number an
         
 and IGraph = 
     abstract member NameScope:string
+    abstract member MakeName:string->string
     abstract member GetName:string->string
     abstract member Handle:nativeint
 

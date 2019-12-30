@@ -109,11 +109,11 @@ namespace TensorFlow
 		{
 			if (string.IsNullOrEmpty(customOpName))
 			{
-				return MakeUniqueName(string.IsNullOrEmpty(NameScope) ? opName : NameScope + "/" + opName);
+				return MakeUniqueName(string.IsNullOrEmpty(NameScope) || NameScope == "_" ? opName : NameScope + "/" + opName);
 			}
 			else
 			{
-				return MakeUniqueName(string.IsNullOrEmpty(NameScope) ? opName : NameScope + "/" + customOpName);
+				return MakeUniqueName(string.IsNullOrEmpty(NameScope) || NameScope == "_"  ? opName : NameScope + "/" + customOpName);
 			}	
 		}
 

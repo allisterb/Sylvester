@@ -30,13 +30,16 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
     member x.NameScope with get() = tfGraph.NameScope
 
     member x.NewSubNameScope(subName:string) = 
-        if empty subName then failwith "New sub-scope name cannot be empty." else x.NameScope + "/" + subName
+        do if empty subName then failwith "New sub-scope name cannot be empty." 
+        do if x.NameScope = "_" then failwith "Cannot create sub-scope name from default graph."
+        x.NameScope + "/" + subName
 
     member x.WithOpName(opName:string) = tfGraph.MakeUniqueName(opName) 
     
     interface IGraph with
         member x.NameScope = scope
         member x.Handle = tfGraph.__Instance
+        member x.MakeName s = tfGraph.MakeName s
         member x.GetName s = tfGraph.GetName s
 
     member val Status = {Code = TF_Code.TF_UNKNOWN; Message = ""} with get, set
@@ -54,19 +57,20 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
     member val Outputs = vanew<'output, Edge> with get,set
 
     member x.AddEdge(e:Edge) =
-        if x.Edges.ContainsKey(e.Name) then
-            failwithf "The edge with name %s already exists in this graph." e.Name
-        else
-            do if e.Graph <> (x :> IGraph) && e.Graph.NameScope = "_" then e.Graph <- (x :> IGraph)
-            x.Edges.Add(e.Name, e)
-            if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
-            e
+        if (e.Graph :> IGraph).NameScope <> x.NameScope then 
+            failwith "This tensor does not belong to this graph's namescope."
+        else if x.Edges.ContainsKey(e.Name) then
+                failwithf "The edge with name %s already exists in this graph." e.Name
+            else
+                x.Edges.Add(e.Name, e)
+                if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
+                e
 
     member x.AddNode(n:Node) =
+        do if (n.Graph :> IGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
         if x.Nodes.ContainsKey(n.Name) then
             failwithf "The node with name %s already exists in this graph." n.Name
         else        
-            do if n.Graph <> (x :> IGraph) && n.Graph.NameScope = "_" then n.Graph <- (x :> IGraph)
             x.Nodes.Add(n.Name, n)
             Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.AddEdge(e) |> ignore) n.Inputs
             ()
@@ -87,12 +91,10 @@ and Node(graph: IGraph, name:string, op:TF_Output[], inputs: Edge list) =
 
     interface INode<TF_Output[]> with
         member val Graph = graph with get,set
-        member x.Name = name
+        member x.Name = x.Graph.MakeName(name)
         member x.Output = op
 
-    member x._Node = x:> INode<TF_Output[]>
-
-    member x.Name = x._Node.Graph.GetName(name)
+    member x.Name = x.Graph.MakeName(name)
 
     member x.Op = op
 
@@ -110,7 +112,7 @@ and Edge(graph: IGraph, name:string, head:Node, output:int, dt:TF_DataType, ?sha
 
     member x._Type = Convert.ToInt64(int x.DataType)
     
-    member x.Name = name
+    member x.Name = x.Graph.MakeName(name)
 
     interface IUnknownShape with  
         member val Rank:Option<int> = if shape.IsSome then Some shape.Value.Length else None  with get, set
@@ -118,7 +120,7 @@ and Edge(graph: IGraph, name:string, head:Node, output:int, dt:TF_DataType, ?sha
 
     interface IEdge with
         member val Graph = graph with get,set
-        member x.Name = name
+        member x.Name = x.Graph.MakeName(name)
         member x._DataType = Convert.ToInt64(int dt)
 
     member x.Shape = x :> IUnknownShape
