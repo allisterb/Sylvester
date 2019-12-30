@@ -10,15 +10,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
-    <ProjectReference Include="..\..\Base\Sylvester.Collections\Sylvester.Collections.fsproj" />
-    <ProjectReference Include="..\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Sylvester.Provider.Arithmetic.Runtime">
-      <HintPath>..\..\Providers\Sylvester.Provider.Arithmetic\src\Sylvester.Provider.Arithmetic.Runtime\bin\Release\net45\Sylvester.Provider.Arithmetic.Runtime.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
+    <ProjectReference Include="..\..\Base\Sylvester.Collections\Sylvester.Collections.fsproj" />
+    <ProjectReference Include="..\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
   </ItemGroup>
 
 </Project>

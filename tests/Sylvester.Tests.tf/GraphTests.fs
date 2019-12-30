@@ -18,7 +18,7 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can create graph`` () =
-        let g = TensorGraph<two, one>()
+        let g = TensorGraph<seven, one>()
         checklt(zero, g.NumInputs)
         Assert.True(g.Initialized)
         Assert.NotNull(g._Graph)
@@ -27,13 +27,13 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can create graph inputs`` () =
-        let g = TensorGraph<three, one>()
+        let g = TensorGraph<n<3>, n<1>>()
         checkgt(four, g.NumInputs)
         Assert.True(g.Initialized)
         Assert.NotNull(g._Graph)
         Assert.Equal((int) g.NumInputs, 3)
         let foo = g.ScalarInput<int>("foo")
-        g.Inputs <- varray three [|foo; foo; foo|]
+        //g.Inputs <- varray n<3>.create() [|foo; foo; foo|]
         Assert.Equal("foo", g.Inputs.[zero].Name)
         ()
 

@@ -19,10 +19,4 @@
     <ProjectReference Include="..\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Sylvester.Provider.Arithmetic.Runtime">
-      <HintPath>..\..\..\Providers\Sylvester.Provider.Arithmetic\src\Sylvester.Provider.Arithmetic.Runtime\bin\Release\net45\Sylvester.Provider.Arithmetic.Runtime.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

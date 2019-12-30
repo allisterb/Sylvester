@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>2.0.0.1</AssemblyVersion>
     <FileVersion>2.0.0.1</FileVersion>
-    <Authors>allisterb</Authors>
+    <Authors>Allister Beharry</Authors>
     <Company />
     <Version>2.0.0.1</Version>
     <Product>Sylvester</Product>

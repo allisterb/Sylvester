@@ -7,7 +7,7 @@ title Sylvester.Arithmetic
 authors
     Allister Beharry
 owners
-    Allister Beharry
+    allisterb
 projectUrl
     https://github.com/allisterb/Sylvester/tree/master/src/Providers/Sylvester.Provider.Arithmetic
 repositoryUrl
@@ -18,14 +18,14 @@ requireLicenseAcceptance
     false
 iconUrl https://github.com/allisterb/Compute.NET/raw/master/numanalysis.png
 
-copyright Copyright(c) 2019 2010 by Allister Beharry
+copyright Copyright(c) 2019 2020 by Allister Beharry
 
 tags
     F# math arithmetic type-level
 summary
     Type-level natural number arithmetic and constraints
 description
-    This library provides type-level natural number arithmetic and constraints using fixed-point decimal types.
+    Type-level natural number arithmetic and constraints using fixed-point decimal types.
 files
     bin/Release/net45/Sylvester.Provider.Arithmetic.Runtime.* ==> lib/net45
     bin/Release/net45/Sylvester.Provider.Arithmetic.DesignTime.* ==> lib/net45

@@ -143,35 +143,25 @@ module N10 =
         
             isZero (r10, r9, r8, r7, r6, r5, r4, r3, r2, r1)
            
-        static member inline (+>) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +>= r) * (!! (l +== r))
+        static member inline (+>) (l, r) = (l +>= r) * (!! (l +== r))
             
-        static member inline (+<) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (!! (l +>= r))
+        static member inline (+<) (l, r) = (!! (l +>= r))
 
-        static member inline (+<=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (!! (l +> r))
+        static member inline (+<=) (l, r) = (!! (l +> r))
 
-        static member inline (+@<<) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +< r) <?> (IndexInRange(r), l)
+        static member inline (+@<<) (l, r) = (l +< r) <?> (IndexInRange(r), l)
         
-        static member inline (+@<) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +< r) <?> (LessThan(r), l)
+        static member inline (+@<) (l, r) = (l +< r) <?> (LessThan(r), l)
         
-        static member inline (+@<=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +<= r) <?> (LessThanOrEqual(r), l)
+        static member inline (+@<=) (l , r) = (l +<= r) <?> (LessThanOrEqual(r), l)
 
-        static member inline (+@>) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +> r) <?> (GreaterThan(r), l)
+        static member inline (+@>) (l, r) = (l +> r) <?> (GreaterThan(r), l)
 
-        static member inline (+@>=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +>= r) <?> (GreaterThanOrEqual(r), l)
+        static member inline (+@>=) (l, r) = (l +>= r) <?> (GreaterThanOrEqual(r), l)
 
-        static member inline (+@==) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +== r) <?> (Equal(r), l)
+        static member inline (+@==) (l, r) = (l +== r) <?> (Equal(r), l)
 
-        static member inline (+@!=) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:N10<'rd10, 'rd9, 'rd8, 'rd7, 'rd6, 'rd5, 'rd4, 'rd3, 'rd2, 'rd1>) =
-            (l +!= r) <?> (NotEqual(r), l)
+        static member inline (+@!=) (l, r) = (l +!= r) <?> (NotEqual(r), l)
 
         static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : int = Checked.int(let n = l :> Number in n.IntVal)
 
