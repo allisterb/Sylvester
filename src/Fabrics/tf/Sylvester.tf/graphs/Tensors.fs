@@ -175,3 +175,8 @@ module Tensors =
             let g = TensorGraph<zero, zero>.DefaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val; number<'dim4>.Val; number<'dim5>.Val; number<'dim6>.Val; number<'dim7>.Val; number<'dim8>.Val|]
             new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'dim6, 'dim7, 'dim8, 't>(g, name, new Node(g, "Placeholder", g._Graph.Placeholder(dataType<'t>, shape), []), 0)
+
+
+    type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim1, 't>
+
+    type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Mat<'dim0, 'dim1, float32>
