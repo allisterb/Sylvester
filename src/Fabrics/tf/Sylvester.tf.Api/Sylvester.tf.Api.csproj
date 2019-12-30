@@ -8,7 +8,15 @@
     <Version>0.2.0-r2.0</Version>
     <Product>tf.NET</Product>
     <Authors>Allister Beharry</Authors>
-    <Description>.NET bindings for the TensorFlow 2 C API.</Description>
+    <Description>.NET bindings for the TensorFlow 2 C API. These are low-level bindings suitable for creating high-level idiomatic interfaces to TensorFlow 2 in languages like C# and F#. These are source bindings only...you will also need the TensorFlow 2 runtime binary library for your OS. Either build TensorFlow yourself or for Windows you can check out https://www.nuget.org/packages/Sylvester.tf.Native.Win/</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>tf2.png</PackageIcon>
+    <PackageIconUrl />
+    <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf/Sylvester.tf.Api</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf/Sylvester.tf.Api</RepositoryUrl>
+    <PackageTags>tensorflow tf ml</PackageTags>
+    <PackageReleaseNotes>Inclusw the TF2 eager API bindings.</PackageReleaseNotes>
+    <Copyright>Copyright (c) 2019 2020 by Allister Beharry. TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,6 +34,17 @@
     <PackageReference Include="System.Buffers" Version="4.5.0" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="tf2.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

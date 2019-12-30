@@ -1,4 +1,9 @@
-﻿using System;
+﻿#region Attribution
+// Contains code from TensorFlowSharp - https://github.com/migueldeicaza/TensorFlowSharp/
+// TensorFlowSharp is authored by Miguel de Icaza and licensed under the MIT License: https://github.com/migueldeicaza/TensorFlowSharp/blob/master/LICENSE
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;

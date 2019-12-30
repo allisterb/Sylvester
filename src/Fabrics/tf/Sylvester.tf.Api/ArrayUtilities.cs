@@ -1,6 +1,13 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+﻿#region Attribution
+// Mostly from: https://github.com/dotnet/corefx/blob/master/src/System.Numerics.Tensors/src/System/Numerics/Tensors/ArrayUtilities.cs
+// Copyright (c) .NET Foundation and Contributors
+
+// The original source file has the following preamble:
+//
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+#endregion
 
 using System;
 using System.Diagnostics;

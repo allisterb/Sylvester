@@ -24,13 +24,9 @@ namespace Sylvester.Bindings
 
         #region Properties
         protected static DirectoryInfo AssemblyDirectory = new FileInfo(Ref.Assembly.GetExecutingAssembly().Location).Directory;
-
-
         public List<string> ClassDecls = new List<string>();
         public List<string> ClassTemplateDecls = new List<string>();
         public List<string> ClassTemplateSpecializationDecls = new List<string>();
-
-
         public ILogger L { get; } = Log.Logger.ForContext<Library>();
         public abstract LibraryKind Kind { get; }
         public string Name => Kind.ToString();
@@ -84,9 +80,11 @@ namespace Sylvester.Bindings
             Contract.Requires(!string.IsNullOrEmpty(Namespace));
             Contract.Requires(!string.IsNullOrEmpty(LibraryName));
             F = Path.Combine(Path.GetFullPath(OutputDirName), ModuleName + ".cs");
-
             Info($"Binding library module {ModuleName}.");
-            Info($"Using {R} as library directory.");
+            if (!string.IsNullOrEmpty(R))
+            {
+                Info($"Using {R} as library directory.");
+            }
             Info($"Using {Path.GetFullPath(OutputDirName)} as output directory.");
             Info($"Using {Namespace} as library namespace.");
             Info($"Using {LibraryName} as shared library name.");

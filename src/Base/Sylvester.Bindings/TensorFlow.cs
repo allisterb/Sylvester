@@ -34,7 +34,9 @@ namespace Sylvester.Bindings
             this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "tf", "tf_status.h"));
             this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "tf", "tf_tensor.h"));
             this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "tf", "c_api.h"));
-            Info("Creating bings for TensorFlow functions...");
+            this.Module.Headers.Add(Path.Combine(AssemblyDirectory.FullName, "tf", "c_api-EAGER.h"));
+            Info("Using {0} C header files for TensorFlow 2.", this.Module.Headers);
+            Info("Creating bindings for TensorFlow functions...");
         }
 
         /// Setup your passes here.
