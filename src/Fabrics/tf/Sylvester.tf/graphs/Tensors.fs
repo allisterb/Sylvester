@@ -30,18 +30,10 @@ module Tensors =
         
         new(name:string, ?shape:int64[]) = 
             let g = TensorGraph<zero, zero>.DefaultGraph
-            new Tensor<'r, 't>(g, name, new Node(g, "Placeholder", g._Graph.Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L)), []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L)) 
-
-    /// Scalar
-    and Scalar<'t when 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) = 
-        inherit Tensor<zero, 't>(graph, name, head, output, [|0L|])
-        interface IScalar
-
-        new(name:string) = 
-            let g = TensorGraph<zero, zero>.DefaultGraph
-            let shape = [|0L|]
-            new Scalar<'t>(g, name, new Node(g, "Placeholder", g._Graph.Placeholder(dataType<'t>, shape), []), 0)
-
+            new Tensor<'r, 't>(g, name, new Node(g, "Placeholder", g._Graph.Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L)), []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))
+            
+        //static member inline (+) (l:Tensor<'r, 't>, r:Tensor<'r, 't> ) :Tensor<'r, 't> = l.Add(r)
+    
     /// Vector
     and Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:IGraph, name:string, head:Node, output:int) =
         inherit Tensor<one, 't>(graph, name, head, output, [|number<'dim0>.Val|])

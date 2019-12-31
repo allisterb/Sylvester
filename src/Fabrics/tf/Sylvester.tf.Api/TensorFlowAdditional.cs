@@ -190,7 +190,7 @@ namespace TensorFlow
 			var s =  c_api.TF_NewSession(graph, opts, status) ?? throw new Exception($"Could not create new TF_Session for graph {graph.NameScope}.");
 			if (tf_status.TF_GetCode(status) == TF_Code.TF_OK)
 			{
-				c_api.TF_DeleteSessionOptions(opts);
+				//c_api.TF_DeleteSessionOptions(opts);
 				return s;
 			}
 			else
@@ -218,14 +218,14 @@ namespace TensorFlow
 				TF_SessionRun2(
 					this.__Instance,
 					IntPtr.Zero,
-					new IntPtr(_i),
-					new IntPtr(_iv),
+					inputs[0].__Instance,
+					inputValues[0].__Instance,
 					0,
-					new IntPtr(_o),
-					new IntPtr(_ov),
+					outputs[0].__Instance,
+					outputValues[0].__Instance,//outputValues[0].__Instance,
 					0,
-					new IntPtr(_t),
-					targets.Length,
+					targets[0].__Instance,
+					1,
 					IntPtr.Zero,
 					status.__Instance
 				);
