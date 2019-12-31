@@ -84,7 +84,7 @@ namespace TensorFlow
 		}
 	}
 
-	public unsafe partial class TF_Graph
+	public unsafe partial class TF_Graph : ITensorFlowOps
     {
 		#region Properties
 		public TF_Operation[] Dependencies { get; set; }

@@ -9,13 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="KernelTests.fs" />
-    <Compile Include="Api\TFSessionTests.fs" />
-    <Compile Include="Api\TFGraphTests.fs" />
+    <Compile Include="Api\OpGenTests.fs" />
     <Compile Include="Api\BindingsTests.fs" />
+    <Compile Include="Api\TFGraphTests.fs" />
+    <Compile Include="Api\TFSessionTests.fs" />
     <Compile Include="Api\TensorTests.fs" />
     <Compile Include="GraphTests.fs" />
-    <Compile Include="OpGenTests.fs" />
+    <Compile Include="ArithmeticTests.fs" />
+    <Compile Include="KernelTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

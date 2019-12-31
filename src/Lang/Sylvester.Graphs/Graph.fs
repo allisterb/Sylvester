@@ -1,8 +1,5 @@
 ﻿namespace Sylvester.Graphs
 
-open System
-open System.Linq
-
 open Sylvester
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
@@ -20,7 +17,7 @@ type Graph<'input, 'output, 'edge when 'input :> Number and 'output :> Number an
     member inline x.Inputs:VArray<'input, 'edge> = VArray<'input, 'edge>()
     
     member inline x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
-        
+
 and IGraph = 
     abstract member NameScope:string
     abstract member MakeName:string->string
@@ -40,12 +37,7 @@ and IEdge =
 
 and IEdge<'n when 'n :> Number> = 
         inherit IEdge
-        inherit IPartialShape<'n>
+        inherit IPartialShape<'n>    
 
-and IOutputEdge = 
-    inherit IUnknownShape
-    inherit IEdge
 
-and IOutputEdge<'n when 'n :> Number> = 
-    inherit IOutputEdge
-    inherit IPartialShape<'n>
+

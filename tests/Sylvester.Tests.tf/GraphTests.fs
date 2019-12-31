@@ -47,9 +47,9 @@ type GraphTests() =
         checkgt(seven, B.Dim0)
         let D = Mat<dim<4>, dim<3>>("D")
         let g = TensorGraph<n<5>, n<1>>()
-        let a = g.MatrixInput<n<10>, n<5>, int>("a")
-        Assert.Equal("a_0", a.Name)
-        Assert.Equal(a.Graph.NameScope, g.NameScope)
+        //let a = g.MatrixInput<n<10>, n<5>, int>("a")
+        //Assert.Equal("a_0", a.Name)
+        //Assert.Equal(a.Graph.NameScope, g.NameScope)
         ()
         
 

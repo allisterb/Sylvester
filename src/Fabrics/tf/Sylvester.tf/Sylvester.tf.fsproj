@@ -11,6 +11,7 @@
     <Compile Include="nodes\Inputs.fs" />
     <Compile Include="nodes\Arithmetic.fs" />
     <Compile Include="edges\Scalar.fs" />
+    <Compile Include="edges\Vector.fs" />
     <Compile Include="Kernel.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
