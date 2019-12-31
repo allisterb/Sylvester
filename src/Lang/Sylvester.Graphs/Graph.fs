@@ -37,7 +37,4 @@ and IEdge =
 
 and IEdge<'n when 'n :> Number> = 
         inherit IEdge
-        inherit IPartialShape<'n>    
-
-
-
+        inherit IPartialShape<'n>  

@@ -32,7 +32,10 @@ module Tensors =
             let g = TensorGraph<zero, zero>.DefaultGraph
             new Tensor<'r, 't>(g, name, new Node(g, "Placeholder", ops(g).Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L)), []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))
             
-        //static member inline (+) (l:Tensor<'r, 't>, r:Tensor<'r, 't> ) :Tensor<'r, 't> = l.Add(r)
+        static member inline (+) (l:Tensor<'r, 't>, r:Tensor<'r, 't> ) :Tensor<'r, 't> = new Tensor<'r, 't>(l.TensorGraph.MakeName("Add"), 
+        
+        
+        ops(l.TensorGraph).Add(l.Output, r.Output)
     
     /// Vector
 

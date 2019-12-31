@@ -162,7 +162,15 @@ module TensorGraph =
         | "Complex" -> TF_DataType.TF_COMPLEX128;
         | _ -> failwithf "The type %s cannot be converted to a TensorFlow tensor type" typeof<'t>.Name
 
-    let ops(g:ITensorGraph) = g.Ops :?> TF_Graph
+    let ops (x:obj) =
+        match x with
+        | :? Node as node -> node.TensorGraph.Ops
+        | :? Edge as edge -> edge.TensorGraph.Ops
+        | :? ITensorGraph as graph -> graph.Ops
+        | _ -> failwith "This type is not a tensor graph element."
+      
+
+    let defaultGraph = TensorGraph<zero, zero>.DefaultGraph
 
     let resetDefaultGraph() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_")
 
