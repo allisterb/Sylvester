@@ -130,7 +130,7 @@ namespace TensorFlow
 
 		public string GetName(string name)
 		{
-			var n = string.IsNullOrEmpty(NameScope) ? name : NameScope + "/" + name;
+			var n = string.IsNullOrEmpty(NameScope) || NameScope == "_" ? name : NameScope + "/" + name;
 			return n + "_" + ids[n];
 		}
 
@@ -174,6 +174,66 @@ namespace TensorFlow
 		{
 			Oper = oper;
 			Index = index;
+		}
+	}
+
+	public unsafe partial class TF_Session
+	{
+		[System.Security.SuppressUnmanagedCodeSecurity]
+		[DllImport("TensorFlow", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl, EntryPoint = "TF_SessionRun")]
+		static extern unsafe void TF_SessionRun2(IntPtr session, IntPtr run_options, IntPtr inputs, IntPtr input_values, int ninputs, IntPtr outputs, IntPtr output_values, int noutputs, IntPtr target_opers, int ntargets, IntPtr run_metadata, [Out] IntPtr status);
+
+		public static TF_Session New(TF_Graph graph)
+		{
+			var status = tf_status.TF_NewStatus();
+			var opts = c_api.TF_NewSessionOptions();
+			var s =  c_api.TF_NewSession(graph, opts, status) ?? throw new Exception($"Could not create new TF_Session for graph {graph.NameScope}.");
+			if (tf_status.TF_GetCode(status) == TF_Code.TF_OK)
+			{
+				c_api.TF_DeleteSessionOptions(opts);
+				return s;
+			}
+			else
+			{
+				throw new Exception($"Could not create new TF_Session for graph {graph.NameScope}: {tf_status.TF_Message(status)}.");
+			}
+		}
+
+		public TF_Status Run(TF_Output[] inputs, TF_Tensor[] inputValues, TF_Output[] outputs, TF_Tensor[] outputValues, TF_Operation[] targets = null, TF_Buffer runMetadata = null, TF_Buffer runOptions = null)
+		{
+			var status = tf_status.TF_NewStatus();
+			var _inputs = inputs.Select(i => i.__Instance).ToArray();
+			var _inputValues = inputValues.Select(i => i.__Instance).ToArray();
+			var _outputs = outputs.Select(i => i.__Instance).ToArray();
+			var _outputValues = outputValues.Select(i => i.__Instance).ToArray();
+			var _targets = targets?.Select(i => i.__Instance).ToArray();
+			
+			var ro = new Buffer(new byte[0]);
+			fixed (IntPtr* _i = _inputs)
+			fixed (IntPtr* _iv = _inputValues)
+			fixed (IntPtr* _o = _outputs)
+			fixed (IntPtr* _ov = _outputValues)
+			fixed (IntPtr* _t = _targets)
+			{
+				TF_SessionRun2(
+					this.__Instance,
+					IntPtr.Zero,
+					new IntPtr(_i),
+					new IntPtr(_iv),
+					0,
+					new IntPtr(_o),
+					new IntPtr(_ov),
+					0,
+					new IntPtr(_t),
+					targets.Length,
+					IntPtr.Zero,
+					status.__Instance
+				);
+			}
+			//c_api.TF_SessionRun
+			//TF_SessionRun2(this, null, inputs, inputValues, inputs.Length, outputs, outputValues, outputs.Length, null, 0, null, status);
+			var msg = tf_status.TF_Message(status);
+			return status;
 		}
 	}
 }

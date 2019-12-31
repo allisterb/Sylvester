@@ -31,7 +31,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 
     member x.NewSubNameScope(subName:string) = 
         do if empty subName then failwith "New sub-scope name cannot be empty." 
-        do if x.NameScope = "_" then failwith "Cannot create sub-scope name from default graph."
+        do if x.IsDefaultGraph then failwith "Cannot create sub-scope name from default graph."
         x.NameScope + "/" + subName
 
     member x.WithOpName(opName:string) = tfGraph.MakeUniqueName(opName) 
@@ -156,5 +156,6 @@ module TensorGraph =
         | "Complex" -> TF_DataType.TF_COMPLEX128;
         | _ -> failwithf "The type %s cannot be converted to a TensorFlow tensor type" typeof<'t>.Name
 
+    //let setDefaultGraph
     let resetDefaultGraph() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_") 
 

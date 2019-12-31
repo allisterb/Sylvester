@@ -9,6 +9,7 @@
     <Compile Include="graphs\TensorGraph.fs" />
     <Compile Include="graphs\Tensors.fs" />
     <Compile Include="nodes\Inputs.fs" />
+    <Compile Include="Kernel.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
 
