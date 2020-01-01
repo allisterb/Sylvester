@@ -15,7 +15,7 @@ open Sylvester.Tensors
 
 [<AutoOpen>]
 module Vector =
-    type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(graph:ITensorGraph, name:string, head:Node, output:int) =
+    type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
         inherit Tensor<one, 't>(graph, name, head, output, [|number<'dim0>.Val|])
         interface IVector
         member x.Dim0:'dim0 = number<'dim0>
