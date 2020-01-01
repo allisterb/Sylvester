@@ -1,3 +1,0 @@
-[submodule "ext/DiffSharp"]
-	path = ext/DiffSharp
-	url = https://github.com/DiffSharp/DiffSharp.git
