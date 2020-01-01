@@ -25,5 +25,26 @@ module Scalar =
             let shape = [|0L|]
             new Scalar<'t>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
 
-       
-    
+        static member (+)(l:Scalar<'t>, r:Scalar<'t>) = 
+            let edgeName = l.TensorGraph.MakeName(sprintf "Add_%s_%s" l.Name r.Name) 
+            let op = add l.Head r.Head
+            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
+            new Scalar<'t>(l.TensorGraph, edgeName, node, 0)
+            
+        static member (-)(l:Scalar<'t>, r:Scalar<'t>) = 
+            let edgeName = l.TensorGraph.MakeName(sprintf "Sub_%s_%s" l.Name r.Name) 
+            let op = sub l.Head r.Head
+            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
+            new Scalar<'t>(l.TensorGraph, edgeName, node, 0)
+          
+        static member (*)(l:Scalar<'t>, r:Scalar<'t>) = 
+            let edgeName = l.TensorGraph.MakeName(sprintf "Mul_%s_%s" l.Name r.Name) 
+            let op = mul l.Head r.Head
+            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
+            new Scalar<'t>(l.TensorGraph, edgeName, node, 0)
+
+        static member (/)(l:Scalar<'t>, r:Scalar<'t>) = 
+            let edgeName = l.TensorGraph.MakeName(sprintf "Div_%s_%s" l.Name r.Name) 
+            let op = div l.Head r.Head
+            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
+            new Scalar<'t>(l.TensorGraph, edgeName, node, 0)
