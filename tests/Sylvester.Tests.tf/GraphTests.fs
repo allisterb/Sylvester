@@ -18,26 +18,19 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can create graph`` () =
-        let g = TensorGraph<seven, one>()
-        checklt(zero, g.NumInputs)
-        Assert.True(g.Initialized)
-        Assert.NotNull(g._Graph)
-        Assert.Equal((int) g.NumInputs, 7)
-        ()
+        resetDefaultGraph()
+        let g = TensorGraph<dim<6>, dim<1>>("g")
+        //checklt(g.Inputs.Length, nine)
+        //check(g.Inputs.Length +> ten)
+        let m0 = Mat<dim<100>, dim<50>>("m0")
+        let m1 = Mat<dim<100>, dim<60>>("m1")
+        let r = m0 + m1
 
-    [<Fact>]
-    let ``Can create graph inputs`` () =
-        let g = TensorGraph<dim<3>, dim<1>>()
-        checkgt(four, g.NumInputs)
-        Assert.True(g.Initialized)
-        Assert.NotNull(g._Graph)
-        Assert.Equal((int) g.NumInputs, 3)
-        setDefaultGraph g
-        let foo = Scalar<int>("foo")
-        g.Inputs <- varray (new dim<3>()) [|foo; foo; foo|]
+        //let s = Scalar<float32
+        //let p = m0 * s
         
-        Assert.Equal("foo", g.Inputs.[zero].Name)
-        ()    
 
+        
+        
 
         

@@ -191,11 +191,6 @@ module TensorGraph =
     let setDefaultGraph graph = TensorGraph<zero, zero>.DefaultGraph <- graph
 
     let resetDefaultGraph() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_")
-
-    let defaultOps = ops(TensorGraph<zero, zero>.DefaultGraph)
-
-    let defaultTFGraph = defaultGraph :?> TF_Graph
-
     
 
     

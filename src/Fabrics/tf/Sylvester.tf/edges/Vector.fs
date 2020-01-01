@@ -24,27 +24,3 @@ module Vector =
             let g = TensorGraph<zero, zero>.DefaultGraph
             let shape = [|number<'dim0>.Val|]
             new Vector<'dim0, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
-
-        static member (+)(l:Vector<'dim0, 't>, r:Vector<'dim0, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Add_%s_%s" l.Name r.Name) 
-            let op = add l.Head r.Head
-            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
-            new Vector<'dim0, 't>(l.TensorGraph, edgeName, node, 0)
-        
-        static member (-)(l:Vector<'dim0, 't>, r:Vector<'dim0, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Sub_%s_%s" l.Name r.Name) 
-            let op = sub l.Head r.Head
-            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
-            new Vector<'dim0, 't>(l.TensorGraph, edgeName, node, 0)
-      
-        static member (*)(l:Vector<'dim0, 't>, r:Vector<'dim0, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Mul_%s_%s" l.Name r.Name) 
-            let op = mul l.Head r.Head
-            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
-            new Vector<'dim0, 't>(l.TensorGraph, edgeName, node, 0)
-
-        static member (/)(l:Vector<'dim0, 't>, r:Vector<'dim0, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Div_%s_%s" l.Name r.Name) 
-            let op = div l.Head r.Head
-            let node = Node(l.TensorGraph, op.Name, op.Op.[0], [l :> Edge; r:>Edge])
-            new Vector<'dim0, 't>(l.TensorGraph, edgeName, node, 0)
