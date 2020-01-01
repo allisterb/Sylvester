@@ -19,4 +19,5 @@ type ArithmeticTests() =
     [<Fact>]
     let ``Can add scalar`` () =
         resetDefaultGraph()
-        let s0 = new Scalar<float32>()
+        let s0 = new Scalar<float32>("s0")
+        ()

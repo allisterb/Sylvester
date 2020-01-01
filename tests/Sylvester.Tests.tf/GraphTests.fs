@@ -27,31 +27,17 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can create graph inputs`` () =
-        let g = TensorGraph<dim<3>, one>()
+        let g = TensorGraph<dim<3>, dim<1>>()
         checkgt(four, g.NumInputs)
         Assert.True(g.Initialized)
         Assert.NotNull(g._Graph)
         Assert.Equal((int) g.NumInputs, 3)
-        let foo = g.ScalarInput<int>("foo")
+        setDefaultGraph g
+        let foo = Scalar<int>("foo")
         g.Inputs <- varray (new dim<3>()) [|foo; foo; foo|]
-        //vainit [|foo; foo; foo|] g.Inputs
-        Assert.Equal("foo", g.Inputs.[zero].Name)
-        ()
-
-    [<Fact>]
-    let ``Can create default graph inputs`` () =
-        let A = new Matrix<five, one, int>("A")
-        Assert.Equal("A_0", A.Name)
-        Assert.Equal("_", A.Graph.NameScope)
-        let B = new Matrix<n<5>, n<10>, int>("B")
-        checkgt(seven, B.Dim0)
-        let D = Mat<dim<4>, dim<3>>("D")
-        let g = TensorGraph<n<5>, n<1>>()
-        //let a = g.MatrixInput<n<10>, n<5>, int>("a")
-        //Assert.Equal("a_0", a.Name)
-        //Assert.Equal(a.Graph.NameScope, g.NameScope)
-        ()
         
+        Assert.Equal("foo", g.Inputs.[zero].Name)
+        ()    
 
 
         

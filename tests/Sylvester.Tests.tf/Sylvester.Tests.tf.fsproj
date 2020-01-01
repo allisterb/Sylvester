@@ -16,7 +16,6 @@
     <Compile Include="Api\TensorTests.fs" />
     <Compile Include="GraphTests.fs" />
     <Compile Include="ArithmeticTests.fs" />
-    <Compile Include="KernelTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
