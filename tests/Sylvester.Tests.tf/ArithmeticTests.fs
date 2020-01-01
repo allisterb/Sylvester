@@ -17,8 +17,10 @@ type ArithmeticTests() =
 
     [<Fact>]
     let ``Can add scalar`` () =
-        setDefaultGraph (TensorGraph<n<5>, n<1>> "G")
-        let s0 = new Scalar<float32>("s0")
-        let s1 = new Scalar<float32>("33")
+        let G = setDefaultGraph (TensorGraph<n<5>, n<1>> "G")
+        let s0 = Scalar<float32>("s0")
+        let s1 = Scalar<float32>("33")
         let r = s0 + s1
+        let m1 = Mat<dim<2>, dim<4>>("m1")
+        //let j = r + m1
         ()
