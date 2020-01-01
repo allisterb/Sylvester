@@ -15,15 +15,15 @@ open Sylvester.Tensors
 
 [<AutoOpen>]
 module Scalar =
-    type Scalar<'t when 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
+    type Scalar<'t when 't: struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
         (graph:ITensorGraph, name:string, head:Node, output:int) = 
         inherit Tensor<zero, 't>(graph, name, head, output, [|0L|])
         interface IScalar
         
         new(name:string) = 
-            let g = TensorGraph<zero, zero>.DefaultGraph
+            let g = defaultGraph
             let shape = [|0L|]
-            new Scalar<'t>(g, name, new Node(g, "Placeholder", ops(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Scalar<'t>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
 
        
     

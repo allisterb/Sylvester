@@ -36,7 +36,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
 
     member x.NewSubNameScope(subName:string) = 
         do if empty subName then failwith "New sub-scope name cannot be empty." 
-        do if x.IsDefaultGraph then failwith "Cannot create sub-scope name from default graph."
+        do if x.IsEmpty then failwith "Cannot create sub-scope name from empty graph."
         x.NameScope + "/" + subName
 
     member x.WithOpName(opName:string) = tfGraph.MakeUniqueName(opName) 
@@ -54,14 +54,19 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
           x.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
           do if x.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
 
+    ///Flat list of graph nodes
     member x.Nodes = new Dictionary<string, Node>()
         
+    /// Flat list of graph edges
     member x.Edges = new Dictionary<string, Edge>()
 
+    /// VArray of graph inputs
     member val Inputs = vanew<'input, Edge> with get,set 
 
+    /// VArray of graph outputs
     member val Outputs = vanew<'output, Edge> with get,set
 
+    /// Add an edge (tensor) to the graph
     member x.AddEdge(e:Edge) =
         if (e.TensorGraph :> IGraph).NameScope <> x.NameScope then 
             failwith "This tensor does not belong to this graph's namescope."
@@ -72,6 +77,7 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
                 if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
                 e
 
+    /// Add a node (operation) to the graph
     member x.AddNode(n:Node) =
         do if (n.TensorGraph :> IGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
         if x.Nodes.ContainsKey(n.Name) then
@@ -83,9 +89,11 @@ type TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sc
                    
     new() = TensorGraph("")
 
-    static member val DefaultGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get, set
+    static member val EmptyGraph = TensorGraph<zero, zero>("_") :> ITensorGraph
 
-    member x.IsDefaultGraph = x.NameScope = "_"
+    static member val DefaultGraph:ITensorGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get, set
+    
+    member x.IsEmpty = x.NameScope = "_"
         
 and GraphStatus = {Code: TF_Code; Message: string}
 
@@ -170,9 +178,25 @@ module TensorGraph =
         | _ -> failwith "This type is not a tensor graph element."
       
 
+    let tf (x:obj) =
+        match x with
+        | :? Node as node -> node.TensorGraph.Ops :?> TF_Graph
+        | :? Edge as edge -> edge.TensorGraph.Ops :?> TF_Graph
+        | :? ITensorGraph as graph -> graph.Ops :?> TF_Graph
+        | _ -> failwith "This type is not a tensor graph element."
+      
+
     let defaultGraph = TensorGraph<zero, zero>.DefaultGraph
 
+    let setDefaultGraph graph = TensorGraph<zero, zero>.DefaultGraph <- graph
+
     let resetDefaultGraph() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_")
+
+    let defaultOps = ops(TensorGraph<zero, zero>.DefaultGraph)
+
+    let defaultTFGraph = defaultGraph :?> TF_Graph
+
+    
 
     
 

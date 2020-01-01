@@ -5,10 +5,10 @@
     <Platforms>AnyCPU;x64</Platforms>
     <PackageId>tf.NET</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.2.0-r2.0</Version>
+    <Version>0.2.1-r2.0.0</Version>
     <Product>tf.NET</Product>
     <Authors>Allister Beharry</Authors>
-    <Description>.NET bindings for the TensorFlow 2 C API. These are low-level bindings suitable for creating high-level idiomatic interfaces to TensorFlow 2 in languages like C# and F#. These are source bindings only...you will also need the TensorFlow 2 runtime binary library for your OS. Either build TensorFlow yourself or for Windows you can check out https://www.nuget.org/packages/Sylvester.tf.Native.Win/</Description>
+    <Description>.NET bindings for the TensorFlow 2 C API. These are low-level bindings suitable for creating high-level idiomatic interfaces to TensorFlow 2 in languages like C# and F#.</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>tf2.png</PackageIcon>
     <PackageIconUrl />
