@@ -20,10 +20,14 @@ type GraphTests() =
     let ``Can create graph`` () =
         let g = TensorGraph<dim<6>, dim<1>>("g") |> setDefaultGraph
         checklt(g.Inputs.Length, nine)
-        
+        Assert.Equal("g", g.NameScope)
         let m0 = Mat<dim<100>, dim<50>>("m")
         let m1 = Mat<dim<100>, dim<60>>("m")
-        Assert.True(m0.Name.StartsWith("m"))       
+        Assert.Equal("g/m_0", m0.Name)
+        Assert.Equal("g/m_1", m1.Name)
+
+        Assert.True(g.Edges.ContainsKey(m0.Name))
+        
 
         
         

@@ -27,11 +27,12 @@ module Tensor =
             
     /// Tensor of known rank but unknown dimensions
     type Tensor<'r, 't when 'r :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-            (graph:ITensorGraph, name:string, head:Node, output:int, ?shape:int64[]) = 
+            (graph:ITensorGraph, name:string, head:Node, output:int, ?shape:int64[]) as this = 
         inherit Edge<'r>(graph, name, head, output, dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L))
         
         do if number<'r>.IntVal > 0 && shape.IsSome && shape.Value.Length <> number<'r>.IntVal then failwith "The shape array parameter length does not match the tensor's type rank."
-        
+        do graph.Add this
+
         new(name:string, ?shape:int64[]) = 
             let g = defaultGraph
             new Tensor<'r, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L)), []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))

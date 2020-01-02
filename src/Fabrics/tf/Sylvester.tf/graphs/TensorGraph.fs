@@ -32,6 +32,18 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     do base.Initialized <- tfGraph <> null && tfGraph.NameScope = scope
         
+    ///Flat list of graph nodes
+    member val Nodes = new Dictionary<string, Node>() with get
+        
+    /// Flat list of graph edges
+    member val Edges = new Dictionary<string, Edge>() with get
+
+    /// VArray of graph inputs
+    member val Inputs = vanew<'input, Edge> with get,set 
+
+    /// VArray of graph outputs
+    member val Outputs = vanew<'output, Edge> with get,set
+
     member internal x._Graph = tfGraph
 
     member x.NameScope with get() = tfGraph.NameScope
@@ -43,24 +55,6 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     member x.WithOpName(opName:string) = tfGraph.MakeUniqueName(opName) 
     
-    member val Status = {Code = TF_Code.TF_UNKNOWN; Message = ""} with get, set
-    
-    member x.UpdateStatus(status:TF_Status) = 
-          x.Status <- {Code = tf_status.TF_GetCode(status); Message = tf_status.TF_Message(status)}
-          do if x.Status.Code <> TF_Code.TF_OK then failwith "An operation in this scope did not return TF_OK."
-
-    ///Flat list of graph nodes
-    member x.Nodes = new Dictionary<string, Node>()
-        
-    /// Flat list of graph edges
-    member x.Edges = new Dictionary<string, Edge>()
-
-    /// VArray of graph inputs
-    member val Inputs = vanew<'input, Edge> with get,set 
-
-    /// VArray of graph outputs
-    member val Outputs = vanew<'output, Edge> with get,set
-
     /// Add an edge (tensor) to the graph
     member x.AddEdge(e:Edge) =
         if (e.TensorGraph :> IGraph).NameScope <> x.NameScope then 
@@ -80,6 +74,12 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
             x.Nodes.Add(n.Name, n)
             Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.AddEdge(e) |> ignore) n.Inputs
                    
+    member x.IsEmpty = x.NameScope = "_"
+
+    static member val EmptyGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get
+
+    static member val DefaultGraph:ITensorGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get, set
+
     interface ITensorGraph with
         member x.NameScope = scope
         member x.Handle = tfGraph.__Instance
@@ -90,26 +90,18 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
         member x.Add e = x.AddEdge(e)
         
     new() = TensorGraph("")
-
-    static member val EmptyGraph = TensorGraph<zero, zero>("_") :> ITensorGraph
-
-    static member val DefaultGraph:ITensorGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get, set
-    
-    member x.IsEmpty = x.NameScope = "_"
         
-and GraphStatus = {Code: TF_Code; Message: string}
-
 /// A tensor graph node consists of an operation with input and edges
 and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
     member val TensorGraph = graph  with get,set
 
-    member x.Name = x.TensorGraph.MakeName(name) 
-
-    member x.Op = op
+    member val Name = graph.MakeName(name) with get 
 
     member val Inputs = inputs with get, set
+
+    member val Op = op with get
 
     interface INode<TF_Output[]> with
         member val Graph = graph :> IGraph with get,set
@@ -124,27 +116,26 @@ and Edge(graph: ITensorGraph, name:string, head:Node, output:int, dt:TF_DataType
     
     member val TensorGraph = graph with get,set
 
-    member x.DataType = dt
+    member val DataType = dt with get
 
-    member x._Type = Convert.ToInt64(int x.DataType)
+    member val _Type = Convert.ToInt64(int dt) with get
     
-    member x.Name = x.TensorGraph.MakeName(name)
+    member val Name = graph.MakeName(name) with get
+
+    member val Head:Node = head with get
+    
+    member x.Output = x.Head.Op.[output]
+    
+    member x.Shape = x :> IUnknownShape
 
     interface IUnknownShape with  
         member val Rank:Option<int> = if shape.IsSome then Some shape.Value.Length else None  with get, set
         member val Dims:Option<int64[]> = shape with get, set
 
-    member x.Shape = x :> IUnknownShape
-    
-    member x.Head:Node = head
-
-    member x.Output = x.Head.Op.[output]
-
     interface IEdge with
         member val Graph = graph :> IGraph with get,set
         member x.Name = x.TensorGraph.MakeName(name)
         member x._DataType = Convert.ToInt64(int dt)
-
 
 /// A tensor graph edge with partially known shape
 and Edge<'r when 'r :> Number>(graph:ITensorGraph, name:string, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
@@ -152,8 +143,6 @@ and Edge<'r when 'r :> Number>(graph:ITensorGraph, name:string, head: Node, outp
 
     interface IEdge<'r> with
         member x.Rank = number<'r>
-
-and Input = { Name: string; DataType: TF_DataType; Shape: int64[] option }
 
 [<AutoOpen>]
 module TensorGraph = 
