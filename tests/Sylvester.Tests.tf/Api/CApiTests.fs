@@ -1,6 +1,6 @@
-namespace Sylvester.Tests.tf
+namespace Sylvester.Tests.tf.Api
 
-module BindingsTests =
+module CApiTests =
 
     open System
     open Xunit

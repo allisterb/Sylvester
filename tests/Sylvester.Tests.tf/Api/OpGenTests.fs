@@ -1,4 +1,4 @@
-﻿namespace Sylvester.Tests.tf
+﻿namespace Sylvester.Tests.tf.Api
 
 module OpGenTests =
 
