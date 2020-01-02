@@ -28,6 +28,15 @@ type GraphTests() =
         Assert.True(g.Edges.ContainsKey(m0.Name))
         Assert.Equal(2, g.Nodes.Count)
         Assert.Equal(2, g.Edges.Count)
+        
+        scope "foo"
+        let m2 = Mat<dim<100>, dim<60>>("m")
+        let m4 = m1 + m2
+        ends()
+
+        Assert.Equal("g/foo/m_0", m2.Name)
+
+
 
 
         

@@ -19,9 +19,6 @@ type Graph<'input, 'output, 'edge when 'input :> Number and 'output :> Number an
     member inline x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
 
 and IGraph = 
-    abstract member NameScope:string
-    abstract member MakeName:string->string
-    abstract member GetName:string->string
     abstract member Handle:nativeint
 
 and INode<'n> = 

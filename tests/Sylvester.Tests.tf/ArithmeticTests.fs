@@ -24,3 +24,6 @@ type ArithmeticTests() =
         let r = s0 + s1
         Assert.Equal(3, G.Nodes.Count)
         Assert.Equal("G/Add_0", G.Nodes.Keys.Last())
+        Assert.Equal(2, G.Nodes.Last().Value.Inputs.Count())
+        Assert.Equal(s0 :> Edge, G.Nodes.Values.Last().Inputs.[0])
+        Assert.Equal(s1 :> Edge, G.Nodes.Values.Last().Inputs.[1])

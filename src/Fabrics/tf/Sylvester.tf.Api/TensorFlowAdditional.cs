@@ -95,14 +95,9 @@ namespace TensorFlow
 		#region Methods
 		public void SetNameScope(string s)
 		{
-			if (string.IsNullOrEmpty(NameScope))
-			{
-				NameScope = s;
-			}
-			else
-			{
-				throw new InvalidOperationException($"The name scope for this graph is already set to {NameScope}");
-			}
+			
+			NameScope = s;
+			
 		}
 
 		public string MakeName(string opName, string customOpName = null)

@@ -16,6 +16,11 @@ open Sylvester.Tensors
 /// A graph of tensor operations.
 type ITensorGraph =
     inherit IGraph
+    abstract member NameScope:string with get,set
+    abstract member Scope:string->unit
+    abstract member Ends:unit->unit
+    abstract member MakeName:string->string
+    abstract member GetName:string->string
     abstract member Ops:ITensorFlowOps
     abstract member Add: Edge -> unit
     abstract member Add: Node -> unit
@@ -38,6 +43,9 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
     /// Flat list of graph edges
     member val Edges = new Dictionary<string, Edge>() with get
 
+    /// Stack of sub-scopes
+    member val Scopes = new Stack<string>()
+
     /// VArray of graph inputs
     member val Inputs = vanew<'input, Edge> with get,set 
 
@@ -46,18 +54,21 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     member internal x._Graph = tfGraph
 
-    member x.NameScope with get() = tfGraph.NameScope
+    member x.NameScope with get() = tfGraph.NameScope and set(value) = tfGraph.SetNameScope(value)
 
-    member x.NewSubNameScope(subName:string) = 
+    member x.Scope(subName:string) = 
         do if empty subName then failwith "New sub-scope name cannot be empty." 
         do if x.IsEmpty then failwith "Cannot create sub-scope name from empty graph."
-        x.NameScope + "/" + subName
+        x.Scopes.Push (x.NameScope + "/" + subName)
+        x.NameScope <- x.NameScope + "/" + subName
+
+    member x.Ends() = if x.Scopes.Count > 0 then x.NameScope <- x.Scopes.Pop() else failwith "No sub-scopes currently exist."
 
     member x.WithOpName(opName:string) = tfGraph.MakeUniqueName(opName) 
     
     /// Add an edge (tensor) to the graph
     member x.AddEdge(e:Edge) =
-        if (e.TensorGraph :> IGraph).NameScope <> x.NameScope then 
+        if (e.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then 
             failwith "This tensor does not belong to this graph's namescope."
         else if x.Edges.ContainsKey(e.Name) then
                 failwithf "The edge with name %s already exists in this graph." e.Name
@@ -67,7 +78,7 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
                 
     /// Add a node (operation) to the graph
     member x.AddNode(n:Node) =
-        do if (n.TensorGraph :> IGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
+        do if (n.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
         if x.Nodes.ContainsKey(n.Name) then
             failwithf "The node with name %s already exists in this graph." n.Name
         else        
@@ -81,10 +92,12 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
     static member val DefaultGraph:ITensorGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get, set
 
     interface ITensorGraph with
-        member x.NameScope = scope
         member x.Handle = tfGraph.__Instance
         member x.MakeName s = tfGraph.MakeName s
         member x.GetName s = tfGraph.GetName s
+        member x.NameScope with get() = x.NameScope and set(value) = x.NameScope <- value
+        member x.Scope s = x.Scope(s)
+        member x.Ends() = x.Ends()
         member x.Ops = tfGraph :> ITensorFlowOps
         member x.Add n = x.AddNode(n)
         member x.Add e = x.AddEdge(e)
@@ -95,7 +108,7 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
-    member val TensorGraph = graph  with get,set
+    member val TensorGraph = graph  with get
 
     member val Name = graph.GetName(name) with get 
 
@@ -114,7 +127,7 @@ and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) =
 and Edge(graph: ITensorGraph, name:string, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
-    member val TensorGraph = graph with get,set
+    member val TensorGraph = graph with get
 
     member val DataType = dt with get
 
@@ -143,6 +156,11 @@ and Edge<'r when 'r :> Number>(graph:ITensorGraph, name:string, head: Node, outp
 
     interface IEdge<'r> with
         member x.Rank = number<'r>
+
+and Scope(g:ITensorGraph, name:string) =
+    let parentScope = g.NameScope
+    do g.NameScope <- name
+    interface IDisposable with member x.Dispose() = g.NameScope <- parentScope
 
 [<AutoOpen>]
 module TensorGraph = 
@@ -186,3 +204,7 @@ module TensorGraph =
         graph
 
     let resetDefaultGraph() = TensorGraph<zero, zero>.DefaultGraph <- new TensorGraph<zero, zero>("_")
+
+    let scope = defaultGraph.Scope
+
+    let ends = defaultGraph.Ends
