@@ -97,7 +97,7 @@ and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) =
     
     member val TensorGraph = graph  with get,set
 
-    member val Name = graph.MakeName(name) with get 
+    member val Name = graph.GetName(name) with get 
 
     member val Inputs = inputs with get, set
 

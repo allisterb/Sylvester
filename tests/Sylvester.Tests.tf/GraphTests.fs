@@ -25,9 +25,10 @@ type GraphTests() =
         let m1 = Mat<dim<100>, dim<60>>("m")
         Assert.Equal("g/m_0", m0.Name)
         Assert.Equal("g/m_1", m1.Name)
-
         Assert.True(g.Edges.ContainsKey(m0.Name))
-        
+        Assert.Equal(2, g.Nodes.Count)
+        Assert.Equal(2, g.Edges.Count)
+
 
         
         
