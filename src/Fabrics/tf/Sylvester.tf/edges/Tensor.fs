@@ -23,7 +23,7 @@ module Tensor =
 
         new(name:string, ?shape:int64[]) = 
             let g = defaultGraph
-            new Tensor<'t>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, defaultArg shape null), []), 0, defaultArg shape null)
+            new Tensor<'t>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, defaultArg shape null, name), []), 0, defaultArg shape null)
             
     /// Tensor of known rank but unknown dimensions
     type Tensor<'r, 't when 'r :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
@@ -35,31 +35,27 @@ module Tensor =
 
         new(name:string, ?shape:int64[]) = 
             let g = defaultGraph
-            new Tensor<'r, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L)), []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))
+            new Tensor<'r, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L), name), []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))
     
         //Arithmetic operators
-        static member (+) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Add_%s_%s" l.Name r.Name) 
+        static member (+) (l:'x, r:'x when 'x :> Tensor<'r, 't>) =  
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; edgeName :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         static member (-) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Sub_%s_%s" l.Name r.Name) 
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; edgeName :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         static member (*) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Mul_%s_%s" l.Name r.Name) 
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; edgeName :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         static member (/) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
-            let edgeName = l.TensorGraph.MakeName(sprintf "Div_%s_%s" l.Name r.Name) 
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; edgeName :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|l.TensorGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         

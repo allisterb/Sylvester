@@ -23,4 +23,4 @@ module Vector =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val|]
-            new Vector<'dim0, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Vector<'dim0, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)

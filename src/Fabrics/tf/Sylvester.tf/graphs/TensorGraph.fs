@@ -131,7 +131,7 @@ and Edge(graph: ITensorGraph, name:string, head:Node, output:int, dt:TF_DataType
 
     member val _Type = Convert.ToInt64(int dt) with get
     
-    member val Name = graph.MakeName(name) with get
+    member val Name = graph.GetName(name) with get
 
     member val Head:Node = head with get
     
@@ -145,7 +145,7 @@ and Edge(graph: ITensorGraph, name:string, head:Node, output:int, dt:TF_DataType
 
     interface IEdge with
         member val Graph = graph :> IGraph with get,set
-        member x.Name = x.TensorGraph.MakeName(name)
+        member x.Name = x.Name
         member x._DataType = Convert.ToInt64(int dt)
 
 /// A tensor graph edge with partially known shape

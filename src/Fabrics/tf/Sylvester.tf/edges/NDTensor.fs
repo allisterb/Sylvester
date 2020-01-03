@@ -27,7 +27,7 @@ module NDTensor =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val|]
-            new Tensor<'dim0, 'dim1, 'dim2, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Tensor<'dim0, 'dim1, 'dim2, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
 
     /// 4-D Tensor
     type Tensor<'dim0, 'dim1, 'dim2, 'dim3, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 'dim3 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
@@ -41,7 +41,7 @@ module NDTensor =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val|]
-            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
 
     /// 5-D Tensor
     type Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 'dim3 :> Number and 'dim4 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
@@ -56,7 +56,7 @@ module NDTensor =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val; number<'dim4>.Val|]
-            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
 
     /// 6-D Tensor
     type Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 'dim3 :> Number and 'dim4 :> Number and 'dim5 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
@@ -72,7 +72,7 @@ module NDTensor =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val; number<'dim4>.Val; number<'dim5>.Val|]
-            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'t>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'t>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
 
     /// 7-D Tensor
     type Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5, 'dim6, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 'dim3 :> Number and 'dim4 :> Number and 'dim5 :> Number and 'dim6 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
@@ -89,7 +89,7 @@ module NDTensor =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val; number<'dim4>.Val; number<'dim5>.Val; number<'dim6>.Val|]
-            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'dim6, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'dim6, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
 
     /// 8-D Tensor
     type Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5, 'dim6, 'dim7, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 'dim3 :> Number and 'dim4 :> Number and 'dim5 :> Number and 'dim6 :> Number and 'dim7 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
@@ -107,7 +107,7 @@ module NDTensor =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val; number<'dim4>.Val; number<'dim5>.Val; number<'dim6>.Val; number<'dim7>.Val|]
-            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'dim6, 'dim7, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'dim6, 'dim7, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
 
     /// 9-D Tensor
     type Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5, 'dim6, 'dim7, 'dim8, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 'dim3 :> Number and 'dim4 :> Number and 'dim5 :> Number and 'dim6 :> Number and 'dim7 :> Number and 'dim8 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
@@ -126,4 +126,4 @@ module NDTensor =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val; number<'dim2>.Val; number<'dim3>.Val; number<'dim4>.Val; number<'dim5>.Val; number<'dim6>.Val; number<'dim7>.Val; number<'dim8>.Val|]
-            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'dim6, 'dim7, 'dim8, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Tensor<'dim0, 'dim1, 'dim2, 'dim3, 'dim4, 'dim5,'dim6, 'dim7, 'dim8, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)

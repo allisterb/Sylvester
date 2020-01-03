@@ -20,7 +20,7 @@ module Matrix =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val|]
-            new Matrix<'dim0, 'dim1, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
+            new Matrix<'dim0, 'dim1, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
 
     type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'dim0, 'dim1, 't>
 
