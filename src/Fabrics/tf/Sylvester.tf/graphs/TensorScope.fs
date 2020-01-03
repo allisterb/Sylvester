@@ -25,4 +25,5 @@ module Scope =
     let scope name = new Scope(defaultGraph, name)
     
     let ends (s:Scope) = let _s = s :> IDisposable in _s.Dispose()
-        
+    
+    

@@ -125,8 +125,15 @@ namespace TensorFlow
 
 		public string GetName(string name)
 		{
-			var n = string.IsNullOrEmpty(NameScope) || NameScope == "_" ? name : NameScope + "/" + name;
-			return n + "_" + ids[n];
+			if (name.StartsWith(this.NameScope))
+			{
+				return name;
+			}
+			else
+			{
+				var n = this.NameScope + "/" + name;
+				return n + "_" + ids[n];
+			}
 		}
 
 		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)

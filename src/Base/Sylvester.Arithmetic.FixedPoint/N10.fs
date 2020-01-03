@@ -19,10 +19,11 @@ module N10 =
         (n10: 'd10, n9:'d9, n8:'d8, n7:'d7, n6:'d6, n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 
 
         interface Number with 
+            member val UVal = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL) with get
+            member val Val = Convert.ToInt64(n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)) with get            
+            member val IntVal = Checked.int(n1.Val * 1 + n2.Val * 10 + n3.Val * 100 + n4.Val * 1000 + n5.Val * 10000 + n6.Val * 100000 + n7.Val * (1000000) + n8.Val * (10000000) + n9.Val * (100000000) + n10.Val * (1000000000)) with get
 
-            member x.UVal = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)
-            member x.Val = Convert.ToInt64(n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL))            
-            member x.IntVal = Checked.int(n1.Val * 1 + n2.Val * 10 + n3.Val * 100 + n4.Val * 1000 + n5.Val * 10000 + n6.Val * 100000 + n7.Val * (1000000) + n8.Val * (10000000) + n9.Val * (100000000) + n10.Val * (1000000000))
+        member x.Val = Convert.ToInt64(n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL))
 
         member x.Digits = (n10, n9, n8, n7, n6, n5, n4, n3, n2, n1)
 

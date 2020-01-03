@@ -1,6 +1,6 @@
 # Sylvster.tf
 ## About
-Sylvester.tf is a high-level functional, verifiable TensorFlow 2.0 API designed to embrace the overall Sylvester language goals of safety, expresiveness and interoperability
+Sylvester.tf is a high-level functional, verifiable TensorFlow 2.0 API designed to embrace the overall Sylvester language goals of safety, expresiveness and interoperability. 
 
 _Simple example_
 ```fsharp

@@ -27,7 +27,8 @@ namespace Sylvester
         {
             if (Logger == null)
             {
-                throw new InvalidOperationException("A logger is not assigned.");
+                SetDefaultLoggerIfNone();
+                Info("Using default console logger.");
             }
             CancellationToken = ct;
             Type = this.GetType();

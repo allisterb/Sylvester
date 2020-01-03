@@ -9,6 +9,11 @@
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <Version>0.2.2</Version>
+    <Description>Type-level natural number arithmetic and constraints</Description>
+    <Authors>Allister Beharry</Authors>
+    <Company>Allister Beharry</Company>
+    <Product>Sylvester</Product>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Bool.fs" />

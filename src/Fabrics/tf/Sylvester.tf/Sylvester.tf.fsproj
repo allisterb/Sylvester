@@ -9,10 +9,11 @@
     <Compile Include="graphs\TensorGraph.fs" />
     <Compile Include="graphs\TensorScope.fs" />
     <Compile Include="nodes\Arithmetic.fs" />
+    <Compile Include="nodes\LinearAlgebra.fs" />
     <Compile Include="edges\Tensor.fs" />
     <Compile Include="edges\Scalar.fs" />
-    <Compile Include="edges\Matrix.fs" />
     <Compile Include="edges\Vector.fs" />
+    <Compile Include="edges\Matrix.fs" />
     <Compile Include="edges\NDTensor.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>

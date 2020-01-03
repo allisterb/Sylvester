@@ -6,7 +6,7 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
 //Type-level arithmetic
-let a = new n<500>
+let a = new n<500>()
 
 let b = new n<125>()
 
@@ -20,4 +20,5 @@ let e = c * a +< b
 
 //Type-level static checks
 check(b +> zero)
-check(b +< zero)
+//check(b +< zero)
+c

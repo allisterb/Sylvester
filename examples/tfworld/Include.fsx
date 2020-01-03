@@ -1,0 +1,8 @@
+#r ".\\..\\..\\src\\Providers\\Sylvester.Provider.Arithmetic\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\net45\\Sylvester.Provider.Arithmetic.Runtime.dll"
+#r ".\\..\\..\\src\\Fabrics\\tf\\Sylvester.tf\\bin\\x64\\Debug\\net471\\Sylvester.Api.dll"
+#r ".\\..\\..\\src\\Fabrics\\tf\\Sylvester.tf\\bin\\x64\\Debug\\net471\\Sylvester.Api.Fs.dll"
+#r ".\\..\\..\\src\\Fabrics\\tf\\Sylvester.tf\\bin\\x64\\Debug\\net471\\Sylvester.Collections.dll"
+#r ".\\..\\..\\src\\Fabrics\\tf\\Sylvester.tf\\bin\\x64\\Debug\\net471\\Sylvester.Tensors.dll"
+#r ".\\..\\..\\src\\Fabrics\\tf\\Sylvester.tf\\bin\\x64\\Debug\\net471\\Sylvester.Graphs.dll"
+#r ".\\..\\..\\src\\Fabrics\\tf\\Sylvester.tf\\bin\\x64\\Debug\\net471\\Sylvester.tf.Api.dll"
+#r ".\\..\\..\\src\\Fabrics\\tf\\Sylvester.tf\\bin\\x64\\Debug\\net471\\Sylvester.tf.dll"

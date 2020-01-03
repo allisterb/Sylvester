@@ -267,3 +267,4 @@ examples/.ionide/symbolCache.db
 /src/Providers/Sylvester.Provider.ND/tests/Sylvester.Provider.ND.Tests/.ionide
 /src/Fabrics/tf/Sylvester.tf.Native.Win/native/tensorflow.dll
 /examples/tfworld/.ionide
+/examples/tfworld/tensorflow.dll

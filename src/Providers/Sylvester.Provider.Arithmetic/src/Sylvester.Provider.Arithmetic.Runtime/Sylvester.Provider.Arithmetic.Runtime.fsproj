@@ -7,6 +7,10 @@
     <OutputType>Library</OutputType>
     <TargetFrameworks>netstandard2.0;net45;netcoreapp2.0</TargetFrameworks>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <Version>0.2.2</Version>
+    <Authors>Allister Beharry</Authors>
+    <Product>Sylvester</Product>
+    <Description>Type-level natural number arithmetic and constraints</Description>
   </PropertyGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
