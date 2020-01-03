@@ -155,12 +155,6 @@ and Edge<'r when 'r :> Number>(graph:ITensorGraph, name:string, head: Node, outp
     interface IEdge<'r> with
         member x.Rank = number<'r>
 
-type Scope(graph:ITensorGraph, name:string) =
-    let parent = graph.NameScope
-    do graph.NameScope <- name
-    interface IDisposable with 
-        member x.Dispose() = do graph.NameScope <- parent
-
 [<AutoOpen>]
 module TensorGraph = 
     let dataType<'t> =
@@ -201,11 +195,3 @@ module TensorGraph =
     let mutable defaultGraph = emptyGraph
 
     let resetDefaultGraph() = defaultGraph <- emptyGraph
-
-    let mutable parentNameScope = ""
-
-    let scope name = 
-        parentNameScope <- defaultGraph.NameScope
-        defaultGraph.NameScope <- defaultGraph.NameScope + "/" + name
-    
-    let ends() = defaultGraph.NameScope <- parentNameScope

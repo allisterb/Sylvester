@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="graphs\TensorFabric.fs" />
     <Compile Include="graphs\TensorGraph.fs" />
+    <Compile Include="graphs\TensorScope.fs" />
     <Compile Include="nodes\Arithmetic.fs" />
     <Compile Include="edges\Tensor.fs" />
     <Compile Include="edges\Scalar.fs" />
