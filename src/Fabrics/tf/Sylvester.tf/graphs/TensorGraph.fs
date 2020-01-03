@@ -89,8 +89,6 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     static member val EmptyGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get
 
-    static member val DefaultGraph:ITensorGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get, set
-
     interface ITensorGraph with
         member x.Handle = tfGraph.__Instance
         member x.MakeName s = tfGraph.MakeName s
@@ -198,15 +196,16 @@ module TensorGraph =
       
     let tg<'input, 'output when 'input :> Number and 'output :>Number>(g:ITensorGraph) = g :?> TensorGraph<'input, 'output>
 
-    let mutable defaultGraph = TensorGraph<zero, zero>.EmptyGraph
-
     let emptyGraph = TensorGraph<zero, zero>.EmptyGraph
 
-    let setDefaultGraph graph = 
-        do TensorGraph<zero, zero>.DefaultGraph <- graph
-        graph
+    let mutable defaultGraph = emptyGraph
 
     let resetDefaultGraph() = defaultGraph <- emptyGraph
 
-    let scope name = new Scope(defaultGraph, name)
+    let mutable parentNameScope = ""
+
+    let scope name = 
+        parentNameScope <- defaultGraph.NameScope
+        defaultGraph.NameScope <- defaultGraph.NameScope + "/" + name
     
+    let ends() = defaultGraph.NameScope <- parentNameScope

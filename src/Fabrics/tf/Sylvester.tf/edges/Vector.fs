@@ -21,6 +21,6 @@ module Vector =
         member x.Dim0:'dim0 = number<'dim0>
 
         new(name:string) = 
-            let g = TensorGraph<zero, zero>.DefaultGraph
+            let g = defaultGraph
             let shape = [|number<'dim0>.Val|]
             new Vector<'dim0, 't>(g, name, new Node(g, "Placeholder", tf(g).Placeholder(dataType<'t>, shape), []), 0)
