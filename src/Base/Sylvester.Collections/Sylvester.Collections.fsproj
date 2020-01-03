@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <AssemblyVersion>0.2.1.0</AssemblyVersion>
-    <FileVersion>0.2.0.0</FileVersion>
-    <Version>0.2.1</Version>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
+    <FileVersion>0.2.2.0</FileVersion>
+    <Version>0.2.2</Version>
     <Authors>Allister Beharry</Authors>
     <Product>Sylvester</Product>
     <Copyright>Copyright © 2019, 2020 Allister Beharry</Copyright>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.1" />
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
