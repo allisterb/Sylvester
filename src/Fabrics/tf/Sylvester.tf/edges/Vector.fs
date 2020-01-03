@@ -15,10 +15,14 @@ open Sylvester.Tensors
 
 [<AutoOpen>]
 module Vector =
+    
+    [<StructuredFormatDisplay("{Display}")>]
     type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
         inherit Tensor<one, 't>(graph, name, head, output, [|number<'dim0>.Val|])
         interface IVector
         member x.Dim0:'dim0 = number<'dim0>
+        member x.Display = sprintf "Vector<%i>" x.Dim0.IntVal
+        
 
         new(name:string) = 
             let g = defaultGraph

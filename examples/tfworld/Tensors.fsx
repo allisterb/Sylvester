@@ -41,4 +41,12 @@ let msum = m1 + m2
 
 let m3 = Mat<dim<90>, dim<6>>("m")
 
+// Type-check matrix addition
 //let msum2 = m1 + m3
+
+let m4 = Mat<dim<6>, dim<45>>("m")
+
+// Matrices type-checked to be conformal for multiplication
+let p1 = m3 * m4
+
+let p2 = m4 * m3

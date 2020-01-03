@@ -1,9 +1,7 @@
 # Sylvster.tf
 ## About
-Sylvester.tf is a high-level functional, verifiable TensorFlow 2.0 API designed to embrace the overall Sylvester language goals of safety, expresiveness and interoperability. 
+Sylvester.tf is a high-level functional and verifiable TensorFlow 2.0 API designed to embrace the overall Sylvester language goals of safety, expresiveness and interoperability. 
 ```fsharp
-#load "Include.fsx"
-
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 open Sylvester.tf
@@ -47,24 +45,6 @@ _Simple example_
 let g = TensorGraph<dim<6>, dim<1>>("g") |> setDefaultGraph
 ```
 ## Inspiration
-One of the ironies of today's computer programming landscape is that functional languages directly inspired by the declarative languages for expressing abstractions and equations of logic and mathematics, have been sidelined for mathematical and scientific computing in favor of imperative, dynamically-typed languages like Python and Julia. The ease-of-use and simplicity of a language like Python is the biggest selling point for its primary position in the machine learning and data science frameworks being released today.
-
-But there are other dimensions to ease-of-use...one is where a language helps the user avoid errors in the mathematical expressions and functions he or she must construct to solve a problem in a particular domain, using for instance [type-level units of measure](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure). Another is where a language can express mathematical and scientific computing programs elegantly and concisely while still retaining these safety benefits of static type checking. The safety and correctness of scientific programs has always been a huge issue for the industry, and Python, for all its virtues, is not a great step forward in that particular direction. Modern functional languages like Haskell, F#, and Scala have implemented advanced type checkers and type inference that eliminate almost all the burden of using static types, and that also make higher-order type-level programming a viable possibility for scientific computing libraries:
-
-_Type-level programming using Sylvester and F#_
-```fsharp
-let v1 = Vec<1000>.Rand //Create a vector of length 1000
-let v2 = Vec<500>.Rand //Create a vector of length 500
-v1 + v2 //Can we do this?
-```
-
-    Type constraint mismatch. The type 
-        'Vector<float32,0,0,0,0,0,0,0,5,0,0>'    
-    is not compatible with type
-        'Vector<float32,0,0,0,0,0,0,1,0,0,0>'  
-
-Modern statically-typed open-source functional languages like F# with their support for advanced type checking and inference, language extension, meta-programming, and interoperability with lower-level libraries like the C/C++ core of TensorFlow, can offer an attractive, easy-to-use, safety-focused, alternative to mainstream scientific computing languages, especially for sectors like finance, aerospace, automotive or any industry where critical systems and decisions depend on mathematical programming, machine learning and data science. 
-
 ## What it does
 A 'tensor fabric' is a framework or DSL that provides types and abstractions for creating computational graphs of tensor operations which can then be saved, loaded and executed on a variety of hardware platforms and devices. [Sylvester.tf](https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf) provides a higher-order statically verifiable type system implemented in F# over the Tensorflow 2 C API and data structures for creating, saving, and loading TensorFlow format computational tensor graphs. Sylvester.tf combines the safety and productivity features of functional programming and higher-order type systems, with the hardware performance and interoperability of Google's TensorFlow and its large eco-system of models, tooling, and hardware execution environments, together with the language eco-system and tooling of a modern mainstream open-source functional programming language backed by Microsoft and the huge .NET user community.
 

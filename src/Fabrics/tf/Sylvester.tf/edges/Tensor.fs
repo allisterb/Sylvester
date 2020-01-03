@@ -26,7 +26,6 @@ module Tensor =
             new Tensor<'t>(g, g.GetName name, new Node(g, g.GetName name, tf(g).Placeholder(dataType<'t>, defaultArg shape null, name), []), 0, defaultArg shape null)
             
     /// Tensor of known rank but unknown dimensions
-    [<StructuredFormatDisplay("Tensor<{Rank}>")>]
     type Tensor<'r, 't when 'r :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
             (graph:ITensorGraph, name:string, head:Node, output:int, ?shape:int64[]) as this = 
         inherit Edge<'r>(graph, name, head, output, dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L))

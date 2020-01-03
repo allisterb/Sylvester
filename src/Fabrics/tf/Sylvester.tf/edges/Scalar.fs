@@ -15,6 +15,8 @@ open Sylvester.Tensors
 
 [<AutoOpen>]
 module Scalar =
+
+    [<StructuredFormatDisplay("<Scalar>")>]
     type Scalar<'t when 't: struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
         (graph:ITensorGraph, name:string, head:Node, output:int) = 
         inherit Tensor<zero, 't>(graph, name, head, output, [|0L|])
