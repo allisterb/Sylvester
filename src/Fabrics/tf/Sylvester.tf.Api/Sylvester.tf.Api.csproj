@@ -13,7 +13,7 @@
     <PackageIcon>tf2.png</PackageIcon>
     <PackageIconUrl />
     <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf/Sylvester.tf.Api</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf/Sylvester.tf.Api</RepositoryUrl>
+    <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageTags>tensorflow tf ml fsharp</PackageTags>
     <PackageReleaseNotes>Improve namescope functions.</PackageReleaseNotes>
     <Copyright>Copyright (c) 2019 2020 by Allister Beharry. TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.</Copyright>

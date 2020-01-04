@@ -3,6 +3,19 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.2.0-alpha</Version>
+    <Description>High-level functional and verifiable TensorFlow 2.0 API.</Description>
+    <Product>Sylvester</Product>
+    <Authors>Allister Beharry</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Copyright>Copyright (c) 2019 2020 by Allister Beharry</Copyright>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl />
+    <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf</PackageProjectUrl>
+    <PackageTags>f# fsharp tensorflow type-level math numeric</PackageTags>
+    <PackageReleaseNotes>First alpha release.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +36,13 @@
     <ProjectReference Include="..\..\..\Lang\Sylvester.Graphs\Sylvester.Graphs.fsproj" />
     <ProjectReference Include="..\..\..\Lang\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
     <ProjectReference Include="..\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

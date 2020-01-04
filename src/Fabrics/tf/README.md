@@ -40,7 +40,7 @@ let sum1 = m0 + m1 // Create a TF Add op node with input edges from m0 and m1
 
 let sum2 = m1 + m2 // Type error: matrices not conformable for element-wise addition
 
-let prod1 = m1 * m2 // Create a TF matmul node with input edges from m1 and m2
+let prod1 = m1 * m2 // Create a TF MatMul node with input edges from m1 and m2
 
 let prod2 = m2 * m1 // Type error: matrices not conformable for multiplication in this order
 ```

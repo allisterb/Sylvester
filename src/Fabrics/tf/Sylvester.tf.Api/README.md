@@ -12,12 +12,17 @@
 ## Differences
 The main differences between this and [TensorFlow.NET](https://github.com/SciSharp/TensorFlow.NET) and TensorSharp and other .NET TensorFlow projects are:
 * tf.NET supports TensorFlow 2 only. TensorFlow.NET and other libraries currently only support TF 1.
-* tf.NET does not try to implement any higher-level APIs for ML or things like that. I made this because I wanted a low-level direct binding to the TensorFlow 2 API that I could use to create my own .NET [scientific computing language](https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf) in F#. Looking at the code for TensorFlow.NET, it seems to me that it mixes a lot of higher-level C# code and the bindings togther.
+* tf.NET does not try to implement any higher-level APIs for ML or things like that. I made this because I wanted a low-level direct binding to the TensorFlow 2 API that I could use to create my own .NET [scientific computing language](https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf) in F#. Looking at the code for TensorFlow.NET, it seems to me that it mixes a lot of higher-level C# code and the bindings together.
+tf.NET has implementations of essential memory-backed objects like [buffers](https://github.com/allisterb/Sylvester/blob/master/src/Fabrics/tf/Sylvester.tf.Api/Buffer.cs) and [tensors](https://github.com/allisterb/Sylvester/blob/master/src/Fabrics/tf/Sylvester.tf.Api/Tensor.cs)
+but usage of these implementations is purely optional.
 
 ## Installation
 Available from [NuGet](https://www.nuget.org/packages/tf.NET/0.2.0-r2.0)
 ```sh
 PM> Install-Package tf.NET
 ```
+
+Note that you will still need the TensorFlow native runtime library for your OS. For Windows you can check out this [package](https://www.nuget.org/packages/Sylvester.tf.Native.Win/) which installs
+a CPU-only TF 2 native library dependency into your project.
 
 For usage examples see the [unit tests](https://github.com/allisterb/Sylvester/blob/master/tests/Sylvester.Tests.tf/Api/TFGraphTests.fs).
