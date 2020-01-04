@@ -17,8 +17,6 @@ open Sylvester.Tensors
 type ITensorGraph =
     inherit IGraph
     abstract member NameScope:string with get,set
-    abstract member Scope:string->unit
-    abstract member Ends:unit->unit
     abstract member MakeName:string->string
     abstract member GetName:string->string
     abstract member Ops:ITensorFlowOps
@@ -55,16 +53,6 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
     member internal x._Graph = tfGraph
 
     member x.NameScope with get() = tfGraph.NameScope and set(value) = tfGraph.SetNameScope(value)
-
-    member x.Scope(subName:string) = 
-        do if empty subName then failwith "New sub-scope name cannot be empty." 
-        do if x.IsEmpty then failwith "Cannot create sub-scope name from empty graph."
-        x.Scopes.Push (x.NameScope + "/" + subName)
-        x.NameScope <- x.NameScope + "/" + subName
-
-    member x.Ends() = if x.Scopes.Count > 0 then x.NameScope <- x.Scopes.Pop() else failwith "No sub-scopes currently exist."
-
-    member x.WithOpName(opName:string) = tfGraph.MakeUniqueName(opName) 
     
     /// Add an edge (tensor) to the graph
     member x.AddEdge(e:Edge) =
@@ -94,8 +82,6 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
         member x.MakeName s = tfGraph.MakeName s
         member x.GetName s = tfGraph.GetName s
         member x.NameScope with get() = x.NameScope and set(value) = x.NameScope <- value
-        member x.Scope s = x.Scope(s)
-        member x.Ends() = x.Ends()
         member x.Ops = tfGraph :> ITensorFlowOps
         member x.Add n = x.AddNode(n)
         member x.Add e = x.AddEdge(e)

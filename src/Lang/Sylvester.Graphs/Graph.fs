@@ -7,16 +7,19 @@ open Sylvester.Collections
 open Sylvester.Tensors
 
 [<AbstractClass>]
+[<StructuredFormatDisplay("{Display}")>]
 type Graph<'input, 'output, 'edge when 'input :> Number and 'output :> Number and 'edge :> IEdge>(scope:string) = 
     inherit Api()
     
-    member inline x.NumInputs = number<'input>
+    member x.NumInputs = number<'input>
 
-    member inline x.NumOutputs = number<'output>
+    member x.NumOutputs = number<'output>
 
-    member inline x.Inputs:VArray<'input, 'edge> = VArray<'input, 'edge>()
+    member x.Inputs:VArray<'input, 'edge> = VArray<'input, 'edge>()
     
-    member inline x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
+    member x.Outputs:VArray<'output, 'edge> = VArray<'output, 'edge>()
+
+    member x.Display = sprintf "Graph<%i, %i>" x.NumInputs.IntVal x.NumOutputs.IntVal 
 
 and IGraph = 
     abstract member Handle:nativeint

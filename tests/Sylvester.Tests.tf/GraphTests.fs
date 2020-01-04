@@ -23,7 +23,7 @@ type GraphTests() =
         checklt(g.Inputs.Length, nine)
         Assert.Equal("g", g.NameScope)
         defaultGraph <- g
-        let m0 = Mat<dim<100>, dim<50>>("m")
+        let m0 = Mat<dim<100>, dim<60>>("m")
         let m1 = Mat<dim<100>, dim<60>>("m")
         Assert.Equal("g/m_0", m0.Name)
         Assert.Equal("g/m_1", m1.Name)
@@ -34,16 +34,24 @@ type GraphTests() =
         
     [<Fact>]
     let ``Can create graph scope``() =
-        defaultGraph <- TensorGraph<dim<6>, dim<1>>("g")
-        let m = Mat<dim<100>, dim<60>>("m")        
-        Assert.Equal("g/m_0", m.Name)
+        defaultGraph <- TensorGraph<dim<6>, dim<1>>()
+        let m0 = Mat<dim<100>, dim<60>>("m")
+        let m1 = Mat<dim<100>, dim<60>>("m")
+        Assert.Equal("m_0", m0.Name)
+        Assert.Equal("m_1", m1.Name)
         let m2 = 
             use x = scope "x"
             Mat<dim<100>, dim<60>>("m")
-        Assert.Equal("g/x/m_0", m2.Name)
-        
-
-        
-        
+        Assert.Equal("x/m_0", m2.Name)
+        use x2 = scope "x2"
+        use x3 = scope "x3"
+        let m3 = Mat<dim<20>, dim<5>>("m")
+        Assert.Equal("x2/x3/m_0", m3.Name)
+        ends x3
+        let m4 = Mat<dim<20>, dim<5>>("m")
+        Assert.Equal("x2/m_0", m4.Name)
+        ends x2
+        let m5 = Mat<dim<200>, dim<5>>("m")
+        Assert.Equal("m_2", m5.Name)
 
         

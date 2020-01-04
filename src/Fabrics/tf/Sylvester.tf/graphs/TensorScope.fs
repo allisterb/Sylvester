@@ -13,9 +13,9 @@ open Sylvester.Collections
 open Sylvester.Graphs
 open Sylvester.Tensors
 
-type Scope(graph: ITensorGraph, name:string) =
+type Scope(graph: ITensorGraph, scope:string) =
     let parent = graph.NameScope
-    do graph.NameScope <- parent + "/" + name
+    do graph.NameScope <- if String.IsNullOrEmpty(parent) then scope else parent + "/" + scope
     interface IDisposable with 
         member x.Dispose() = do graph.NameScope <- parent
 

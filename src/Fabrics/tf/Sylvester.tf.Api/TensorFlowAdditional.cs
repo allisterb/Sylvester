@@ -108,7 +108,7 @@ namespace TensorFlow
 			}
 			else
 			{
-				return MakeUniqueName(string.IsNullOrEmpty(NameScope) || NameScope == "_"  ? opName : NameScope + "/" + customOpName);
+				return MakeUniqueName(string.IsNullOrEmpty(NameScope) || NameScope == "_"  ? customOpName : NameScope + "/" + customOpName);
 			}	
 		}
 
@@ -125,7 +125,11 @@ namespace TensorFlow
 
 		public string GetName(string name)
 		{
-			if (name.StartsWith(this.NameScope))
+			if(string.IsNullOrEmpty(NameScope))
+			{
+				return name +"_" + ids[name];
+			}
+			else if (name.StartsWith(NameScope))
 			{
 				return name;
 			}
