@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Sylvester.tf</id>
+    <version>0.2.0.4</version>
+    <authors>Allister Beharry</authors>
+    <owners>Allister Beharry</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <icon>numanalysis.png</icon>
+    <projectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf</projectUrl>
+    <description>High-level functional and verifiable TensorFlow 2.0 API.</description>
+    <releaseNotes>First alpha release. Use FSharp.Core &gt;= 4.3.4</releaseNotes>
+    <copyright>Copyright (c) 2019 2020 by Allister Beharry</copyright>
+    <tags>f# fsharp tensorflow type-level math numeric</tags>
+    <repository url="https://github.com/allisterb/Sylvester.git" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.7.1">
+        <dependency id="FSharp.Core" version="4.3.4" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration" version="3.1.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.Abstractions" version="3.1.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.EnvironmentVariables" version="3.1.0" exclude="Build,Analyzers" />
+		<dependency id="CsvHelper" version="12.2.2" exclude="Build,Analyzers" />
+		<dependency id="Sylvester.Arithmetic" version="0.2.2.1" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="FSharp.Core" version="4.3.4" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration" version="3.1.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.Abstractions" version="3.1.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.EnvironmentVariables" version="3.1.0" exclude="Build,Analyzers" />
+		<dependency id="CsvHelper" version="12.2.2" exclude="Build,Analyzers" />
+		<dependency id="Sylvester.Arithmetic" version="0.2.2.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

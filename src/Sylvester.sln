@@ -116,6 +116,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TFWorld", "TFWorld", "{5011
 		..\examples\tfworld\Tensors.fsx = ..\examples\tfworld\Tensors.fsx
 	EndProjectSection
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Tests.Packages", "..\tests\Sylvester.Tests.Packages\Sylvester.Tests.Packages.fsproj", "{0C96CB07-EC02-4E50-BE0F-F72365059DE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -414,6 +416,18 @@ Global
 		{41053720-CF2C-4D93-9932-9B8C6E4984EE}.Release|x64.Build.0 = Release|Any CPU
 		{41053720-CF2C-4D93-9932-9B8C6E4984EE}.Release|x86.ActiveCfg = Release|Any CPU
 		{41053720-CF2C-4D93-9932-9B8C6E4984EE}.Release|x86.Build.0 = Release|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Debug|Any CPU.Build.0 = Debug|x64
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Debug|x64.Build.0 = Debug|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Debug|x86.Build.0 = Debug|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Release|x64.ActiveCfg = Release|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Release|x64.Build.0 = Release|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -451,6 +465,7 @@ Global
 		{958A8547-6F8E-4F49-8C71-249186984611} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{41053720-CF2C-4D93-9932-9B8C6E4984EE} = {6B594C72-1F63-42A3-87DB-CC18B5724753}
 		{5011FAC1-C79E-4EAF-8FE7-B8458927A29C} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
+		{0C96CB07-EC02-4E50-BE0F-F72365059DE9} = {578D2618-B994-4B73-9838-9E05E0132C26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

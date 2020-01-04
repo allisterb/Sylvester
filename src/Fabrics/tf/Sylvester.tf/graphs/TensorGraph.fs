@@ -41,9 +41,6 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
     /// Flat list of graph edges
     member val Edges = new Dictionary<string, Edge>() with get
 
-    /// Stack of sub-scopes
-    member val Scopes = new Stack<string>()
-
     /// VArray of graph inputs
     member val Inputs = vanew<'input, Edge> with get,set 
 
@@ -114,9 +111,7 @@ and Edge(graph: ITensorGraph, name:string, head:Node, output:int, dt:TF_DataType
     member val TensorGraph = graph with get
 
     member val DataType = dt with get
-
-    member val _Type = Convert.ToInt64(int dt) with get
-    
+   
     member val Name = graph.GetName(name) with get
 
     member val Head:Node = head with get

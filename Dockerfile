@@ -36,6 +36,9 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotn
     && tar -zxf dotnet.tar.gz -C /usr/share/dotnet \
     && rm dotnet.tar.gz \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+	
+# Install TensorFlow
+conda install --quiet --yes 'tensorflow=2.0'
 
 # Enable detection of running in a container
 ENV DOTNET_RUNNING_IN_CONTAINER=true \
