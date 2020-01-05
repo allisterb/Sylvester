@@ -28,7 +28,7 @@ module Matrix =
         static member (*) (l:'x, r:'y when 'x :> Matrix<'a, 'dim1, 't> and 'y :> Matrix<'dim1, 'b, 't>) = 
             let node = matmul l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<Matrix<'a, 'b, 't>>, ([|defaultGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> Matrix<'a, 'b, 't>
+            Activator.CreateInstance (typeof<Matrix<'a, 'b, 't>>, ([|defaultGraph :> obj; node :> obj; 0 :> obj|])) :?> Matrix<'a, 'b, 't>
 
     
     type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'dim0, 'dim1, 't>

@@ -44,17 +44,11 @@ module Tensor =
         static member (+) (l:'x, r:'x when 'x :> Tensor<'r, 't>) =  
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|defaultGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|defaultGraph :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         static member (-) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|defaultGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> 'x
-
-
-        static member (/) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
-            let node = add l.Head r.Head
-            node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|defaultGraph :> obj; node.Name :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|defaultGraph :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         

@@ -18,14 +18,14 @@ type LinearAlgebraTests() =
 
     [<Fact>]
     let ``Can add matrices`` () =
-        defaultGraph <- TensorGraph<n<5>, n<1>> "G"
+        defaultGraph <- TensorGraph<n<5>, n<1>>()
         let msum = 
-            use matops = scope "matops"
+            use mops = scope "mops"
             let a = Mat<dim<33>, dim<5>>("a")
             let b = Mat<dim<33>, dim<5>>("b")
             let a2 = Mat<dim<33>, dim<6>>("a")
             a + b
-            //a2 + b
-        Assert.True(msum.Name.StartsWith("G"))
+            
+        Assert.Equal("mops/Add_0", msum.Name)
 
 
