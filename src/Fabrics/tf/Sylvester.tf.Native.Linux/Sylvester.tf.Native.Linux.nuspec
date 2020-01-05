@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Sylvester.tf.Native.Linux</id>
+    <version>2.0.0.1</version>
+    <authors>Allister Beharry</authors>
+    <owners>allisterb</owners>
+    <copyright>TensorFlow is Copyright 2015 The TensorFlow Authors</copyright>
+    <licenseUrl>https://raw.githubusercontent.com/tensorflow/tensorflow/r2.0/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/allisterb/Sylvester/master/src/Fabrics/tf/Sylvester.tf.Api/tf2.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <summary>TensorFlow 2.0 native Linux x64 library dependency</summary>
+    <description>TensorFlow 2.0 native Linux x64 library dependency for the Sylvester project. The DLL will be automatically copied to your project's output directory on build.</description>
+    <releaseNotes>See https://raw.githubusercontent.com/tensorflow/tensorflow/r2.0/RELEASE.md</releaseNotes>
+    <tags>tensorflow sylvester</tags>
+  </metadata>
+  <files>
+    <file src="native\**\*.so" target="build\native\" />
+    <file src="Sylvester.tf.Native.Linux.targets" target="build\Sylvester.tf.Native.Linux.targets" />
+  </files>
+</package>
