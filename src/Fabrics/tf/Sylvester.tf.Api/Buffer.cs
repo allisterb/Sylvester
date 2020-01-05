@@ -9,7 +9,7 @@ using TensorFlow.Delegates;
 
 namespace TensorFlow
 {
-    public unsafe class Buffer
+    public unsafe class Buffer : TF_Native
     {
         #region Constructors
         public Buffer(byte[] buffer)
@@ -22,6 +22,7 @@ namespace TensorFlow
             _Buffer.Data = Ptr;
             _Buffer.Length = Length;
             _Buffer.DataDeallocator = DeallocateMethod;
+            Allocated = true;
             Initialized = true;
         }
         #endregion
@@ -38,6 +39,8 @@ namespace TensorFlow
         public ulong Length { get; }
 
         public bool Initialized { get; protected set; }
+
+        public bool Allocated { get; protected set; }
         #endregion
 
         #region Methods
@@ -50,8 +53,19 @@ namespace TensorFlow
             else
             {
                 MemoryHandle.Dispose();
-                this.Initialized = false;
+                this.Allocated = false;
             }
+        }
+
+        public override void Dispose()
+        {
+            if (!this.Allocated)
+            {
+                MemoryHandle.Dispose();
+                Allocated = false;
+            }
+            c_api.TF_DeleteBuffer(this);
+            this.IsDeleted = true;
         }
         #endregion
 
