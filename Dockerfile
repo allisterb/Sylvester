@@ -69,13 +69,13 @@ RUN dotnet tool install -g dotnet-interactive --add-source "https://dotnet.myget
 ENV PATH="${PATH}:${HOME}/.dotnet/tools"
 RUN echo "$PATH"
 
-ENV LIBRARY_PATH= "${LIBRARY_PATH}:/usr/local/lib"
+ENV LIBRARY_PATH="${LIBRARY_PATH}:/usr/local/lib"
 
-ENV LD_LIBRARY_PATH= "${LD_LIBRARY_PATH}:/usr/local/lib"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
 
-RUN echo "LIBRARY_PATH = $LIBRARY_PATH"
+RUN echo "LIBRARY_PATH=$LIBRARY_PATH"
 
-RUN echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
+RUN echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 # Install kernel specs
 RUN dotnet interactive jupyter install
 
