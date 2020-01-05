@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Configuration;
 
 
 namespace Sylvester
@@ -18,10 +16,7 @@ namespace Sylvester
         #region Constructors
         static Api()
         {
-            Configuration = new ConfigurationBuilder()
-                    .AddEnvironmentVariables()
-                    .Build();
-            HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Sylvester/0.1");
+          
         }
         public Api(CancellationToken ct)
         {
@@ -44,13 +39,9 @@ namespace Sylvester
 
         public static DirectoryInfo CurrentDirectory { get; } = new DirectoryInfo(Directory.GetCurrentDirectory());
 
-        public static IConfigurationRoot Configuration { get; protected set; }
-
         public static Logger Logger { get; protected set; }
 
         public static CancellationTokenSource Cts { get; } = new CancellationTokenSource();
-
-        public static HttpClient HttpClient { get; } = new HttpClient();
 
         public virtual bool Initialized { get; protected set; }
 
@@ -80,11 +71,6 @@ namespace Sylvester
             {
                 Logger = new ConsoleLogger();
             }
-        }
-
-        public static string Config(string i)
-        {
-            return Api.Configuration[i];   
         }
 
         public static void Info(string messageTemplate, params object[] args) => Logger.Info(messageTemplate, args);

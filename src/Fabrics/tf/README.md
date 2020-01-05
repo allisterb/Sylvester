@@ -1,4 +1,7 @@
 # Sylvester.tf
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/allisterb/Sylvester.git/master?filepath=notebooks%2FSylvester.tf.ipynb
+
 ## About
 Sylvester.tf is a high-level functional and verifiable TensorFlow 2.0 API designed to embrace the overall Sylvester language goals of safety, expressiveness and interoperability. 
 ```fsharp

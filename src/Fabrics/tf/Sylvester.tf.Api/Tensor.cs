@@ -33,12 +33,12 @@ namespace TensorFlow
 
         public Tensor(T value) : base()
         {
-            Ptr = Marshal.AllocHGlobal(Marshal.SizeOf<T>());
+            Ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(T)));
             Unsafe.Write((void*)Ptr, value);
             MemoryHandle = new MemoryHandle((void*)Ptr);
             Dims = new long[0];
             NumDims = 0;
-            Length = Convert.ToUInt64(Marshal.SizeOf<T>());
+            Length = Convert.ToUInt64(Marshal.SizeOf(typeof(T)));
             DataType = GetDataType();
             Deallocate = DeallocateMethod;
             var d = 0L;
