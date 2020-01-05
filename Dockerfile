@@ -39,10 +39,10 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotn
 	
 # Install TensorFlow
 
-RUN curl -SL --output libtensorflow.so https://allisterb-sylvester.s3.us-east-2.amazonaws.com/libtensorflow.so \
+RUN curl -SL --output libtensorflow.so https://allisterb-sylvester.s3.us-east-2.amazonaws.com/libtensorflow.so \ https://allisterb-sylvester.s3.us-east-2.amazonaws.com/libtensorflow_framework.so.2.0.0
 && curl -SL --output libtensorflow_framework.so.2.0.0 https://allisterb-sylvester.s3.us-east-2.amazonaws.com/libtensorflow_framework.so.2.0.0 \
 && cp libtensorflow.so /usr/local/lib/libTensorFlow && cp libtensorflow.so /usr/local/lib/TensorFlow && cp libtensorflow.so /usr/local/lib/TensorFlow.so \
-&& cp libtensorflow_framework.so.2.0.0 /usr/local/lib/
+&& cp libtensorflow_framework.so.2.0.0 /usr/local/lib/ && && cp libtensorflow_framework.so.2.0.0 /usr/local/lib/libtensorflow_framework.so.2
 # Enable detection of running in a container
 ENV DOTNET_RUNNING_IN_CONTAINER=true \
     # Enable correct mode for dotnet watch (only mode supported in a container)
