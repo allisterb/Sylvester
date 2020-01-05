@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Sylvester.Arithmetic" Version="0.2.2.1" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>
