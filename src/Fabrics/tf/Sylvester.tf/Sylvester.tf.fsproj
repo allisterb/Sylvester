@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.2.0.2-alpha</Version>
+    <Version>0.2.0.8</Version>
     <Description>High-level functional and verifiable TensorFlow 2.0 API.</Description>
     <Product>Sylvester</Product>
     <Authors>Allister Beharry</Authors>
@@ -15,9 +15,9 @@
     <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf</PackageProjectUrl>
     <PackageTags>f# fsharp tensorflow type-level math numeric</PackageTags>
-    <PackageReleaseNotes>First alpha release. Use FSharp.Core &gt;= 4.3.4</PackageReleaseNotes>
-    <AssemblyVersion>0.2.0.2</AssemblyVersion>
-    <FileVersion>0.2.0.2</FileVersion>
+    <PackageReleaseNotes>Downgrade .NET FX version to 4.5.</PackageReleaseNotes>
+    <AssemblyVersion>0.2.0.8</AssemblyVersion>
+    <FileVersion>0.2.0.8</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -57,6 +57,10 @@
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
