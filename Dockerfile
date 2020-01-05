@@ -41,7 +41,7 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotn
 
 RUN curl -SL --output libtensorflow.so https://allisterb-sylvester.s3.us-east-2.amazonaws.com/libtensorflow.so \
 && curl -SL --output libtensorflow_framework.so.2.0.0 https://allisterb-sylvester.s3.us-east-2.amazonaws.com/libtensorflow_framework.so.2.0.0 \
-&& cp libtensorflow.so /usr/local/lib/libTensorFlow && cp libTensorFlow.so /usr/local/lib/TensorFlow && cp libTensorFlow.so /usr/local/lib/TensorFlow.so \
+&& cp libtensorflow.so /usr/local/lib/libTensorFlow && cp libtensorflow.so /usr/local/lib/TensorFlow && cp libtensorflow.so /usr/local/lib/TensorFlow.so \
 && cp libtensorflow_framework.so.2.0.0 /usr/local/lib/
 # Enable detection of running in a container
 ENV DOTNET_RUNNING_IN_CONTAINER=true \
