@@ -85,13 +85,13 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
         
     new() = TensorGraph("")
         
-/// A tensor graph node consists of an operation with input and edges
+/// A tensor graph node consists of an operation with input and output edges
 and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     
     member val TensorGraph = graph  with get
 
-    member val Name = graph.GetName(name) with get 
+    member val Name = name with get 
 
     member val Inputs = inputs with get, set
 
@@ -99,20 +99,21 @@ and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) =
 
     interface INode<TF_Output[]> with
         member val Graph = graph :> IGraph with get,set
-        member x.Name = x.Name
-        member x.Output = op
+        member val Name = name
+        member val Op = op
 
-    new(graph: ITensorGraph, name:string, op:TF_Output, inputs: Edge list) = Node(graph, name, [|op|], inputs)
+    new(graph: ITensorGraph, op:TF_Output, inputs: Edge list) = Node(graph, c_api.TF_OperationName op.Oper, [|op|], inputs)
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
-and Edge(graph: ITensorGraph, name:string, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
+/// Each edge has one head node and data type with known or unknown shape.
+and Edge(graph: ITensorGraph, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
     inherit Api()
     
     member val TensorGraph = graph with get
 
     member val DataType = dt with get
    
-    member val Name = graph.GetName(name) with get
+    member val Name = head.Name with get
 
     member val Head:Node = head with get
     
@@ -130,8 +131,8 @@ and Edge(graph: ITensorGraph, name:string, head:Node, output:int, dt:TF_DataType
         member x._DataType = Convert.ToInt64(int dt)
 
 /// A tensor graph edge with partially known shape
-and Edge<'r when 'r :> Number>(graph:ITensorGraph, name:string, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
-    inherit Edge(graph, name, head, output, dt, shape)
+and Edge<'r when 'r :> Number>(graph:ITensorGraph, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
+    inherit Edge(graph, head, output, dt, shape)
 
     interface IEdge<'r> with
         member x.Rank = number<'r>

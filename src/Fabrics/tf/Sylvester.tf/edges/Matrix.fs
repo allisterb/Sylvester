@@ -12,8 +12,8 @@ open Sylvester.Tensors
 [<AutoOpen>]
 module Matrix =
     [<StructuredFormatDisplay("{Display}")>]
-    type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't : struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
-        inherit Tensor<two, 't>(graph, name, head, output, [|number<'dim0>.Val; number<'dim1>.Val|])
+    type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't : struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, head:Node, output:int) =
+        inherit Tensor<two, 't>(graph, head, output, [|number<'dim0>.Val; number<'dim1>.Val|])
         interface IMatrix
         member x.Dim0 = number<'dim0>
         member x.Dim1 = number<'dim1>
@@ -22,7 +22,8 @@ module Matrix =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val|]
-            new Matrix<'dim0, 'dim1, 't>(g, name, new Node(g, name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
+            let op = tf(g).Placeholder(dataType<'t>, shape, name)
+            new Matrix<'dim0, 'dim1, 't>(g, new Node(g, op, []), 0)
 
         static member (*) (l:'x, r:'y when 'x :> Matrix<'a, 'dim1, 't> and 'y :> Matrix<'dim1, 'b, 't>) = 
             let node = matmul l.Head r.Head

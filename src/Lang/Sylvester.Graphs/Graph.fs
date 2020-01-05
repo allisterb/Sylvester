@@ -27,7 +27,7 @@ and IGraph =
 and INode<'n> = 
     abstract member Graph:IGraph with get,set
     abstract member Name:string
-    abstract member Output:'n
+    abstract member Op:'n
 
 and IEdge = 
     inherit IUnknownShape

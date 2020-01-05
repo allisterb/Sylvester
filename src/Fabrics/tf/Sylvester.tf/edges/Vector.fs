@@ -17,8 +17,8 @@ open Sylvester.Tensors
 module Vector =
     
     [<StructuredFormatDisplay("{Display}")>]
-    type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, name:string, head:Node, output:int) =
-        inherit Tensor<one, 't>(graph, name, head, output, [|number<'dim0>.Val|])
+    type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>(graph:ITensorGraph, head:Node, output:int) =
+        inherit Tensor<one, 't>(graph, head, output, [|number<'dim0>.Val|])
         interface IVector
         member x.Dim0:'dim0 = number<'dim0>
         member x.Display = sprintf "Vector<%i>" x.Dim0.IntVal
@@ -27,4 +27,5 @@ module Vector =
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val|]
-            new Vector<'dim0, 't>(g, g.GetName name, new Node(g, g.GetName name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
+            let op = tf(g).Placeholder(dataType<'t>, shape, name) 
+            new Vector<'dim0, 't>(g, new Node(g, op, []), 0)

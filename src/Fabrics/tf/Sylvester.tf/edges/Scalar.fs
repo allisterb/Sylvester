@@ -18,11 +18,12 @@ module Scalar =
 
     [<StructuredFormatDisplay("<Scalar>")>]
     type Scalar<'t when 't: struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-        (graph:ITensorGraph, name:string, head:Node, output:int) = 
-        inherit Tensor<zero, 't>(graph, name, head, output, [|0L|])
+        (graph:ITensorGraph, head:Node, output:int) = 
+        inherit Tensor<zero, 't>(graph, head, output, [|0L|])
         interface IScalar
         
         new(name:string) = 
             let g = defaultGraph
             let shape = [|0L|]
-            new Scalar<'t>(g, g.GetName name, new Node(g, g.GetName name, tf(g).Placeholder(dataType<'t>, shape, name), []), 0)
+            let op = tf(g).Placeholder(dataType<'t>, shape, name)
+            new Scalar<'t>(g, new Node(g, op, []), 0)
