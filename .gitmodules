@@ -1,0 +1,3 @@
+[submodule "ext/protobuf.Text"]
+	path = ext/protobuf.Text
+	url = https://github.com/SciSharp/protobuf.Text.git
