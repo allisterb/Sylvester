@@ -19,7 +19,6 @@ type TFGraphTests() =
     [<Fact>]
     let ``Can import graph from file``() =
         Assert.True(File.Exists("graph1.pb"))
-        Assert.True(File.Exists("graph2.pb"))
         let (graph, _ops, status) = TF_Graph.Import("graph1.pb", c_api.TF_NewImportGraphDefOptions());
         Assert.Equal(TF_Code.TF_OK, tf_status.TF_GetCode(status))
         Assert.NotNull(graph)
@@ -28,5 +27,10 @@ type TFGraphTests() =
         let ops = Seq.map (fun op -> c_api.TF_OperationName op) _ops
         Assert.Contains("input", ops)
         Assert.Contains("final_result", ops)
+
+        let def = TF_Graph.Import("graph1.pb")
+        Assert.NotNull(def)
+        Assert.NotEmpty(def.Node)
+
 
       

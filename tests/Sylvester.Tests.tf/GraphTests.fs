@@ -12,7 +12,11 @@ open Sylvester.Collections
 open Sylvester.tf
 open Sylvester.Tests
 
+open Google.Protobuf
+open Google.Protobuf.Collections
+
 open TensorFlow
+
 
 type GraphTests() =
     inherit BaseTest()
@@ -53,5 +57,22 @@ type GraphTests() =
         ends x2
         let m5 = Mat<dim<200>, dim<5>>("m")
         Assert.Equal("m_2", m5.Name)
+
+    [<Fact>]
+    let ``Can export graph``() =
+        let g = TensorGraph<dim<6>, dim<1>>()
+        defaultGraph <- g
+        let m0 = Mat<dim<100>, dim<60>>("m")
+        let m1 = Mat<dim<100>, dim<60>>("m")
+        Assert.Equal("m_0", m0.Name)
+        Assert.Equal("m_1", m1.Name)
+        let sum0 = 
+            use x = scope "x"
+            m0 + m1
+        let def = g._Graph.ExportToGraphDef()
+        Assert.NotEmpty(def.Node)
+
+
+
 
         

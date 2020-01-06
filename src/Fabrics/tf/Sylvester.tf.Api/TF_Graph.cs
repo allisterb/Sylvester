@@ -85,6 +85,21 @@ namespace TensorFlow
 			}
 		}
 
+		public TF_Buffer ExportToGraphDefBuffer()
+		{
+			var buf = c_api.TF_NewBuffer();
+			var status = tf_status.TF_NewStatus();
+			c_api.TF_GraphToGraphDef(this, buf, status);
+			return buf;
+		}
+
+		public GraphDef ExportToGraphDef()
+		{
+			TF_Buffer b = this.ExportToGraphDefBuffer();
+			var stream = CodedInputStream.CreateWithLimits((UnmanagedMemoryStream)b, 256 * 1024 * 1024, 100);
+			return GraphDef.Parser.ParseFrom(stream);
+		}
+
 		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)
 		{
 			var b = new Buffer(buffer);
@@ -109,24 +124,12 @@ namespace TensorFlow
 			return graph;
 		}
 
-		public TF_Buffer Export()
-		{
-			var buf = c_api.TF_NewBuffer();
-			var status = tf_status.TF_NewStatus();
-			c_api.TF_GraphToGraphDef(this, buf, status);
-			return buf;
-		}
-
-		public GraphDef ToGraphDef()
-		{
-			TF_Buffer b = this.Export();
-			var stream = CodedInputStream.CreateWithLimits((UnmanagedMemoryStream)b, 250 * 1024 * 1024, 100);
-			return GraphDef.Parser.ParseFrom(stream);
-		}
-
 		public static TF_Graph Import(string filePath, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status) =>
 			Import(File.ReadAllBytes(filePath), options, out ops, out status);
 
+		public static GraphDef Import(string filePath) => GraphDef.Parser.ParseFrom(CodedInputStream.CreateWithLimits(File.OpenRead(filePath), 256 * 1024 * 1024, 100));
+
+		
 		#endregion
 
 		#region Fields
