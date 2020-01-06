@@ -8,9 +8,15 @@ using System.Linq;
 
 namespace TensorFlow
 {
-    public abstract class TF_Native : IDisposable
+    public abstract class TF_Native 
     {
-        public abstract void Dispose();
-        public bool IsDeleted { get; protected set; }
+        public abstract IntPtr NativePtr { get; }
+
+        public abstract bool OwnsNativeMemory { get; }
+
+        public abstract void Delete();
+
+        public bool IsDeleted => this.NativePtr == IntPtr.Zero;
+
     }
 }

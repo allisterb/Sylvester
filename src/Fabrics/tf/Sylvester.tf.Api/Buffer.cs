@@ -9,7 +9,7 @@ using TensorFlow.Delegates;
 
 namespace TensorFlow
 {
-    public unsafe class Buffer : TF_Native
+    public unsafe class Buffer
     {
         #region Constructors
         public Buffer(byte[] buffer)
@@ -55,17 +55,6 @@ namespace TensorFlow
                 MemoryHandle.Dispose();
                 this.Allocated = false;
             }
-        }
-
-        public override void Dispose()
-        {
-            if (!this.Allocated)
-            {
-                MemoryHandle.Dispose();
-                Allocated = false;
-            }
-            c_api.TF_DeleteBuffer(this);
-            this.IsDeleted = true;
         }
         #endregion
 

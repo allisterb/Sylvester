@@ -11,10 +11,26 @@ using System.Text;
 
 using System.Linq;
 
+using Google.Protobuf;
+using Tensorflow;
+
 namespace TensorFlow
 {
 	public unsafe partial class TF_Graph : TF_Native, ITensorFlowOps
 	{
+		#region Overriden members
+		public override IntPtr NativePtr => this.__Instance;
+		public override bool OwnsNativeMemory => this.__ownsNativeInstance;
+		public override void Delete()
+		{
+			if (!this.__ownsNativeInstance)
+			{
+				c_api.TF_DeleteGraph(this);
+				this.__Instance = IntPtr.Zero;
+			}
+		}
+		#endregion
+
 		#region Properties
 		public TF_Operation[] Dependencies { get; set; }
 
@@ -69,12 +85,6 @@ namespace TensorFlow
 			}
 		}
 
-		public override void Dispose()
-		{
-			c_api.TF_DeleteGraph(this);
-			this.IsDeleted = true;
-		}
-
 		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)
 		{
 			var b = new Buffer(buffer);
@@ -99,6 +109,21 @@ namespace TensorFlow
 			return graph;
 		}
 
+		public TF_Buffer Export()
+		{
+			var buf = c_api.TF_NewBuffer();
+			var status = tf_status.TF_NewStatus();
+			c_api.TF_GraphToGraphDef(this, buf, status);
+			return buf;
+		}
+
+		public GraphDef ToGraphDef()
+		{
+			TF_Buffer b = this.Export();
+			var stream = CodedInputStream.CreateWithLimits((UnmanagedMemoryStream)b, 250 * 1024 * 1024, 100);
+			return GraphDef.Parser.ParseFrom(stream);
+		}
+
 		public static TF_Graph Import(string filePath, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status) =>
 			Import(File.ReadAllBytes(filePath), options, out ops, out status);
 
@@ -108,5 +133,4 @@ namespace TensorFlow
 		Dictionary<string, int> ids = new Dictionary<string, int>();
 		#endregion
 	}
-
 }
