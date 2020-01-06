@@ -101,12 +101,8 @@ namespace TensorFlow
 			return GraphDef.Parser.ParseFrom(stream);
 		}
 
-		public void ExportToBinaryFile(string filePath)
-		{
-			ExportAsGraphDef().WriteTo(File.Open(filePath, FileMode.Create));
-		}
+		public void ExportToBinaryFile(string filePath) => ExportAsGraphDef().WriteTo(File.Open(filePath, FileMode.Create));
 
-		
 		public void ExportToTxtFile(string filePath) => File.WriteAllText(filePath, ExportAsGraphDef().ToText());
 
 		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)

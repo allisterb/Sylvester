@@ -31,6 +31,8 @@ type TFGraphTests() =
         let def = TF_Graph.Import("graph1.pb")
         Assert.NotNull(def)
         Assert.NotEmpty(def.Node)
+
+        graph.ExportToTxtFile("graph1.pbtxt")
         
 
 

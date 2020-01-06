@@ -44,11 +44,11 @@ type GraphTests() =
         Assert.Equal("m_0", m0.Name)
         Assert.Equal("m_1", m1.Name)
         let m2 = 
-            use x = scope "x"
+            use x = subscope "x"
             Mat<dim<100>, dim<60>>("m")
         Assert.Equal("x/m_0", m2.Name)
-        use x2 = scope "x2"
-        use x3 = scope "x3"
+        use x2 = subscope "x2"
+        use x3 = subscope "x3"
         let m3 = Mat<dim<20>, dim<5>>("m")
         Assert.Equal("x2/x3/m_0", m3.Name)
         ends x3
@@ -60,18 +60,18 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can export graph``() =
-        let g = TensorGraph<dim<6>, dim<1>>("G")
+        let g = TensorGraph<dim<6>, dim<1>>()
         defaultGraph <- g
         let m0 = Mat<dim<100>, dim<60>>("m")
         let m1 = Mat<dim<100>, dim<60>>("m")
-        Assert.Equal("G/m_0", m0.Name)
-        Assert.Equal("G/m_1", m1.Name)
+        Assert.Equal("m_0", m0.Name)
+        Assert.Equal("m_1", m1.Name)
         let sum0 = 
-            use x = scope "x"
+            use x = scope "MatrixOps"
             m0 + m1
         let def = g._Graph.ExportAsGraphDef()
         Assert.NotEmpty(def.Node)
-        let s = g._Graph.ExportToTxtFile("graph.pbtxt")
+        do g._Graph.ExportToTxtFile("graph.pbtxt")
         ()
         //do g._Graph.ExportToGraphDef("graph.pbtxt")
         
