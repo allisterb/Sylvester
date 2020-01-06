@@ -53,4 +53,8 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ext\protobuf.Text\src\protobuf.Text\protobuf.Text.csproj" />
+  </ItemGroup>
+
 </Project>

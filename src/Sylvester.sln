@@ -120,6 +120,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Packages", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.tf.Native.Linux", "Fabrics\tf\Sylvester.tf.Native.Linux\Sylvester.tf.Native.Linux.csproj", "{3BA68BFA-4F7B-4F8D-BA30-19C65B382254}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "protobuf.Text", "..\ext\protobuf.Text\src\protobuf.Text\protobuf.Text.csproj", "{4DB9C68D-2787-4B49-A95B-F948A00AB02F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -442,6 +444,18 @@ Global
 		{3BA68BFA-4F7B-4F8D-BA30-19C65B382254}.Release|x64.Build.0 = Release|Any CPU
 		{3BA68BFA-4F7B-4F8D-BA30-19C65B382254}.Release|x86.ActiveCfg = Release|Any CPU
 		{3BA68BFA-4F7B-4F8D-BA30-19C65B382254}.Release|x86.Build.0 = Release|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Debug|x64.Build.0 = Debug|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Debug|x86.Build.0 = Debug|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Release|x64.ActiveCfg = Release|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Release|x64.Build.0 = Release|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Release|x86.ActiveCfg = Release|Any CPU
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -481,6 +495,7 @@ Global
 		{5011FAC1-C79E-4EAF-8FE7-B8458927A29C} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
 		{0C96CB07-EC02-4E50-BE0F-F72365059DE9} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{3BA68BFA-4F7B-4F8D-BA30-19C65B382254} = {0C40457E-4586-422A-A161-3ADE8618354F}
+		{4DB9C68D-2787-4B49-A95B-F948A00AB02F} = {09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

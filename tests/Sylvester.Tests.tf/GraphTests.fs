@@ -60,17 +60,22 @@ type GraphTests() =
 
     [<Fact>]
     let ``Can export graph``() =
-        let g = TensorGraph<dim<6>, dim<1>>()
+        let g = TensorGraph<dim<6>, dim<1>>("G")
         defaultGraph <- g
         let m0 = Mat<dim<100>, dim<60>>("m")
         let m1 = Mat<dim<100>, dim<60>>("m")
-        Assert.Equal("m_0", m0.Name)
-        Assert.Equal("m_1", m1.Name)
+        Assert.Equal("G/m_0", m0.Name)
+        Assert.Equal("G/m_1", m1.Name)
         let sum0 = 
             use x = scope "x"
             m0 + m1
-        let def = g._Graph.ExportToGraphDef()
+        let def = g._Graph.ExportAsGraphDef()
         Assert.NotEmpty(def.Node)
+        let s = g._Graph.ExportToTxtFile("graph.pbtxt")
+        ()
+        //do g._Graph.ExportToGraphDef("graph.pbtxt")
+        
+        
 
 
 

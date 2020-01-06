@@ -12,6 +12,7 @@ using System.Text;
 using System.Linq;
 
 using Google.Protobuf;
+using Protobuf.Text;
 using Tensorflow;
 
 namespace TensorFlow
@@ -85,7 +86,7 @@ namespace TensorFlow
 			}
 		}
 
-		public TF_Buffer ExportToGraphDefBuffer()
+		public TF_Buffer ExportAsGraphDefBuffer()
 		{
 			var buf = c_api.TF_NewBuffer();
 			var status = tf_status.TF_NewStatus();
@@ -93,12 +94,20 @@ namespace TensorFlow
 			return buf;
 		}
 
-		public GraphDef ExportToGraphDef()
+		public GraphDef ExportAsGraphDef()
 		{
-			TF_Buffer b = this.ExportToGraphDefBuffer();
+			TF_Buffer b = this.ExportAsGraphDefBuffer();
 			var stream = CodedInputStream.CreateWithLimits((UnmanagedMemoryStream)b, 256 * 1024 * 1024, 100);
 			return GraphDef.Parser.ParseFrom(stream);
 		}
+
+		public void ExportToBinaryFile(string filePath)
+		{
+			ExportAsGraphDef().WriteTo(File.Open(filePath, FileMode.Create));
+		}
+
+		
+		public void ExportToTxtFile(string filePath) => File.WriteAllText(filePath, ExportAsGraphDef().ToText());
 
 		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)
 		{
