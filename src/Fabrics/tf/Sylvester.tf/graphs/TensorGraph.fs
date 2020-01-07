@@ -3,6 +3,7 @@
 open System
 open System.Collections.Generic;
 open System.Runtime.CompilerServices
+open System.Linq
 
 open TensorFlow
 
@@ -50,26 +51,25 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     member internal x._Graph = tfGraph
 
+    member internal x.PlaceHolders = seq {for n in x.Nodes.Values do yield n.Op} |> Seq.concat |> Seq.filter (fun n -> TF_Graph.GetOpType(n) = "Placeholder")
+
     member x.NameScope with get() = tfGraph.NameScope and set(value) = tfGraph.SetNameScope(value)
     
     /// Add an edge (tensor) to the graph
     member x.AddEdge(e:Edge) =
-        if (e.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then 
-            failwith "This tensor does not belong to this graph's namescope."
-        else if x.Edges.ContainsKey(e.Name) then
-                failwithf "The edge with name %s already exists in this graph." e.Name
-            else
-                x.Edges.Add(e.Name, e)
-                do if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
+        do if (e.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then failwith "This tensor does not belong to this graph's namescope."
+        do if x.Edges.ContainsKey(e.Name) then failwithf "The edge with name %s already exists in this graph." e.Name
+        x.Edges.Add(e.Name, e)
+        do if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
                 
     /// Add a node (operation) to the graph
     member x.AddNode(n:Node) =
         do if (n.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
-        if x.Nodes.ContainsKey(n.Name) then
-            failwithf "The node with name %s already exists in this graph." n.Name
-        else        
-            x.Nodes.Add(n.Name, n)
-            Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.AddEdge(e) |> ignore) n.Inputs
+        do if x.Nodes.ContainsKey(n.Name) then failwithf "The node with name %s already exists in this graph." n.Name                
+        let placeholders = Seq.filter (fun op -> TF_Graph.GetOpType(op) = "Placeholder") n.Op in 
+            if Seq.length placeholders > 0 && Seq.length x.PlaceHolders = x.Inputs.IntLength then failwithf "Cannot add input node %s as this graph already contains %i input(s)." n.Name x.Inputs.IntLength  
+        x.Nodes.Add(n.Name, n)
+        Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.AddEdge(e) |> ignore) n.Inputs
                    
     member x.IsEmpty = x.NameScope = "_"
 

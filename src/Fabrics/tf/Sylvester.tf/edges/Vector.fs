@@ -1,16 +1,9 @@
 ﻿namespace Sylvester.tf
 
 open System
-open System.Collections.Generic;
-open System.Runtime.CompilerServices
 
-open TensorFlow
-
-open Sylvester
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
-open Sylvester.Collections
-open Sylvester.Graphs
 open Sylvester.Tensors
 
 [<AutoOpen>]
@@ -23,7 +16,6 @@ module Vector =
         member x.Dim0:'dim0 = number<'dim0>
         member x.Display = sprintf "Vector<%i>" x.Dim0.IntVal
         
-
         new(name:string) = 
             let g = defaultGraph
             let shape = [|number<'dim0>.Val|]

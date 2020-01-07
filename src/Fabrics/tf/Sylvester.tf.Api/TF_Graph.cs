@@ -136,7 +136,7 @@ namespace TensorFlow
 
 		public static GraphDef Import(string filePath) => GraphDef.Parser.ParseFrom(CodedInputStream.CreateWithLimits(File.OpenRead(filePath), 256 * 1024 * 1024, 100));
 
-		
+		public static string GetOpType(TF_Output op) => c_api.TF_OperationOpType(op.Oper);
 		#endregion
 
 		#region Fields
