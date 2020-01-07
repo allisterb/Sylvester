@@ -33,7 +33,7 @@ and IEdge =
     inherit IUnknownShape
     abstract member Graph:IGraph with get,set
     abstract member Name:string
-    abstract member _DataType:int64
+    abstract member DataType:int64
 
 and IEdge<'n when 'n :> Number> = 
         inherit IEdge

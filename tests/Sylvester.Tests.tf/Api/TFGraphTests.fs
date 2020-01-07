@@ -32,7 +32,7 @@ type TFGraphTests() =
         Assert.NotNull(def)
         Assert.NotEmpty(def.Node)
 
-        graph.ExportToTxtFile("graph1.pbtxt")
+        graph.Export("graph1.pbtxt")
         
 
 

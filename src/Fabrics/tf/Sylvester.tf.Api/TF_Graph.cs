@@ -86,7 +86,7 @@ namespace TensorFlow
 			}
 		}
 
-		public TF_Buffer ExportAsGraphDefBuffer()
+		internal TF_Buffer ToGraphDefBuffer()
 		{
 			var buf = c_api.TF_NewBuffer();
 			var status = tf_status.TF_NewStatus();
@@ -94,16 +94,18 @@ namespace TensorFlow
 			return buf;
 		}
 
-		public GraphDef ExportAsGraphDef()
+		public GraphDef ToGraphDef()
 		{
-			TF_Buffer b = this.ExportAsGraphDefBuffer();
+			TF_Buffer b = this.ToGraphDefBuffer();
 			var stream = CodedInputStream.CreateWithLimits((UnmanagedMemoryStream)b, 256 * 1024 * 1024, 100);
-			return GraphDef.Parser.ParseFrom(stream);
+			var def =  GraphDef.Parser.ParseFrom(stream);
+			b.Delete();
+			return def;
 		}
 
-		public void ExportToBinaryFile(string filePath) => ExportAsGraphDef().WriteTo(File.Open(filePath, FileMode.Create));
+		public void ExportToBinaryFile(string filePath) => ToGraphDef().WriteTo(File.Open(filePath, FileMode.Create));
 
-		public void ExportToTxtFile(string filePath) => File.WriteAllText(filePath, ExportAsGraphDef().ToText());
+		public void Export(string filePath) => File.WriteAllText(filePath, ToGraphDef().ToText());
 
 		public static TF_Graph Import(byte[] buffer, TF_ImportGraphDefOptions options, out List<TF_Operation> ops, out TF_Status status)
 		{

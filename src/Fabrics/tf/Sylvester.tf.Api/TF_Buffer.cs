@@ -29,15 +29,13 @@ namespace TensorFlow
         #region Operators
         public static explicit operator byte[](TF_Buffer b)
         {
-            
             if (b.Length == 0UL)
             {
                 return new byte[0];
             }
             else
             {
-                byte[] arr = new byte[b.Length];
-                
+                byte[] arr = new byte[b.Length];                
                 Marshal.Copy(b.Data, arr, 0, checked(Convert.ToInt32(b.Length)));
                 return arr;
             }

@@ -22,6 +22,7 @@ type ITensorGraph =
     abstract member Ops:ITensorFlowOps
     abstract member Add: Edge -> unit
     abstract member Add: Node -> unit
+    abstract member Export:string->unit
     
 /// A graph of tensor operations with a known number of inputs and outputs.
 and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string) = 
@@ -82,6 +83,7 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
         member x.Ops = tfGraph :> ITensorFlowOps
         member x.Add n = x.AddNode(n)
         member x.Add e = x.AddEdge(e)
+        member x.Export path = tfGraph.Export path
         
     new() = TensorGraph("")
         
@@ -128,7 +130,7 @@ and Edge(graph: ITensorGraph, head:Node, output:int, dt:TF_DataType, ?shape:int6
     interface IEdge with
         member val Graph = graph :> IGraph with get,set
         member x.Name = x.Name
-        member x._DataType = Convert.ToInt64(int dt)
+        member x.DataType = Convert.ToInt64(int dt)
 
 /// A tensor graph edge with partially known shape
 and Edge<'r when 'r :> Number>(graph:ITensorGraph, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
@@ -177,3 +179,49 @@ module TensorGraph =
     let mutable defaultGraph = emptyGraph
 
     let resetDefaultGraph() = defaultGraph <- emptyGraph
+
+[<AutoOpen>]
+module Dimensions = 
+    type zero = dim<0>
+
+    type one = dim<1>
+
+    type two = dim<2>
+
+    type three = dim<3>
+
+    type four = dim<4>
+
+    type five = dim<5>
+
+    type six = dim<6>
+
+    type seven = dim<7>
+
+    type eight = dim<8>
+
+    type nine = dim<9>
+
+    type ten = dim<10>
+
+    let zero = new zero()
+
+    let one = new one()
+
+    let two = new two()
+
+    let three = new three()
+
+    let four = new four()
+
+    let five = new five()
+
+    let six = new six()
+
+    let seven = new seven()
+
+    let eight = new eight()
+
+    let nine = new nine()
+
+    let ten = new ten()

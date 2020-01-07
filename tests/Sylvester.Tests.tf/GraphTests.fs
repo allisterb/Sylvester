@@ -1,6 +1,7 @@
 ﻿namespace Sylvester.Tests.tf
 
 open System
+open System.IO
 open System.Linq
 
 open Xunit
@@ -69,9 +70,9 @@ type GraphTests() =
         let sum0 = 
             use x = scope "MatrixOps"
             m0 + m1
-        let def = g._Graph.ExportAsGraphDef()
+        let def = g._Graph.ToGraphDef()
         Assert.NotEmpty(def.Node)
-        do g._Graph.ExportToTxtFile("graph.pbtxt")
+        do g._Graph.Export "graph.pbtxt"
         ()
         //do g._Graph.ExportToGraphDef("graph.pbtxt")
         
