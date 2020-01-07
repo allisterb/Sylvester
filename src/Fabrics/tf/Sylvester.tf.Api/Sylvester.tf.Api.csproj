@@ -5,7 +5,7 @@
     <Platforms>AnyCPU;x64</Platforms>
     <PackageId>tf.NET</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.2.3</Version>
+    <Version>0.2.3.1</Version>
     <Product>tf.NET</Product>
     <Authors>Allister Beharry</Authors>
     <Description>.NET bindings for the TensorFlow 2 C API. These are low-level bindings suitable for creating high-level idiomatic interfaces to TensorFlow 2 in languages like C# and F#.</Description>
@@ -14,9 +14,11 @@
     <PackageIconUrl />
     <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf/Sylvester.tf.Api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
-    <PackageTags>tensorflow tf ml fsharp</PackageTags>
-    <PackageReleaseNotes>Improve namescope functions.</PackageReleaseNotes>
+    <PackageTags>tensorflow tf ml fsharp csharp dotnet</PackageTags>
+    <PackageReleaseNotes>Add export functions.</PackageReleaseNotes>
     <Copyright>Copyright (c) 2019 2020 by Allister Beharry. TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.</Copyright>
+    <AssemblyVersion>0.2.3.1</AssemblyVersion>
+    <FileVersion>0.2.3.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
