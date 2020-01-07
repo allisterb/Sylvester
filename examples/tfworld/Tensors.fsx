@@ -5,7 +5,7 @@ open Sylvester.Arithmetic.N10
 open Sylvester.tf
 
 // Create a new tensor graph with ten inputs and one output and set as default graph for this program scope
-let g = TensorGraph<dim<10>, dim<1>>()
+let g = TensorGraph<dim<2>, dim<1>>()
 defaultGraph <- g
 // The default graph is typed according to how many inputs and output are specified
 
