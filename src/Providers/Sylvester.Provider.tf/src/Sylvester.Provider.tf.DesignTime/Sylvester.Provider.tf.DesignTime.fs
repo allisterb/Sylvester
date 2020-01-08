@@ -6,40 +6,52 @@ open System.IO
 open System.Reflection
 open FSharp.Quotations
 open FSharp.Core.CompilerServices
-open MyNamespace
+
 open ProviderImplementation
 open ProviderImplementation.ProvidedTypes
 
-// Put any utility helpers here
-[<AutoOpen>]
-module internal Helpers =
-    let x = 1
+open Sylvester.Arithmetic
+open Sylvester.Arithmetic.N10
+open Sylvester.tf
+open TensorFlow
 
 [<TypeProvider>]
-type BasicErasingProvider (config : TypeProviderConfig) as this =
+type SyntaxProvider (config : TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces (config, assemblyReplacementMap=[("Sylvester.Provider.tf.DesignTime", "Sylvester.Provider.tf.Runtime")], addDefaultProbingLocation=true)
 
-    let ns = "MyNamespace"
+    let ns = "Sylvester.tf"
     let asm = Assembly.GetExecutingAssembly()
 
-    // check we contain a copy of runtime files, and are not referencing the runtime DLL
-    do assert (typeof<DataSource>.Assembly.GetName().Name = asm.GetName().Name)  
+    let Vec() =
+        let V = ProvidedTypeDefinition(asm, ns, "Vec", Some typedefof<Vector<_,_>>)
+        
+        let helpText = 
+            """<summary>Vector with type-level dimension constraints.</summary>
+           <param name='Length'>The length of the vector.</param>
+           <param name='Type'>The datatype of the vector.</param>
+            """
+        V.AddXmlDoc helpText
 
-    let createTypes () =
-        let myType = ProvidedTypeDefinition(asm, ns, "MyType", Some typeof<obj>)
+        let lengthParam = ProvidedStaticParameter("Length", typeof<int>)
+        let typeParam = ProvidedStaticParameter("Type", typeof<int>)
 
-        let ctor = ProvidedConstructor([], invokeCode = fun args -> <@@ "My internal state" :> obj @@>)
-        myType.AddMember(ctor)
-
-        let ctor2 = ProvidedConstructor([ProvidedParameter("InnerState", typeof<string>)], invokeCode = fun args -> <@@ (%%(args.[0]):string) :> obj @@>)
-        myType.AddMember(ctor2)
-
-        let innerState = ProvidedProperty("InnerState", typeof<string>, getterCode = fun args -> <@@ (%%(args.[0]) :> obj) :?> string @@>)
-        myType.AddMember(innerState)
-
-        let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
-        myType.AddMember(meth)
-
+        do V.DefineStaticParameters([lengthParam; typeParam], fun name args ->
+            let n = args.[0] :?> int
+            let dt = args.[1] :?> int
+            let N = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
+            let vec = typedefof<Vector<_,_>>.MakeGenericType(N, dt |> dataType)
+            let vecExpr = Expr.Value vec
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some vec, false)
+            provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (enum<TF_DataType>(dt).ToString()) (n))   
+    
+            let ctor1 = ProvidedConstructor([ ProvidedParameter("name",typeof<string>) ], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance((%%(vecExpr) : Type), (%%(args.[0]) : string)) @@>)
+            
+            provided.AddMember(ctor1)
+           
+            provided
+        )
+ 
         let nameOf =
             let param = ProvidedParameter("p", typeof<Expr<int>>)
             param.AddCustomAttribute {
@@ -54,49 +66,12 @@ type BasicErasingProvider (config : TypeProviderConfig) as this =
                     | Microsoft.FSharp.Quotations.Patterns.ValueWithName (_, _, n) -> n
                     | e -> failwithf "Invalid quotation argument (expected ValueWithName): %A" e
                 @@>)
-        myType.AddMember(nameOf)
+       
+        V.AddMember(nameOf)
+        V
 
-        [myType]
+    do this.AddNamespace(ns, [Vec()])
 
-    do
-        this.AddNamespace(ns, createTypes())
-
-[<TypeProvider>]
-type BasicGenerativeProvider (config : TypeProviderConfig) as this =
-    inherit TypeProviderForNamespaces (config, assemblyReplacementMap=[("Sylvester.Provider.tf.DesignTime", "Sylvester.Provider.tf.Runtime")])
-
-    let ns = "Sylvester.Provider.tf"
-    let asm = Assembly.GetExecutingAssembly()
-
-    // check we contain a copy of runtime files, and are not referencing the runtime DLL
-    do assert (typeof<DataSource>.Assembly.GetName().Name = asm.GetName().Name)  
-
-    let createType typeName (count:int) =
-        let asm = ProvidedAssembly()
-        let myType = ProvidedTypeDefinition(asm, ns, typeName, Some typeof<obj>, isErased=false)
-
-        let ctor = ProvidedConstructor([], invokeCode = fun args -> <@@ "My internal state" :> obj @@>)
-        myType.AddMember(ctor)
-
-        let ctor2 = ProvidedConstructor([ProvidedParameter("InnerState", typeof<string>)], invokeCode = fun args -> <@@ (%%(args.[1]):string) :> obj @@>)
-        myType.AddMember(ctor2)
-
-        for i in 1 .. count do 
-            let prop = ProvidedProperty("Property" + string i, typeof<int>, getterCode = fun args -> <@@ i @@>)
-            myType.AddMember(prop)
-
-        let meth = ProvidedMethod("StaticMethod", [], typeof<DataSource>, isStatic=true, invokeCode = (fun args -> Expr.Value(null, typeof<DataSource>)))
-        myType.AddMember(meth)
-        asm.AddTypes [ myType ]
-
-        myType
-
-    let myParamType = 
-        let t = ProvidedTypeDefinition(asm, ns, "GenerativeProvider", Some typeof<obj>, isErased=false)
-        t.DefineStaticParameters( [ProvidedStaticParameter("Count", typeof<int>)], fun typeName args -> createType typeName (unbox<int> args.[0]))
-        t
-    do
-        this.AddNamespace(ns, [myParamType])
 
 
 [<TypeProviderAssembly>]

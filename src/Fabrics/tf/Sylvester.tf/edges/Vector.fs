@@ -16,8 +16,8 @@ module Vector =
         member x.Dim0:'dim0 = number<'dim0>
         member x.Display = sprintf "Vector<%i>" x.Dim0.IntVal
         
-        new(name:string) = 
-            let g = defaultGraph
+        new(name:string, ?graph:ITensorGraph) = 
+            let g = defaultArg graph defaultGraph
             let shape = [|number<'dim0>.Val|]
             let op = tf(g).Placeholder(dataType<'t>, shape, name) 
             new Vector<'dim0, 't>(g, new Node(g, op, []), 0)

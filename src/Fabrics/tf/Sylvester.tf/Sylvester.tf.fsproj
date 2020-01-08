@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>0.2.1</Version>
+    <Version>0.2.2</Version>
     <Description>High-level functional and verifiable TensorFlow 2.0 API.</Description>
     <Product>Sylvester</Product>
     <Authors>Allister Beharry</Authors>
@@ -16,8 +16,8 @@
     <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf</PackageProjectUrl>
     <PackageTags>f# fsharp tensorflow type-level math numeric</PackageTags>
     <PackageReleaseNotes>Add export functions</PackageReleaseNotes>
-    <AssemblyVersion>0.2.1.1</AssemblyVersion>
-    <FileVersion>0.2.1.1</FileVersion>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <FileVersion>0.2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

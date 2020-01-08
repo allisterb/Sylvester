@@ -14,8 +14,8 @@ module Scalar =
         inherit Tensor<zero, 't>(graph, head, output, [|0L|])
         interface IScalar
         
-        new(name:string) = 
-            let g = defaultGraph
+        new(name:string, ?graph:ITensorGraph) = 
+            let g = defaultArg graph defaultGraph
             let shape = [|0L|]
             let op = tf(g).Placeholder(dataType<'t>, shape, name)
             new Scalar<'t>(g, new Node(g, op, []), 0)

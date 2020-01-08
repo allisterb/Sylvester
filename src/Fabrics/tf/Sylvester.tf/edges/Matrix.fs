@@ -19,8 +19,8 @@ module Matrix =
         member x.Dim1 = number<'dim1>
         member x.Display = sprintf "Matrix<%i, %i>" x.Dim0.IntVal x.Dim1.IntVal
         
-        new(name:string) = 
-            let g = defaultGraph
+        new(name:string, ?graph:ITensorGraph) = 
+            let g = defaultArg graph defaultGraph
             let shape = [|number<'dim0>.Val; number<'dim1>.Val|]
             let op = tf(g).Placeholder(dataType<'t>, shape, name)
             new Matrix<'dim0, 'dim1, 't>(g, new Node(g, op, []), 0)
@@ -28,9 +28,4 @@ module Matrix =
         static member (*) (l:'x, r:'y when 'x :> Matrix<'a, 'dim1, 't> and 'y :> Matrix<'dim1, 'b, 't>) = 
             let node = matmul l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<Matrix<'a, 'b, 't>>, ([|defaultGraph :> obj; node :> obj; 0 :> obj|])) :?> Matrix<'a, 'b, 't>
-
-    
-    type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'dim0, 'dim1, 't>
-
-    type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Mat<'dim0, 'dim1, float32>
+            Activator.CreateInstance (typeof<Matrix<'a, 'b, 't>>, ([|l :> obj; node :> obj; 0 :> obj|])) :?> Matrix<'a, 'b, 't>

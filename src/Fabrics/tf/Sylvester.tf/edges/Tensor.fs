@@ -21,8 +21,8 @@ module Tensor =
         inherit Edge(graph, head, output, dataType<'t>, defaultArg shape null)
         do graph.Add this
 
-        new(name:string, ?shape:int64[]) = 
-            let g = defaultGraph
+        new(name:string, ?shape:int64[], ?graph: ITensorGraph) = 
+            let g = defaultArg graph defaultGraph
             let op = tf(g).Placeholder(dataType<'t>, defaultArg shape null, name)
             new Tensor<'t>(g, new Node(g, op, []), 0, defaultArg shape null)
             
@@ -35,8 +35,8 @@ module Tensor =
 
         member x.Rank = number<'r>
 
-        new(name:string, ?shape:int64[]) = 
-            let g = defaultGraph
+        new(name:string, ?shape:int64[], ?graph:ITensorGraph) = 
+            let g = defaultArg graph defaultGraph
             let op = tf(g).Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L), name)
             new Tensor<'r, 't>(g, new Node(g, op, []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))
     
@@ -44,11 +44,11 @@ module Tensor =
         static member (+) (l:'x, r:'x when 'x :> Tensor<'r, 't>) =  
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|defaultGraph :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|l :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         static member (-) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|defaultGraph :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            Activator.CreateInstance (typeof<'x>, ([|l :> obj; node :> obj; 0 :> obj|])) :?> 'x
 
         
