@@ -1,43 +1,60 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
 	ProjectSection(SolutionItems) = preProject
 		paket.dependencies = paket.dependencies
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Provider.tf.Runtime", "src\Sylvester.Provider.tf.Runtime\Sylvester.Provider.tf.Runtime.fsproj", "{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.tf.Runtime", "src\Sylvester.Provider.tf.Runtime\Sylvester.Provider.tf.Runtime.fsproj", "{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Provider.tf.DesignTime", "src\Sylvester.Provider.tf.DesignTime\Sylvester.Provider.tf.DesignTime.fsproj", "{DBF9117D-3686-4C1A-916E-9FE31EB95735}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.tf.DesignTime", "src\Sylvester.Provider.tf.DesignTime\Sylvester.Provider.tf.DesignTime.fsproj", "{DBF9117D-3686-4C1A-916E-9FE31EB95735}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ED8079DD-2B06-4030-9F0F-DC548F98E1C4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Provider.tf.Tests", "tests\Sylvester.Provider.tf.Tests\Sylvester.Provider.tf.Tests.fsproj", "{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Provider.tf.Tests", "tests\Sylvester.Provider.tf.Tests\Sylvester.Provider.tf.Tests.fsproj", "{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Debug|Any CPU.Build.0 = Debug|x64
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Debug|x64.ActiveCfg = Debug|x64
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Debug|x64.Build.0 = Debug|x64
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Release|Any CPU.ActiveCfg = Release|x64
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Release|Any CPU.Build.0 = Release|x64
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Release|x64.ActiveCfg = Release|x64
+		{E8FD4545-EAC9-4E21-9B3B-6A2A1B4865E5}.Release|x64.Build.0 = Release|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Debug|Any CPU.Build.0 = Debug|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Debug|x64.ActiveCfg = Debug|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Debug|x64.Build.0 = Debug|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Release|Any CPU.ActiveCfg = Release|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Release|Any CPU.Build.0 = Release|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Release|x64.ActiveCfg = Release|x64
+		{DBF9117D-3686-4C1A-916E-9FE31EB95735}.Release|x64.Build.0 = Release|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Debug|Any CPU.Build.0 = Debug|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Debug|x64.ActiveCfg = Debug|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Debug|x64.Build.0 = Debug|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Release|Any CPU.ActiveCfg = Release|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Release|Any CPU.Build.0 = Release|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Release|x64.ActiveCfg = Release|x64
+		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B0B03D40-5ADD-46E0-AEB9-99D98DF87E43} = {ED8079DD-2B06-4030-9F0F-DC548F98E1C4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {66FD9499-B713-4DE7-81FE-707D6F7CC6E7}
 	EndGlobalSection
 EndGlobal

@@ -1,7 +1,6 @@
 namespace Sylvester.tf
 
 open System
-
 open TensorFlow
 
 // Put the TypeProviderAssemblyAttribute in the runtime DLL, pointing to the design-time DLL

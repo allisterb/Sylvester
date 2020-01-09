@@ -23,7 +23,7 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
     let asm = Assembly.GetExecutingAssembly()
 
     let Vec() =
-        let V = ProvidedTypeDefinition(asm, ns, "Vec", Some typedefof<Vector<_,_>>)
+        let V = ProvidedTypeDefinition(asm, ns, "Vec", Some typeof<Number>)
         
         let helpText = 
             """<summary>Vector with type-level dimension constraints.</summary>
@@ -39,15 +39,17 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
             let n = args.[0] :?> int
             let dt = args.[1] :?> int
             let N = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
-            let vec = typedefof<Vector<_,_>>.MakeGenericType(N, dt |> dataType)
-            let vecExpr = Expr.Value vec
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some vec, false)
-            provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (enum<TF_DataType>(dt).ToString()) (n))   
-    
-            let ctor1 = ProvidedConstructor([ ProvidedParameter("name",typeof<string>) ], invokeCode = fun args -> 
-                <@@ Activator.CreateInstance((%%(vecExpr) : Type), (%%(args.[0]) : string)) @@>)
+            //let vecType = V.MakeGenericType(N, dt |> dataType)
+            //let vecExpr =  Expr.Value vecType
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some N, false)
             
-            provided.AddMember(ctor1)
+            //provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (enum<TF_DataType>(dt).ToString()) (n))   
+            
+    
+            //let ctor1 = ProvidedConstructor([ ProvidedParameter("name",typeof<string>) ], invokeCode = fun args -> 
+              //  <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), typeof<int>), (%%(args.[0]) : string)) @@>)
+            
+            //provided.AddMember(ctor1)
            
             provided
         )

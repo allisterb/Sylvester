@@ -11,6 +11,7 @@
     <FileVersion>0.2.0.0</FileVersion>
     <PackageId>Sylvester.tf.Syntax</PackageId>
     <Version>0.2.0</Version>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
