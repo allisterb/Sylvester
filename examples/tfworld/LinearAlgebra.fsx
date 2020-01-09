@@ -24,4 +24,4 @@
 
 open Sylvester.tf
 
-let x = Vec<12, INT8>("FOO")
+let x = new Vec<12>("fpp")

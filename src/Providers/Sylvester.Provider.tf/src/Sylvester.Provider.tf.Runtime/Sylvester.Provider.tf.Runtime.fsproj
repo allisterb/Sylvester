@@ -38,15 +38,19 @@
     <MSBuild Projects="..\Sylvester.Provider.tf.DesignTime\Sylvester.Provider.tf.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=net45" />
   </Target>
   <Target Name="AfterBuild">
-    <CreateItem Include="..\Sylvester.Provider.tf.DesignTime\bin\$(Configuration)\netcoreapp3.1\*.dll;..\Sylvester.Provider.tf.DesignTime\bin\$(Configuration)\netcoreapp3.1\*.pdb">
+   
+    <!-- Place the net45 design-time DLLs alongside the runtime DLL for loading by legacy F# toolchains -->
+    <Copy SourceFiles="..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\net45\Sylvester.Provider.tf.DesignTime.dll" DestinationFolder="$(OutputPath)" Condition="'$(TargetFramework)' == 'net45'" />
+
+    <CreateItem Include="..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\netcoreapp3.1\*.dll;..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\netcoreapp3.1\*.pdb">
       <Output TaskParameter="Include" ItemName="DesignTimeBinaries1" />
     </CreateItem>
     <Copy SourceFiles="@(DesignTimeBinaries1)" DestinationFolder="$(OutputPath)/../typeproviders/fsharp41/netcoreapp3.1" />
-    <CreateItem Include="..\Sylvester.Provider.tf.DesignTime\bin\$(Configuration)\net45\*.dll;..\Sylvester.Provider.tf.DesignTime\bin\$(Configuration)\net45\*.pdb">
+    <CreateItem Include="..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\net45\*.dll;..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\net45\*.pdb">
       <Output TaskParameter="Include" ItemName="DesignTimeBinaries2" />
     </CreateItem>
     <Copy SourceFiles="@(DesignTimeBinaries2)" DestinationFolder="$(OutputPath)/../typeproviders/fsharp41/net45" />
-    <CreateItem Include="..\Sylvester.Provider.tf.DesignTime\bin\$(Configuration)\netstandard2.0\*.dll;..\Sylvester.Provider.tf.DesignTime\bin\$(Configuration)\netstandard2.0\*.pdb">
+    <CreateItem Include="..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\netstandard2.0\*.dll;..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\netstandard2.0\*.pdb">
       <Output TaskParameter="Include" ItemName="DesignTimeBinaries3" />
     </CreateItem>
     <Copy SourceFiles="@(DesignTimeBinaries3)" DestinationFolder="$(OutputPath)/../typeproviders/fsharp41/netstandard2.0" />

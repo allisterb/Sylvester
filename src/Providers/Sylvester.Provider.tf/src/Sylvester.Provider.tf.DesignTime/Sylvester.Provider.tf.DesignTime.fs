@@ -23,33 +23,36 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
     let asm = Assembly.GetExecutingAssembly()
 
     let Vec() =
-        let V = ProvidedTypeDefinition(asm, ns, "Vec", Some typeof<Number>)
+        let V = ProvidedTypeDefinition(asm, ns, "Vec", Some typeof<Edge>)
         
         let helpText = 
-            """<summary>Vector with type-level dimension constraints.</summary>
+            """<summary>TensorFlow vector with type-level dimension constraints.</summary>
            <param name='Length'>The length of the vector.</param>
            <param name='Type'>The datatype of the vector.</param>
             """
         V.AddXmlDoc helpText
 
         let lengthParam = ProvidedStaticParameter("Length", typeof<int>)
-        let typeParam = ProvidedStaticParameter("Type", typeof<int>)
+        let typeParam = ProvidedStaticParameter("Type", typeof<int>, FLOAT)
 
         do V.DefineStaticParameters([lengthParam; typeParam], fun name args ->
             let n = args.[0] :?> int
             let dt = args.[1] :?> int
             let N = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
-            //let vecType = V.MakeGenericType(N, dt |> dataType)
-            //let vecExpr =  Expr.Value vecType
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some N, false)
+            let vec = typedefof<Vector<_,_>>.MakeGenericType(N, dt |> dataType)
+            let vecExpr =   vec |> Expr.Value 
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some vec, false)
             
-            //provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (enum<TF_DataType>(dt).ToString()) (n))   
-            
+            provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (enum<TF_DataType>(dt).ToString()) (n))   
+            //
     
             //let ctor1 = ProvidedConstructor([ ProvidedParameter("name",typeof<string>) ], invokeCode = fun args -> 
-              //  <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), typeof<int>), (%%(args.[0]) : string)) @@>)
+            //    <@@ Activator.CreateInstance((%%(vecExpr) : Type), typeof<int>), (%%(args.[0]) : string) @@>)
+
+            let ctor1 = ProvidedConstructor([ ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
+                    <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), (%%(args.[0]) : string)) @@>)
             
-            //provided.AddMember(ctor1)
+            provided.AddMember(ctor1)
            
             provided
         )
