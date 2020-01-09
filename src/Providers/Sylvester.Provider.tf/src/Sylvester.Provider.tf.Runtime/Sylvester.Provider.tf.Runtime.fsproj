@@ -31,6 +31,9 @@
     <!-- Be explicit about the version of FSharp.Core since we mention it in the manual nuget package spec -->
     <PackageReference Include="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Fabrics\tf\Sylvester.tf\Sylvester.tf.fsproj" />
+  </ItemGroup>
   <Target Name="BeforeBuild">
     <MSBuild Projects="..\Sylvester.Provider.tf.DesignTime\Sylvester.Provider.tf.DesignTime.fsproj" Targets="Restore" />
     <MSBuild Projects="..\Sylvester.Provider.tf.DesignTime\Sylvester.Provider.tf.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=netcoreapp3.1" />

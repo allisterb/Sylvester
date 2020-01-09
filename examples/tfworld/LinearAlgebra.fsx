@@ -21,7 +21,8 @@
 //#r ".\\..\\..\\src\\Providers\\Sylvester.Provider.Tensors\\src\\Sylvester.Provider.Tensors.Runtime\\bin\\Release\\netstandard2.0\\Sylvester.Provider.Tensors.Runtime.dll"
 //#r ".\\..\\..\\src\\Providers\\Sylvester.Provider.NDArray\\src\\Sylvester.Provider.NDArray.Runtime\\bin\\Release\\netstandard2.0\\Sylvester.Provider.NDArray.Runtime.dll"
 
-
+open Sylvester.Arithmetic
 open Sylvester.tf
 
+defaultGraph <- TensorGraph<n<1>, n<2>>()
 let x = new Vec<12>("fpp")

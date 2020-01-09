@@ -14,7 +14,7 @@ module Vector =
         inherit Tensor<one, 't>(graph, head, output, [|number<'dim0>.Val|])
         interface IVector
         member x.Dim0:'dim0 = number<'dim0>
-        member x.Display = sprintf "Vector<%i>" x.Dim0.IntVal
+        member x.Display = sprintf "Vector<%i, %s>" (x.Dim0.IntVal) (dataType<'t>.ToString())
         
         new(name:string, ?graph:ITensorGraph) = 
             let g = defaultArg graph defaultGraph

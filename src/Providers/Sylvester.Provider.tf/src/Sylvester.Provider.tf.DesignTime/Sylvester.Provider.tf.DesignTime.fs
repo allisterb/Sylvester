@@ -49,8 +49,8 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
             //let ctor1 = ProvidedConstructor([ ProvidedParameter("name",typeof<string>) ], invokeCode = fun args -> 
             //    <@@ Activator.CreateInstance((%%(vecExpr) : Type), typeof<int>), (%%(args.[0]) : string) @@>)
 
-            let ctor1 = ProvidedConstructor([ ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
-                    <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), (%%(args.[0]) : string)) @@>)
+            let ctor1 = ProvidedConstructor([ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
+                    <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), (%%(args.[0]) : string), None) @@>)
             
             provided.AddMember(ctor1)
            

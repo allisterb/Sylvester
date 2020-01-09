@@ -5,5 +5,5 @@ FSharp.Core
 # put any package references here
 # System.Text.Encoding.CodePages framework: netstandard2.0,netcoreapp3.1
 
-Sylvester.tf
-Sylvester.tf.Native.Win copy_local: false
+# Sylvester.tf
+# Sylvester.tf.Native.Win copy_local: false
