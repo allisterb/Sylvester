@@ -22,14 +22,66 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
     let ns = "Sylvester.tf"
     let asm = Assembly.GetExecutingAssembly()
 
-    let Vec() =
+    let Graph =
+        let G = ProvidedTypeDefinition(asm, ns, "Graph", Some typeof<TensorGraph<_,_>>)
+        
+        let helpText = 
+            "<summary>TensorFlow graph with type-level input and output constraints.</summary><param name='input'>The number of graph inputs.</param>\n<param name='output'>The number of graph outputs.</param>"
+        G.AddXmlDoc helpText
+
+        let inputParam = ProvidedStaticParameter("input", typeof<int>, 1)
+        let outputParam = ProvidedStaticParameter("output", typeof<int>, 1)
+
+        do G.DefineStaticParameters([inputParam; outputParam], fun name args ->
+            let input = args.[0] :?> int
+            let tinput = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(input, 10))
+            let output = args.[1] :?> int
+            let toutput = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(output, 10))
+            let g = typedefof<TensorGraph<_,_>>.MakeGenericType(tinput, toutput)
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some g, false)
+            
+            provided.AddXmlDoc <| (sprintf "<summary>TensorFlow graph with %i input(s) and %i output(s).</summary>" input output)   
+            
+            let ctor1 = ProvidedConstructor([], invokeCode = fun args -> 
+                    <@@ 
+                    Activator.CreateInstance(typedefof<TensorGraph<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(input, 10)), 
+                                                typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(output, 10))), None) 
+                    @@>)
+            let ctor2 = ProvidedConstructor([ProvidedParameter("scope", typeof<string>)], invokeCode = fun args -> 
+                <@@ 
+                Activator.CreateInstance(typedefof<TensorGraph<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(input, 10)), 
+                                                typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(output, 10))), Some (%%(args.[0]) : string)) 
+                @@>)
+
+            provided.AddMember(ctor1)
+            provided.AddMember(ctor2)
+           
+            provided
+        )
+ 
+        let nameOf =
+            let param = ProvidedParameter("p", typeof<Expr<int>>)
+            param.AddCustomAttribute {
+                new CustomAttributeData() with
+                    member __.Constructor = typeof<ReflectedDefinitionAttribute>.GetConstructor([||])
+                    member __.ConstructorArguments = [||] :> _
+                    member __.NamedArguments = [||] :> _
+            }
+            ProvidedMethod("NameOf", [ param ], typeof<string>, isStatic = true, invokeCode = fun args ->
+                <@@
+                    match (%%args.[0]) : Expr<int> with
+                    | Microsoft.FSharp.Quotations.Patterns.ValueWithName (_, _, n) -> n
+                    | e -> failwithf "Invalid quotation argument (expected ValueWithName): %A" e
+                @@>)
+       
+        G.AddMember(nameOf)
+        G
+
+    let Vec =
         let V = ProvidedTypeDefinition(asm, ns, "Vec", Some typeof<Edge>)
         
         let helpText = 
-            """<summary>TensorFlow vector with type-level dimension constraints.</summary>
-           <param name='Length'>The length of the vector.</param>
-           <param name='Type'>The datatype of the vector.</param>
-            """
+            "<summary>TensorFlow vector with type-level dimension constraints.</summary><param name='Length'>The length or size of the vector.</param>\n<param name='Type'>The TF data type of the vector.</param>"
         V.AddXmlDoc helpText
 
         let lengthParam = ProvidedStaticParameter("Length", typeof<int>)
@@ -50,9 +102,14 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
             //    <@@ Activator.CreateInstance((%%(vecExpr) : Type), typeof<int>), (%%(args.[0]) : string) @@>)
 
             let ctor1 = ProvidedConstructor([ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
-                    <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), (%%(args.[0]) : string), None) @@>)
-            
+                    <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), 
+                            BindingFlags.NonPublic ||| BindingFlags.Public ||| BindingFlags.Instance, null, [|(%%(args.[0]) : string) :> obj; None :> obj|], null) @@>)
+            //let ctor2 = ProvidedConstructor([ProvidedParameter("name",typeof<string>); ProvidedParameter("graph",typeof<ITensorGraph>)], invokeCode = fun args -> 
+            //        <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), (%%(args.[0]) : string), (%%(args.[1]) : ITensorGraph)) @@>)
+            ctor1.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s vector with the specified name.</summary>\n<param name='name'>The name of the vector</param>" <| enum<TF_DataType>(dt).ToString())
+
             provided.AddMember(ctor1)
+            //provided.AddMember(ctor2)
            
             provided
         )
@@ -75,7 +132,7 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
         V.AddMember(nameOf)
         V
 
-    do this.AddNamespace(ns, [Vec()])
+    do this.AddNamespace(ns, [Vec; Graph])
 
 
 
