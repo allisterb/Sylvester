@@ -85,17 +85,17 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
         V.AddXmlDoc helpText
 
         let lengthParam = ProvidedStaticParameter("Length", typeof<int>)
-        let typeParam = ProvidedStaticParameter("Type", typeof<int>, FLOAT)
-
+        let typeParam = ProvidedStaticParameter("Type", typeof<TF_DataType>, TF_DataType.TF_FLOAT)
+        
         do V.DefineStaticParameters([lengthParam; typeParam], fun name args ->
             let n = args.[0] :?> int
-            let dt = args.[1] :?> int
+            let dt = args.[1] :?> TF_DataType
             let N = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
             let vec = typedefof<Vector<_,_>>.MakeGenericType(N, dt |> dataType)
             //let vecExpr =   vec |> Expr.Value 
             let provided = ProvidedTypeDefinition(asm, ns, name, Some vec, false)
             
-            provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (enum<TF_DataType>(dt).ToString()) (n))   
+            provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (dt.ToString()) (n))   
 
             let ctor1 = ProvidedConstructor([ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
                     <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), 
@@ -103,8 +103,8 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
             let ctor2 = ProvidedConstructor([ProvidedParameter("name", typeof<string>); ProvidedParameter("graph", typeof<ITensorGraph>)], invokeCode = fun args -> 
                     <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), 
                             BindingFlags.NonPublic ||| BindingFlags.Instance, null, [|(%%(args.[0]) : string) :> obj; (Some (%%(args.[1]) : ITensorGraph)) :> obj|], null) @@>)
-            ctor1.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s vector with the specified name in the default graph.</summary>\n<param name='name'>The name of the vector</param>" <| enum<TF_DataType>(dt).ToString())
-            ctor2.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s vector with the specified name in the specified graph.</summary>\n<param name='name'>The name of the vector</param>\n<param name='graph'>The graph the vector belongs to.</param>" <| enum<TF_DataType>(dt).ToString())
+            ctor1.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s vector with the specified name in the default graph.</summary>\n<param name='name'>The name of the vector</param>" <| dt.ToString())
+            ctor2.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s vector with the specified name in the specified graph.</summary>\n<param name='name'>The name of the vector</param>\n<param name='graph'>The graph the vector belongs to.</param>" <| dt.ToString())
 
             provided.AddMember(ctor1)
             provided.AddMember(ctor2)

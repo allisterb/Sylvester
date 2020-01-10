@@ -2,7 +2,7 @@
 
 open System
 open System.Collections.Generic;
-open System.Runtime.CompilerServices
+open System.Reflection
 open System.Linq
 
 open TensorFlow
@@ -25,6 +25,7 @@ type ITensorGraph =
     abstract member Add: Node -> unit
     abstract member Export:string->unit
     
+
 /// A graph of tensor operations with a known number of inputs and outputs.
 and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string) = 
     inherit Graph<'input, 'output, Edge>(scope)
@@ -106,6 +107,8 @@ and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) =
 
     new(graph: ITensorGraph, op:TF_Output, inputs: Edge list) = Node(graph, c_api.TF_OperationName op.Oper, [|op|], inputs)
 
+and IDataType<'t> = interface end
+
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
 /// Each edge has one head node and data type with known or unknown shape.
 and Edge(graph: ITensorGraph, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
@@ -174,54 +177,11 @@ module TensorGraph =
       
     let tg<'input, 'output when 'input :> Number and 'output :>Number>(g:ITensorGraph) = g :?> TensorGraph<'input, 'output>
 
+    let createEdge<'x when 'x :> Edge>(graph:ITensorGraph, head: Node, output:int) =
+        Activator.CreateInstance(typeof<'x>, BindingFlags.Public ||| BindingFlags.NonPublic ||| BindingFlags.Instance, null, [|graph :> obj; head :> obj; output :> obj|], null) :?> 'x 
+
     let emptyGraph = TensorGraph<zero, zero>.EmptyGraph
 
     let mutable defaultGraph = emptyGraph
 
     let resetDefaultGraph() = defaultGraph <- emptyGraph
-
-[<AutoOpen>]
-module Dimensions = 
-    type zero = dim<0>
-
-    type one = dim<1>
-
-    type two = dim<2>
-
-    type three = dim<3>
-
-    type four = dim<4>
-
-    type five = dim<5>
-
-    type six = dim<6>
-
-    type seven = dim<7>
-
-    type eight = dim<8>
-
-    type nine = dim<9>
-
-    type ten = dim<10>
-
-    let zero = new zero()
-
-    let one = new one()
-
-    let two = new two()
-
-    let three = new three()
-
-    let four = new four()
-
-    let five = new five()
-
-    let six = new six()
-
-    let seven = new seven()
-
-    let eight = new eight()
-
-    let nine = new nine()
-
-    let ten = new ten()

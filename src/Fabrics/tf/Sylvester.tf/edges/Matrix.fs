@@ -14,7 +14,7 @@ module Matrix =
     [<StructuredFormatDisplay("{Display}")>]
     type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't : struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
         internal (graph:ITensorGraph, head:Node, output:int) =
-        inherit Tensor<two, 't>(graph, head, output, [|number<'dim0>.Val; number<'dim1>.Val|])
+        inherit Tensor<Rank.two, 't>(graph, head, output, [|number<'dim0>.Val; number<'dim1>.Val|])
         interface IMatrix
         member x.Dim0 = number<'dim0>
         member x.Dim1 = number<'dim1>

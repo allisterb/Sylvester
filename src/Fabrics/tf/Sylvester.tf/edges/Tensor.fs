@@ -1,25 +1,64 @@
 ﻿namespace Sylvester.tf
 
 open System
-open System.Collections.Generic;
-open System.Runtime.CompilerServices
 
-open TensorFlow
-
-open Sylvester
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
-open Sylvester.Collections
-open Sylvester.Graphs
 open Sylvester.Tensors
+
+[<AutoOpen>]
+module Dimension = 
+    type zero = dim<0>
+
+    type one = dim<1>
+
+    type two = dim<2>
+
+    type three = dim<3>
+
+    type four = dim<4>
+
+    type five = dim<5>
+
+    type six = dim<6>
+
+    type seven = dim<7>
+
+    type eight = dim<8>
+
+    type nine = dim<9>
+
+    type ten = dim<10>
+
+    let zero = new zero()
+
+    let one = new one()
+
+    let two = new two()
+
+    let three = new three()
+
+    let four = new four()
+
+    let five = new five()
+
+    let six = new six()
+
+    let seven = new seven()
+
+    let eight = new eight()
+
+    let nine = new nine()
+
+    let ten = new ten()
 
 [<AutoOpen>]
 module Tensor = 
     /// Tensor of unknown rank and dimensions
     type Tensor<'t when 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
             internal (graph:ITensorGraph, head:Node, output:int, ?shape:int64[]) as this = 
-        inherit Edge(graph, head, output, dataType<'t>, defaultArg shape null)
+        inherit Edge(graph, head, output, dataType<'t>, defaultArg shape null) 
         do graph.Add this
+        interface IDataType<'t>
 
         internal new (name:string, ?shape:int64[], ?graph: ITensorGraph) = 
             let g = defaultArg graph defaultGraph
@@ -39,16 +78,16 @@ module Tensor =
             let g = defaultArg graph defaultGraph
             let op = tf(g).Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L), name)
             new Tensor<'r, 't>(g, new Node(g, op, []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))
-    
-        //Arithmetic operators
-        static member (+) (l:'x, r:'x when 'x :> Tensor<'r, 't>) =  
+        
+        //Arithmetic operators for fully known shapes
+        static member (+) (l:'x, r:'y when 'x :> Tensor<'r, 't> and 'y :> Tensor<'r, 't> and 'x :> IFullShape<'r> and 'y :> IFullShape<'r>) =  
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|l :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            createEdge<'x>(l.TensorGraph, node, 0)
 
-        static member (-) (l:'x, r:'x when 'x :> Tensor<'r, 't>) = 
-            let node = add l.Head r.Head
+        static member (-) (l:'x, r:'x when 'x :> Tensor<'r, 't> and 'x :> IFullShape<'r>) = 
+            let node = sub l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<'x>, ([|l :> obj; node :> obj; 0 :> obj|])) :?> 'x
+            createEdge<'x>(l.TensorGraph, node, 0)
 
         

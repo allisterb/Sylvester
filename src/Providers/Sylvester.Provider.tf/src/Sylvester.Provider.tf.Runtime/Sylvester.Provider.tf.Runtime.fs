@@ -10,39 +10,40 @@ do ()
 [<AutoOpen>]
 module DataTypes =
     [<Literal>] 
-    let BOOL = 10  // TF_DataType.TF_BOOL
+    let BOOL = TF_DataType.TF_BOOL  // TF_DataType.TF_BOOL
     
     [<Literal>] 
-    let INT8 =  6  // TF_DataType.TF_INT8
+    let INT8 =  TF_DataType.TF_INT8
     
     [<Literal>] 
-    let UINT8 = 4  // TF_DataType.TF_UINT8
+    let UINT8 = TF_DataType.TF_UINT8
     
     [<Literal>] 
-    let INT16 = 5  // TF_DataType.TF_INT16
+    let INT16 = TF_DataType.TF_INT16
 
     [<Literal>] 
-    let UINT16 = 17 // TF_DataType.TF_UINT16
+    let UINT16 = TF_DataType.TF_UINT16
 
     [<Literal>] 
-    let INT32 = 3   // TF_DataType.TF_INT32
+    let INT32 = TF_DataType.TF_INT32
 
     [<Literal>] 
-    let UINT32 = 22 // TF_DataType.TF_UINT32
+    let UINT32 = TF_DataType.TF_UINT32
 
     [<Literal>] 
-    let INT64 = 9   // TF_DataType.TF_INT64
+    let INT64 = TF_DataType.TF_INT64
 
     [<Literal>] 
-    let UINT64 = 23 // TF_DataType.TF_UINT64
+    let UINT64 = TF_DataType.TF_UINT64
 
     [<Literal>] 
-    let FLOAT = 1   // TF_DataType.TF_FLOAT
+    let FLOAT = TF_DataType.TF_FLOAT
 
     [<Literal>] 
-    let DOUBLE = 2  // TF_DataType.TF_DOUBLE
+    let DOUBLE = TF_DataType.TF_DOUBLE
 
-    let dataType (t:int) =
+    
+    let rec dataType (t:TF_DataType) =
         match t with
         | BOOL -> typeof<bool>
         | INT8 -> typeof<sbyte>
@@ -55,5 +56,5 @@ module DataTypes =
         | UINT64 -> typeof<uint64>
         | FLOAT -> typeof<float32>
         | DOUBLE -> typeof<double>
-        | _ -> failwithf "Cannot convert data type code %i to TensorFlow type." t
+        | _ -> failwithf "The TensorFlow type %s is currently not supported." (t.ToString())
     

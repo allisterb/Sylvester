@@ -12,7 +12,7 @@ module Vector =
     [<StructuredFormatDisplay("{Display}")>]
     type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
         internal (graph:ITensorGraph, head:Node, output:int) =
-        inherit Tensor<one, 't>(graph, head, output, [|number<'dim0>.Val|])
+        inherit Tensor<Rank.one, 't>(graph, head, output, [|number<'dim0>.Val|])
         interface IVector
         member x.Dim0:'dim0 = number<'dim0>
         member x.Display = sprintf "Vector<%i, %s>" (x.Dim0.IntVal) (dataType<'t>.ToString())
