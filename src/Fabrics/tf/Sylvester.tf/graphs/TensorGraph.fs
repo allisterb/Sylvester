@@ -37,10 +37,10 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     do base.Initialized <- tfGraph <> null && tfGraph.NameScope = scope
         
-    ///Flat list of graph nodes
+    ///Flat map of graph nodes
     member val Nodes = new Dictionary<string, Node>() with get
         
-    /// Flat list of graph edges
+    /// Flat map of graph edges
     member val Edges = new Dictionary<string, Edge>() with get
 
     /// VArray of graph inputs
@@ -87,7 +87,7 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
         
     new() = TensorGraph("")
         
-/// A tensor graph node consists of an operation with input and output edges
+/// A tensor graph node consists of an operation with input edges
 and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     inherit Api()
     

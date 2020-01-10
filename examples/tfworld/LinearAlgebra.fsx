@@ -3,6 +3,6 @@
 open Sylvester.tf
 
 defaultGraph <- new Graph<3, 2>()
-
-let x = new Vec<12, FLOAT>("fpp")
-//let r = new Vector<one, int>("ff")
+let x = new Vec<19, INT8>("fpp")
+let y = new Vec<16, DOUBLE>("fp")
+//let z = x + y
