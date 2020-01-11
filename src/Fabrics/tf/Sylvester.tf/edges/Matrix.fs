@@ -18,7 +18,7 @@ module Matrix =
         interface IMatrix
         member x.Dim0 = number<'dim0>
         member x.Dim1 = number<'dim1>
-        member x.Display = sprintf "Matrix<%i, %i>" x.Dim0.IntVal x.Dim1.IntVal
+        member x.Display = sprintf "Matrix<%i, %i, %s>" x.Dim0.IntVal x.Dim1.IntVal (dataType<'t>.ToString())
         
         internal new(name:string, ?graph:ITensorGraph) = 
             let g = defaultArg graph defaultGraph
@@ -26,7 +26,7 @@ module Matrix =
             let op = tf(g).Placeholder(dataType<'t>, shape, name)
             new Matrix<'dim0, 'dim1, 't>(g, new Node(g, op, []), 0)
 
-        static member (*) (l:'x, r:'y when 'x :> Matrix<'a, 'dim1, 't> and 'y :> Matrix<'dim1, 'b, 't>) = 
+        static member (*) (l:Matrix<'a, 'dim1, 't>, r:Matrix<'dim1, 'b, 't>) = 
             let node = matmul l.Head r.Head
             node.Inputs <- [l; r]
-            Activator.CreateInstance (typeof<Matrix<'a, 'b, 't>>, ([|l :> obj; node :> obj; 0 :> obj|])) :?> Matrix<'a, 'b, 't>
+            createEdge<Matrix<'a, 'b, 't>>(l.TensorGraph, node, 0)

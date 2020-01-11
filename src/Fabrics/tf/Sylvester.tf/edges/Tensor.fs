@@ -80,12 +80,12 @@ module Tensor =
             new Tensor<'r, 't>(g, new Node(g, op, []), 0, defaultArg shape (Array.create number<'r>.IntVal 0L))
         
         //Arithmetic operators for fully known shapes
-        static member (+) (l:'x, r:'y when 'x :> Tensor<'r, 't> and 'y :> Tensor<'r, 't> and 'x :> IFullShape<'r> and 'y :> IFullShape<'r>) =  
+        static member (+) (l:'x, r:'x when 'x :> Tensor<'r, _> and 'x :> IFullShape<'r>) =  
             let node = add l.Head r.Head
             node.Inputs <- [l; r]
             createEdge<'x>(l.TensorGraph, node, 0)
 
-        static member (-) (l:'x, r:'x when 'x :> Tensor<'r, 't> and 'x :> IFullShape<'r>) = 
+        static member (-) (l:'x, r:'x when 'x :> Tensor<'r, _> and 'x :> IFullShape<'r>) = 
             let node = sub l.Head r.Head
             node.Inputs <- [l; r]
             createEdge<'x>(l.TensorGraph, node, 0)
