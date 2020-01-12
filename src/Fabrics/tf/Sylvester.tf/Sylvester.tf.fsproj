@@ -21,6 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="paket.template" />
     <Compile Include="graphs\TensorGraph.fs" />
     <Compile Include="graphs\TensorScope.fs" />
     <Compile Include="nodes\Arithmetic.fs" />

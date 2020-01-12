@@ -87,6 +87,8 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
         
     new() = TensorGraph("")
         
+and Graph<'input, 'output when 'input :> Number and 'output :> Number> = TensorGraph<'input, 'output>
+
 /// A tensor graph node consists of an operation with input edges
 and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     

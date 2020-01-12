@@ -19,13 +19,12 @@ summary
 description
     Sylvester.tf is a functional verifiable tensor fabric for scientific computing using F# and TensorFlow 2.
 files
-    bin/x64/Release/net45/Sylvester.Provider.tf.Runtime.* ==> lib/net45
-    bin/x64/Release/netstandard2.0/Sylvester.Provider.tf.Runtime.* ==> lib/netstandard2.0
-    bin/x64/Release/typeproviders/fsharp41/netstandard2.0/*.dll ==> typeproviders/fsharp41/netstandard2.0
-    bin/x64/Release/typeproviders/fsharp41/netcoreapp3.1/*.dll ==> typeproviders/fsharp41/netcoreapp3.1
-    bin/x64/Release/typeproviders/fsharp41/net45/*.dll ==> typeproviders/fsharp41/net45
-references
-    Sylvester.Provider.tf.Runtime.dll
+    bin/x64/Debug/net45/Sylvester.* ==> lib/net45
+    bin/x64/Debug/netstandard2.0/Sylvester.* ==> lib/netstandard2.0
+    
+# references
+#    Sylvester.Provider.tf.Runtime.dll
+
 dependencies
   FSharp.Core >= LOCKEDVERSION
 
