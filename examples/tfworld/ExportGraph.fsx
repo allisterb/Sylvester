@@ -7,9 +7,9 @@ open Sylvester.tf
 defaultGraph <- TensorGraph<n<3>, n<1>>()
 
 // Create 3 matrix placeholders in root scope
-let m0 = Mat<dim<6>, dim<100>>("m")
-let m1 = Mat<dim<6>, dim<100>>("m")
-let m2 = Mat<dim<100>, dim<200>>("m")
+let m0 = Matrix<dim<6>, dim<100>>("m")
+let m1 = Matrix<dim<6>, dim<100>>("m")
+let m2 = Matrix<dim<100>, dim<200>>("m")
 
 // Create a matrix algebra operation in new name scope
 let output = 

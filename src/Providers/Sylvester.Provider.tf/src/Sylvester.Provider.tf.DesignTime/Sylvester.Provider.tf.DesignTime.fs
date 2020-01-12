@@ -37,6 +37,36 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
                 | e -> failwithf "Invalid quotation argument (expected ValueWithName): %A" e
             @@>)
        
+    let Dimension =
+        let D = ProvidedTypeDefinition(asm, ns, "d", Some typeof<N10<_,_,_,_,_,_,_,_,_,_>>, false)
+    
+        let helpText = "<summary>Typed representation of a natural number dimension size.</summary>\n
+           <param name='Val'>The dimension size to represent.</param>"
+        
+        D.AddXmlDoc helpText
+    
+        let valueParam = ProvidedStaticParameter("Val", typeof<int>)
+
+        do D.DefineStaticParameters([valueParam], fun name args ->
+            let d = args.[0] :?> int
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some <| typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(d, 10)), false)
+            provided.AddXmlDoc <| (sprintf "<summary>A typed representation of the natural number dimension size %i.</summary>" <| d)   
+            
+            let ctor = ProvidedConstructor([], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(d, 10))) @@>)
+            ctor.AddXmlDoc(sprintf "Create an instance of the typed representation of dimension size %i." d)
+            provided.AddMember(ctor)
+
+            let create = ProvidedMethod("create", [], typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(d, 10)), isStatic = true, invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(d, 10))) @@>)
+
+            create.AddXmlDocDelayed(fun () -> sprintf "Create an instance of the typed representation of dimension %i." d)
+            provided.AddMember(create)
+
+            provided
+        )
+        D
+
     let Graph =
         let G = ProvidedTypeDefinition(asm, ns, "Graph", Some typeof<TensorGraph<_,_>>)
         
@@ -75,91 +105,10 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
 
             provided
         )
- 
-        //G.AddMember(nameOf)
         G
 
-    let Vec =
-        let V = ProvidedTypeDefinition(asm, ns, "Vec", Some typeof<Edge>)
-        
-        let helpText = 
-            "<summary>TensorFlow vector with type-level dimension constraints.</summary><param name='Length'>The length or size of the vector.</param>\n<param name='Type'>The TF data type of the vector.</param>"
-        V.AddXmlDoc helpText
-
-        let lengthParam = ProvidedStaticParameter("Length", typeof<int>)
-        let typeParam = ProvidedStaticParameter("Type", typeof<TF_DataType>)
-        
-        do V.DefineStaticParameters([lengthParam; typeParam], fun name args ->
-            let n = args.[0] :?> int
-            let dt = args.[1] :?> TF_DataType
-            let N = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10))
-            let vec = typedefof<Vector<_,_>>.MakeGenericType(N, dt |> dataType)
-            //let vecExpr =   vec |> Expr.Value 
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some vec, false)
-            
-            provided.AddXmlDoc <| (sprintf "<summary>%s vector of length %d with type-level dimension constraints.</summary>" (dt.ToString()) (n))   
-
-            let ctor1 = ProvidedConstructor([ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
-                    <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), 
-                            BindingFlags.NonPublic ||| BindingFlags.Instance, null, [|(%%(args.[0]) : string) :> obj; None :> obj|], null) @@>)
-            let ctor2 = ProvidedConstructor([ProvidedParameter("name", typeof<string>); ProvidedParameter("graph", typeof<ITensorGraph>)], invokeCode = fun args -> 
-                    <@@ Activator.CreateInstance(typedefof<Vector<_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(n, 10)), dt |> dataType), 
-                            BindingFlags.NonPublic ||| BindingFlags.Instance, null, [|(%%(args.[0]) : string) :> obj; (Some (%%(args.[1]) : ITensorGraph)) :> obj|], null) @@>)
-            
-            ctor1.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s vector with the specified name in the default graph.</summary>\n<param name='name'>The name of the vector.</param>" <| dt.ToString())
-            ctor2.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s vector with the specified name in the specified graph.</summary>\n<param name='name'>The name of the vector</param>\n<param name='graph'>The graph the vector belongs to.</param>" <| dt.ToString())
-
-            provided.AddMember(ctor1)
-            provided.AddMember(ctor2)
-           
-            provided
-        )
-        V
-    
-    let Mat = 
-        let M = ProvidedTypeDefinition(asm, ns, "Mat", Some typeof<Edge>)
-        
-        let helpText = 
-            "<summary>TensorFlow matrix with type-level dimension constraints.</summary><param name='Dim0'>The number of rows or size of matrix dimension zero.</param>\n<param name='Dim1'>The number of columns or size of matrix dimension one.</param>\n<param name='Type'>The TF data type of the matrix.</param>"
-        M.AddXmlDoc helpText
-
-        let dim0Param = ProvidedStaticParameter("Dim0", typeof<int>)
-        let dim1Param = ProvidedStaticParameter("Dim1", typeof<int>)
-        let typeParam = ProvidedStaticParameter("Type", typeof<TF_DataType>)
-        
-        do M.DefineStaticParameters([dim0Param; dim1Param; typeParam], fun name args ->
-            let dim0 = args.[0] :?> int
-            let dim1 = args.[1] :?> int
-            let dt = args.[2] :?> TF_DataType
-            
-            let N0 = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim0, 10))
-            let N1 = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim1, 10))
-            let mat = typedefof<Matrix<_,_,_>>.MakeGenericType(N0, N1, dt |> dataType)
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some mat)
-            provided.AddXmlDoc <| (sprintf "<summary>%s matrix of dimensions %dx%d with type-level dimension constraints.</summary>" (dt.ToString()) (dim0) (dim1))   
-
-            let ctor1 = ProvidedConstructor([ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
-                    <@@ 
-                        Activator.CreateInstance(typedefof<Matrix<_,_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim0, 10)), 
-                                                    typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim1, 10)), dt |> dataType), 
-                            BindingFlags.NonPublic ||| BindingFlags.Instance, null, [|(%%(args.[0]) : string) :> obj; None :> obj|], null) 
-                    @@>)
-            let ctor2 = ProvidedConstructor([ProvidedParameter("name", typeof<string>); ProvidedParameter("graph", typeof<ITensorGraph>)], invokeCode = fun args -> 
-                    <@@ 
-                        Activator.CreateInstance(typedefof<Matrix<_,_,_>>.MakeGenericType(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim0, 10)), 
-                                                    typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim1, 10)), dt |> dataType), 
-                            BindingFlags.NonPublic ||| BindingFlags.Instance, null, [|(%%(args.[0]) : string) :> obj; (Some (%%(args.[1]) : ITensorGraph)) :> obj|], null) @@>)
-            
-            ctor1.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s matrix with the specified name in the default graph.</summary>\n<param name='name'>The name of the matrix.</param>" <| dt.ToString())
-            ctor2.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s matrix with the specified name in the specified graph.</summary>\n<param name='name'>The name of the matrix.</param>\n<param name='graph'>The graph the matrix belongs to.</param>" <| dt.ToString())
-            provided.AddMember(ctor1)
-            provided.AddMember(ctor2)
-            
-            provided
-        )
-        M
        
-    do this.AddNamespace(ns, [Graph; Vec; Mat])
+    do this.AddNamespace(ns, [Dimension;Graph])
 
 [<TypeProviderAssembly>]
 do ()
