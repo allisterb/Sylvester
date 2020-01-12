@@ -1,9 +1,10 @@
 #load "Include.fsx"
 
+open Sylvester.Arithmetic
 open Sylvester.tf
 
 // Create a new tensor graph with ten inputs and one output and set as default graph for this program scope
-let g = TensorGraph<d<2>, d<1>>()
+let g = new Graph<two, one>()
 defaultGraph <- g
 // The default graph is typed according to how many inputs and output are specified
 
@@ -23,8 +24,8 @@ defaultGraph <- g
 
 
 // Use a new scope
-let m0 = Mat<d<100>, d<60>>("m")
-let m1 = Mat<d<100>, d<60>>("m")
+let m0 = Mat<dim<100>, dim<60>>("m")
+let m1 = Mat<dim<100>, dim<60>>("m")
 // Revert to root scope
 
 

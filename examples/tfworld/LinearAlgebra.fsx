@@ -3,7 +3,7 @@
 open Sylvester.tf
 open Sylvester.Arithmetic
 
-defaultGraph <- new TensorGraph<six, two>()
+defaultGraph <- new Graph<six, two>()
 
 let x = Vec<dim<19>>("fpp")
 let m0 = Mat<dim<12>, dim<17>>("m")

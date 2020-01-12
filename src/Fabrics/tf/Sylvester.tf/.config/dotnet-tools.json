@@ -1,5 +1,12 @@
 {
   "version": 1,
   "isRoot": true,
-  "tools": {}
+  "tools": {
+    "paket": {
+      "version": "5.241.6",
+      "commands": [
+        "paket"
+      ]
+    }
+  }
 }
