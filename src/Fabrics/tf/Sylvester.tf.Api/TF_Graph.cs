@@ -41,20 +41,20 @@ namespace TensorFlow
 		#region Methods
 		public void SetNameScope(string s)
 		{
-
 			NameScope = s;
-
 		}
 
 		public string MakeName(string opName, string customOpName = null)
 		{
+			if (NameScope == "_") throw new InvalidOperationException("Not creating name in the empty graph.");
+			
 			if (string.IsNullOrEmpty(customOpName))
 			{
-				return MakeUniqueName(string.IsNullOrEmpty(NameScope) || NameScope == "_" ? opName : NameScope + "/" + opName);
+				return MakeUniqueName(string.IsNullOrEmpty(NameScope) ? opName : NameScope + "/" + opName);
 			}
 			else
 			{
-				return MakeUniqueName(string.IsNullOrEmpty(NameScope) || NameScope == "_" ? customOpName : NameScope + "/" + customOpName);
+				return MakeUniqueName(string.IsNullOrEmpty(NameScope) ? customOpName : NameScope + "/" + customOpName);
 			}
 		}
 

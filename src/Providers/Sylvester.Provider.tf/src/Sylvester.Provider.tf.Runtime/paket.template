@@ -1,38 +1,43 @@
 type file
-id Sylvester.Provider.tf
+id Sylvester.tf
 authors
-    Steffen Forkmann, Gustavo Guerra, JohnDoeKyrgyz, Don Syme
+    Allister Beharry
 owners
-    Steffen Forkmann, Gustavo Guerra, JohnDoeKyrgyz, Don Syme
+    allisterb
 projectUrl
-    http://github.com/fsprojects/Sylvester.Provider.tf
+    https://github.com/allisterb/Sylvester/tree/master/src/Fabrics/tf
 iconUrl
-    https://raw.githubusercontent.com/fsprojects/Sylvester.Provider.tf/master/docs/files/img/logo.png
+    https://github.com/allisterb/Sylvester/raw/master/icon.png
 licenseUrl
-    http://github.com/fsprojects/Sylvester.Provider.tf/blob/master/LICENSE.txt
+    https://raw.githubusercontent.com/allisterb/Sylvester/master/LICENSE
 requireLicenseAcceptance
     false
 tags
-    F# fsharp typeproviders Sylvester.Provider.tf
+    F# fsharp tensorflow ml numeric type-level math
 summary
-    This library is for the .NET platform implementing Sylvester.Provider.tf.
+    Functional, verifiable TensorFlow 2 API for F#.
 description
-    This library is for the .NET platform implementing Sylvester.Provider.tf.
-tags
-    F# fsharp typeproviders Sylvester.Provider.tf
+    Sylvester.tf is a functional verifiable tensor fabric for scientific computing using F# and TensorFlow 2.
 files
-    bin/Release/net45/Sylvester.Provider.tf.Runtime.* ==> lib/net45
-    bin/Release/netstandard2.0/Sylvester.Provider.tf.Runtime.* ==> lib/netstandard2.0
-    bin/Release/typeproviders/fsharp41/netstandard2.0/*.dll ==> typeproviders/fsharp41/netstandard2.0
-    bin/Release/typeproviders/fsharp41/netcoreapp3.1/*.dll ==> typeproviders/fsharp41/netcoreapp3.1
-    bin/Release/typeproviders/fsharp41/net45/*.dll ==> typeproviders/fsharp41/net45
+    bin/x64/Release/net45/Sylvester.Provider.tf.Runtime.* ==> lib/net45
+    bin/x64/Release/netstandard2.0/Sylvester.Provider.tf.Runtime.* ==> lib/netstandard2.0
+    bin/x64/Release/typeproviders/fsharp41/netstandard2.0/*.dll ==> typeproviders/fsharp41/netstandard2.0
+    bin/x64/Release/typeproviders/fsharp41/netcoreapp3.1/*.dll ==> typeproviders/fsharp41/netcoreapp3.1
+    bin/x64/Release/typeproviders/fsharp41/net45/*.dll ==> typeproviders/fsharp41/net45
 references
     Sylvester.Provider.tf.Runtime.dll
 dependencies
   FSharp.Core >= LOCKEDVERSION
 
-# put any package references here
-#  Some.Package
+  # put any package references here
+  System.ValueTuple >= 4.4.0
+  System.Buffers >= 4.5.0
+  System.Memory >= 4.5.3
+  System.Runtime.CompilerServices.Unsafe >= 4.7.0
+  CsvHelper >= 12.2.2
+  Google.ProtoBuf >= 3.11.2
+  Sylvester.Arithmetic >= 0.2.2.1
+
 #  framework: netcoreapp3.1
 #    System.Text.Encoding.CodePages >= LOCKEDVERSION
 #  framework: netstandard2.0

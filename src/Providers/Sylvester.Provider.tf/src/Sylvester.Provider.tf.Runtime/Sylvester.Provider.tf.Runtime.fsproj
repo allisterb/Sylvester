@@ -43,7 +43,7 @@
   <Target Name="AfterBuild">
    
     <!-- Place the net45 design-time DLLs alongside the runtime DLL for loading by legacy F# toolchains -->
-    <Copy SourceFiles="..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\net45\Sylvester.Provider.tf.DesignTime.dll" DestinationFolder="$(OutputPath)" Condition="'$(TargetFramework)' == 'net45'" />
+    <Copy SourceFiles="..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)$(Configuration)\net45\Sylvester.Provider.tf.DesignTime.dll" DestinationFolder="$(OutputPath)" Condition="'$(TargetFramework)' == 'net45'" />
 
     <CreateItem Include="..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\netcoreapp3.1\*.dll;..\Sylvester.Provider.tf.DesignTime\bin\$(Platform)\$(Configuration)\netcoreapp3.1\*.pdb">
       <Output TaskParameter="Include" ItemName="DesignTimeBinaries1" />

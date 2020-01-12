@@ -25,7 +25,6 @@ type ITensorGraph =
     abstract member Add: Node -> unit
     abstract member Export:string->unit
     
-
 /// A graph of tensor operations with a known number of inputs and outputs.
 and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string) = 
     inherit Graph<'input, 'output, Edge>(scope)
@@ -52,7 +51,7 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     member internal x._Graph = tfGraph
 
-    member internal x.PlaceHolders = seq {for n in x.Nodes.Values do yield n.Op} |> Seq.concat |> Seq.filter (fun n -> TF_Graph.GetOpType(n) = "Placeholder")
+    member internal x.NumPlaceHolders = seq {for n in x.Nodes.Values do yield n.Op} |> Seq.concat |> Seq.filter (fun n -> TF_Graph.GetOpType(n) = "Placeholder") |> Seq.length
 
     member x.NameScope with get() = tfGraph.NameScope and set(value) = tfGraph.SetNameScope(value)
     
@@ -67,8 +66,8 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
     member x.AddNode(n:Node) =
         do if (n.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
         do if x.Nodes.ContainsKey(n.Name) then failwithf "The node with name %s already exists in this graph." n.Name                
-        let placeholders = Seq.filter (fun op -> TF_Graph.GetOpType(op) = "Placeholder") n.Op in 
-            if Seq.length placeholders > 0 && Seq.length x.PlaceHolders = x.Inputs.IntLength then failwithf "Cannot add input node %s as this graph already contains %i input(s)." n.Name x.Inputs.IntLength  
+        let numplaceholders = n.Op |> Seq.filter (fun op -> TF_Graph.GetOpType(op) = "Placeholder") |> Seq.length in 
+            if numplaceholders > 0 && x.NumPlaceHolders + numplaceholders > x.Inputs.IntLength then failwithf "Cannot add input node %s as this graph already contains %i input(s)." n.Name x.Inputs.IntLength  
         x.Nodes.Add(n.Name, n)
         Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.AddEdge(e) |> ignore) n.Inputs
                    
@@ -90,7 +89,6 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
         
 /// A tensor graph node consists of an operation with input edges
 and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) = 
-    inherit Api()
     
     member val TensorGraph = graph  with get
 
@@ -112,7 +110,6 @@ and IDataType<'t> = interface end
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
 /// Each edge has one head node and data type with known or unknown shape.
 and Edge(graph: ITensorGraph, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
-    inherit Api()
     
     member val TensorGraph = graph with get
 
@@ -182,6 +179,4 @@ module TensorGraph =
 
     let emptyGraph = TensorGraph<zero, zero>.EmptyGraph
 
-    let mutable defaultGraph = emptyGraph
-
-    let resetDefaultGraph() = defaultGraph <- emptyGraph
+    let mutable defaultGraph = emptyGraph    
