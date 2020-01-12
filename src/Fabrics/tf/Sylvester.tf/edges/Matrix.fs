@@ -26,7 +26,7 @@ module Matrix =
             let op = tf(g).Placeholder(dataType<'t>, shape, name)
             new Matrix<'dim0, 'dim1, 't>(g, new Node(g, op, []), 0)
 
-        static member (*) (l:Matrix<'a, 'dim1, 't>, r:Matrix<'dim1, 'b, 't>) = 
+        static member (*) (l:Matrix<'a, 'b, 't>, r: Matrix<'b, 'c, 't>) = 
             let node = matmul l.Head r.Head
             node.Inputs <- [l; r]
-            createEdge<Matrix<'a, 'b, 't>>(l.TensorGraph, node, 0)
+            createEdge<Matrix<'a, 'c, 't>>(l.TensorGraph, node, 0)

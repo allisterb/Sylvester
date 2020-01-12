@@ -21,7 +21,7 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
 
     let ns = "Sylvester.tf"
     let asm = Assembly.GetExecutingAssembly()
-
+    
     let nameOf =
         let param = ProvidedParameter("p", typeof<Expr<int>>)
         param.AddCustomAttribute {
@@ -115,8 +115,8 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
             provided
         )
         V
- 
-    let Mat =
+    
+    let Mat = 
         let M = ProvidedTypeDefinition(asm, ns, "Mat", Some typeof<Edge>)
         
         let helpText = 
@@ -131,11 +131,11 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
             let dim0 = args.[0] :?> int
             let dim1 = args.[1] :?> int
             let dt = args.[2] :?> TF_DataType
+            
             let N0 = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim0, 10))
             let N1 = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(dim1, 10))
             let mat = typedefof<Matrix<_,_,_>>.MakeGenericType(N0, N1, dt |> dataType)
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some mat, false)
-            
+            let provided = ProvidedTypeDefinition(asm, ns, name, Some mat)
             provided.AddXmlDoc <| (sprintf "<summary>%s matrix of dimensions %dx%d with type-level dimension constraints.</summary>" (dt.ToString()) (dim0) (dim1))   
 
             let ctor1 = ProvidedConstructor([ProvidedParameter("name",typeof<string>)], invokeCode = fun args -> 
@@ -154,16 +154,12 @@ type SyntaxProvider (config : TypeProviderConfig) as this =
             ctor2.AddXmlDoc(sprintf "<summary>Create a TensorFlow %s matrix with the specified name in the specified graph.</summary>\n<param name='name'>The name of the matrix.</param>\n<param name='graph'>The graph the matrix belongs to.</param>" <| dt.ToString())
             provided.AddMember(ctor1)
             provided.AddMember(ctor2)
-
+            
             provided
         )
- 
-        //M.AddMember(nameOf)
         M
-
+       
     do this.AddNamespace(ns, [Graph; Vec; Mat])
-
-
 
 [<TypeProviderAssembly>]
 do ()
