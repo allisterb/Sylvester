@@ -80,4 +80,9 @@ type VArray2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'
     new(x:'t) = VArray2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (x))
     
     new() = VArray2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (Unchecked.defaultof<'t>))
-      
+     
+type VArray2D<'i0, 'i1 when 'i0 :> Number and 'i1:> Number> with
+   static member create(arr: 't[,]) = new VArray2D<'i0, 'i1, 't>(arr)
+   static member create(v: 't) = new VArray2D<'i0, 'i1, 't>(Array2D.create (number<'i0>.IntVal) (number<'i1>.IntVal) (v))
+
+type Array2D<'i0, 'i1, 't when 'i0 :> Number and 'i1 :> Number> = VArray2D<'i0, 'i1, 't>
