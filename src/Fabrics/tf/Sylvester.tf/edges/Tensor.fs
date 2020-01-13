@@ -73,7 +73,8 @@ module Tensor =
         do graph.Add this
 
         member x.Rank = number<'r>
-
+        interface IPartialShape<'r> with member x.Rank = x.Rank
+        
         new(name:string, ?shape:int64[], ?graph:ITensorGraph) = 
             let g = defaultArg graph defaultGraph
             let op = tf(g).Placeholder(dataType<'t>, defaultArg shape (Array.create number<'r>.IntVal 0L), name)

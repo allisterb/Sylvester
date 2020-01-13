@@ -19,7 +19,7 @@ type VArray<'n when 'n :> Number>() =
 type VArray<'n, 't when 'n :> Number >(items:'t[]) = 
     inherit VArray<'n>()
     
-    member x._Array = if items.Length = x.IntLength then items else raise (ArgumentOutOfRangeException("items", sprintf "The initializing array length %i does not match the type legth %i." items.Length x.IntLength))
+    member x._Array = if items.Length = x.IntLength then items else raise (ArgumentOutOfRangeException("items", sprintf "The initializing array length %i does not match the type length %i." items.Length x.IntLength))
          
     member inline x.SetVal(i:'i, item:'t) =
         checkidx(i, x.Length)
@@ -65,4 +65,6 @@ type VArray<'n, 't when 'n :> Number >(items:'t[]) =
 
  type VArray<'n when 'n :> Number> with
     static member create(arr: 't[]) = new VArray<'n, 't>(arr)
+    static member create(v: 't) = new VArray<'n, 't>(Array.create (number<'n>.IntVal) (v))
 
+type Array<'n when 'n :> Number> = VArray<'n>
