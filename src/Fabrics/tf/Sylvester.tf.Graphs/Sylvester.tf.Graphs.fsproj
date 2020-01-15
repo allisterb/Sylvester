@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="GraphDefn.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ext\satsumagraph\src\Satsuma.netstandard.csproj" />
+    <ProjectReference Include="..\..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
+    <ProjectReference Include="..\..\..\Lang\Sylvester.Graphs\Sylvester.Graphs.fsproj" />
+    <ProjectReference Include="..\Sylvester.tf.Protobuf\Sylvester.tf.Protobuf.csproj" />
+  </ItemGroup>
+
+</Project>

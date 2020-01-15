@@ -134,7 +134,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{748A7F28-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tf", "tf", "{2069AF67-7346-4028-9EDB-A0A01E6A5D0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.tf.Protobuf", "Fabrics\tf\Sylvester.tf.Protobuf\Sylvester.tf.Protobuf.csproj", "{C91574BD-AE0D-4002-8F8D-2096892959EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.tf.Protobuf", "Fabrics\tf\Sylvester.tf.Protobuf\Sylvester.tf.Protobuf.csproj", "{C91574BD-AE0D-4002-8F8D-2096892959EF}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.tf.Graphs", "Fabrics\tf\Sylvester.tf.Graphs\Sylvester.tf.Graphs.fsproj", "{0B97CA0E-645C-4848-9BDE-A3013C390C5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -494,6 +496,18 @@ Global
 		{C91574BD-AE0D-4002-8F8D-2096892959EF}.Release|x64.Build.0 = Release|Any CPU
 		{C91574BD-AE0D-4002-8F8D-2096892959EF}.Release|x86.ActiveCfg = Release|Any CPU
 		{C91574BD-AE0D-4002-8F8D-2096892959EF}.Release|x86.Build.0 = Release|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Debug|x64.Build.0 = Debug|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Debug|x86.Build.0 = Debug|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Release|x64.ActiveCfg = Release|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Release|x64.Build.0 = Release|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Release|x86.ActiveCfg = Release|Any CPU
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -539,6 +553,7 @@ Global
 		{748A7F28-6803-4FE1-A615-9F964E8F354C} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{2069AF67-7346-4028-9EDB-A0A01E6A5D0E} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{C91574BD-AE0D-4002-8F8D-2096892959EF} = {0C40457E-4586-422A-A161-3ADE8618354F}
+		{0B97CA0E-645C-4848-9BDE-A3013C390C5E} = {0C40457E-4586-422A-A161-3ADE8618354F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}
