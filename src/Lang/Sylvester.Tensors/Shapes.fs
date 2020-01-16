@@ -6,27 +6,27 @@ open Sylvester
 open Sylvester.Arithmetic
 
 module Rank = 
-    type zero = n<0>
+    type zero = N<0>
 
-    type one = n<1>
+    type one = N<1>
 
-    type two = n<2>
+    type two = N<2>
 
-    type three = n<3>
+    type three = N<3>
 
-    type four = n<4>
+    type four = N<4>
 
-    type five = n<5>
+    type five = N<5>
 
-    type six = n<6>
+    type six = N<6>
 
-    type seven = n<7>
+    type seven = N<7>
 
-    type eight = n<8>
+    type eight = N<8>
 
-    type nine = n<9>
+    type nine = N<9>
 
-    type ten = n<10>
+    type ten = N<10>
 
     let zero = new zero()
 

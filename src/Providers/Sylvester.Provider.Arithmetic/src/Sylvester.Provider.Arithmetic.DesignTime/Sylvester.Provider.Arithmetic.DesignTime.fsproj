@@ -19,7 +19,6 @@
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Bool.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Constraints.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Number.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Rank.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Base10.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\N10.fs" />
     

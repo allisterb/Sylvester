@@ -2,13 +2,13 @@
 //#r ".\\..\\..\\src\\Base\\Sylvester.Collections\\bin\\Debug\\net45\\Sylvester.Collections.dll"
 
 open Sylvester.Arithmetic
-open FSharp.Reflection
-open System.Reflection
-open Sylvester.Arithmetic.N10
-//open Sylvester.Collections
 
-//printf "%s" typeof<dim<4, 7>>.FullName
-typeof<dim<4, 7>>.GenericTypeArguments.[1].GenericTypeArguments.[9].Name
+type one = dim<N<1>>
+
+//type r = Mat<dim<3, 4>, float>
+//let v = Vec<dim<4>()
+printf "%s" typeof<dim<4, 7>>.Name
+//typeof<dim<4, 7>>.Gen
 //Type-level arithmetic
 //let a = new n<500>()
 
