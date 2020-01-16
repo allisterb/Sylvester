@@ -1,8 +1,8 @@
 ﻿namespace Sylvester.Arithmetic
 
-module N10 = 
+open System
 
-    open System
+module N10 = 
 
     type N10Overflow = N10Overflow
     

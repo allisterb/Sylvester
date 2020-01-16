@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DimensionsTests.fs" />
     <Compile Include="ConstraintTests.fs" />
     <Compile Include="Base10Tests.fs" />
     <Compile Include="N10Tests.fs" />

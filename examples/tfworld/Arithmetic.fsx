@@ -2,23 +2,27 @@
 //#r ".\\..\\..\\src\\Base\\Sylvester.Collections\\bin\\Debug\\net45\\Sylvester.Collections.dll"
 
 open Sylvester.Arithmetic
+open FSharp.Reflection
+open System.Reflection
 open Sylvester.Arithmetic.N10
 //open Sylvester.Collections
 
+//printf "%s" typeof<dim<4, 7>>.FullName
+typeof<dim<4, 7>>.GenericTypeArguments.[1].GenericTypeArguments.[9].Name
 //Type-level arithmetic
-let a = new n<500>()
+//let a = new n<500>()
 
-let b = new n<125>()
+//let b = new n<125>()
 
-let c = a + b
+//let c = a + b
 
 
 //Type-level comparison
-let d = c +> a
+//let d = c +> a
 
-let e = c * a +< b
+//let e = c * a +< b
 
 //Type-level static checks
-check(b +> zero)
+//check(b +> zero)
 //check(b +< zero)
-c
+//c

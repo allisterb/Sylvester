@@ -15,7 +15,8 @@ type OpGraph (stream:Stream) =
     inherit AbstractGraph()    
     let pbdef = GraphDef.Parser.ParseFrom(CodedInputStream.CreateWithLimits(stream, 256 * 1024 * 1024, 100))
     do if pbdef.Node.Count > 0 then failwith "This graph definition is empty."
-    
+    let z = new NodeDef()
+    z.
     override x.Initialized = pbdef.IsInitialized() && pbdef.Node.Count > 0
     
     

@@ -473,14 +473,7 @@ module Base10 =
   type ``8`` with static member inline (++*) (_:_8, nn) = nn + nn + nn + nn + nn + nn + nn + nn
   type ``9`` with static member inline (++*) (_:_9, nn) = nn + nn + nn + nn + nn + nn + nn + nn + nn
 
-  type Number = 
-    abstract IntVal:int
-    abstract Val:int64
-    abstract UVal:uint64
-    
   let digit<'d when 'd :>Base10Digit>() :'d = Activator.CreateInstance<'d>()
-
-  let number<'n when 'n :> Number> = Activator.CreateInstance<'n>()
    
   let _val(d:Base10Digit) = (uint64) d.Val
 
@@ -491,7 +484,7 @@ module Base10 =
 
   let areEqual<'d when 'd :> Base10Digit>(_:'d, b: obj) = isEqualTo<'d>(b)
 
-  let getCharDigitType(d:char) =
+  let getCharBase10Type(d:char) =
     match d with
     | '0' -> typedefof<_0>
     | '1' -> typedefof<_1>
@@ -508,7 +501,7 @@ module Base10 =
   let getIntBase10TypeArray(n:int, length:int) =
     let s = n.ToString()
     do if s.Length > length then failwith <| sprintf "The number of integer digits in %i is more than %i." n length
-    s.PadLeft(length, '0') |> Seq.map(fun d -> getCharDigitType d) |> Seq.toArray
+    s.PadLeft(length, '0') |> Seq.map(fun d -> getCharBase10Type d) |> Seq.toArray
 
   
   

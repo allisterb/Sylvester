@@ -1,6 +1,7 @@
 ﻿namespace Sylvester.tf
 
 open System
+open System.Reflection
 
 open Sylvester
 open Sylvester.Arithmetic
@@ -33,6 +34,13 @@ module Matrix =
 
     type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't : struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'dim0, 'dim1, 't> 
 
+    //type Mat<'dim0 * 'dim1, 't when 'dims :> Number * Number and 't : struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'dim0, 'dim1, 't> 
+    
+
+    ///type Mat<Tuple<'dim0, 'dim1>, 't when 't : struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'dim0, 'dim1, 't> 
+
     type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, float>
 
+    type r = one * four
+    //let x = Mat<r, int>("a")
     

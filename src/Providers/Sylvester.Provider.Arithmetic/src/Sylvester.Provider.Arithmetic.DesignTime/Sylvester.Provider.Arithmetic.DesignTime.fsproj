@@ -9,7 +9,7 @@
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <Version>0.2.2</Version>
+    <Version>0.2.3</Version>
     <Description>Type-level natural number arithmetic and constraints</Description>
     <Authors>Allister Beharry</Authors>
     <Company>Allister Beharry</Company>
@@ -17,9 +17,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Bool.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Base10.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Constraints.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Number.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Rank.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Base10.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\N10.fs" />
+    
     <Compile Include="..\..\paket-files\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fsi">
       <Paket>True</Paket>
       <Link>paket-files/ProvidedTypes.fsi</Link>
@@ -28,6 +31,7 @@
       <Paket>True</Paket>
       <Link>paket-files/ProvidedTypes.fs</Link>
     </Compile>
+    
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="ArithmeticProvider.fs" />
     <None Include="paket.references" />

@@ -11,7 +11,7 @@ owners
 projectUrl
     https://github.com/allisterb/Sylvester/tree/master/src/Providers/Sylvester.Provider.Arithmetic
 repositoryUrl
-	https://github.com/allisterb/Sylvester/tree/master/src/Providers/Sylvester.Provider.Arithmetic
+	https://github.com/allisterb/Sylvester.git
 licenseUrl
     https://raw.githubusercontent.com/allisterb/Sylvester/blob/master/LiCENSE
 requireLicenseAcceptance
@@ -21,7 +21,7 @@ iconUrl https://github.com/allisterb/Compute.NET/raw/master/numanalysis.png
 copyright Copyright(c) 2019 2020 by Allister Beharry
 
 tags
-    F# math arithmetic type-level
+    F# fsharp math arithmetic type-level
 summary
     Type-level natural number arithmetic and constraints
 description
