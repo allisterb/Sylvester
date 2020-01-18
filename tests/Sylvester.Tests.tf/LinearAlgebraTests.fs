@@ -18,7 +18,7 @@ type LinearAlgebraTests() =
 
     [<Fact>]
     let ``Can add matrices`` () =
-        defaultGraph <- TensorGraph<n<5>, n<1>>()
+        defaultGraph <- TensorGraph<N<5>, N<1>>()
         Assert.Equal("", defaultGraph.NameScope)
         let msum = 
             use mops = scope "mops"
@@ -32,7 +32,7 @@ type LinearAlgebraTests() =
 
     [<Fact>]
     let ``Can multiply matrices`` () =
-        defaultGraph <- TensorGraph<n<5>, n<1>>()
+        defaultGraph <- TensorGraph<N<5>, N<1>>()
         Assert.Equal("", defaultGraph.NameScope)
         let msum = 
             use mops = scope "mops"

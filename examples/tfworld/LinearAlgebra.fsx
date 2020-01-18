@@ -5,6 +5,7 @@ open Sylvester.Arithmetic
 
 defaultGraph <- new Graph<six, two>()
 
+
 let x = Vec<dim<19>>("fpp")
 let m0 = Mat<dim<12>, dim<17>>("m")
 let m1 = Mat<dim<17>, dim<20>>("m")

@@ -26,5 +26,5 @@ module Vector =
     type Vec<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
         Vector<'dim0, 't>
 
-    type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, float>
+    type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, float32>
 

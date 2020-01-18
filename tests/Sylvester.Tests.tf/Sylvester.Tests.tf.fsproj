@@ -15,6 +15,7 @@
     <Compile Include="Api\TFSessionTests.fs" />
     <Compile Include="Api\TensorTests.fs" />
     <Compile Include="GraphTests.fs" />
+    <Compile Include="GraphDefnTests.fs" />
     <Compile Include="ArithmeticTests.fs" />
     <Compile Include="LinearAlgebraTests.fs" />
     <Compile Include="Program.fs" />
@@ -29,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Fabrics\tf\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
+    <ProjectReference Include="..\..\src\Fabrics\tf\Sylvester.tf.Graphs\Sylvester.tf.Graphs.fsproj" />
     <ProjectReference Include="..\..\src\Fabrics\tf\Sylvester.tf.OpGen\Sylvester.tf.OpGen.csproj" />
     <ProjectReference Include="..\..\src\Fabrics\tf\Sylvester.tf\Sylvester.tf.fsproj" />
     <ProjectReference Include="..\Sylvester.Tests.Base\Sylvester.Tests.Base.csproj" />

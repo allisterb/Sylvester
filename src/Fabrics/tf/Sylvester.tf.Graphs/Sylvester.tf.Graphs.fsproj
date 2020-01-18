@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="OpGraph.fs" />
+    <Compile Include="GraphDefn.fs" />
   </ItemGroup>
 
   <ItemGroup>

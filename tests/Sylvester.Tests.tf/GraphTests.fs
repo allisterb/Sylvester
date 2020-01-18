@@ -18,7 +18,6 @@ open Google.Protobuf.Collections
 
 open TensorFlow
 
-
 type GraphTests() =
     inherit BaseTest()
 
