@@ -1,14 +1,13 @@
-﻿namespace Sylvester.tf
+﻿namespace Sylvester.LinearAlgebra
 
 open System
 
-open Sylvester.Arithmetic.N10
+open Sylvester.Arithmetic
 open Sylvester.Tensors
 
 [<StructuredFormatDisplay("<Scalar>")>]
 type Scalar<'t when 't: struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    (graph:ITensorGraph, head:Node, output:int) = 
-    inherit Tensor<Rank.zero, 't>(graph, head, output, [|0L|])
+    (ops:ILinearAlgebraOps, value:'t) = 
     interface IScalar
         
     new(name:string, ?graph:ITensorGraph) = 

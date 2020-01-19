@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ILinearAlgebraOps.fs" />
+    <Compile Include="Scalar.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lang\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
+  </ItemGroup>
+
+</Project>
