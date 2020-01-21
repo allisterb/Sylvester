@@ -4,3 +4,6 @@
 [submodule "ext/satsumagraph"]
 	path = ext/satsumagraph
 	url = https://github.com/allisterb/satsumagraph.git
+[submodule "ext/automatic-graph-layout"]
+	path = ext/automatic-graph-layout
+	url = https://github.com/microsoft/automatic-graph-layout.git

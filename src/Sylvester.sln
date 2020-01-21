@@ -152,7 +152,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{6AF10FA0-9
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.LinearAlgebra", "Math\Sylvester.LinearAlgebra\Sylvester.LinearAlgebra.fsproj", "{0A7023F5-1F66-4662-8E9C-E1B81FCB0ED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Graphs", "Lang\Sylvester.Graphs\Sylvester.Graphs.csproj", "{2D277F37-52DB-4AD4-B7B4-80575FAF72C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Graphs", "Lang\Sylvester.Graphs\Sylvester.Graphs.csproj", "{2D277F37-52DB-4AD4-B7B4-80575FAF72C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSAGL.NETCore", "..\ext\automatic-graph-layout\GraphLayout\MSAGL.NETCore\MSAGL\MSAGL.NETCore.csproj", "{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -560,6 +562,18 @@ Global
 		{2D277F37-52DB-4AD4-B7B4-80575FAF72C3}.Release|x64.Build.0 = Release|Any CPU
 		{2D277F37-52DB-4AD4-B7B4-80575FAF72C3}.Release|x86.ActiveCfg = Release|Any CPU
 		{2D277F37-52DB-4AD4-B7B4-80575FAF72C3}.Release|x86.Build.0 = Release|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Debug|x64.Build.0 = Debug|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Debug|x86.Build.0 = Debug|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Release|x64.ActiveCfg = Release|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Release|x64.Build.0 = Release|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Release|x86.ActiveCfg = Release|Any CPU
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -611,6 +625,7 @@ Global
 		{DA5B4D76-6EF6-481E-9D45-8376030FD94B} = {0C40457E-4586-422A-A161-3ADE8618354F}
 		{0A7023F5-1F66-4662-8E9C-E1B81FCB0ED3} = {6AF10FA0-9CAD-4048-BA33-E60D8D4C5653}
 		{2D277F37-52DB-4AD4-B7B4-80575FAF72C3} = {E0E37582-2ECB-4B62-9ACA-B797A22A6704}
+		{36D3D1D2-BA46-4A2B-A7C3-256287762D8F} = {09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}
