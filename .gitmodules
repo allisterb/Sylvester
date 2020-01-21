@@ -1,6 +1,6 @@
 [submodule "ext/protobuf.Text"]
 	path = ext/protobuf.Text
-	url = https://github.com/SciSharp/protobuf.Text.git
+	url = https://github.com/allisterb/protobuf.Text.git
 [submodule "ext/satsumagraph"]
 	path = ext/satsumagraph
-	url = https://git.code.sf.net/p/satsumagraph/code
+	url = https://github.com/allisterb/satsumagraph.git
