@@ -69,9 +69,9 @@ type GraphTests() =
         let sum0 = 
             use x = scope "MatrixOps"
             m0 + m1
-        let def = g._Graph.ToGraphDef()
+        let def = tf(g).ToGraphDef()
         Assert.NotEmpty(def.Node)
-        do g._Graph.Export "graph.pbtxt"
+        do tf(g).Export "graph.pbtxt"
         ()
         //do g._Graph.ExportToGraphDef("graph.pbtxt")
         

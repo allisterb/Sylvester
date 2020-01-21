@@ -3,9 +3,7 @@
 open System
 
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
-open Sylvester.Tensors
-    
+
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
     (graph:ITensorGraph, head:Node, output:int) =

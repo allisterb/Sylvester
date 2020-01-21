@@ -1,14 +1,8 @@
 ﻿namespace Sylvester.tf
 
 open System
-open System.Reflection
 
-open Sylvester
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
-open Sylvester.Collections
-open Sylvester.Graphs
-open Sylvester.Tensors
 
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't : struct and 't:> ValueType and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
@@ -28,7 +22,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't : s
     static member (*) (l:Matrix<'a, 'b, 't>, r: Matrix<'b, 'c, 't>) = 
         let node = matmul l.Head r.Head
         node.Inputs <- [l; r]
-        createEdge<Matrix<'a, 'c, 't>>(l.TensorGraph, node, 0)
+        createEdge<Matrix<'a, 'c, 't>>(l.Graph, node, 0)
 
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, float32>
 type MatF<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, float>

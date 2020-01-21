@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ext\satsumagraph\src\Satsuma.netstandard.csproj" />
+    <ProjectReference Include="..\..\Base\Sylvester.Api\Sylvester.Api.csproj" />
+  </ItemGroup>
+
+</Project>

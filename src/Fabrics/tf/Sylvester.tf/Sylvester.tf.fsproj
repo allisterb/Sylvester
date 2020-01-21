@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <None Include="paket.template" />
+    <Compile Include="graphs\Shapes.fs" />
     <Compile Include="graphs\Graph.fs" />
     <Compile Include="graphs\Scope.fs" />
     <Compile Include="nodes\Arithmetic.fs" />
@@ -36,8 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
-    <ProjectReference Include="..\..\..\Lang\Sylvester.Graphs\Sylvester.Graphs.fsproj" />
-    <ProjectReference Include="..\..\..\Lang\Sylvester.Tensors\Sylvester.Tensors.fsproj" />
+    <ProjectReference Include="..\..\..\Base\Sylvester.Collections\Sylvester.Collections.fsproj" />
     <ProjectReference Include="..\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
   </ItemGroup>
 
@@ -53,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 

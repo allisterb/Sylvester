@@ -3,54 +3,8 @@
 open System
 
 open Sylvester.Arithmetic
-open Sylvester.Tensors
 
-[<AutoOpen>]
-module Dimension = 
-    type zero = dim<0>
-    
-    type one = dim<1>
-    
-    type two = dim<2>
-    
-    type three = dim<3>
-    
-    type four = dim<4>
-    
-    type five = dim<5>
-    
-    type six = dim<6>
-    
-    type seven = dim<7>
-    
-    type eight = dim<8>
-    
-    type nine = dim<9>
-    
-    type ten = dim<10>
-    
-    let zero = new zero()
-    
-    let one = new one()
-    
-    let two = new two()
-    
-    let three = new three()
-    
-    let four = new four()
-    
-    let five = new five()
-    
-    let six = new six()
-    
-    let seven = new seven()
-    
-    let eight = new eight()
-    
-    let nine = new nine()
-    
-    let ten = new ten()
-
+type IDataType<'t> = interface end
 
 /// Tensor of unknown rank and dimensions
 type Tensor<'t when 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
@@ -83,11 +37,11 @@ type Tensor<'r, 't when 'r :> Number and 't:> ValueType and 't : struct  and 't:
     static member (+) (l:'x, r:'x when 'x :> Tensor<'r, _> and 'x :> IFullShape<'r>) =  
         let node = add l.Head r.Head
         node.Inputs <- [l; r]
-        createEdge<'x>(l.TensorGraph, node, 0)
+        createEdge<'x>(l.Graph, node, 0)
 
     static member (-) (l:'x, r:'x when 'x :> Tensor<'r, _> and 'x :> IFullShape<'r>) = 
         let node = sub l.Head r.Head
         node.Inputs <- [l; r]
-        createEdge<'x>(l.TensorGraph, node, 0)
+        createEdge<'x>(l.Graph, node, 0)
 
         

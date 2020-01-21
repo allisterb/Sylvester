@@ -15,7 +15,7 @@
     <Compile Include="Api\TFSessionTests.fs" />
     <Compile Include="Api\TensorTests.fs" />
     <Compile Include="GraphTests.fs" />
-    <Compile Include="GraphDefnTests.fs" />
+    <Compile Include="GraphDefTests.fs" />
     <Compile Include="ArithmeticTests.fs" />
     <Compile Include="LinearAlgebraTests.fs" />
     <Compile Include="Program.fs" />

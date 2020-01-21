@@ -3,20 +3,16 @@
 open System
 open System.Collections.Generic;
 open System.Reflection
-open System.Linq
 
 open TensorFlow
 
 open Sylvester
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
 open Sylvester.Collections
-open Sylvester.Graphs
-open Sylvester.Tensors
 
 /// A graph of tensor operations.
 type ITensorGraph =
-    inherit IGraph
+    abstract member Handle:nativeint
     abstract member NameScope:string with get,set
     abstract member MakeName:string->string
     abstract member GetName:string->string
@@ -27,7 +23,7 @@ type ITensorGraph =
     
 /// A graph of tensor operations with a known number of inputs and outputs.
 and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(scope:string) = 
-    inherit Graph<'input, 'output, Edge>(scope)
+    inherit Api()
     
     let tfGraph = c_api.TF_NewGraph() |?? lazy failwith "Could not create new TF_Graph."
     
@@ -37,44 +33,41 @@ and TensorGraph<'input, 'output when 'input :> Number and 'output :> Number>(sco
 
     do base.Initialized <- tfGraph <> null && tfGraph.NameScope = scope
         
-    ///Flat map of graph nodes
-    member val Nodes = new Dictionary<string, Node>() with get
-        
-    /// Flat map of graph edges
-    member val Edges = new Dictionary<string, Edge>() with get
-
     /// VArray of graph inputs
     member val Inputs = vanew<'input, Edge> with get,set 
 
     /// VArray of graph outputs
     member val Outputs = vanew<'output, Edge> with get,set
 
-    member internal x._Graph = tfGraph
+    member x.NameScope with get() = tfGraph.NameScope and set(value) = tfGraph.SetNameScope(value)
+    
+    member x.IsEmpty = x.NameScope = "_"
+    
+    ///Flat map of graph nodes
+    member val internal Nodes = new Dictionary<string, Node>() with get
+        
+    /// Flat map of graph edges
+    member val internal Edges = new Dictionary<string, Edge>() with get
 
     member internal x.NumPlaceHolders = seq {for n in x.Nodes.Values do yield n.Op} |> Seq.concat |> Seq.filter (fun n -> TF_Graph.GetOpType(n) = "Placeholder") |> Seq.length
 
-    member x.NameScope with get() = tfGraph.NameScope and set(value) = tfGraph.SetNameScope(value)
+    static member val EmptyGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get/// Add an edge (tensor) to the graph
     
-    /// Add an edge (tensor) to the graph
-    member x.AddEdge(e:Edge) =
-        do if (e.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then failwith "This tensor does not belong to this graph's namescope."
+    member internal x.AddEdge(e:Edge) =
+        if (e.Graph :> ITensorGraph).NameScope <> x.NameScope then failwith "This tensor does not belong to this graph's namescope."
         do if x.Edges.ContainsKey(e.Name) then failwithf "The edge with name %s already exists in this graph." e.Name
         x.Edges.Add(e.Name, e)
         do if not <| x.Nodes.ContainsKey(e.Head.Name) then x.AddNode(e.Head)
                 
     /// Add a node (operation) to the graph
-    member x.AddNode(n:Node) =
-        do if (n.TensorGraph :> ITensorGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
+    member internal x.AddNode(n:Node) =
+        do if (n.Graph :> ITensorGraph).NameScope <> x.NameScope then failwith "This node does not belong to this graph's namescope."
         do if x.Nodes.ContainsKey(n.Name) then failwithf "The node with name %s already exists in this graph." n.Name                
         let numplaceholders = n.Op |> Seq.filter (fun op -> TF_Graph.GetOpType(op) = "Placeholder") |> Seq.length in 
             if numplaceholders > 0 && x.NumPlaceHolders + numplaceholders > x.Inputs.IntLength then failwithf "Cannot add input node %s as this graph already contains %i input(s)." n.Name x.Inputs.IntLength  
         x.Nodes.Add(n.Name, n)
         Seq.iter (fun (e:Edge) -> if not <| x.Edges.ContainsKey(e.Name) then x.AddEdge(e) |> ignore) n.Inputs
                    
-    member x.IsEmpty = x.NameScope = "_"
-
-    static member val EmptyGraph = TensorGraph<zero, zero>("_") :> ITensorGraph with get
-
     interface ITensorGraph with
         member x.Handle = tfGraph.__Instance
         member x.MakeName s = tfGraph.MakeName s
@@ -92,7 +85,7 @@ and Graph<'input, 'output when 'input :> Number and 'output :> Number> = TensorG
 /// A tensor graph node consists of an operation with input edges
 and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) = 
     
-    member val TensorGraph = graph  with get
+    member val Graph = graph  with get
 
     member val Name = name with get 
 
@@ -100,20 +93,13 @@ and Node(graph: ITensorGraph, name:string, op:TF_Output[], inputs: Edge list) =
 
     member val Op = op with get
 
-    interface INode<TF_Output[]> with
-        member val Graph = graph :> IGraph with get,set
-        member val Name = name
-        member val Op = op
-
     new(graph: ITensorGraph, op:TF_Output, inputs: Edge list) = Node(graph, c_api.TF_OperationName op.Oper, [|op|], inputs)
-
-and IDataType<'t> = interface end
 
 /// A tensor graph edge represents tensor data of known or unknown shape flowing into or out of a graph and between graph nodes.
 /// Each edge has one head node and data type with known or unknown shape.
 and Edge(graph: ITensorGraph, head:Node, output:int, dt:TF_DataType, ?shape:int64[]) = 
     
-    member val TensorGraph = graph with get
+    member val Graph = graph with get
 
     member val DataType = dt with get
    
@@ -129,17 +115,11 @@ and Edge(graph: ITensorGraph, head:Node, output:int, dt:TF_DataType, ?shape:int6
         member val Rank:Option<int> = if shape.IsSome then Some shape.Value.Length else None  with get, set
         member val Dims:Option<int64[]> = shape with get, set
 
-    interface IEdge with
-        member val Graph = graph :> IGraph with get,set
-        member x.Name = x.Name
-        member x.DataType = Convert.ToInt64(int dt)
-
 /// A tensor graph edge with partially known shape
 and Edge<'r when 'r :> Number>(graph:ITensorGraph, head: Node, output:int, dt:TF_DataType, shape:int64[]) =
     inherit Edge(graph, head, output, dt, shape)
-
-    interface IEdge<'r> with
-        member x.Rank = number<'r>
+    member val Rank = number<'r>
+    interface IPartialShape<'r> with member x.Rank = x.Rank 
 
 [<AutoOpen>]
 module TensorGraph = 
@@ -161,18 +141,18 @@ module TensorGraph =
 
     let ops (x:obj) =
         match x with
-        | :? Node as node -> node.TensorGraph.Ops
-        | :? Edge as edge -> edge.TensorGraph.Ops
+        | :? Node as node -> node.Graph.Ops
+        | :? Edge as edge -> edge.Graph.Ops
         | :? ITensorGraph as graph -> graph.Ops
-        | _ -> failwith "This type is not a tensor graph element."
+        | _ -> failwith "This type is not a tensor graph or graph element."
       
 
     let tf (x:obj) =
         match x with
-        | :? Node as node -> node.TensorGraph.Ops :?> TF_Graph
-        | :? Edge as edge -> edge.TensorGraph.Ops :?> TF_Graph
+        | :? Node as node -> node.Graph.Ops :?> TF_Graph
+        | :? Edge as edge -> edge.Graph.Ops :?> TF_Graph
         | :? ITensorGraph as graph -> graph.Ops :?> TF_Graph
-        | _ -> failwith "This type is not a tensor graph element."
+        | _ -> failwith "This type is not a TensorFlow graph or element."
       
     let tg<'input, 'output when 'input :> Number and 'output :>Number>(g:ITensorGraph) = g :?> TensorGraph<'input, 'output>
 

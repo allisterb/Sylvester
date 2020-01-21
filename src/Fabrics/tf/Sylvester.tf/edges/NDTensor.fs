@@ -1,17 +1,8 @@
 ﻿namespace Sylvester.tf
 
 open System
-open System.Collections.Generic;
-open System.Runtime.CompilerServices
 
-open TensorFlow
-
-open Sylvester
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
-open Sylvester.Collections
-open Sylvester.Graphs
-open Sylvester.Tensors
 
 /// 3-D Tensor
 type Tensor<'dim0, 'dim1, 'dim2, 't when 'dim0 :> Number and 'dim1 :> Number and 'dim2 :> Number and 't:> ValueType and 't : struct  and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>

@@ -1,9 +1,53 @@
-﻿namespace Sylvester.Tensors
+﻿namespace Sylvester.tf
 
-open System
-
-open Sylvester
 open Sylvester.Arithmetic
+
+[<AutoOpen>]
+module Dimension = 
+    type zero = dim<0>
+    
+    type one = dim<1>
+    
+    type two = dim<2>
+    
+    type three = dim<3>
+    
+    type four = dim<4>
+    
+    type five = dim<5>
+    
+    type six = dim<6>
+    
+    type seven = dim<7>
+    
+    type eight = dim<8>
+    
+    type nine = dim<9>
+    
+    type ten = dim<10>
+    
+    let zero = new zero()
+    
+    let one = new one()
+    
+    let two = new two()
+    
+    let three = new three()
+    
+    let four = new four()
+    
+    let five = new five()
+    
+    let six = new six()
+    
+    let seven = new seven()
+    
+    let eight = new eight()
+    
+    let nine = new nine()
+    
+    let ten = new ten()
+
 
 module Rank = 
     type zero = N<0>
@@ -50,17 +94,17 @@ module Rank =
 
     let ten = new ten()
 
-/// A tensor whose rank and dimensions may be unknown until runtime
+/// A TF tensor whose rank and dimensions may be unknown until runtime
 type IUnknownShape =
     abstract member Rank:Option<int> with get,set
     abstract member Dims:Option<int64[]> with get,set
 
-/// A tensor whose rank is known at compile time
+/// A TF tensor whose rank is known at compile time
 type IPartialShape<'n when 'n :> Number> = 
     inherit IUnknownShape
     abstract member Rank:'n
 
-/// A tensor whose rank and dimensions are known at compile time    
+/// A TF tensor whose rank and dimensions are known at compile time    
 type IFullShape<'n when 'n :> Number> = 
     inherit IPartialShape<'n>
 
