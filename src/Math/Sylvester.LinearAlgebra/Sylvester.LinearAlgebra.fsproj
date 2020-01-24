@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ILinearAlgebraOps.fs" />
+    <Compile Include="LinearAlgebra.fs" />
     <Compile Include="Scalar.fs" />
   </ItemGroup>
 

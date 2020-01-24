@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ext\automatic-graph-layout\GraphLayout\MSAGL.NETCore\MSAGL\MSAGL.NETCore.csproj" />
     <ProjectReference Include="..\..\..\ext\satsumagraph\src\Satsuma.netstandard.csproj" />
     <ProjectReference Include="..\..\Base\Sylvester.Api\Sylvester.Api.csproj" />
   </ItemGroup>
