@@ -5,6 +5,8 @@ open System.Collections
 open System.Collections.Generic
 open Microsoft.FSharp.Collections
 
+type Numeric<'t when 't : struct  and 't: comparison and 't: equality and 't :> IFormattable> = 't
+
 /// Set of numbers belonging to the continuum of real numbers
 type R<'t when 't : struct  and 't: comparison and 't: equality and 't :> IFormattable> =
 | R of 't
@@ -28,6 +30,12 @@ with
         |Seq s -> Seq(s |> Seq.filter f)
         |Set s -> Set(fun x -> s(x) && f(x))
 
+    static member inline (+) (l, r) = 
+        match (l, r) with
+        |(R a, R b) -> R(a + b)
+        |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
+        |(Set a, Set b) -> Set(fun x -> a(x) || b(x))
+           
 /// Cartesian product of R x R
 type R2<'t when 't:> ValueType and 't : struct  and 't: comparison and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
 | R2 of 't * 't
@@ -39,21 +47,6 @@ type R3<'t when 't:> ValueType and 't : struct  and 't: comparison and 't: (new:
 | R3 of 't * 't * 't
 | Seq3 of seq<'t * 't * 't>
 | Set3 of (('t * 't * 't) -> bool)
-
-type BinaryOp<'t when 't : struct  and 't: comparison and 't: equality and 't :> IFormattable
-    and 't : (static member (+): 't -> 't -> 't)
-    and 't : (static member (-): 't -> 't -> 't)
-    and 't : (static member (*): 't -> 't -> 't)
-    and 't : (static member (/): 't -> 't -> 't)
-    and 't : (static member Zero: 't)> = 't -> 't -> 't
-
-type Field<'t when 't : struct  and 't: comparison and 't: equality and 't :> IFormattable
-    and 't : (static member (+): 't -> 't -> 't)
-    and 't : (static member (-): 't -> 't -> 't)
-    and 't : (static member (*): 't -> 't -> 't)
-    and 't : (static member (/): 't -> 't -> 't)
-    and 't : (static member Zero: 't)> = Field of R<'t> * BinaryOp<'t> * BinaryOp<'t>
-
 
 [<AutoOpen>]
 module Interval = 
@@ -82,13 +75,8 @@ module Reals =
 
 [<AutoOpen>]
 module Integers = 
-    
     let Z = Set(fun (_:int) -> true)
     let Zpos = Seq(infseq (fun n -> n))
     let Zneg = Seq(infseq (fun n -> -1 * n)) 
     let Zplus = Zpos
     let Zminus = Zneg
-
-    let F = Field(Zpos, (+), (*))
-    let R = Field(Real, (+), (*))
-

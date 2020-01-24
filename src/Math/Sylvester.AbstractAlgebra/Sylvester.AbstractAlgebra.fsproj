@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Numbers.fs" />
+    <Compile Include="Structures.fs" />
   </ItemGroup>
 
 </Project>
