@@ -90,7 +90,7 @@ module VArray =
 
     let arrayOf1<'t> (x1:'t) = Array<one, 't>(x1)
 
-    let arrayOf2<'t> (x1:'t) (x2:'t)= Array<two, 't>([|x1; x2|])
+    let arrayOf2<'t> (x1:'t) (x2:'t) = Array<two, 't>([|x1; x2|])
 
     let arrayOf3<'t> (x1:'t) (x2:'t) (x3:'t) = Array<three, 't>([|x1; x2; x3|])
 

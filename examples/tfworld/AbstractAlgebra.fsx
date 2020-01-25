@@ -7,4 +7,3 @@ open Sylvester.Collections
 open Sylvester.AbstractAlgebra
 
 let G = Group(Z, (+))
-G.Set

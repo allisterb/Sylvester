@@ -13,6 +13,6 @@ type Group<'t when 't : struct  and 't: comparison and 't: equality and 't :> IF
     and 't : (static member (/): 't -> 't -> 't)
     and 't : (static member Zero: 't)
     and 't : (static member One: 't)>(set: Set<'t>, op:BinaryOp<'t>) = 
-    inherit Category<one, one, 't>((arrayOf1(Struct(set))),(arrayOf1(Morph(Struct(set), Struct(set), op))))
-    member inline x.Set = x.Structures.[zero].Set
+    inherit Struct<two, one, 't>(arrayOf2 (set) (set), arrayOf1(op))
+    
         

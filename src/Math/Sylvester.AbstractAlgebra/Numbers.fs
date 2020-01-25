@@ -30,12 +30,14 @@ with
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
-    ///Subset of R
+    /// A subset of the set.
     member x.Sub(f: 't -> bool) = 
         match x with
-        |Elem a -> failwith "Cannot take a subset of an element "
+        |Elem a -> failwith "Cannot take a subset of a set element."
         |Seq s -> Seq(s |> Seq.filter f)
         |Set s -> Set(fun x -> s(x) && f(x))
+
+    static member inline Empty = Set(fun (_:'t) -> false)
 
     static member inline (+) (l, r) = 
         match (l, r) with
@@ -45,7 +47,6 @@ with
 
         |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
         |_ -> failwith "Not implemented"
-
 
 [<AutoOpen>]
 module Interval = 

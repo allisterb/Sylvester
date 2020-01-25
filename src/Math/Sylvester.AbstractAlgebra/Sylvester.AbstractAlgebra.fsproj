@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <Compile Include="Numbers.fs" />
-    <Compile Include="Categories.fs" />
+    <Compile Include="Structures.fs" />
     <Compile Include="Groups.fs" />
   </ItemGroup>
 
