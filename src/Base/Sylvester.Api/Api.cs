@@ -7,8 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-
-
 namespace Sylvester
 {
     public abstract class Api

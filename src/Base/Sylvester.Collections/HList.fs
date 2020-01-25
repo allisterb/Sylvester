@@ -39,7 +39,6 @@ and HAppend = HAppend with
     static member inline ($) (HAppend, HCons(x, xs)) = fun list ->
         HCons (x, (HAppend |*| xs) list)
 
-
 and HMapper<'a> = HMapper of 'a with
     static member ($) (HMapper(_), HNil) = HNil
     static member inline ($) (HMapper(M), HCons(x, xs)) = HCons(M $ x, (HMapper(M) |*| (xs)))

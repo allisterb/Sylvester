@@ -10,7 +10,7 @@ module Api =
         | Failure of 'TFailure
         with member x.Res with get() = match x with | Success s -> s | Failure f -> failwith "This result is a failure."
 
-     //API Logging
+     // API Logging
     let inline info mt args = Api.Info(mt, List.toArray args)
 
     let inline debug mt args = Api.Debug(mt, List.toArray args)
@@ -129,5 +129,5 @@ module Api =
    
     let inline (|??) a b = nullCoalesceHelper<NullCoalesce, _, _, _> a b
 
-    //Strings
+    // Strings
     let empty (s:string) = String.IsNullOrEmpty s

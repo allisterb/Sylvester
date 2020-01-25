@@ -3,20 +3,19 @@ namespace Sylvester.Collections
 open System
 
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
 
 [<AbstractClass>]
-type VArray2D<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number>() = 
+type Array2D<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number>() = 
     
     member x.Dim0 = number<'dim0>
 
     member x.Dim1 = number<'dim1>
 
-    static member inline (!+) (v:VArray2D<'dim0, 'dim1>) = (v.Dim0, v.Dim1)
+    static member inline (!+) (v:Array2D<'dim0, 'dim1>) = (v.Dim0, v.Dim1)
 
 [<StructuredFormatDisplay("{_Array}")>]
-type VArray2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'t[,]) = 
-    inherit VArray2D<'dim0, 'dim1>()
+type Array2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'t[,]) = 
+    inherit Array2D<'dim0, 'dim1>()
     let l0 = items.GetLength(0)
     let l1 = items.GetLength(1)
 
@@ -59,8 +58,8 @@ type VArray2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'
         checkidx(j, x.Dim1)
         x._Array.[i |> int, j |> int]
            
-    member inline x.GetSlice(start0: 'a option, finish0 : 'b option, start1: 'c option, finish1 : 'd option) : VArray2D<'x, 'y, 't> =  
-        let inline create(z0:'z0, z1:'z1, items: 't[,] when 'z0 :> Number and 'z1 :> Number) = VArray2D<'z0, 'z1, 't>(items)
+    member inline x.GetSlice(start0: 'a option, finish0 : 'b option, start1: 'c option, finish1 : 'd option) : Array2D<'x, 'y, 't> =  
+        let inline create(z0:'z0, z1:'z1, items: 't[,] when 'z0 :> Number and 'z1 :> Number) = Array2D<'z0, 'z1, 't>(items)
 
         checkidx(start0.Value, x.Dim0)
         checkidx(finish0.Value, x.Dim0)
@@ -72,17 +71,27 @@ type VArray2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'
         let _start1, _finish1 = start1.Value, finish1.Value
         let intstart0, intfinish0 = _start0 |> int, _finish0 |> int
         let intstart1, intfinish1 = _start1 |> int, _finish1 |> int
-        let length0 = (_finish0 - _start0) + one
-        let length1 = (_finish1 - _start1) + one
+        let length0 = (_finish0 - _start0)
+        let length1 = (_finish1 - _start1)
 
         create(length0, length1, x._Array.[intstart0..intfinish0, intstart1..intfinish1])
         
-    new(x:'t) = VArray2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (x))
+    new(x:'t) = Array2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (x))
     
-    new() = VArray2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (Unchecked.defaultof<'t>))
+    new() = Array2D<'dim0, 'dim1, 't>(Array2D.create (number<'dim0>.IntVal) (number<'dim1>.IntVal) (Unchecked.defaultof<'t>))
      
-type VArray2D<'i0, 'i1 when 'i0 :> Number and 'i1:> Number> with
-   static member create(arr: 't[,]) = new VArray2D<'i0, 'i1, 't>(arr)
-   static member create(v: 't) = new VArray2D<'i0, 'i1, 't>(Array2D.create (number<'i0>.IntVal) (number<'i1>.IntVal) (v))
+type Array2D<'i0, 'i1 when 'i0 :> Number and 'i1:> Number> with
+   static member create(arr: 't[,]) = new Array2D<'i0, 'i1, 't>(arr)
+   static member create(v: 't) = new Array2D<'i0, 'i1, 't>(Array2D.create (number<'i0>.IntVal) (number<'i1>.IntVal) (v))
 
-type Array2D<'i0, 'i1, 't when 'i0 :> Number and 'i1 :> Number> = VArray2D<'i0, 'i1, 't>
+[<AutoOpen>]
+module VArray2D =
+    open Sylvester.Arithmetic.N10
+    
+    let inline va2dinit (items: 't[,]) (vl:Array2D<'dim0, 'dim1, 't>) = vl.SetVals items
+
+    let inline va2darray (dim0:'dim0) (dim1:'dim1) (x:'t[,]) = Array2D<'dim0, 'dim1, 't> (x)
+
+    let inline va2dnew<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number> = Array2D<'dim0, 'dim1, 't>()
+
+    let inline va2dcopy (dim0:'dim0) (dim1:'dim1) (items:'t[,]) =  va2dnew<'dim0, 'dim1, 't> |> va2dinit items 

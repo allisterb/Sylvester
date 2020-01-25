@@ -17,10 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="HList.fs" />
     <Compile Include="VArray.fs" />
     <Compile Include="VArray2D.fs" />
-    <Compile Include="Logic.fs" />
+    <Compile Include="HList.fs" />
     
   </ItemGroup>
 

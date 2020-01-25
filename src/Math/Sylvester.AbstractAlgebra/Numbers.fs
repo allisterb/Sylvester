@@ -5,12 +5,16 @@ open System.Collections
 open System.Collections.Generic
 open Microsoft.FSharp.Collections
 
-type Numeric<'t when 't : struct  and 't: comparison and 't: equality and 't :> IFormattable> = 't
-
-/// Set of numbers belonging to the continuum of real numbers
+/// The continuum of real numbers.
 type R<'t when 't : struct  and 't: comparison and 't: equality and 't :> IFormattable> =
+
+/// A single element of R.
 | R of 't
+
+/// A sequence of elements of R i.e. a function from N->R.
 | Seq of seq<'t>
+
+/// A set of elements of R defined by a predicate.
 | Set of ('t -> bool)
     
 with 
@@ -24,17 +28,23 @@ with
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
+    ///Subset of R
     member x.Sub(f: 't -> bool) = 
         match x with
-        |R a -> Set(fun x -> x = a)
+        |R a -> failwith "Cannot take a subset of an element of R"
         |Seq s -> Seq(s |> Seq.filter f)
         |Set s -> Set(fun x -> s(x) && f(x))
 
     static member inline (+) (l, r) = 
         match (l, r) with
         |(R a, R b) -> R(a + b)
+        |(R a, Seq b) -> Seq.append ([a]) (b) |> Seq
+        |(R a, Set b) -> Set(fun x -> a = x || b(x))
+
         |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
-        |(Set a, Set b) -> Set(fun x -> a(x) || b(x))
+        |_ -> failwith "Not implemented"
+
+
            
 /// Cartesian product of R x R
 type R2<'t when 't:> ValueType and 't : struct  and 't: comparison and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =

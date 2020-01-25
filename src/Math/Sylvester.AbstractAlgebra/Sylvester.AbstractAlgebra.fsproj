@@ -2,11 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <UserSecretsId>319d1de7-61b8-4062-9ca2-995dd9eda8af</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="Numbers.fs" />
-    <Compile Include="Structures.fs" />
+    <Compile Include="Categories.fs" />
+    <Compile Include="Groups.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Sylvester.Collections\Sylvester.Collections.fsproj" />
   </ItemGroup>
 
 </Project>
