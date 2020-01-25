@@ -3,27 +3,29 @@
 open System
 open System.Collections
 open System.Collections.Generic
+open System.Numerics
+
 open Microsoft.FSharp.Collections
 
-/// The continuum of real numbers.
-type R<'t when 't : struct  and 't: comparison and 't: equality and 't :> IFormattable> =
+/// A set of numbers defined over the elements of some field like R or C.
+type Set<'t when 't : struct  and 't: equality and 't :> IFormattable> =
 
-/// A single element of R.
-| R of 't
+/// A single element of a set of numbers.
+| Elem of 't
 
-/// A sequence of elements of R i.e. a function from N->R.
+/// A sequence of numbers i.e. a function from N -> t .
 | Seq of seq<'t>
 
-/// A set of elements of R defined by a predicate.
+/// A set of numbers defined by a predicate.
 | Set of ('t -> bool)
     
 with 
     interface IEnumerable<'t> with
         member x.GetEnumerator () =
             match x with
-            |R a -> let s = seq { yield a} in s.GetEnumerator()
+            |Elem a -> let s = seq { yield a} in s.GetEnumerator()
             |Seq s -> s.GetEnumerator()
-            |Set s -> failwith "Cannot enumerate an arbitrary subset of R. Use a sequence instead."
+            |Set s -> failwith "Cannot enumerate an arbitrary subset of numbers. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -31,32 +33,19 @@ with
     ///Subset of R
     member x.Sub(f: 't -> bool) = 
         match x with
-        |R a -> failwith "Cannot take a subset of an element of R"
+        |Elem a -> failwith "Cannot take a subset of an element "
         |Seq s -> Seq(s |> Seq.filter f)
         |Set s -> Set(fun x -> s(x) && f(x))
 
     static member inline (+) (l, r) = 
         match (l, r) with
-        |(R a, R b) -> R(a + b)
-        |(R a, Seq b) -> Seq.append ([a]) (b) |> Seq
-        |(R a, Set b) -> Set(fun x -> a = x || b(x))
+        |(Elem a, Elem b) -> Elem(a + b)
+        |(Elem a, Seq b) -> Seq.append ([a]) (b) |> Seq
+        |(Elem a, Set b) -> Set(fun x -> a = x || b(x))
 
         |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
         |_ -> failwith "Not implemented"
 
-
-           
-/// Cartesian product of R x R
-type R2<'t when 't:> ValueType and 't : struct  and 't: comparison and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
-| R2 of 't * 't
-| Seq2 of seq<'t * 't>
-| Set2 of (('t * 't) -> bool)
-
-/// Cartesian product of R x R x R
-type R3<'t when 't:> ValueType and 't : struct  and 't: comparison and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
-| R3 of 't * 't * 't
-| Seq3 of seq<'t * 't * 't>
-| Set3 of (('t * 't * 't) -> bool)
 
 [<AutoOpen>]
 module Interval = 
@@ -82,6 +71,10 @@ module Interval =
 module Reals = 
     let Real = Set(fun (_:double) -> true)
     let RealF = Set(fun (_:single) -> true)
+    
+[<AutoOpen>]
+module Complex =
+    let Complex = Set(fun (_:Complex) -> true)
 
 [<AutoOpen>]
 module Integers = 
