@@ -3,33 +3,33 @@
 open System
 
 [<AutoOpen>]
-module Api =
+module FsRuntime =
      
-    type ApiResult<'TSuccess,'TFailure> = 
+    type Result<'TSuccess,'TFailure> = 
         | Success of 'TSuccess
         | Failure of 'TFailure
         with member x.Res with get() = match x with | Success s -> s | Failure f -> failwith "This result is a failure."
 
-     // API Logging
-    let inline info mt args = Api.Info(mt, List.toArray args)
+     // Runtime Logging
+    let inline info mt args = Runtime.Info(mt, List.toArray args)
 
-    let inline debug mt args = Api.Debug(mt, List.toArray args)
+    let inline debug mt args = Runtime.Debug(mt, List.toArray args)
 
-    let inline err mt args = Api.Error(mt, List.toArray args)
+    let inline err mt args = Runtime.Error(mt, List.toArray args)
 
-    let inline errex mt args = Api.Error(mt, List.toArray args)
+    let inline errex mt args = Runtime.Error(mt, List.toArray args)
 
-    //API Patterns
+    //Runtime Patterns
     let (|Default|) defaultValue input =    
         defaultArg input defaultValue
     
-    //API Logic
+    //Runtime Logic
     let inline tryCatch f x =
         try
             f x |> Success
         with
         | ex -> 
-            err "The API operation failed." []
+            err "The Runtime operation failed." []
             Failure ex
 
     let inline tryCatch' f x =
@@ -65,11 +65,11 @@ module Api =
     let succ = 
         function
         | Success value -> value
-        | Failure failure -> failwith "This API result is failure."
+        | Failure failure -> failwith "This Runtime result is failure."
 
-    let init (api: 'T when 'T :> Api) = if api.Initialized then api else failwith "This API object is not initialized."
+    let init (r: 'T when 'T :> Runtime) = if r.Initialized then r else failwith "This runtime object is not initialized."
 
-    let init' (api: 'T when 'T :> Api) = if api.Initialized then Success api else Failure (exn "This API object is not initialized.")
+    let init' (r: 'T when 'T :> Runtime) = if r.Initialized then Success r else Failure (exn "This runtime object is not initialized.")
 
     let switch' res f = 
         match res with
@@ -95,9 +95,9 @@ module Api =
     
     let inline (!>>>) f = tryCatchAsync' f
 
-    let inline (!!) (api: #Api) = init api
+    let inline (!!) (r: #Runtime) = init r
 
-    let inline (!!>) (api: #Api) = init' api 
+    let inline (!!>) (r: #Runtime) = init' r 
 
     let inline (!>?) res = test res
 
@@ -105,9 +105,9 @@ module Api =
 
     let inline (|>>>) res f = switchAsync' res f
 
-    let inline (>>|) api f = api |> init' |> switch' <| f
+    let inline (>>|) r f = r |> init' |> switch' <| f
     
-    let inline (>>>|) api f = api |> init' |> switchAsync' <| f
+    let inline (>>>|) r f = r |> init' |> switchAsync' <| f
 
     let inline (>>=) f1 f2  = bind f2 f1 
 

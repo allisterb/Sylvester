@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Base\Sylvester.Api\Sylvester.Api.csproj" />
+    <ProjectReference Include="..\..\src\Base\Sylvester.Api\Sylvester.Runtime.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Sylvester
 {
-    public abstract class Api
+public abstract class Runtime
     {
         #region Constructors
-        static Api()
+        static Runtime()
         {
           
         }
-        public Api(CancellationToken ct)
+        public Runtime(CancellationToken ct)
         {
             if (Logger == null)
             {
@@ -26,7 +26,7 @@ namespace Sylvester
             CancellationToken = ct;
             Type = this.GetType();
         }
-        public Api(): this(Cts.Token) {}
+        public Runtime(): this(Cts.Token) {}
 
         #endregion
 
@@ -98,7 +98,7 @@ namespace Sylvester
         }
         public void ThrowIfNotInitialized()
         {
-            if (!this.Initialized) throw new ApiNotInitializedException(this);
+            if (!this.Initialized) throw new NotInitializedException(this);
         }
         #endregion
     }

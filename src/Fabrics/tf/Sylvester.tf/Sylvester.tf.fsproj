@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
     <ProjectReference Include="..\..\..\Base\Sylvester.Collections\Sylvester.Collections.fsproj" />
+    <ProjectReference Include="..\..\..\Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj" />
     <ProjectReference Include="..\Sylvester.tf.Api\Sylvester.tf.Api.csproj" />
   </ItemGroup>
 

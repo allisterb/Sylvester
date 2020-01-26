@@ -7,7 +7,7 @@ namespace Sylvester.Tests
     {
         public BaseTest()
         {
-            Api.SetDefaultLoggerIfNone();
+            Runtime.SetDefaultLoggerIfNone();
         }
     }
 }

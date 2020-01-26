@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sylvester
 {
-    public class IO : Api
+    public class IO : Runtime
     {
         public IO(): base()
         {

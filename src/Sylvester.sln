@@ -89,9 +89,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Collections
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lang", "Lang", "{E0E37582-2ECB-4B62-9ACA-B797A22A6704}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Api", "Base\Sylvester.Api\Sylvester.Api.csproj", "{D0C30E85-E9D4-4A3D-9C67-EC4EBE79785D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Runtime", "Base\Sylvester.Runtime\Sylvester.Runtime.csproj", "{D0C30E85-E9D4-4A3D-9C67-EC4EBE79785D}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Api.Fs", "Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj", "{8118104F-4D62-487B-AC55-699490291BB5}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Fs.Runtime", "Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj", "{8118104F-4D62-487B-AC55-699490291BB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Tests.Base", "..\tests\Sylvester.Tests.Base\Sylvester.Tests.Base.csproj", "{958A8547-6F8E-4F49-8C71-249186984611}"
 EndProject

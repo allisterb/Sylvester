@@ -5,11 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Api.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Sylvester.Api\Sylvester.Api.csproj" />
+    <Compile Include="Runtime.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +15,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sylvester.Runtime\Sylvester.Runtime.csproj" />
   </ItemGroup>
 
 </Project>

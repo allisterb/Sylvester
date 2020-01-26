@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Base\Sylvester.Api.Fs\Sylvester.Api.Fs.fsproj" />
+    <ProjectReference Include="..\..\..\Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj" />
     <ProjectReference Include="..\..\..\Lang\Sylvester.Graphs\Sylvester.Graphs.csproj" />
     <ProjectReference Include="..\Sylvester.tf.Protobuf\Sylvester.tf.Protobuf.csproj" />
   </ItemGroup>
