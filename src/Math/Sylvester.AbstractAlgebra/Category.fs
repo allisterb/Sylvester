@@ -8,7 +8,7 @@ open Sylvester.Collections
 /// Morphism between 2 structures of the same type in Universe U.
 type Morph<'U, 's, 'n when 'U : equality and 'n :> Number and 's :> Struct<'U, 'n>> = 
 
-/// Morphism defined by maps or functions from one structure to another.
+/// Morphism defined by a map or function from one structure to another.
 |Morph of 's * 's * Map<'U> 
 
 /// Hom-set of all morphisms between 2 structures

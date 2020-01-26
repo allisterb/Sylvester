@@ -15,7 +15,11 @@ type Map<'U, 'V when 'U: equality and 'V: equality> = 'U -> 'V
 type Op<'U> = 
 |Unary of ('U -> 'U) 
 |Binary of ('U -> 'U -> 'U)
-
+with
+    member x.Symbol = match x with | Unary op -> op.ToString() | Binary op -> op.ToString()
+    static member LeftAssociativeSymbols = ["+"; "-"] 
+    static member inline IsLeftAssociative op = Op<'U>.LeftAssociativeSymbols |> Seq.contains (op.ToString())
+    
 /// Collection of n operations.
 type Ops<'n, 'U when 'n :> Number and 'U: equality> = Array<'n, Op<'U>>
 
