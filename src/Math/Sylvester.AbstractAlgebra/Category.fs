@@ -28,7 +28,7 @@ with
     member x.Map = 
         match x with
         |Morph(_, _, m) -> m
-        |Hom(_,_) -> failwith "The hom-set comprises all of the maps between 2 sets and is not an individual map."
+        |Hom(_,_) -> failwith "The hom-set comprises all of the maps between 2 structures and is not an individual map."
     
     static member (*) (l:Morph<'U, 'n>, r:Morph<'U, 'n>) =
         match l, r with
@@ -38,9 +38,10 @@ with
     /// Identity morphism
     static member Id(s) = Morph(s, s, id)
 
-type ICategory<'U, 'ob, 'mn, 'n when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number and 'n :> Number> =
-    abstract member Morphisms: Array<'n, Morph<'U, 'mn>>
+type ICategory<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number> =
+    abstract member Morph: Morph<'U, 'mn>
 
-type Category<'U, 'ob, 'mn, 'n when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number and 'n :> Number>(morphisms:Array<'n, Morph<'U, 'mn>>) = 
-    interface ICategory<'U, 'ob, 'mn, 'n> with member val Morphisms = morphisms
-
+type Category<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number>(morph:Morph<'U, 'mn>) = 
+    interface ICategory<'U, 'ob, 'mn> with 
+        member val Morph = morph
+    member val Morph = morph

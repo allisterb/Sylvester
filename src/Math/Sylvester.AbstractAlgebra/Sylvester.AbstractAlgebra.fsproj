@@ -9,7 +9,7 @@
     <Compile Include="Set.fs" />
     <Compile Include="Structure.fs" />
     <Compile Include="Category.fs" />
-    <Compile Include="Monoids.fs" />
+    <Compile Include="Monoid.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,27 +5,40 @@ open System.Collections
 open System.Collections.Generic
 open System.Numerics
 
-open Sylvester.Arithmetic
-open Sylvester.Collections
-
 /// A set of elements belonging to a universe denoted by U.
 type Set<'U when 'U: equality> =
 /// The empty set
 | Empty
 
-/// A single element of a set.
+/// A single element of U.
 | Elem of 'U
 
 /// A sequence of elements i.e. a function from N -> U.
 | Seq of seq<'U>
 
-/// A set of elements defined by a predicate.
+/// A set of elements of U defined by a predicate.
 | Set of ('U -> bool)
 
 /// The Cartesian product of 2 sets.
 | Prod of Set<'U> * Set<'U>
     
 with 
+    /// Cartesian product operator.
+    static member inline (*) (l, r) = Prod(l, r)
+    
+    /// Union operator.
+    static member inline (|+|) (l, r) = 
+        match (l, r) with
+        |(Empty, x) -> x
+        |(x, Empty) -> x
+        
+        |(Elem a, Elem b) -> Elem(a + b)
+        |(Elem a, Seq b) -> Seq.append ([a]) (b) |> Seq
+        |(Elem a, Set b) -> Set(fun x -> a = x || b(x))
+        
+        |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
+        |_ -> failwith "Not implemented"
+
     interface IEnumerable<'U> with
         member x.GetEnumerator () = 
             match x with
@@ -35,8 +48,9 @@ with
             |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
 
             |Prod(Empty, Empty) -> (Empty :> IEnumerable<'U>).GetEnumerator()
-            |Prod(Empty, s) -> (s :> IEnumerable<'U>).GetEnumerator()
-            |Prod(s, Empty) -> (s :> IEnumerable<'U>).GetEnumerator()
+            |Prod(Empty, a) -> (a :> IEnumerable<'U>).GetEnumerator()
+            |Prod(a, Empty) -> (a :> IEnumerable<'U>).GetEnumerator()
+            
 
             | _ -> failwith "Not implemented."
                 
@@ -52,21 +66,6 @@ with
         |Set s -> Set(fun x -> s(x) && f(x))
         | _ -> failwith "Not implemented"
 
-    static member inline (*) (l, r) = Prod(l, r)
-    
-    static member inline (|+|) (l, r) = 
-        match (l, r) with
-        |(Empty, x) -> x
-        |(x, Empty) -> x
-        
-        |(Elem a, Elem b) -> Elem(a + b)
-        |(Elem a, Seq b) -> Seq.append ([a]) (b) |> Seq
-        |(Elem a, Set b) -> Set(fun x -> a = x || b(x))
-        
-        |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
-        |_ -> failwith "Not implemented"
-
-type Sets<'n, 'U when 'n :> Number and 'U: equality> = Array<'n, Set<'U>>
 
 [<AutoOpen>]
 module Interval = 
@@ -98,7 +97,12 @@ module Complex =
     let Complex = Set(fun (_:Complex) -> true)
 
 [<AutoOpen>]
-module Integers = 
+module Ints = 
+    let Int = Set(fun (_:int) -> true)
+    
+    let IntU = Set(fun (_:UInt32) -> true)
+    let IntUS = Set(fun (_:UInt32) -> true)
+
     let Z = Set(fun (_:int) -> true)
     let Zpos = Seq(infseq (fun n -> n))
     let Zneg = Seq(infseq (fun n -> -1 * n)) 

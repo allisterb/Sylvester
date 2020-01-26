@@ -21,3 +21,6 @@ type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, maps: Maps<
     interface IStruct<'U, 'n> with 
         member val Set = set
         member val Maps = maps
+
+    member x.Set = set
+    member x.Maps = maps

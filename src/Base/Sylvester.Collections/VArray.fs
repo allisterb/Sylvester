@@ -77,7 +77,6 @@ type Array<'n, 't when 'n :> Number>(items:'t[]) =
 
 [<AutoOpen>]
 module VArray =
-    
     open Sylvester.Arithmetic.N10
 
     let inline vainit (items:IEnumerable<'t>) (vl:Array<'n, 't>) = 
