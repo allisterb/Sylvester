@@ -41,13 +41,13 @@ with
 type Morphisms<'n, 'U when 'n :> Number and 'U : struct  and 'U: equality and 'U :> IFormattable> = Array<'n, Morph<'U>>
 
 /// A collection of sets and collection of morphisms in some universe U.
-type ICategory<'U, 'obn, 'mn, 'ob, 'm  when 'U : struct  and 'U: equality and 'U :> IFormattable and 'obn :> Number and 'mn :> Number and 'ob :> Sets<'obn, 'U> and 'm  :> Morphisms<'mn, 'U>> = 
-    abstract member Objects:'ob
-    abstract member Morphisms:'m
+type ICategory<'U, 'obn, 'mn when 'U : struct  and 'U: equality and 'U :> IFormattable and 'obn :> Number and 'mn :> Number> = 
+    abstract member Objects:Sets<'obn, 'U>
+    abstract member Morphisms:Morphisms<'mn, 'U>
 
 /// Base implementation of a category of sets and morphisms in some universe U used by structures.
-type Category<'U, 'obn, 'mn, 'ob, 'm  when 'U : struct  and 'U: equality and 'U :> IFormattable and 'obn :> Number and 'mn :> Number and 'ob :> Sets<'obn, 'U> and 'm  :> Morphisms<'mn, 'U>>
-    (objects: 'ob, morphisms: 'm) = 
-    interface ICategory<'U, 'obn, 'mn, 'ob, 'm> with 
+type Category<'U, 'obn, 'mn when 'U : struct  and 'U: equality and 'U :> IFormattable and 'obn :> Number and 'mn :> Number>
+    (objects: Sets<'obn, 'U>, morphisms: Morphisms<'mn, 'U>) = 
+    interface ICategory<'U, 'obn, 'mn> with 
         member val Objects = objects
         member val Morphisms = morphisms
