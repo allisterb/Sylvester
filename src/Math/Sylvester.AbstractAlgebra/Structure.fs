@@ -37,12 +37,4 @@ type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n
         member val Ops = ops
 
     member x.Set = set
-    member x.Ops = ops
-
-/// A Struct with a single operation.
-type Struct<'U when 'U: equality>(set: Set<'U>, op:Op<'U>) = 
-    inherit Struct<'U, one>(set, op |> arrayOf1)
-
-type Struct2<'U when 'U: equality>(set: Set<'U>, op1:Op<'U>, op2:Op<'U>) = 
-    inherit Struct<'U, two>(set, arrayOf2 (op1) (op2))
-    
+    member x.Ops = ops    
