@@ -8,7 +8,7 @@ open Sylvester.Collections
 /// Morphism between 2 structures of the same type in Universe U.
 type Morph<'U, 'n when 'U : equality and 'n :> Number> = 
 
-/// Single morphism defined by a map or function from one structure to another.
+/// Morphism defined by maps or functions from one structure to another.
 |Morph of Struct<'U, 'n> * Struct<'U, 'n> * Map<Struct<'U, 'n>>
 
 /// Hom-set of all morphisms between 2 structures
@@ -38,7 +38,6 @@ with
     /// Identity morphism
     static member Id(s) = Morph(s, s, id)
 
-type Category<'U, 'mn when 'U: equality and 'mn :> Number>(s:Struct<'U, _>, m:Array<'mn, Morph<'U, _>>) = 
-    member val Obj = s
-    member val Morphpisms = m
+type Category<'U, 'obj, 'n when 'U: equality and 'obj :> Struct<'U, 'n> and 'n :> Number>(m:Morph<'U, 'n>) = 
+    member val Morph = m
 
