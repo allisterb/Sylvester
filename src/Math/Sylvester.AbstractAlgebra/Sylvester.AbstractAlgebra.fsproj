@@ -6,8 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Sets.fs" />
-    <Compile Include="Categories.fs" />
+    <Compile Include="Set.fs" />
+    <Compile Include="Structure.fs" />
+    <Compile Include="Category.fs" />
     <Compile Include="Monoids.fs" />
   </ItemGroup>
 
