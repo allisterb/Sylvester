@@ -6,7 +6,7 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
 /// Set of elements closed under some operation.
-type Monoid<'U when 'U: equality>(set:Set<'U>, op:Map<'U>) =
+type Monoid<'U when 'U: equality>(set:Set<'U>, op:Map<'U>, id:'U) =
     inherit Struct<'U, one>(set, arrayOf1 op)
 
-type Monoids<'U when 'U : equality>(m: Morph<'U, one>) = inherit Category<'U, Monoid<'U>, one>(m)
+type Monoids<'U when 'U : equality>(m: Morph<'U, one>) = inherit Category<'U, Monoid<'U>, one, one>(arrayOf1 m)

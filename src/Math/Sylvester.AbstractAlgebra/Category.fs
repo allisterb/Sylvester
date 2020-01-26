@@ -38,6 +38,9 @@ with
     /// Identity morphism
     static member Id(s) = Morph(s, s, id)
 
-type Category<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number>(m:Morph<'U, 'mn>) = 
-    member val Morph = m
+type ICategory<'U, 'ob, 'mn, 'n when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number and 'n :> Number> =
+    abstract member Morphisms: Array<'n, Morph<'U, 'mn>>
+
+type Category<'U, 'ob, 'mn, 'n when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number and 'n :> Number>(morphisms:Array<'n, Morph<'U, 'mn>>) = 
+    interface ICategory<'U, 'ob, 'mn, 'n> with member val Morphisms = morphisms
 
