@@ -6,5 +6,11 @@ open Sylvester.Arithmetic
 open Sylvester.Collections
 open Sylvester.AbstractAlgebra
 
-open System
-let C = Elem('4')
+
+let Z = Set(fun (_:int) -> true)
+
+let M = Monoid(Z, (+), 0)
+
+let N = Monoid(Z, (+), 0)
+
+let S = Morph(M, N, fun x -> 2 * x)

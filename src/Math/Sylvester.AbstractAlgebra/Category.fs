@@ -9,7 +9,7 @@ open Sylvester.Collections
 type Morph<'U, 'n when 'U : equality and 'n :> Number> = 
 
 /// Morphism defined by maps or functions from one structure to another.
-|Morph of Struct<'U, 'n> * Struct<'U, 'n> * Map<Struct<'U, 'n>>
+|Morph of Struct<'U, 'n> * Struct<'U, 'n> * Map<'U>
 
 /// Hom-set of all morphisms between 2 structures
 |Hom of Struct<'U, 'n> * Struct<'U, 'n>

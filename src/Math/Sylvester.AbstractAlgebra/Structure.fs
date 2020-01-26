@@ -8,19 +8,28 @@ open Sylvester.Collections
 /// Map or function between elements of universe U.
 type Map<'U when 'U: equality> = 'U -> 'U 
 
-/// Collection of n maps.
-type Maps<'n, 'U when 'n :> Number and 'U: equality> = Array<'n, Map<'U>>
+/// Map or function between elements of universe U and universe V.
+type Map<'U, 'V when 'U: equality and 'V: equality> = 'U -> 'V 
 
-/// A set together with a collection of n maps of elements in some universe U.
+/// Operations between elements of a universe U.
+type Op<'U> = 
+|Unary of ('U -> 'U) 
+|Binary of ('U -> 'U -> 'U)
+
+/// Collection of n operations.
+type Ops<'n, 'U when 'n :> Number and 'U: equality> = Array<'n, Op<'U>>
+
+/// A set together with a collection of n operations of elements in some universe U.
 type IStruct<'U, 'n when 'U: equality and 'n :> Number> = 
     abstract member Set:Set<'U>
-    abstract member Maps:Maps<'n, 'U>
+    abstract member Ops:Ops<'n, 'U>
 
-/// Base implementation of a structured set that is inherited by other mathematical structures.
-type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, maps: Maps<'n, 'U>) = 
+/// Base implementation of a mathematical structure consisting of a set together with a collection of n operations of elements in some universe U.
+/// This type is inherited by other mathematical structure types.
+type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n, 'U>) = 
     interface IStruct<'U, 'n> with 
         member val Set = set
-        member val Maps = maps
+        member val Ops = ops
 
     member x.Set = set
-    member x.Maps = maps
+    member x.Ops = ops
