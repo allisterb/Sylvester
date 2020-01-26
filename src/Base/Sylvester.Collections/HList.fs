@@ -16,8 +16,8 @@ type HCons<'a, 'b when 'b :> HList>  = HCons of 'a * 'b with
     static member inline (^<|-^) (folder:HFolder<'a, 'v>, x) = folder $ x
     static member inline (!+)(HCons(x, xs)) = (!+ xs) + one
       
-    static member inline (|@|) (HCons(x, _), _:N1<``0``>) = x
-    static member inline (|@|) (HCons(_, HCons(y, _)), _:N1<``1``>) = y
+    static member inline (|@|) (HCons(x, _), _:zero) = x
+    static member inline (|@|) (HCons(_, HCons(y, _)), _:one) = y
     static member inline (|@|) (HCons(_, HCons(_, HCons(y, _))), _:N1<``2``>) = y
     static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(y, _)))), _:N1<``3``>) = y
     static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))), _:N1<``4``>) = y
@@ -26,7 +26,7 @@ type HCons<'a, 'b when 'b :> HList>  = HCons of 'a * 'b with
     static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))), _:N1<``7``>) = y
     static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))))), _:N1<``8``>) = y
     static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))))), _:N1<``9``>) = y
-     
+ 
 and HNil = HNil with
     interface HList
     static member inline (|*|) (f, HNil) = f $ HNil
@@ -45,4 +45,4 @@ and HMapper<'a> = HMapper of 'a with
 
 and HFolder<'a, 'v> = HFolder of 'a * 'v with
     static member ($) (HFolder(_, v), HNil) = v
-    static member inline ($) (HFolder(F, v), HCons(x, xs)) = HFolder(F, F $ (v,x)) |*| xs
+    static member inline ($) (HFolder(F, v), HCons(x, xs)) = HFolder(F, F $ (v,x)) |*| xs    

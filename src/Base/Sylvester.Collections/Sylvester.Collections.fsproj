@@ -20,6 +20,7 @@
     <Compile Include="VArray.fs" />
     <Compile Include="VArray2D.fs" />
     <Compile Include="HList.fs" />
+    <Compile Include="Collection.fs" />
     
   </ItemGroup>
 
