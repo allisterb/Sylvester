@@ -8,7 +8,7 @@
   <ItemGroup>
     <Compile Include="Sets.fs" />
     <Compile Include="Categories.fs" />
-    <Compile Include="Groups.fs" />
+    <Compile Include="Monoids.fs" />
   </ItemGroup>
 
   <ItemGroup>
