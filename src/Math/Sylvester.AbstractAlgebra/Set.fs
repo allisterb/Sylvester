@@ -12,9 +12,6 @@ type Set<'U when 'U: equality> =
 /// The empty set
 | Empty
 
-/// A single element of U.
-| Elem of 'U
-
 /// A sequence of elements i.e. a function from N -> U.
 | Seq of seq<'U>
 
@@ -28,14 +25,11 @@ with
         |(Empty, x) -> x
         |(x, Empty) -> x
         
-        |(Elem _, _) -> failwith "Set union operation not defined for a set element."
-        |(_, Elem _) -> failwith "Set union operation not defined for a set element."
-
         |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
         |(Set a, Set b) -> Set(fun x -> a (x) || b(x))
 
-        |(Set a, Seq b) -> Set(fun x -> a(x) || x |> Seq.contains b)
-        |(Seq a, Set b) -> Set(fun x -> x |> Seq.contains a || b(x))
+        |(Set a, Seq b) -> Set(fun x -> a(x) || Seq.contains x b)
+        |(Seq a, Set b) -> Set(fun x -> Seq.contains x a || b(x))
 
     /// Set intersection operator.
     static member inline (|*|) (l, r) = 
@@ -43,20 +37,16 @@ with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
         
-        |(Elem _, _) -> failwith "Set intersection operation not defined for a set element."
-        |(_, Elem _) -> failwith "Set intersection operation not defined for a set element."
-
         |(Seq a, Seq b) -> a.Intersect(b) |> Seq
-        |(Set a, Set b) -> Set(fun x -> a (x) && b(x))
+        |(Set a, Set b) -> Set(fun x -> a(x) && b(x))
 
-        |(Set a, Seq b) -> Set(fun x -> a(x) && x |> Seq.contains b)
-        |(Seq a, Set b) -> Set(fun x -> x |> Seq.contains a && b(x))
+        |(Set a, Seq b) -> Set(fun x -> a(x) && Seq.contains x b)
+        |(Seq a, Set b) -> Set(fun x -> Seq.contains x a && b(x))
 
     interface IEnumerable<'U> with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
-            |Elem a -> Seq.singleton(a).GetEnumerator()
             |Seq s -> let distinct = Seq.distinct s in distinct.GetEnumerator()
             |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
                 
@@ -67,7 +57,6 @@ with
     member x.Sub(f: 'U -> bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Elem a -> failwith "A single element has no subsets."
         |Seq s -> Seq(s |> Seq.filter f)
         |Set s -> Set(fun x -> s(x) && f(x))
 
