@@ -5,8 +5,8 @@ open System
 open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
-/// Group of numbers with arithmetical properties or objects isomorphic to such numbers.
-type Monoid<'U when 'U : struct  and 'U: comparison and 'U: equality and 'U :> IFormattable>(set:Set<'U>) =
-    inherit Category<one, zero, Collection<Set<'U>>, Empty, 'U>(Singleton(set), Empty)
+/// Set of numbers closed under some operation.
+type Monoid<'U when 'U : struct  and 'U: comparison and 'U: equality and 'U :> IFormattable>(set:Set<'U>, op:Map<'U>) =
+    inherit Category<'U, one, one, Sets<one, 'U>, Morphisms<one, 'U>>(arrayOf1 set, arrayOf1 (Morph(set, set, op)))
     
         

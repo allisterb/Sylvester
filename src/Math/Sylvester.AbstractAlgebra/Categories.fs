@@ -3,33 +3,30 @@
 open System
 
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
-/// Map or function between objects.
-type Map<'domain, 'codomain> = 'domain -> 'codomain 
+/// Map or function between numbers of the same type.
+type Map<'U when 'U : struct  and 'U: equality and 'U :> IFormattable> = 'U -> 'U 
    
-/// Composition of maps.
-type Comp<'a, 'b, 'c> = Map<'a, 'b> -> Map<'b, 'c> -> Map<'a, 'c>
+/// Morphism between 2 sets of the same type.
+type Morph<'U when 'U : struct  and 'U: equality and 'U :> IFormattable> = Morph of Set<'U> * Set<'U> * Map<'U> with   
+    member x.Domain = let (Morph(d, _, _)) = x in d
+    member x.CoDomain = let (Morph(_, c, _)) = x in c
+    member x.Map = let (Morph(_, _, m)) = x in m
+    static member inline Id(x) = Morph(x, x, id)  
 
-/// Morphism between 2 objects.
-type Morph<'domain, 'codomain>(domain:'domain, codomain:'codomain, map:Map<'domain, 'codomain>) = 
-    member val Domain = domain
-    member val CoDomain = codomain
-    member val Map = map
-    
-    static member inline Id(x:'domain) = Morph(x, x, id)  
-    static member inline Zero = Morph(Empty, Empty, id)
+    static member (*) (Morph(a, _, m), Morph(_, c, n))= Morph(a, c, m >> n)
 
-/// Binary operation between numbers.
-type BinaryOp<'t when 't : struct  and 't: equality and 't :> IFormattable> = 't -> 't -> 't
-    
-/// A collection of objects and collection of morphisms in some universe.
-type Category<'obn, 'mn, 'ob, 'm, 'U when 'obn :> Number and 'mn :> Number and 'ob :> ICollection<'obn> and 'm  :> ICollection<'mn>>
+type Morphisms<'n, 'U when 'n :> Number and 'U : struct  and 'U: equality and 'U :> IFormattable> = Array<'n, Morph<'U>>
+
+/// A collection of sets and collection of morphisms in some universe U.
+type ICategory<'U, 'obn, 'mn, 'ob, 'm  when 'U : struct  and 'U: equality and 'U :> IFormattable and 'obn :> Number and 'mn :> Number and 'ob :> Sets<'obn, 'U> and 'm  :> Morphisms<'mn, 'U>> = 
+    abstract member Objects:'ob
+    abstract member Morphisms:'m
+
+/// Base implementation of a category.
+type Category<'U, 'obn, 'mn, 'ob, 'm  when 'U : struct  and 'U: equality and 'U :> IFormattable and 'obn :> Number and 'mn :> Number and 'ob :> Sets<'obn, 'U> and 'm  :> Morphisms<'mn, 'U>>
     (objects: 'ob, morphisms: 'm) = 
-    member val Objects = objects
-    member val Morphisms = morphisms
-    
-
-
-    
+    interface ICategory<'U, 'obn, 'mn, 'ob, 'm> with 
+        member val Objects = objects
+        member val Morphisms = morphisms

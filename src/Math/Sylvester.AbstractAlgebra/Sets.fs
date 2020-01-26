@@ -5,6 +5,9 @@ open System.Collections
 open System.Collections.Generic
 open System.Numerics
 
+open Sylvester.Arithmetic
+open Sylvester.Collections
+
 /// A set with elements of numbers belonging to a common universe denoted by U which may not have an order relation.
 type Set<'U when 'U : struct  and 'U: equality and 'U :> IFormattable> =
 /// The empty set
@@ -62,6 +65,8 @@ with
         
         |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
         |_ -> failwith "Not implemented"
+
+type Sets<'n, 'U when 'n :> Number and 'U : struct  and 'U: equality and 'U :> IFormattable> = Array<'n, Set<'U>>
 
 [<AutoOpen>]
 module Interval = 

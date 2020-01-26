@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ICollection.fs" />
     <Compile Include="VArray.fs" />
     <Compile Include="VArray2D.fs" />
     <Compile Include="HList.fs" />

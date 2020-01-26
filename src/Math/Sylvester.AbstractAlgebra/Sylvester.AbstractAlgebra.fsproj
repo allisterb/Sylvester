@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Categories.fs" />
     <Compile Include="Sets.fs" />
+    <Compile Include="Categories.fs" />
     <Compile Include="Groups.fs" />
   </ItemGroup>
 

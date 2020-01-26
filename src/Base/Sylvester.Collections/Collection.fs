@@ -3,11 +3,6 @@
 open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 
-/// Collection of n heterogeneous elements with type-level cardinality.
-type ICollection<'n when 'n :> Number> = abstract member Card:'n
-
-type Empty = Empty with interface ICollection<zero> with member x.Card = zero
-
 type Collection<'a> = Singleton of 'a 
 with 
     member x.Elems = let (Singleton a) = x in a
