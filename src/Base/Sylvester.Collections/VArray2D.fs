@@ -11,7 +11,7 @@ type Array2D<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number>() =
 
     member x.Dim1 = number<'dim1>
 
-    static member inline (!+) (v:Array2D<'dim0, 'dim1>) = (v.Dim0, v.Dim1)
+    static member (!+) (v:Array2D<'dim0, 'dim1>) = (v.Dim0, v.Dim1)
 
 [<StructuredFormatDisplay("{_Array}")>]
 type Array2D<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number>(items:'t[,]) = 

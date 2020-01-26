@@ -13,7 +13,9 @@ type Array<'n when 'n :> Number>() =
     
     member x.IntLength = x.Length.IntVal
 
-    static member inline (!+) (v:Array<'n>) = v.Length
+    static member (!+) (v:Array<'n>) = v.Length
+
+    interface Sylvester.Collections.ICollection<'n> with member x.Card = x.Length
 
 /// An array of n objects of type 't.
 [<StructuredFormatDisplay("{Display}")>]
@@ -56,7 +58,7 @@ type Array<'n, 't when 'n :> Number>(items:'t[]) =
 
         create(length, x._Array.[intstart..intfinish])
 
-    member inline x.Map(m:'t->'u) = Array<'n, 'u>(Array.map m x._Array)
+    member x.Map(m:'t->'u) = Array<'n, 'u>(Array.map m x._Array)
     
     member x.Display = sprintf "Array<%i, %s>: %A" x.IntLength typeof<'t>.Name x._Array
 
