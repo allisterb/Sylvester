@@ -1,17 +1,14 @@
-﻿namespace Sylvester.AbstractAlgebra
-
-open System
+﻿namespace Sylvester
 
 open Sylvester.Arithmetic
-open Sylvester.Collections
 
-/// Morphism between 2 structures of the same type in Universe U.
+/// Morphism between 2 structures of the same type in universe U.
 type Morph<'U, 's, 'n when 'U : equality and 'n :> Number and 's :> Struct<'U, 'n>> = 
 
-/// Morphism defined by a map or function from one structure to another.
+/// Morphism defined by a map or function from elements of the set of one structure to another of the same type.
 |Morph of 's * 's * Map<'U> 
 
-/// Hom-set of all morphisms between 2 structures
+/// hom-set of all morphisms between 2 structures of the same type.
 |Hom of 's * 's
 
 with       
@@ -35,7 +32,7 @@ with
         | Morph(a, _, m), Morph(_, c, n) -> Morph(a, c, m >> n) 
         | _ -> failwith "Only individual morphisms are compatible for composition."
         
-    /// Identity morphism
+    /// Identity morphism.
     static member Id(s) = Morph(s, s, id)
 
 type ICategory<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number> =

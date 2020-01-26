@@ -1,8 +1,9 @@
-﻿namespace Sylvester.AbstractAlgebra
+﻿namespace Sylvester
 
 open System
 
 open Sylvester.Arithmetic
+open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
 /// Map or function between elements of universe U.
@@ -17,7 +18,7 @@ type Op<'U> =
 |Binary of ('U -> 'U -> 'U)
 with
     member x.Symbol = match x with | Unary op -> op.ToString() | Binary op -> op.ToString()
-    static member LeftAssociativeSymbols = ["+"; "-"] 
+    static member LeftAssociativeSymbols = ["+"; "-"; "*"; "/"] 
     static member inline IsLeftAssociative op = Op<'U>.LeftAssociativeSymbols |> Seq.contains (op.ToString())
     
 /// Collection of n operations.
@@ -37,3 +38,11 @@ type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n
 
     member x.Set = set
     member x.Ops = ops
+
+/// A Struct with a single operation.
+type Struct<'U when 'U: equality>(set: Set<'U>, op:Op<'U>) = 
+    inherit Struct<'U, one>(set, op |> arrayOf1)
+
+type Struct2<'U when 'U: equality>(set: Set<'U>, op1:Op<'U>, op2:Op<'U>) = 
+    inherit Struct<'U, two>(set, arrayOf2 (op1) (op2))
+    

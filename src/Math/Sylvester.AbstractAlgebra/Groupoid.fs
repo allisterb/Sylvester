@@ -1,4 +1,4 @@
-﻿namespace Sylvester.AbstractAlgebra
+﻿namespace Sylvester
 
 open System
 
@@ -7,7 +7,4 @@ open Sylvester.Collections
 
 /// Set of elements closed under some binary operation.
 type Groupoid<'U when 'U: equality>(set:Set<'U>, op:'U->'U->'U) =
-    inherit Struct<'U, one>(set, arrayOf1 (Binary(op)))
-
-/// Category of monoids with a structure-preserving morphism.
-type Groupoids<'U when 'U : equality> = Category<'U, Groupoid<'U>, one>
+    inherit Struct<'U>(set, Binary(op))

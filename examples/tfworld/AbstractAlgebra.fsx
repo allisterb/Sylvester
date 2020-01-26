@@ -2,15 +2,12 @@
 #r ".\\..\\..\\src\\Base\\Sylvester.Collections\\bin\\Debug\\netstandard2.0\\Sylvester.Collections.dll"
 #r ".\\..\\..\\src\\Math\\Sylvester.AbstractAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.AbstractAlgebra.dll"
 
-open Sylvester.Arithmetic
-open Sylvester.Collections
-open Sylvester.AbstractAlgebra
+open Sylvester
 
+let Z = Set(fun (_:string) -> true)
 
-let Z = Set(fun (_:int) -> true)
+let M = Monoid(Z, (+), "")
 
-let M = Monoid(Z, (+), 0)
+let N = Monoid(Z, (+), "")
 
-let N = Monoid(Z, (+), 0)
-
-let S = Morph(M, N, fun x -> 2 * x)
+let S = Morph(M, N, id)

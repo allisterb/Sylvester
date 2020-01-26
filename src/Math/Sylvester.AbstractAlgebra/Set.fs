@@ -1,4 +1,4 @@
-﻿namespace Sylvester.AbstractAlgebra
+﻿namespace Sylvester
 
 open System
 open System.Collections
