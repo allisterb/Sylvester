@@ -6,4 +6,5 @@ open Sylvester.Arithmetic
 open Sylvester.Collections
 open Sylvester.AbstractAlgebra
 
-let G = Group(Z, (+))
+open System
+let C = Elem('4')

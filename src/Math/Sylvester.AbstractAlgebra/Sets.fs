@@ -8,18 +8,18 @@ open System.Numerics
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
-/// A set with elements of numbers belonging to a common universe denoted by U which may not have an order relation.
-type Set<'U when 'U : struct  and 'U: equality and 'U :> IFormattable> =
+/// A set of elements belonging to a universe denoted by U.
+type Set<'U when 'U: equality> =
 /// The empty set
 | Empty
 
 /// A single element of a set.
 | Elem of 'U
 
-/// A sequence of numbers i.e. a function from N -> U.
+/// A sequence of elements i.e. a function from N -> U.
 | Seq of seq<'U>
 
-/// A set of numbers defined by a predicate.
+/// A set of elements defined by a predicate.
 | Set of ('U -> bool)
 
 /// The Cartesian product of 2 sets.
@@ -32,7 +32,7 @@ with
             |Empty -> Seq.empty.GetEnumerator()
             |Elem a -> Seq.singleton(a).GetEnumerator()
             |Seq s -> s.GetEnumerator()
-            |Set s -> failwith "Cannot enumerate an arbitrary set of numbers. Use a sequence instead."
+            |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
 
             |Prod(Empty, Empty) -> (Empty :> IEnumerable<'U>).GetEnumerator()
             |Prod(Empty, s) -> (s :> IEnumerable<'U>).GetEnumerator()
@@ -66,7 +66,7 @@ with
         |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
         |_ -> failwith "Not implemented"
 
-type Sets<'n, 'U when 'n :> Number and 'U : struct  and 'U: equality and 'U :> IFormattable> = Array<'n, Set<'U>>
+type Sets<'n, 'U when 'n :> Number and 'U: equality> = Array<'n, Set<'U>>
 
 [<AutoOpen>]
 module Interval = 
