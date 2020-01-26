@@ -2,12 +2,16 @@
 #r ".\\..\\..\\src\\Base\\Sylvester.Collections\\bin\\Debug\\netstandard2.0\\Sylvester.Collections.dll"
 #r ".\\..\\..\\src\\Math\\Sylvester.AbstractAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.AbstractAlgebra.dll"
 
+open System 
+open System.Collections.Generic
+open System.Linq
 open Sylvester
+open Sylvester.Arithmetic.N10
 
-let Z = Set(fun (_:string) -> true)
+let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32)
 
-let M = Monoid(Z, (+), "")
+c.Take(26) |> Array.ofSeq
 
-let N = Monoid(Z, (+), "")
+let d = Monoid(c, (+), "")
 
-let S = Morph(M, N, id)
+let m = Morph(d,d,id)

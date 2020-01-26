@@ -1,11 +1,8 @@
 ﻿namespace Sylvester
 
-open System
 open System.Collections
 open System.Collections.Generic
 open System.Linq
-open System.Numerics
-
 
 /// A set of elements belonging to a universe denoted by U.
 type Set<'U when 'U: equality> =
@@ -64,4 +61,4 @@ with
 module Set =
     let infiniteSeq f = f |> Seq.initInfinite |> Seq  
 
-    let infiniteSeq2 f = f |> infiniteSeq |> Seq.pairwise
+    let infiniteSeq2 f = f |> infiniteSeq |> Seq.pairwise |> Seq
