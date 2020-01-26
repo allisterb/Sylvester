@@ -9,4 +9,4 @@ open Sylvester.Collections
 type Monoid<'U when 'U: equality>(set:Set<'U>, op:Map<'U>) =
     inherit Struct<'U, one>(set, arrayOf1 op)
 
-type Monoids<'U when 'U : equality>(morphisms: Array<one, Morph<'U, one>>) = inherit Category<'U, Monoid<'U>, one, one>(morphisms)
+type Monoids<'U when 'U : equality>(m: Morph<'U, one>) = inherit Category<'U, Monoid<'U>, one>(m)
