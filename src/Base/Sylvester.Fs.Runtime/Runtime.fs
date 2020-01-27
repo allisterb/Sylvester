@@ -5,12 +5,12 @@ open System
 [<AutoOpen>]
 module FsRuntime =
      
+    /// Result of a runtime operation.
     type Result<'TSuccess,'TFailure> = 
         | Success of 'TSuccess
         | Failure of 'TFailure
-        with member x.Res with get() = match x with | Success s -> s | Failure f -> failwith "This result is a failure."
+        with member x.Res with get() = match x with | Success s -> s | Failure f -> failwith "This operation failed."
 
-     // Runtime Logging
     let inline info mt args = Runtime.Info(mt, List.toArray args)
 
     let inline debug mt args = Runtime.Debug(mt, List.toArray args)
@@ -19,11 +19,9 @@ module FsRuntime =
 
     let inline errex mt args = Runtime.Error(mt, List.toArray args)
 
-    //Runtime Patterns
     let (|Default|) defaultValue input =    
         defaultArg input defaultValue
     
-    //Runtime Logic
     let inline tryCatch f x =
         try
             f x |> Success
@@ -65,7 +63,7 @@ module FsRuntime =
     let succ = 
         function
         | Success value -> value
-        | Failure failure -> failwith "This Runtime result is failure."
+        | Failure failure -> failwith "This operation failed."
 
     let init (r: 'T when 'T :> Runtime) = if r.Initialized then r else failwith "This runtime object is not initialized."
 

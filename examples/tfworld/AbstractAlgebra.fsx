@@ -1,17 +1,28 @@
-#r ".\\..\\..\\src\\Providers\\Sylvester.Provider.Arithmetic\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\netstandard2.0\\Sylvester.Provider.Arithmetic.Runtime.dll"
-#r ".\\..\\..\\src\\Base\\Sylvester.Collections\\bin\\Debug\\netstandard2.0\\Sylvester.Collections.dll"
-#r ".\\..\\..\\src\\Math\\Sylvester.AbstractAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.AbstractAlgebra.dll"
+#load "MathInclude.fsx"
 
 open System 
-open System.Collections.Generic
 open System.Linq
+
 open Sylvester
-open Sylvester.Arithmetic.N10
 
-let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32)
+[<RequireQualifiedAccess>] 
+[<ReflectedDefinition>]
+module op =
+    let c = infiniteSeq2 ((+) 65 >> Char.ConvertFromUtf32)
 
-c.Take(26) |> Array.ofSeq
+    let e = (+) 65 >> Char.ConvertFromUtf32
+let expr = FsExpr(op.e).Expr
 
-let d = Monoid(c, (+), "")
+//("D","D") |<| op.c 
+ 
 
-let m = Morph(d,d,id)
+//c.Take(26) |> Array.ofSeq
+
+//let d = Monoid(c, (+), "")
+
+//let m = Morph(d,d,id)
+
+//let g = Seq ["A"; "A"; "B"]
+
+//g.Take(30) |> Array.ofSeq
+
