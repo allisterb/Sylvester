@@ -5,7 +5,7 @@ open Sylvester.Arithmetic
 /// Morphism between 2 structures of the same type in universe U.
 type Morph<'U, 's, 'n when 'U : equality and 'n :> Number and 's :> Struct<'U, 'n>> = 
 
-/// Morphism defined by a map or function from elements of the set of one structure to another of the same type.
+/// Morphism defined by a map from elements of the set of one structure to another of the same type.
 |Morph of 's * 's * Map<'U> 
 
 /// hom-set of all morphisms between 2 structures of the same type.

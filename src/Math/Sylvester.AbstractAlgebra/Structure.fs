@@ -3,7 +3,6 @@
 open System
 
 open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
 /// Map or function between elements of universe U.
@@ -37,4 +36,5 @@ type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n
         member val Ops = ops
 
     member x.Set = set
-    member x.Ops = ops    
+    member x.Ops = ops
+    
