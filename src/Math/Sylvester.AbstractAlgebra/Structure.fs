@@ -6,7 +6,6 @@ open Sylvester.Arithmetic
 
 /// A set together with a collection of n operations of elements in some universe U.
 type IStruct<'U, 'n when 'U: equality and 'n :> Number> = 
-    inherit ISet<'U>
     abstract member Set:Set<'U>
     abstract member Ops:Ops<'n, 'U>
 
@@ -18,10 +17,6 @@ type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n
     interface IStruct<'U, 'n> with
         member val Set = set
         member val Ops = ops
-        member x.GetEnumerator() : Generic.IEnumerator<'U> = (x.Set :> Generic.IEnumerable<'U>).GetEnumerator()
-        member x.GetEnumerator() : IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
-        member x.Sub f = (x.Set :> ISet<'U>).Sub f
-        member x.Contains e = (x.Set :> ISet<'U>).Contains e
     
 /// The cardinality of a structure's collections.
 [<RequireQualifiedAccess>]

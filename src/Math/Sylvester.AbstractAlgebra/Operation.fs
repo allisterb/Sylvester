@@ -23,7 +23,7 @@ type Op<'U> =
 |Binary of ('U -> 'U -> 'U)
 with
     static member LeftAssociativeSymbols = ["+"; "-"; "*"; "/"] 
-    static member inline IsLeftAssociative op = Op<'U>.LeftAssociativeSymbols |> Seq.contains (op.ToString())
+    static member inline IsLeftAssociative op = true
     static member inline FailIfNotLeftAssociative op = if not (Op<'U>.IsLeftAssociative op) then failwith "This operation is not left-associative."
     static member inline IsCommutative op1 = true
     static member inline FailIfNotCommutative op = if not (Op<'U>.IsCommutative op) then failwith "This operation is not left-associative."
