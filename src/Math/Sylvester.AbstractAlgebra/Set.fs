@@ -6,6 +6,11 @@ open System.Linq
 
 open Sylvester.Arithmetic
 
+type ISet<'U when 'U: equality> =
+    inherit IEnumerable<'U>
+    abstract member Sub:('U -> bool) -> ISet<'U>
+    abstract member Contains: 'U -> bool
+
 /// A set of elements belonging to a universe denoted by U.
 type Set<'U when 'U: equality> =
 /// The empty set.
@@ -39,6 +44,10 @@ with
         |Empty -> false
         |Seq s -> elem |> s.Contains
         |Set s -> s elem
+
+    interface ISet<'U> with
+        member x.Sub f = x.Sub(f) :> ISet<'U>
+        member x.Contains e = x.Contains e
 
     /// Set union operator.
     static member (|+|) (l, r) = 
