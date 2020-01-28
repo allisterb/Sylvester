@@ -16,7 +16,7 @@ type ISet<'U when 'U: equality> =
 type Set<'U when 'U: equality> =
 /// The empty set.
 | Empty
-/// A sequence of elements i.e. a function from N -> U.
+/// A sequence of elements i.e. a set S that has a function from N -> S.
 | Seq of seq<'U>
 /// A set of elements of U defined by a predicate.
 | Set of ('U -> bool)

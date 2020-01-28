@@ -10,14 +10,17 @@ type IRing<'U when 'U: equality> =
     abstract member Monoid: Monoid<'U>
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
-type Ring<'U when 'U: equality>(set:Set<'U>, group: AbelianGroup<'U>, Monoid: Monoid<'U>) =
-    inherit Struct<'U, card.two>(set, arrayOf2 (group.Ops.[zero]) (Monoid.Ops.[zero]))
-    do Monoid.Op |> failIfNotDistributiveOver group.Op
+type Ring<'U when 'U: equality>(set:Set<'U>, group: AbelianGroup<'U>, monoid: Monoid<'U>) =
+    inherit Struct<'U, card.two>(set, arrayOf2 (group.Ops.[zero]) (monoid.Ops.[zero]))
+    do monoid.Op |> failIfNotDistributiveOver group.Op
     member val Op1 = group.Op
-    member val Op2 = Monoid.Op
+    member val Op2 = monoid.Op
+    member val Group = group
+    member val Monoid = monoid
+
     interface IRing<'U> with
         member val Group = group
-        member val Monoid = Monoid
+        member val Monoid = monoid
 
 type CommutativeRing<'U when 'U: equality>(set:Set<'U>, group: AbelianGroup<'U>, Monoid: CommutativeMonoid<'U>) =
     inherit Ring<'U>(set, group, Monoid)
@@ -30,7 +33,7 @@ module Ring =
         CommutativeRing(set, AdditiveGroup(set), MultiplicativeMonoid(set))
 
     /// Ring of 32-bit integers.
-    let Integers = IntegerRing(Int)
+    let Integers = IntegerRing(infiniteSeq (fun n -> n))
 
     /// Ring of big integers.
     let BigIntegers = IntegerRing(BigInt)    

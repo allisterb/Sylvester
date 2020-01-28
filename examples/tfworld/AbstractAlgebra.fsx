@@ -84,3 +84,4 @@ d.Take(5) |> Array.ofSeq
 
 //g.Take(30) |> Array.ofSeq
 
+Integers.Group.Take(10) |> Array.ofSeq
