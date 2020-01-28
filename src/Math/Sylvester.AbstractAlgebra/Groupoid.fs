@@ -2,6 +2,7 @@
 
 open Sylvester.Collections
 
+/// Set of elements closed under some binary operation.
 type IGroupoid<'U when 'U: equality> = 
     inherit IStruct<'U, card.one>
     abstract member Op: BinaryOp<'U>

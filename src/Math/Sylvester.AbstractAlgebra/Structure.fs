@@ -1,13 +1,10 @@
 ﻿namespace Sylvester
 
-open System
 open System.Collections
 
 open Sylvester.Arithmetic
-open Sylvester.Collections
 
 /// A set together with a collection of n operations of elements in some universe U.
-
 type IStruct<'U, 'n when 'U: equality and 'n :> Number> = 
     inherit ISet<'U>
     abstract member Set:Set<'U>

@@ -6,8 +6,10 @@ open System.Collections
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
+type IMap<'n when 'n :> Number> = interface end
+
 /// Map or function between elements of universe U.
-type Map<'U when 'U: equality> = 'U -> 'U 
+type Map<'U when 'U: equality> = 'U -> 'U  
 
 /// Unarp operation between elements of universe U.
 type UnaryOp<'U when 'U: equality> = 'U -> 'U  

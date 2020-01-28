@@ -1,5 +1,6 @@
 ﻿namespace Sylvester
 
+/// Set of elements closed under some left-associative operation with identity.
 type IMonoid<'U when 'U: equality> = 
     inherit IGroupoid<'U>
     abstract member Identity: 'U
@@ -11,11 +12,12 @@ type Monoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U) =
     member val Identity = id
     interface IMonoid<'U> with member val Identity = id
     
+/// Monoid with commutative operators.
 type CommutativeMonoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U) =
     inherit Monoid<'U>(set, op, id)
     do failIfNotCommutative op
 
-/// Category of monoids with a structure-preserving morphism.
+/// Category of monoids with one structure-preserving morphism.
 type Mon<'U when 'U : equality> = Category<'U, Monoid<'U>, card.one, card.one>
 
 [<AutoOpen>]

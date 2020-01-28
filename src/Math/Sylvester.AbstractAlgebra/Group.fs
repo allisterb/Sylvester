@@ -1,5 +1,6 @@
 ﻿namespace Sylvester
 
+/// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type IGroup<'U when 'U: equality> = 
     inherit IMonoid<'U> 
     abstract member Inverse: UnaryOp<'U>
@@ -15,7 +16,7 @@ type AbelianGroup<'U when 'U: equality>(set:Set<'U>, op: BinaryOp<'U>, id:'U, in
     do failIfNotCommutative op
 
 /// Category of groups with a structure-preserving morphism.
-type Grp<'U when 'U : equality> = Category<'U, Group<'U>, card.one, card.one>
+type Grp<'U when 'U : equality>(group:Group<'U>, map: Map<'U>) = inherit Category<'U, Group<'U>, card.one, card.one>(Morph(group, group, map))
 
 [<AutoOpen>]
 module Group =
@@ -30,6 +31,8 @@ module Group =
         (set: Set<'U>) =
         let one = LanguagePrimitives.GenericOne<'U>
         AbelianGroup(set, FSharpPlus.Math.Generic.(*), one, FSharpPlus.Math.Generic.(/) one)
+
+    let g = Grp(AdditiveGroup(Int), (*) 2)
 
 
 

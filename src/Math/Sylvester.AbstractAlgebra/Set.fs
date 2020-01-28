@@ -3,6 +3,7 @@
 open System.Collections
 open System.Collections.Generic
 open System.Linq
+open System.Numerics
 
 open Sylvester.Arithmetic
 
@@ -146,3 +147,5 @@ module Set =
 
     let IntL = Set(fun (_:int64) -> true)
     let IntUL = Set(fun (_:uint64) -> true)
+
+    let BigInt = Set(fun (_:bigint) -> true)
