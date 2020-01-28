@@ -46,6 +46,15 @@ type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n
         member val Set = set
         member val Ops = ops
     
+[<AutoOpen>]
+module Op =
+    let inline isLeftAssociative (op:BinaryOp<'U>) = Op<'U>.IsLeftAssociative op
+    let inline failIfNotLeftAssociative (op:BinaryOp<'U>) = Op<'U>.FailIfNotLeftAssociative op
+    let inline isCommutative (op:BinaryOp<'U>) = Op<'U>.IsCommutative op
+    let inline failIfNotCommutative (op:BinaryOp<'U>) = Op<'U>.FailIfNotCommutative op
+    let inline distributesOver (op1:BinaryOp<'U>) (op2:BinaryOp<'U>) = Op<'U>.DistributesOver op1 op2
+    let inline failIfNotDistributiveOver (op1:BinaryOp<'U>) (op2:BinaryOp<'U>) = Op<'U>.FailIfNotDistributiveOver op1 op2
+
 /// The cardinality of a structure's collections.
 [<RequireQualifiedAccess>]
 module card = 

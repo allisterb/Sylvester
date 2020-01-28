@@ -10,7 +10,6 @@ type Morph<'U, 's, 'n when 'U : equality and 'n :> Number and 's :> Struct<'U, '
 
 /// hom-set of all morphisms between 2 structures of the same type.
 |Hom of 's * 's
-
 with       
     member x.Domain = 
         match x with

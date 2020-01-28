@@ -12,7 +12,7 @@ type Group<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U, inv: Unary
 
 type AbelianGroup<'U when 'U: equality>(set:Set<'U>, op: BinaryOp<'U>, id:'U, inv: UnaryOp<'U>) =
     inherit Group<'U>(set, op, id, inv)
-    do if op |> Op<'U>.IsCommutative |> not then failwith ""
+    do failIfNotCommutative op
 
 /// Category of groups with a structure-preserving morphism.
 type Grp<'U when 'U : equality> = Category<'U, Group<'U>, card.one>
@@ -29,7 +29,7 @@ module Group =
     let inline MultiplicativeGroup<'U when 'U : equality and 'U : (static member One:'U) and 'U: (static member (*) :'U -> 'U -> 'U) and 'U: (static member (/) :'U -> 'U -> 'U)>
         (set: Set<'U>) =
         let one = LanguagePrimitives.GenericOne<'U>
-        AbelianGroup(set, FSharpPlus.Math.Generic.(*), one, fun x -> FSharpPlus.Math.Generic.(/) one x)
+        AbelianGroup(set, FSharpPlus.Math.Generic.(*), one, FSharpPlus.Math.Generic.(/) one)
 
 
 

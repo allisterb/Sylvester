@@ -11,13 +11,14 @@ type IRing<'U when 'U: equality> =
 /// Set of elements closed under a left-associative commutative operations and a distributive operation.
 type Ring<'U when 'U: equality>(set:Set<'U>, group: AbelianGroup<'U>, monoid: Monoid<'U>) =
     inherit Struct<'U, card.two>(set, arrayOf2 (group.Ops.[zero]) (monoid.Ops.[zero]))
-    do if not(Op<'U>.DistributesOver group.Op monoid.Op) then failwith "The 2nd operator does not distribute over the first."
+    do monoid.Op |> failIfNotDistributiveOver group.Op
     member val Op1 = group.Op
     member val Op2 = monoid.Op
     interface IRing<'U> with
         member val Group = group
         member val Monoid = monoid
 
+    
 type CommutativeRing<'U when 'U: equality>(set:Set<'U>, group: AbelianGroup<'U>, monoid: CommutativeMonoid<'U>) =
     inherit Ring<'U>(set, group, monoid)
 
@@ -28,5 +29,6 @@ module Ring =
         (set: Set<'U>) =
         CommutativeRing(set, AdditiveGroup(set), MultiplicativeMonoid(set))
 
+    let Integers = IntegerRing(Int)
 
         

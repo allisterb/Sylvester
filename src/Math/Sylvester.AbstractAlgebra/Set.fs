@@ -137,5 +137,3 @@ module Set =
 
     let IntL = Set(fun (_:int64) -> true)
     let IntUL = Set(fun (_:uint64) -> true)
-
-    let Integers = Int

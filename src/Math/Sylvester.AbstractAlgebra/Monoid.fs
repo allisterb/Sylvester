@@ -13,7 +13,7 @@ type Monoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U) =
     
 type CommutativeMonoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U) =
     inherit Monoid<'U>(set, op, id)
-    do Op<'U>.FailIfNotCommutative op
+    do failIfNotCommutative op
 
 /// Category of monoids with a structure-preserving morphism.
 type Mon<'U when 'U : equality> = Category<'U, Monoid<'U>, card.one>
@@ -26,7 +26,7 @@ module Monoid =
         let id = LanguagePrimitives.GenericZero<'U>
         CommutativeMonoid(set, Binary(+).DestructureBinary, id)
 
-    /// Define a monoid over a set which has an additive operator and one. 
+    /// Define a monoid over a set which has an multiplicative operator and one. 
     let inline MultiplicativeMonoid<'U when 'U : equality and 'U : (static member One:'U) and 'U: (static member (*) :'U -> 'U -> 'U)> 
         (set: Set<'U>) =
         let one = LanguagePrimitives.GenericOne<'U>
