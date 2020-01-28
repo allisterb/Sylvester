@@ -39,6 +39,7 @@ type ICategory<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn
     abstract member Morph: Morph<'U, 'ob, 'mn>
 
 type Category<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number>(morph:Morph<'U, 'ob, 'mn>) = 
+    member val Morph = morph
     interface ICategory<'U, 'ob, 'mn> with 
         member val Morph = morph
-    member x.Morph = morph
+    

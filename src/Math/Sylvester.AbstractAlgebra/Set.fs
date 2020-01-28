@@ -16,6 +16,30 @@ type Set<'U when 'U: equality> =
 | Set of ('U -> bool)
     
 with 
+    interface IEnumerable<'U> with
+        member x.GetEnumerator () = 
+            match x with
+            |Empty -> Seq.empty.GetEnumerator()
+            |Seq s -> let distinct = Seq.distinct s in distinct.GetEnumerator()
+            |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
+                
+    interface IEnumerable with
+        member x.GetEnumerator () = (x :> IEnumerable<'U>).GetEnumerator () :> IEnumerator
+
+    /// A subset of the set.
+    member x.Sub(f: 'U -> bool) = 
+        match x with
+        |Empty -> failwith "The empty set has no subsets."
+        |Seq s -> Seq(s |> Seq.filter f)
+        |Set s -> Set(fun x -> s(x) && f(x))
+
+    /// A subset of the set.
+    member x.Contains(elem: 'U) = 
+        match x with
+        |Empty -> false
+        |Seq s -> elem |> s.Contains
+        |Set s -> s elem
+
     /// Set union operator.
     static member (|+|) (l, r) = 
         match (l, r) with
@@ -41,35 +65,7 @@ with
         |(Seq a, Set b) -> Set(fun x -> Seq.contains x a && b(x))
 
     /// Set membership operator.
-    static member (|<|) (elem:'U, set:Set<'U>) =
-        match set with
-        | Empty -> false
-        | Seq s -> set |> Seq.contains elem
-        | Set s -> s elem
-
-    interface IEnumerable<'U> with
-        member x.GetEnumerator () = 
-            match x with
-            |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> let distinct = Seq.distinct s in distinct.GetEnumerator()
-            |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
-                
-    interface IEnumerable with
-        member x.GetEnumerator () = (x :> IEnumerable<'U>).GetEnumerator () :> IEnumerator
-
-    /// A subset of the set.
-    member x.Sub(f: 'U -> bool) = 
-        match x with
-        |Empty -> failwith "The empty set has no subsets."
-        |Seq s -> Seq(s |> Seq.filter f)
-        |Set s -> Set(fun x -> s(x) && f(x))
-
-    /// A subset of the set.
-    member x.Contains(elem: 'U) = 
-        match x with
-        |Empty -> false
-        |Seq s -> elem |> s.Contains
-        |Set s -> s elem
+    static member (|<|) (elem:'U, set:Set<'U>) = set.Contains elem
 
 [<AutoOpen>]
 module Set =
@@ -134,64 +130,4 @@ module Set =
                                     k := !l
                                     l :=  m
             }
-        f |> infiniteSeq |> quintwise |> Seq
-
-/// The cardinality of a set.
-[<RequireQualifiedAccess>]
-module Card = 
-    /// Cardinality 0.
-    type zero = N10.zero
-
-    /// Cardinality 1.
-    type one = N10.one
-
-    /// Cardinality 2.
-    type two = N10.two
-
-    /// Cardinality 3.
-    type three = N10.three
-
-    /// Cardinality 4.
-    type four = N10.four
-
-    /// Cardinality 5.
-    type five = N10.five
-
-    /// Cardinality 6.
-    type six = N10.six
-
-    /// Cardinality 7.
-    type seven = N10.seven
-
-    /// Cardinality 8.
-    type eight = N10.eight
-
-    /// Cardinality 9.
-    type nine = N10.nine
-
-    /// Cardinality 10.
-    type ten = N10.ten
-
-    let zero = new zero()
-
-    let one = new one()
-
-    let two = new two()
-
-    let three = new three()
-
-    let four = new four()
-
-    let five = new five()
-
-    let six = new six()
-
-    let seven = new seven()
-
-    let eight = new eight()
-
-    let nine = new nine()
-
-    let ten = new ten()
-
-    
+        f |> infiniteSeq |> quintwise |> Seq    

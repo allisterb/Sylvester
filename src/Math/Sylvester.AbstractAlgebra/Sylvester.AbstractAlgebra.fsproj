@@ -13,6 +13,7 @@
     <Compile Include="Semigroup.fs" />
     <Compile Include="Monoid.fs" />
     <Compile Include="Group.fs" />
+    <Compile Include="Ring.fs" />
   </ItemGroup>
 
   <ItemGroup>
