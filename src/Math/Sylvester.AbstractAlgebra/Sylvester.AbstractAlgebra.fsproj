@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FSharpPlus" Version="1.1.0-RC2" />
     <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
   </ItemGroup>
 

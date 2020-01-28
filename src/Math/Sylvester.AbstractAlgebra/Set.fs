@@ -131,3 +131,11 @@ module Set =
                                     l :=  m
             }
         f |> infiniteSeq |> quintwise |> Seq    
+
+    let Int = Set(fun (_:int) -> true)
+    let IntU = Set(fun (_:uint32) -> true)
+
+    let IntL = Set(fun (_:int64) -> true)
+    let IntUL = Set(fun (_:uint64) -> true)
+
+    let Integers = Int

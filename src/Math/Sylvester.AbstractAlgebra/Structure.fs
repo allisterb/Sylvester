@@ -8,16 +8,26 @@ open Sylvester.Collections
 /// Map or function between elements of universe U.
 type Map<'U when 'U: equality> = 'U -> 'U 
 
-/// Operations between elements of a universe U.
+/// Binary operation between pairs of elements of universe U.
+type UnaryOp<'U when 'U: equality> = 'U -> 'U  
+
+/// Binary operation between pairs of elements of universe U.
+type BinaryOp<'U when 'U: equality> = 'U -> 'U -> 'U 
+
+/// Union of operations between elements of a universe U.
 type Op<'U> = 
 |Unary of ('U -> 'U) 
 |Binary of ('U -> 'U -> 'U)
 with
     member x.Symbol = match x with | Unary op -> op.ToString() | Binary op -> op.ToString()
+    member inline x.DestructureBinary = match x with | Binary op -> op | _ -> failwith "This operation is not a binary op." 
     static member LeftAssociativeSymbols = ["+"; "-"; "*"; "/"] 
     static member inline IsLeftAssociative op = Op<'U>.LeftAssociativeSymbols |> Seq.contains (op.ToString())
+    static member inline FailIfNotLeftAssociative op = if not (Op<'U>.IsLeftAssociative op) then failwith "This operation is not left-associative."
     static member inline IsCommutative op1 = true
+    static member inline FailIfNotCommutative op = if not (Op<'U>.IsCommutative op) then failwith "This operation is not left-associative."
     static member inline DistributesOver op1 op2 = true
+    static member inline FailIfNotDistributiveOver op1 op2 = if not (Op<'U>.DistributesOver op1 op2) then failwith "This operation is not distributive."
 
 /// Collection of n operations.
 type Ops<'n, 'U when 'n :> Number and 'U: equality> = Array<'n, Op<'U>>
@@ -36,13 +46,6 @@ type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n
         member val Set = set
         member val Ops = ops
     
-/// Properties of operations.
-[<AutoOpen>]
-module Op =
-    let isLeftAssociative (op: 'U->'U->'U) = Op<'U>.IsLeftAssociative op
-    let isCommutative (op: 'U->'U->'U) = Op<'U>.IsCommutative op
-    let distributesOver (op1: 'U->'U->'U) (op2 : 'U->'U->'U)= Op<'U>.DistributesOver op1 op2
-
 /// The cardinality of a structure's collections.
 [<RequireQualifiedAccess>]
 module card = 
