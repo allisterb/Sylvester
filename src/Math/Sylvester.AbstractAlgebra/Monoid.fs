@@ -16,7 +16,7 @@ type CommutativeMonoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U
     do failIfNotCommutative op
 
 /// Category of monoids with a structure-preserving morphism.
-type Mon<'U when 'U : equality> = Category<'U, Monoid<'U>, card.one>
+type Mon<'U when 'U : equality> = Category<'U, Monoid<'U>, card.one, card.one>
 
 [<AutoOpen>]
 module Monoid =

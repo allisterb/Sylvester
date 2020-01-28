@@ -1,6 +1,7 @@
 ﻿namespace Sylvester
 
 open Sylvester.Arithmetic
+open Sylvester.Collections
 
 /// Morphism between 2 structures of the same type in universe U.
 type Morph<'U, 's, 'n when 'U : equality and 'n :> Number and 's :> Struct<'U, 'n>> = 
@@ -13,12 +14,12 @@ type Morph<'U, 's, 'n when 'U : equality and 'n :> Number and 's :> Struct<'U, '
 with       
     member x.Domain = 
         match x with
-        |Morph(d, _, _) -> d
+        |Morph(d, _, _)
         |Hom(d,_) -> d
   
     member x.CoDomain = 
         match x with
-        |Morph(_, c, _) -> c
+        |Morph(_, c, _)
         |Hom(_,c) -> c
 
     member x.Map = 
@@ -34,11 +35,13 @@ with
     /// Identity morphism.
     static member Id(s) = Morph(s, s, id)
 
-type ICategory<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number> =
-    abstract member Morph: Morph<'U, 'ob, 'mn>
+type Morphisms<'U, 's, 'sn, 'mn when 'U : equality and 'sn :> Number and 's :> Struct<'U, 'sn> and 'mn :> Number> = Array<'mn, Morph<'U, 's, 'sn>>
 
-type Category<'U, 'ob, 'mn when 'U: equality and 'ob :> Struct<'U, 'mn> and 'mn :> Number>(morph:Morph<'U, 'ob, 'mn>) = 
+type ICategory<'U, 'ob, 'sn, 'mn when 'U: equality and 'sn :> Number and 'ob :> Struct<'U, 'sn> and 'mn :> Number> =
+    abstract member Morph: Morph<'U, 'ob, 'sn>
+
+type Category<'U, 'ob, 'sn, 'mn when 'U: equality and 'sn :> Number and 'ob :> Struct<'U, 'sn> and 'mn :> Number>(morph:Morph<'U, 'ob, 'sn>) = 
     member val Morph = morph
-    interface ICategory<'U, 'ob, 'mn> with 
+    interface ICategory<'U, 'ob, 'sn, 'mn> with 
         member val Morph = morph
     

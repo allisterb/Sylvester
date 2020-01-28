@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Include="Set.fs" />
+    <Compile Include="Operation.fs" />
     <Compile Include="Structure.fs" />
     <Compile Include="Category.fs" />
     <Compile Include="Groupoid.fs" />
