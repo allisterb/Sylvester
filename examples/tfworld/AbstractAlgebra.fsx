@@ -78,10 +78,15 @@ let d = Monoid(op.c, (+), "")
 
 d.Take(5) |> Array.ofSeq
 
+(d.["nancy", "drew"]) + "/" 
+let h = Groupoids(d, d, (+) "/" )
+
+h.["nancy", "drew"]
+
 //let m = Morph(d,d,id)
 
 //let g = Seq ["A"; "A"; "B"]
 
 //g.Take(30) |> Array.ofSeq
 
-Integers.Group.Take(10) |> Array.ofSeq
+//Integers.Group.Take(10) |> Array.ofSeq
