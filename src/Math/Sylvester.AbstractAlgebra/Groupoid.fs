@@ -21,7 +21,7 @@ type Groupoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>) =
         member x.GetEnumerator(): Generic.IEnumerator<'U * 'U * 'U> = (let s = x.Set :> Generic.IEnumerable<'U> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'U * 'U * 'U>).GetEnumerator () :> IEnumerator
 
-/// Category of groups with a structure-preserving morphism.
+/// Category of groupoids with a structure-preserving morphism.
 type Groupoids<'U when 'U : equality>(l:Groupoid<'U>, r:Groupoid<'U>, map: Map<'U>) = 
     inherit Category<'U, Groupoid<'U>, card.one, card.one>(arrayOf1 (Morph(l, r, map)))
     member x.Map = map

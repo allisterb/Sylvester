@@ -37,11 +37,12 @@ with
 
 type Morphisms<'U, 's, 'sn, 'mn when 'U : equality and 'sn :> Number and 's :> Struct<'U, 'sn> and 'mn :> Number> = Array<'mn, Morph<'U, 's, 'sn>>
 
-type ICategory<'U, 'ob, 'sn, 'mn when 'U: equality and 'sn :> Number and 'ob :> Struct<'U, 'sn> and 'mn :> Number> =
-    abstract member Morphisms: Morphisms<'U, 'ob, 'sn, 'mn>
+type ICategory<'U, 'ob, 'sn when 'U: equality and 'sn :> Number and 'ob :> Struct<'U, 'sn>> =
+    abstract member Morph: Morph<'U, 'ob, 'sn>
 
-type Category<'U, 'ob, 'sn, 'mn when 'U: equality and 'sn :> Number and 'ob :> Struct<'U, 'sn> and 'mn :> Number>(morphisms:Morphisms<'U, 'ob, 'sn, 'mn>) = 
-    member val Morphisms = morphisms
-    interface ICategory<'U, 'ob, 'sn, 'mn> with 
-        member val Morphisms = morphisms
+type Category<'U, 'ob, 'sn when 'U: equality and 'sn :> Number and 'ob :> Struct<'U, 'sn>>(morph:Morph<'U, 'ob, 'sn>) = 
+    member val Morph = morph
+    interface ICategory<'U, 'ob, 'sn> with 
+        member val Morph = morph
+    
     

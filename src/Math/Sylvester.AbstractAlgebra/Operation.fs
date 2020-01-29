@@ -19,6 +19,7 @@ type BinaryOp<'U when 'U: equality> = 'U -> 'U -> 'U
 
 /// Union of operations between elements of a universe U.
 type Op<'U> = 
+|Const of 'U
 |Unary of ('U -> 'U) 
 |Binary of ('U -> 'U -> 'U)
 with
@@ -30,8 +31,9 @@ with
     static member inline DistributesOver op1 op2 = true
     static member inline FailIfNotDistributiveOver op1 op2 = if not (Op<'U>.DistributesOver op1 op2) then failwith "This operation is not distributive."
 
-    member x.Symbol = match x with | Unary op -> op.ToString() | Binary op -> op.ToString()
+    member x.Symbol = match x with |Const op -> op.ToString() | Unary op -> op.ToString() | Binary op -> op.ToString()
 
+    member inline x.DestructureConst = match x with | Const op -> op | _ -> failwith "This operation is not a const."
     member inline x.DestructureUnary = match x with | Unary op -> op | _ -> failwith "This operation is not a unary op."
     member inline x.DestructureBinary = match x with | Binary op -> op | _ -> failwith "This operation is not a binary op." 
     

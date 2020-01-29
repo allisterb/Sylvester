@@ -27,6 +27,9 @@ type CommutativeRing<'U when 'U: equality>(set:Set<'U>, group: AbelianGroup<'U>,
 
 [<AutoOpen>]
 module Ring =
+    let inline AdditiveRing<'U when 'U : equality and 'U : (static member Zero:'U) and 'U: (static member (+) :'U -> 'U -> 'U) and 'U: (static member (~-) :'U -> 'U)>(set:Set<'U>, op, id) =
+        Ring(set, AdditiveGroup(set), Monoid(set, op, id))
+
     /// Define a ring over a set which has +, *, operators and 0, 1 elements defined. 
     let inline IntegerRing<'U when 'U : equality and 'U : (static member Zero:'U) and 'U : (static member One:'U) and 'U: (static member (+) :'U -> 'U -> 'U) and 'U: (static member (*) :'U -> 'U -> 'U) and 'U: (static member (~-) :'U -> 'U)> 
         (set: Set<'U>) =

@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open Sylvester.Collections
+
 /// Set of elements closed under some left-associative operation with identity.
 type IMonoid<'U when 'U: equality> = 
     inherit IGroupoid<'U>
@@ -17,9 +19,9 @@ type CommutativeMonoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U
     inherit Monoid<'U>(set, op, id)
     do failIfNotCommutative op
 
-/// Category of monoids with one structure-preserving morphism.
-type Mon<'U when 'U : equality> = Category<'U, Monoid<'U>, card.one, card.one>
-
+/// Category of structure-preserving monoid morphisms.
+type Mon<'U when 'U : equality>(l:Monoid<'U>, r:Monoid<'U>, map:Map<'U>) = inherit Category<'U, Monoid<'U>, card.one>(Morph(l,r, map))
+    
 [<AutoOpen>]
 module Monoid =
     /// Define a monoid over a set which has an additive operator and zero. 
@@ -33,6 +35,4 @@ module Monoid =
         (set: Set<'U>) =
         let one = LanguagePrimitives.GenericOne<'U>
         CommutativeMonoid(set, FSharpPlus.Math.Generic.(*), one)
-
-
 

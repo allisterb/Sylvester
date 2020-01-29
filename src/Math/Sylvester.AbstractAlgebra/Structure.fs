@@ -54,6 +54,8 @@ module card =
     /// Cardinality 10.
     type ten = N10.ten
 
+    type aleph0 = N10.ten
+
     let zero = new zero()
 
     let one = new one()
