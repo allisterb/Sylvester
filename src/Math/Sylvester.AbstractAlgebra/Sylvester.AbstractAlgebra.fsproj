@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FSharpPlus" Version="1.1.0-RC2" />
+    <PackageReference Include="FSharpPlus" Version="1.0.0" />
     <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
     <PackageReference Include="Sylvester.Collections" Version="0.2.3" />
   </ItemGroup>

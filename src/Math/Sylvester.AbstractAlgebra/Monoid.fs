@@ -19,10 +19,9 @@ type CommutativeMonoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>, id:'t
     inherit Monoid<'t>(set, op, id)
     do failIfNotCommutative op
 
-/// Category of structure-preserving monoid morphisms.
-type Mon<'t when 't : equality>(l:Monoid<'t>, r:Monoid<'t>, map:Map<'t>) = 
-    inherit Category<'t, Monoid<'t>, card.one>(Morph(l,r, map))
-    new (m:Monoid<'t>, map:Map<'t>) = Mon(m,m,map)
+/// Category of monoids with a structure-preserving morphism.
+type Monoids<'ut, 'vt when 'ut : equality and 'vt: equality>(l:Monoid<'ut>, r:Monoid<'vt>, map: Map<'ut, 'vt>) = 
+    inherit Category<'ut, 'vt, card.one, card.one, Monoid<'ut>, Monoid<'vt>, card.one>(Morph(l, r, map) |> arrayOf1)
 
 [<AutoOpen>]
 module Monoid =
@@ -37,4 +36,3 @@ module Monoid =
         (set: Set<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>
         CommutativeMonoid(set, FSharpPlus.Math.Generic.(*), one)
-

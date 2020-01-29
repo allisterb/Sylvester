@@ -18,7 +18,8 @@ type AbelianGroup<'t when 't: equality>(set:Set<'t>, op: BinaryOp<'t>, id:'t, in
     do failIfNotCommutative op
 
 /// Category of groups with a structure-preserving morphism.
-type Grp<'t when 't : equality>(l:Group<'t>, r:Group<'t>, map: Map<'t>) = inherit Category<'t, Group<'t>, card.one>(Morph(l, r, map))
+type Groups<'ut, 'vt when 'ut : equality and 'vt: equality>(l:Group<'ut>, r:Group<'vt>, map: Map<'ut, 'vt>) = 
+    inherit Category<'ut, 'vt, card.one, card.one, Group<'ut>, Group<'vt>, card.one>(Morph(l, r, map) |> arrayOf1)
 
 [<AutoOpen>]
 module Group =

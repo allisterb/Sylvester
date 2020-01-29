@@ -3,14 +3,14 @@
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
-/// Morphism between 2 structures of type u, v.
-type Morph<'t, 's, 'n when 't : equality and 'n :> Number and 's :> Struct<'t, 'n>> = 
+/// Morphism between 2 structures of type t and u.
+type Morph<'ut, 'vt, 'un, 'vn, 'u, 'v when 'ut : equality and 'vt : equality and 'un :> Number and 'vn :> Number and 'u :> IStruct<'ut, 'un> and 'v :> IStruct<'vt, 'vn>> = 
 
 /// Morphism defined by a map from elements of the set of one structure to another of the same type.
-|Morph of 's * 's * Map<'t> 
+|Morph of 'u * 'v * Map<'ut, 'vt> 
 
 /// hom-set of all morphisms between 2 structures of the same type.
-|Hom of 's * 's
+|Hom of 'u * 'v
 with       
     member x.Domain = 
         match x with
@@ -27,7 +27,7 @@ with
         |Morph(_, _, m) -> m
         |Hom(_,_) -> failwith "The hom-set comprises all of the maps between 2 structures and is not an individual map."
     
-    static member (*) (l:Morph<'t, 's, 'n>, r:Morph<'t, 's, 'n>) =
+    static member (*) (l:Morph<'ut, 'vt, 'un, 'vn, 'u, 'v>, r:Morph<'vt, 'wt, 'vn, 'wn, 'v, 'w>) =
         match l, r with
         | Morph(a, _, m), Morph(_, c, n) -> Morph(a, c, m >> n) 
         | _ -> failwith "Only individual morphisms are compatible for composition."
@@ -35,14 +35,18 @@ with
     /// Identity morphism.
     static member Id(s) = Morph(s, s, id)
 
-type Morphisms<'t, 's, 'sn, 'mn when 't : equality and 'sn :> Number and 's :> Struct<'t, 'sn> and 'mn :> Number> = Array<'mn, Morph<'t, 's, 'sn>>
+type Morphisms<'ut, 'vt, 'un, 'vn, 'u, 'v, 'mn when 'ut : equality and 'vt : equality and 'un :> Number and 'vn :> Number and 'u :> IStruct<'ut, 'un> and 'v :> IStruct<'vt, 'vn> and 'mn :> Number> = Array<'mn, Morph<'ut, 'vt, 'un, 'vn, 'u, 'v>>
 
-type ICategory<'t, 'ob, 'sn when 't: equality and 'sn :> Number and 'ob :> Struct<'t, 'sn>> =
-    abstract member Morph: Morph<'t, 'ob, 'sn>
-
-type Category<'t, 'ob, 'sn when 't: equality and 'sn :> Number and 'ob :> Struct<'t, 'sn>>(morph:Morph<'t, 'ob, 'sn>) = 
-    member val Morph = morph
-    interface ICategory<'t, 'ob, 'sn> with 
-        member val Morph = morph
+/// A category of morphisms between 2 structures.
+type Category<'ut, 'vt, 'un, 'vn, 'u, 'v, 'mn when 'ut : equality and 'vt : equality and 'un :> Number and 'vn :> Number and 'u :> IStruct<'ut, 'un> and 'v :> IStruct<'vt, 'vn> and 'mn :> Number>(morphisms:Morphisms<'ut, 'vt, 'un, 'vn, 'u, 'v, 'mn>) = 
+    member val Morphisms = morphisms
+    member val Source = morphisms.Map(fun m -> m.Domain)
+    member val Target = morphisms.Map(fun m -> m.CoDomain)
+    member x.Map = morphisms.Map(fun m -> m.Map)
+    member inline x.Item(n, e:'ut) = x.Morphisms.[n].Map e
     
+   
+ 
+
+
     
