@@ -1,5 +1,6 @@
 ﻿namespace Sylvester
 
+open Sylvester.Arithmetic
 open Sylvester.Collections
 
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
@@ -17,9 +18,9 @@ type AbelianGroup<'t when 't: equality>(set:Set<'t>, op: BinaryOp<'t>, id:'t, in
     inherit Group<'t>(set, op, id, inv)
     do failIfNotCommutative op
 
-/// Category of groups with a structure-preserving morphism.
-type Groups<'ut, 'vt when 'ut : equality and 'vt: equality>(l:Group<'ut>, r:Group<'vt>, map: Map<'ut, 'vt>) = 
-    inherit Category<'ut, 'vt, card.one, card.one, Group<'ut>, Group<'vt>, card.one>(Morph(l, r, map) |> arrayOf1)
+/// Category of groups with n structure-preserving morphisms.
+type Groups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Group<'ut>, r:Group<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
+    inherit Category<'ut, 'vt, card.one, card.one, 'n>(l, r, maps) 
 
 [<AutoOpen>]
 module Group =

@@ -1,5 +1,6 @@
 ﻿namespace Sylvester
 
+open Sylvester.Arithmetic
 open Sylvester.Collections
 
 /// Set of elements closed under some left-associative operation with identity.
@@ -19,9 +20,9 @@ type CommutativeMonoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>, id:'t
     inherit Monoid<'t>(set, op, id)
     do failIfNotCommutative op
 
-/// Category of monoids with a structure-preserving morphism.
-type Monoids<'ut, 'vt when 'ut : equality and 'vt: equality>(l:Monoid<'ut>, r:Monoid<'vt>, map: Map<'ut, 'vt>) = 
-    inherit Category<'ut, 'vt, card.one, card.one, Monoid<'ut>, Monoid<'vt>, card.one>(Morph(l, r, map) |> arrayOf1)
+/// Category of monoids with n structure-preserving morphisms.
+type Monoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Monoid<'ut>, r:Monoid<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
+    inherit Category<'ut, 'vt, card.one, card.one,'n>(l, r, maps)
 
 [<AutoOpen>]
 module Monoid =
