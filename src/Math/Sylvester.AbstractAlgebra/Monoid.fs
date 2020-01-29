@@ -3,36 +3,38 @@
 open Sylvester.Collections
 
 /// Set of elements closed under some left-associative operation with identity.
-type IMonoid<'U when 'U: equality> = 
-    inherit IGroupoid<'U>
-    abstract member Identity: 'U
+type IMonoid<'t when 't: equality> = 
+    inherit IGroupoid<'t>
+    abstract member Identity: 't
 
 /// Set of elements closed under some left-associative operation with identity.
-type Monoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U) =
-    inherit Semigroup<'U>(set, op)
+type Monoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>, id:'t) =
+    inherit Semigroup<'t>(set, op)
     member val Op = op
     member val Identity = id
-    interface IMonoid<'U> with member val Identity = id
+    interface IMonoid<'t> with member val Identity = id
     
 /// Monoid with commutative operators.
-type CommutativeMonoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>, id:'U) =
-    inherit Monoid<'U>(set, op, id)
+type CommutativeMonoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>, id:'t) =
+    inherit Monoid<'t>(set, op, id)
     do failIfNotCommutative op
 
 /// Category of structure-preserving monoid morphisms.
-type Mon<'U when 'U : equality>(l:Monoid<'U>, r:Monoid<'U>, map:Map<'U>) = inherit Category<'U, Monoid<'U>, card.one>(Morph(l,r, map))
-    
+type Mon<'t when 't : equality>(l:Monoid<'t>, r:Monoid<'t>, map:Map<'t>) = 
+    inherit Category<'t, Monoid<'t>, card.one>(Morph(l,r, map))
+    new (m:Monoid<'t>, map:Map<'t>) = Mon(m,m,map)
+
 [<AutoOpen>]
 module Monoid =
     /// Define a monoid over a set which has an additive operator and zero. 
-    let inline AdditiveMonoid<'U when 'U : equality and 'U : (static member Zero:'U) and 'U: (static member (+) :'U -> 'U -> 'U)> 
-        (set: Set<'U>) =
-        let id = LanguagePrimitives.GenericZero<'U>
+    let inline AdditiveMonoid<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't)> 
+        (set: Set<'t>) =
+        let id = LanguagePrimitives.GenericZero<'t>
         CommutativeMonoid(set, Binary(+).DestructureBinary, id)
 
     /// Define a monoid over a set which has an multiplicative operator and one. 
-    let inline MultiplicativeMonoid<'U when 'U : equality and 'U : (static member One:'U) and 'U: (static member (*) :'U -> 'U -> 'U)> 
-        (set: Set<'U>) =
-        let one = LanguagePrimitives.GenericOne<'U>
+    let inline MultiplicativeMonoid<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't)> 
+        (set: Set<'t>) =
+        let one = LanguagePrimitives.GenericOne<'t>
         CommutativeMonoid(set, FSharpPlus.Math.Generic.(*), one)
 

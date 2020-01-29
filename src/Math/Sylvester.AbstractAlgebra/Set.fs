@@ -3,26 +3,23 @@
 open System.Collections
 open System.Collections.Generic
 open System.Linq
-open System.Numerics
 
-open Sylvester.Arithmetic
+type ISet<'t when 't: equality> =
+    inherit IEnumerable<'t>
+    abstract member Sub:('t -> bool) -> ISet<'t>
+    abstract member Contains: 't -> bool
 
-type ISet<'U when 'U: equality> =
-    inherit IEnumerable<'U>
-    abstract member Sub:('U -> bool) -> ISet<'U>
-    abstract member Contains: 'U -> bool
-
-/// A set of elements belonging to a universe denoted by U.
-type Set<'U when 'U: equality> =
+/// A set of elements each with type or class denoted by t.
+type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
 /// A sequence of elements i.e. a set S that has a function from N -> S.
-| Seq of seq<'U>
-/// A set of elements of U defined by a predicate.
-| Set of ('U -> bool)
+| Seq of seq<'t>
+/// A set of elements defined by a predicate.
+| Set of ('t -> bool)
     
 with 
-    interface IEnumerable<'U> with
+    interface IEnumerable<'t> with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
@@ -30,24 +27,24 @@ with
             |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
                 
     interface IEnumerable with
-        member x.GetEnumerator () = (x :> IEnumerable<'U>).GetEnumerator () :> IEnumerator
+        member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
     /// A subset of the set.
-    member x.Sub(f: 'U -> bool) = 
+    member x.Sub(f: 't -> bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
         |Seq s -> Seq(s |> Seq.filter f)
         |Set s -> Set(fun x -> s(x) && f(x))
 
     /// A subset of the set.
-    member x.Contains(elem: 'U) = 
+    member x.Contains(elem: 't) = 
         match x with
         |Empty -> false
         |Seq s -> elem |> s.Contains
         |Set s -> s elem
 
-    interface ISet<'U> with
-        member x.Sub f = x.Sub(f) :> ISet<'U>
+    interface ISet<'t> with
+        member x.Sub f = x.Sub(f) :> ISet<'t>
         member x.Contains e = x.Contains e
 
     /// Set union operator.
@@ -75,11 +72,12 @@ with
         |(Seq a, Set b) -> Set(fun x -> Seq.contains x a && b(x))
 
     /// Set membership operator.
-    static member (|<|) (elem:'U, set:Set<'U>) = set.Contains elem
+    static member (|<|) (elem:'t, set:Set<'t>) = set.Contains elem
 
 [<AutoOpen>]
 module Set =
-    /// n-wise functions based on http://fssnip.net/50 by ptan
+    // n-wise functions based on http://fssnip.net/50 by ptan
+    
     let triplewise (source: seq<_>) =
         seq { 
             use e = source.GetEnumerator() 

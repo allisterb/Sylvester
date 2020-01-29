@@ -1,20 +1,18 @@
 ﻿namespace Sylvester
 
-open System.Collections
-
 open Sylvester.Arithmetic
 
-/// A set together with a collection of n operations of elements in some universe U.
-type IStruct<'U, 'n when 'U: equality and 'n :> Number> = 
-    abstract member Set:Set<'U>
-    abstract member Ops:Ops<'n, 'U>
+/// A set together with a collection of n operations of elements of type 't.
+type IStruct<'t, 'n when 't: equality and 'n :> Number> = 
+    abstract member Set:Set<'t>
+    abstract member Ops:Ops<'n, 't>
 
-/// Base implementation of a mathematical structure consisting of a set together with a collection of n operations on elements in some universe U.
+/// Base implementation of a mathematical structure consisting of a set together with a collection of n operations on elements of type t.
 /// This type is inherited by all other mathematical structure types.
-type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n, 'U>) =  
+type Struct<'t, 'n when 't: equality and 'n :> Number>(set: Set<'t>, ops: Ops<'n, 't>) =  
     member val Set = set
     member val Ops = ops    
-    interface IStruct<'U, 'n> with
+    interface IStruct<'t, 'n> with
         member val Set = set
         member val Ops = ops
     

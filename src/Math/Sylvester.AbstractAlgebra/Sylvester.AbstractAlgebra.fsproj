@@ -3,6 +3,20 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <UserSecretsId>319d1de7-61b8-4062-9ca2-995dd9eda8af</UserSecretsId>
+    <Version>0.2.1</Version>
+    <Authors>Allister Beharry</Authors>
+    <Description>F# Library for defining and exploring concepts in abstract algebra.</Description>
+    <Product>Sylvester</Product>
+    <Company>Allister Beharry</Company>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReleaseNotes>First release with basic definitions up to rings.</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Math/Sylvester.AbstractAlgebra</PackageProjectUrl>
+    <Copyright>Copyright (c) 2019 2020 by Allister Beharry</Copyright>
+    <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
+    <PackageTags>fsharp math abstract algebra theory</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +35,17 @@
     <PackageReference Include="FSharpPlus" Version="1.1.0-RC2" />
     <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
     <PackageReference Include="Sylvester.Collections" Version="0.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

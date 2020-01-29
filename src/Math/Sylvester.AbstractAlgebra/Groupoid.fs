@@ -6,25 +6,26 @@ open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
 /// Set of elements closed under some binary operation.
-type IGroupoid<'U when 'U: equality> = 
-    inherit IStruct<'U, card.one>
-    inherit Generic.IEnumerable<'U * 'U * 'U>
-    abstract member Op: BinaryOp<'U>
+type IGroupoid<'t when 't: equality> = 
+    inherit IStruct<'t, card.one>
+    inherit Generic.IEnumerable<'t * 't * 't>
+    abstract member Op: BinaryOp<'t>
     
 /// Set of elements closed under some binary operation.
-type Groupoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>) =
-    inherit Struct<'U, card.one>(set, arrayOf1 (Binary(op)))
+type Groupoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>) =
+    inherit Struct<'t, card.one>(set, arrayOf1 (Binary(op)))
     member val Op = op
-    member x.Item(l:'U, r:'U) = x.Op l r
-    interface IGroupoid<'U> with
+    member x.Item(l:'t, r:'t) = x.Op l r
+    member x.ToArray n = x |> Seq.take n |> Seq.toArray
+    interface IGroupoid<'t> with
         member val Op = op
-        member x.GetEnumerator(): Generic.IEnumerator<'U * 'U * 'U> = (let s = x.Set :> Generic.IEnumerable<'U> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'U * 'U * 'U>).GetEnumerator () :> IEnumerator
+        member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
 
 /// Category of groupoids with a structure-preserving morphism.
-type Groupoids<'U when 'U : equality>(l:Groupoid<'U>, r:Groupoid<'U>, map: Map<'U>) = 
-    inherit Category<'U, Groupoid<'U>, card.one>((Morph(l, r, map)))
+type Groupoids<'t when 't : equality>(l:Groupoid<'t>, r:Groupoid<'t>, map: Map<'t>) = 
+    inherit Category<'t, Groupoid<'t>, card.one>((Morph(l, r, map)))
     member x.Map = map
-    member x.Item(e:'U) = map e 
+    member x.Item(e:'t) = map e 
 
     
