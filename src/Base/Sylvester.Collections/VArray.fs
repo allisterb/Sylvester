@@ -38,7 +38,7 @@ type Array<'n, 't when 'n :> Number>(items:'t[]) =
         for i in 0..x._Array.Length - 1 do f i x._Array.[i]
 
     member inline x.SetVals(items: IEnumerable<'t> ) = 
-        do if Seq.length items <> x.IntLength then raise(ArgumentOutOfRangeException("The length of the sequence argument does not match the type length."))
+        do if Seq.length items <> x.IntLength then raise(ArgumentOutOfRangeException("items", sprintf "The initializing sequence length %i does not match the type length %i." (Seq.length items) x.IntLength))
         x.ForAll(fun i a -> x._Array.SetValue(a, i))
 
     member inline x.Item(i:'i) : 't = 

@@ -13,7 +13,7 @@ type IStruct<'U, 'n when 'U: equality and 'n :> Number> =
 /// This type is inherited by all other mathematical structure types.
 type Struct<'U, 'n when 'U: equality and 'n :> Number>(set: Set<'U>, ops: Ops<'n, 'U>) =  
     member val Set = set
-    member val Ops = ops
+    member val Ops = ops    
     interface IStruct<'U, 'n> with
         member val Set = set
         member val Ops = ops

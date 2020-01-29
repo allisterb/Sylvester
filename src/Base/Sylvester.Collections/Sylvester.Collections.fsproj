@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <AssemblyVersion>0.2.2.0</AssemblyVersion>
-    <FileVersion>0.2.2.0</FileVersion>
-    <Version>0.2.2</Version>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
+    <FileVersion>0.2.3.0</FileVersion>
+    <Version>0.2.3</Version>
     <Authors>Allister Beharry</Authors>
     <Product>Sylvester</Product>
     <Copyright>Copyright © 2019, 2020 Allister Beharry</Copyright>
-    <Description>Base number-parameterized collection types. These collection types can perform static verification of lengths and indices as long as some information about these values is available at compile time.</Description>
+    <Description>Sylvester number-parameterized collection types. These collection types can perform static verification of lengths and indices as long as some information about these values is available at compile time.</Description>
     <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/Base/Sylvester.Collections</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/allisterb/Sylvester/tree/master/Base/Sylvester.Collections</RepositoryUrl>
+    <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageTags>type-level</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Add ICollection interface</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

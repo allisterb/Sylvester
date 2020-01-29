@@ -79,73 +79,67 @@ with
 
 [<AutoOpen>]
 module Set =
+    /// n-wise functions based on http://fssnip.net/50 by ptan
+    let triplewise (source: seq<_>) =
+        seq { 
+            use e = source.GetEnumerator() 
+            if e.MoveNext() then
+                let i = ref e.Current
+                if e.MoveNext() then
+                    let j = ref e.Current
+                    while e.MoveNext() do
+                        let k = e.Current 
+                        yield (!i, !j, k)
+                        i := !j
+                        j := k 
+        }
+
+    let quadwise (source: seq<_>) =
+        seq { 
+            use e = source.GetEnumerator() 
+            if e.MoveNext() then
+                let i = ref e.Current
+                if e.MoveNext() then
+                    let j = ref e.Current
+                    if e.MoveNext() then
+                        let k = ref e.Current
+                        while e.MoveNext() do
+                            let l = e.Current
+                            yield (!i, !j, !k, l)
+                            i := !j
+                            j := !k
+                            k := l
+            }
+
+    let quintwise (source: seq<_>) =
+        seq { 
+            use e = source.GetEnumerator() 
+            if e.MoveNext() then
+                let i = ref e.Current
+                if e.MoveNext() then
+                    let j = ref e.Current
+                    if e.MoveNext() then
+                        let k = ref e.Current
+                        if e.MoveNext() then
+                            let l = ref e.Current
+                            while e.MoveNext() do
+                                let m = e.Current
+                                yield (!i, !j, !k, !l, m)
+                                i := !j
+                                j := !k
+                                k := !l
+                                l :=  m
+        }
+
     let infiniteSeq f = f |> Seq.initInfinite |> Seq  
 
     let infiniteSeq2 f = f |> infiniteSeq |> Seq.pairwise |> Seq
 
-    /// n-wise functions based on http://fssnip.net/50 by ptan
-    
     let infiniteSeq3 f = 
-        let triplewise (source: seq<_>) =
-            seq { 
-                use e = source.GetEnumerator() 
-                if e.MoveNext() then
-                    let i = ref e.Current
-                    if e.MoveNext() then
-                        let j = ref e.Current
-                        while e.MoveNext() do
-                            let k = e.Current 
-                            yield (!i, !j, k)
-                            i := !j
-                            j := k 
-            }
         f |> infiniteSeq |> triplewise |> Seq
 
     let infiniteSeq4 f = 
-        let quadwise (source: seq<_>) =
-            seq { 
-                use e = source.GetEnumerator() 
-                if e.MoveNext() then
-                    let i = ref e.Current
-                    if e.MoveNext() then
-                        let j = ref e.Current
-                        if e.MoveNext() then
-                            let k = ref e.Current
-                            while e.MoveNext() do
-                                let l = e.Current
-                                yield (!i, !j, !k, l)
-                                i := !j
-                                j := !k
-                                k := l
-                }
         f |> infiniteSeq |> quadwise |> Seq
 
     let infiniteSeq5 f = 
-        let quintwise (source: seq<_>) =
-            seq { 
-                use e = source.GetEnumerator() 
-                if e.MoveNext() then
-                    let i = ref e.Current
-                    if e.MoveNext() then
-                        let j = ref e.Current
-                        if e.MoveNext() then
-                            let k = ref e.Current
-                            if e.MoveNext() then
-                                let l = ref e.Current
-                                while e.MoveNext() do
-                                    let m = e.Current
-                                    yield (!i, !j, !k, !l, m)
-                                    i := !j
-                                    j := !k
-                                    k := !l
-                                    l :=  m
-            }
-        f |> infiniteSeq |> quintwise |> Seq    
-
-    let Int = Set(fun (_:int) -> true)
-    let IntU = Set(fun (_:uint32) -> true)
-
-    let IntL = Set(fun (_:int64) -> true)
-    let IntUL = Set(fun (_:uint64) -> true)
-
-    let BigInt = Set(fun (_:bigint) -> true)
+        f |> infiniteSeq |> quintwise |> Seq

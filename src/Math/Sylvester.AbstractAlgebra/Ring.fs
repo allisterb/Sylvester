@@ -36,7 +36,6 @@ module Ring =
         CommutativeRing(set, AdditiveGroup(set), MultiplicativeMonoid(set))
 
     /// Ring of 32-bit integers.
-    let Integers = IntegerRing(infiniteSeq (fun n -> n))
+    let Integers = IntegerRing(infiniteSeq id)
 
-    /// Ring of big integers.
-    let BigIntegers = IntegerRing(BigInt)    
+   

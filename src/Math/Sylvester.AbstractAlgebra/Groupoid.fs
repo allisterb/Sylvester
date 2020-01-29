@@ -23,9 +23,8 @@ type Groupoid<'U when 'U: equality>(set:Set<'U>, op:BinaryOp<'U>) =
 
 /// Category of groupoids with a structure-preserving morphism.
 type Groupoids<'U when 'U : equality>(l:Groupoid<'U>, r:Groupoid<'U>, map: Map<'U>) = 
-    inherit Category<'U, Groupoid<'U>, card.one, card.one>(arrayOf1 (Morph(l, r, map)))
+    inherit Category<'U, Groupoid<'U>, card.one>((Morph(l, r, map)))
     member x.Map = map
-    member x.Morph = x.Morphisms.[zero]
     member x.Item(e:'U) = map e 
 
     
