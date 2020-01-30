@@ -1,15 +1,10 @@
-```fsharp
-// Use the Sylvester abstract algebra package
-#load "Paket.fsx"
-Paket.Package["Sylvester.AbstractAlgebra"] 
-#load "Paket.Generated.Refs.fsx"
+# Sylvester.AbstractAlgebra
+The Sylvester abstract algebra library contains types and operations for rigorously defining abstract algebra structures and concepts.
 
+```fsharp
 open System 
 open Sylvester
-```
 
-
-```fsharp
 // Define an infinite sequence of strings
 let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32)
 c
@@ -19,8 +14,6 @@ c
 
 
     Seq (seq ["A"; "B"; "C"; "D"; ...])
-
-
 
 
 ```fsharp
@@ -43,9 +36,6 @@ Cat
 let (++) = Cat.Op
 let a, b = "Nancy", "Drew"
 a++b
-
-// All types and operators are strongly types
-//a ++ 4
 ```
 
 
@@ -53,7 +43,7 @@ a++b
 
     "NancyDrew"
 
-
+All structures defined by the library are strongly-typed and can use any other .NET types and operations. In the snippet below the pad function defined over sets using the ++ operation is seen not to be a homomorphism.
 
 
 ```fsharp
@@ -87,9 +77,3 @@ pad a ++ b
 
     "     NancyDrew"
 
-
-
-
-```fsharp
-
-```
