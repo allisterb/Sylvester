@@ -6,10 +6,10 @@ open Sylvester.Collections
 /// Morphism between 2 structures of type t and u which each have at least one binary operator.
 type Morph<'ut, 'vt, 'un, 'vn when 'ut : equality and 'vt : equality and 'un :> Number and 'vn :> Number> = 
 
-/// Morphism defined by a map from elements of the set of one structure to another of the same type.
+/// Morphism defined by a map from elements of the set of one structure to another.
 |Morph of Struct<'ut, 'un> * Struct<'vt, 'vn> * Map<'ut, 'vt> 
 
-/// hom-set of all morphisms between 2 structures of the same type.
+/// hom-set of all morphisms between 2 structures.
 |Hom of Struct<'ut, 'un> * Struct<'vt, 'vn>
 with       
     member x.Domain = 
@@ -48,9 +48,9 @@ type Category<'ut, 'vt, 'un, 'vn, 'n when 'ut : equality and 'vt : equality and 
 
     new (l:Struct<'ut, 'un>, r:Struct<'vt, 'vn>, maps: Array<'n, Map<'ut, 'vt>>) = Category(maps.Map(fun m -> Morph(l, r, m)))
 
-        
-
-
+[<AutoOpen>]
+module Category =
+    let Morph(s, m) = Morph(s, s, m)
    
  
 

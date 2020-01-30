@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <UserSecretsId>319d1de7-61b8-4062-9ca2-995dd9eda8af</UserSecretsId>
-    <Version>0.2.1</Version>
+    <Version>0.2.1.2</Version>
     <Authors>Allister Beharry</Authors>
     <Description>F# Library for defining and exploring concepts in abstract algebra.</Description>
     <Product>Sylvester</Product>
@@ -20,6 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="README.md" />
     <Compile Include="Set.fs" />
     <Compile Include="Operation.fs" />
     <Compile Include="Structure.fs" />
@@ -33,7 +34,6 @@
 
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.0.0" />
-    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
     <PackageReference Include="Sylvester.Collections" Version="0.2.3" />
   </ItemGroup>
 
@@ -46,6 +46,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 
 </Project>
