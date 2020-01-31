@@ -69,7 +69,7 @@ with
     static member (|<|) (elem:'t, set:Set<'t>) = set.Contains elem
 
     /// Set Cartesian product.
-    static member (*) (l, r) = 
+    static member (*) (l:Set<'a>, r:Set<'b>) = 
         match (l, r) with
         |(Empty, Empty) -> Empty
         |(Empty, a) -> Seq.allPairs Seq.empty a |> Seq 
@@ -82,8 +82,6 @@ with
         |(Seq a, Set b) -> Set(fun (x,y) -> b(x) && a |> Seq.contains x)
 
 type ISet<'t when 't: equality> = abstract member Set:Set<'t>
-
-type Prod<'ut, 'vt> = 'ut * 'vt
 
 [<AutoOpen>]
 module Set =

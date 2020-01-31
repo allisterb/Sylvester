@@ -8,8 +8,8 @@ type IMonoid<'t when 't: equality> =
     inherit IGroupoid<'t>
     abstract member Identity: 't
 
-/// Set of elements closed under some left-associative operation with identity.
-type Monoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>, id:'t) =
+/// Set of elements closed under some left-associative operation with identity element.
+type Monoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>, id: NullaryOp<'t>) =
     inherit Semigroup<'t>(set, op)
     member val Op = op
     member val Identity = id

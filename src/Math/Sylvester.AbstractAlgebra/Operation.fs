@@ -15,6 +15,9 @@ type Map<'t, 'u when 't: equality and 'u : equality> = 't -> 'u
 /// Map or function between elements of types t->u->v.
 type Map<'t, 'u, 'v when 't: equality and 'u : equality and 'v: equality> = 't -> 'u -> 'v 
 
+/// 0-ary operation between elements of type 't.
+type NullaryOp<'t when 't : equality> = 't
+
 /// Unary operation between elements of type t.
 type UnaryOp<'t when 't: equality> = Map<'t, 't>
 
@@ -23,11 +26,11 @@ type BinaryOp<'t when 't: equality> = Map<'t, 't, 't>
 
 /// Union of operations between elements of type t.
 type Op<'t when 't: equality> = 
-| Const of 't
+| Nullary of NullaryOp<'t>
 | Unary of UnaryOp<'t>
 | Binary of BinaryOp<'t>
 with 
-    member x.DestructureConst = match x with | Const op -> op | _ -> failwith "This operation is not a const."
+    member x.DestructureNullary = match x with | Nullary op -> op | _ -> failwith "This operation is not a nullary op."
     member x.DestructureUnary = match x with | Unary op -> op | _ -> failwith "This operation is not a unary op."
     member x.DestructureBinary = match x with | Binary op -> op | _ -> failwith "This operation is not a binary op." 
     static member LeftAssociative = ["+"; "-"; "*"; "/"] 

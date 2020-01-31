@@ -8,14 +8,13 @@ open Sylvester.Collections
 /// Set of elements closed under a left-associative commutative operation and a 2nd left-associative distributive operation.
 type IRing<'t when 't: equality> =  
     inherit IGroup<'t>
-    abstract member Group: AbelianGroup<'t>
-    abstract member Monoid: Monoid<'t>
+    abstract member Op2:BinaryOp<'t>
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type Ring<'t when 't: equality>(set:Set<'t>, group: AbelianGroup<'t>, monoid: Monoid<'t>) =
     inherit Struct<'t, card.two>(set, arrayOf2 (group.Ops.[zero]) (monoid.Ops.[zero]))
     do monoid.Op |> failIfNotDistributiveOver group.Op
-    member val Op1 = group.Op
+    member val Op = group.Op
     member val Op2 = monoid.Op
     member val Group = group
     member val Monoid = monoid
@@ -26,8 +25,7 @@ type Ring<'t when 't: equality>(set:Set<'t>, group: AbelianGroup<'t>, monoid: Mo
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         member val Identity = group.Identity
         member val Inverse = group.Inverse
-        member val Group = group
-        member val Monoid = monoid
+        member val Op2 = monoid.Op
 
 type CommutativeRing<'t when 't: equality>(set:Set<'t>, group: AbelianGroup<'t>, Monoid: CommutativeMonoid<'t>) =
     inherit Ring<'t>(set, group, Monoid)
