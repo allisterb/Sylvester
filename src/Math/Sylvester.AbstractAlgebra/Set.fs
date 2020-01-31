@@ -17,6 +17,8 @@ type Set<'t when 't: equality> =
 | Set of SetBuilder<'t>
     
 with 
+    interface ISet<'t> with member x.Set = x
+
     interface IEnumerable<'t> with
         member x.GetEnumerator () = 
             match x with
@@ -42,8 +44,8 @@ with
         |Set s -> s elem
 
     /// Set union operator.
-    static member (|+|) (l, r) = 
-        match (l, r) with
+    static member (|+|) (l:ISet<'t>, r:ISet<'t>) = 
+        match (l.Set, r.Set) with
         |(Empty, x) -> x
         |(x, Empty) -> x
         
@@ -54,8 +56,8 @@ with
         |(Seq a, Set b) -> Set(fun x -> a |> Seq.contains x || b(x))
 
     /// Set intersection operator.
-    static member (|*|) (l, r) = 
-        match (l, r) with
+    static member (|*|) (l:ISet<'t>, r:ISet<'t>) = 
+        match (l.Set, r.Set) with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
         
@@ -66,11 +68,11 @@ with
         |(Seq a, Set b) -> Set(fun x -> Seq.contains x a && b(x))
 
     /// Set membership operator.
-    static member (|<|) (elem:'t, set:Set<'t>) = set.Contains elem
+    static member (|<|) (elem:'t, set:ISet<'t>) = set.Set.Contains elem
 
     /// Set Cartesian product.
-    static member (*) (l:Set<'a>, r:Set<'b>) = 
-        match (l, r) with
+    static member (*) (l:ISet<'a>, r:ISet<'b>) = 
+        match (l.Set, r.Set) with
         |(Empty, Empty) -> Empty
         |(Empty, a) -> Seq.allPairs Seq.empty a |> Seq 
         |(a, Empty) -> Seq.allPairs a Seq.empty |> Seq
@@ -78,10 +80,10 @@ with
         |(Seq a, Seq b) -> Seq.allPairs a b |> Seq
         |(Set a, Set b) -> Set(fun (x, y) -> a(x) && b(y))
 
-        |(Set a, Seq b) -> Set(fun (x,y) -> a(x) && b |> Seq.contains x)
-        |(Seq a, Set b) -> Set(fun (x,y) -> b(x) && a |> Seq.contains x)
+        |(Set a, Seq b) -> Set(fun (x, y) -> a(x) && b |> Seq.contains y)
+        |(Seq a, Set b) -> Set(fun (x, y) -> b(y) && a |> Seq.contains x)
 
-type ISet<'t when 't: equality> = abstract member Set:Set<'t>
+and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
 [<AutoOpen>]
 module Set =
