@@ -1,5 +1,6 @@
 ﻿namespace Sylvester
 
+open System
 open System.Collections
 
 open Sylvester.Arithmetic.N10
@@ -11,15 +12,15 @@ type IRing<'t when 't: equality> =
     abstract member Op2:BinaryOp<'t>
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
-type Ring<'t when 't: equality>(set:Set<'t>, group: AbelianGroup<'t>, monoid: Monoid<'t>) =
-    inherit Struct<'t, card.two>(set, arrayOf2 (group.Ops.[zero]) (monoid.Ops.[zero]))
+type Ring<'t when 't: equality>(group: AbelianGroup<'t>, monoid: Monoid<'t>) =
+    inherit Struct<'t, card.two>(group.Set, arrayOf2 (group.Ops.[zero]) (monoid.Ops.[zero]))
     do monoid.Op |> failIfNotDistributiveOver group.Op
     member val Op = group.Op
     member val Op2 = monoid.Op
     member val Group = group
     member val Monoid = monoid
     interface IRing<'t> with
-        member val Set = set
+        member val Set = group.Set
         member val Op = group.Op
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (group.Op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
@@ -27,20 +28,26 @@ type Ring<'t when 't: equality>(set:Set<'t>, group: AbelianGroup<'t>, monoid: Mo
         member val Inverse = group.Inverse
         member val Op2 = monoid.Op
 
-type CommutativeRing<'t when 't: equality>(set:Set<'t>, group: AbelianGroup<'t>, Monoid: CommutativeMonoid<'t>) =
-    inherit Ring<'t>(set, group, Monoid)
+type CommutativeRing<'t when 't: equality>(group: AbelianGroup<'t>, Monoid: CommutativeMonoid<'t>) =
+    inherit Ring<'t>(group, Monoid)
 
 [<AutoOpen>]
 module Ring =
     let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:Set<'t>, op, id) =
-        Ring(set, AdditiveGroup(set), Monoid(set, op, id))
+        Ring(AdditiveGroup(set), Monoid(set, op, id))
 
     /// Define a ring over a set which has +, *, operators and 0, 1 elements defined. 
     let inline IntegerRing<'t when 't : equality and 't : (static member Zero:'t) and 't : (static member One:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (*) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
         (set: Set<'t>) =
-        CommutativeRing(set, AdditiveGroup(set), MultiplicativeMonoid(set))
+        CommutativeRing(AdditiveGroup(set), MultiplicativeMonoid(set))
 
-    /// Ring of 32-bit integers.
-    let Integers = IntegerRing(infiniteSeq id)
+    /// Ring of 32-bit positive integers.
+    let Zpos = IntegerRing(infiniteSeq id)
+
+    /// Ring of 32-bit negative integers
+    let Zneg = IntegerRing(infiniteSeq (fun n -> -n))
+
+    /// Ring of integers
+    let Z = let set = Zpos.Set |+| Zneg.Set in IntegerRing(set)
 
    
