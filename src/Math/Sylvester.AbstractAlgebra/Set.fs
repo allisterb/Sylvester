@@ -4,10 +4,8 @@ open System.Collections
 open System.Collections.Generic
 open System.Linq
 
-type ISet<'t when 't: equality> =
-    inherit IEnumerable<'t>
-    abstract member Sub:('t -> bool) -> ISet<'t>
-    abstract member Contains: 't -> bool
+// A predicate that defines a set.
+type SetBuilder<'t> = 't -> bool
 
 /// A set of elements each with type or class denoted by t.
 type Set<'t when 't: equality> =
@@ -15,8 +13,8 @@ type Set<'t when 't: equality> =
 | Empty
 /// A sequence of elements i.e. a set S that has a function from N -> S.
 | Seq of seq<'t>
-/// A set of elements defined by a predicate.
-| Set of ('t -> bool)
+/// A set of elements defined by a set builder predicate.
+| Set of SetBuilder<'t>
     
 with 
     interface IEnumerable<'t> with
@@ -28,12 +26,12 @@ with
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
-
+  
     /// A subset of the set.
-    member x.Sub(f: 't -> bool) = 
+    member x.Subset(f: 't -> bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Seq s -> Seq(s |> Seq.filter f)
+        |Seq s -> Seq(s |> Seq.filter f) 
         |Set s -> Set(fun x -> s(x) && f(x))
 
     /// A subset of the set.
@@ -42,10 +40,6 @@ with
         |Empty -> false
         |Seq s -> elem |> s.Contains
         |Set s -> s elem
-
-    interface ISet<'t> with
-        member x.Sub f = x.Sub(f) :> ISet<'t>
-        member x.Contains e = x.Contains e
 
     /// Set union operator.
     static member (|+|) (l, r) = 
@@ -73,6 +67,23 @@ with
 
     /// Set membership operator.
     static member (|<|) (elem:'t, set:Set<'t>) = set.Contains elem
+
+    /// Set Cartesian product.
+    static member (*) (l, r) = 
+        match (l, r) with
+        |(Empty, Empty) -> Empty
+        |(Empty, a) -> Seq.allPairs Seq.empty a |> Seq 
+        |(a, Empty) -> Seq.allPairs a Seq.empty |> Seq
+
+        |(Seq a, Seq b) -> Seq.allPairs a b |> Seq
+        |(Set a, Set b) -> Set(fun (x, y) -> a(x) && b(y))
+
+        |(Set a, Seq b) -> Set(fun (x,y) -> a(x) && b |> Seq.contains x)
+        |(Seq a, Set b) -> Set(fun (x,y) -> b(x) && a |> Seq.contains x)
+
+type ISet<'t when 't: equality> = abstract member Set:Set<'t>
+
+type Prod<'ut, 'vt> = 'ut * 'vt
 
 [<AutoOpen>]
 module Set =

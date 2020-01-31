@@ -32,7 +32,7 @@ module Monoid =
         let id = LanguagePrimitives.GenericZero<'t>
         CommutativeMonoid(set, Binary(+).DestructureBinary, id)
 
-    /// Define a monoid over a set which has an multiplicative operator and one. 
+    /// Define a monoid over a set which has a multiplicative operator and one. 
     let inline MultiplicativeMonoid<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't)> 
         (set: Set<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>

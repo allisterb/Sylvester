@@ -16,8 +16,8 @@ module VArrayTests =
         ()
         //let v = VArray(two * hundred + three * ten + four, 0)
         //Assert.IsType<N3<_2, _3, _4>>(v.Length) |> ignore
-
-        
-
+    let ``Can create non-empty array``() =
+        let arr = Array<one, string>(array.Empty<string>())
+        Assert.NotNull arr
        
 
