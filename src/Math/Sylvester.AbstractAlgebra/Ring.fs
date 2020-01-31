@@ -1,11 +1,13 @@
 ﻿namespace Sylvester
 
+open System.Collections
+
 open Sylvester.Arithmetic.N10
 open Sylvester.Collections
 
 /// Set of elements closed under a left-associative commutative operation and a 2nd left-associative distributive operation.
-type IRing<'t when 't: equality> = 
-    inherit IStruct<'t, card.two> 
+type IRing<'t when 't: equality> =  
+    inherit IGroup<'t>
     abstract member Group: AbelianGroup<'t>
     abstract member Monoid: Monoid<'t>
 
@@ -17,8 +19,13 @@ type Ring<'t when 't: equality>(set:Set<'t>, group: AbelianGroup<'t>, monoid: Mo
     member val Op2 = monoid.Op
     member val Group = group
     member val Monoid = monoid
-
     interface IRing<'t> with
+        member val Set = set
+        member val Op = group.Op
+        member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (group.Op) a b))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+        member val Identity = group.Identity
+        member val Inverse = group.Inverse
         member val Group = group
         member val Monoid = monoid
 
