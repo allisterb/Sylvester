@@ -13,7 +13,7 @@ type Set<'t when 't: equality> =
 | Empty
 /// A sequence of elements i.e. a set S that has a function from N -> S.
 | Seq of seq<'t>
-/// A set of elements defined by a set builder predicate.
+/// A set of elements defined by a set builder statement.
 | Set of SetBuilder<'t>
     
 with 
@@ -29,7 +29,7 @@ with
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
   
-    /// A subset of the set.
+    /// Create a subset of the set.
     member x.Subset(f: 't -> bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
@@ -42,7 +42,7 @@ with
         |Empty -> false
         |Seq s -> elem |> s.Contains
         |Set s -> s elem
-
+ 
     /// Set union operator.
     static member (|+|) (l:ISet<'t>, r:ISet<'t>) = 
         match (l.Set, r.Set) with
@@ -88,7 +88,8 @@ and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 [<AutoOpen>]
 module Set =
     // n-wise functions based on http://fssnip.net/50 by ptan
-    
+    let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
+
     let triplewise (source: seq<_>) =
         seq { 
             use e = source.GetEnumerator() 

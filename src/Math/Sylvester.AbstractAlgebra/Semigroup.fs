@@ -3,12 +3,12 @@
 open Sylvester.Arithmetic
 open Sylvester.Collections
 /// Set of elements closed under some left-associative operation.
-type Semigroup<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>) =
+type Semigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     inherit Groupoid<'t>(set, op)
     do failIfNotLeftAssociative op
     
 /// Set of elements closed under some left-associative commutative operation.
-type CommutativeSemigroup<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>) =
+type CommutativeSemigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     inherit Semigroup<'t>(set, op)
     do failIfNotCommutative op
 

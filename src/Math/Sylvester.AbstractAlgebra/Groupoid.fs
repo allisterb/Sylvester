@@ -12,13 +12,13 @@ type IGroupoid<'t when 't: equality> =
     abstract member Op: BinaryOp<'t>
     
 /// Set of elements closed under some binary operation.
-type Groupoid<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>) =
+type Groupoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     inherit Struct<'t, card.one>(set, arrayOf1 (Binary(op)))
     member val Op = op
     member x.Item(l:'t, r:'t) = x.Op l r
     member x.ToArray n = x |> Seq.take n |> Seq.toArray
     interface IGroupoid<'t> with
-        member val Set = set
+        member val Set = set.Set
         member val Op = op
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()

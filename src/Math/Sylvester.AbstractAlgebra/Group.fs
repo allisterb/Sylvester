@@ -9,12 +9,12 @@ type IGroup<'t when 't: equality> =
     abstract member Inverse: UnaryOp<'t>
 
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
-type Group<'t when 't: equality>(set:Set<'t>, op:BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
+type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Monoid<'t>(set, op, id)
     member val Inverse = inv
     interface IGroup<'t> with member val Inverse = inv
 
-type AbelianGroup<'t when 't: equality>(set:Set<'t>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
+type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, id, inv)
     do failIfNotCommutative op
 
@@ -26,12 +26,12 @@ type Groups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>
 module Group =
     /// Define a group over a set which has an additive operator and zero and negation. 
     let inline AdditiveGroup<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
-        (set: Set<'t>) =
+        (set: ISet<'t>) =
         let id = LanguagePrimitives.GenericZero<'t>
         AbelianGroup(set, Binary(+).DestructureBinary, id, (~-))
 
     /// Define a group over a set which has a multiplicative operator and one and division.
     let inline MultiplicativeGroup<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't) and 't: (static member (/) :'t -> 't -> 't)>
-        (set: Set<'t>) =
+        (set: ISet<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>
         AbelianGroup(set, FSharpPlus.Math.Generic.(*), one, FSharpPlus.Math.Generic.(/) one)

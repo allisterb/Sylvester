@@ -28,17 +28,20 @@ type Ring<'t when 't: equality>(group: AbelianGroup<'t>, monoid: Monoid<'t>) =
         member val Inverse = group.Inverse
         member val Op2 = monoid.Op
 
+    new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
+        Ring(AbelianGroup(set, op, zero, inv), Monoid(set, op2, one))
+
 type CommutativeRing<'t when 't: equality>(group: AbelianGroup<'t>, Monoid: CommutativeMonoid<'t>) =
     inherit Ring<'t>(group, Monoid)
 
 [<AutoOpen>]
 module Ring =
-    let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:Set<'t>, op, id) =
+    let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op, id) =
         Ring(AdditiveGroup(set), Monoid(set, op, id))
 
     /// Define a ring over a set which has +, *, operators and 0, 1 elements defined. 
     let inline IntegerRing<'t when 't : equality and 't : (static member Zero:'t) and 't : (static member One:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (*) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
-        (set: Set<'t>) =
+        (set: ISet<'t>) =
         CommutativeRing(AdditiveGroup(set), MultiplicativeMonoid(set))
 
     /// Ring of 32-bit positive integers.
@@ -48,6 +51,6 @@ module Ring =
     let Zneg = IntegerRing(infiniteSeq (fun n -> -n))
 
     /// Ring of integers
-    let Z = let set = Zpos.Set |+| Zneg.Set in IntegerRing(set)
+    let Z = IntegerRing(Zpos |+| Zneg)
 
    

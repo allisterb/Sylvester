@@ -8,11 +8,11 @@ type IStruct<'t, 'n when 't: equality and 'n :> Number> =
    
 /// Base implementation of a mathematical structure consisting of a set together with a collection of n operations on elements of type t.
 /// This type is inherited by all other mathematical structure types.
-type Struct<'t, 'n when 't: equality and 'n :> Number>(set: Set<'t>, ops: Ops<'n, 't>) =  
-    member val Set = set
+type Struct<'t, 'n when 't: equality and 'n :> Number>(set: ISet<'t>, ops: Ops<'n, 't>) =  
+    member val Set = set.Set
     member val Ops = ops    
     interface IStruct<'t, 'n> with
-        member val Set = set
+        member val Set = set.Set
 
 /// The cardinality of a structure's collections.
 [<RequireQualifiedAccess>]
