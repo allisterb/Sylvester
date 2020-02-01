@@ -33,6 +33,8 @@ type Ring<'t when 't: equality>(group: AbelianGroup<'t>, monoid: Monoid<'t>) =
 
 type CommutativeRing<'t when 't: equality>(group: AbelianGroup<'t>, Monoid: CommutativeMonoid<'t>) =
     inherit Ring<'t>(group, Monoid)
+    new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
+        CommutativeRing(AbelianGroup(set, op, zero, inv), CommutativeMonoid(set, op2, one))
 
 [<AutoOpen>]
 module Ring =
@@ -43,14 +45,3 @@ module Ring =
     let inline IntegerRing<'t when 't : equality and 't : (static member Zero:'t) and 't : (static member One:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (*) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
         (set: ISet<'t>) =
         CommutativeRing(AdditiveGroup(set), MultiplicativeMonoid(set))
-
-    /// Ring of 32-bit positive integers.
-    let Zpos = IntegerRing(infiniteSeq id)
-
-    /// Ring of 32-bit negative integers
-    let Zneg = IntegerRing(infiniteSeq (fun n -> -n))
-
-    /// Ring of integers
-    let Z = IntegerRing(Zpos |+| Zneg)
-
-   

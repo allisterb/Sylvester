@@ -15,7 +15,6 @@ type Set<'t when 't: equality> =
 | Seq of seq<'t>
 /// A set of elements defined by a set builder statement.
 | Set of SetBuilder<'t>
-    
 with 
     interface ISet<'t> with member x.Set = x
 
@@ -87,9 +86,12 @@ and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
 [<AutoOpen>]
 module Set =
-    // n-wise functions based on http://fssnip.net/50 by ptan
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
-
+    let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
+    
+    
+    // n-wise functions based on http://fssnip.net/50 by ptan
+   
     let triplewise (source: seq<_>) =
         seq { 
             use e = source.GetEnumerator() 
