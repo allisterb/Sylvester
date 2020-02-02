@@ -20,7 +20,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md" />
     <Compile Include="Set.fs" />
     <Compile Include="Operation.fs" />
     <Compile Include="Structure.fs" />
@@ -30,6 +29,7 @@
     <Compile Include="Monoid.fs" />
     <Compile Include="Group.fs" />
     <Compile Include="Ring.fs" />
+    <Compile Include="Poset.fs" />
     <Compile Include="Numbers.fs" />
   </ItemGroup>
 
@@ -39,11 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\icon.png">
+    <None Include="README.md" />
+    <None Include="..\..\..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-    <None Include="..\..\..\LICENSE">
+    <None Include="..\..\..\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

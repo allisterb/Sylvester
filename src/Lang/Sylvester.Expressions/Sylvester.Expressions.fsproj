@@ -8,4 +8,8 @@
     <Compile Include="FsExpr.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Mono.Reflection" Version="2.0.0" />
+  </ItemGroup>
+
 </Project>

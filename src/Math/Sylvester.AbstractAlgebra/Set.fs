@@ -43,8 +43,8 @@ with
         |Set s -> s elem
  
     /// Set union operator.
-    static member (|+|) (l:ISet<'t>, r:ISet<'t>) = 
-        match (l.Set, r.Set) with
+    static member (|+|) (l, r) = 
+        match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
         
@@ -55,8 +55,8 @@ with
         |(Seq a, Set b) -> Set(fun x -> a |> Seq.contains x || b(x))
 
     /// Set intersection operator.
-    static member (|*|) (l:ISet<'t>, r:ISet<'t>) = 
-        match (l.Set, r.Set) with
+    static member (|*|) (l, r) = 
+        match (l, r) with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
         
@@ -67,11 +67,11 @@ with
         |(Seq a, Set b) -> Set(fun x -> Seq.contains x a && b(x))
 
     /// Set membership operator.
-    static member (|<|) (elem:'t, set:ISet<'t>) = set.Set.Contains elem
+    static member (|<|) (elem:'t, set:Set<'t>) = set.Contains elem
 
     /// Set Cartesian product.
-    static member (*) (l:ISet<'a>, r:ISet<'b>) = 
-        match (l.Set, r.Set) with
+    static member (*) (l, r) = 
+        match (l, r) with
         |(Empty, Empty) -> Empty
         |(Empty, a) -> Seq.allPairs Seq.empty a |> Seq 
         |(a, Empty) -> Seq.allPairs a Seq.empty |> Seq
@@ -88,7 +88,6 @@ and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 module Set =
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
-    
     
     // n-wise functions based on http://fssnip.net/50 by ptan
    
@@ -153,5 +152,5 @@ module Set =
     let infiniteSeq4 f = 
         f |> infiniteSeq |> quadwise |> Seq
 
-    let infiniteSeq5 f = 
+    let infiniteSeq5 f =
         f |> infiniteSeq |> quintwise |> Seq

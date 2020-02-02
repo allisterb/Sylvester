@@ -24,11 +24,15 @@ type UnaryOp<'t when 't: equality> = Map<'t, 't>
 // Binary operation between elements of type t.
 type BinaryOp<'t when 't: equality> = Map<'t, 't, 't>
 
+// Order operation on comparable elements.
+type Order<'t when 't: equality> = Map<'t, 't, bool>
+
 /// Union of operations between elements of type t.
 type Op<'t when 't: equality> = 
 | Nullary of NullaryOp<'t>
 | Unary of UnaryOp<'t>
 | Binary of BinaryOp<'t>
+| Order of Order<'t>
 with 
     member x.DestructureNullary = match x with | Nullary op -> op | _ -> failwith "This operation is not a nullary op."
     member x.DestructureUnary = match x with | Unary op -> op | _ -> failwith "This operation is not a unary op."

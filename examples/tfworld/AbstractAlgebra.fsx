@@ -3,16 +3,20 @@
 open System 
 open System.Linq
 
+open Microsoft.FSharp.Quotations
+open System.Runtime.CompilerServices
+
 open Sylvester
 
+Z5.Set
 // Define an infinte seq
-let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32) 
+//let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32) 
 
 
-c.Take(26) |> Array.ofSeq
-let cats = Monoid(c, (+), "")
+//c.Take(26) |> Array.ofSeq
+//let cats = Monoid(c, (+), "")
 
-cats.Take 3 |> Array.ofSeq
+//cats.Take 3 |> Array.ofSeq
 
 //let a = "Nancy"
 //let b = "Drew"
@@ -41,3 +45,11 @@ cats.Take 3 |> Array.ofSeq
 //g.Take(30) |> Array.ofSeq
 
 //Integers.Group.Take(10) |> Array.ofSeq
+
+[<ReflectedDefinition>]
+let f x = 
+    let a = 12. * 4. - float x
+    a ** 2.
+
+let g = FsExpr(f)
+g.Expr
