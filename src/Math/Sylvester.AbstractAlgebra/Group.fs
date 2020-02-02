@@ -3,6 +3,18 @@
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
+type GroupElement<'order when 'order :> Number> =
+    struct
+        val Index: int
+        new(i:int) = {Index = i}
+    end
+    with 
+        static member op_Explicit (e:GroupElement<'order>) :int = e.Index
+        static member (+) (l:GroupElement<'order>,r:GroupElement<'order>) = 
+            let a = (int) l
+            let b = (int) r
+            GroupElement<'order>(Mod.(+) number.IntVal a b)
+
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type IGroup<'t when 't: equality> = 
     inherit IMonoid<'t> 

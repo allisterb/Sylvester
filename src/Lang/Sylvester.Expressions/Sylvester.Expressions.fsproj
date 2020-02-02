@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ExprToString.fs" />
     <Compile Include="FsExpr.fs" />
+    <Compile Include="Generator.fs" />
   </ItemGroup>
 
   <ItemGroup>

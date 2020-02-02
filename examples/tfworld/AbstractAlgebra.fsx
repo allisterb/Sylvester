@@ -51,5 +51,11 @@ let f x =
     let a = 12. * 4. - float x
     a ** 2.
 
-let g = FsExpr(f)
-g.Expr
+//let g = FsExpr(f)
+///g.Expr
+let x = Seq (seq { yield 1})
+let z  = match x with | Seq s -> s |_ -> failwith ""
+//typeof<FsExpr<_> list>.GetG
+ 
+let o = Poset(Z, (<))
+o.[4, 2]

@@ -24,7 +24,7 @@ type UnaryOp<'t when 't: equality> = Map<'t, 't>
 // Binary operation between elements of type t.
 type BinaryOp<'t when 't: equality> = Map<'t, 't, 't>
 
-// Order operation on comparable elements.
+// Order operation on elements of type t.
 type Order<'t when 't: equality> = Map<'t, 't, bool>
 
 /// Union of operations between elements of type t.

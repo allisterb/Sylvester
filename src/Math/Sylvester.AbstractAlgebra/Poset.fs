@@ -22,4 +22,3 @@ type Poset<'t when 't: equality and 't: comparison>(set:ISet<'t>, op:Order<'t>) 
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * bool> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * bool>).GetEnumerator () :> IEnumerator
-
