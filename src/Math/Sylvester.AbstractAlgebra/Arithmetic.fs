@@ -8,5 +8,6 @@ module internal Mod =
     let (+) n x y = modulo n (x + y)
     let (-) n x y = modulo n (x - y)
     let (*) n x y = modulo n (x * y)
+    let (/) n x y = x % y
 
 

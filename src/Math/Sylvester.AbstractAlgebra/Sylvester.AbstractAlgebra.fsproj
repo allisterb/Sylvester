@@ -25,12 +25,12 @@
     <Compile Include="Operation.fs" />
     <Compile Include="Structure.fs" />
     <Compile Include="Category.fs" />
+    <Compile Include="Order.fs" />
     <Compile Include="Groupoid.fs" />
     <Compile Include="Semigroup.fs" />
     <Compile Include="Monoid.fs" />
     <Compile Include="Group.fs" />
     <Compile Include="Ring.fs" />
-    <Compile Include="Poset.fs" />
     <Compile Include="Numbers.fs" />
   </ItemGroup>
 
