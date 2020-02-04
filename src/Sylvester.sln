@@ -168,7 +168,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Extensions", "Bas
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{921C2A48-62E1-4433-9CD4-BDBAAD7DA19D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvesters.Tests.CAS.Maxima", "..\tests\Sylvesters.Tests.CAS.Maxima\Sylvesters.Tests.CAS.Maxima.fsproj", "{090B1820-95AD-4B66-B427-171B8A2CC75A}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvesters.Tests.CAS.Maxima", "..\tests\Sylvesters.Tests.CAS.Maxima\Sylvesters.Tests.CAS.Maxima.fsproj", "{090B1820-95AD-4B66-B427-171B8A2CC75A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Tests.AbstractAlgebra", "..\tests\Sylvester.Tests.AbstractAlgebra\Sylvester.Tests.AbstractAlgebra.fsproj", "{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Unquote.NetStandard", "..\ext\unquote\Unquote.NetStandard\Unquote.NetStandard.fsproj", "{12F257E9-7A58-490E-9DCC-D9B14E5F8792}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -648,6 +652,30 @@ Global
 		{090B1820-95AD-4B66-B427-171B8A2CC75A}.Release|x64.Build.0 = Release|Any CPU
 		{090B1820-95AD-4B66-B427-171B8A2CC75A}.Release|x86.ActiveCfg = Release|Any CPU
 		{090B1820-95AD-4B66-B427-171B8A2CC75A}.Release|x86.Build.0 = Release|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Debug|x64.Build.0 = Debug|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Release|x64.ActiveCfg = Release|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Release|x64.Build.0 = Release|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Release|x86.ActiveCfg = Release|Any CPU
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98}.Release|x86.Build.0 = Release|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Debug|x64.Build.0 = Debug|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Debug|x86.Build.0 = Debug|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Release|x64.ActiveCfg = Release|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Release|x64.Build.0 = Release|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Release|x86.ActiveCfg = Release|Any CPU
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -707,6 +735,8 @@ Global
 		{C5D4A339-242A-4557-AA76-A06FE4A6B67C} = {13341FF8-8B25-4943-AA36-F9DCF19B369E}
 		{921C2A48-62E1-4433-9CD4-BDBAAD7DA19D} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{090B1820-95AD-4B66-B427-171B8A2CC75A} = {921C2A48-62E1-4433-9CD4-BDBAAD7DA19D}
+		{7C4D5AFA-0074-4092-B4CD-ED106D16EE98} = {921C2A48-62E1-4433-9CD4-BDBAAD7DA19D}
+		{12F257E9-7A58-490E-9DCC-D9B14E5F8792} = {09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

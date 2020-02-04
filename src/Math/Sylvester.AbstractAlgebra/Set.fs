@@ -1,10 +1,12 @@
 ﻿namespace Sylvester
 
+open System
 open System.Collections
 open System.Collections.Generic
 open System.Linq
     
 /// A set of elements each with type or class denoted by t.
+[<CustomEquality; NoComparison>]
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
@@ -14,6 +16,17 @@ type Set<'t when 't: equality> =
 | Set of SetBuilder<'t>
 with 
     interface ISet<'t> with member x.Set = x
+    interface IEquatable<Set<'t>> with
+        member a.Equals b =
+            match a, b with
+            | Empty, Empty -> true
+            | _, Empty -> false
+            |Empty, _ -> false
+
+            |Seq (Finite s1), Seq (Finite s2) -> s1 = s2
+            |Set expr1, Set expr2 ->  expr1.Equals expr2
+
+            |_,_ -> failwith "Cannot test a sequence and set builder for equality. Use 2 finite sequences or 2 set builders."
 
     interface IEnumerable<'t> with
         member x.GetEnumerator () = 
@@ -37,7 +50,7 @@ with
         | _ -> failwith "This set is not a sequence."
 
     /// Create a subset of the set using a predicate.
-    member x.Subset(f: Predicate<'t>) = 
+    member x.Subset(f: LogicalPredicate<'t>) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
         |Seq s -> Seq(s |> Seq.filter f) 
@@ -49,7 +62,7 @@ with
         |Empty -> false
         |Seq s -> 
             match s with
-            | Generator g -> g.ContainsElement elem
+            | Generator g -> g.HasElement elem
             | _ -> s.Contains elem // May fail
         |Set s -> s.Pred elem
 
@@ -58,16 +71,16 @@ with
        | Empty -> 0
        | Seq s ->
             match s with
-            | FiniteContainer c -> Seq.length c
+            | Finite c -> Seq.length c
             | _ -> failwith "Cannot get length of arbitrary sequence. Use a finite sequence instead."
-       | _ -> failwith "Cannot get length of arbitrary set. Use a finite sequence instead."
+       | _ -> failwith "Cannot get length of an arbitrary set. Use a finite sequence instead."
 
     member x.Subsets =
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq s ->
             match s with
-            | FiniteContainer c ->
+            | Finite c ->
                 //using bit pattern to generate subsets
                 let max_bits x = 
                     let rec loop acc = if (1 <<< acc ) > x then acc else loop (acc + 1)
