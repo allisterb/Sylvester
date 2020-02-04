@@ -26,8 +26,13 @@ type PredicateExpr<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr
     interface IPredicateExpr<'t> with
         member val Pred = v :?> LogicalPredicate<'t>
         member val Expr = e
-    interface IEquatable<PredicateExpr<'t>> with member a.Equals b = exprToString a.Expr = exprToString b.Expr
-
+    interface IEquatable<PredicateExpr<'t>> with override a.Equals(b) = exprToString a.Expr = exprToString b.Expr
+    override a.Equals (_b:obj) = 
+            match _b with 
+            | :? PredicateExpr<'t> as b -> (a :> IEquatable<PredicateExpr<'t>>).Equals b
+            | _ -> false
+    override a.GetHashCode() = (exprToString a.Expr).GetHashCode() 
+ 
 /// A statement that defines a set using a predicate for set membership.
 type SetBuilder<'t when 't : equality> = PredicateExpr<'t>
 
@@ -77,3 +82,8 @@ module SetBuilder =
         | ListSeq
         | SetSeq -> Some x
         | _ -> None
+
+    let (|FiniteSeq|NonFiniteSeq|) s =
+        match s:IEnumerable<'t> with
+        | Finite _ -> FiniteSeq
+        | _ -> NonFiniteSeq

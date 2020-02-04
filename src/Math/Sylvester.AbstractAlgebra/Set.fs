@@ -23,10 +23,19 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Seq (Finite s1), Seq (Finite s2) -> s1 = s2
+            |Seq (Finite s1), Seq (Finite s2) ->  a |> Seq.forall (fun x -> b.Contains x) && b |> Seq.forall (fun x -> a.Contains x)
             |Set expr1, Set expr2 ->  expr1.Equals expr2
 
             |_,_ -> failwith "Cannot test a sequence and set builder for equality. Use 2 finite sequences or 2 set builders."
+    override a.Equals (_b:obj) = 
+            match _b with 
+            | :? Set<'t> as b -> (a :> IEquatable<Set<'t>>).Equals b
+            | _ -> false
+    override a.GetHashCode() = 
+        match a with
+        | Empty -> 0
+        | Seq s -> s.GetHashCode()
+        | Set p -> p.GetHashCode()
 
     interface IEnumerable<'t> with
         member x.GetEnumerator () = 
@@ -65,6 +74,19 @@ with
             | Generator g -> g.HasElement elem
             | _ -> s.Contains elem // May fail
         |Set s -> s.Pred elem
+    
+    member a.HasSubset b =
+        match a, b with
+        | Empty, Empty -> false
+        | _, Empty -> true
+        |Empty, _ -> false
+
+        |Seq (Finite s1), Seq (Finite s2) ->  b |> Seq.forall (fun x -> a.Contains x)
+        |Set s1, Seq (Finite s2) ->  b |> Seq.forall (fun x -> a.HasElement x)
+        |Seq s1, Set s2 ->  failwith "Cannot test if a sequence contains a set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
+        |Set expr1, Set expr2 ->  failwith "Cannot test two set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
+
+        |_,_ -> failwith "Cannot test a non for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
 
     member x.Length =
        match x with
@@ -93,12 +115,11 @@ with
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i c}
                 
-                        seq{for i in 0 .. (1 <<< len)-1 -> as_set i}
+                        Seq(seq{for i in 0 .. (1 <<< len)-1 -> Seq(as_set i |> Seq.toArray)} |> Seq.toArray)
                 subsets
             | _ -> failwith "Cannot get all subsets of an arbitrary sequence. Use a finite sequence instead."
-        | _ -> failwith "Cannot get all subsets of an arbitrary set. Use a finite sequence instead."
-        // Seq.iter (printf "%O") (subsets (set [1 .. 5])) ;;
- 
+        | _ -> failwith "Cannot get all subsets of a set builder set. Use a finite sequence instead."
+        
     /// Set union operator.
     static member (|+|) (l, r) = 
         match (l, r) with

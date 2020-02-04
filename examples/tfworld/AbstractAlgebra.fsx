@@ -8,7 +8,7 @@ open System.Runtime.CompilerServices
 
 open Sylvester
 
-Z5.Set
+//Z5.Set
 // Define an infinte seq
 //let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32) 
 
@@ -51,7 +51,14 @@ let f x =
     let a = 12. * 4. - float x
     a ** 2.
 
-Zpos.HasElement 4
+let a = Seq [0;9;6]
+let b = Seq [0;9;6]
+let c = Pred(fun x -> x = 0) |> Set 
+let d = Pred(fun x -> x = 0) |> Set 
+a.Equals b
+//exprToString d.Expr
+//c.Equals d
+//Z.Set.Take(10)
 //let g = FsExpr(f)
 ///g.Expr
 //let x = Seq ([4;5])
