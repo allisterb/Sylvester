@@ -7,3 +7,6 @@
 [submodule "ext/automatic-graph-layout"]
 	path = ext/automatic-graph-layout
 	url = https://github.com/microsoft/automatic-graph-layout.git
+[submodule "ext/unquote"]
+	path = ext/unquote
+	url = https://github.com/allisterb/unquote.git
