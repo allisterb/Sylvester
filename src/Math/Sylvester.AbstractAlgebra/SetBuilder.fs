@@ -6,24 +6,30 @@ open System.Linq
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-/// A statement that defines a set using a predicate for set membership.
-type ISetBuilder<'t when 't: equality> =
+/// A logical predicate.
+type Predicate<'t when 't: equality> = 't -> bool
+
+//// A logical predicate expression.
+type IPredicateExpr<'t when 't: equality> = 
     abstract member Pred:Predicate<'t>
-    abstract member PredExpr:Expr
-    
+    abstract member Expr:Expr
+
 /// A statement that defines a set using a predicate for set membership.
-and SetBuilder<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<Predicate<'t>>) = 
+type ISetBuilder<'t when 't: equality> = IPredicateExpr<'t>
+
+//// A logical predicate expression
+type PredicateExpr<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<Predicate<'t>>) = 
     let v,t,e = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
     member val Pred = v :?> Predicate<'t>
-    member val PredExpr = e
-    interface ISetBuilder<'t> with
+    member val Expr = e
+    interface IPredicateExpr<'t> with
         member val Pred = v :?> Predicate<'t>
-        member val PredExpr = e
+        member val Expr = e
 
-/// A logical predicate.
-and Predicate<'t when 't: equality> = 't -> bool
+/// A statement that defines a set using a predicate for set membership.
+type SetBuilder<'t when 't : equality> = PredicateExpr<'t>
 
-/// A set builder statement together with a generating function that defines a sequence. 
+/// A  generating function that defines a sequence together with a logical predicate that tests for set membership. 
 type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<Predicate<'t>>, [<ReflectedDefinition(true)>] gen:Expr<GeneratingFunction<'t>>) = 
     let pv,pt,pe = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
     let gv,gt,ge = match gen with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
@@ -39,17 +45,24 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
     interface ISetBuilder<'t> with
         member val Pred = pv :?> Predicate<'t>
-        member val PredExpr = pe
+        member val Expr = pe
     
 /// A sequence generating function.
 and GeneratingFunction<'t when 't: equality> = int -> 't
-    
-type Build<'t when 't: equality> = SetBuilder<'t>
+
+type Pred<'t when 't: equality> = PredicateExpr<'t>    
 type Gen<'t when 't: equality> = SetGenerator<'t>
 
 [<AutoOpen>]
 module SetBuilder =
     let (|Generator|_|) x =
         match x:IEnumerable<'t> with
-        | :? SetGenerator<'t> as g -> Some g
+        | _ when x.GetType().Name.StartsWith("SetGenerator") -> Some (x :?> SetGenerator<'t>)
         | _ -> None
+
+    let (|ArraySeq|ListSeq|SetSeq|OtherSeq|) s =
+        match s:IEnumerable<'t> with
+        | :? array<'t> -> ArraySeq
+        | :? list<'t> ->  ListSeq
+        | x when x.GetType().Name.EndsWith("Set") -> SetSeq
+        | _ -> OtherSeq

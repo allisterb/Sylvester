@@ -8,7 +8,7 @@ open System.Linq
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
-/// A set defined by the distinct elements of a sequence i.e. a set that has a function from N -> t.
+/// A set defined by the (distinct) elements of a sequence i.e. a set that has a function from N -> t.
 | Seq of seq<'t>
 /// A set of elements defined by a set builder statement.
 | Set of SetBuilder<'t>
@@ -19,7 +19,7 @@ with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> let distinct = Seq.distinct s in distinct.GetEnumerator()
+            |Seq s -> s.GetEnumerator()
             |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
                 
     interface IEnumerable with
@@ -28,8 +28,8 @@ with
     member x.Builder =
         match x with
         | Empty -> failwith "This set is the empty set."
-        | Set sb -> sb :> ISetBuilder<'t>
-        | Seq s -> match s with | Generator gen -> gen :> ISetBuilder<'t> | _ -> failwith "This sequence is not defined by a generating function."
+        | Set sb -> sb
+        | Seq s -> match s with | Generator gen -> SetBuilder(gen.Pred) | _ -> failwith "This sequence is not defined by a generating function."
         
     member x.Generator = 
         match x with
@@ -41,16 +41,19 @@ with
         match x with
         |Empty -> failwith "The empty set has no subsets."
         |Seq s -> Seq(s |> Seq.filter f) 
-        |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
+        |Set s -> Pred(fun x -> s.Pred(x) && f(x)) |> Set
 
-    /// A subset of the set.
-    member x.Contains(elem: 't) = 
+    /// Determine if the set contains an element.
+    member x.HasElement(elem: 't) = 
         match x with
         |Empty -> false
         |Seq s -> 
             match s with
-            | :? SetGenerator<'t> as g -> g.Pred elem
-            | _ -> elem |> s.Contains
+            | Generator g -> g.Pred elem
+            | ArraySeq -> s.Contains elem
+            | ListSeq -> s.Contains elem
+            | SetSeq -> s.Contains elem
+            | OtherSeq -> failwith "The Contains function is not defined for a arbitrary sequence. Use a finite sequence type or a set generator."
         |Set s -> s.Pred elem
  
     /// Set union operator.
@@ -165,4 +168,4 @@ module Set =
         f |> infiniteSeq |> quadwise |> Seq
 
     let infiniteSeq5 f =
-        f |> infiniteSeq |> quintwise |> Seq
+        f |> infiniteSeq |> quintwise |> Seq        

@@ -51,11 +51,46 @@ let f x =
     let a = 12. * 4. - float x
     a ** 2.
 
+Zpos.HasElement 4
 //let g = FsExpr(f)
 ///g.Expr
-let x = Seq (seq { yield 1})
-let z  = match x with | Seq s -> s |_ -> failwith ""
+//let x = Seq ([4;5])
+//let z  = match Zpos with | Seq s -> s.GetType().Name |_ -> failwith ""
+
 //typeof<FsExpr<_> list>.GetG
- 
-let o = Poset(Z, (<))
-o.[4, 2]
+//let o = Poset(Z, (<))
+//o.[4, 2]
+
+//FsExpr(seq { yield 1}).Expr
+//z.Expr
+
+//let y n = (1 + n) * (1 + n) + 2
+//let b = Pred(fun x -> x > 0) |> Set
+//let g = Gen((fun b -> b > 0), (fun n -> n + 1))
+//g.GetType().Name
+//b.Builder.Expr
+//let expr = FsExpr(y)
+//expr.Expr
+//generatePattern (FsExpr(y).Expr) []
+//g.Expr
+
+//let zss = GroupElement<card.seven>(6)
+//zss * zss
+
+//let sb = build (fun x -> x > 0)
+//let ttt = Builder(fun x -> x > 0) |> Set
+//ttt.Builder.Expr
+
+//Builder(fun x -> x > 0)
+
+//sb
+//sb.Contains 4
+//sb.Builder.Expr
+//let paq = SetGenerator ((fun x -> x = 16), ([0]))
+//paq
+
+//let s = infiniteSeq (fun n -> n * n)
+//FsExpr(s).Expr
+
+//let paq = SetGenerator ((fun x -> x = 16), fun n -> n * n)
+//paq.First()
