@@ -1,3 +1,6 @@
+# Sylvester.AbstractAlgebra
+The Sylvester abstract algebra library contains types and operations for rigorously defining abstract algebra structures and concepts.
+
 ```fsharp
 // Use the Sylvester abstract algebra package
 #load "Paket.fsx"
@@ -8,9 +11,6 @@ open System
 open System.Linq
 open Sylvester
 ```
-
-# Sylvester.AbstractAlgebra
-The Sylvester abstract algebra library contains types and operations for rigorously defining abstract algebra structures and concepts.
 
 ## Morphisms
 
