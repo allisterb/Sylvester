@@ -49,9 +49,42 @@ with
         |Empty -> false
         |Seq s -> 
             match s with
-            | Generator g -> g.Pred elem
+            | Generator g -> g.ContainsElement elem
             | _ -> s.Contains elem // May fail
         |Set s -> s.Pred elem
+
+    member x.Length =
+       match x with
+       | Empty -> 0
+       | Seq s ->
+            match s with
+            | FiniteContainer c -> Seq.length c
+            | _ -> failwith "Cannot get length of arbitrary sequence. Use a finite sequence instead."
+       | _ -> failwith "Cannot get length of arbitrary set. Use a finite sequence instead."
+
+    member x.Subsets =
+        match x with
+        | Empty -> failwith "The empty set has no subsets."
+        | Seq s ->
+            match s with
+            | FiniteContainer c ->
+                //using bit pattern to generate subsets
+                let max_bits x = 
+                    let rec loop acc = if (1 <<< acc ) > x then acc else loop (acc + 1)
+                    loop 0
+                
+                let bit_setAt i x = ((1 <<< i) &&& x) <> 0
+                let subsets = 
+                        
+                        let len = (Seq.length c)
+                        let as_set x =  seq {for i in 0 .. (max_bits x) do 
+                                                if (bit_setAt i x) && (i < len) then yield Seq.item i c}
+                
+                        seq{for i in 0 .. (1 <<< len)-1 -> as_set i}
+                subsets
+            | _ -> failwith "Cannot get all subsets of an arbitrary sequence. Use a finite sequence instead."
+        | _ -> failwith "Cannot get all subsets of an arbitrary set. Use a finite sequence instead."
+        // Seq.iter (printf "%O") (subsets (set [1 .. 5])) ;;
  
     /// Set union operator.
     static member (|+|) (l, r) = 

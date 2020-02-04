@@ -39,6 +39,7 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<
     member val Gen = gen
     member val GenExpr = ge
     member val Seq = Seq.initInfinite gen
+    member x.ContainsElement elem = x.Pred elem
     interface IEnumerable<'t> with
         member x.GetEnumerator () = x.Seq.GetEnumerator() 
     interface IEnumerable with
