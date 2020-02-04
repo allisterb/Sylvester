@@ -8,7 +8,7 @@ open System.Linq
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
-/// A set defined by the (distinct) elements of a sequence i.e. a set that has a function from N -> t.
+/// A set defined by the distinct elements of a sequence i.e. a set that has a function from N -> t.
 | Seq of seq<'t>
 /// A set of elements defined by a set builder statement.
 | Set of SetBuilder<'t>
@@ -36,8 +36,8 @@ with
         | Seq s -> match s with | Generator gen -> gen | _ -> failwith "This sequence is not defined by a generating function."
         | _ -> failwith "This set is not a sequence."
 
-    /// Create a subset of the set.
-    member x.Subset(f: 't -> bool) = 
+    /// Create a subset of the set using a predicate.
+    member x.Subset(f: Predicate<'t>) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
         |Seq s -> Seq(s |> Seq.filter f) 
@@ -58,24 +58,14 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
+        |(a, b) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
         
-        |(Seq _, Seq _) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
-        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred x || b.Pred x) |> Set
-
-        |(Set a, Seq _) -> SetBuilder(fun x -> a.Pred x || r.HasElement x) |> Set
-        |(Seq _, Set b) -> SetBuilder(fun x -> l.HasElement x || b.Pred x) |> Set
-
     /// Set intersection operator.
     static member (|*|) (l, r) = 
         match (l, r) with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
-        
-        |(Seq a, Seq b) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
-        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred x && b.Pred x) |> Set
-
-        |(Set a, Seq b) -> SetBuilder(fun x -> a.Pred x && r.HasElement x) |> Set
-        |(Seq a, Set b) -> SetBuilder(fun x -> l.HasElement x && b.Pred x) |> Set
+        |(a, b) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
 
     /// Set membership operator.
     static member (|<|) (elem:'t, set:Set<'t>) = set.HasElement elem
@@ -84,15 +74,10 @@ with
     static member (*) (l, r) = 
         match (l, r) with
         |(Empty, Empty) -> Empty
-        |(Empty, a) -> Empty
-        |(a, Empty) -> Empty
-
-        |(Seq a, Seq b) -> SetBuilder(fun (x, y) -> l.HasElement x && r.HasElement y) |> Set
-        |(Set a, Set b) -> SetBuilder(fun (x, y) -> a.Pred x && b.Pred y) |> Set
-
-        |(Set a, Seq b) -> SetBuilder(fun (x, y) -> a.Pred x && r.HasElement y) |> Set
-        |(Seq a, Set b) -> SetBuilder(fun (x, y) -> b.Pred y && l.HasElement x) |> Set
-
+        |(a, Empty) -> SetBuilder(fun (x, y) -> l.HasElement x) |> Set
+        |(Empty, b) -> SetBuilder(fun (x, y) -> r.HasElement y) |> Set
+        |(a, b) -> SetBuilder(fun (x, y) -> l.HasElement x && r.HasElement y) |> Set
+        
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
 [<AutoOpen>]
