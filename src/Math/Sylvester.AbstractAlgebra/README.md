@@ -108,7 +108,7 @@ pad a + pad b = pad (a + b)
 
 
 
-
+## Rings
 ```fsharp
 Zpos
 ```
@@ -119,7 +119,7 @@ Zpos
     seq [(0, 1, 1); (1, 2, 3); (2, 3, 5); (3, 4, 7); ...]
 
 
-
+## Subsets
 
 ```fsharp
 let s = seq{1..6} |> Set.ofSubsets
