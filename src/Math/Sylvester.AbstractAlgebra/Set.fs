@@ -3,15 +3,12 @@
 open System.Collections
 open System.Collections.Generic
 open System.Linq
-
-// A predicate that defines a set.
-type SetBuilder<'t> = 't -> bool
-
+    
 /// A set of elements each with type or class denoted by t.
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
-/// A sequence of elements i.e. a set S that has a function from N -> S.
+/// A set defined by the distinct elements of a sequence i.e. a set that has a function from N -> t.
 | Seq of seq<'t>
 /// A set of elements defined by a set builder statement.
 | Set of SetBuilder<'t>
@@ -28,19 +25,33 @@ with
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
   
+    member x.Builder =
+        match x with
+        | Empty -> failwith "This set is the empty set."
+        | Set sb -> sb :> ISetBuilder<'t>
+        | Seq s -> match s with | Generator gen -> gen :> ISetBuilder<'t> | _ -> failwith "This sequence is not defined by a generating function."
+        
+    member x.Generator = 
+        match x with
+        | Seq s -> match s with | Generator gen -> gen | _ -> failwith "This sequence is not defined by a generating function."
+        | _ -> failwith "This set is not a sequence."
+
     /// Create a subset of the set.
     member x.Subset(f: 't -> bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
         |Seq s -> Seq(s |> Seq.filter f) 
-        |Set s -> Set(fun x -> s(x) && f(x))
+        |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
 
     /// A subset of the set.
     member x.Contains(elem: 't) = 
         match x with
         |Empty -> false
-        |Seq s -> elem |> s.Contains
-        |Set s -> s elem
+        |Seq s -> 
+            match s with
+            | :? SetGenerator<'t> as g -> g.Pred elem
+            | _ -> elem |> s.Contains
+        |Set s -> s.Pred elem
  
     /// Set union operator.
     static member (|+|) (l, r) = 
@@ -49,10 +60,10 @@ with
         |(x, Empty) -> x
         
         |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
-        |(Set a, Set b) -> Set(fun x -> a (x) || b(x))
+        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred (x) || b.Pred(x)) |> Set
 
-        |(Set a, Seq b) -> Set(fun x -> a(x) || b |> Seq.contains x)
-        |(Seq a, Set b) -> Set(fun x -> a |> Seq.contains x || b(x))
+        |(Set a, Seq b) -> SetBuilder(fun x -> a.Pred(x) || b |> Seq.contains x) |> Set
+        |(Seq a, Set b) -> SetBuilder(fun x -> a |> Seq.contains x || b.Pred(x)) |> Set
 
     /// Set intersection operator.
     static member (|*|) (l, r) = 
@@ -61,10 +72,10 @@ with
         |(_, Empty) -> Empty
         
         |(Seq a, Seq b) -> a.Intersect(b) |> Seq
-        |(Set a, Set b) -> Set(fun x -> a(x) && b(x))
+        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred(x) && b.Pred(x)) |> Set
 
-        |(Set a, Seq b) -> Set(fun x -> a(x) && Seq.contains x b)
-        |(Seq a, Set b) -> Set(fun x -> Seq.contains x a && b(x))
+        |(Set a, Seq b) -> SetBuilder(fun x -> a.Pred(x) && Seq.contains x b) |> Set
+        |(Seq a, Set b) -> SetBuilder(fun x -> Seq.contains x a && b.Pred(x)) |> Set
 
     /// Set membership operator.
     static member (|<|) (elem:'t, set:Set<'t>) = set.Contains elem
@@ -77,18 +88,19 @@ with
         |(a, Empty) -> Seq.allPairs a Seq.empty |> Seq
 
         |(Seq a, Seq b) -> Seq.allPairs a b |> Seq
-        |(Set a, Set b) -> Set(fun (x, y) -> a(x) && b(y))
+        |(Set a, Set b) -> SetBuilder(fun (x, y) -> a.Pred(x) && b.Pred(y)) |> Set
 
-        |(Set a, Seq b) -> Set(fun (x, y) -> a(x) && b |> Seq.contains y)
-        |(Seq a, Set b) -> Set(fun (x, y) -> b(y) && a |> Seq.contains x)
+        |(Set a, Seq b) -> SetBuilder(fun (x, y) -> a.Pred(x) && b |> Seq.contains y) |> Set
+        |(Seq a, Set b) -> SetBuilder(fun (x, y) -> b.Pred(y) && a |> Seq.contains x) |> Set
 
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
 [<AutoOpen>]
 module Set =
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
-    let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
     
+    let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
+
     // n-wise functions based on http://fssnip.net/50 by ptan
    
     let triplewise (source: seq<_>) =

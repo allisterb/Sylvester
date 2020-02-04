@@ -13,7 +13,7 @@ type IPartialOrder<'t when 't: equality> =
 /// A set of elements with a total order.
 type ITotalOrder<'t when 't: equality and 't : comparison> = inherit IPartialOrder<'t>
 
-/// A set of elements with an order relation.
+/// A set of elements with an partial order relation.
 type Poset<'t when 't: equality>(set:ISet<'t>, op:Order<'t>) = 
     inherit Struct<'t, card.one>(set, arrayOf1 (Order(op)))
     member val Op = op
@@ -26,6 +26,10 @@ type Poset<'t when 't: equality>(set:ISet<'t>, op:Order<'t>) =
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * bool>).GetEnumerator () :> IEnumerator
 
-type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>, op:Order<'t>) =
-    inherit Poset<'t>(set, op)
+type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
+    inherit Poset<'t>(set, (<=))
+    interface ITotalOrder<'t>
+
+type StrictlyOrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
+    inherit Poset<'t>(set, (<))
     interface ITotalOrder<'t>

@@ -20,12 +20,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="SetBuilder.fs" />
     <Compile Include="Arithmetic.fs" />
     <Compile Include="Set.fs" />
     <Compile Include="Operation.fs" />
     <Compile Include="Structure.fs" />
     <Compile Include="Category.fs" />
     <Compile Include="Order.fs" />
+    <Compile Include="Lattice.fs" />
     <Compile Include="Groupoid.fs" />
     <Compile Include="Semigroup.fs" />
     <Compile Include="Monoid.fs" />
@@ -49,6 +51,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
