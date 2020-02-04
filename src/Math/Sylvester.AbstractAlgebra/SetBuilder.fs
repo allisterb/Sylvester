@@ -60,9 +60,17 @@ module SetBuilder =
         | _ when x.GetType().Name.StartsWith("SetGenerator") -> Some (x :?> SetGenerator<'t>)
         | _ -> None
 
-    let (|ArraySeq|ListSeq|SetSeq|OtherSeq|) s =
+    let (|ArraySeq|ListSeq|SetSeq|GeneratorSeq|OtherSeq|) s =
         match s:IEnumerable<'t> with
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
-        | x when x.GetType().Name.EndsWith("Set") -> SetSeq
+        | _ when s.GetType().Name.EndsWith("Set") -> SetSeq
+        | _ when s.GetType().Name.StartsWith("SetGenerator") -> GeneratorSeq
         | _ -> OtherSeq
+
+    let (|FiniteContainer|_|) x =
+        match x:IEnumerable<'t> with
+        | ArraySeq
+        | ListSeq
+        | SetSeq -> Some x
+        | _ -> None

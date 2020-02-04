@@ -53,7 +53,7 @@ with
             | ArraySeq -> s.Contains elem
             | ListSeq -> s.Contains elem
             | SetSeq -> s.Contains elem
-            | OtherSeq -> failwith "The Contains function is not defined for a arbitrary sequence. Use a finite sequence type or a set generator."
+            | OtherSeq -> failwith "The HasElement function is not defined for a arbitrary sequence. Use a finite sequence type or a set generator."
         |Set s -> s.Pred elem
  
     /// Set union operator.
