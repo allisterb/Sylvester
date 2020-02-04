@@ -26,7 +26,7 @@ with
             |Seq (Finite s1), Seq (Finite s2) ->  a |> Seq.forall (fun x -> b.Contains x) && b |> Seq.forall (fun x -> a.Contains x)
             |Set expr1, Set expr2 ->  expr1.Equals expr2
 
-            |_,_ -> failwith "Cannot test a sequence and set builder for equality. Use 2 finite sequences or 2 set builders."
+            |_,_ -> failwith "Cannot test a sequence and a set builder statement for equality. Use 2 finite sequences or 2 set builders."
     override a.Equals (_b:obj) = 
             match _b with 
             | :? Set<'t> as b -> (a :> IEquatable<Set<'t>>).Equals b
@@ -93,9 +93,9 @@ with
        | Empty -> 0
        | Seq s ->
             match s with
-            | Finite c -> Seq.length c
-            | _ -> failwith "Cannot get length of arbitrary sequence. Use a finite sequence instead."
-       | _ -> failwith "Cannot get length of an arbitrary set. Use a finite sequence instead."
+            | Finite c -> c |> Seq.distinct |> Seq.length 
+            | _ -> failwith "Cannot get length of an arbitrary sequence. Use a finite sequence instead."
+       | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
 
     member x.Subsets =
         match x with
@@ -114,12 +114,21 @@ with
                         let len = (Seq.length c)
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i c}
-                
-                        Seq(seq{for i in 0 .. (1 <<< len)-1 -> Seq(as_set i |> Seq.toArray)} |> Seq.toArray)
+          
+                        Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)} |> Seq.toArray)
                 subsets
             | _ -> failwith "Cannot get all subsets of an arbitrary sequence. Use a finite sequence instead."
-        | _ -> failwith "Cannot get all subsets of a set builder set. Use a finite sequence instead."
+        | _ -> failwith "Cannot get all subsets of a set edfined by a set builder statement. Use a finite sequence instead."
         
+    static member ofSeq(s:seq<'t>) = Seq(s)
+
+    static member ofSubsets(s:seq<'t>) = 
+        let set = 
+            match s with
+            | FiniteSeq -> Seq(s |> Seq.toArray)
+            | NonFiniteSeq -> Seq(s |> Seq.toArray)
+        set.Subsets
+ 
     /// Set union operator.
     static member (|+|) (l, r) = 
         match (l, r) with
@@ -206,15 +215,17 @@ module Set =
                                 l :=  m
         }
 
-    let infiniteSeq f = f |> Seq.initInfinite |> Seq  
+    let infiniteSeq g = g |> Seq.initInfinite |> Seq  
 
-    let infiniteSeq2 f = f |> infiniteSeq |> Seq.pairwise |> Seq
+    let infiniteSeq2 g = g |> infiniteSeq |> Seq.pairwise |> Seq
 
-    let infiniteSeq3 f = 
-        f |> infiniteSeq |> triplewise |> Seq
+    let infiniteSeq3 g = 
+        g |> infiniteSeq |> triplewise |> Seq
 
-    let infiniteSeq4 f = 
-        f |> infiniteSeq |> quadwise |> Seq
+    let infiniteSeq4 g = 
+        g |> infiniteSeq |> quadwise |> Seq
 
-    let infiniteSeq5 f =
-        f |> infiniteSeq |> quintwise |> Seq        
+    let infiniteSeq5 g =
+        g |> infiniteSeq |> quintwise |> Seq
+        
+    let infiniteGen g f = Gen(f, g) :> seq<'t> |> Seq

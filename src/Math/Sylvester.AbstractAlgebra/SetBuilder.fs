@@ -15,7 +15,7 @@ type IPredicateExpr<'t when 't: equality> =
     abstract member Pred:LogicalPredicate<'t>
     abstract member Expr:Expr
 
-/// A statement that defines a set using a predicate for set membership.
+/// A logical statement that can define a set using a predicate for set membership.
 type ISetBuilder<'t when 't: equality> = IPredicateExpr<'t>
 
 //// A logical predicate expression
@@ -72,8 +72,8 @@ module SetBuilder =
         match s:IEnumerable<'t> with
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
-        | _ when s.GetType().Name.EndsWith("Set") -> SetSeq
-        | _ when s.GetType().Name.StartsWith("SetGenerator") -> GeneratorSeq
+        | _ when s.GetType().Name.StartsWith("FSharpSet") -> SetSeq
+        | :? SetGenerator<'t> -> GeneratorSeq
         | _ -> OtherSeq
 
     let (|Finite|_|) x =
