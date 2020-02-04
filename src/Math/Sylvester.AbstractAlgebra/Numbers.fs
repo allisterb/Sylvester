@@ -3,10 +3,10 @@
 [<AutoOpen>]
 module Numbers = 
     /// Ring of 32-bit positive integers.
-    let Zpos = Seq(Gen((fun (_:int) -> true), (id)))
+    let Zpos = Seq(Gen((fun (_:int) -> true), (id))) |> IntegerRing
 
     /// Ring of 32-bit negative integers
-    let Zneg = Seq(Gen((fun (_:int) -> true), (id >> ((*) (-1)))))
+    let Zneg = Seq(Gen((fun (_:int) -> true), (id >> ((*) (-1))))) |> IntegerRing
 
     /// Ring of integers
     let Z = IntegerRing(Zpos |+| Zneg)

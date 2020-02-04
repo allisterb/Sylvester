@@ -41,7 +41,7 @@ with
         match x with
         |Empty -> failwith "The empty set has no subsets."
         |Seq s -> Seq(s |> Seq.filter f) 
-        |Set s -> Pred(fun x -> s.Pred(x) && f(x)) |> Set
+        |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
 
     /// Determine if the set contains an element.
     member x.HasElement(elem: 't) = 
@@ -50,10 +50,7 @@ with
         |Seq s -> 
             match s with
             | Generator g -> g.Pred elem
-            | ArraySeq -> s.Contains elem
-            | ListSeq -> s.Contains elem
-            | SetSeq -> s.Contains elem
-            | OtherSeq -> failwith "The HasElement function is not defined for a arbitrary sequence. Use a finite sequence type or a set generator."
+            | _ -> s.Contains elem // May fail
         |Set s -> s.Pred elem
  
     /// Set union operator.
@@ -62,11 +59,11 @@ with
         |(Empty, x) -> x
         |(x, Empty) -> x
         
-        |(Seq a, Seq b) -> Seq.concat([a; b]) |> Seq
-        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred (x) || b.Pred(x)) |> Set
+        |(Seq _, Seq _) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
+        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred x || b.Pred x) |> Set
 
-        |(Set a, Seq b) -> SetBuilder(fun x -> a.Pred(x) || b |> Seq.contains x) |> Set
-        |(Seq a, Set b) -> SetBuilder(fun x -> a |> Seq.contains x || b.Pred(x)) |> Set
+        |(Set a, Seq _) -> SetBuilder(fun x -> a.Pred x || r.HasElement x) |> Set
+        |(Seq _, Set b) -> SetBuilder(fun x -> l.HasElement x || b.Pred x) |> Set
 
     /// Set intersection operator.
     static member (|*|) (l, r) = 
@@ -74,27 +71,27 @@ with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
         
-        |(Seq a, Seq b) -> a.Intersect(b) |> Seq
-        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred(x) && b.Pred(x)) |> Set
+        |(Seq a, Seq b) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
+        |(Set a, Set b) -> SetBuilder(fun x -> a.Pred x && b.Pred x) |> Set
 
-        |(Set a, Seq b) -> SetBuilder(fun x -> a.Pred(x) && Seq.contains x b) |> Set
-        |(Seq a, Set b) -> SetBuilder(fun x -> Seq.contains x a && b.Pred(x)) |> Set
+        |(Set a, Seq b) -> SetBuilder(fun x -> a.Pred x && r.HasElement x) |> Set
+        |(Seq a, Set b) -> SetBuilder(fun x -> l.HasElement x && b.Pred x) |> Set
 
     /// Set membership operator.
-    static member (|<|) (elem:'t, set:Set<'t>) = set.Contains elem
+    static member (|<|) (elem:'t, set:Set<'t>) = set.HasElement elem
 
     /// Set Cartesian product.
     static member (*) (l, r) = 
         match (l, r) with
         |(Empty, Empty) -> Empty
-        |(Empty, a) -> Seq.allPairs Seq.empty a |> Seq 
-        |(a, Empty) -> Seq.allPairs a Seq.empty |> Seq
+        |(Empty, a) -> Empty
+        |(a, Empty) -> Empty
 
-        |(Seq a, Seq b) -> Seq.allPairs a b |> Seq
-        |(Set a, Set b) -> SetBuilder(fun (x, y) -> a.Pred(x) && b.Pred(y)) |> Set
+        |(Seq a, Seq b) -> SetBuilder(fun (x, y) -> l.HasElement x && r.HasElement y) |> Set
+        |(Set a, Set b) -> SetBuilder(fun (x, y) -> a.Pred x && b.Pred y) |> Set
 
-        |(Set a, Seq b) -> SetBuilder(fun (x, y) -> a.Pred(x) && b |> Seq.contains y) |> Set
-        |(Seq a, Set b) -> SetBuilder(fun (x, y) -> b.Pred(y) && a |> Seq.contains x) |> Set
+        |(Set a, Seq b) -> SetBuilder(fun (x, y) -> a.Pred x && r.HasElement y) |> Set
+        |(Seq a, Set b) -> SetBuilder(fun (x, y) -> b.Pred y && l.HasElement x) |> Set
 
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
