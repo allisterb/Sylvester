@@ -2,9 +2,10 @@
 
 open Sylvester.Arithmetic
 
-/// A set together with a collection of n operations of elements of type 't.
+/// A mathematical structure consisting of a set together with a collection of n operations on elements of type 't.
 type IStruct<'t, 'n when 't: equality and 'n :> Number> = 
     inherit ISet<'t>
+    abstract Ops: Ops<'n, 't>
    
 /// Base implementation of a mathematical structure consisting of a set together with a collection of n operations on elements of type t.
 /// This type is inherited by all other mathematical structure types.
@@ -13,7 +14,7 @@ type Struct<'t, 'n when 't: equality and 'n :> Number>(set: ISet<'t>, ops: Ops<'
     member val Ops = ops    
     interface IStruct<'t, 'n> with
         member val Set = set.Set
-
+        member val Ops = ops
 /// The cardinality of a structure's collections.
 [<RequireQualifiedAccess>]
 module card = 

@@ -22,14 +22,14 @@ type S = S of string with
     static member Zero = S ""
 
 // Define an infinite sequence of L strings
-let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32 >> S)
-c
+let Sym = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32 >> S)
+Sym
 ```
 
 
 ```fsharp
 // Define a monoid using our set and + operator and zero element
-let L = Monoid(c, (+), S.Zero)
+let L = Monoid(Sym, (+), S.Zero)
 L
 ```
 

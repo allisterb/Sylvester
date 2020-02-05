@@ -14,7 +14,7 @@
     <Copyright>Copyright (c) 2019 2020 by Allister Beharry</Copyright>
     <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageTags>fsharp math abstract algebra theory</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>

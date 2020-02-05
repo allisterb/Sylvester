@@ -1,9 +1,8 @@
 ﻿namespace Sylvester
 
-open System
 open System.Collections
 
-open Sylvester.Arithmetic.N10
+open Sylvester.Arithmetic
 open Sylvester.Collections
 
 /// Set of elements closed under a left-associative commutative operation and a 2nd left-associative distributive operation.
@@ -13,7 +12,7 @@ type IRing<'t when 't: equality> =
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type Ring<'t when 't: equality>(group: AbelianGroup<'t>, monoid: Monoid<'t>) =
-    inherit Struct<'t, card.two>(group.Set, arrayOf2 (group.Ops.[zero]) (monoid.Ops.[zero]))
+    inherit Struct<'t, card.two>(group.Set, arrayOf2 (group.Ops.[N10.zero]) (monoid.Ops.[N10.zero]))
     do monoid.Op |> failIfNotDistributiveOver group.Op
     member val Op = group.Op
     member val Op2 = monoid.Op
