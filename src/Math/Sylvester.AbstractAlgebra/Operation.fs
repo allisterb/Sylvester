@@ -6,10 +6,10 @@ open System.Collections
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
-/// Map or function between elements of type t.
+/// Map or function between 2 elements of type t.
 type Map<'t when 't: equality> = 't -> 't  
 
-/// Map or function between elements of types t->u.
+/// Map or function between 2 elements of types t and u.
 type Map<'t, 'u when 't: equality and 'u : equality> = 't -> 'u 
 
 /// Map or function between elements of types t->u->v.
@@ -44,15 +44,19 @@ with
     static member FailIfNotCommutative op = if not (Op<'t>.IsCommutative op) then failwith "This operation is not left-associative."
     static member DistributesOver op1 op2 = true
     static member FailIfNotDistributiveOver op1 op2 = if not (Op<'t>.DistributesOver op1 op2) then failwith "This operation is not distributive."
+    static member IsIdempotent (op:BinaryOp<'t>) = true
+    static member FailIfNotIdempotent (op:BinaryOp<'t>) = if not (Op<'t>.IsIdempotent op) then failwith "This operation is not idempotent."
    
 /// Collection of n operations between elements of type t.
 type Ops<'n, 't when 'n :> Number and 't: equality> = Array<'n, Op<'t>>
 
 [<AutoOpen>]
 module Op =
-    let inline isCommutative (op:BinaryOp<'t>) = Op<'t>.IsCommutative op
-    let inline failIfNotCommutative (op:BinaryOp<'t>) = Op<'t>.FailIfNotCommutative op
+    let isCommutative (op:BinaryOp<'t>) = Op<'t>.IsCommutative op
+    let failIfNotCommutative (op:BinaryOp<'t>) = Op<'t>.FailIfNotCommutative op
     let iisLeftAssociative (op:BinaryOp<'t>) = Op<'t>.IsLeftAssociative (op.ToString())
     let failIfNotLeftAssociative (op:BinaryOp<'t>) = Op<'t>.FailIfNotLeftAssociative op
-    let inline distributesOver (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.DistributesOver (op1.ToString()) (op2.ToString())
-    let inline failIfNotDistributiveOver (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.FailIfNotDistributiveOver op1 op2
+    let distributesOver (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.DistributesOver (op1.ToString()) (op2.ToString())
+    let failIfNotDistributiveOver (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.FailIfNotDistributiveOver op1 op2
+    let isIdempotent (op:BinaryOp<'t>) = Op<'t>.IsIdempotent op
+    let failIfNotIdempotent(op:BinaryOp<'t>) = Op<'t>.FailIfNotIdempotent op

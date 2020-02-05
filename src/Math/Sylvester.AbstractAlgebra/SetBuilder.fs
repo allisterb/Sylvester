@@ -14,7 +14,7 @@ type LogicalPredicate<'t when 't: equality> = 't -> bool
 type IPredicateExpr<'t when 't: equality> = 
     abstract member Pred:LogicalPredicate<'t>
     abstract member Expr:Expr
-
+    abstract member ExprString:string
 /// A logical statement that can define a set using a predicate for set membership.
 type ISetBuilder<'t when 't: equality> = IPredicateExpr<'t>
 
@@ -23,10 +23,12 @@ type PredicateExpr<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr
     let v,t,e = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
     member val Pred = v :?> LogicalPredicate<'t>
     member val Expr = e
+    member val ExprString = exprToString e
     interface IPredicateExpr<'t> with
         member val Pred = v :?> LogicalPredicate<'t>
         member val Expr = e
-    interface IEquatable<PredicateExpr<'t>> with member a.Equals(b) = exprToString a.Expr = exprToString b.Expr
+        member val ExprString = exprToString e
+    interface IEquatable<PredicateExpr<'t>> with member a.Equals(b) = a.ExprString = b.ExprString
     override a.Equals (_b:obj) = 
             match _b with 
             | :? PredicateExpr<'t> as b -> (a :> IEquatable<PredicateExpr<'t>>).Equals b
@@ -50,6 +52,7 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<
     interface ISetBuilder<'t> with
         member val Pred = pv :?> LogicalPredicate<'t>
         member val Expr = pe
+        member val ExprString = exprToString pe
     
 /// A sequence generating function.
 and GeneratingFunction<'t when 't: equality> = int -> 't

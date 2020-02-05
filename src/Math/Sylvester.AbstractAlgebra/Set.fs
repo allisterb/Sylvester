@@ -4,7 +4,7 @@ open System
 open System.Collections
 open System.Collections.Generic
 open System.Linq
-    
+   
 /// A set of elements each with type or class denoted by t.
 [<CustomEquality; NoComparison>]
 type Set<'t when 't: equality> =
@@ -24,11 +24,11 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Seq s1, Seq s2 ->  a |> Seq.forall (fun x -> b.Contains x) && b |> Seq.forall (fun x -> a.Contains x)
-            |Set expr1, Set expr2 ->  expr1.Equals expr2
             |Generator g1, Generator g2 -> g1.PredExpr.Equals g2.PredExpr
-
-            |_,_ -> failwith "Cannot test a sequence and a set builder statement for equality. Use 2 finite sequences or 2 set builders."
+            |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && b |> Seq.forall (fun x -> a.HasElement x)
+            |Set expr1, Set expr2 ->  expr1.Equals expr2
+            
+            |_,_ -> failwith "Cannot test a sequence and a set defined using a set builder statement for equality. Use 2 finite sequences or 2 set builders."
     
     override a.Equals (_b:obj) = 
             match _b with 
@@ -89,13 +89,13 @@ with
         |Seq s1, Set s2 ->  failwith "Cannot test if a sequence contains a set defined by set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
         |Set expr1, Set expr2 ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
 
-    member a.Complement b =
+    member a.Difference b =
         match a, b with
         | _, Empty -> a
         | Empty, _ -> Empty
         | _, _ -> a.Subset(fun x -> b.HasElement x |> not)
         
-    member a.Complement b =
+    member a.Difference b =
         match a with
         | Empty -> Empty
         | Generator g -> SetGenerator((fun x -> g.Pred(x) && not(x = b)), g.Seq |> Seq.except [b]) |> Set.ofGen
@@ -144,37 +144,39 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
-        |(Generator g1, Generator g2) -> SetGenerator((fun x -> g1.HasElement x || g2.HasElement x), Seq.concat[g1.Seq; g2.Seq]) |> Set.ofGen
-        |(Generator g1, Seq s2) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[g1.Seq; s2]) |> Set.ofGen
-        |(Seq s1, Generator g2) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[s1; g2.Seq]) |> Set.ofGen
-        |(a, b) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
+        
+        |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[a; b]) |> Set.ofGen
+        |(_, _) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
         
     /// Set intersection operator.
     static member (|*|) (l, r) = 
         match (l, r) with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
-        |(Generator g1, Generator g2) -> SetGenerator((fun x -> g1.HasElement x && g2.HasElement x), g1.Seq.Intersect g2) |> Set.ofGen
-        |(Generator g1, Seq s2) -> SetGenerator((fun x -> l.HasElement x && r.HasElement x), g1.Seq.Intersect s2) |> Set.ofGen
-        |(Seq s1, Generator g2) -> SetGenerator((fun x -> l.HasElement x && r.HasElement x), s1.Intersect g2.Seq) |> Set.ofGen
-        |(a, b) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
+        
+        |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), a.Intersect b) |> Set.ofGen
+        |(_, _) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
 
     /// Set has subset operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
 
     /// Set difference operator
-    static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Complement r
+    static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
 
-    /// Set complement operator
-    static member (|^|) (l:Set<'t>, r:'t) = l.Complement r
+    /// Set element-wise difference operator
+    static member (|-|) (l:Set<'t>, r:'t) = l.Difference r
+
+    /// Set relative complement operator: A |/| B = B \ A.
+    static member (|/|) (l:Set<'t>, r:Set<'t>) = r.Difference l
 
     /// Set Cartesian product.
     static member (*) (l, r) = 
         match (l, r) with
-        |(Empty, Empty) -> Empty
-        |(a, Empty) -> SetBuilder(fun (x, y) -> l.HasElement x) |> Set
-        |(Empty, b) -> SetBuilder(fun (x, y) -> r.HasElement y) |> Set
-        |(a, b) -> SetBuilder(fun (x, y) -> l.HasElement x && r.HasElement y) |> Set
+        |(_, Empty) -> Empty
+        |(Empty, _) -> Empty
+
+        |(Seq a, Seq b) -> Seq(Gen((fun (x,y) -> l.HasElement x && r.HasElement y), Seq.allPairs a b))
+        |(_,_) -> SetBuilder(fun (x,y) -> l.HasElement x && r.HasElement y) |> Set
         
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
@@ -186,9 +188,9 @@ module Set =
 
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
     
-    let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |-| r.Set
+    let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
 
-    let inline (|^|) (l:ISet<'t>) (r:'t) = let s = (l.Set) in s |^| r
+    let (|^|) (l:ISet<'t>) (r:'t) = l.Set.Difference r
 
     // n-wise functions based on http://fssnip.net/50 by ptan
    
@@ -243,13 +245,13 @@ module Set =
                                 l :=  m
         }
 
-    let infiniteSeq g f = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
+    let infiniteSeq f g = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
 
-    let infiniteSeq2 g f = Gen(f, g |> Seq.initInfinite |> Seq.pairwise) |> Set.ofGen
+    let infiniteSeq2 f g = Gen(f, g |> Seq.initInfinite |> Seq.pairwise) |> Set.ofGen
 
-    let infiniteSeq3 g f = Gen(f, g |> Seq.initInfinite |> triplewise) |> Set.ofGen
+    let infiniteSeq3 f g = Gen(f, g |> Seq.initInfinite |> triplewise) |> Set.ofGen
 
-    let infiniteSeq4 g f = Gen(f, g |> Seq.initInfinite |> quadwise) |> Set.ofGen
+    let infiniteSeq4 f g = Gen(f, g |> Seq.initInfinite |> quadwise) |> Set.ofGen
 
-    let infiniteSeq5 g f = Gen(f, g |> Seq.initInfinite |> quintwise) |> Set.ofGen
+    let infiniteSeq5 f g = Gen(f, g |> Seq.initInfinite |> quintwise) |> Set.ofGen
         

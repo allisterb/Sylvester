@@ -49,6 +49,7 @@ module Group =
         (set: ISet<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>
         AbelianGroup(set, FSharpPlus.Math.Generic.(*), one, FSharpPlus.Math.Generic.(/) one)
+
     /// Define a group over a set which has an additive operator and zero and negation. 
     let inline AdditiveGroup<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
         (set: ISet<'t>) =

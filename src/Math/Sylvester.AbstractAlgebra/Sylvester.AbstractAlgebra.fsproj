@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Compile Include="SetBuilder.fs" />
-    <Compile Include="Arithmetic.fs" />
     <Compile Include="Set.fs" />
     <Compile Include="Operation.fs" />
     <Compile Include="Structure.fs" />
@@ -31,9 +30,9 @@
     <Compile Include="Groupoid.fs" />
     <Compile Include="Semigroup.fs" />
     <Compile Include="Monoid.fs" />
+    <Compile Include="Arithmetic.fs" />
     <Compile Include="Group.fs" />
     <Compile Include="Ring.fs" />
-    <Compile Include="Numbers.fs" />
   </ItemGroup>
 
   <ItemGroup>
