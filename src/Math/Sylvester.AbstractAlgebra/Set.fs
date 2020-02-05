@@ -66,7 +66,7 @@ with
     member x.Subset(f: LogicalPredicate<'t>) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Generator g -> Seq(Gen((fun x -> g.Pred(x) && f(x)), g.Seq |> Seq.filter f))
+        |Generator g -> Seq(SetGenerator((fun x -> g.Pred(x) && f(x)), g.Seq |> Seq.filter f))
         |Seq s -> Seq(s |> Seq.filter f) 
         |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
 
@@ -125,7 +125,7 @@ with
         
     static member ofGen(gen:Gen<'t>) = Seq gen
 
-    static member ofSubsets(s:seq<'t>) = 
+    static member ofSubsets(s:seq<'t>) =
         let set = 
             match s with
             | FiniteSeq -> Seq(s |> Seq.toArray)
@@ -137,6 +137,9 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
+        |(Generator g1, Generator g2) -> SetGenerator((fun x -> g1.HasElement x || g2.HasElement x), Seq.concat[g1.Seq; g2.Seq]) |> Set.ofGen
+        |(Generator g1, Seq s2) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[g1.Seq; s2]) |> Set.ofGen
+        |(Seq s1, Generator g2) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[s1; g2.Seq]) |> Set.ofGen
         |(a, b) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
         
     /// Set intersection operator.
@@ -144,6 +147,9 @@ with
         match (l, r) with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
+        |(Generator g1, Generator g2) -> SetGenerator((fun x -> g1.HasElement x && g2.HasElement x), g1.Seq.Intersect g2) |> Set.ofGen
+        |(Generator g1, Seq s2) -> SetGenerator((fun x -> l.HasElement x && r.HasElement x), g1.Seq.Intersect s2) |> Set.ofGen
+        |(Seq s1, Generator g2) -> SetGenerator((fun x -> l.HasElement x && r.HasElement x), s1.Intersect g2.Seq) |> Set.ofGen
         |(a, b) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
 
     /// Set has subset operator.
