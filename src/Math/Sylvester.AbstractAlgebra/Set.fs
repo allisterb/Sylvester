@@ -16,6 +16,7 @@ type Set<'t when 't: equality> =
 | Set of SetBuilder<'t>
 with 
     interface ISet<'t> with member x.Set = x
+    
     interface IEquatable<Set<'t>> with
         member a.Equals b =
             match a, b with
@@ -23,14 +24,17 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Seq (Finite s1), Seq (Finite s2) ->  a |> Seq.forall (fun x -> b.Contains x) && b |> Seq.forall (fun x -> a.Contains x)
+            |Seq s1, Seq s2 ->  a |> Seq.forall (fun x -> b.Contains x) && b |> Seq.forall (fun x -> a.Contains x)
             |Set expr1, Set expr2 ->  expr1.Equals expr2
+            |Generator g1, Generator g2 -> g1.PredExpr.Equals g2.PredExpr
 
             |_,_ -> failwith "Cannot test a sequence and a set builder statement for equality. Use 2 finite sequences or 2 set builders."
+    
     override a.Equals (_b:obj) = 
             match _b with 
             | :? Set<'t> as b -> (a :> IEquatable<Set<'t>>).Equals b
             | _ -> false
+    
     override a.GetHashCode() = 
         match a with
         | Empty -> 0
@@ -42,7 +46,7 @@ with
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> s.GetEnumerator()
-            |Set s -> failwith "Cannot enumerate an arbitrary set. Use a sequence instead."
+            |Set s -> failwith "Cannot enumerate a set defined by a set builder statement. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -50,7 +54,7 @@ with
     member x.Builder =
         match x with
         | Empty -> failwith "This set is the empty set."
-        | Set sb -> sb
+        | Set builder -> builder
         | Seq s -> match s with | Generator gen -> SetBuilder(gen.Pred) | _ -> failwith "This sequence is not defined by a generating function."
         
     member x.Generator = 
@@ -81,29 +85,31 @@ with
         | _, Empty -> true
         |Empty, _ -> false
 
-        |Seq (Finite s1), Seq (Finite s2) ->  b |> Seq.forall (fun x -> a.Contains x)
-        |Set s1, Seq (Finite s2) ->  b |> Seq.forall (fun x -> a.HasElement x)
-        |Seq s1, Set s2 ->  failwith "Cannot test if a sequence contains a set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
-        |Set expr1, Set expr2 ->  failwith "Cannot test two set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
+        |_, Seq s2 ->  b |> Seq.forall (fun x -> a.HasElement x)
+        
+        |Seq s1, Set s2 ->  failwith "Cannot test if a sequence contains a set defined by set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
+        |Set expr1, Set expr2 ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
 
-        |_,_ -> failwith "Cannot test a non for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
+    member a.Complement b =
+        match a, b with
+        | _, Empty -> a
+        | Empty, _ -> Empty
 
+        |Seq s1, _ -> Seq(s1 |> Seq.filter (fun x -> b.HasElement x |> not))
+        | _, _ -> a.Subset(fun x -> b.HasElement x |> not)
+        
     member x.Length =
        match x with
        | Empty -> 0
-       | Seq s ->
-            match s with
-            | Finite c -> c |> Seq.distinct |> Seq.length 
-            | _ -> failwith "Cannot get length of an arbitrary sequence. Use a finite sequence instead."
+       | Seq s -> s |> Seq.distinct |> Seq.length
        | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
 
     member x.Subsets =
         match x with
         | Empty -> failwith "The empty set has no subsets."
-        | Seq s ->
-            match s with
-            | Finite c ->
-                //using bit pattern to generate subsets
+        | Seq c ->
+                // From http://www.fssnip.net/ff/title/Sequence-of-all-Subsets-of-a-set by Isaiah Permulla
+                // using bit pattern to generate subsets
                 let max_bits x = 
                     let rec loop acc = if (1 <<< acc ) > x then acc else loop (acc + 1)
                     loop 0
@@ -117,11 +123,9 @@ with
           
                         Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)} |> Seq.toArray)
                 subsets
-            | _ -> failwith "Cannot get all subsets of an arbitrary sequence. Use a finite sequence instead."
-        | _ -> failwith "Cannot get all subsets of a set edfined by a set builder statement. Use a finite sequence instead."
+            
+        | _ -> failwith "Cannot get all subsets of a set defined by a set builder statement. Use a finite sequence instead."
         
-    static member ofSeq(s:seq<'t>) = Seq(s)
-
     static member ofSubsets(s:seq<'t>) = 
         let set = 
             match s with
@@ -143,8 +147,11 @@ with
         |(_, Empty) -> Empty
         |(a, b) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
 
-    /// Set membership operator.
-    static member (|<|) (elem:'t, set:Set<'t>) = set.HasElement elem
+    /// Set has subset operator.
+    static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
+
+    /// Set difference operator
+    static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Complement r
 
     /// Set Cartesian product.
     static member (*) (l, r) = 
