@@ -95,6 +95,13 @@ with
         | Empty, _ -> Empty
         | _, _ -> a.Subset(fun x -> b.HasElement x |> not)
         
+    member a.Complement b =
+        match a with
+        | Empty -> Empty
+        | Generator g -> SetGenerator((fun x -> g.Pred(x) && not(x = b)), g.Seq |> Seq.except [b]) |> Set.ofGen
+        | Seq s -> Seq(s |> Seq.except [b])
+        | Set builder -> SetBuilder(fun x -> builder.Pred(x) && not(x=b)) |> Set
+        
     member x.Length =
        match x with
        | Empty -> 0
@@ -118,7 +125,7 @@ with
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i c}
           
-                        Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)} |> Seq.toArray)
+                        Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
                 subsets
             
         | _ -> failwith "Cannot get all subsets of a set defined by a set builder statement. Use a finite sequence instead."
@@ -158,6 +165,9 @@ with
     /// Set difference operator
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Complement r
 
+    /// Set complement operator
+    static member (|^|) (l:Set<'t>, r:'t) = l.Complement r
+
     /// Set Cartesian product.
     static member (*) (l, r) = 
         match (l, r) with
@@ -178,6 +188,7 @@ module Set =
     
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |-| r.Set
 
+    let inline (|^|) (l:ISet<'t>) (r:'t) = let s = (l.Set) in s |^| r
 
     // n-wise functions based on http://fssnip.net/50 by ptan
    

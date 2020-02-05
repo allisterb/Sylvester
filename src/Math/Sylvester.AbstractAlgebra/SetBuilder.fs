@@ -61,7 +61,7 @@ type Gen<'t when 't: equality> = SetGenerator<'t>
 module SetBuilder =
     let (|Generator|_|) x =
         match x:IEnumerable<'t> with
-        | _ when x.GetType().Name.StartsWith("SetGenerator") -> Some (x :?> SetGenerator<'t>)
+        | :? SetGenerator<'t> -> Some (x :?> SetGenerator<'t>)
         | _ -> None
 
     let (|ArraySeq|ListSeq|SetSeq|GeneratorSeq|OtherSeq|) s =
