@@ -36,16 +36,12 @@ type PredicateExpr<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr
 /// A statement that defines a set using a predicate for set membership.
 type SetBuilder<'t when 't : equality> = PredicateExpr<'t>
 
-/// A generating function that defines a sequence together with a logical predicate that tests for set membership. 
-type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>, [<ReflectedDefinition(true)>] gen:Expr<GeneratingFunction<'t>>) = 
+/// A generator defines a sequence together with a logical predicate that tests for set membership. 
+type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>, s:seq<'t>) = 
     let pv,pt,pe = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
-    let gv,gt,ge = match gen with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
-    let gen = gv :?> GeneratingFunction<'t>
     member val Pred = pv :?> LogicalPredicate<'t>
     member val PredExpr = pe
-    member val Gen = gen
-    member val GenExpr = ge
-    member val Seq = Seq.initInfinite gen
+    member val Seq = s
     member x.HasElement elem = x.Pred elem
     interface IEnumerable<'t> with
         member x.GetEnumerator () = x.Seq.GetEnumerator() 

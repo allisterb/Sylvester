@@ -66,6 +66,7 @@ with
     member x.Subset(f: LogicalPredicate<'t>) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
+        |Generator g -> Seq(Gen((fun x -> g.Pred(x) && f(x)), g.Seq |> Seq.filter f))
         |Seq s -> Seq(s |> Seq.filter f) 
         |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
 
@@ -73,10 +74,8 @@ with
     member x.HasElement(elem: 't) = 
         match x with
         |Empty -> false
-        |Seq s -> 
-            match s with
-            | Generator g -> g.HasElement elem
-            | _ -> s.Contains elem // May fail
+        |Generator g -> g.HasElement elem
+        |Seq s -> s.Contains elem // May fail
         |Set s -> s.Pred elem
     
     member a.HasSubset b =
@@ -94,8 +93,6 @@ with
         match a, b with
         | _, Empty -> a
         | Empty, _ -> Empty
-
-        |Seq s1, _ -> Seq(s1 |> Seq.filter (fun x -> b.HasElement x |> not))
         | _, _ -> a.Subset(fun x -> b.HasElement x |> not)
         
     member x.Length =
@@ -126,6 +123,8 @@ with
             
         | _ -> failwith "Cannot get all subsets of a set defined by a set builder statement. Use a finite sequence instead."
         
+    static member ofGen(gen:Gen<'t>) = Seq gen
+
     static member ofSubsets(s:seq<'t>) = 
         let set = 
             match s with
@@ -168,6 +167,11 @@ module Set =
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
     
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
+
+    let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
+    
+    let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |-| r.Set
+
 
     // n-wise functions based on http://fssnip.net/50 by ptan
    
@@ -222,17 +226,13 @@ module Set =
                                 l :=  m
         }
 
-    let infiniteSeq g = g |> Seq.initInfinite |> Seq  
+    let infiniteSeq g f = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
 
-    let infiniteSeq2 g = g |> infiniteSeq |> Seq.pairwise |> Seq
+    let infiniteSeq2 g f = Gen(f, g |> Seq.initInfinite |> Seq.pairwise) |> Set.ofGen
 
-    let infiniteSeq3 g = 
-        g |> infiniteSeq |> triplewise |> Seq
+    let infiniteSeq3 g f = Gen(f, g |> Seq.initInfinite |> triplewise) |> Set.ofGen
 
-    let infiniteSeq4 g = 
-        g |> infiniteSeq |> quadwise |> Seq
+    let infiniteSeq4 g f = Gen(f, g |> Seq.initInfinite |> quadwise) |> Set.ofGen
 
-    let infiniteSeq5 g =
-        g |> infiniteSeq |> quintwise |> Seq
+    let infiniteSeq5 g f = Gen(f, g |> Seq.initInfinite |> quintwise) |> Set.ofGen
         
-    let infiniteGen g f = Gen(f, g) :> seq<'t> |> Seq
