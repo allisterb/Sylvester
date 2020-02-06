@@ -21,9 +21,9 @@ type SemiLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, order:
     interface ISemiLattice<'t> with
         member val Set = set.Set
         member val Order = order
-        member x.GetEnumerator(): Generic.IEnumerator<'t * 't * bool> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (order) a b))).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * bool>).GetEnumerator () :> IEnumerator
+        member x.GetEnumerator(): Generic.IEnumerator<'t> = 
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then 0 else 1))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then 0 else 1)).GetEnumerator() :> IEnumerator
         member x.Join = join    
     
 /// Set of elements closed under 2 operations that are associative, commutative, and idempotent, which induces a partial order on the set 
@@ -45,9 +45,8 @@ type Lattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: Bina
     interface ILattice<'t> with
         member val Set = set.Set
         member val Order = order
-        member x.GetEnumerator(): Generic.IEnumerator<'t * 't * bool> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (order) a b))).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * bool>).GetEnumerator () :> IEnumerator
-        member x.Join = join 
+        member x.GetEnumerator(): Generic.IEnumerator<'t> = 
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then 0 else 1))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then 0 else 1)).GetEnumerator() :> IEnumerator        member x.Join = join 
         member x.Meet = meet
     

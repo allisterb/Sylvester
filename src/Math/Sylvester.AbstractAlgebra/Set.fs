@@ -199,17 +199,24 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Set = Seq items
     interface ISet<'t> with
         member x.Set = x.Set
-    
+
+type Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
+
 [<AutoOpen>]
 module Set =
+    /// Set union operator.
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
     
+    /// Set intersection operator.
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
 
+    /// Set subset relation.
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
     
+    /// Set difference operator.
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
 
+    /// Set- element difference operator.
     let (|^|) (l:ISet<'t>) (r:'t) = l.Set.Difference r
 
     // n-wise functions based on http://fssnip.net/50 by ptan
@@ -277,4 +284,5 @@ module Set =
 
     let ofType<'t when 't: equality> = fun (_:'t) -> true
     
+    /// A singleton set containing 0. 
     let Zero = FiniteSet<N<1>, int>([|0|])
