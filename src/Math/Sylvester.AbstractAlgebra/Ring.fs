@@ -49,18 +49,21 @@ type OrderedRing<'t when 't: equality and 't : comparison>(group: AbelianGroup<'
 
 [<AutoOpen>]
 module Ring =
+    /// Zero ring.
     let Zero = CommutativeRing(Group.Zero, Monoid.Zero)
     
+
     let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op, id) =
         Ring(AdditiveGroup(set), Monoid(set, op, id))
 
+    /// Ring of positive integers.
     let Zpos =
         let set = infiniteSeq  (fun x -> x >= 0) (id)
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), MultiplicativeMonoid(set), order) 
                 interface IWellOrder<int> with
-                    member x.Least(e:Set<int>) = LanguagePrimitives.GenericZero
+                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -69,13 +72,14 @@ module Ring =
                     member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<int> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, ((<)) a b))).GetEnumerator() :> IEnumerator
         }
 
+    /// Ring of negative integers.
     let Zneg =
-        let set = infiniteSeq  (fun x -> x >= 0) (fun n -> -n)
+        let set = infiniteSeq  (fun x -> x <= 0) (fun n -> -n)
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), MultiplicativeMonoid(set), order) 
                 interface IWellOrder<int> with
-                    member x.Least(e:Set<int>) = LanguagePrimitives.GenericZero
+                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -84,13 +88,14 @@ module Ring =
                     member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<int> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, ((<)) a b))).GetEnumerator() :> IEnumerator
         }
 
+    /// Ring of integers.
     let Z =
         let set = Zpos |+| Zneg
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), MultiplicativeMonoid(set), order) 
                 interface IWellOrder<int> with
-                    member x.Least(e:Set<int>) = LanguagePrimitives.GenericZero
+                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -99,6 +104,22 @@ module Ring =
                     member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<int> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, ((<)) a b))).GetEnumerator() :> IEnumerator
         }
 
+    /// Ring of natural numbers.
+    let N =
+        let set = Zpos |^| 0
+        let order = (<=)
+        {
+            new OrderedRing<int>(AdditiveGroup(set), MultiplicativeMonoid(set), order) 
+                interface IWellOrder<int> with
+                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
+                interface ITotalOrder<int> with
+                    member x.Set = set
+                    member x.Order = order
+                    member x.GetEnumerator(): Generic.IEnumerator<int * int * bool> = 
+                        (let s = x.Set :> Generic.IEnumerable<int> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, order a b))).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<int> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, ((<)) a b))).GetEnumerator() :> IEnumerator
+        }
+    
     let Z1 = CommutativeRing(Z, Mod.(+) 1, Mod.(*) 1, 0, 1, (~-))
     let Z2 = CommutativeRing(Z, Mod.(+) 2, Mod.(*) 2, 0, 1, (~-))
     let Z3 = CommutativeRing(Z, Mod.(+) 3, Mod.(*) 3, 0, 1, (~-))
