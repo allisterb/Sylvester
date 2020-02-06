@@ -15,6 +15,15 @@ type Struct<'t, 'n when 't: equality and 'n :> Number>(set: ISet<'t>, ops: Ops<'
     interface IStruct<'t, 'n> with
         member val Set = set.Set
         member val Ops = ops
+
+/// A structure that has an identity element.
+type IIdentity<'t when 't : equality> = 
+    abstract member Identity:'t
+
+/// A structure that has an identity element.
+type IInverse<'t when 't : equality> = 
+    abstract member Inverse:UnaryOp<'t>
+
 /// The cardinality of a structure's collections.
 [<RequireQualifiedAccess>]
 module card = 

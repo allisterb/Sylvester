@@ -21,8 +21,8 @@ type GroupElement<'order when 'order :> Number> =
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type IGroup<'t when 't: equality> = 
     inherit IMonoid<'t> 
-    abstract member Inverse: UnaryOp<'t>
-
+    inherit IInverse<'t>
+    
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Monoid<'t>(set, op, id)

@@ -6,7 +6,7 @@ open Sylvester.Collections
 /// Set of elements closed under some left-associative operation with identity.
 type IMonoid<'t when 't: equality> = 
     inherit IGroupoid<'t>
-    abstract member Identity: 't
+    inherit IIdentity<'t>
 
 /// Set of elements closed under some left-associative operation with identity element.
 type Monoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id: NullaryOp<'t>) =

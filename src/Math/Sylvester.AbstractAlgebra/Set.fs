@@ -154,6 +154,16 @@ with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
         
+        |(Seq a, Finite b) -> 
+                    SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat [a;b] 
+                    |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
+                    |> Seq.take (b.Count())) 
+                    |> Set.ofGen
+        |(Finite a, Seq b) -> 
+                    SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat [a;b] 
+                    |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
+                    |> Seq.take (a.Count())) 
+                    |> Set.ofGen
         |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), a.Intersect b) |> Set.ofGen
         |(_, _) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
 
@@ -254,4 +264,6 @@ module Set =
     let infiniteSeq4 f g = Gen(f, g |> Seq.initInfinite |> quadwise) |> Set.ofGen
 
     let infiniteSeq5 f g = Gen(f, g |> Seq.initInfinite |> quintwise) |> Set.ofGen
+
+    let ofType<'t when 't: equality> = fun (_:'t) -> true
         
