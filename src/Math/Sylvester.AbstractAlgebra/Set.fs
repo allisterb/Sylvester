@@ -131,7 +131,6 @@ with
             
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a finite sequence instead."
     
-    member x.Perm = Seq.p
     static member ofGen(gen:Gen<'t>) = Seq gen
 
     static member ofSubsets(s:seq<'t>) =

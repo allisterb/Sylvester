@@ -23,8 +23,8 @@ type SemiLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>) =
         member val Set = set.Set
         member val Order = order
         member x.GetEnumerator(): Generic.IEnumerator<'t> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then 0 else 1))).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then 0 else 1)).GetEnumerator() :> IEnumerator
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then -1 else 1))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then -1 else 1)).GetEnumerator() :> IEnumerator
         member x.Join = join    
     
 /// Set of elements closed under 2 operations that are associative, commutative, and idempotent, which induces a partial order on the set 
@@ -48,7 +48,8 @@ type Lattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: Bina
         member val Set = set.Set
         member val Order = order
         member x.GetEnumerator(): Generic.IEnumerator<'t> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then 0 else 1))).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then 0 else 1)).GetEnumerator() :> IEnumerator        member x.Join = join 
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then -1 else 1))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then -1 else 1)).GetEnumerator() :> IEnumerator        
+        member x.Join = join 
         member x.Meet = meet
     

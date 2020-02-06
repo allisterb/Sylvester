@@ -44,9 +44,9 @@ type OrderedRing<'t when 't: equality and 't : comparison>(group: AbelianGroup<'
         member val Order = order
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator(): Generic.IEnumerator<'t> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then 0 else 1))).GetEnumerator()
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then -1 else 1))).GetEnumerator()
     interface IEnumerable with
-        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then 0 else 1)).GetEnumerator() :> IEnumerator
+        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then -1 else 1)).GetEnumerator() :> IEnumerator
 
 [<AutoOpen>]
 module Ring =
@@ -70,7 +70,7 @@ module Ring =
                     member x.Minimal = 0
                     member x.LowerBound = 0
                 interface IWellOrder<int> with
-                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
+                    member x.Least(subset:Set<int>) = subset |> Seq.sortWith (fun a b -> (if order a b then -1 else 1)) |> Seq.item 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
                 interface IEnumerable with
@@ -91,7 +91,7 @@ module Ring =
                     member x.Maximal = 0
                     member x.UpperBound = 0
                 interface IWellOrder<int> with
-                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
+                    member x.Least(subset:Set<int>) = subset |> Seq.sortWith (fun a b -> (if order a b then -1 else 1)) |> Seq.item 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
                 interface IEnumerable with
