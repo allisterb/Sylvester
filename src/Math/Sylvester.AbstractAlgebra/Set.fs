@@ -5,6 +5,9 @@ open System.Collections
 open System.Collections.Generic
 open System.Linq
    
+open Sylvester.Arithmetic
+open Sylvester.Collections
+
 /// A set of elements each with type or class denoted by t.
 [<CustomEquality; NoComparison>]
 type Set<'t when 't: equality> =
@@ -190,6 +193,13 @@ with
         
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
+and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
+    member val Length = number<'n>
+    member val Items = Array<'n, 't>(items)
+    member val Set = Seq items
+    interface ISet<'t> with
+        member x.Set = x.Set
+    
 [<AutoOpen>]
 module Set =
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
@@ -266,4 +276,5 @@ module Set =
     let infiniteSeq5 f g = Gen(f, g |> Seq.initInfinite |> quintwise) |> Set.ofGen
 
     let ofType<'t when 't: equality> = fun (_:'t) -> true
-        
+    
+    let Zero = FiniteSet<N<1>, int>([|0|])

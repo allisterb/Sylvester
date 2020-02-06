@@ -4,7 +4,7 @@ open System.Collections
 
 open Sylvester.Collections
 
-/// A set of elements with a partial order relation.
+/// A set of elements with a partial order relation i.e. an operation that is refleive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
     inherit ISet<'t>
     inherit Generic.IEnumerable<'t * 't * bool>
@@ -48,17 +48,15 @@ type IMinimal<'t when 't : equality> =
 
 /// A set that contains a maximal element greater than or equal to all other maximals.
 type IGreatest<'t when 't : equality> =
-    inherit IBoundedAbove<'t>
     inherit IMaximal<'t>
     abstract Greatest:'t
 
 /// A set that contains a minimal element lesser than or equal to all other minimals.
 type ILeast<'t when 't : equality> =
-    inherit IBoundedBelow<'t>
     inherit IMinimal<'t>
     abstract Least:'t
 
-/// A totally ordered set where every subset has a least element.
+/// A totally ordered set where every subset that is bounded below has a least element.
 type IWellOrder<'t when 't : equality and 't: comparison> =
     inherit ITotalOrder<'t>
     abstract Least:Set<'t>->'t
@@ -75,6 +73,11 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * bool> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (order) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * bool>).GetEnumerator () :> IEnumerator
+
+/// A partially ordered set that has a lower bound.
+type LowerBoundedSet<'t when 't: equality>(set:ISet<'t>, order:Order<'t>, lowerBound: 't) =
+    inherit Poset<'t>(set, order)
+    interface IBoundedBelow<'t> with member val LowerBound = lowerBound
 
 /// A set of elements with a total order relation.
 type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =

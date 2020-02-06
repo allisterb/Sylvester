@@ -14,7 +14,7 @@ type Monoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id: NullaryOp<'
     member val Op = op
     member val Identity = id
     interface IMonoid<'t> with member val Identity = id
-    
+   
 /// Monoid with commutative operators.
 type CommutativeMonoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'t) =
     inherit Monoid<'t>(set, op, id)
@@ -37,3 +37,5 @@ module Monoid =
         (set: ISet<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>
         CommutativeMonoid(set, FSharpPlus.Math.Generic.(*), one)
+
+    let Zero = CommutativeMonoid(Set.Zero, (*), 0)
