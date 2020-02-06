@@ -111,7 +111,7 @@ with
        | Seq s -> s |> Seq.distinct |> Seq.length
        | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
 
-    member x.Subsets(?length:int) =
+    member x.Powerset =
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq c ->
@@ -123,7 +123,7 @@ with
                 
                 let bit_setAt i x = ((1 <<< i) &&& x) <> 0
                 let subsets = 
-                        let len = defaultArg length (Seq.length c)
+                        let len = Seq.length c
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i c}
                         Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
@@ -131,8 +131,6 @@ with
             
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a finite sequence instead."
             
-    member x.Powerset = x.Subsets(x.Length)
-
     static member ofGen(gen:Gen<'t>) = Seq gen
 
     static member ofSubsets(s:seq<'t>) =
@@ -140,7 +138,7 @@ with
             match s with
             | FiniteSeq -> Seq(s |> Seq.toArray)
             | NonFiniteSeq -> Seq(s |> Seq.toArray)
-        set.Subsets
+        set.Powerset
  
     /// Set union operator.
     static member (|+|) (l, r) = 
