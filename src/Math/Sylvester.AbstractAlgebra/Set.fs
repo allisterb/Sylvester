@@ -27,9 +27,9 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Generator g1, Generator g2 -> g1.PredExpr.Equals g2.PredExpr
+            |Generator g1, Generator g2 -> g1.PredExpr = g2.PredExpr
             |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && b |> Seq.forall (fun x -> a.HasElement x)
-            |Set expr1, Set expr2 ->  expr1.Equals expr2
+            |Set expr1, Set expr2 ->  expr1 = expr2
             
             |_,_ -> failwith "Cannot test a sequence and a set defined using a set builder statement for equality. Use 2 finite sequences or 2 set builders."
     
@@ -78,7 +78,7 @@ with
         match x with
         |Empty -> false
         |Generator g -> g.HasElement elem
-        |Seq s -> s.Contains elem // May fail
+        |Seq s -> s.Contains elem // May fail if sequence is infinite
         |Set s -> s.Pred elem
     
     member a.HasSubset b =
@@ -87,23 +87,23 @@ with
         | _, Empty -> true
         |Empty, _ -> false
 
-        |_, Seq s2 ->  b |> Seq.forall (fun x -> a.HasElement x)
+        |_, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
         
-        |Seq s1, Set s2 ->  failwith "Cannot test if a sequence contains a set defined by set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
-        |Set expr1, Set expr2 ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
+        |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
+        |Set _, Set _ ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
 
     member a.Difference b =
         match a, b with
         | _, Empty -> a
         | Empty, _ -> Empty
-        | _, _ -> a.Subset(fun x -> b.HasElement x |> not)
+        | _,_ -> a.Subset(fun x -> b.HasElement x |> not)
         
     member a.Difference b =
         match a with
         | Empty -> Empty
         | Generator g -> SetGenerator((fun x -> g.Pred(x) && not(x = b)), g.Seq |> Seq.except [b]) |> Set.ofGen
         | Seq s -> Seq(s |> Seq.except [b])
-        | Set builder -> SetBuilder(fun x -> builder.Pred(x) && not(x=b)) |> Set
+        | Set builder -> SetBuilder(fun x -> builder.Pred(x) && not(x = b)) |> Set
         
     member x.Length =
        match x with
@@ -111,7 +111,7 @@ with
        | Seq s -> s |> Seq.distinct |> Seq.length
        | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
 
-    member x.Subsets =
+    member x.Subsets(?length:int) =
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq c ->
@@ -123,16 +123,16 @@ with
                 
                 let bit_setAt i x = ((1 <<< i) &&& x) <> 0
                 let subsets = 
-                        
-                        let len = (Seq.length c)
+                        let len = defaultArg length (Seq.length c)
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i c}
-          
                         Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
                 subsets
             
-        | _ -> failwith "Cannot get all subsets of a set defined by a set builder statement. Use a finite sequence instead."
-        
+        | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a finite sequence instead."
+            
+    member x.Powerset = x.Subsets(x.Length)
+
     static member ofGen(gen:Gen<'t>) = Seq gen
 
     static member ofSubsets(s:seq<'t>) =
@@ -199,7 +199,9 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Set = Seq items
     interface ISet<'t> with
         member x.Set = x.Set
-
+    interface Generic.IEnumerable<'t> with
+        member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
+        member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
 type Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
 
 [<AutoOpen>]
