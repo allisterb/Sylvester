@@ -26,9 +26,9 @@
     <Compile Include="Structure.fs" />
     <Compile Include="Category.fs" />
     <Compile Include="Order.fs" />
-    <Compile Include="Lattice.fs" />
     <Compile Include="Groupoid.fs" />
     <Compile Include="Semigroup.fs" />
+    <Compile Include="Lattice.fs" />
     <Compile Include="Monoid.fs" />
     <Compile Include="Arithmetic.fs" />
     <Compile Include="Group.fs" />

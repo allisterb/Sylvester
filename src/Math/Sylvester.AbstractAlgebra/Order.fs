@@ -7,7 +7,7 @@ open Sylvester.Collections
 /// A set of elements with a partial order relation i.e. an operation that is reflexive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
     inherit ISet<'t>
-    inherit Generic.IEnumerable<'t >
+    inherit Generic.IEnumerable<'t>
     abstract Order: Order<'t>
     
 /// A set of elements with a total order.
@@ -47,7 +47,7 @@ type IHasMinimal<'t when 't : equality> =
     abstract Minimal:'t
 
 /// A set that contains a maximal element greater than or equal to all other maximals.
-type IGreatest<'t when 't : equality> =
+type IHasGreatest<'t when 't : equality> =
     inherit IHasMaximal<'t>
     abstract Greatest:'t
 
@@ -74,17 +74,8 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if (order a b) then 0 else 1)).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
-/// A partially ordered set that has a lower bound.
-type LowerBoundedSet<'t when 't: equality>(set:ISet<'t>, order:Order<'t>, lowerBound: 't) =
-    inherit Poset<'t>(set, order)
-    interface IBoundedBelow<'t> with member val LowerBound = lowerBound
-
 /// A set of elements with a total order relation.
 type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
     inherit Poset<'t>(set, (<=))
     interface ITotalOrder<'t>
 
-/// A set of elements with a strict total order relation
-type StrictlyOrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
-    inherit Poset<'t>(set, (<))
-    interface ITotalOrder<'t>

@@ -66,8 +66,37 @@ type ArithmeticProvider (config : TypeProviderConfig) as this =
         D.DefineStaticParameters([valueParam], createDim)
         D
 
+    let Tag = 
+        let T = ProvidedTypeDefinition(asm, "Sylvester", "Tag", Some typeof<N10<_,_,_,_,_,_,_,_,_,_>>, false)
+        T.AddXmlDoc "<summary>A type-level string tag that can be applied to objects.</summary>\n<param name='Name'>The tag name.</param>"
+        let nameParam = ProvidedStaticParameter("Name", typeof<string>)
+        let createTag (typeName:string) (args:obj[]) =
+            let name = args.[0] :?> string
+            let g = typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(Math.Abs(name.GetHashCode()), 10))
+            let provided = ProvidedTypeDefinition(asm, "Sylvester", typeName, Some g, false)
+            provided.AddXmlDoc <| (sprintf "<summary>The type-level string tag %s.</summary>" <| name)   
+    
+            let ctor = ProvidedConstructor([], invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(Math.Abs(name.GetHashCode()), 10))) @@>)
+            provided.AddMember(ctor)
+
+            let p = ProvidedMethod("create", [], g, isStatic = true, invokeCode = fun args -> 
+                <@@ Activator.CreateInstance(typedefof<N10<_,_,_,_,_,_,_,_,_,_>>.MakeGenericType(getIntBase10TypeArray(Math.Abs(name.GetHashCode()), 10))) @@>)
+            p.AddXmlDocDelayed(fun () -> sprintf "Create an instance of the type-level string tag %s." name)
+
+            let n = ProvidedProperty("Name", typeof<string>, getterCode = fun args -> <@@ name @@>)
+            n.AddXmlDocDelayed(fun () -> sprintf "Value of the type-level string tag: %s." name)
+           
+            provided.AddMember(p)
+            provided.AddMember(n)
+            provided
+
+        T.DefineStaticParameters([nameParam], createTag)
+        T
+
     do
         this.AddNamespace(ns, [Nat; Dim])
+        this.AddNamespace("Sylvester", [Tag])
         
 [<TypeProviderAssembly>]
 do ()

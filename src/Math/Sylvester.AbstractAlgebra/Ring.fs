@@ -86,7 +86,7 @@ module Ring =
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
-                interface IGreatest<int> with 
+                interface IHasGreatest<int> with 
                     member x.Greatest = 0
                     member x.Maximal = 0
                     member x.UpperBound = 0
