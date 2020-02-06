@@ -13,11 +13,12 @@ type ISemiLattice<'t when 't: equality> =
     
 /// Set of elements closed under a operation that is associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that the operation on every pair of elements results in the supremum of the pair.
-type SemiLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, order: Order<'t>) =
+type SemiLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>) =
     inherit Struct<'t, card.one>(set, arrayOf1 (Binary(join)))
     do failIfNotLeftAssociative join
     do failIfNotCommutative join
     do failIfNotIdempotent join
+    let order = (fun a b -> (if (join a b) = a then false else true))
     interface ISemiLattice<'t> with
         member val Set = set.Set
         member val Order = order
@@ -36,12 +37,13 @@ type ILattice<'t when 't: equality> =
 
 /// Set of elements closed under 2 operations that are associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that each operation on every pair of elements results in the supremum and infimum respectively of the pair.
-type Lattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, order: Order<'t>) =
+type Lattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>) =
     inherit Struct<'t, card.two>(set, arrayOf2 (Binary(join)) (Binary(meet)))
     do failIfNotLeftAssociative join
     do failIfNotCommutative join
     do failIfNotLeftAssociative meet
     do failIfNotCommutative meet
+    let order = (fun a b -> (if (join a b) = a then false else true))
     interface ILattice<'t> with
         member val Set = set.Set
         member val Order = order
