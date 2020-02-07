@@ -9,7 +9,7 @@ open Sylvester.Arithmetic
 open Sylvester.Collections
 
 /// A set of elements each with type or class denoted by t.
-[<CustomEquality; NoComparison>]
+[<CustomEquality; CustomComparison>]
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
@@ -27,9 +27,9 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Generator g1, Generator g2 -> g1.PredExpr = g2.PredExpr
-            |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && b |> Seq.forall (fun x -> a.HasElement x)
+            |Generator g1, Generator g2 -> g1.ExprString = g2.ExprString
             |Set expr1, Set expr2 ->  expr1 = expr2
+            |Seq _, Seq _ ->  a |> Seq.distinct |> Seq.forall (fun x -> b.HasElement x) && b |> Seq.distinct |> Seq.forall (fun x -> a.HasElement x)
             
             |_,_ -> failwith "Cannot test a sequence and a set defined using a set builder statement for equality. Use 2 finite sequences or 2 set builders."
     
@@ -41,8 +41,9 @@ with
     override a.GetHashCode() = 
         match a with
         | Empty -> 0
+        | Generator g -> g.ExprString.GetHashCode()
         | Seq s -> s.GetHashCode()
-        | Set p -> p.GetHashCode()
+        | Set p -> p.ExprString.GetHashCode()
 
     interface IEnumerable<'t> with
         member x.GetEnumerator () = 
@@ -92,6 +93,15 @@ with
         |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
         |Set _, Set _ ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
 
+    interface IComparable<Set<'t>> with
+        member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else failwith "These sets do not have a subset relation and so are not comparable."
+
+    interface IComparable with
+        member a.CompareTo b = 
+            match b with
+            | :? Set<'t> as set -> (a :> IComparable<Set<'t>>).CompareTo set
+            | _ -> failwith "This object is not a set."
+
     member a.Difference b =
         match a, b with
         | _, Empty -> a
@@ -105,6 +115,8 @@ with
         | Seq s -> Seq(s |> Seq.except [b])
         | Set builder -> SetBuilder(fun x -> builder.Pred(x) && not(x = b)) |> Set
         
+    member a.Complement (b:Set<'t>) = b.Difference a
+    
     member x.Length =
        match x with
        | Empty -> 0
@@ -136,8 +148,8 @@ with
     static member ofSubsets(s:seq<'t>) =
         let set = 
             match s with
-            | FiniteSeq -> Seq(s |> Seq.toArray)
-            | NonFiniteSeq -> Seq(s |> Seq.toArray)
+            | FiniteSeq -> Seq(s |> Seq.distinct |> Seq.toArray)
+            | NonFiniteSeq -> Seq(s |> Seq.distinct |> Seq.toArray)
         set.Powerset
  
     /// Set union operator.
@@ -188,7 +200,7 @@ with
 
         |(Seq a, Seq b) -> Seq(Gen((fun (x,y) -> l.HasElement x && r.HasElement y), Seq.allPairs a b))
         |(_,_) -> SetBuilder(fun (x,y) -> l.HasElement x && r.HasElement y) |> Set
-        
+    
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
 and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
@@ -200,7 +212,8 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
-type Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
+
+and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
 
 [<AutoOpen>]
 module Set =

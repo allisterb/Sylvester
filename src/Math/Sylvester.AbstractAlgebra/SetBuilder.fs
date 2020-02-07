@@ -42,7 +42,8 @@ type SetBuilder<'t when 't : equality> = PredicateExpr<'t>
 type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>, s:seq<'t>) = 
     let pv,pt,pe = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
     member val Pred = pv :?> LogicalPredicate<'t>
-    member val PredExpr = pe
+    member val Expr = pe
+    member val ExprString = exprToString pe
     member val Seq = s
     member x.HasElement elem = x.Pred elem
     interface IEnumerable<'t> with
