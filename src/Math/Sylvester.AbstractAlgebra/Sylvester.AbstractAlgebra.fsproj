@@ -34,6 +34,7 @@
     <Compile Include="Ring.fs" />
     <Compile Include="Lattice.fs" />
     <Compile Include="BooleanAlgebra.fs" />
+    <Compile Include="SetAlgebra.fs" />
   </ItemGroup>
 
   <ItemGroup>

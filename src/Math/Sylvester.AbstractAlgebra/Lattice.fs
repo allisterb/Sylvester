@@ -13,11 +13,12 @@ type ISemiLattice<'t when 't: equality> =
     
 /// Set of elements closed under a operation that is associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that the operation on every pair of elements results in the supremum of the pair.
-type SemiLattice<'t when 't: equality>(set: ISet<'t>, op: BinaryOp<'t>, order:Order<'t>) =
+type SemiLattice<'t when 't: equality>(set: ISet<'t>, op: BinaryOp<'t>) =
     inherit Struct<'t, card.one>(set, arrayOf1 (Binary(op)))
     do failIfNotLeftAssociative op
     do failIfNotCommutative op
     do failIfNotIdempotent op
+    let order = (fun a b -> (if (op a b) = a then false else true))
     interface ISemiLattice<'t> with
         member val Set = set.Set
         member val Op = op
@@ -53,8 +54,10 @@ type Lattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: Bina
     inherit Struct<'t, card.two>(set, arrayOf2 (Binary(join)) (Binary(meet)))
     do failIfNotLeftAssociative join
     do failIfNotCommutative join
+    do failIfNotIdempotent join
     do failIfNotLeftAssociative meet
     do failIfNotCommutative meet
+    do failIfNotIdempotent meet
     let order = (fun a b -> (if (join a b) = a then false else true))
     interface ILattice<'t> with
         member val Set = set.Set
@@ -114,6 +117,5 @@ type ComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>
 
 type DistributedComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, greatest:'t, least:'t, complement:UnaryOp<'t>) =
     inherit ComplementedLattice<'t>(set, join, meet, least, greatest, complement)
-    let order = (fun a b -> (if (join a b) = a then false else true))
     do (failIfNotDistributiveOver join meet) 
     do (failIfNotDistributiveOver meet join)
