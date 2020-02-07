@@ -24,7 +24,11 @@ type GroupElement<'order when 'order :> Number> =
 type IGroup<'t when 't: equality> = 
     inherit IMonoid<'t> 
     inherit IInverse<'t>
-    
+
+type IAdditiveGroup<'t when 't: equality> = inherit IGroup<'t>
+
+type IMultiplicativeGroup<'t when 't: equality> = inherit IGroup<'t>
+
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Struct<'t, card.three>(set, arrayOf3 (Binary(op)) (Nullary(ident)) (Unary(inv)))    
@@ -63,12 +67,49 @@ module Group =
     let inline MultiplicativeGroup<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't) and 't: (static member (/) :'t -> 't -> 't)>
         (set: ISet<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>
-        AbelianGroup(set, FSharpPlus.Math.Generic.(*), one, FSharpPlus.Math.Generic.(/) one)
-
+        let inv = FSharpPlus.Math.Generic.(/) one
+        let op = FSharpPlus.Math.Generic.(*)
+        {
+            new IMultiplicativeGroup<'t> with
+                    member x.Set = set.Set
+                    member x.Op = FSharpPlus.Math.Generic.(*)
+                    member x.Identity = one
+                    member x.Inverse = inv
+                    member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
+                        (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+        } 
     /// Define a group over a set which has an additive operator and zero and negation. 
     let inline AdditiveGroup<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
         (set: ISet<'t>) =
-        let id = LanguagePrimitives.GenericZero<'t>
-        AbelianGroup(set, Binary(+).DestructureBinary, id, (~-))
+        let zero = LanguagePrimitives.GenericZero<'t>
+        let op = Binary(+).DestructureBinary
+        { 
+                new IAdditiveGroup<'t> with
+                    member x.Set = set.Set
+                    member x.Op = op
+                    member x.Identity = zero
+                    member x.Inverse = (~-)
+                    member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
+                        (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+        }
+
+    let inline AdditiveAbelianGroup<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
+        (set: ISet<'t>) = 
+        let zero = LanguagePrimitives.GenericZero<'t>
+        let op = Binary(+).DestructureBinary
+        {
+            new AbelianGroup<'t>(set, Binary(+).DestructureBinary, LanguagePrimitives.GenericZero, (~-))
+                interface IAdditiveGroup<'t>
+                interface IGroup<'t> with
+                    member x.Set = set.Set
+                    member x.Op = op
+                    member x.Identity = zero
+                    member x.Inverse = (~-)
+                    member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
+                        (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+        }
 
     let Zero = FiniteAbelianGroup<N<1>, int>(Set.Zero, (*), 0, fun _ -> 0)

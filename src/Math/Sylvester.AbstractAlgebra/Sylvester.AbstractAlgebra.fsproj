@@ -35,6 +35,7 @@
     <Compile Include="Lattice.fs" />
     <Compile Include="BooleanAlgebra.fs" />
     <Compile Include="SetAlgebra.fs" />
+    <Compile Include="Field.fs" />
   </ItemGroup>
 
   <ItemGroup>

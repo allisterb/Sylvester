@@ -18,6 +18,7 @@ with
             (let s = x.Set :> Generic.IEnumerable<Set<'t>> in s |> Seq.sort).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = let s = x.Set :> Generic.IEnumerable<Set<'t>> in s.GetEnumerator() :> IEnumerator        
 
+[<AutoOpen>]
 module Subsets =
     type Set<'t when 't : equality> 
     with 

@@ -3,7 +3,7 @@
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
-/// Morphism between 2 structures of type t and u which each have at least one binary operator.
+/// Morphism between 2 structures of type ut and ut which have un and vn operations respectively.
 type Morph<'ut, 'vt, 'un, 'vn when 'ut : equality and 'vt : equality and 'un :> Number and 'vn :> Number> = 
 
 /// Morphism defined by a map from elements of the set of one structure to another.
