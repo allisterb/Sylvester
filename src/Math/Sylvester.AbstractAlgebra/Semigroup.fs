@@ -2,10 +2,15 @@
 
 open Sylvester.Arithmetic
 open Sylvester.Collections
+
 /// Set of elements closed under some left-associative operation.
+type ISemigroup<'t when 't: equality> =
+    inherit IGroupoid<'t>
+
 type Semigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     inherit Groupoid<'t>(set, op)
     do failIfNotLeftAssociative op
+    interface ISemigroup<'t>
     
 /// Set of elements closed under some left-associative commutative operation.
 type CommutativeSemigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =

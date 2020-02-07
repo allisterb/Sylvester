@@ -12,7 +12,7 @@ type IRing<'t when 't: equality> =
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type Ring<'t when 't: equality>(group: AbelianGroup<'t>, monoid: Monoid<'t>) =
-    inherit Struct<'t, card.two>(group.Set, arrayOf2 (group.Ops.[N10.zero]) (monoid.Ops.[N10.zero]))
+    inherit Struct<'t, card.four>(group.Set, arrayOf4 (group.Ops.[N10.zero]) (group.Ops.[N10.one]) (group.Ops.[N10.one]) (Binary(monoid.Op)) )
     do monoid.Op |> failIfNotDistributiveOver group.Op
     member val Op = group.Op
     member val Op2 = monoid.Op

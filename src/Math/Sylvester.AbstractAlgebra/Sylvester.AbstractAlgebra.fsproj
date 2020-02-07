@@ -28,11 +28,12 @@
     <Compile Include="Order.fs" />
     <Compile Include="Groupoid.fs" />
     <Compile Include="Semigroup.fs" />
-    <Compile Include="Lattice.fs" />
     <Compile Include="Monoid.fs" />
     <Compile Include="Arithmetic.fs" />
     <Compile Include="Group.fs" />
     <Compile Include="Ring.fs" />
+    <Compile Include="Lattice.fs" />
+    <Compile Include="BooleanAlgebra.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Base\Sylvester.Kinds\Sylvester.Kinds.fsproj" />
     <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
   </ItemGroup>
 

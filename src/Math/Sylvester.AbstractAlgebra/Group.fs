@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open System.Collections
+
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
@@ -24,11 +26,19 @@ type IGroup<'t when 't: equality> =
     inherit IInverse<'t>
     
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
-type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
-    inherit Monoid<'t>(set, op, id)
+type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+    inherit Struct<'t, card.three>(set, arrayOf3 (Binary(op)) (Nullary(ident)) (Unary(inv)))    
+    member val Op = op
+    member val Identity = ident
     member val Inverse = inv
-    interface IGroup<'t> with member val Inverse = inv
-    
+    interface IGroup<'t> with 
+        member val Op = op
+        member val Identity = ident
+        member val Inverse = inv
+        member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+
 type FiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, id, inv)
     member x.El0<'n when 'n :> card.one>() = (x, GroupElement<'order>(0))
@@ -45,7 +55,7 @@ type FiniteAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:F
 
 /// Category of groups with n structure-preserving morphisms.
 type Groups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Group<'ut>, r:Group<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
-    inherit Category<'ut, 'vt, card.one, card.one, 'n>(l, r, maps) 
+    inherit Category<'ut, 'vt, card.three, card.three, 'n>(l, r, maps) 
 
 [<AutoOpen>]
 module Group =

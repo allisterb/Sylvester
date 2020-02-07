@@ -1,20 +1,27 @@
 ﻿namespace Sylvester
 
+open System.Collections
+
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
 /// Set of elements closed under some left-associative operation with identity.
 type IMonoid<'t when 't: equality> = 
-    inherit IGroupoid<'t>
+    inherit ISemigroup<'t>
     inherit IIdentity<'t>
 
 /// Set of elements closed under some left-associative operation with identity element.
 type Monoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id: NullaryOp<'t>) =
-    inherit Semigroup<'t>(set, op)
+    inherit Struct<'t, card.two>(set, arrayOf2 (Binary(op)) (Nullary(id)))
     member val Op = op
     member val Identity = id
-    interface IMonoid<'t> with member val Identity = id
-   
+    interface IMonoid<'t> with 
+        member val Op = op
+        member val Identity = id
+        member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+
 /// Monoid with commutative operators.
 type CommutativeMonoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'t) =
     inherit Monoid<'t>(set, op, id)
@@ -22,7 +29,7 @@ type CommutativeMonoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'
 
 /// Category of monoids with n structure-preserving morphisms.
 type Monoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Monoid<'ut>, r:Monoid<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
-    inherit Category<'ut, 'vt, card.one, card.one,'n>(l, r, maps)
+    inherit Category<'ut, 'vt, card.two, card.two,'n>(l, r, maps)
 
 [<AutoOpen>]
 module Monoid =
