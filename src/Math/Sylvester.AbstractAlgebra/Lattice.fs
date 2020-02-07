@@ -95,7 +95,7 @@ type IComplementedLattic<'t when 't : equality> =
     inherit IBoundedLattice<'t>
     abstract Complement:UnaryOp<'t>
 
-type ComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, greatest:'t, least:'t, complement:UnaryOp<'t>) =
+type ComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, least:'t, greatest:'t, complement:UnaryOp<'t>) =
     inherit Struct<'t, card.five>(set, arrayOf5 (Binary(join)) (Binary(meet)) (Nullary(least)) (Nullary(greatest)) (Unary(complement)))
     let order = (fun a b -> (if (join a b) = a then false else true))
     interface IComplementedLattic<'t> with
@@ -115,7 +115,7 @@ type ComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>
 
         member val Complement = complement
 
-type DistributedComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, greatest:'t, least:'t, complement:UnaryOp<'t>) =
+type DistributedComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, least:'t, greatest:'t, complement:UnaryOp<'t>) =
     inherit ComplementedLattice<'t>(set, join, meet, least, greatest, complement)
     do (failIfNotDistributiveOver join meet) 
     do (failIfNotDistributiveOver meet join)
