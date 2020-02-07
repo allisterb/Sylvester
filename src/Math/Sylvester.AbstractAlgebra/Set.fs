@@ -94,7 +94,7 @@ with
         |Set _, Set _ ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
 
     interface IComparable<Set<'t>> with
-        member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else failwith "These sets do not have a subset relation and so are not comparable."
+        member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else 0
 
     interface IComparable with
         member a.CompareTo b = 
@@ -142,6 +142,8 @@ with
                 subsets
             
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a finite sequence instead."
+    
+    static member toSet(s: seq<'t>) = Seq s
     
     static member ofGen(gen:Gen<'t>) = Seq gen
 

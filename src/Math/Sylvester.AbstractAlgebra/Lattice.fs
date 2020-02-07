@@ -91,14 +91,14 @@ type BoundedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, mee
     new (set: ISet<'t>, join: IBoundedJoinSemiLattice<'t>, meet: IBoundedMeetSemiLattice<'t>) = 
         BoundedLattice(set, join.Op, meet.Op, join.Least, meet.Greatest)
 
-type IComplementedLattic<'t when 't : equality> =
+type IComplementedLattice<'t when 't : equality> =
     inherit IBoundedLattice<'t>
     abstract Complement:UnaryOp<'t>
 
 type ComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, least:'t, greatest:'t, complement:UnaryOp<'t>) =
     inherit Struct<'t, card.five>(set, arrayOf5 (Binary(join)) (Binary(meet)) (Nullary(least)) (Nullary(greatest)) (Unary(complement)))
     let order = (fun a b -> (if (join a b) = a then false else true))
-    interface IComplementedLattic<'t> with
+    interface IComplementedLattice<'t> with
         member val Set = set.Set
         member val Order = order
         member val Join = join 
