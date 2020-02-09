@@ -3,6 +3,8 @@
 open System
 open System.Collections
 
+open FSharp.Quotations
+open FSharp.Quotations.Patterns
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
@@ -19,20 +21,22 @@ type IEquivalenceRelation =
     inherit ISymmetricRelation
     inherit ITransitiveRelation
 
-type Relation<'t when 't : equality>(set: Set<'t * 't>) =
-    member x.Set = set
-    new(set: Set<'t>, f:LogicalPredicate<'t * 't>) = 
-        let p:Set<'t*'t> = (set * set) in Relation(p.Subset f)
-    member x.IsReflexive = set |> Seq.forall (fun(a, _) -> set.HasElement (a, a))
-    member x.IsSymmetric = set |> Seq.forall (fun(a, b) -> set.HasElement (b, a))
-    member x.IsTransitive = 
-        let mutable result = true
-        for (a, b) in set do
-            for (_b, c) in set |> Seq.filter (fun (r1, c) -> r1 = b) do
-                if (set.HasElement (a,c)) |> not then 
-                    result <- false
-        result
-
+type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t * 't>>) =
+    let v,t,e = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
+    member val Pred = v :?> LogicalPredicate<'t *'t>
+    member val Expr = e
+    member val ExprString = exprToString e
+    interface ISetBuilder<'t * 't> with
+        member val Pred = v :?> LogicalPredicate<'t * 't>
+        member val Expr = e
+        member val ExprString = exprToString e
+    member x.Set = let p:Set<'t*'t> = (set * set) in p.Subset x.Pred
+    interface Generic.IEnumerable<'t * 't> with
+        member x.GetEnumerator(): Generic.IEnumerator<'t * 't> = 
+            let s = x.Set :> Generic.IEnumerable<'t*'t> in s.GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (x.Set :> Generic.IEnumerable<'t * 't>).GetEnumerator () :> IEnumerator
+    interface ISet<'t * 't> with member x.Set = x.Set
+  
 [<AutoOpen>]
 module Relation = 
     type Set<'t when 't : equality> with
