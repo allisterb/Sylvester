@@ -12,7 +12,7 @@ type IRing<'t when 't: equality> =
     abstract member Op2:BinaryOp<'t>
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
-type Ring<'t when 't: equality>(group: AbelianGroup<'t>, op2: BinaryOp<'t>) =
+type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit Struct<'t, card.four>(group.Set, arrayOf4 (Binary(group.Op)) (Nullary(group.Identity)) (Unary(group.Inverse)) (Binary(op2)))
     do op2 |> failIfNotDistributiveOver group.Op
     member val Op = group.Op
@@ -31,14 +31,14 @@ type Ring<'t when 't: equality>(group: AbelianGroup<'t>, op2: BinaryOp<'t>) =
         Ring(AbelianGroup(set, op, ident, inv), op2)
 
 /// Ring where the 2nd operation is commutative.
-type CommutativeRing<'t when 't: equality>(group: AbelianGroup<'t>, op2: BinaryOp<'t>) =
+type CommutativeRing<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit Ring<'t>(group, op2)
     do failIfNotCommutative op2
     new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
         CommutativeRing(AbelianGroup(set, op, zero, inv), op2)
 
 /// Commutative ring with a total order relation.
-type OrderedRing<'t when 't: equality and 't : comparison>(group: AbelianGroup<'t>, op2: BinaryOp<'t>, order: Order<'t>) =
+type OrderedRing<'t when 't: equality and 't : comparison>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>, order: Order<'t>) =
     inherit CommutativeRing<'t>(group, op2)
     interface ITotalOrder<'t> with
         member val Set = group.Set
@@ -62,7 +62,7 @@ module Ring =
         let set = infiniteSeq  (fun x -> x >= 0) (id) in
         let order = (<=) in
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
+            new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -83,7 +83,7 @@ module Ring =
         let set = infiniteSeq  (fun x -> x <= 0) (fun n -> -n)
         let order = (<=)
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
+            new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -104,7 +104,7 @@ module Ring =
         let set = Zpos |+| Zneg
         let order = (<=)
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
+            new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -121,7 +121,7 @@ module Ring =
         let set = Zpos |^| 0
         let order = (<=)
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
+            new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface IWellOrder<int> with
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
             interface ITotalOrder<int> with

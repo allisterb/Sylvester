@@ -194,7 +194,6 @@ with
 
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
 
-
 and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Length = number<'n>
     member val Items = Array<'n, 't>(items)
