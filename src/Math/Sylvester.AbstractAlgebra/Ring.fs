@@ -6,19 +6,18 @@ open Sylvester.Arithmetic
 open Sylvester.Collections
 
 /// Set of elements closed under a left-associative commutative invertible operation with identity, 
-/// and a 2nd left-associative operation with identity which distributes over the first operation.
+/// and a 2nd left-associative operation which distributes over the first operation.
 type IRing<'t when 't: equality> =  
     inherit IGroup<'t>
     abstract member Op2:BinaryOp<'t>
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
-type Ring<'t when 't: equality>(group: AbelianGroup<'t>, monoid: Monoid<'t>) =
-    inherit Struct<'t, card.five>(group.Set, arrayOf5 (group.Ops.[N10.zero]) (group.Ops.[N10.one]) (group.Ops.[N10.two]) (Binary(monoid.Op)) (Nullary(monoid.Identity)))
-    do monoid.Op |> failIfNotDistributiveOver group.Op
+type Ring<'t when 't: equality>(group: AbelianGroup<'t>, op2: BinaryOp<'t>) =
+    inherit Struct<'t, card.four>(group.Set, arrayOf4 (Binary(group.Op)) (Nullary(group.Identity)) (Unary(group.Inverse)) (Binary(op2)))
+    do op2 |> failIfNotDistributiveOver group.Op
     member val Op = group.Op
-    member val Op2 = monoid.Op
+    member val Op2 = op2
     member val Group = group
-    member val Monoid = monoid
     interface IRing<'t> with
         member val Set = group.Set
         member val Op = group.Op
@@ -26,20 +25,21 @@ type Ring<'t when 't: equality>(group: AbelianGroup<'t>, monoid: Monoid<'t>) =
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         member val Identity = group.Identity
         member val Inverse = group.Inverse
-        member val Op2 = monoid.Op
+        member val Op2 = op2
 
-    new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
-        Ring(AbelianGroup(set, op, zero, inv), Monoid(set, op2, one))
+    new (set:ISet<'t>, op: BinaryOp<'t>, ident:'t, inv:UnaryOp<'t>, op2: BinaryOp<'t>) =
+        Ring(AbelianGroup(set, op, ident, inv), op2)
 
-/// Ring with a commutative monoid.
-type CommutativeRing<'t when 't: equality>(group: AbelianGroup<'t>, Monoid: CommutativeMonoid<'t>) =
-    inherit Ring<'t>(group, Monoid)
+/// Ring where the 2nd operation is commutative.
+type CommutativeRing<'t when 't: equality>(group: AbelianGroup<'t>, op2: BinaryOp<'t>) =
+    inherit Ring<'t>(group, op2)
+    do failIfNotCommutative op2
     new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
-        CommutativeRing(AbelianGroup(set, op, zero, inv), CommutativeMonoid(set, op2, one))
+        CommutativeRing(AbelianGroup(set, op, zero, inv), op2)
 
 /// Commutative ring with a total order relation.
-type OrderedRing<'t when 't: equality and 't : comparison>(group: AbelianGroup<'t>, monoid: CommutativeMonoid<'t>, order: Order<'t>) =
-    inherit CommutativeRing<'t>(group, monoid)
+type OrderedRing<'t when 't: equality and 't : comparison>(group: AbelianGroup<'t>, op2: BinaryOp<'t>, order: Order<'t>) =
+    inherit CommutativeRing<'t>(group, op2)
     interface ITotalOrder<'t> with
         member val Set = group.Set
         member val Order = order
@@ -52,17 +52,17 @@ type OrderedRing<'t when 't: equality and 't : comparison>(group: AbelianGroup<'
 [<AutoOpen>]
 module Ring =
     /// Zero ring.
-    let Zero = CommutativeRing(Group.Zero, Monoid.Zero)
+    let Zero = CommutativeRing(Group.Zero, (+))
     /// Additive ring.
-    let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op, id) =
-        Ring(AbelianGroup(set, Binary(+).DestructureBinary, LanguagePrimitives.GenericZero, (~-)), Monoid(set, op, id))
+    let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op2) =
+        Ring(AbelianGroup(set, Binary(+).DestructureBinary, LanguagePrimitives.GenericZero, (~-)), op2)
 
     /// Ring of positive integers.
     let Zpos =
         let set = infiniteSeq  (fun x -> x >= 0) (id) in
         let order = (<=) in
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), MultiplicativeMonoid(set), order) 
+            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -83,7 +83,7 @@ module Ring =
         let set = infiniteSeq  (fun x -> x <= 0) (fun n -> -n)
         let order = (<=)
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), MultiplicativeMonoid(set), order) 
+            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -104,7 +104,7 @@ module Ring =
         let set = Zpos |+| Zneg
         let order = (<=)
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), MultiplicativeMonoid(set), order) 
+            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -121,7 +121,7 @@ module Ring =
         let set = Zpos |^| 0
         let order = (<=)
         {
-            new OrderedRing<int>(AdditiveAbelianGroup(set), MultiplicativeMonoid(set), order) 
+            new OrderedRing<int>(AdditiveAbelianGroup(set), (*), order) 
                 interface IWellOrder<int> with
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
             interface ITotalOrder<int> with

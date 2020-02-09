@@ -22,7 +22,7 @@ with
 module Subsets =
     type Set<'t when 't : equality> 
     with 
-        member x.Subsets(f) = Subsets(x, x.Powerset |> Seq.filter f |> Set.toSet)
+        member x.Subsets(f) = Subsets(x, x.Powerset |> Seq.filter f |> Set.fromSeq)
 
 type SetAlgebra<'t when 't: equality>(subsets: Subsets<'t>, least: Set<'t>, greatest: Set<'t>) =
     inherit BooleanAlgebra<Set<'t>>(subsets, (|+|), (|*|), least, greatest, subsets.ParentSet.Complement)

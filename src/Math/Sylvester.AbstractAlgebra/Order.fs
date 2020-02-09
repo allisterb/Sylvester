@@ -7,6 +7,9 @@ open Sylvester.Collections
 /// A set of elements with a partial order relation i.e. an operation that is reflexive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
     inherit ISet<'t>
+    inherit IReflexiveRelation
+    inherit IAntiSymmetricRelation
+    inherit ITransitiveRelation
     inherit Generic.IEnumerable<'t>
     abstract Order: Order<'t>
     

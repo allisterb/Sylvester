@@ -18,8 +18,6 @@ type Set<'t when 't: equality> =
 /// A set of elements defined by a set builder statement.
 | Set of SetBuilder<'t>
 with 
-    interface ISet<'t> with member x.Set = x
-    
     interface IEquatable<Set<'t>> with
         member a.Equals b =
             match a, b with
@@ -29,7 +27,7 @@ with
 
             |Generator g1, Generator g2 -> g1.ExprString = g2.ExprString
             |Set expr1, Set expr2 ->  expr1 = expr2
-            |Seq _, Seq _ ->  a |> Seq.distinct |> Seq.forall (fun x -> b.HasElement x) && b |> Seq.distinct |> Seq.forall (fun x -> a.HasElement x)
+            |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && b |> Seq.forall (fun x -> a.HasElement x)
             
             |_,_ -> failwith "Cannot test a sequence and a set defined using a set builder statement for equality. Use 2 finite sequences or 2 set builders."
     
@@ -49,23 +47,12 @@ with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> s.GetEnumerator()
+            |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
             |Set s -> failwith "Cannot enumerate a set defined by a set builder statement. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
   
-    member x.Builder =
-        match x with
-        | Empty -> failwith "This set is the empty set."
-        | Set builder -> builder
-        | Seq s -> match s with | Generator gen -> SetBuilder(gen.Pred) | _ -> failwith "This sequence is not defined by a generating function."
-        
-    member x.Generator = 
-        match x with
-        | Seq s -> match s with | Generator gen -> gen | _ -> failwith "This sequence is not defined by a generating function."
-        | _ -> failwith "This set is not a sequence."
-
     /// Create a subset of the set using a predicate.
     member x.Subset(f: LogicalPredicate<'t>) = 
         match x with
@@ -75,7 +62,7 @@ with
         |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
 
     /// Determine if the set contains an element.
-    member x.HasElement(elem: 't) = 
+    member x.HasElement elem = 
         match x with
         |Empty -> false
         |Generator g -> g.HasElement elem
@@ -120,7 +107,7 @@ with
     member x.Length =
        match x with
        | Empty -> 0
-       | Seq s -> s |> Seq.distinct |> Seq.length
+       | Seq s -> s |> Seq.length
        | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
 
     member x.Powerset =
@@ -143,7 +130,7 @@ with
             
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a finite sequence instead."
     
-    static member toSet(s: seq<'t>) = Seq s
+    static member fromSeq(s: seq<'t>) = Seq s
     
     static member ofGen(gen:Gen<'t>) = Seq gen
 
@@ -192,7 +179,7 @@ with
     static member (|-|) (l:Set<'t>, r:'t) = l.Difference r
 
     /// Set relative complement operator: A |/| B = B \ A.
-    static member (|/|) (l:Set<'t>, r:Set<'t>) = r.Difference l
+    static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
 
     /// Set Cartesian product.
     static member (*) (l, r) = 
@@ -203,7 +190,10 @@ with
         |(Seq a, Seq b) -> Seq(Gen((fun (x,y) -> l.HasElement x && r.HasElement y), Seq.allPairs a b))
         |(_,_) -> SetBuilder(fun (x,y) -> l.HasElement x && r.HasElement y) |> Set
     
+    interface ISet<'t> with member x.Set = x
+
 and ISet<'t when 't: equality> = abstract member Set:Set<'t>
+
 
 and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Length = number<'n>
@@ -234,6 +224,7 @@ module Set =
     /// Set- element difference operator.
     let (|^|) (l:ISet<'t>) (r:'t) = l.Set.Difference r
 
+    let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     // n-wise functions based on http://fssnip.net/50 by ptan
    
     let triplewise (source: seq<_>) =

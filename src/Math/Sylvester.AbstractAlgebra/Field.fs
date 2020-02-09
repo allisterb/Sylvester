@@ -28,6 +28,10 @@ module Field =
     let ReF = Field(AdditiveGroup(float32s), MultiplicativeGroup(float32s))
     let Re = Field(AdditiveGroup(floats), MultiplicativeGroup(floats))
 
+    let openInterval left right = 
+        let subset = Re.Set.Subset(fun x -> x > left && x < right)
+        subset
+    
     let lineF (origin:float32) (step:float32) = infiniteSeq (fun x -> x >= origin) (fun n -> origin + (((float32) n) * step))
     let line (origin:float) (step:float) = infiniteSeq (fun x -> x >= origin) (fun n -> origin + (((float) n) * step))
     
