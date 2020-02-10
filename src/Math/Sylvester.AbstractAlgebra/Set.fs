@@ -18,6 +18,16 @@ type Set<'t when 't: equality> =
 /// A set of elements defined by a set builder statement.
 | Set of SetBuilder<'t>
 with 
+    interface IEnumerable<'t> with
+        member x.GetEnumerator () = 
+            match x with
+            |Empty -> Seq.empty.GetEnumerator()
+            |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
+            |Set s -> failwith "Cannot enumerate a set defined by a set builder statement. Use a sequence instead."
+                
+    interface IEnumerable with
+        member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
+
     interface IEquatable<Set<'t>> with
         member a.Equals b =
             match a, b with
@@ -27,7 +37,8 @@ with
 
             |Generator g1, Generator g2 -> g1.ExprString = g2.ExprString
             |Set expr1, Set expr2 ->  expr1 = expr2
-            |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && b |> Seq.forall (fun x -> a.HasElement x)
+            |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && 
+                              b |> Seq.forall (fun x -> a.HasElement x)
             
             |_,_ -> failwith "Cannot test a sequence and a set defined using a set builder statement for equality. Use 2 finite sequences or 2 set builders."
     
@@ -43,22 +54,12 @@ with
         | Seq s -> s.GetHashCode()
         | Set p -> p.ExprString.GetHashCode()
 
-    interface IEnumerable<'t> with
-        member x.GetEnumerator () = 
-            match x with
-            |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
-            |Set s -> failwith "Cannot enumerate a set defined by a set builder statement. Use a sequence instead."
-                
-    interface IEnumerable with
-        member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
-  
     /// Create a subset of the set using a predicate.
     member x.Subset(f: LogicalPredicate<'t>) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Generator g -> Seq(SetGenerator((fun x -> g.Pred(x) && f(x)), g.Seq |> Seq.filter f))
-        |Seq s -> Seq(s |> Seq.filter f) 
+        |Generator g -> Seq(SetGenerator((fun x -> g.Pred(x) && f(x)), x |> Seq.filter f))
+        |Seq _ -> Seq(x |> Seq.filter f) 
         |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
 
     /// Determine if the set contains an element.
@@ -98,8 +99,8 @@ with
     member a.Difference b =
         match a with
         | Empty -> Empty
-        | Generator g -> SetGenerator((fun x -> g.Pred(x) && not(x = b)), g.Seq |> Seq.except [b]) |> Set.ofGen
-        | Seq s -> Seq(s |> Seq.except [b])
+        | Generator g -> SetGenerator((fun x -> g.Pred(x) && not(x = b)), a |> Seq.except [b]) |> Set.ofGen
+        | Seq _ -> Seq(a |> Seq.except [b])
         | Set builder -> SetBuilder(fun x -> builder.Pred(x) && not(x = b)) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
@@ -107,13 +108,13 @@ with
     member x.Length =
        match x with
        | Empty -> 0
-       | Seq s -> s |> Seq.length
+       | Seq _ -> x |> Seq.length
        | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
 
-    member x.Powerset =
-        match x with
+    member a.Powerset =
+        match a with
         | Empty -> failwith "The empty set has no subsets."
-        | Seq c ->
+        | Seq _ ->
                 // From http://www.fssnip.net/ff/title/Sequence-of-all-Subsets-of-a-set by Isaiah Permulla
                 // using bit pattern to generate subsets
                 let max_bits x = 
@@ -122,14 +123,16 @@ with
                 
                 let bit_setAt i x = ((1 <<< i) &&& x) <> 0
                 let subsets = 
-                        let len = Seq.length c
+                        let len = a.Length
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
-                                                if (bit_setAt i x) && (i < len) then yield Seq.item i c}
+                                                if (bit_setAt i x) && (i < len) then yield Seq.item i a}
                         Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
                 subsets
             
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a finite sequence instead."
     
+    member x.Prod:Set<'t * 't> = Seq(Gen ((fun (a, b) -> x.HasElement a && x.HasElement b), Seq.allPairs x x))
+
     static member fromSeq(s: seq<'t>) = Seq s
     
     static member ofGen(gen:Gen<'t>) = Seq gen
@@ -147,7 +150,7 @@ with
         |(Empty, x) -> x
         |(x, Empty) -> x
         
-        |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[a; b]) |> Set.ofGen
+        |(Seq _, Seq _) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[l; r]) |> Set.ofGen
         |(_, _) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
         
     /// Set intersection operator.

@@ -44,10 +44,10 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<
     member val Pred = pv :?> LogicalPredicate<'t>
     member val Expr = pe
     member val ExprString = exprToString pe
-    member val Seq = s
+    ///member val Seq = s
     member x.HasElement elem = x.Pred elem
     interface IEnumerable<'t> with
-        member x.GetEnumerator () = x.Seq.GetEnumerator() 
+        member x.GetEnumerator () = s.GetEnumerator() 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
     interface ISetBuilder<'t> with

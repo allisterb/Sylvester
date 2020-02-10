@@ -23,6 +23,7 @@ type IEquivalenceRelation =
 
 type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t * 't>>) =
     let v,t,e = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
+    member val ParentSet = set
     member val Pred = v :?> LogicalPredicate<'t *'t>
     member val Expr = e
     member val ExprString = exprToString e
@@ -30,13 +31,14 @@ type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>]
         member val Pred = v :?> LogicalPredicate<'t * 't>
         member val Expr = e
         member val ExprString = exprToString e
-    member x.Set = let p:Set<'t*'t> = (set * set) in p.Subset x.Pred
-    interface Generic.IEnumerable<'t * 't> with
-        member x.GetEnumerator(): Generic.IEnumerator<'t * 't> = 
-            let s = x.Set :> Generic.IEnumerable<'t*'t> in s.GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (x.Set :> Generic.IEnumerable<'t * 't>).GetEnumerator () :> IEnumerator
+    member x.Set = set.Prod.Subset(x.Pred)
     interface ISet<'t * 't> with member x.Set = x.Set
-  
+    interface Generic.IEnumerable<'t * 't> with
+        member x.GetEnumerator(): Generic.IEnumerator<'t * 't> =
+            let s = x.Set :> Generic.IEnumerable<'t *'t> in s.GetEnumerator()
+        member x.GetEnumerator(): IEnumerator = (x.Set :> Generic.IEnumerable<'t * 't>).GetEnumerator () :> IEnumerator
+    
+    
 [<AutoOpen>]
 module Relation = 
     type Set<'t when 't : equality> with

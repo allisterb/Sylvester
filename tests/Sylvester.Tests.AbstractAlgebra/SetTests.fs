@@ -30,3 +30,10 @@ module Set =
 
         let d = s1 |-| s2
         Assert.Equal(3, d.Length)
+
+
+    [<Fact>]
+    let ``Can get distinct``() = 
+        let lt = [|5;6;6;7;8|] |> Set.fromSeq
+        Assert.Equal(4, lt.Length)
+          
