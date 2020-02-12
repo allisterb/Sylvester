@@ -1,42 +1,25 @@
 ﻿namespace Sylvester
 
-open System.Collections
-
-type Subsets<'t when 't : equality > = Subsets of Set<'t> * Set<Set<'t>>
-with
-    member x.ParentSet = 
-        let (Subsets(set, _)) = x in set
-    member x.Set = 
-        let (Subsets(_, subsets)) = x in subsets
-    member x.FailIfDoesNotContainParent() = if not(x.Set.HasElement x.ParentSet) then failwith "This set of subsets does not contain the parent set as a distinguished element."
-    member x.FailIfDoesNotContainDistinguishedEmpty() = if not(x.Set.HasElement Empty) then failwith "This set of subsets does not contain the empty set as a distinguished element."
-    interface ITotalOrder<Set<'t>> with
-        member x.Set = x.Set
-        member x.Order = (<)
-    interface Generic.IEnumerable<Set<'t>> with
-        member x.GetEnumerator(): Generic.IEnumerator<Set<'t>> = 
-            (let s = x.Set :> Generic.IEnumerable<Set<'t>> in s |> Seq.sort).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = let s = x.Set :> Generic.IEnumerable<Set<'t>> in s.GetEnumerator() :> IEnumerator        
-
-[<AutoOpen>]
-module Subsets =
-    type Set<'t when 't : equality> 
-    with 
-        member x.Subsets(f) = Subsets(x, x.Powerset |> Seq.filter f |> Set.fromSeq)
-
-type SetAlgebra<'t when 't: equality>(subsets: Subsets<'t>, least: Set<'t>, greatest: Set<'t>) =
-    inherit BooleanAlgebra<Set<'t>>(subsets, (|+|), (|*|), least, greatest, subsets.ParentSet.Complement)
-    member x.Subsets = subsets
+type SetAlgebra<'t when 't: equality>(set:Set<'t>, subsets: Set<Set<'t>>) =
+    inherit BooleanAlgebra<Set<'t>>(OrderedSet(subsets), (|+|), (|*|), Seq.min subsets, Seq.max subsets, set.Complement)
+    member val Subsets = OrderedSet(subsets)
     member x.AsLattice = x :> IComplementedLattice<Set<'t>>        
     interface ITotalOrder<Set<'t>>
-    interface Generic.IEnumerable<Set<'t>> with
-        member x.GetEnumerator(): Generic.IEnumerator<Set<'t>> = 
-            (let s = x.Set :> Generic.IEnumerable<Set<'t>> in s |> Seq.sort).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = let s = x.Set :> Generic.IEnumerable<Set<'t>> in s.GetEnumerator() :> IEnumerator        
-    new(subsets:Subsets<'t>) = SetAlgebra(subsets, Seq.min subsets, Seq.max subsets)
-    new(set: Set<'t>) = SetAlgebra(Subsets(set, set.Powerset)) 
+    new(set: Set<'t>) = SetAlgebra(set, set.Powerset) 
 
-type SigmaAlgebra<'t when 't: equality>(subsets: Subsets<'t>) =
-    inherit SetAlgebra<'t>(subsets)
-    do subsets.FailIfDoesNotContainParent()
-    do subsets.FailIfDoesNotContainDistinguishedEmpty()
+type SigmaAlgebra<'t when 't: equality>(set:Set<'t>, subsets: Set<Set<'t>>) =
+    inherit SetAlgebra<'t>(set, subsets)
+    do if not(subsets.HasElement set) then failwith "This set of subsets does not contain the parent set as a distinguished element."
+    do if not(subsets.HasElement Empty) then failwith "This set of subsets does not contain the empty set as a distinguished element."
+    new(set: Set<'t>) = SigmaAlgebra(set, set.Powerset)
+
+[<AutoOpen>]
+module SetAlgebra =
+    type Set<'t when 't : equality> with
+        member x.AsAlgebra = SetAlgebra(x)
+        static member ToAlgebra (s:Set<Set<'t>>) = s.AsAlgebra 
+        member x.ToAlgebra(f) = Gen((fun s -> x.Powerset.HasElement s && f s), x.Powerset |> Seq.filter f) |> Set.ofGen |> Set.ToAlgebra
+        member x.AsSigmaAlgebra = SigmaAlgebra(x)
+        static member ToSigmaAlgebra (s:Set<Set<'t>>) = s.AsSigmaAlgebra
+        static member ToSigmaAlgebra (s:Set<'t>) = s.Powerset.AsSigmaAlgebra
+        member x.ToSigmaAlgebra(f) = Gen((fun s -> x.Powerset.HasElement s && f s), x.Powerset |> Seq.filter f) |> Set.ofGen |> Set.ToSigmaAlgebra

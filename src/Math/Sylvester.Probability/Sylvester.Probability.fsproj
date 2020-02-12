@@ -5,12 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="ProbabilityMeasure.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\tests\Sylvester.Tests.AbstractAlgebra\Sylvester.Tests.AbstractAlgebra.fsproj" />
-    <ProjectReference Include="..\Sylvester.RealAnalysis\Sylvester.RealAnalysis.fsproj" />
+    <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
   </ItemGroup>
 
 </Project>

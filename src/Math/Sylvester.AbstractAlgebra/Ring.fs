@@ -21,12 +21,11 @@ type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     interface IRing<'t> with
         member val Set = group.Set
         member val Op = group.Op
+        member val Op2 = op2
+        member val Identity = group.Identity
+        member val Inverse = group.Inverse        
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (group.Op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
-        member val Identity = group.Identity
-        member val Inverse = group.Inverse
-        member val Op2 = op2
-
     new (set:ISet<'t>, op: BinaryOp<'t>, ident:'t, inv:UnaryOp<'t>, op2: BinaryOp<'t>) =
         Ring(AbelianGroup(set, op, ident, inv), op2)
 

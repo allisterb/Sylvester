@@ -74,7 +74,7 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
         member val Set = set.Set
         member val Order = order
         member x.GetEnumerator(): Generic.IEnumerator<'t> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if (order a b) then 0 else 1)).GetEnumerator()
+            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if (order a b) then -1 else 1)).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
 /// A set of elements with a total order relation.
