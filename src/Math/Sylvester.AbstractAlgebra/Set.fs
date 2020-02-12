@@ -172,6 +172,12 @@ with
         |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), a.Intersect b) |> Set.ofGen
         |(_, _) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
 
+    /// Set create subset operator.
+    static member (|>|) (l:Set<'t>, r:LogicalPredicate<'t>) = l.Subset r
+
+    /// Set filter subsets operator.
+    static member (|>>|) (l:Set<'t>, r:LogicalPredicate<Set<'t>>) = l.Powerset |> Seq.filter r
+
     /// Set has subset operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
 
@@ -219,6 +225,12 @@ module Set =
 
     /// Set subset relation.
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
+
+    /// Set create subset
+    let (|>|) (l:ISet<'t>) (r:LogicalPredicate<'t>) = l.Set |>| r
+    
+    /// Set filter subset
+    let (|>>|) (l:ISet<'t>) (r:LogicalPredicate<Set<'t>>) = l.Set.Powerset |>| r
     
     /// Set difference operator.
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
@@ -227,6 +239,7 @@ module Set =
     let (|^|) (l:ISet<'t>) (r:'t) = l.Set.Difference r
 
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
+    
     // n-wise functions based on http://fssnip.net/50 by ptan
    
     let triplewise (source: seq<_>) =

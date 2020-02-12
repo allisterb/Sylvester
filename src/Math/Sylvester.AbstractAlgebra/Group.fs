@@ -31,6 +31,11 @@ type IAdditiveGroup<'t when 't: equality> = inherit IAbelianGroup<'t>
 
 type IMultiplicativeGroup<'t when 't: equality> = inherit IAbelianGroup<'t>
 
+type ISubGroup<'t when 't: equality> = 
+    inherit IGroup<'t>
+    abstract Parent:IGroup<'t> 
+
+type ISubGroup<'order, 't when 'order :> Number and 't : equality> = inherit ISubGroup<'t>
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Struct<'t, card.three>(set, arrayOf3 (Binary(op)) (Nullary(ident)) (Unary(inv)))    
@@ -44,19 +49,33 @@ type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: U
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
-
+    member x.Subgroup(p:LogicalPredicate<'t>) = 
+        { 
+            new ISubGroup<'t> with 
+                member a.Parent = x :> IGroup<'t>
+                member a.Set = x.Set.Subset p
+                member a.Op = x.Op
+                member a.Identity = x.Identity
+                member a.Inverse  = x.Inverse
+                member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
+                     (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+                 member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+ 
+        } 
+    static member (|>|) (l:Group<'t> , r:LogicalPredicate<'t> when 't : equality) = l.Subgroup r
+ 
 type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, id, inv)
     do failIfNotCommutative op
     interface IAbelianGroup<'t>
 
-type FiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
-    inherit Group<'t>(set, op, id, inv)
+type FiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+    inherit Group<'t>(set, op, ident, inv)
     member x.El0<'n when 'n :> card.one>() = (x, GroupElement<'order>(0))
     member x.El1<'n when 'n :> card.two>() = (x, GroupElement<'order>(0), GroupElement<'order>(1))
 
-type FiniteAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
-    inherit FiniteGroup<'order, 't>(set, op, id, inv)
+type FiniteAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+    inherit FiniteGroup<'order, 't>(set, op, ident, inv)
     do failIfNotCommutative op
     interface IAbelianGroup<'t>
 

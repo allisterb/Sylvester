@@ -33,6 +33,7 @@
     <Compile Include="Arithmetic.fs" />
     <Compile Include="Group.fs" />
     <Compile Include="Ring.fs" />
+    <Compile Include="Ideal.fs" />
     <Compile Include="Lattice.fs" />
     <Compile Include="BooleanAlgebra.fs" />
     <Compile Include="SetAlgebra.fs" />

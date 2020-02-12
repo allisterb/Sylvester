@@ -38,7 +38,6 @@ type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>]
             let s = x.Set :> Generic.IEnumerable<'t *'t> in s.GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x.Set :> Generic.IEnumerable<'t * 't>).GetEnumerator () :> IEnumerator
     
-    
 [<AutoOpen>]
 module Relation = 
     type Set<'t when 't : equality> with
