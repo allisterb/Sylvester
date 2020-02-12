@@ -70,6 +70,7 @@ with
         |Seq s -> s.Contains elem // May fail if sequence is infinite
         |Set s -> s.Pred elem
     
+    /// Determine if the set contains another set as a subset.
     member a.HasSubset b =
         match a, b with
         | Empty, Empty -> false
@@ -105,12 +106,14 @@ with
         
     member a.Complement (b:Set<'t>) = b.Difference a
     
+    /// Number of elements in the set. 
     member x.Length =
        match x with
        | Empty -> 0
        | Seq _ -> x |> Seq.length
        | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
 
+    /// Set of all subsets.
     member a.Powerset =
         match a with
         | Empty -> failwith "The empty set has no subsets."
@@ -129,9 +132,11 @@ with
                         Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
                 subsets
             
-        | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a finite sequence instead."
+        | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a sequence instead."
     
-    member x.Prod:Set<'t * 't> = Seq(Gen ((fun (a, b) -> x.HasElement a && x.HasElement b), Seq.allPairs x x))
+    /// Cartesian product of set elements.
+    member x.Prod:Set<'t * 't> = 
+        Seq(Gen ((fun (a, b) -> x.HasElement a && x.HasElement b), cart x))
 
     static member fromSeq(s: seq<'t>) = Seq s
     
@@ -176,7 +181,7 @@ with
     static member (|>|) (l:Set<'t>, r:LogicalPredicate<'t>) = l.Subset r
 
     /// Set filter subsets operator.
-    static member (|>>|) (l:Set<'t>, r:LogicalPredicate<Set<'t>>) = l.Powerset |> Seq.filter r
+    static member (|>>|) (l:Set<'t>, r:LogicalPredicate<Set<'t>>) = l.Powerset.Subset r
 
     /// Set has subset operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
@@ -196,7 +201,7 @@ with
         |(_, Empty) -> Empty
         |(Empty, _) -> Empty
 
-        |(Seq a, Seq b) -> Seq(Gen((fun (x,y) -> l.HasElement x && r.HasElement y), Seq.allPairs a b))
+        |(Seq a, Seq b) -> Seq(Gen((fun (x,y) -> l.HasElement x && r.HasElement y), cart2 a b))
         |(_,_) -> SetBuilder(fun (x,y) -> l.HasElement x && r.HasElement y) |> Set
     
     interface ISet<'t> with member x.Set = x
@@ -212,6 +217,7 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
+    new (items:seq<'t>) = FiniteSet(items |> Seq.toArray)
 
 and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
 
@@ -240,58 +246,9 @@ module Set =
 
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    // n-wise functions based on http://fssnip.net/50 by ptan
-   
-    let triplewise (source: seq<_>) =
-        seq { 
-            use e = source.GetEnumerator() 
-            if e.MoveNext() then
-                let i = ref e.Current
-                if e.MoveNext() then
-                    let j = ref e.Current
-                    while e.MoveNext() do
-                        let k = e.Current 
-                        yield (!i, !j, k)
-                        i := !j
-                        j := k 
-        }
+    /// Cartesian product operator.
+    let (|**|) (l:ISet<'t>) (r:ISet<'t>) = l.Set * r.Set
 
-    let quadwise (source: seq<_>) =
-        seq { 
-            use e = source.GetEnumerator() 
-            if e.MoveNext() then
-                let i = ref e.Current
-                if e.MoveNext() then
-                    let j = ref e.Current
-                    if e.MoveNext() then
-                        let k = ref e.Current
-                        while e.MoveNext() do
-                            let l = e.Current
-                            yield (!i, !j, !k, l)
-                            i := !j
-                            j := !k
-                            k := l
-            }
-
-    let quintwise (source: seq<_>) =
-        seq { 
-            use e = source.GetEnumerator() 
-            if e.MoveNext() then
-                let i = ref e.Current
-                if e.MoveNext() then
-                    let j = ref e.Current
-                    if e.MoveNext() then
-                        let k = ref e.Current
-                        if e.MoveNext() then
-                            let l = ref e.Current
-                            while e.MoveNext() do
-                                let m = e.Current
-                                yield (!i, !j, !k, !l, m)
-                                i := !j
-                                j := !k
-                                k := !l
-                                l :=  m
-        }
 
     let infiniteSeq f g = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
 
