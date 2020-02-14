@@ -93,7 +93,7 @@ module Ring =
                     member x.Maximal = 0
                     member x.UpperBound = 0
                 interface IWellOrder<int> with
-                    member x.Least(subset:Set<int>) = subset |> Seq.sortWith (fun a b -> (if order a b then -1 else 1)) |> Seq.item 0
+                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
                 interface IEnumerable with
@@ -110,7 +110,7 @@ module Ring =
                     member x.Set = set
                     member x.Order = order
                 interface IWellOrder<int> with
-                    member x.Least(subset:Set<int>) = subset |> Seq.sortWith (fun a b -> (if order a b then -1 else 1)) |> Seq.item 0
+                    member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
                 interface IEnumerable with

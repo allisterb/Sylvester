@@ -112,7 +112,6 @@ type ComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>
         member x.GetEnumerator(): Generic.IEnumerator<'t> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then -1 else 1))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then -1 else 1)).GetEnumerator() :> IEnumerator        
-
         member val Complement = complement
 
 type DistributedComplementedLattice<'t when 't: equality>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, least:'t, greatest:'t, complement:UnaryOp<'t>) =

@@ -91,12 +91,13 @@ module SetBuilder =
     let cart (source: seq<'a>) =
         seq { 
             use e = source.GetEnumerator() 
-            let prev = new System.Collections.Generic.List<'a>()
+            let prev = new System.Collections.Generic.List<'a ref>()
            
             while e.MoveNext() do
                 let i = ref e.Current
-                prev.Add !i
-                yield! seq {for p in prev do yield (!i, p)}
+                prev.Add i
+                yield! seq {for p in prev do yield (!i, !p)}
+                yield! seq {for p in prev do yield (!p, !i)}
                  
         }
 
@@ -104,14 +105,14 @@ module SetBuilder =
         seq { 
             use e1 = source1.GetEnumerator()
             use e2 = source2.GetEnumerator()
-            let prev = new System.Collections.Generic.List<'a *'b>()
+            let prev = new System.Collections.Generic.List<'a ref *'b ref>()
            
             while (e1.MoveNext() && e2.MoveNext()) do
                 let i = ref e1.Current
                 let j = ref e2.Current
-                prev.Add ((!i, !j))
-                yield! seq {for p in prev do yield (!i, snd p)}
-                yield! seq {for p in prev do yield (fst p, !j)} 
+                prev.Add ((i, j))
+                yield! seq {for p in prev do yield (!i, !(snd p))}
+                yield! seq {for p in prev do yield (!(fst p), !j)} 
         }
 
 

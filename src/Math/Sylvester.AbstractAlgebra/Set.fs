@@ -70,6 +70,8 @@ with
         |Seq s -> s.Contains elem // May fail if sequence is infinite
         |Set s -> s.Pred elem
     
+    member x.Indicate elem = if x.HasElement elem then 1 else 0
+
     /// Determine if the set contains another set as a subset.
     member a.HasSubset b =
         match a, b with
@@ -123,21 +125,22 @@ with
                 let max_bits x = 
                     let rec loop acc = if (1 <<< acc ) > x then acc else loop (acc + 1)
                     loop 0
-                
+            
                 let bit_setAt i x = ((1 <<< i) &&& x) <> 0
                 let subsets = 
                         let len = a.Length
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i a}
-                        Seq(seq{for i in 0 .. (1 <<< len)-1 -> let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
-                subsets
-            
+                        Seq(seq{for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
+                subsets    
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a sequence instead."
-    
-    /// Cartesian product of set elements.
-    member x.Prod:Set<'t * 't> = 
-        Seq(Gen ((fun (a, b) -> x.HasElement a && x.HasElement b), cart x))
 
+    member x.Prod = 
+        match x with
+        |Empty -> Empty
+        |Seq s -> Seq(Gen((fun (a,b) -> x.HasElement a && x.HasElement b), cart s))
+        |Set _ -> SetBuilder(fun (a,b) -> x.HasElement a && x.HasElement b) |> Set
+    
     static member fromSeq(s: seq<'t>) = Seq s
     
     static member ofGen(gen:Gen<'t>) = Seq gen
