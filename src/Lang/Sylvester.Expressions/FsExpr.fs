@@ -81,4 +81,11 @@ module FsExpr =
         | ShapeVar v -> Expr.Var v
         | ShapeLambda (v,expr) -> Expr.Lambda (v,transform expr)
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map transform exprs)
+
+    let traverseExprShape quotation f =
+        match quotation with
+        | ShapeVar v -> Expr.Var v
+        | ShapeLambda (v,expr) -> Expr.Lambda (v, f expr)
+        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
+
     
