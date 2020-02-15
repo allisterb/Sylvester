@@ -151,6 +151,8 @@ with
             | FiniteSeq -> Seq(s |> Seq.distinct |> Seq.toArray)
             | NonFiniteSeq -> Seq(s |> Seq.distinct |> Seq.toArray)
         set.Powerset
+
+    static member toProd(s:Set<'t>) = s.Prod
  
     /// Set union operator.
     static member (|+|) (l, r) = 

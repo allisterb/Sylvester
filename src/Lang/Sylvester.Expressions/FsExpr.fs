@@ -36,8 +36,6 @@ type FsExpr<'t>([<ReflectedDefinition(true)>] expr: Expr<'t>) =
             FsStmt(stmt, parameters)
         ()
             
-
-  
 [<AutoOpen>]
 module FsExpr =
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
@@ -71,5 +69,16 @@ module FsExpr =
 
         rexpand Map.empty expr
     
+    // Traverse and transform based on: http://fortysix-and-two.blogspot.com/2009/06/traversing-and-transforming-f.html
+    let rec traverse quotation =
+        match quotation with
+        | ShapeVar v -> ()
+        | ShapeLambda (v,expr) -> traverse expr
+        | ShapeCombination (o, exprs) -> List.map traverse exprs |> ignore
 
+    let rec transform quotation =
+        match quotation with
+        | ShapeVar v -> Expr.Var v
+        | ShapeLambda (v,expr) -> Expr.Lambda (v,transform expr)
+        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map transform exprs)
     
