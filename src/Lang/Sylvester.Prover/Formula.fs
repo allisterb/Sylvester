@@ -37,14 +37,35 @@ module ArithmeticPatterns =
         match expr with
         | SpecificCall <@@ (*) @@> (None, _,l::r::[]) -> Some(l, r)
         | _ -> None
+        
+    let (|Range|_|) (expr:Expr) =
+        match expr with
+        | SpecificCall <@@ (..) @@> (None, _,l::r::[]) -> Some(l,r)
+        | _ -> None
+
+    let (|Sum|_|) (expr:Expr) =
+        match expr with
+        | Call(None, m, Range(l,r)::[]) when m.Name = "CreateSequence" -> Some (l, r)
+        | _ -> None
+
    
+
 [<AutoOpen>]
 module ArithmeticRules =
     open ArithmeticPatterns
-    let rec reduceConstantIntOperands expr =
+    
+    let rec reduceConstantIntOperands (expr:Expr) =
         match expr with
         | Addition(Addition(l, Int32 lval), Int32 rval) -> let s = Expr.Value(lval + rval) in <@@ %%l + %%s @@>
         | _ -> traverseExprShape expr reduceConstantIntOperands
-       
+    
+    let rec replaceSum (expr:Expr) =
+        match expr with
+        | Sum (l, r) -> expr
+        | _ -> traverseExprShape expr replaceSum
+
+    
+    //let reduce sum =
+    
 
 
