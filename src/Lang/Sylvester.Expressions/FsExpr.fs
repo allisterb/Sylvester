@@ -6,18 +6,6 @@ open System.Text.RegularExpressions
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Quotations
 
-open Swensen.Unquote
-open Swensen.Unquote.Decompilation
-open Swensen.Utils
-
-module P = Microsoft.FSharp.Quotations.Patterns
-module DP = Microsoft.FSharp.Quotations.DerivedPatterns
-
-module EP = Swensen.Unquote.ExtraPatterns
-module ER = Swensen.Unquote.ExtraReflection
-module OP = Swensen.Unquote.OperatorPrecedence
-module CC = Swensen.Unquote.Decompilation.CustomContext
-
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
@@ -38,6 +26,27 @@ type FsExpr<'t>([<ReflectedDefinition(true)>] expr: Expr<'t>) =
             
 [<AutoOpen>]
 module FsExpr =
+    let sequal (l:Expr) (r:Expr) = l.ToString() = r.ToString()
+    
+    let sequal2 (l1:Expr) (l2:Expr) (r1:Expr) (r2:Expr) = sequal l1 r1 && sequal l2 r2
+    
+    let sequal3 (l1:Expr) (l2:Expr) (l3:Expr) (r1:Expr) (r2:Expr) (r3:Expr)= sequal l1 r1 && sequal l2 r2 && sequal l3 r3
+
+    let src expr = decompile expr
+    
+    let split expr =
+        match expr with
+        | Call(None, _, l::r::[]) -> (l, r)
+        | Lambda(v, Call(None, m, l::r::[])) -> (Expr.Lambda(v, l), Expr.Lambda(v, r))
+        | _ -> failwithf "Cannot split expression %A." (src expr)
+    
+
+    let traverse quotation f =
+        match quotation with
+        | ShapeVar v -> Expr.Var v
+        | ShapeLambda (v,expr) -> Expr.Lambda (v, f expr)
+        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
+
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.
     let expand expr =
@@ -55,11 +64,7 @@ module FsExpr =
             // If the variable has an assignment, then replace it with the expression
             | ExprShape.ShapeVar v when Map.containsKey v vars -> vars.[v]    
             // Else apply rexpand recursively on all sub-expressions
-            | ExprShape.ShapeVar v -> Expr.Var v        
-            | ExprShape.ShapeLambda(v, expr) -> Expr.Lambda(v, rexpand vars expr)
-            | ExprShape.ShapeCombination(o, exprs) ->
-                ExprShape.RebuildShapeCombination(o, List.map (rexpand vars) exprs)
-
+            | _ -> traverse expr (rexpand vars)
           // After expanding, try reducing the expression - we can replace 'let' expressions and applications where the first argument is lambda.
           match expanded with
           | Application(ExprShape.ShapeLambda(v, body), assign)
@@ -69,23 +74,13 @@ module FsExpr =
 
         rexpand Map.empty expr
     
-    // Traverse and transform based on: http://fortysix-and-two.blogspot.com/2009/06/traversing-and-transforming-f.html
-    let rec traverse quotation =
-        match quotation with
-        | ShapeVar v -> ()
-        | ShapeLambda (v,expr) -> traverse expr
-        | ShapeCombination (o, exprs) -> List.map traverse exprs |> ignore
+    let expandReflectedDefinitionParam = 
+        function
+        | WithValue(v, _, e) -> (v, expand e)
+         
+        | _ -> failwith "Expression is not a reflected definition."
 
-    let rec transform quotation =
-        match quotation with
-        | ShapeVar v -> Expr.Var v
-        | ShapeLambda (v,expr) -> Expr.Lambda (v,transform expr)
-        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map transform exprs)
+    
 
-    let traverseExprShape quotation f =
-        match quotation with
-        | ShapeVar v -> Expr.Var v
-        | ShapeLambda (v,expr) -> Expr.Lambda (v, f expr)
-        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
 
     
