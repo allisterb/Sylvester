@@ -2,28 +2,13 @@
 
 open System
 open System.Reflection
-open System.Text.RegularExpressions
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Quotations
 
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
-    
-type FsExpr<'t>([<ReflectedDefinition(true)>] expr: Expr<'t>) = 
-    member x.Expr = expr
-    member x.Decompile((processor:FsStmt -> unit)) =
-        let stmtProcessor (str: string, parameters: obj list) =
-            let stripFormatting s =
-                let i = ref -1
-                let eval (rxMatch: Match) =
-                    incr i
-                    sprintf "@p%d" !i
-                Regex.Replace(s, "%.", eval)
-            let stmt = stripFormatting str
-            FsStmt(stmt, parameters)
-        ()
-            
+                
 [<AutoOpen>]
 module FsExpr =
     let sequal (l:Expr) (r:Expr) = l.ToString() = r.ToString()
@@ -40,7 +25,6 @@ module FsExpr =
         | Lambda(v, Call(None, m, l::r::[])) -> (Expr.Lambda(v, l), Expr.Lambda(v, r))
         | _ -> failwithf "Cannot split expression %A." (src expr)
     
-
     let traverse quotation f =
         match quotation with
         | ShapeVar v -> Expr.Var v
@@ -77,10 +61,4 @@ module FsExpr =
     let expandReflectedDefinitionParam = 
         function
         | WithValue(v, _, e) -> (v, expand e)
-         
-        | _ -> failwith "Expression is not a reflected definition."
-
-    
-
-
-    
+        | _ -> failwith "Expression is not a reflected definition parameter."

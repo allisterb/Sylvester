@@ -1,32 +1,28 @@
 ﻿namespace Sylvester
 
-open System
-
-open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Quotations
-open FSharp.Quotations.Patterns
-open FSharp.Quotations.DerivedPatterns
-open FSharp.Quotations.ExprShape
 
-open FormulaPatterns
+type Axioms = (Expr * Expr -> bool)
 
-type Axioms = (Expr * Expr->Expr option)
+type Rules = (Expr * Expr -> Expr * Expr) list 
 
-type Rules = (Expr * Expr ->Expr * Expr) list 
+type ProofSystem(axioms: Axioms, rules: Rules) =
+    let axiomStep (a,b) = match axioms (a, b) with | true -> (a, b) |  false -> (CONT.Expr, CONT.Expr)
+    member x.AxiomStep(a, b) = axiomStep a,b
+    member val Axioms = axioms
+    member val Rules = axiomStep :: rules
+    member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)     
+    static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b 
 
-type ProofCalculus =  ProofCalculus of Axioms * Rules with
-    member x.Axioms = let (ProofCalculus(a, _)) = x in a
-    member x.Rules = let (ProofCalculus(_, r)) = x in r
-    member x.AxiomaticEquality a b = match x.Axioms (a, b) with | Some _ -> true | None -> false
-    static member (|-) ((c:ProofCalculus), (a, b)) = c.AxiomaticEquality a b 
+type ProofStep = (Expr * Expr) -> (Expr * Expr)
 
-type ProofStep = Expr list -> Expr list
-
-type Proof = ProofCalculus * Expr list * ProofStep list
+type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: ProofStep list) =
+    let ruleNames = system.Rules |> List.map (fun r -> r.ToString())
+    let stepNames = steps |> List.map (fun r -> r.ToString())
+    do if stepNames |> Seq.forall(fun step -> List.contains step ruleNames) then
+        do stepNames |> Seq.iteri (fun i p -> if ruleNames |> List.contains p |> not then printf "%i" i)
 
 type Theorem<'t, 'u>(lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>, proof:Proof) = class end
    
 module Proof =   
-    let axiomatic_equality (c:ProofCalculus) (a:Formula<'t, 'u>) (b:Formula<'t, 'u>) = c.AxiomaticEquality a.Expr b.Expr
-    
     let thm (lhs:Formula<_, _>) (rhs:Formula<_, _>) (proof) = Theorem(lhs, rhs, proof)

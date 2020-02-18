@@ -10,8 +10,7 @@ open FSharp.Quotations.ExprShape
 
 type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     let (v, e) = expandReflectedDefinitionParam expr
-    [<ReflectedDefinition>]
-    member val Apply = v :?> ('t -> 'u)
+    [<ReflectedDefinition>] member val Apply = v :?> ('t -> 'u)
     member val Expr = e
     member val Src = decompile e
     member x.Members = (x, x.Apply)
@@ -36,12 +35,14 @@ module Formula =
     
     let src (f:Formula<'t, 'u>) = decompile f.Expr
     
-    let split<'t, 'u> (f:Formula<'t, 'u>) =
-        match f.Expr with
-        | Lambda(v, Call(None, m, l::r::[])) -> (Expr.Lambda(v, l), Expr.Lambda(v, r))
-        | _ -> failwithf "Cannot spilt formula %A." f
+    let split<'t, 'u> (f:Formula<'t, 'u>) = split f.Expr
+
+    let TAUT = value true
+
+    let CONT = value false
 
 module FormulaPatterns =
+
     let (|BinaryOp|_|) =
         function
         | Call(_, _, l::r::[]) -> Some (l, r)
@@ -80,12 +81,17 @@ module FormulaPatterns =
     let (|Commute|_|) (A, B) =
         match A,B with
         // x + y, y + x
-        | Lambda(_, BinaryOp(a1, a2)), Lambda(_, BinaryOp(b1, b2)) when sequal2 a1 a2 b2 b1 -> Some B
+        | Lambda(_, BinaryOp(a1, a2)), Lambda(_, BinaryOp(b1, b2)) when sequal2 a1 a2 b2 b1 -> Some (A, B)
+        | _ -> None
+
+    let (|Equal|_|) (l:Expr, r:Expr) =
+        match (l, r) with
+        | (A, B) when A.ToString() = B.ToString() -> Some (A, B)
         | _ -> None
 
     let (|Assoc|_|) (A, B) =
-        match A,B with
+        match A, B with
         // x + y + z, x + (y + z)
-        | Lambda(_,BinaryOp(BinaryOp(a1, a2), a3)), Lambda(_, BinaryOp(b1, BinaryOp(b2, b3))) when (sequal3 a1 a2 a3 b1 b2 b3) -> Some B 
-        | Lambda(_, BinaryOp(a1, BinaryOp(a2, a3))), Lambda(_, BinaryOp(BinaryOp(b1, b2), b3)) when (sequal3 a1 a2 a3 b1 b2 b3)-> Some B
+        | Lambda(_,BinaryOp(BinaryOp(a1, a2), a3)), Lambda(_, BinaryOp(b1, BinaryOp(b2, b3))) when (sequal3 a1 a2 a3 b1 b2 b3) -> Some (A, B) 
+        | Lambda(_, BinaryOp(a1, BinaryOp(a2, a3))), Lambda(_, BinaryOp(BinaryOp(b1, b2), b3)) when (sequal3 a1 a2 a3 b1 b2 b3)-> Some (A, B)
         | _ -> None
