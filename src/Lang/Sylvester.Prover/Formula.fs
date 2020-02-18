@@ -10,7 +10,6 @@ open FSharp.Quotations.ExprShape
 
 type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     let (v, e) = expandReflectedDefinitionParam expr
-    member val Obj = v
     [<ReflectedDefinition>]
     member val Apply = v :?> ('t -> 'u)
     member val Expr = e
@@ -27,6 +26,8 @@ type F<'t, 'u> = Formula<'t, 'u>
 type Value<'t> = Formula<unit, 't>
 
 type Predicate<'t> = Formula<'t, bool>
+
+type Prop = Value<bool>
 
 [<AutoOpen>]
 module Formula =

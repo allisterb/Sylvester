@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Include="Formula.fs" />
     <Compile Include="Proof.fs" />
+    <Compile Include="Arithmetic.fs" />
   </ItemGroup>
 
   <ItemGroup>
