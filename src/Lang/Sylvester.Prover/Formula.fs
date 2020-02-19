@@ -43,14 +43,32 @@ module Formula =
 
 module FormulaPatterns =
 
+    let (|Equal|_|) (l:Expr, r:Expr) =
+        match (l, r) with
+        | (A, B) when A.ToString() = B.ToString() -> Some (A, B)
+        | _ -> None
+
     let (|BinaryOp|_|) =
         function
         | Call(_, _, l::r::[]) -> Some (l, r)
         | _ -> None
 
+    let (|Commute|_|) (A, B) =
+        match A,B with
+        // x + y, y + x
+        | Lambda(_, BinaryOp(a1, a2)), Lambda(_, BinaryOp(b1, b2)) when sequal2 a1 a2 b2 b1 -> Some (A, B)
+        | _ -> None
+
+    let (|Assoc|_|) (A, B) =
+        match A, B with
+        // x + y + z, x + (y + z)
+        | Lambda(_,BinaryOp(BinaryOp(a1, a2), a3)), Lambda(_, BinaryOp(b1, BinaryOp(b2, b3))) when (sequal3 a1 a2 a3 b1 b2 b3) -> Some (A, B)
+        | Lambda(_, BinaryOp(a1, BinaryOp(a2, a3))), Lambda(_, BinaryOp(BinaryOp(b1, b2), b3)) when (sequal3 a1 a2 a3 b1 b2 b3)-> Some (A, B)
+        | _ -> None
+
     let (|Add|_|) =
         function
-        | SpecificCall <@@ (+) @@> (None,_,l::r::[]) -> Some(l, r) 
+        | SpecificCall <@@ (+) @@> (None,_,l::r::[]) -> Some(l, r)
         | _ -> None
 
     let (|Subtract|_|) =
@@ -78,20 +96,3 @@ module FormulaPatterns =
         | Call(None, method, Sequence(l, r)::[]) when method.Name = "Sum" -> Some (l, r)
         | _ -> None
 
-    let (|Commute|_|) (A, B) =
-        match A,B with
-        // x + y, y + x
-        | Lambda(_, BinaryOp(a1, a2)), Lambda(_, BinaryOp(b1, b2)) when sequal2 a1 a2 b2 b1 -> Some (A, B)
-        | _ -> None
-
-    let (|Equal|_|) (l:Expr, r:Expr) =
-        match (l, r) with
-        | (A, B) when A.ToString() = B.ToString() -> Some (A, B)
-        | _ -> None
-
-    let (|Assoc|_|) (A, B) =
-        match A, B with
-        // x + y + z, x + (y + z)
-        | Lambda(_,BinaryOp(BinaryOp(a1, a2), a3)), Lambda(_, BinaryOp(b1, BinaryOp(b2, b3))) when (sequal3 a1 a2 a3 b1 b2 b3) -> Some (A, B) 
-        | Lambda(_, BinaryOp(a1, BinaryOp(a2, a3))), Lambda(_, BinaryOp(BinaryOp(b1, b2), b3)) when (sequal3 a1 a2 a3 b1 b2 b3)-> Some (A, B)
-        | _ -> None
