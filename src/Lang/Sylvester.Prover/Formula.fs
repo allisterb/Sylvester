@@ -16,9 +16,19 @@ type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     member x.Members = (x, x.Apply)
     override x.ToString() = x.Src
 
-    static member (<=>) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = sequal lhs.Expr rhs.Expr
-    static member (<=>) (lhs:Expr, rhs:Formula<'t, 'u>) = sequal lhs rhs.Expr
-    static member (<=>) (lhs:Formula<'t, 'u>, rhs:Expr) = sequal lhs.Expr rhs
+    static member TAUT = Formula(fun() -> true)
+    static member CONT = Formula(fun() -> false)
+    static member (<=>) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
+    static member (*) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = And(lhs, rhs)
+    static member (+) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = Or(lhs, rhs)
+    static member (~-) (lhs:Formula<'t, bool>) = Formula(fun() -> Not(lhs))
+    static member (=>) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = And(lhs, rhs), Formula<'t, 'u>.TAUT
+
+and And<'a, 'b> = And of 'a * 'b
+
+and Not<'a> = Not of 'a 
+
+and Or<'a, 'b> = Or of 'a * 'b
 
 type F<'t, 'u> = Formula<'t, 'u>
 
@@ -37,9 +47,9 @@ module Formula =
     
     let split<'t, 'u> (f:Formula<'t, 'u>) = split f.Expr
 
-    let TAUT = value true
+    let TAUT = value(true)
 
-    let CONT = value false
+    let CONT = value(false)
 
 module FormulaPatterns =
 

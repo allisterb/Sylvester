@@ -50,13 +50,16 @@ type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
     member val System = system
     member val Steps = steps
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
+    static member (|-) ((proof:Proof), (A:Formula<'t,'u>, B:Formula<'v,'w>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
 
-type Theorem<'t, 'u>(a:Formula<'t, 'u>, b:Formula<'t, 'u>, proof:Proof) = 
-    do if not (proof.A <=> a && proof.B <=> b) then failwithf "The provided proof is not a proof of %s<=>%s" (a.Src) (b.Src)
+type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) = 
+    let (a, b) = stms
+    do if not ((sequal proof.A a.Expr) && (sequal proof.B b.Expr)) then failwithf "The provided proof is not a proof of %s<=>%s" (a.Src) (b.Src)
     do if not (proof.Complete) then failwithf "The provided proof of %s<=>%s is not complete." (a.Src) (b.Src)
     member val A = a
     member val B = b
     member val Proof = proof
-   
+ and TheoremStmt<'t, 'u> = Formula<'t, 'u> * Formula<'t, 'u>
+
 module Proof =   
-    let thm (lhs:Formula<_, _>) (rhs:Formula<_, _>) (proof) = Theorem(lhs, rhs, proof)
+    let thm (stmt:TheoremStmt<_,_>) (proof) = Theorem(stmt, proof)

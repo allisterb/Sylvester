@@ -19,3 +19,4 @@ let F3, f3 = Formula(sum).Members
 
 //F3
 let p = Proof(Arithmetic, F1.Expr, F2.Expr, [right_assoc_b; reduce_constants_a_b])
+(p |- (F1, F2))

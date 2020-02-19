@@ -22,25 +22,42 @@ module Arithmetic =
         | Subtract(Int32 l, Int32 r) -> Expr.Value(l - r)
         | Multiply(Int32 l, Int32 r) -> Expr.Value(l * r)
         | expr -> traverse expr reduce_constants
-
-    let reduce_constants_a_b = Rule("Reduce equal constants in A and B", fun (a,b) -> reduce_constants a, reduce_constants b)
     
     let rec right_assoc =
         function
-        | Add(Add(a1, a2), a3) -> <@@ %%a1 + (%%a2 + %%a3)@@>
+        | Add(Add(a1, a2), a3) -> <@@ %%a1 + (%%a2 + %%a3) @@>
+        | Subtract(Multiply(a1, a2), a3) -> <@@ %%a1 + (%%a2 + %%a3) @@>
+        | Multiply(Multiply(a1, a2), a3) -> <@@ %%a1 + (%%a2 + %%a3) @@>
         | expr -> traverse expr right_assoc
 
     let rec left_assoc =
         function
-        | Add(a1, Add(a2, a3)) -> <@@ (%%a1 + %%a2) + %%a3@@>
+        | Add(a1, Add(a2, a3)) -> <@@ (%%a1 + %%a2) + %%a3 @@>
+        | Subtract(a1, Subtract(a2, a3)) -> <@@ (%%a1 + %%a2) + %%a3 @@>
+        | Multiply(a1, Multiply(a2, a3)) -> <@@ (%%a1 + %%a2) + %%a3 @@>
         | expr -> traverse expr left_assoc
 
+    let rec commute =
+        function
+        | Add(a1, a2) -> <@@ (%%a2 + %%a1) @@>
+        | Multiply(a1, a2) -> <@@ (%%a2 * %%a1) @@>
+        | expr -> traverse expr left_assoc
+
+
+    /// Reduce equal constants in A and B. 
+    let reduce_constants_a_b = Rule("Reduce equal constants in A and B", fun (a,b) -> reduce_constants a, reduce_constants b)
+
+    /// A is left associative.
     let left_assoc_a = Rule("A is left associative", fun (a,b) -> left_assoc a, b)
     
+    /// B is left associative.
     let left_assoc_b = Rule("B is left associative", fun (a, b) -> a, left_assoc b)
 
+    /// A is right associative.
     let right_assoc_a = Rule("A is right associative", fun (a, b) -> right_assoc a, b)
     
+    /// B is right associativr
     let right_assoc_b = Rule("B is right associative", fun (a, b) -> a, right_assoc b)
 
-    let Arithmetic = ProofSystem(integer_axioms, [reduce_constants_a_b; left_assoc_a; left_assoc_b; right_assoc_a; right_assoc_b])
+    /// Axioms and rules for integer arithmetic
+    let IntegerArithmetic = ProofSystem(integer_axioms, [reduce_constants_a_b; left_assoc_a; left_assoc_b; right_assoc_a; right_assoc_b])
