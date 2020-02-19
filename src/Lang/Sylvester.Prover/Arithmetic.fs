@@ -23,7 +23,7 @@ module Arithmetic =
         | Multiply(Int32 l, Int32 r) -> Expr.Value(l * r)
         | expr -> traverse expr reduce_constants
 
-    let reduce_constants_a_b = Rule("Reduce constants in A and B", fun (a,b) -> reduce_constants a, reduce_constants b)
+    let reduce_constants_a_b = Rule("Reduce equal constants in A and B", fun (a,b) -> reduce_constants a, reduce_constants b)
     
     let rec right_assoc =
         function

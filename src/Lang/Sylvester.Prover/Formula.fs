@@ -43,9 +43,9 @@ module Formula =
 
 module FormulaPatterns =
 
-    let (|Equal|_|) (l:Expr, r:Expr) =
-        match (l, r) with
-        | (A, B) when A.ToString() = B.ToString() -> Some (A, B)
+    let (|UnaryOp|_|) =
+        function
+        | Call(_, _, l::[]) -> Some l
         | _ -> None
 
     let (|BinaryOp|_|) =
@@ -53,17 +53,26 @@ module FormulaPatterns =
         | Call(_, _, l::r::[]) -> Some (l, r)
         | _ -> None
 
-    let (|Commute|_|) (A, B) =
-        match A,B with
-        // x + y, y + x
-        | Lambda(_, BinaryOp(a1, a2)), Lambda(_, BinaryOp(b1, b2)) when sequal2 a1 a2 b2 b1 -> Some (A, B)
+    let (|Equal|_|) (l:Expr, r:Expr) =
+        match (l, r) with
+        | (A, B) when sequal A B -> Some (A, B)
         | _ -> None
 
+    // x + y, y + x
+    let (|Commute|_|) (A, B) =
+        match A,B with
+        | Lambda(_, BinaryOp(a1, a2)), Lambda(_, BinaryOp(b1, b2)) when sequal2 a1 a2 b2 b1 -> Some (A, B)
+        | BinaryOp(a1, a2), BinaryOp(b1, b2) when sequal2 a1 a2 b2 b1 -> Some (A, B)
+        | _ -> None
+
+    // x + y + z, x + (y + z)
     let (|Assoc|_|) (A, B) =
         match A, B with
-        // x + y + z, x + (y + z)
         | Lambda(_,BinaryOp(BinaryOp(a1, a2), a3)), Lambda(_, BinaryOp(b1, BinaryOp(b2, b3))) when (sequal3 a1 a2 a3 b1 b2 b3) -> Some (A, B)
         | Lambda(_, BinaryOp(a1, BinaryOp(a2, a3))), Lambda(_, BinaryOp(BinaryOp(b1, b2), b3)) when (sequal3 a1 a2 a3 b1 b2 b3)-> Some (A, B)
+        
+        | BinaryOp(BinaryOp(a1, a2), a3), BinaryOp(b1, BinaryOp(b2, b3)) when (sequal3 a1 a2 a3 b1 b2 b3) -> Some (A, B)
+        | BinaryOp(a1, BinaryOp(a2, a3)), BinaryOp(BinaryOp(b1, b2), b3) when (sequal3 a1 a2 a3 b1 b2 b3)-> Some (A, B)
         | _ -> None
 
     let (|Add|_|) =
@@ -95,4 +104,3 @@ module FormulaPatterns =
         match expr with
         | Call(None, method, Sequence(l, r)::[]) when method.Name = "Sum" -> Some (l, r)
         | _ -> None
-

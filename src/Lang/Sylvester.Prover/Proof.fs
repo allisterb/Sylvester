@@ -19,7 +19,7 @@ type ProofSystem(axioms: Axioms, rules: Rules) =
 type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
     let ruleNames = system.Rules |> List.map (fun r -> r.Name)
     let stepNames = steps |> List.map (fun r -> r.Name)
-    do printfn "Proof of %s <=> %s." (decompile a) (decompile b)
+    do printfn "Proof of A:%s <=> B:%s." (decompile a) (decompile b)
     let mutable astate, bstate = (a, b)
     let mutable stepCount = 0
     do while stepCount < steps.Length do
@@ -27,7 +27,14 @@ type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
             failwithf "Step %i (%s) is not part of the rules of the proof system." stepCount stepNames.[stepCount]
         else
             let (_a, _b) = steps.[stepCount].Apply (astate, bstate)
-            printfn "%i. %s: (%s, %s) -> (%s, %s)" stepCount stepNames.[stepCount] (decompile astate) (decompile bstate) (decompile _a) (decompile _b)
+            if (not (sequal _a astate) && sequal _b bstate) then
+                printfn "%i. %s: (%s, %s) -> (%s, %s)" (stepCount + 1) stepNames.[stepCount] (decompile astate) (decompile bstate) (decompile _a) (decompile _b)
+            else if not (sequal _a astate) then
+                printfn "%i. %s: %s -> %s" (stepCount + 1) stepNames.[stepCount] (decompile astate) (decompile _a)
+            else if not (sequal _b bstate) then
+                printfn "%i. %s: %s -> %s" (stepCount + 1) stepNames.[stepCount] (decompile bstate) (decompile _b)
+            else
+                printfn "%i. %s: No change." (stepCount + 1) stepNames.[stepCount] 
             astate <- _a
             bstate <- _b
             if system |- (astate, bstate) then 
@@ -45,7 +52,7 @@ type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
 
 type Theorem<'t, 'u>(a:Formula<'t, 'u>, b:Formula<'t, 'u>, proof:Proof) = 
-    do if not (proof.A = a.Expr && proof.B = b.Expr) then failwithf "The provided proof is not a proof of %s<=>%s" (a.Src) (b.Src)
+    do if not (proof.A <=> a && proof.B <=> b) then failwithf "The provided proof is not a proof of %s<=>%s" (a.Src) (b.Src)
     do if not (proof.Complete) then failwithf "The provided proof of %s<=>%s is not complete." (a.Src) (b.Src)
     member val A = a
     member val B = b

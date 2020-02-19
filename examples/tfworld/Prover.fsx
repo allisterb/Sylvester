@@ -17,5 +17,5 @@ let F1, f1 = Formula(f).Members
 let F2, f2 = Formula(g).Members
 let F3, f3 = Formula(sum).Members
 
-F3
-//let p = Proof(Arithmetic, F1.Expr, F2.Expr, [right_assoc_b; reduce_constants_a_b])
+//F3
+let p = Proof(Arithmetic, F1.Expr, F2.Expr, [right_assoc_b; reduce_constants_a_b])
