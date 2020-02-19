@@ -16,27 +16,31 @@ type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     member x.Members = (x, x.Apply)
     override x.ToString() = x.Src
 
-    static member TAUT = Formula(fun() -> true)
-    static member CONT = Formula(fun() -> false)
-    static member (<=>) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
-    static member (*) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = And(lhs, rhs)
-    static member (+) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = Or(lhs, rhs)
+    static member TAUT = Prop(fun() -> true)
+    static member CONT = Prop(fun() -> false)
+    static member (*) (lhs:Formula<'t, bool>, rhs:Formula<'t, bool>) = And(lhs, rhs)
+    static member (+) (lhs:Formula<'t, bool>, rhs:Formula<'t, bool>) = Or(lhs, rhs)
     static member (~-) (lhs:Formula<'t, bool>) = Formula(fun() -> Not(lhs))
-    static member (=>) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = And(lhs, rhs), Formula<'t, 'u>.TAUT
+    static member (=>) (lhs:Formula<'t, bool>, rhs:Formula<'t, bool>) = Implies(lhs, rhs)
 
-and And<'a, 'b> = And of 'a * 'b
+    static member (<=>) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
+    static member (|->) (lhs:Formula<'t, bool>, rhs:Formula<'t, bool>) = Implies(lhs, rhs), Prop.TAUT
 
-and Not<'a> = Not of 'a 
+and Value<'t> = Formula<unit, 't>
 
-and Or<'a, 'b> = Or of 'a * 'b
+and Predicate<'t> = Formula<'t, bool>
+
+and Prop = Value<bool>
+
+and And<'a> = And of Formula<'a, bool> * Formula<'a, bool>
+
+and Not<'a> = Not of Formula<'a, bool> 
+
+and Or<'a> = Or of Formula<'a, bool> * Formula<'a, bool>
+
+and Implies<'a> = Implies of Formula<'a, bool> * Formula<'a, bool>
 
 type F<'t, 'u> = Formula<'t, 'u>
-
-type Value<'t> = Formula<unit, 't>
-
-type Predicate<'t> = Formula<'t, bool>
-
-type Prop = Value<bool>
 
 [<AutoOpen>]
 module Formula =
