@@ -15,9 +15,9 @@ type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
         let step = steps.[stepCount]
         do 
             match step with
-            | (Rule(n, _)) -> if not(List.contains n ruleNames) then failwithf "Rule at step %i (%s) is not part of the rules of the current proof system." stepCount n
+            | (Rule(n, _)) -> if not(ruleNames |> List.contains n) then failwithf "Rule at step %i (%s) is not part of the rules of the current proof system." stepCount n
             | (Subst(n, p, _)) -> if not(p.System = system) then failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof system." stepCount n
-        let (_a, _b) = steps.[stepCount].Apply (astate, bstate)
+        let (_a, _b) = step.Apply (astate, bstate)
         if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
             printfn "%i. %s: (%s, %s) -> (%s, %s)" (stepCount + 1) stepNames.[stepCount] (decompile astate) (decompile bstate) (decompile _a) (decompile _b)
         else if not (sequal _a astate) then
@@ -58,7 +58,6 @@ with
         | (Rule(_, r)) -> r
         | (Subst(_, p, r)) -> r p
        
-   
 and Rules = Rule list 
 
 and ProofSystem(axioms: Axioms, rules: Rules) =
@@ -85,12 +84,14 @@ module Proof =
         | expr -> traverse expr (subst p)
 
     /// Substitute A with X when A <=> X.
-    let subst_a p = Subst("Substitute A with X when A <=> X", p, fun proof (a,b) -> (subst proof a), b) 
+    let subst_a (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof (a,b) -> (subst proof a), b) 
 
     /// Substitute B with X when B <=> X.
-    let subst_b p = Subst("Substitute B with X when B <=> X", p, fun proof (a, b) -> (a, subst proof b))
+    let subst_b (p:Proof) = Subst(sprintf "Substitute %s in B with %s" (src p.A) (src p.B), p, fun proof (a, b) -> (a, subst proof b))
 
-    let proof_system (axioms:Axioms) (rules:Rules) = ProofSystem(axioms, rules)
-    let proof (system: ProofSystem) (a:Expr)  (b:Expr) (steps: Rule list) = Proof(system, a, b, steps)
-    let axiomatic (system: ProofSystem) (a:Expr)  (b:Expr)  = Proof(system, a, b, [])
-    let thm (stmt:TheoremStmt<_,_>) (proof) = Theorem(stmt, proof)
+    let proof_system axioms rules = ProofSystem(axioms, rules)
+    let proof system a  b steps = Proof(system, a, b, steps)
+    let proof' (system: ProofSystem) (a:Formula<_,_>)  (b:Formula<_,_>) (steps: Rule list) = proof system a.Expr b.Expr steps
+    let axiomatic system a  b = proof system a b []
+    let axiomatic' (system: ProofSystem) (a:Formula<_,_>)  (b:Formula<_,_>)  = proof' system a b []
+    let theorem (stmt:TheoremStmt<_,_>) (proof) = Theorem(stmt, proof)

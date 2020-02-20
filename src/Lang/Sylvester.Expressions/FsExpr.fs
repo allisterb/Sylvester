@@ -78,5 +78,5 @@ module FsExpr =
     
     let expandReflectedDefinitionParam = 
         function
-        | WithValue(v, _, e) -> (v, expand e)
+        | WithValue(v, t, e) -> (v, t, expand e)
         | _ -> failwith "Expression is not a reflected definition parameter."

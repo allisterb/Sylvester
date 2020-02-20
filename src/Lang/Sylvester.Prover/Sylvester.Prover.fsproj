@@ -15,7 +15,7 @@
   <ItemGroup>
     <Compile Include="Formula.fs" />
     <Compile Include="Proof.fs" />
-    <Compile Include="IntegerArithmetic.fs" />
+    <Compile Include="Systems\IntegerArithmetic.fs" />
   </ItemGroup>
 
   <ItemGroup>
