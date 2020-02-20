@@ -19,6 +19,8 @@ module FsExpr =
 
     let src expr = decompile expr
     
+    let varx<'t> = Expr.Var(Var.Global("x", typedefof<'t>))
+    
     let split expr =
         match expr with
         | Call(None, _, l::r::[]) -> (l, r)

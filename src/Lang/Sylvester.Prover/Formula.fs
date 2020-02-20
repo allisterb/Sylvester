@@ -1,12 +1,8 @@
 ﻿namespace Sylvester
 
-open System
-
-open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
-open FSharp.Quotations.ExprShape
 
 type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     let (v, e) = expandReflectedDefinitionParam expr
@@ -15,7 +11,7 @@ type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     member val Src = decompile e
     member x.Members = (x, x.Apply)
     override x.ToString() = x.Src
-
+    
     static member (<=>) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
     
 and Value<'t> = Formula<unit, 't>
@@ -31,10 +27,6 @@ module Formula =
     [<ReflectedDefinition>] 
     let value (x:'t) = Value(fun () -> x)
     
-    let src (f:Formula<'t, 'u>) = decompile f.Expr
-    
-    let split<'t, 'u> (f:Formula<'t, 'u>) = split f.Expr
-
     let TAUT = value(true)
 
     let CONT = value(false)

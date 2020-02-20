@@ -41,8 +41,17 @@ module Arithmetic =
         function
         | Add(a1, a2) -> <@@ (%%a2 + %%a1) @@>
         | Multiply(a1, a2) -> <@@ (%%a2 * %%a1) @@>
-        | expr -> traverse expr left_assoc
+        | expr -> traverse expr commute
 
+    let rec split_left = 
+        function
+        | Lambda(v1, BinaryOp(a, b)) -> Expr.Lambda(v1, a)
+        | expr -> traverse expr (split_left)
+    
+    let rec split_right = 
+        function
+        | Lambda(v1, BinaryOp(a, b)) -> Expr.Lambda(v1, b)
+        | expr -> traverse expr (split_right)
 
     /// Reduce equal constants in A and B. 
     let reduce_constants_a_b = Rule("Reduce equal constants in A and B", fun (a,b) -> reduce_constants a, reduce_constants b)
@@ -59,5 +68,8 @@ module Arithmetic =
     /// B is right associativr
     let right_assoc_b = Rule("B is right associative", fun (a, b) -> a, right_assoc b)
 
+    
+    let IntegerAxioms = ProofSystem(integer_axioms, [])
+    
     /// Axioms and rules for integer arithmetic
     let IntegerArithmetic = ProofSystem(integer_axioms, [reduce_constants_a_b; left_assoc_a; left_assoc_b; right_assoc_a; right_assoc_b])
