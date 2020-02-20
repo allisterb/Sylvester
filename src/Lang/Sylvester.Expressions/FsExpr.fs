@@ -18,20 +18,36 @@ module FsExpr =
     let sequal3 (l1:Expr) (l2:Expr) (l3:Expr) (r1:Expr) (r2:Expr) (r3:Expr)= sequal l1 r1 && sequal l2 r2 && sequal l3 r3
 
     let src expr = decompile expr
-    
-    let varx<'t> = Expr.Var(Var.Global("x", typedefof<'t>))
-    
-    let split expr =
+        
+    let body = 
+        function
+        | Lambda(v1, b) -> b
+        | expr -> failwithf "Expression %A is not a function." (src expr)
+
+    let traverse expr f =
         match expr with
-        | Call(None, _, l::r::[]) -> (l, r)
-        | Lambda(v, Call(None, m, l::r::[])) -> (Expr.Lambda(v, l), Expr.Lambda(v, r))
-        | _ -> failwithf "Cannot split expression %A." (src expr)
-    
-    let traverse quotation f =
-        match quotation with
         | ShapeVar v -> Expr.Var v
-        | ShapeLambda (v,expr) -> Expr.Lambda (v, f expr)
+        | ShapeLambda (v, body) -> Expr.Lambda (v, f body)
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
+
+    let split =
+        function
+        | Lambda(v, Call(None, m, l::r::[])) -> (Expr.Lambda(v, l), Expr.Lambda(v, r))
+        | expr -> failwithf "Cannot split expression %A." (src expr)
+
+    let split_left = 
+        function
+        | Lambda(v1, Call(_, _, l::_::[])) -> Expr.Lambda(v1, l)
+        | expr -> failwithf "Cannot split expression %A." (src expr)
+    
+    let split_right = 
+        function
+        | Lambda(v1, Call(_, _, _::r::[])) -> Expr.Lambda(v1, r)
+        | expr -> failwithf "Cannot split expression %A." (src expr)
+
+
+
+    let varx<'t> = Expr.Var(Var.Global("x", typedefof<'t>))
 
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.

@@ -18,7 +18,7 @@ type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
             | (Rule(n, _)) -> if not(List.contains n ruleNames) then failwithf "Rule at step %i (%s) is not part of the rules of the current proof system." stepCount n
             | (Subst(n, p, _)) -> if not(p.System = system) then failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof system." stepCount n
         let (_a, _b) = steps.[stepCount].Apply (astate, bstate)
-        if (not (sequal _a astate) && sequal _b bstate) then
+        if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
             printfn "%i. %s: (%s, %s) -> (%s, %s)" (stepCount + 1) stepNames.[stepCount] (decompile astate) (decompile bstate) (decompile _a) (decompile _b)
         else if not (sequal _a astate) then
             printfn "%i. %s: %s -> %s" (stepCount + 1) stepNames.[stepCount] (decompile astate) (decompile _a)
@@ -81,7 +81,7 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
 module Proof =   
     let rec subst (p:Proof) = 
         function 
-        | A when sequal p.A A && p.Complete -> p.B  
+        | A when (sequal (p.A) (A)) && p.Complete -> p.B  
         | expr -> traverse expr (subst p)
 
     /// Substitute A with X when A <=> X.

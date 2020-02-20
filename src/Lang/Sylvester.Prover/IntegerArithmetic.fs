@@ -6,7 +6,7 @@ open Microsoft.FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 
-module Arithmetic =
+module IntegerArithmetic =
     open FormulaPatterns
     
     let integer_axioms = 
@@ -42,16 +42,6 @@ module Arithmetic =
         | Add(a1, a2) -> <@@ (%%a2 + %%a1) @@>
         | Multiply(a1, a2) -> <@@ (%%a2 * %%a1) @@>
         | expr -> traverse expr commute
-
-    let rec split_left = 
-        function
-        | Lambda(v1, BinaryOp(a, b)) -> Expr.Lambda(v1, a)
-        | expr -> traverse expr (split_left)
-    
-    let rec split_right = 
-        function
-        | Lambda(v1, BinaryOp(a, b)) -> Expr.Lambda(v1, b)
-        | expr -> traverse expr (split_right)
 
     /// Reduce equal constants in A and B. 
     let reduce_constants_a_b = Rule("Reduce equal constants in A and B", fun (a,b) -> reduce_constants a, reduce_constants b)
