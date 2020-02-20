@@ -8,6 +8,7 @@ type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     let (v, e) = expandReflectedDefinitionParam expr
     [<ReflectedDefinition>] member val Apply = v :?> ('t -> 'u)
     member val Expr = e
+    member val Body = e |> body
     member val Src = decompile e
     member x.Members = (x, x.Apply)
     override x.ToString() = x.Src
