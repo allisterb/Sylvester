@@ -59,8 +59,10 @@ a.Equals b
 a.Powerset |> Seq.toArray
 let fs = FSharp.Collections.Set.ofSeq [0;5;7]
 fs.GetType().Name
-let t = new Tag<Name="gg">()
-
+let t = new Tag<"gg">()
+let name = t.Name
+type Tagged<'o, 't when 't :> Number>(h:'o, g:'t) =
+    member x.Oo = h
 //a.Subsets.HasElement (Seq([1]))
 //exprToString d.Expr
 //c.Equals d

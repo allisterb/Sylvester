@@ -14,17 +14,19 @@ module Formulae =
 
 let V = value 6
 
-let F1, f1 = F(f).Members
-let F2, f2 = F(g).Members
-let F3, f3 = F(h).Members
-let F4, f4 = F(i).Members
+let F1, f1, _ = F(f).Form
+let F2, f2, _= F(g).Form
+let F3, f3, _ = F(h).Form
+let F4, f4, _ = F(i).Form
 
-let p = Proof(IntegerArithmetic, F1.Expr, F2.Expr, [right_assoc_b; reduce_constants_a_b])
+let p = proof IntegerArithmetic F1 F2 [right_assoc_b; reduce_constants_a_b]
 p |- (F1 <=> F2)
-let j = thm (F1 <=> F2) p 
+let j = theorem (F1 <=> F2) p 
 
-let F5 = F(fun x -> 3 * x + 6).Expr |> body
+let F5 = F(fun x -> 2 * x + 4)
 
-let p5 = axiomatic IntegerArithmetic (F5) (commute F5)
+let p5 = axiomatic' IntegerArithmetic F5.Body (commute F5.Body)
+(right_assoc >> subst p5) F3.Expr
 
-let p6 = proof IntegerArithmetic F3.Expr F4.Expr [left_assoc_a; subst_a p5]
+//(right_assoc >> right_assoc >> src) F3.Expr  
+let p6 = proof IntegerArithmetic F3 F4 [right_assoc_a; commute_a_right;left_assoc_a;right_assoc_a;right_assoc_a; left_assoc_a_right;reduce_constants_a_b]

@@ -90,8 +90,8 @@ module Proof =
     let subst_b (p:Proof) = Subst(sprintf "Substitute %s in B with %s" (src p.A) (src p.B), p, fun proof (a, b) -> (a, subst proof b))
 
     let proof_system axioms rules = ProofSystem(axioms, rules)
-    let proof system a  b steps = Proof(system, a, b, steps)
-    let proof' (system: ProofSystem) (a:Formula<_,_>)  (b:Formula<_,_>) (steps: Rule list) = proof system a.Expr b.Expr steps
+    let proof' system a  b steps = Proof(system, a, b, steps)
+    let proof (system: ProofSystem) (a:Formula<_,_>)  (b:Formula<_,_>) (steps: Rule list) = proof' system a.Expr b.Expr steps
     let axiomatic system a  b = proof system a b []
-    let axiomatic' (system: ProofSystem) (a:Formula<_,_>)  (b:Formula<_,_>)  = proof' system a b []
+    let axiomatic' (system) (a)  (b)  = proof' system a b []
     let theorem (stmt:TheoremStmt<_,_>) (proof) = Theorem(stmt, proof)
