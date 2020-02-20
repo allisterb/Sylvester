@@ -5,7 +5,10 @@ open Microsoft.FSharp.Quotations
 type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
     let ruleNames = system.Rules |> List.map (fun (r:Rule) -> r.Name)
     let stepNames = steps |> List.map (fun r -> r.Name)
-    do printfn "Proof of A:%s <=> B:%s." (decompile a) (decompile b)
+    do printfn "Proof of A: %s <=> B: %s." (decompile a) (decompile b)
+    do if system |- (a, b) then
+        printfn "|- %s <=> %s" (decompile a) (decompile b)
+        printfn "Proof complete."
     let mutable astate, bstate = (a, b)
     let mutable stepCount = 0
     do while stepCount < steps.Length do
@@ -64,7 +67,6 @@ and ProofSystem(axioms: Axioms, rules: Rules) =
     member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)     
     static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b 
 
-
 type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) = 
     let (a, b) = stms
     do if not ((sequal proof.A a.Expr) && (sequal proof.B b.Expr)) then failwithf "The provided proof is not a proof of %s<=>%s" (a.Src) (b.Src)
@@ -72,6 +74,7 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
     member val A = a
     member val B = b
     member val Proof = proof
+ 
  and TheoremStmt<'t, 'u> = Formula<'t, 'u> * Formula<'t, 'u>
 
 [<AutoOpen>]
@@ -81,10 +84,13 @@ module Proof =
         | A when sequal p.A A && p.Complete -> p.B  
         | expr -> traverse expr (subst p)
 
+    /// Substitute A with X when A <=> X.
     let subst_a p = Subst("Substitute A with X when A <=> X", p, fun proof (a,b) -> (subst proof a), b) 
 
+    /// Substitute B with X when B <=> X.
     let subst_b p = Subst("Substitute B with X when B <=> X", p, fun proof (a, b) -> (a, subst proof b))
 
     let proof_system (axioms:Axioms) (rules:Rules) = ProofSystem(axioms, rules)
     let proof (system: ProofSystem) (a:Expr)  (b:Expr) (steps: Rule list) = Proof(system, a, b, steps)
+    let axiomatic (system: ProofSystem) (a:Expr)  (b:Expr)  = Proof(system, a, b, [])
     let thm (stmt:TheoremStmt<_,_>) (proof) = Theorem(stmt, proof)
