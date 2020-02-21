@@ -1,6 +1,8 @@
-﻿namespace Sylvester
+﻿namespace Sylph
 
 open Microsoft.FSharp.Quotations
+
+open Sylvester
 
 type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: Rule list) =
     let ruleNames = system.Rules |> List.map (fun (r:Rule) -> r.Name)
@@ -10,6 +12,7 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: Rule list) =
         printfn "|- %s <=> %s" (src a) (src b)
         printfn "Proof complete."
     let mutable astate, bstate = (a, b)
+    let mutable state:(Expr * Expr * string) list = [] 
     let mutable stepCount = 0
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
@@ -18,31 +21,46 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: Rule list) =
             | (Rule(n, _)) -> if not(ruleNames |> List.contains n) then failwithf "Rule at step %i (%s) is not part of the rules of the current proof system." stepCount n
             | (Subst(n, p, _)) -> if not(p.System = system) then failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof system." stepCount n
         let (_a, _b) = step.Apply (astate, bstate)
-        if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
-            printfn "%i. %s: (%s, %s) <=> (%s, %s)" (stepCount + 1) stepNames.[stepCount] (src astate) (src bstate) (src _a) (src _b)
-        else if not (sequal _a astate) then
-            printfn "%i. %s: %s <=> %s" (stepCount + 1) stepNames.[stepCount] (src astate) (src _a)
-        else if not (sequal _b bstate) then
-            printfn "%i. %s: %s <=> %s" (stepCount + 1) stepNames.[stepCount] (src bstate) (src _b)
-        else
-            printfn "%i. %s: No change." (stepCount + 1) stepNames.[stepCount] 
+        let msg =
+            if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
+                sprintf "%i. %s: (%s, %s) <=> (%s, %s)" (stepCount + 1) stepNames.[stepCount] (src astate) (src bstate) (src _a) (src _b)
+            else if not (sequal _a astate) then
+                sprintf "%i. %s: %s <=> %s" (stepCount + 1) stepNames.[stepCount] (src astate) (src _a)
+            else if not (sequal _b bstate) then
+                sprintf "%i. %s: %s <=> %s" (stepCount + 1) stepNames.[stepCount] (src bstate) (src _b)
+            else
+                sprintf "%i. %s: No change." (stepCount + 1) stepNames.[stepCount] 
+        printfn "%s" msg
         astate <- _a
         bstate <- _b
+        state <- (astate, bstate, msg) :: state
         if system |- (astate, bstate) then 
             printfn "Proof complete." 
             stepCount <- steps.Length
         else
             printfn "Proof incomplete."
             stepCount <- stepCount + 1
-    
+    do if stepCount = 0 && not(system |- (a, b)) then
+        printfn "Proof incomplete."
     member val A = a
     member val B = b
     member val System = system
     member val Steps = steps
     member val Complete = system |- (astate, bstate)
+    member val State = state
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
     static member (|-) ((proof:Proof), (A:Formula<'t,'u>, B:Formula<'v,'w>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
 
+    static member (+) (l:Proof, r:Proof) = 
+        let (_, last_l_bstate, _) = l.State |> Seq.last
+        let (first_r_astate, _, _) = r.State.Head
+        if l.System = r.System then 
+            if sequal l.B r.A && sequal last_l_bstate first_r_astate then 
+                Proof(l.A, r.B, l.System, List.concat [l.Steps; r.Steps])
+            else failwith "Cannot create proof from these proofs. The last B state of the LHS is not the first A state of the RHS."
+        else
+            failwith "Cannot create proof from these proofs because they use different proof systems."
+        
 and Axioms = (Expr * Expr -> bool)
 
 and Rule = 
@@ -65,6 +83,7 @@ and ProofSystem(axioms: Axioms, rules: Rules) =
     member val Rules = rules
     member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)     
     static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b
+    static member (|-) ((c:ProofSystem), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
 
 type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) = 
     let (a, b) = stms

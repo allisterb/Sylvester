@@ -1,8 +1,10 @@
-﻿namespace Sylvester
+﻿namespace Sylph
 
 open Microsoft.FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
+
+open Sylvester
 
 type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     let (v, t, e) = expandReflectedDefinitionParam expr

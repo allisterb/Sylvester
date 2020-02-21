@@ -1,4 +1,4 @@
-﻿namespace Sylvester.Prover
+﻿namespace Sylph
 
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
@@ -17,6 +17,7 @@ module IntegerArithmetic =
 
         | Multiply(a1, a2), Multiply(b1, b2) when sequal2 a1 a2 b2 b1 -> Some true  
         | Lambda(_, Multiply(a1, a2)), Lambda(_, Multiply(b1, b2)) when sequal2 a1 a2 b2 b1 -> Some true
+        
         | _ -> None
 
     // x + y + z, x + (y + z)
@@ -43,25 +44,49 @@ module IntegerArithmetic =
         | Add(Multiply(a1, b1), Multiply(a2, b2)), Multiply(a3, Add(b3, b4)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some true
         | _ -> None
 
-    let integer_axioms (A, B) = 
-        match (A, B) with
+    let (|AddIdentity|_|) = 
+        function
+        | a1, Add(a2, Int32 0) when sequal a1 a2 -> Some true
+        | Lambda(_, a1), Lambda(_, Add(a2, Int32 0)) when sequal a1 a2 -> Some true
+        
+        | Add(a1, Int32 0), a2 when sequal a1 a2 -> Some true
+        | Lambda(_, Add(a1, Int32 0)), Lambda(_, a2) when sequal a1 a2 -> Some true
+       
+        | _ -> None
+
+    let (|MulIdentity|_|) = 
+        function
+        | a1, Multiply(a2, Int32 1) when sequal a1 a2 -> Some true
+        | Lambda(_, a1), Lambda(_, Multiply(a2, Int32 1)) when sequal a1 a2 -> Some true
+        
+        | Multiply(a1, Int32 1), a2 when sequal a1 a2 -> Some true
+        | Lambda(_, Multiply(a1, Int32 1)), Lambda(_, a2) when sequal a1 a2 -> Some true
+        | _ -> None
+
+    let integer_axioms = 
+        function
         | Equal x  
         | Assoc x 
-        | Commute x  
+        | Commute x
+        | AddIdentity x
+        | MulIdentity x
         | Distrib x -> true
         | _ -> false
-        ||
-        match (B, A) with
-        | Assoc x 
-        | Commute x  
-        | Distrib x -> true
-        | _ -> false
-        
+                
     let rec equal_constants  =
         function
         | Add(Int32 l, Int32 r) -> Expr.Value(l + r)
+        | Add(UInt32 l, UInt32 r) -> Expr.Value(l + r)
+        | Add(Int64 l, Int64 r) -> Expr.Value(l + r)
+        
         | Subtract(Int32 l, Int32 r) -> Expr.Value(l - r)
+        | Subtract(UInt32 l, UInt32 r) -> Expr.Value(l - r)
+        | Subtract(Int64 l, Int64 r) -> Expr.Value(l - r)
+        
         | Multiply(Int32 l, Int32 r) -> Expr.Value(l * r)
+        | Multiply(UInt32 l, UInt32 r) -> Expr.Value(l * r)
+        | Multiply(Int64 l, Int64 r) -> Expr.Value(l * r)
+
         | expr -> traverse expr equal_constants
     
     let rec right_assoc =
