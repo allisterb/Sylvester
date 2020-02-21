@@ -2,12 +2,12 @@
 
 open Microsoft.FSharp.Quotations
 
-type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
+type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: Rule list) =
     let ruleNames = system.Rules |> List.map (fun (r:Rule) -> r.Name)
     let stepNames = steps |> List.map (fun r -> r.Name)
-    do printfn "Proof of A: %s <=> B: %s." (decompile a) (decompile b)
+    do printfn "Proof of A: %s <=> B: %s:" (src a) (src b)
     do if system |- (a, b) then
-        printfn "|- %s <=> %s" (decompile a) (decompile b)
+        printfn "|- %s <=> %s" (src a) (src b)
         printfn "Proof complete."
     let mutable astate, bstate = (a, b)
     let mutable stepCount = 0
@@ -19,11 +19,11 @@ type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
             | (Subst(n, p, _)) -> if not(p.System = system) then failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof system." stepCount n
         let (_a, _b) = step.Apply (astate, bstate)
         if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
-            printfn "%i. %s: (%s, %s) -> (%s, %s)" (stepCount + 1) stepNames.[stepCount] (decompile astate) (decompile bstate) (decompile _a) (decompile _b)
+            printfn "%i. %s: (%s, %s) <=> (%s, %s)" (stepCount + 1) stepNames.[stepCount] (src astate) (src bstate) (src _a) (src _b)
         else if not (sequal _a astate) then
-            printfn "%i. %s: %s -> %s" (stepCount + 1) stepNames.[stepCount] (decompile astate) (decompile _a)
+            printfn "%i. %s: %s <=> %s" (stepCount + 1) stepNames.[stepCount] (src astate) (src _a)
         else if not (sequal _b bstate) then
-            printfn "%i. %s: %s -> %s" (stepCount + 1) stepNames.[stepCount] (decompile bstate) (decompile _b)
+            printfn "%i. %s: %s <=> %s" (stepCount + 1) stepNames.[stepCount] (src bstate) (src _b)
         else
             printfn "%i. %s: No change." (stepCount + 1) stepNames.[stepCount] 
         astate <- _a
@@ -35,11 +35,11 @@ type Proof(system: ProofSystem, a:Expr,  b:Expr,  steps: Rule list) =
             printfn "Proof incomplete."
             stepCount <- stepCount + 1
     
-    member val Complete = system |- (astate, bstate)
     member val A = a
     member val B = b
     member val System = system
     member val Steps = steps
+    member val Complete = system |- (astate, bstate)
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
     static member (|-) ((proof:Proof), (A:Formula<'t,'u>, B:Formula<'v,'w>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
 
@@ -64,7 +64,7 @@ and ProofSystem(axioms: Axioms, rules: Rules) =
     member val Axioms = axioms
     member val Rules = rules
     member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)     
-    static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b 
+    static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b
 
 type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) = 
     let (a, b) = stms
@@ -82,16 +82,14 @@ module Proof =
         function 
         | A when (sequal (p.A) (A)) && p.Complete -> p.B  
         | expr -> traverse expr (subst p)
-
     /// Substitute A with X when A <=> X.
     let subst_a (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof (a,b) -> (subst proof a), b) 
-
     /// Substitute B with X when B <=> X.
     let subst_b (p:Proof) = Subst(sprintf "Substitute %s in B with %s" (src p.A) (src p.B), p, fun proof (a, b) -> (a, subst proof b))
 
     let proof_system axioms rules = ProofSystem(axioms, rules)
-    let proof' system a  b steps = Proof(system, a, b, steps)
-    let proof (system: ProofSystem) (a:Formula<_,_>)  (b:Formula<_,_>) (steps: Rule list) = proof' system a.Expr b.Expr steps
-    let axiomatic system a  b = proof system a b []
-    let axiomatic' (system) (a)  (b)  = proof' system a b []
+    let proof' a b system steps = Proof(a, b, system, steps)
+    let proof (a:Formula<_,_>, b:Formula<_,_>) (system: ProofSystem) (steps: Rule list) = proof' a.Expr b.Expr system steps
+    let axiomatic (a,b) system  = proof (a,b) system []
+    let axiomatic' a b system   = proof' a b system []
     let theorem (stmt:TheoremStmt<_,_>) (proof) = Theorem(stmt, proof)
