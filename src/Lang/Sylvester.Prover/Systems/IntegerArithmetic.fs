@@ -7,8 +7,7 @@ open Microsoft.FSharp.Quotations.DerivedPatterns
 open Sylvester
 open FormulaPatterns
 
-module IntegerArithmetic =
-    
+module IntegerArithmetic =    
     // x + y, y + x
     let (|Commute|_|) =
         function
