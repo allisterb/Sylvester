@@ -40,6 +40,8 @@ module Formula =
     
     let prop (x:bool) = value x
 
+    let src expr = decompile expr
+
 module FormulaPatterns =
     let (|Equal|_|) =
         function

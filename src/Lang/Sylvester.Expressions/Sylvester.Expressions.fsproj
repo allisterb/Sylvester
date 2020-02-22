@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Reflection" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\ext\unquote\Unquote.NetStandard\Unquote.NetStandard.fsproj" />
   </ItemGroup>
 

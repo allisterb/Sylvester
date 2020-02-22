@@ -5,21 +5,26 @@ open Microsoft.FSharp.Quotations
 open Sylvester
 
 type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: Rule list, ?quiet:bool) =
-    let logBuilder = System.Text.StringBuilder()
     let ruleNames = system.Rules |> List.map (fun (r:Rule) -> r.Name)
     let stepNames = steps |> List.map (fun r -> r.Name)
+
+    let logBuilder = System.Text.StringBuilder()
     let q = defaultArg quiet false
     let prooflog (x:string) = 
         do 
             logBuilder.Append(x) |> ignore
             if not q then printfn "%s" x
+    
+    let mutable astate, bstate = (a, b)
+    let mutable state:(Expr * Expr * string) list = [] 
+    let mutable stepCount = 0
+
     do sprintf "Proof of A: %s <=> B: %s:" (src a) (src b) |> prooflog
     do if system |- (a, b) then
         sprintf "|- %s <=> %s" (src a) (src b) |> prooflog
         sprintf "Proof complete." |> prooflog
-    let mutable astate, bstate = (a, b)
-    let mutable state:(Expr * Expr * string) list = [] 
-    let mutable stepCount = 0
+        stepCount <- steps.Length
+    
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
         let stepId = stepCount + 1
@@ -50,17 +55,18 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: Rule list, ?quiet:bool) 
     do if stepCount = 0 && not(system |- (a, b)) then
         sprintf "Proof incomplete." |> prooflog
     member val A = a
+    
     member val B = b
     member val System = system
     member val Steps = steps
     member val Complete = system |- (astate, bstate)
     member val State = state
     member val Log = logBuilder
+    
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
     static member (|-) ((proof:Proof), (A:Formula<'t,'u>, B:Formula<'v,'w>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
-
+    
     static member (+) (l:Proof, r:Rule) = if l.Complete then failwith "Cannot add a rule to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
-
     static member (+) (l:Proof, r:Proof) = 
         let rec subst (p:Proof) = 
             function 
@@ -114,7 +120,7 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
 [<AutoOpen>]
 module Proof =   
     let rec subst (p:Proof) = 
-        function 
+        function
         | A when (sequal (p.A) (A)) && p.Complete -> p.B  
         | expr -> traverse expr (subst p)
     /// Substitute A with X when A <=> X.

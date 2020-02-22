@@ -2,17 +2,23 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Sylph</PackageId>
     <Version>0.1.0</Version>
     <Product>Symbolic proof helper</Product>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
     <Authors>Allister Beharry</Authors>
-    <Description>Theorem prover that can prove symbolic equality between 2 F# expressions.</Description>
+    <Description>Interactive theorem prover that can prove equivalence between 2 F# functions and expressions.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
+    <PackageTags>math logic theorem prover</PackageTags>
+    <PackageReleaseNotes>First release.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="README.md" />
     <Compile Include="Formula.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Systems\IntegerArithmetic.fs" />
@@ -28,6 +34,13 @@
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
