@@ -70,7 +70,7 @@ let b = F (fun x -> 5 + 3 * x)
 let c = F (fun x -> 6 * x)
 
 //Some theorems are true axiomatically 
-// e.g the functions a and b are equivalent because of the commutativity axiom of integer arithmtic.
+// e.g the functions a and b are equivalent because of the commutativity axiom of integer arithmetic.
 integer_arithmetic |- (a <=> b)
 ```
 
