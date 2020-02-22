@@ -23,10 +23,6 @@ let F4 = F (fun x -> 5 * x + 10)
 ```
 
 
-Installed package Sylph version *
-
-
-
 ```fsharp
 // Or use a reflected definition
 
