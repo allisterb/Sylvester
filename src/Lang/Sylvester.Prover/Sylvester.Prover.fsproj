@@ -15,9 +15,15 @@
     <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageTags>math logic theorem prover</PackageTags>
     <PackageReleaseNotes>First release.</PackageReleaseNotes>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <None Include="README.md" />
     <Compile Include="Formula.fs" />
     <Compile Include="Proof.fs" />

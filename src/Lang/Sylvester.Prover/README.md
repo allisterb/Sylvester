@@ -4,7 +4,14 @@
 
 Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas with the same domain and co-domain and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# function of a particular type for which a code quotation and full expression tree are available. Formulas in a theorem do not have to be logical formulas but any 2 formulas where it makes sense to reason about equationally.
 
-```fsharp
+
+```C#
+// Use the Sylph NuGet package
+#r "nuget: Sylph"
+```
+
+
+```C#
 open Sylph
 
 // Define some integer formulae of interest
@@ -15,7 +22,11 @@ let F4 = F (fun x -> 5 * x + 10)
 ```
 
 
-```fsharp
+Installed package Sylph version *
+
+
+
+```C#
 // Or use a reflected definition
 
 [<ReflectedDefinition>]
@@ -37,7 +48,7 @@ F1.Expr
 
 
 
-```fsharp
+```C#
 // And can also be decompiled to the F# source
 F1.Src
 ```
@@ -52,7 +63,7 @@ F1.Src
 Proofs are constructed according to the axioms and rules of a [proof system](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Systems/IntegerArithmetic.fs) which define the rules that can be used to match and transform formula expressions that preserve equivalence.
 
 
-```fsharp
+```C#
 // Open the integer arithmetic proof system
 open IntegerArithmetic
 
@@ -86,7 +97,7 @@ integer_arithmetic |- (a <=> b)
 ````
 
 
-```fsharp
+```C#
 // True because of the addition identity axiom
 integer_arithmetic |- (c <=> F(fun x -> 6*x + 0))
 ```
@@ -101,7 +112,7 @@ integer_arithmetic |- (c <=> F(fun x -> 6*x + 0))
 Proof systems also contain [rules](https://github.com/allisterb/Sylvester/blob/5811b1f544d94057b40728b9086b7ccd940428ab/src/Lang/Sylvester.Prover/Systems/IntegerArithmetic.fs#L60) that are valid ways to transform two function expressions when they are not in a primitive unary or binary form. Theorems usully require a *proof* which is just a `list` of rule applications that must all be instances of rules defined only by the proof system.
 
 
-```fsharp
+```C#
 // Not provable directly from axioms: 2x + 5 + 3 <=> 2x + 8 
 integer_arithmetic |- (F1 <=> F2)
 ```
@@ -114,7 +125,7 @@ integer_arithmetic |- (F1 <=> F2)
 
 
 
-```fsharp
+```C#
 // Proof of F1 <=> F2 using two steps
 let p1 = proof (F1 <=> F2) integer_arithmetic [
         right_assoc_b 
@@ -143,7 +154,7 @@ let rec right_assoc =
 ````
 
 
-```fsharp
+```C#
 // Apply the right_assoc rule to a formula expression and compare
 F2.Expr, right_assoc F2.Expr
 ```
@@ -166,7 +177,7 @@ F2.Expr, right_assoc F2.Expr
 Rules are normal F# functions that can be chained together:
 
 
-```fsharp
+```C#
 // Rules on formula expressions can be chained together.
 (right_assoc >> equal_constants) F2.Expr
 ```
@@ -181,8 +192,7 @@ Rules are normal F# functions that can be chained together:
 
 
 
-```fsharp
-open Sylvester
+```C#
 // Apply two rules and compare the resulting source
 src F2.Expr, (right_assoc >> equal_constants >> src) F2.Expr
 ```
@@ -197,7 +207,7 @@ src F2.Expr, (right_assoc >> equal_constants >> src) F2.Expr
 In the above case we can see that the two formulae F1 and F2 are equivalent since one can be transformed into another and we use these two rules in our proof `p1`.
 
 
-```fsharp
+```C#
 p1.Steps
 ```
 
@@ -210,7 +220,7 @@ p1.Steps
 
 
 
-```fsharp
+```C#
 p1 |- (F1 <=> F2)
 ```
 
@@ -224,7 +234,7 @@ p1 |- (F1 <=> F2)
 When a proof is constructed each step is checked and executed and the resulting state of the pair of formulae logged and stored. This is a longer proof using more rules of inference for integer arithmetic:
 
 
-```fsharp
+```C#
 // 3 * x + 6 + 2 * x + 4 <=> 5 * x + 10
 let p2 = proof (F3 <=> F4) integer_arithmetic [
     right_assoc_a 
@@ -266,7 +276,7 @@ let p2 = proof (F3 <=> F4) integer_arithmetic [
 
 
 
-```fsharp
+```C#
 // Proof state after sixth step
 p2.State.[5]
 ```
@@ -289,7 +299,7 @@ p2.State.[5]
 There are two kinds of rules: rules derived from axioms of a particular proof system and a general substitution rule (derived from the axiom of symbolic equality) which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system. The substitution rule is what allows proofs to be created in stages e.g we can create a partial proof of F3 <=> F4.
 
 
-```fsharp
+```C#
 // 3 * x + 6 + 2 * x + 4 <=> 5 * x + 10
 let p3 = proof (F3 <=> F4) integer_arithmetic [
     right_assoc_a 
@@ -318,7 +328,7 @@ let p3 = proof (F3 <=> F4) integer_arithmetic [
 If we then work on another proof which completes this proof we can join these two proofs together
 
 
-```fsharp
+```C#
 let p4 = proof (F(fun x -> 3 * x + (10 + 2 * x)) <=> F4) integer_arithmetic [
     commute_a_right
     left_assoc_a
@@ -344,7 +354,7 @@ let p4 = proof (F(fun x -> 3 * x + (10 + 2 * x)) <=> F4) integer_arithmetic [
 
 
 
-```fsharp
+```C#
 // Join p3 and p4 together to complete the proof of F3 <=> F4 
 let p5 = p3 + p4
 ```
@@ -367,7 +377,7 @@ let p5 = p3 + p4
 
 
 
-```fsharp
+```C#
 p5 |- (F3 <=> F4)
 ```
 
