@@ -1,5 +1,6 @@
 # Sylph
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allisterb/sylph-notebooks.git/master?filepath=Sylph.ipynb)
+[![NuGet](https://img.shields.io/nuget/v/Sylph.svg)](https://www.nuget.org/packages/Sylph/)
 
 [Sylph](https://www.nuget.org/packages/Sylph/) (symbolic proof helper) is a language-integrated interactive theorem prover for F# which helps a user formally prove two F# functions or expressions are equivalent according to the axioms and rules of a particular proof system.
 
