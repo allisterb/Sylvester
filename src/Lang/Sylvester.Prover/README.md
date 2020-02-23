@@ -108,7 +108,7 @@ Proof systems also contain rules that are valid ways to transform two function e
 
 
 ```fsharp
-// Not provable directly from axioms: 2x + 5 + 3 <=> 2x + 8 
+// Not provable directly from axioms: 2x + 3 + 5 <=> 2x + 8 
 integer_arithmetic |- (F1 <=> F2)
 ```
 
