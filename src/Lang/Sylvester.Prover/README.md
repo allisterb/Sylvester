@@ -2,17 +2,14 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allisterb/sylph-notebooks.git/master?filepath=Sylph.ipynb)
 [![NuGet](https://img.shields.io/nuget/v/Sylph.svg)](https://www.nuget.org/packages/Sylph/)
 
-[Sylph](https://www.nuget.org/packages/Sylph/) (symbolic proof helper) is a language-integrated interactive theorem prover for F# which helps a user formally prove two F# functions or expressions are equivalent according to the axioms and rules of a particular proof system.
+[Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (symbolic proof helper) is a language-integrated interactive theorem prover for F# which helps a user formally prove two F# functions or expressions are equivalent according to the axioms and rules of a particular proof system.
 
-Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas with the same domain and co-domain and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# function of a particular type for which a code quotation and full expression tree are available. Formulas in a theorem do not have to be logical formulas but any 2 formulas where it makes sense to reason about equationally.
-
+Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# function of a particular type for which a code quotation and full expression tree are available. Formulas in a theorem do not have to be logical formulas but any 2 F#/.NET functions of the same type where it makes sense to reason about them equationally.
 
 ```fsharp
 // Use the Sylph NuGet package
 #r "nuget: Sylph"
 ```
-
-
 ```fsharp
 open Sylph
 
@@ -294,7 +291,7 @@ p2.State.[5]
 
 
 
-There are two kinds of rules: rules derived from axioms of a particular proof system and a general substitution rule (derived from the axiom of symbolic equality) which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system. The substitution rule is what allows proofs to be created in stages e.g we can create a partial proof of F3 <=> F4.
+There are two kinds of rules: rules derived from axioms of a particular proof system and a general substitution rule which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system. The substitution rule is what allows proofs to be created in stages e.g we can create a partial proof of F3 <=> F4.
 
 
 ```fsharp
