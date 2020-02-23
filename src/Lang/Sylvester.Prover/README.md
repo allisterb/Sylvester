@@ -107,7 +107,7 @@ integer_arithmetic |- (c <=> F(fun x -> 6*x + 0))
 
 
 
-Proof systems also contain [rules](https://github.com/allisterb/Sylvester/blob/5811b1f544d94057b40728b9086b7ccd940428ab/src/Lang/Sylvester.Prover/Systems/IntegerArithmetic.fs#L60) that are valid ways to transform two function expressions when they are not in a primitive unary or binary form. Theorems usully require a *proof* which is just a `list` of rule applications that must all be instances of rules defined only by the proof system.
+Proof systems also contain rules that are valid ways to transform two function expressions when they are not in a primitive unary or binary form. Theorems usully require a *proof* which is just a `list` of rule applications that must all be instances of rules defined only by the proof system.
 
 
 ```fsharp
