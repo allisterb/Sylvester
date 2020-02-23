@@ -294,8 +294,8 @@ p2.State.[5]
 
 
 There are two kinds of rules: 
-    * A general substitution rule which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system.
-    * Rules derived from axioms of a particular proof system and the substitution rule
+* A general substitution rule which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system.
+* Rules derived from axioms of a particular proof system and the substitution rule.
     
 The substitution rule also allows proofs to be created in stages e.g we can create a partial proof of F3 <=> F4.
 
