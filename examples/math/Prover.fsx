@@ -52,7 +52,7 @@ let p8 = proof (F3 <=> F4) integer_arithmetic [
     equal_constants_a_b
 ]
 
-let p9 = proof (F(fun x -> 3 * x + (6 + 4 + 2 * x)) <=> F4) integer_arithmetic [
+let p9 = proof (F(fun x -> 3 * x + (10 + 2 * x)) <=> F4) integer_arithmetic [
     commute_a_right
     left_assoc_a
     collect_a_left
@@ -61,3 +61,6 @@ let p9 = proof (F(fun x -> 3 * x + (6 + 4 + 2 * x)) <=> F4) integer_arithmetic [
 ]
 
 let p10 = p8 + p9
+
+let F11 = F (fun (x:int) -> seq {0..x} |> Seq.sum)
+F11.Expr

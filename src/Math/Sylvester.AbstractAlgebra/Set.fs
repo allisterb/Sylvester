@@ -75,10 +75,9 @@ with
     /// Determine if the set contains another set as a subset.
     member a.HasSubset b =
         match a, b with
-        | Empty, Empty -> false
+        | Empty, _ -> false
         | _, Empty -> true
-        |Empty, _ -> false
-
+     
         |_, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
         
         |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
@@ -118,7 +117,7 @@ with
     /// Set of all subsets.
     member a.Powerset =
         match a with
-        | Empty -> failwith "The empty set has no subsets."
+        | Empty -> Empty
         | Seq _ ->
                 // From http://www.fssnip.net/ff/title/Sequence-of-all-Subsets-of-a-set by Isaiah Permulla
                 // using bit pattern to generate subsets
@@ -131,8 +130,9 @@ with
                         let len = a.Length
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i a}
-                        Seq(seq{for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.length(s) = 0 then Empty else Seq(s |> Seq.toArray)})
-                subsets    
+                        seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
+                
+                Seq (Gen ((fun x -> a.HasSubset x), subsets))   
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a sequence instead."
 
     member x.Prod = 
