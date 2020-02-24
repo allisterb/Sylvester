@@ -69,8 +69,3 @@ module FormulaPatterns =
         function
         | Call(None, method, Sequence(l, r)::[]) when method.Name = "Sum" -> Some (l, r)
         | _ -> None
-
-    let equal a b = 
-        match(a, b) with
-        |Equal _ -> true
-        | _ -> false
