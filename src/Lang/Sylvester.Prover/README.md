@@ -2,17 +2,16 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allisterb/sylph-notebooks.git/master?filepath=Sylph.ipynb)
 [![NuGet](https://img.shields.io/nuget/v/Sylph.svg)](https://www.nuget.org/packages/Sylph/)
 
-[Sylph](https://www.nuget.org/packages/Sylph/) (symbolic proof helper) is a language-integrated interactive theorem prover for F# which helps a user formally prove two F# functions or expressions are equivalent according to the axioms and rules of a particular proof system.
+[Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (symbolic proof helper) is a language-integrated interactive theorem prover for F# which helps a user formally prove two F# functions or expressions are equivalent according to the axioms and rules of a particular proof system.
 
-Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas with the same domain and co-domain and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# function of a particular type for which a code quotation and full expression tree are available. Formulas in a theorem do not have to be logical formulas but any 2 formulas where it makes sense to reason about equationally.
+Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# function of a particular type for which a code quotation and full expression tree are available. Formulas in a theorem do not have to be logical formulas but any 2 F#/.NET functions of the same type where it makes sense to reason about them equationally. 
 
+In Sylph F# functions of the same type lose their interpretation and become sequences of symbols that match certain patterns and can be transformed in certain ways.
 
 ```fsharp
 // Use the Sylph NuGet package
 #r "nuget: Sylph"
 ```
-
-
 ```fsharp
 open Sylph
 
@@ -71,7 +70,7 @@ let b = F (fun x -> 5 + 3 * x)
 let c = F (fun x -> 6 * x)
 
 //Some theorems are true axiomatically 
-// e.g the functions a and b are equivalent because of the commutativity axiom of integer arithmetic.
+// e.g the formulae a and b are equivalent because of the commutativity axiom of integer arithmetic.
 integer_arithmetic |- (a <=> b)
 ```
 
@@ -107,11 +106,11 @@ integer_arithmetic |- (c <=> F(fun x -> 6*x + 0))
 
 
 
-Proof systems also contain [rules](https://github.com/allisterb/Sylvester/blob/5811b1f544d94057b40728b9086b7ccd940428ab/src/Lang/Sylvester.Prover/Systems/IntegerArithmetic.fs#L60) that are valid ways to transform two function expressions when they are not in a primitive unary or binary form. Theorems usully require a *proof* which is just a `list` of rule applications that must all be instances of rules defined only by the proof system.
+Proof systems also contain rules that are valid ways to transform two function expressions when they are not in a primitive unary or binary form. Theorems usully require a *proof* which is just a `list` of rule applications that must all be instances of rules defined only by the proof system.
 
 
 ```fsharp
-// Not provable directly from axioms: 2x + 5 + 3 <=> 2x + 8 
+// Not provable directly from axioms: 2x + 3 + 5 <=> 2x + 8 
 integer_arithmetic |- (F1 <=> F2)
 ```
 
@@ -294,7 +293,11 @@ p2.State.[5]
 
 
 
-There are two kinds of rules: rules derived from axioms of a particular proof system and a general substitution rule (derived from the axiom of symbolic equality) which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system. The substitution rule is what allows proofs to be created in stages e.g we can create a partial proof of F3 <=> F4.
+There are two kinds of rules: 
+* A general substitution rule which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system.
+* Rules derived from axioms of a particular proof system and the substitution rule.
+    
+The substitution rule also allows proofs to be created in stages e.g we can create a partial proof of F3 <=> F4.
 
 
 ```fsharp
