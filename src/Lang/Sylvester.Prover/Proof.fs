@@ -61,8 +61,12 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
     member val Steps = steps
     member val Complete = system |- (astate, bstate)
     member val State = state
+    member val AState = astate
+    member val BState = bstate
+    member val ProofRule = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
+    member x.ASubst(a:Expr) = x.ProofRule(a, x.B) |> fst
+    member x.BSubst(b:Expr) = x.ProofRule(x.A, b) |> snd
     member val Log = logBuilder
-    
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
     static member (|-) ((proof:Proof), (A:Formula<'t,'u>, B:Formula<'v,'w>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
     
@@ -76,7 +80,7 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
         if l.System = r.System then 
             if sequal last_l_astate r.A  then
                 let l2 = Proof(l.A, last_l_astate, l.System, l.Steps, true) in
-                let s = Subst(sprintf "Joining proof of %s <=> %s to proof of %s <=> %s" (src l.A) (src last_l_astate) (src r.A) (src r.B), l2, fun proof e -> subst proof e) |> EntireA in
+                let s = Subst(sprintf "Joining proof of %s == %s to proof of %s == %s" (src l.A) (src last_l_astate) (src r.A) (src r.B), l2, fun proof e -> subst proof e) |> EntireA in
                 Proof(l.A, r.B, l.System, s::r.Steps)  
             else failwith "Cannot create proof from these proofs. The RHS of the first proof is not the LHS of the 2nd proof."
         else
@@ -158,8 +162,7 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
     member val A = a
     member val B = b
     member val Proof = proof
-    //member val ProofRule = Rule(sprintf "Proof rule for %s == %s" a.Src b.Src, 
-    //                        proof.Steps |> List.map (fun r -> r.Rule.Apply) |> List.reduce (>>))
+    //member 
     //static member (==) (l:Theorem<'t, 'u>, r:Theorem<'t, 'u>) = 
     //    (l.ProofRule.Apply >> fst, l.A.Expr, l.B.Expr), (l.ProofRule.Apply >> fst, l.A.Expr, l.B.Expr)
  
@@ -173,15 +176,8 @@ module Proof =
         | expr -> traverse expr (subst p)
     
     /// Substitute A with X when A == X.
-    let subst_rule (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
+    let Subst (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
   
-    let entire_a r = EntireA r
-    let entire_b r = EntireB r
-    let left_a r = LeftA r
-    let left_b r = LeftB r
-    let right_a r = RightA r
-    let right_b r = RightB r
-
     let proof_system axioms rules = ProofSystem(axioms, rules)
     let proof' a b system steps = Proof(a, b, system, steps)
     let proof (a:Formula<_,_>, b:Formula<_,_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps
