@@ -161,23 +161,14 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
     do if not (proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (a.Src) (b.Src)
     member val A = a
     member val B = b
+    member val System = proof.System
     member val Proof = proof
-    //member 
-    //static member (==) (l:Theorem<'t, 'u>, r:Theorem<'t, 'u>) = 
-    //    (l.ProofRule.Apply >> fst, l.A.Expr, l.B.Expr), (l.ProofRule.Apply >> fst, l.A.Expr, l.B.Expr)
- 
+    
  and TheoremStmt<'t, 'u> = Formula<'t, 'u> * Formula<'t, 'u>
 
 [<AutoOpen>]
-module Proof =   
-    let rec subst (p:Proof) = 
-        function
-        | A when (sequal (p.A) (A)) && p.Complete -> p.B  
-        | expr -> traverse expr (subst p)
-    
-    /// Substitute A with X when A == X.
-    let Subst (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
-  
+module Proof =     
+
     let proof_system axioms rules = ProofSystem(axioms, rules)
     let proof' a b system steps = Proof(a, b, system, steps)
     let proof (a:Formula<_,_>, b:Formula<_,_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps
