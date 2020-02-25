@@ -1,6 +1,6 @@
 ﻿namespace Sylph
 
-open Microsoft.FSharp.Quotations
+open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
@@ -14,15 +14,9 @@ type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     member val Src = decompile e
     member x.Form = (x, x.Apply, x.Body)
     override x.ToString() = x.Src   
-    
     static member (==) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
 
-
 type F<'t, 'u> = Formula<'t, 'u>
-
-[<AutoOpen>]
-module Formula =
-    let src expr = decompile expr
 
 module FormulaPatterns =
     let (|Equal|_|) =
@@ -32,12 +26,12 @@ module FormulaPatterns =
 
     let (|UnaryOp|_|) =
         function
-        | Call(_, _, l::[]) -> Some l
+        | Call(None, _, l::[]) -> Some l
         | _ -> None
 
     let (|BinaryOp|_|) =
         function
-        | Call(_, _, l::r::[]) -> Some (l, r)
+        | Call(None, _, l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Add|_|) =
@@ -65,7 +59,26 @@ module FormulaPatterns =
         | Call(None, method, Range(l, r)::[]) when method.Name = "CreateSequence" -> Some (l, r)
         | _ -> None
 
-    let (|Sum|_|) (expr:Expr) =
+    let (|Sum|_|)  =
         function
         | Call(None, method, Sequence(l, r)::[]) when method.Name = "Sum" -> Some (l, r)
         | _ -> None
+
+ module Formula =     
+     open FormulaPatterns
+
+     let left (s:Expr -> Expr) = 
+        function
+        | BinaryOp(l, _) -> l |> s
+        | _ -> failwith "Not binary."
+     
+     let right (s:Expr -> Expr) = 
+        function
+        | BinaryOp(_, r) -> r |> s
+        | _ -> failwith "Not binary."
+
+     let src expr = decompile expr
+
+        
+
+ 

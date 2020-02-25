@@ -27,6 +27,8 @@
     <None Include="README.md" />
     <Compile Include="Formula.fs" />
     <Compile Include="Proof.fs" />
+    <Compile Include="Systems\PropositionalLogic.fs" />
+    <Compile Include="Systems\EquationalLogic.fs" />
     <Compile Include="Systems\IntegerArithmetic.fs" />
   </ItemGroup>
 
