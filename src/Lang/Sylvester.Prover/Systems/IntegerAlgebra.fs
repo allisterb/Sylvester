@@ -7,7 +7,7 @@ open Microsoft.FSharp.Quotations.DerivedPatterns
 open Sylvester
 open FormulaPatterns
 
-module IntegerArithmetic =    
+module IntegerAlgebra =    
     // x + y, y + x
     let (|Commute|_|) =
         function
@@ -121,8 +121,8 @@ module IntegerArithmetic =
     /// Collect multiplication terms distributed over addition in expression.
     let Collect = Rule("Collect multiplication terms distributed over addition in (expression)", collect)
     
-    /// Axioms and rules for integer arithmetic.
-    let integer_arithmetic = 
+    /// Axioms and rules for integer algebra.
+    let integer_algebra = 
         ProofSystem(integer_axioms, [
             Reduce 
             LeftAssoc 

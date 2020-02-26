@@ -168,7 +168,12 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
 
 [<AutoOpen>]
 module Proof =     
-
+    let rec subst (p:Proof) = 
+        function
+        | A when (sequal (p.A) (A)) && p.Complete -> p.B  
+        | expr -> traverse expr (subst p)
+    /// Substitute A with X when A == X.
+    let Subst (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
     let proof_system axioms rules = ProofSystem(axioms, rules)
     let proof' a b system steps = Proof(a, b, system, steps)
     let proof (a:Formula<_,_>, b:Formula<_,_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps
