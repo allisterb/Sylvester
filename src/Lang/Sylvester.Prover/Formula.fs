@@ -8,6 +8,7 @@ open Sylvester
 
 type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     let (v, t, e) = expandReflectedDefinitionParam expr
+    member val Type = t
     member val Apply = v :?> ('t -> 'u)
     member val Expr = body e
     member val LambdaExpr = e 

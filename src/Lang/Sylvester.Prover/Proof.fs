@@ -157,6 +157,7 @@ and ProofSystem(axioms: Axioms, rules: Rules) =
     member val Axioms = axioms
     member val Rules = rules
     member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)     
+    static member BooleanAxioms = ProofSystem(boolean_axioms, [])
     static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b
     static member (|-) ((c:ProofSystem), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
 
@@ -172,13 +173,17 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
  and TheoremStmt<'t, 'u> = Formula<'t, 'u> * Formula<'t, 'u>
 
 [<AutoOpen>]
-module Proof =     
+module LeibnizRule = 
     let rec subst (p:Proof) = 
         function
         | A when (sequal (p.A) (A)) && p.Complete -> p.B  
         | expr -> traverse expr (subst p)
-    /// Substitute A with X when A == X.
+    
+    /// Leibniz's rule : Substitute a part of A: a with X when X == a.
     let Subst (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
+
+[<AutoOpen>]
+module Proof =     
     let proof_system axioms rules = ProofSystem(axioms, rules)
     let proof' a b system steps = Proof(a, b, system, steps)
     let proof (a:Formula<_,_>, b:Formula<_,_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps

@@ -10,7 +10,7 @@ open Sylvester
 /// Formalizes the system of equational propsitional logic used by Sylph.
 /// Based on E: http://www.cs.cornell.edu/home/gries/Logic/Equational.html
 /// The main difference is that since we only have to deal with symbolic equality (not mathematical equality)
-//  we can drop the restriction that a substitution must only replace variables in an expression and consider general symbolic substitution.
+///  we can drop the restriction that a substitution must only replace variables in an expression and consider general symbolic substitution.
 [<AutoOpen>]
 module EquationalLogic =
     
