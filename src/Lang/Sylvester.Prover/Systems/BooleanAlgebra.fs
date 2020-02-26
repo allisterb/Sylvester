@@ -6,103 +6,10 @@ open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
 
 open Sylvester
-open FormulaPatterns
-
-module Operators =
-    /// Implication operator
-    let (==>) (l:bool) (r:bool) = (not l) || r
-
-    /// Equivalence operator. The (==) operator is reserved for conjunctional equivalence
-    let (<=>) (l:bool) (r:bool) = l ==> r && r ==> l
 
 module BooleanAlgebra =
+
     open Operators
-
-    let Taut = F(fun () -> true)
-
-    let Cont = F(fun () -> true)
-
-    (* Patterns*)
-    let (|Implies|_|) =
-        function
-        | SpecificCall <@@ (==>) @@> (None,_,l::r::[]) -> Some(l, r)
-        | _ -> None
-
-    let (|Equiv|_|) =
-        function
-        | SpecificCall <@@ (<=>) @@> (None,_,l::r::[]) -> Some(l, r)
-        | _ -> None
-
-    let (|Not|_|) =
-        function
-        | SpecificCall <@@ not @@> (None,_,l::[]) -> Some l
-        | _ -> None
-
-    (* Axioms *)
-    // x || y, y || x
-    // x && y, y && x
-    // x <=> y, y <=> x
-    let (|Commute|_|) =
-        function
-        | Lambda(v1, OrElse(a1, a2)), Lambda(v2, OrElse(b1, b2)) when vequal v1 v2 && sequal2 a1 a2 b2 b1 -> Some true
-        | Lambda(v1, AndAlso(a1, a2)), Lambda(v2, AndAlso(b1, b2)) when vequal v1 v2 && sequal2 a1 a2 b2 b1 -> Some true 
-        | Lambda(v1, Equiv(a1, a2)), Lambda(v2, Equiv(b1, b2)) when vequal v1 v2 && sequal2 a1 a2 b2 b1 -> Some true 
-        | _ -> None
-
-    // x || y || z, x || (y || z)
-    // x && y && z, x && (y && z)
-    // X <=> y <=> z, x <=> (y <=> z)
-    let (|Assoc|_|) =
-        function
-        | Lambda(v1, OrElse(OrElse(a1, a2), a3)), Lambda(v2, OrElse(b1, OrElse(b2, b3))) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3 -> Some true        
-        | Lambda(v1, OrElse(a1, OrElse(a2, a3))), Lambda(v2, OrElse(OrElse(b1, b2), b3)) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3 -> Some true
-        
-        | Lambda(v1, AndAlso(AndAlso(a1, a2), a3)), Lambda(v2, AndAlso(b1, AndAlso(b2, b3))) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3 -> Some true
-        | Lambda(v1, AndAlso(a1, AndAlso(a2, a3))), Lambda(v2, AndAlso(AndAlso(b1, b2), b3)) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3 -> Some true
-
-        | Lambda(v1, Equiv(Equiv(a1, a2), a3)), Lambda(v2, Equiv(b1, Equiv(b2, b3))) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3-> Some true         | _ -> None
-        | Lambda(v1, Equiv(a1, Equiv(a2, a3))), Lambda(v2, Equiv(Equiv(b1, b2), b3)) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3-> Some true
-        | _ -> None
-        
-    // x && (y || z), x && y || x && z
-    let (|Distrib|_|) =
-        function
-        | Lambda(v1, OrElse(AndAlso(a1, b1), AndAlso(a2, b2))), Lambda(v2, AndAlso(a3, OrElse(b3, b4))) when vequal v1 v2 && (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some true
-        | Lambda(v1, Not(AndAlso(a1, a2))), Lambda(v2, OrElse(Not(b1), Not(b2))) when vequal v1 v2 && sequal2 a1 a2 b1 b2 -> Some true
-        | _ -> None
-
-    let (|Identity|_|) =
-        function
-        | Lambda(v1, a1), Lambda(v2, a2) when vequal v1 v2 && sequal a1 a2 -> Some true
-        | _ -> None
-
-    let (|False|_|) =
-        function
-        | Lambda(v1, Bool false), Lambda(v2, Not(Bool true)) when vequal v1 v2 -> Some true
-        | _ -> None
-    
-    let (|OrIdentity|_|) = 
-        function
-        | Lambda(v1, a1), Lambda(v2, OrElse(a2, Bool false)) when vequal v1 v2 && sequal a1 a2 -> Some true
-        | Lambda(v1, OrElse(a1, Bool false)), Lambda(v2, a2) when vequal v1 v2 && sequal a1 a2 -> Some true
-        | _ -> None
-
-    let (|AndIdentity|_|) = 
-        function
-        | Lambda(v1, a1), Lambda(v2, AndAlso(a2, Bool true)) when vequal v1 v2 && sequal a1 a2 -> Some true        
-        | Lambda(v1, AndAlso(a1, Bool true)), Lambda(v2, a2) when vequal v1 v2 && sequal a1 a2 -> Some true
-        | _ -> None
-
-    let boolean_axioms =
-        function
-        | Commute x
-        | Assoc x
-        | Distrib x
-        | Identity x
-        | False x
-        | OrIdentity x
-        | AndIdentity x -> true
-        | _ -> false
 
     let rec reduce_constants  =
         function
@@ -124,7 +31,7 @@ module BooleanAlgebra =
         function
         | OrElse(a1, OrElse(a2, a3)) -> <@@ (%%a1 || %%a2) || %%a3 @@>
         | AndAlso(a1, AndAlso(a2, a3)) -> <@@ (%%a1 && %%a2) && %%a3 @@>
-        | Equiv(a1, Equiv(a2, a3)) -> <@@ (%%a1 ==> %%a2) ==> %%a3 @@>
+        | Equiv(a1, Equiv(a2, a3)) -> <@@ (%%a1 <=> %%a2) <=> %%a3 @@>
         | expr -> traverse expr left_assoc
 
     let rec commute =

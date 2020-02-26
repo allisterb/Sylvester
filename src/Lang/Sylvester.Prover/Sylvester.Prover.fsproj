@@ -25,11 +25,11 @@
       <PackagePath></PackagePath>
     </None>
     <None Include="README.md" />
+    <Compile Include="EquationalLogic.fs" />
     <Compile Include="Formula.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Systems\BooleanAlgebra.fs" />
     <Compile Include="Systems\IntegerAlgebra.fs" />
-    <Compile Include="Systems\EquationalLogic.fs" />
   </ItemGroup>
 
   <ItemGroup>

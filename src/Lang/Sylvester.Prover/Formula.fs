@@ -9,20 +9,17 @@ open Sylvester
 type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     let (v, t, e) = expandReflectedDefinitionParam expr
     member val Apply = v :?> ('t -> 'u)
-    member val Expr = e
-    member val Body = e |> body
+    member val Expr = body e
+    member val LambdaExpr = e 
     member val Src = decompile e
-    member x.Form = (x, x.Apply, x.Body)
+    member x.Form = (x, x.Apply, x.Expr)
     override x.ToString() = x.Src   
+    static member (<=>) (lhs:Formula<'t, bool>, rhs:Formula<'t, bool>) = boolean_axioms(lhs.Expr, rhs.Expr)
     static member (==) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
+    
 type F<'t, 'u> = Formula<'t, 'u>
 
 module FormulaPatterns =
-    let (|Equal|_|) =
-        function
-        | (A, B) when sequal A B -> Some true
-        | _ -> None
-
     let (|UnaryOp|_|) =
         function
         | Call(None, _, l::[]) -> Some l
@@ -65,7 +62,3 @@ module FormulaPatterns =
 
  module Formula =     
      let src expr = decompile expr
-
-        
-
- 

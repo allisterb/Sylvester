@@ -25,8 +25,9 @@ module FsExpr =
 
     let src expr = decompile expr
         
-    let body = 
+    let rec body = 
         function
+        | Lambda(v1, Lambda(v2, b)) -> body (Expr.Lambda(v2, b))
         | Lambda(v1, b) -> b
         | expr -> failwithf "Expression %A is not a function." (src expr)
 

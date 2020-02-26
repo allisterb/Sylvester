@@ -20,10 +20,15 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
     let mutable stepCount = 0
 
     do sprintf "Proof of A: %s == B: %s:" (src a) (src b) |> prooflog
-    do if system |- (a, b) then
-        sprintf "|- %s == %s" (src a) (src b) |> prooflog
-        sprintf "Proof complete." |> prooflog
-        stepCount <- steps.Length
+    do 
+        if system |- (a, b) then
+           sprintf "|- %s == %s" (src a) (src b) |> prooflog
+           sprintf "Proof complete." |> prooflog
+           stepCount <- steps.Length
+        else if boolean_axioms (a, b) then
+           sprintf "|- %s == %s" (src a) (src b) |> prooflog
+           sprintf "Proof complete." |> prooflog
+           stepCount <- steps.Length
     
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
