@@ -1,55 +1,56 @@
 ﻿namespace Sylph
 
+open System
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
 
 open Sylvester
-open Sylph.Operators
+open Operators
 
 module BooleanAlgebra =
     let rec reduce_constants  =
         function
-        | OrElse(Bool l, Bool r) -> Expr.Value(l || r)        
+        | Or(Bool l, Bool r) -> Expr.Value(l ||| r)        
         | Not(Bool l) -> Expr.Value(not l)        
-        | AndAlso(Bool l, Bool r) -> Expr.Value(l && r)
-        | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
+        | And(Bool l, Bool r) -> Expr.Value(l |&| r)
+        //| Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
         | Equiv(Bool l, Bool r) -> Expr.Value((l = r))
         | expr -> traverse expr reduce_constants
 
     let rec right_assoc =
         function
-        | OrElse(OrElse(a1, a2), a3) -> <@@ %%a1 || (%%a2 || %%a3) @@>
-        | AndAlso(AndAlso(a1, a2), a3) -> <@@ %%a1 && (%%a2 && %%a3) @@>
-        | Equiv(Equiv(a1, a2), a3) -> <@@ %%a1 = (%%a2 = %%a3) @@> 
+        | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
+        | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@>
+        | Equiv(Equiv(a1, a2), a3) -> <@@ (%%a1 : Boolean) = ((%%a2:Boolean) = %%a3:bool) @@> 
         | expr -> traverse expr right_assoc
 
     let rec left_assoc =
         function
-        | OrElse(a1, OrElse(a2, a3)) -> <@@ (%%a1 || %%a2) || %%a3 @@>
-        | AndAlso(a1, AndAlso(a2, a3)) -> <@@ (%%a1 && %%a2) && %%a3 @@>
+        | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
+        | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@>
         | Equiv(a1, Equiv(a2, a3)) -> <@@ (%%a1 = %%a2) = %%a3 @@>
         | expr -> traverse expr left_assoc
 
     let rec commute =
         function
-        | OrElse(a1, a2) -> <@@ (%%a2 || %%a1) @@>
-        | AndAlso(a1, a2) -> <@@ (%%a2 && %%a1) @@>
+        | Or(a1, a2) -> <@@ (%%a2 ||| %%a1) @@>
+        | And(a1, a2) -> <@@ (%%a2 |&| %%a1) @@>
         | Equiv(a1, a2) -> <@@ (%%a2 = %%a1) @@>
         | expr -> traverse expr commute
 
     let rec distrib =
         function
-        | OrElse(a1, AndAlso(a2, a3)) -> <@@ %%a1 && %%a2 || %%a1 && %%a3 @@> 
-        | Not(AndAlso(a1, a2)) -> <@@ not %%a1 || not %%a2 @@> 
+        | Or(a1, And(a2, a3)) -> <@@ %%a1 |&| %%a2 ||| %%a1 |&| %%a3 @@> 
+        | Not(And(a1, a2)) -> <@@ not %%a1 ||| not %%a2 @@> 
         | expr -> traverse expr distrib
 
     let rec collect =
         function
-        | OrElse(AndAlso(a1, a2), AndAlso(a3, a4)) when sequal a1 a3 -> <@@ %%a1 && (%%a2 || %%a4) @@>
-        | OrElse(AndAlso(a1, a2), AndAlso(a3, a4)) when sequal a2 a4 -> <@@ %%a2 && (%%a1 || %%a3) @@>    
-        | OrElse(Not(a1), Not(a2)) when sequal a1 a2 -> <@@ not(%%a1 && %%a2) @@>
+        | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
+        | Or(And(a1, a2), And(a3, a4)) when sequal a2 a4 -> <@@ %%a2 |&| (%%a1 ||| %%a3) @@>    
+        | Or(Not(a1), Not(a2)) when sequal a1 a2 -> <@@ not(%%a1 |&| %%a2) @@>
         | expr -> traverse expr collect
 
     /// Reduce equal constants in expression. 

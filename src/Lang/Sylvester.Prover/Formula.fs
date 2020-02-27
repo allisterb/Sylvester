@@ -6,25 +6,30 @@ open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 
-type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
+type Formula<'t>([<ReflectedDefinition(true)>] expr: Expr<'t>) =
     let (v, t, e) = expandReflectedDefinitionParam expr
     member val Type = t
-    member val Apply = v :?> ('t -> 'u)
+    member val Apply = v :?> 't
     member val Expr = body e
     member val LambdaExpr = e 
     member val Src = decompile e
     member x.Form = (x, x.Apply, x.Expr)
     override x.ToString() = x.Src   
-    static member (==) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
+    static member (==) (lhs:Formula<'t>, rhs:Formula<'t>) = lhs, rhs
+    
+    static member T = Formula(fun () -> true)
+    static member F = Formula(fun () -> false)  
+    // We want to be able to say boolean formulae are == True/False also i.e a tautolgy or contradiction so define these overloads too
+    static member (==) (lhs:Formula<bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
+    static member (==) (lhs:Formula<bool->bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
+    static member (==) (lhs:Formula<bool->bool->bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
 
-    static member T = Formula(fun() -> true)
-    static member F = Formula(fun() -> false)
-    static member (<=>) (lhs:Formula<_, bool>, rhs:Formula<_, bool>) = boolean_axioms(lhs.Expr, rhs.Expr)
-type F<'t, 'u> = Formula<'t, 'u>
-
-type Prop = Formula<unit, bool>
+type Prop = Formula<unit->bool>
+type F<'t> = Formula<'t>
 
 module FormulaPatterns =
+    open Operators
+
     let (|UnaryOp|_|) =
         function
         | Call(None, _, l::[]) -> Some l

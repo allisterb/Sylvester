@@ -3,6 +3,7 @@
 open Microsoft.FSharp.Quotations
 
 open Sylvester
+open Operators
 
 type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?quiet:bool) =
     let ruleNames = system.Rules |> List.map (fun (r:Rule) -> r.Name)
@@ -33,7 +34,7 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
         do 
             match step.Rule with
             | (Rule(n, _)) -> if not (ruleNames |> List.contains n) then failwithf "Rule at step %i (%s) is not part of the rules of the current proof system." stepId n
-            | (Subst(n, p, _)) -> if not (p.System = system) then failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof system." stepId n
+            | (Subst(n, p, _)) -> if not (system = ProofSystem.S || (p.System = system)) then failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof system." stepId n
         let (_a, _b) = step.Apply (astate, bstate)
         let msg =
             if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
@@ -69,7 +70,7 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
     member x.BSubst(b:Expr) = x.ProofRule(x.A, b) |> snd
     member val Log = logBuilder
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
-    static member (|-) ((proof:Proof), (A:Formula<'t,'u>, B:Formula<'v,'w>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
+    static member (|-) ((proof:Proof), (A:Formula<'t>, B:Formula<'v>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
     
     static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a rule to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
     static member (+) (l:Proof, r:Proof) = 
@@ -129,13 +130,11 @@ with
         | EntireB rule -> a, rule.Apply b
         | LeftA rule -> 
                 match a with
-                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply l in Expr.Call(m, s::r::[]), b
-                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply l in Expr.Call(o, m, s::r::[]), b
+                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r), b
                 | _ -> failwith "A is not a binary operation."
         | LeftB rule -> 
                 match b with
-                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply l in a, Expr.Call(m, s::r::[])
-                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply l in a, Expr.Call(o, m, s::r::[])
+                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in a, binary_call(o, m, s, r)
                 | _ -> failwith "B is not a binary operation."
 
         | RightA rule -> 
@@ -153,11 +152,11 @@ and ProofSystem(axioms: Axioms, rules: Rules) =
     member val Axioms = axioms
     member val Rules = rules
     member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)     
-    static member BooleanAxioms = ProofSystem(boolean_axioms, [])
+    static member S = ProofSystem(boolean_axioms, [])
     static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b
-    static member (|-) ((c:ProofSystem), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
+    static member (|-) ((c:ProofSystem), (a, b):Formula<_> * Formula<_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
 
-type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) = 
+type Theorem<'t>(stms:TheoremStmt<'t>, proof:Proof) = 
     let (a, b) = stms
     do if not ((sequal proof.A a.Expr) && (sequal proof.B b.Expr)) then failwithf "The provided proof is not a proof of %s==%s" (a.Src) (b.Src)
     do if not (proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (a.Src) (b.Src)
@@ -166,7 +165,7 @@ type Theorem<'t, 'u>(stms:TheoremStmt<'t, 'u>, proof:Proof) =
     member val System = proof.System
     member val Proof = proof
     
- and TheoremStmt<'t, 'u> = Formula<'t, 'u> * Formula<'t, 'u>
+ and TheoremStmt<'t> = Formula<'t> * Formula<'t>
 
 [<AutoOpen>]
 module LeibnizRule = 
@@ -182,7 +181,7 @@ module LeibnizRule =
 module Proof =     
     let proof_system axioms rules = ProofSystem(axioms, rules)
     let proof' a b system steps = Proof(a, b, system, steps)
-    let proof (a:Formula<_,_>, b:Formula<_,_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps
+    let proof (a:Formula<_>, b:Formula<_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps
     let axiomatic (a,b) system  = proof (a,b) system []
     let axiomatic' a b system   = proof' a b system []
-    let theorem (stmt:TheoremStmt<_,_>) (proof) = Theorem(stmt, proof)
+    let theorem (stmt:TheoremStmt<_>) (proof) = Theorem(stmt, proof)

@@ -37,7 +37,7 @@ module FsExpr =
         | ShapeLambda (v, body) -> Expr.Lambda (v, f body)
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
 
-    let binary_call so m l r =
+    let binary_call (so, m, l, r) =
         match so with
         | None -> Expr.Call(m, l::r::[])
         | Some o -> Expr.Call(o, m, l::r::[])
