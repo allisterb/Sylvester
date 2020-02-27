@@ -11,35 +11,38 @@ module IntegerAlgebra =
     // x + y, y + x
     let (|Commute|_|) =
         function
-        | Lambda(v1, Add(a1, a2)), Lambda(v2, Add(b1, b2)) when vequal v1 v2 && sequal2 a1 a2 b2 b1 -> Some true        
-        | Lambda(v1, Multiply(a1, a2)), Lambda(v2, Multiply(b1, b2)) when vequal v1 v2 && sequal2 a1 a2 b2 b1 -> Some true  
+        | Add(a1, a2), Add(b1, b2) when sequal2 a1 a2 b2 b1 -> Some true        
+        | Multiply(a1, a2), Multiply(b1, b2) when sequal2 a1 a2 b2 b1 -> Some true  
         | _ -> None
 
     // x + y + z, x + (y + z)
     let (|Assoc|_|) =
         function
-        | Lambda(v1, Add(Add(a1, a2), a3)), Lambda(v2, Add(b1, Add(b2, b3))) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3 -> Some true        
-        | Lambda(v1, Add(a1, Add(a2, a3))), Lambda(v2, Add(Add(b1, b2), b3)) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3 -> Some true
-        | Lambda(v1, Multiply(Multiply(a1, a2), a3)), Lambda(v2, Multiply(b1, Multiply(b2, b3))) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3 -> Some true
-        | Lambda(v1, Multiply(a1, Multiply(a2, a3))), Lambda(v2, Multiply(Multiply(b1, b2), b3)) when vequal v1 v2 && sequal3 a1 a2 a3 b1 b2 b3-> Some true
+        | Add(Add(a1, a2), a3), Add(b1, Add(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some true        
+        | Add(a1, Add(a2, a3)), Add(Add(b1, b2), b3) when sequal3 a1 a2 a3 b1 b2 b3 -> Some true
+        | Multiply(Multiply(a1, a2), a3), Multiply(b1, Multiply(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some true
+        | Multiply(a1, Multiply(a2, a3)), Multiply(Multiply(b1, b2), b3) when sequal3 a1 a2 a3 b1 b2 b3-> Some true
         | _ -> None
 
     // x * (y + z), x * y + x * z
     let (|Distrib|_|) =
         function
-        | Lambda(v1, Add(Multiply(a1, b1), Multiply(a2, b2))), Lambda(v2, Multiply(a3, Add(b3, b4))) when vequal v1 v2 && (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some true
+        | Add(Multiply(a1, b1), Multiply(a2, b2)), Multiply(a3, Add(b3, b4)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some true
+        | Multiply(a3, Add(b3, b4)), Add(Multiply(a1, b1), Multiply(a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some true
         | _ -> None
 
+    // x + 0 = x
     let (|AddIdentity|_|) = 
         function
-        | Lambda(v1, a1), Lambda(v2, Add(a2, Int32 0)) when vequal v1 v2 && sequal a1 a2 -> Some true
+        | a1, Add(a2, Int32 0) when sequal a1 a2 -> Some true
         | Add(a1, Int32 0), a2 when sequal a1 a2 -> Some true       
         | _ -> None
 
+    // x * 1 = x
     let (|MulIdentity|_|) = 
         function
-        | Lambda(v1, a1), Lambda(v2, Multiply(a2, Int32 1)) when vequal v1 v2 && sequal a1 a2 -> Some true        
-        | Lambda(v1, Multiply(a1, Int32 1)), Lambda(v2, a2) when vequal v1 v2 && sequal a1 a2 -> Some true
+        | a1, Multiply(a2, Int32 1) when sequal a1 a2 -> Some true        
+        | Multiply(a1, Int32 1), a2 when sequal a1 a2 -> Some true
         | _ -> None
 
     let integer_axioms = 

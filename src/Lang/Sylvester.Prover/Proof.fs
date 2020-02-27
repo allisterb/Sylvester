@@ -25,10 +25,6 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
            sprintf "|- %s == %s" (src a) (src b) |> prooflog
            sprintf "Proof complete." |> prooflog
            stepCount <- steps.Length
-        else if boolean_axioms (a, b) then
-           sprintf "|- %s == %s" (src a) (src b) |> prooflog
-           sprintf "Proof complete." |> prooflog
-           stepCount <- steps.Length
     
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
@@ -48,7 +44,7 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
                 sprintf "%i. %s: %s == %s" (stepId) (stepName.Replace("(expression)", "B")) (src bstate) (src _b)
             else
                 sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A and B")) 
-        prooflog msg
+        do prooflog msg
         astate <- _a
         bstate <- _b
         state <- state @ [(astate, bstate, msg)]
@@ -133,24 +129,24 @@ with
         | EntireB rule -> a, rule.Apply b
         | LeftA rule -> 
                 match a with
-                | Patterns.Lambda(v, Patterns.Call(None, m, l::r::[])) -> let s = rule.Apply l in Expr.Lambda(v, Expr.Call(m, s::r::[])), b
-                | Patterns.Lambda(v, Patterns.Call(Some o, m, l::r::[])) -> let s = rule.Apply l in Expr.Lambda(v, Expr.Call(o, m, s::r::[])), b
+                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply l in Expr.Call(m, s::r::[]), b
+                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply l in Expr.Call(o, m, s::r::[]), b
                 | _ -> failwith "A is not a binary operation."
         | LeftB rule -> 
                 match b with
-                | Patterns.Lambda(v, Patterns.Call(None, m, l::r::[])) -> let s = rule.Apply l in a, Expr.Lambda(v, Expr.Call(m, s::r::[]))
-                | Patterns.Lambda(v, Patterns.Call(Some o, m, l::r::[])) -> let s = rule.Apply l in a, Expr.Lambda(v, Expr.Call(o, m, s::r::[]))
+                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply l in a, Expr.Call(m, s::r::[])
+                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply l in a, Expr.Call(o, m, s::r::[])
                 | _ -> failwith "B is not a binary operation."
 
         | RightA rule -> 
                 match a with
-                | Patterns.Lambda(v, Patterns.Call(None, m, l::r::[])) -> let s = rule.Apply r in Expr.Lambda(v, Expr.Call(m, l::s::[])), b
-                | Patterns.Lambda(v, Patterns.Call(Some o, m, l::r::[])) -> let s = rule.Apply r in Expr.Lambda(v, Expr.Call(o, m, l::s::[])), b
+                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply r in Expr.Call(m, l::s::[]), b
+                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply r in Expr.Call(o, m, l::s::[]), b
                 | _ -> failwithf "A is not a binary operation: %s " (a.ToString())
         | RightB rule -> 
                 match b with
-                | Patterns.Lambda(v, Patterns.Call(None, m, l::r::[])) -> let s = rule.Apply r in a, Expr.Lambda(v, Expr.Call(m, l::s::[]))
-                | Patterns.Lambda(v, Patterns.Call(Some o, m, l::r::[])) -> let s = rule.Apply r in a, Expr.Lambda(v, Expr.Call(o, m, l::s::[]))
+                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply r in a, Expr.Call(m, l::s::[])
+                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply r in a, Expr.Call(o, m, l::s::[])
                 | _ -> failwithf "B is not a binary operation: %s" (b.ToString())
  
 and ProofSystem(axioms: Axioms, rules: Rules) =
@@ -179,7 +175,7 @@ module LeibnizRule =
         | A when (sequal (p.A) (A)) && p.Complete -> p.B  
         | expr -> traverse expr (subst p)
     
-    /// Leibniz's rule : Substitute a part of A: a with X when X == a.
+    /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x == a.
     let Subst (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
 
 [<AutoOpen>]

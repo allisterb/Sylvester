@@ -15,10 +15,14 @@ type Formula<'t, 'u>([<ReflectedDefinition(true)>] expr: Expr<'t -> 'u>) =
     member val Src = decompile e
     member x.Form = (x, x.Apply, x.Expr)
     override x.ToString() = x.Src   
-    static member (<=>) (lhs:Formula<'t, bool>, rhs:Formula<'t, bool>) = boolean_axioms(lhs.Expr, rhs.Expr)
     static member (==) (lhs:Formula<'t, 'u>, rhs:Formula<'t, 'u>) = lhs, rhs
-    
+
+    static member T = Formula(fun() -> true)
+    static member F = Formula(fun() -> false)
+    static member (<=>) (lhs:Formula<_, bool>, rhs:Formula<_, bool>) = boolean_axioms(lhs.Expr, rhs.Expr)
 type F<'t, 'u> = Formula<'t, 'u>
+
+type Prop = Formula<unit, bool>
 
 module FormulaPatterns =
     let (|UnaryOp|_|) =

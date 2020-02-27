@@ -6,39 +6,37 @@ open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
 
 open Sylvester
+open Sylph.Operators
 
 module BooleanAlgebra =
-
-    open Operators
-
     let rec reduce_constants  =
         function
         | OrElse(Bool l, Bool r) -> Expr.Value(l || r)        
         | Not(Bool l) -> Expr.Value(not l)        
         | AndAlso(Bool l, Bool r) -> Expr.Value(l && r)
         | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
-        | Equiv(Bool l, Bool r) -> Expr.Value(l <=> r)
+        | Equiv(Bool l, Bool r) -> Expr.Value((l = r))
         | expr -> traverse expr reduce_constants
 
     let rec right_assoc =
         function
         | OrElse(OrElse(a1, a2), a3) -> <@@ %%a1 || (%%a2 || %%a3) @@>
         | AndAlso(AndAlso(a1, a2), a3) -> <@@ %%a1 && (%%a2 && %%a3) @@>
-        | Equiv(Equiv(a1, a2), a3) -> <@@ %%a1 <=> (%%a2 <=> %%a3) @@> 
+        | Equiv(Equiv(a1, a2), a3) -> <@@ %%a1 = (%%a2 = %%a3) @@> 
         | expr -> traverse expr right_assoc
 
     let rec left_assoc =
         function
         | OrElse(a1, OrElse(a2, a3)) -> <@@ (%%a1 || %%a2) || %%a3 @@>
         | AndAlso(a1, AndAlso(a2, a3)) -> <@@ (%%a1 && %%a2) && %%a3 @@>
-        | Equiv(a1, Equiv(a2, a3)) -> <@@ (%%a1 <=> %%a2) <=> %%a3 @@>
+        | Equiv(a1, Equiv(a2, a3)) -> <@@ (%%a1 = %%a2) = %%a3 @@>
         | expr -> traverse expr left_assoc
 
     let rec commute =
         function
         | OrElse(a1, a2) -> <@@ (%%a2 || %%a1) @@>
         | AndAlso(a1, a2) -> <@@ (%%a2 && %%a1) @@>
-        | Equiv(a1, a2) -> <@@ (%%a2 <=> %%a1) @@>
+        | Equiv(a1, a2) -> <@@ (%%a2 = %%a1) @@>
         | expr -> traverse expr commute
 
     let rec distrib =

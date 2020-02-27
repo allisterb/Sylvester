@@ -8,19 +8,29 @@ let F3 = F (fun x -> 3 * x + 6 + 2 * x + 4)
 let F4 = F (fun x -> 5 * x + 10)
 
 open IntegerArithmetic
-//let p1 = proof (F1 == F2) integer_arithmetic [
-//    right_assoc_b
-//    reduce_constants_a_b
-    ]
+let p1 = proof (F1 == F2) integer_arithmetic [
+    RightAssoc |> EntireB 
+    Reduce |> EntireB
+]
 
-//let p2 = proof (F3 == F4) integer_arithmetic [
-//    right_assoc_a 
-//    commute_a_right
-//    right_assoc_a 
-//    left_assoc_a_right
-//    reduce_constants_a_b
-//]
-let F6 = F (fun x y -> x + y + 6)
-let F7 = F (fun x y -> x + y + 6 + 0)
+//F3.Expr
+let p2 = proof (F3 == F4) integer_arithmetic [ 
+    RightAssoc |> EntireA
+    Commute |> RightA
+    LeftAssoc |> EntireA
+    Commute |> EntireA
+    LeftAssoc |> EntireA
+    LeftAssoc |> EntireA
+    Collect |> LeftA
+    Reduce |> EntireA
+    RightAssoc |> EntireA
+    Reduce |> RightA
+    Commute |> LeftA
+]
 
-integer_arithmetic |- (F6 == F7)
+p2.ASubst F3.Expr
+//let F6 = F (fun x -> x +  6)
+//let F7 = F (fun x -> x + 6 + 0)
+
+//integer_arithmetic |- (F6 == F7)
+

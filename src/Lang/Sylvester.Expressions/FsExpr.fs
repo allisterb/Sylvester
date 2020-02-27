@@ -37,24 +37,10 @@ module FsExpr =
         | ShapeLambda (v, body) -> Expr.Lambda (v, f body)
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
 
-    let split =
-        function
-        | Lambda(v, Call(None, m, l::r::[])) -> (Expr.Lambda(v, l), Expr.Lambda(v, r))
-        | expr -> failwithf "Cannot split expression %A." (src expr)
-
-    let split_left = 
-        function
-        | Lambda(v1, Call(_, _, l::_::[])) -> Expr.Lambda(v1, l)
-        | expr -> failwithf "Cannot split expression %A." (src expr)
-    
-    let split_right = 
-        function
-        | Lambda(v1, Call(_, _, _::r::[])) -> Expr.Lambda(v1, r)
-        | expr -> failwithf "Cannot split expression %A." (src expr)
-
-
-
-    let varx<'t> = Expr.Var(Var.Global("x", typedefof<'t>))
+    let binary_call so m l r =
+        match so with
+        | None -> Expr.Call(m, l::r::[])
+        | Some o -> Expr.Call(o, m, l::r::[])
 
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.
