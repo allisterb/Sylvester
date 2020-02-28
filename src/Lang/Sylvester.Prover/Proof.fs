@@ -156,16 +156,25 @@ and ProofSystem(axioms: Axioms, rules: Rules) =
     static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b
     static member (|-) ((c:ProofSystem), (a, b):Formula<_> * Formula<_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
 
-type Theorem<'t>(stms:TheoremStmt<'t>, proof:Proof) = 
-    let (a, b) = stms
-    do if not ((sequal proof.A a.Expr) && (sequal proof.B b.Expr)) then failwithf "The provided proof is not a proof of %s==%s" (a.Src) (b.Src)
-    do if not (proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (a.Src) (b.Src)
+type Theorem<'t>(stmt:TheoremStmt<'t>, proof:Proof) = 
+    let (a, b) = stmt.Members
+    do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
+    do if not (proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (src a) (src b)
     member val A = a
     member val B = b
     member val System = proof.System
     member val Proof = proof
     
- and TheoremStmt<'t> = Formula<'t> * Formula<'t>
+ and TheoremStmt<'t> = 
+    | Equivalence of Formula<'t> * Formula<'t>
+    | Tautology of Formula<'t> 
+    | Contradiction of Formula<'t>
+with
+    member x.Members =
+        match x with
+        | Equivalence (a, b) -> a.Expr, b.Expr
+        | Tautology t -> t.Expr, Prop.T.Expr
+        | Contradiction f -> f.Expr, Prop.F.Expr
 
 [<AutoOpen>]
 module LeibnizRule = 
@@ -179,6 +188,11 @@ module LeibnizRule =
 
 [<AutoOpen>]
 module Proof =     
+    let True = Prop.T
+    let False = Prop.F
+    let inline taut f = f == True
+    let inline contra f = f == False
+
     let proof_system axioms rules = ProofSystem(axioms, rules)
     let proof' a b system steps = Proof(a, b, system, steps)
     let proof (a:Formula<_>, b:Formula<_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps

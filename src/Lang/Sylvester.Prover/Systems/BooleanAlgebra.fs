@@ -15,7 +15,7 @@ module BooleanAlgebra =
         | Or(Bool l, Bool r) -> Expr.Value(l ||| r)        
         | Not(Bool l) -> Expr.Value(not l)        
         | And(Bool l, Bool r) -> Expr.Value(l |&| r)
-        //| Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
+        | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
         | Equiv(Bool l, Bool r) -> Expr.Value((l = r))
         | expr -> traverse expr reduce_constants
 

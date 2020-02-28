@@ -69,7 +69,7 @@ module EquationalLogic =
     /// Associativity axioms
     let (|Assoc|_|) =
         function
-        // x || y || z == x || (y || z)
+        // x ||| y ||| z == x ||| (y ||| z)
         | Or(Or(a1, a2), a3), Or(b1, Or(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some true        
         | Equiv(Or(Or(a1, a2), a3), Or(b1, Or(b2, b3))), Bool true when sequal3 a1 a2 a3 b1 b2 b3 -> Some true        
 
@@ -86,7 +86,7 @@ module EquationalLogic =
     /// Symmetry axioms
     let (|Symmetry|_|) =
         function
-        // x || y == y || x
+        // x ||| y == y ||| x
         | Or(a1, a2), Or(b1, b2) when sequal2 a1 a2 b2 b1 -> Some true
         | Equiv(Or(a1, a2), Or(b1, b2)), Bool true when sequal2 a1 a2 b2 b1 -> Some true
 
