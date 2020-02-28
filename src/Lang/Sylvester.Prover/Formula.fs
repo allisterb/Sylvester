@@ -24,12 +24,10 @@ type Formula<'t>([<ReflectedDefinition(true)>] expr: Expr<'t>) =
     static member (==) (lhs:Formula<bool->bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
     static member (==) (lhs:Formula<bool->bool->bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
 
-type Prop = Formula<unit->bool>
 type F<'t> = Formula<'t>
+type Prop = Formula<unit->bool>
 
 module FormulaPatterns =
-    open Operators
-
     let (|UnaryOp|_|) =
         function
         | Call(None, _, l::[]) -> Some l

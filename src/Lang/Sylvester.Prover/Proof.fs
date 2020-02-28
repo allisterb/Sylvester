@@ -44,7 +44,7 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
             else if not (sequal _b bstate) then
                 sprintf "%i. %s: %s == %s" (stepId) (stepName.Replace("(expression)", "B")) (src bstate) (src _b)
             else
-                sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A and B")) 
+                sprintf "%i. %s: No change." (stepId) (stepName) 
         do prooflog msg
         astate <- _a
         bstate <- _b

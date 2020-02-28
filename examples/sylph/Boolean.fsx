@@ -1,18 +1,14 @@
 #load "Include.fsx"
 
 open Sylph
-open Formula
-//let A = F (fun (p:bool) -> p = p)
+open Operators
 
-//let B = F(fun (q:bool) -> q = q)
+let A = F(fun p q -> p = q = q = p)
+let C = F (fun p q r -> p |&| q |&| r)
 
-let f (p:bool) q r = (p = q = r)
-let C = F (fun (p:bool) q r -> (p = q = r))
+open BooleanAlgebra
+let p1 = proof (A == Prop.T) boolean_algebra [
+    RightAssoc |> EntireA
+]
 
-C.Expr
-//C == Prop.T 
-
-//open BooleanAlgebra
-//let p1 = proof (C == Prop.T) boolean_algebra [
-//    RightAssoc |> LeftA
-//]
+A.Expr
