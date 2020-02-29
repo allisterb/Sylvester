@@ -28,9 +28,5 @@ let p2 = proof (F3 == F4) integer_algebra [
     Commute |> LeftA
 ]
 
-p2.ASubst F3.Expr
-//let F6 = F (fun x -> x +  6)
-//let F7 = F (fun x -> x + 6 + 0)
-
-//integer_arithmetic |- (F6 == F7)
+    
 

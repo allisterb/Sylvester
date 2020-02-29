@@ -1,12 +1,19 @@
 ﻿namespace Sylph
 
-open Microsoft.FSharp.Quotations
+open FSharp.Quotations
+open FSharp.Quotations.Patterns
+open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 open Operators
+open EquationalLogic
 
-type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?quiet:bool) =
-    let ruleNames = system.Rules |> List.map (fun (r:Rule) -> r.Name)
+type Proof(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:bool) =
+    let S:Theory = Theory.S
+    let ruleNames = List.concat [
+            (S.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
+            theory.Rules |> List.map (fun (r:Rule) -> r.Name)
+        ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
     
     let logBuilder = System.Text.StringBuilder()
@@ -22,7 +29,7 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
 
     do sprintf "Proof of A: %s == B: %s:" (src a) (src b) |> prooflog
     do 
-        if system |- (a, b) then
+        if S |- (a, b) || theory |- (a, b)  then
            sprintf "|- %s == %s" (src a) (src b) |> prooflog
            sprintf "Proof complete." |> prooflog
            stepCount <- steps.Length
@@ -33,8 +40,8 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
         let stepName = stepNames.[stepCount]
         do 
             match step.Rule with
-            | (Rule(n, _)) -> if not (ruleNames |> List.contains n) then failwithf "Rule at step %i (%s) is not part of the rules of the current proof system." stepId n
-            | (Subst(n, p, _)) -> if not (system = ProofSystem.S || (p.System = system)) then failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof system." stepId n
+            | (Rule(n, _)) -> if (not (ruleNames |> List.contains n)) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
+            | (Subst(n, p, _)) -> if not (p.System = S || (p.System = theory)) then failwithf "Substitution rule at step %i (%s) does not use the rules of S or the current theory." stepId n
         let (_a, _b) = step.Apply (astate, bstate)
         let msg =
             if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
@@ -44,35 +51,34 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
             else if not (sequal _b bstate) then
                 sprintf "%i. %s: %s == %s" (stepId) (stepName.Replace("(expression)", "B")) (src bstate) (src _b)
             else
-                sprintf "%i. %s: No change." (stepId) (stepName) 
+                sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A or B")) 
         do prooflog msg
         astate <- _a
         bstate <- _b
         state <- state @ [(astate, bstate, msg)]
-        if system |- (astate, bstate) then 
+        if theory |- (astate, bstate) then 
             sprintf "Proof complete." |> prooflog 
             stepCount <- steps.Length
         else
             sprintf "Proof incomplete." |> prooflog
             stepCount <- stepCount + 1
-    do if stepCount = 0 && not(system |- (a, b)) then
+
+    do if stepCount = 0 && not(theory |- (a, b)) then
         sprintf "Proof incomplete." |> prooflog
     member val A = a
     member val B = b
-    member val System = system
+    member val System = theory
     member val Steps = steps
-    member val Complete = system |- (astate, bstate)
+    member val Complete = theory |- (astate, bstate)
     member val State = state
     member val AState = astate
     member val BState = bstate
-    member val ProofRule = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
-    member x.ASubst(a:Expr) = x.ProofRule(a, x.B) |> fst
-    member x.BSubst(b:Expr) = x.ProofRule(x.A, b) |> snd
+    member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
     static member (|-) ((proof:Proof), (A:Formula<'t>, B:Formula<'v>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
     
-    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a rule to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
+    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
     static member (+) (l:Proof, r:Proof) = 
         let rec subst (p:Proof) = 
             function 
@@ -84,9 +90,9 @@ type Proof(a:Expr,  b:Expr, system: ProofSystem, steps: RuleApplication list, ?q
                 let l2 = Proof(l.A, last_l_astate, l.System, l.Steps, true) in
                 let s = Subst(sprintf "Joining proof of %s == %s to proof of %s == %s" (src l.A) (src last_l_astate) (src r.A) (src r.B), l2, fun proof e -> subst proof e) |> EntireA in
                 Proof(l.A, r.B, l.System, s::r.Steps)  
-            else failwith "Cannot create proof from these proofs. The RHS of the first proof is not the LHS of the 2nd proof."
+            else failwith "Cannot join these proofs. The RHS of the first proof is not the LHS of the 2nd proof."
         else
-            failwith "Cannot create proof from these proofs because they use different proof systems."
+            failwith "Cannot join these proofs because they use different theories."
         
 and Axioms = (Expr * Expr -> bool)
 
@@ -139,22 +145,52 @@ with
 
         | RightA rule -> 
                 match a with
-                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply r in Expr.Call(m, l::s::[]), b
-                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply r in Expr.Call(o, m, l::s::[]), b
-                | _ -> failwithf "A is not a binary operation: %s " (a.ToString())
+                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s), b
+                | _ -> failwithf "A is not a binary operation: %s." (src a)
         | RightB rule -> 
                 match b with
-                | Patterns.Call(None, m, l::r::[]) -> let s = rule.Apply r in a, Expr.Call(m, l::s::[])
-                | Patterns.Call(Some o, m, l::r::[]) -> let s = rule.Apply r in a, Expr.Call(o, m, l::s::[])
-                | _ -> failwithf "B is not a binary operation: %s" (b.ToString())
+                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in a, binary_call(o, m, l, s)
+                | _ -> failwithf "B is not a binary operation: %s." (src a)
  
-and ProofSystem(axioms: Axioms, rules: Rules) =
+and Theory(axioms: Axioms, rules: Rules) =
     member val Axioms = axioms
     member val Rules = rules
-    member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)     
-    static member S = ProofSystem(boolean_axioms, [])
-    static member (|-) ((c:ProofSystem), (a, b)) = c.AxiomaticallyEquivalent a b
-    static member (|-) ((c:ProofSystem), (a, b):Formula<_> * Formula<_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
+    member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)
+    static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEquivalent a b
+    static member (|-) ((c:Theory), (a, b):Formula<_> * Formula<_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
+
+    /// S is the theory of equational logic used by Sylph.
+    static member val S =
+        /// Reduce logical constants in expression. 
+        let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
+
+        /// Logical operators in expression are left-associative.
+        let S_LeftAssoc = Rule("Logical operators in (expression) are left-associative", left_assoc)
+        
+        /// Logical operators in expression are right associative.
+        let S_RightAssoc = Rule("Logical operators in (expression) are right-associative", right_assoc)
+          
+        /// Expression is commutative.
+        let S_Commute = Rule("Logical operators in (expression) are commutative.", commute)
+
+        /// Multiplication distributes over addition in expression.
+        let S_Distrib = Rule("Distribute logical terms in (expression)", distrib)
+        
+        /// Collect distributed terms in expression.
+        let S_Collect = Rule("Collect distributed logical terms in (expression)", collect)
+
+        /// Replace identical terms in expression.
+        let S_Ident = Rule("Substitute identical logical terms in (expression)", ident)
+
+        Theory(logical_axioms, [
+            S_Reduce
+            S_LeftAssoc
+            S_RightAssoc
+            S_Commute
+            S_Distrib
+            S_Collect
+            S_Ident
+        ])
 
 type Theorem<'t>(stmt:TheoremStmt<'t>, proof:Proof) = 
     let (a, b) = stmt.Members
@@ -177,7 +213,7 @@ with
         | Contradiction f -> f.Expr, Prop.F.Expr
 
 [<AutoOpen>]
-module LeibnizRule = 
+module LogicalRules = 
     let rec subst (p:Proof) = 
         function
         | A when (sequal (p.A) (A)) && p.Complete -> p.B  
@@ -186,6 +222,27 @@ module LeibnizRule =
     /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x == a.
     let Subst (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
 
+    /// Reduce logical constants in expression. 
+    let ReduceLogical = Theory.S.Rules.[0]
+
+    /// Lo is left associative.
+    let LeftAssocLogical = Theory.S.Rules.[1]
+    
+    /// Expression is right associative.
+    let RightAssocLogical = Theory.S.Rules.[2]
+      
+    /// Expression is commutative.
+    let CommuteLogical = Theory.S.Rules.[3]
+
+    /// Multiplication distributes over addition in expression.
+    let DistribLogical = Theory.S.Rules.[4]
+    
+    /// Collect distributed logical terms in expression.
+    let CollectLogical = Theory.S.Rules.[5]
+
+    /// Replace identical logical terms in expression.
+    let IdentLogical = Theory.S.Rules.[6]
+
 [<AutoOpen>]
 module Proof =     
     let True = Prop.T
@@ -193,9 +250,9 @@ module Proof =
     let inline taut f = f == True
     let inline contra f = f == False
 
-    let proof_system axioms rules = ProofSystem(axioms, rules)
-    let proof' a b system steps = Proof(a, b, system, steps)
-    let proof (a:Formula<_>, b:Formula<_>) (system: ProofSystem) (steps: RuleApplication list) = proof' a.Expr b.Expr system steps
-    let axiomatic (a,b) system  = proof (a,b) system []
-    let axiomatic' a b system   = proof' a b system []
+    let theory axioms rules = Theory(axioms, rules)
+    let proof' a b theory steps = Proof(a, b, theory, steps)
+    let proof (a:Formula<_>, b:Formula<_>) (theory: Theory) (steps: RuleApplication list) = proof' a.Expr b.Expr theory steps
+    let axiomatic (a,b) theory  = proof (a,b) theory []
+    let axiomatic' a b theory   = proof' a b theory []
     let theorem (stmt:TheoremStmt<_>) (proof) = Theorem(stmt, proof)
