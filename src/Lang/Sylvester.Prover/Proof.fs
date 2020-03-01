@@ -170,17 +170,26 @@ and Theory(axioms: Axioms, rules: Rules) =
         /// Logical operators in expression are right associative.
         let S_RightAssoc = Rule("Logical operators in (expression) are right-associative", right_assoc)
           
-        /// Expression is commutative.
-        let S_Commute = Rule("Logical operators in (expression) are commutative.", commute)
+        /// Logical operators in expression commute.
+        let S_Commute = Rule("Logical operators in (expression) are commutative", commute)
 
-        /// Multiplication distributes over addition in expression.
+        /// distribute lgical tems in over addition in expression.
         let S_Distrib = Rule("Distribute logical terms in (expression)", distrib)
         
         /// Collect distributed terms in expression.
         let S_Collect = Rule("Collect distributed logical terms in (expression)", collect)
 
-        /// Replace identical terms in expression.
+        /// Substitute identical terms in expression.
         let S_Ident = Rule("Substitute identical logical terms in (expression)", ident)
+
+        /// Substitue idempotent terms in expression.
+        let S_Idemp = Rule("Substitute idempotent logical terms in (expression)", idemp)
+
+        /// Replace identical terms in expression.
+        let S_ExcludedMiddle = Rule("Logical terms in (expression) satisfy the law of excluded middle", excluded_middle)
+
+        /// Replace identical terms in expression.
+        let S_GoldenRule = Rule("Logical terms in (expression) satisfy the golden rule", golden_rule)
 
         Theory(logical_axioms, [
             S_Reduce
@@ -190,6 +199,9 @@ and Theory(axioms: Axioms, rules: Rules) =
             S_Distrib
             S_Collect
             S_Ident
+            S_Idemp
+            S_ExcludedMiddle
+            S_GoldenRule
         ])
 
 type Theorem<'t>(stmt:TheoremStmt<'t>, proof:Proof) = 
@@ -225,23 +237,32 @@ module LogicalRules =
     /// Reduce logical constants in expression. 
     let ReduceLogical = Theory.S.Rules.[0]
 
-    /// Lo is left associative.
+    /// Logical expression is left associative.
     let LeftAssocLogical = Theory.S.Rules.[1]
     
-    /// Expression is right associative.
+    /// Logical expression is right associative.
     let RightAssocLogical = Theory.S.Rules.[2]
       
-    /// Expression is commutative.
+    /// Logical expression is commutative.
     let CommuteLogical = Theory.S.Rules.[3]
 
-    /// Multiplication distributes over addition in expression.
+    /// Distribute logical terms in expression.
     let DistribLogical = Theory.S.Rules.[4]
     
     /// Collect distributed logical terms in expression.
     let CollectLogical = Theory.S.Rules.[5]
 
-    /// Replace identical logical terms in expression.
+    /// Substitute identical logical terms in expression.
     let IdentLogical = Theory.S.Rules.[6]
+
+    /// Substitute idempotent logical terms in expression.
+    let IdempLogical = Theory.S.Rules.[7]
+
+    /// Logical expression satisfies law of excluded middle.
+    let ExcludedMiddle = Theory.S.Rules.[8]
+
+    /// Logical expression satisfies golden rule.
+    let GoldenRule = Theory.S.Rules.[9]
 
 [<AutoOpen>]
 module Proof =     
