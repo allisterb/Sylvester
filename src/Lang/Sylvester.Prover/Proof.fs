@@ -160,7 +160,7 @@ and Theory(axioms: Axioms, rules: Rules) =
     static member (|-) ((c:Theory), (a, b):Formula<_> * Formula<_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
 
     /// S is the theory of equational logic used by Sylph.
-    static member val S =
+    static member val S =    
         /// Reduce logical constants in expression. 
         let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
 
@@ -232,7 +232,15 @@ module LogicalRules =
         | expr -> traverse expr (subst p)
     
     /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x == a.
-    let Subst (p:Proof) = Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
+    let Subst (p:Proof) = 
+        if not p.Complete then 
+            failwithf "The proof of %A == %A is not complete" (src p.A) (src p.B) 
+        else Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
+
+    let inline Axiom (t:Theory) (a:Formula<_>, b:Formula<_>) = 
+        let p = Proof(a.Expr, b.Expr, t, [], true) in Subst p
+
+    let inline LogicalAxiom (a, b) = Axiom (Theory.S) (a, b)
 
     /// Reduce logical constants in expression. 
     let ReduceLogical = Theory.S.Rules.[0]
@@ -274,6 +282,9 @@ module Proof =
     let theory axioms rules = Theory(axioms, rules)
     let proof' a b theory steps = Proof(a, b, theory, steps)
     let proof (a:Formula<_>, b:Formula<_>) (theory: Theory) (steps: RuleApplication list) = proof' a.Expr b.Expr theory steps
-    let axiomatic (a,b) theory  = proof (a,b) theory []
-    let axiomatic' a b theory   = proof' a b theory []
+    let inline axiom (a, b) theory  = proof (a,b) theory []
+    let inline axiom' (a, b) theory   = proof' a b theory []
+    let inline logical_axiom (a,b)  = axiom (a,b) Theory.S
+    let inline logical_axiom' (a, b) = axiom' (a, b)  Theory.S
+
     let theorem (stmt:TheoremStmt<_>) (proof) = Theorem(stmt, proof)

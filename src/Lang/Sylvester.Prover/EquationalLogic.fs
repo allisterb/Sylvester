@@ -38,6 +38,11 @@ module EquationalLogic =
         | Equiv(expr2), Bool true -> Some expr2
         | _ -> None
 
+    // Axioms must be defines symmetrically because of the symmetric properties of ==.
+    let (|Symm|):(Expr * Expr)->(Expr * Expr) =
+        function
+        | (A, B) -> (B, A)
+       
     let (|NotEquiv|_|) =
          function
          | SpecificCall <@@ (!=) @@> (None,_,l::r::[]) -> Some(l, r)
@@ -177,6 +182,10 @@ module EquationalLogic =
         | Conj(GoldenRule x) -> Some x
         | _ -> None
 
+    let (|SymmLogicalAxioms|_|) =
+        function
+        | Symm(A, B) -> match (A, B) with |Equal x|Symmetry x|Assoc x|Distrib x|Identity x|Idempotent x|ExcludedMiddle x|GoldenRule x -> Some x | _ -> None
+
     let logical_axioms =
         function
         | Equal x
@@ -185,8 +194,10 @@ module EquationalLogic =
         | Distrib x 
         | Identity x 
         | Idempotent x
+        | ExcludedMiddle x
+        | GoldenRule x
         | ConjLogicalAxioms x 
-        | ExcludedMiddle x -> true
+        | SymmLogicalAxioms x -> true
         | _ -> false
 
     (* Inference rules *) 
@@ -267,7 +278,7 @@ module EquationalLogic =
         
     let rec idemp =
         function
-        | Or(a1, a2) when sequal a1 a2 -> <@@ %%a2 @@>
+        | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | expr -> traverse expr idemp
 
     let rec excluded_middle =
