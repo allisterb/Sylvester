@@ -38,7 +38,7 @@ module EquationalLogic =
         | Equiv(expr2), Bool true -> Some expr2
         | _ -> None
 
-    // Axioms must be defines symmetrically because of the symmetric properties of ==.
+    // We need to define axioms symmetrically because of the symmetric properties of ==.
     let (|Symm|):(Expr * Expr)->(Expr * Expr) =
         function
         | (A, B) -> (B, A)
@@ -157,12 +157,12 @@ module EquationalLogic =
 
     let (|Idempotent|_|) = 
         function
-        | Or(a1, a2), a3 when sequal a1 a2 && sequal a1 a3 -> Some <@@ %%a3 @@>
+        | Or(a1, a2), a3 when sequal a1 a2 && sequal a1 a3 -> Some <@@ (%%a3:bool) @@>
         | _ -> None
 
     let (|ExcludedMiddle|_|) =
         function
-        | Or(a1, Not(a2)), Bool true when sequal a1 a2 -> Some <@@ %%a2 @@>
+        | Or(a1, Not(a2)), Bool true when sequal a1 a2 -> Some <@@ (%%a2: bool) @@>
         | _ -> None
 
     let (|GoldenRule|_|) =
@@ -238,7 +238,7 @@ module EquationalLogic =
     let rec distrib =
         function
         | Or(a1, And(a2, a3)) -> <@@ %%a1 |&| %%a2 ||| %%a1 |&| %%a3 @@> 
-        | Or(a1, Equiv(a2, a3)) -> <@@ %%a1 = %%a2 ||| %%a1 = %%a3 @@> 
+        | Or(a1, Equiv(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@> 
         | Not(And(a1, a2)) -> <@@ not %%a1 ||| not %%a2 @@>
         | expr -> traverse expr distrib
     

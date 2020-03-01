@@ -20,8 +20,8 @@ type Formula<'t>([<ReflectedDefinition(true)>] expr: Expr<'t>) =
     static member T = Formula(fun () -> true)
     static member F = Formula(fun () -> false)  
     
-    // We want to be able to say formulae with logical form are == True/False also i.e a tautolgy or contradiction so define these overloads too
-    static member (==) (lhs:Formula<bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
+    // We want to be able to say any formula with a logical form is == True/False also i.e is a tautolgy or contradiction so define these overloads too.
+    static member inline (==) (lhs:Formula<bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
     static member (==) (lhs:Formula<bool->bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
     static member (==) (lhs:Formula<bool->bool->bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
     static member (==) (lhs:Formula<bool->bool->bool->bool->bool>, rhs:Formula<unit -> bool>) = lhs, rhs
