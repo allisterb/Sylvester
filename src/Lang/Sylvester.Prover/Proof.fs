@@ -200,10 +200,9 @@ and Theory(axioms: Axioms, rules: Rules) =
             S_GoldenRule
         ])
 
-type Theorem<'u, 'v>(stmt: TheoremStmt<'u, 'v>, proof:Proof) = 
+type Theorem<'u, 'v> internal (stmt: TheoremStmt<'u, 'v>, proof:Proof) = 
     let (a, b) = stmt.Members
     do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
-    do if not (proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (src a) (src b)
     member val A = a
     member val B = b
     member val System = proof.System
@@ -213,13 +212,14 @@ and TheoremStmt<'u, 'v> =
     | Equivalence of Formula<'u, 'v> * Formula<'u, 'v>
     | Taut of Formula<'u, 'v>
     | Contr of Formula<'u, 'v>
+    | Ident of Formula<'u, 'v>
     with
     member x.Members = 
         match x with
         | Equivalence(a, b) -> a.Expr, b.Expr
         | Taut a -> a.Expr, Formula<'u, 'v>.T.Expr
         | Contr a -> a.Expr, Formula<'u, 'v>.F.Expr
-
+        | Ident a -> match a.Expr with | Equiv(l, r) -> l, r | _ -> failwithf "The formula %A is not an identity." a.Expr
 [<AutoOpen>]
 module LogicalRules = 
     /// The theory of equational logic that defines the logical axioms and inference rules for proofs.
@@ -237,7 +237,7 @@ module LogicalRules =
         else Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
 
     /// Substitute a theorem into another proof.
-    let Lemma p = p |> Subst 
+    let Lemma (lemma:Theorem<'u,'v>) = if not (lemma.Proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (src lemma.A) (src lemma.B) else lemma.Proof |> Subst 
         
     /// Reduce logical constants in expression. 
     let Reduce' = S.Rules.[0]
@@ -273,18 +273,18 @@ module Proof =
     let theory axioms rules = Theory(axioms, rules)
     let proof (a:Formula<_,_>, b:Formula<_,_>) theory steps = Proof(a.Expr, b.Expr, theory, steps)
     let proof' a b steps = Proof(a, b, S, steps)
-    let theorem stmt proof = Theorem(stmt, proof)
-    let lemma  = theorem
+    let theorem (a, b) theory steps = Theorem(Equivalence(a, b), proof(a, b) theory steps)
     let taut (f:Formula<'u, 'v>) theory steps = 
-        let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
-        do if  not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A is not a boolean expression." f.Src
-        Proof (f.Expr, True.Expr, theory, steps) 
+        do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
+        Theorem(Taut(f), Proof (f.Expr, True.Expr, theory, steps))  
     let taut' f steps = taut f S steps
-    let contr (f:Formula<_, _>) theory steps = proof (f, False) theory steps
+    let contr (f:Formula<'u, 'v>) theory steps = 
+        do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
+        Theorem((Contr f), proof (f, False) theory steps)
     let contr' f steps = contr f S steps 
     let ident (f:Formula<_, _>) theory steps  = 
         match f.Expr with 
-        | Equiv(l, r) -> Proof(l, r, theory, steps) 
+        | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps)) 
         | _ -> failwithf "The expression %A is not recognized as an identity." (src f.Expr)  
     let ident' (f:Formula<_,  _>) steps  = ident f S steps
     

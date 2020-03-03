@@ -2,8 +2,8 @@
 
 open System
 open System.Reflection
-open Microsoft.FSharp.Reflection
-open Microsoft.FSharp.Quotations
+open FSharp.Reflection
+open FSharp.Quotations
 
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
@@ -11,6 +11,8 @@ open FSharp.Quotations.ExprShape
                 
 [<AutoOpen>]
 module FsExpr =
+    let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
+    
     let sequal (l:Expr) (r:Expr) = l.ToString() = r.ToString()
     
     let sequal2 (l1:Expr) (l2:Expr) (r1:Expr) (r2:Expr) = sequal l1 r1 && sequal l2 r2
