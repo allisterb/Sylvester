@@ -3,12 +3,12 @@
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
-
+open FSharp.Reflection
 open Sylvester
 open Operators
 open EquationalLogic
 
-type Proof(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:bool) =
+type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:bool) =
     let S:Theory = Theory.S
     let ruleNames = List.concat [
             (S.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
@@ -76,7 +76,7 @@ type Proof(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
-    static member (|-) ((proof:Proof), (A:Formula<'a, 'b>, B:Formula<'c, 'd>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
+    static member (|-) ((proof:Proof), (A:Formula<_,_>, B:Formula<_,_>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
     
     static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
     static member (+) (l:Proof, r:Proof) = 
@@ -200,7 +200,7 @@ and Theory(axioms: Axioms, rules: Rules) =
             S_GoldenRule
         ])
 
-type Theorem(stmt: TheoremStmt, proof:Proof) = 
+type Theorem<'u, 'v>(stmt: TheoremStmt<'u, 'v>, proof:Proof) = 
     let (a, b) = stmt.Members
     do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
     do if not (proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (src a) (src b)
@@ -208,17 +208,17 @@ type Theorem(stmt: TheoremStmt, proof:Proof) =
     member val B = b
     member val System = proof.System
     member val Proof = proof
-    
-and TheoremStmt = 
-    | Equivalence of Expr * Expr
-    | Tautology of Expr
-    | Contradiction of Expr
+       
+and TheoremStmt<'u, 'v> = 
+    | Equivalence of Formula<'u, 'v> * Formula<'u, 'v>
+    | Taut of Formula<'u, 'v>
+    | Contr of Formula<'u, 'v>
     with
     member x.Members = 
         match x with
-        | Equivalence(a, b) -> a, b
-        | Tautology a -> a, (Prop.T).Expr
-        | Contradiction a -> a, (Prop.F).Expr
+        | Equivalence(a, b) -> a.Expr, b.Expr
+        | Taut a -> a.Expr, Formula<'u, 'v>.T.Expr
+        | Contr a -> a.Expr, Formula<'u, 'v>.F.Expr
 
 [<AutoOpen>]
 module LogicalRules = 
@@ -237,7 +237,7 @@ module LogicalRules =
         else Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
 
     /// Substitute a theorem into another proof.
-    let Lemma (t:Theorem) = t.Proof |> Subst 
+    let Lemma p = p |> Subst 
         
     /// Reduce logical constants in expression. 
     let Reduce' = S.Rules.[0]
@@ -267,20 +267,24 @@ module LogicalRules =
     let GoldenRule = S.Rules.[8]
 
 [<AutoOpen>]
-module Proof =     
-    let True = Prop.T
-    let False = Prop.F
+module Proof =        
+    let True = Formula<_,_>.T
+    let False = Formula<_,_>.F
     let theory axioms rules = Theory(axioms, rules)
     let proof (a:Formula<_,_>, b:Formula<_,_>) theory steps = Proof(a.Expr, b.Expr, theory, steps)
     let proof' a b steps = Proof(a, b, S, steps)
     let theorem stmt proof = Theorem(stmt, proof)
-    let taut (f:Formula<_, _>) theory steps = theorem (Tautology(f.Expr)) (Proof(f.Expr, True.Expr, theory, steps))
+    let lemma  = theorem
+    let taut (f:Formula<'u, 'v>) theory steps = 
+        let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
+        do if  not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A is not a boolean expression." f.Src
+        Proof (f.Expr, True.Expr, theory, steps) 
     let taut' f steps = taut f S steps
-    let contr (f:Formula<_, bool>) theory steps = theorem (Contradiction(f.Expr)) (Proof(f.Expr, True.Expr, theory, steps))
+    let contr (f:Formula<_, _>) theory steps = proof (f, False) theory steps
     let contr' f steps = contr f S steps 
-    let ident (f:Formula<_ , bool>) theory steps  = 
+    let ident (f:Formula<_, _>) theory steps  = 
         match f.Expr with 
-        | Equiv(l, r) -> theorem (Equivalence(l, r)) (Proof(l, r, theory, steps)) 
+        | Equiv(l, r) -> Proof(l, r, theory, steps) 
         | _ -> failwithf "The expression %A is not recognized as an identity." (src f.Expr)  
-    let ident' (f:Formula<_,  bool>) steps  = ident f S steps
+    let ident' (f:Formula<_,  _>) steps  = ident f S steps
     

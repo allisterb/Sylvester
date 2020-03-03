@@ -22,6 +22,7 @@ module Operators =
 /// and consider general textual substitution with syntactically valid expressions.
 module EquationalLogic =
     open Operators
+
     (* Patterns *)
     
     // The (=) operator is logical equivalence which is associative i.e we can say a = b = c.

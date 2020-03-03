@@ -8,23 +8,29 @@ open Sylvester
 open FormulaPatterns
 
 module IntegerAlgebra =    
-    // x + y, y + x
+    
+    /// Commutativity axioms
     let (|Commute|_|) =
         function
+        // x + y == y + x
         | Add(a1, a2), Add(b1, b2) when sequal2 a1 a2 b2 b1 -> Some <@@ %%b1 + %%b2 @@>     
+        // x * y == y * x
         | Multiply(a1, a2), Multiply(b1, b2) when sequal2 a1 a2 b2 b1 -> Some <@@ %%b1 * %%b2 @@>  
         | _ -> None
 
-    // x + y + z, x + (y + z)
+    /// Associativity axioms
     let (|Assoc|_|) =
         function
+        // x + y + z == x + (y + z)
         | Add(Add(a1, a2), a3), Add(b1, Add(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some <@@ %%b1 + (%%b2 + %%b3) @@>        
+        // x * y * z == x * (y * z)
         | Multiply(Multiply(a1, a2), a3), Multiply(b1, Multiply(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some <@@ %%b1 * (%%b2 * %%b3) @@>
         | _ -> None
 
-    // x * (y + z), x * y + x * z
+    /// Distributivity axioms
     let (|Distrib|_|) =
         function
+        // x * (y + z) == x * y + x * z
         | Multiply(a3, Add(b3, b4)), Add(Multiply(a1, b1), Multiply(a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some <@@ (%%a1 * %%b1) + (%%a2 * %%b2) @@>
         | _ -> None
 

@@ -6,21 +6,20 @@ open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 
-type Formula<'u,'v>([<ReflectedDefinition(true)>] expr: Expr<'u -> 'v>) =
+type Formula<'u, 'v>([<ReflectedDefinition(true)>] expr: Expr<'u -> 'v>) =
     let (v, t, e) = expandReflectedDefinitionParam expr
+    member val Lambda = expr
     member val Type = t
-    member val Apply = v :?> 'u ->'v
+    member val Apply = v :?> 'u->'v
     member val Expr = body e
     member val LambdaExpr = e 
     member val Src = decompile e
     member x.Form = (x, x.Apply, x.Expr)
     override x.ToString() = x.Src
-    static member (==) (lhs:Formula<_,_>, rhs:Formula<_,_>) = lhs, rhs
-    static member T = Formula(fun () -> true)
-    static member F = Formula(fun () -> false)  
-
+    static member (==) (lhs:Formula<_,_>, rhs:Formula<_,_>) = lhs, rhs  
+    static member T = Formula (fun () -> true)
+    static member F = Formula (fun () -> false)
 type F<'u, 'v> = Formula<'u, 'v>
-type Prop = Formula<unit, bool>
 
 module FormulaPatterns =
     let (|UnaryOp|_|) =
