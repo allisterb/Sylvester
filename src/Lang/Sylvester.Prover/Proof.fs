@@ -76,7 +76,7 @@ type Proof(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
-    static member (|-) ((proof:Proof), (A:Formula<'t>, B:Formula<'v>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
+    static member (|-) ((proof:Proof), (A:Formula<'a, 'b>, B:Formula<'c, 'd>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
     
     static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
     static member (+) (l:Proof, r:Proof) = 
@@ -155,9 +155,9 @@ with
 and Theory(axioms: Axioms, rules: Rules) =
     member val Axioms = axioms
     member val Rules = rules
-    member x.AxiomaticallyEquivalent a b = x.Axioms (a, b)
-    static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEquivalent a b
-    static member (|-) ((c:Theory), (a, b):Formula<_> * Formula<_>) = c.AxiomaticallyEquivalent a.Expr b.Expr
+    member x.AxiomaticallyEqual a b = x.Axioms (a, b)
+    static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEqual a b
+    static member (|-) ((c:Theory), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEqual a.Expr b.Expr
 
     /// The theory of equational logic used by Sylph.
     static member val S =    
@@ -179,9 +179,6 @@ and Theory(axioms: Axioms, rules: Rules) =
         /// Collect distributed terms in expression.
         let S_Collect = Rule("Collect distributed logical terms in (expression)", collect)
 
-        /// Substitute identical terms in expression.
-        let S_Ident = Rule("Substitute identical logical terms in (expression)", ident)
-
         /// Substitue idempotent terms in expression.
         let S_Idemp = Rule("Substitute idempotent logical terms in (expression)", idemp)
 
@@ -198,13 +195,12 @@ and Theory(axioms: Axioms, rules: Rules) =
             S_Commute
             S_Distrib
             S_Collect
-            S_Ident
             S_Idemp
             S_ExcludedMiddle
             S_GoldenRule
         ])
 
-type Theorem<'t>(stmt:TheoremStmt<'t>, proof:Proof) = 
+type Theorem(stmt: TheoremStmt, proof:Proof) = 
     let (a, b) = stmt.Members
     do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
     do if not (proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (src a) (src b)
@@ -213,16 +209,16 @@ type Theorem<'t>(stmt:TheoremStmt<'t>, proof:Proof) =
     member val System = proof.System
     member val Proof = proof
     
- and TheoremStmt<'t> = 
-    | Equivalence of Formula<'t> * Formula<'t>
-    | Tautology of Formula<'t> 
-    | Contradiction of Formula<'t>
-with
-    member x.Members =
+and TheoremStmt = 
+    | Equivalence of Expr * Expr
+    | Tautology of Expr
+    | Contradiction of Expr
+    with
+    member x.Members = 
         match x with
-        | Equivalence (a, b) -> a.Expr, b.Expr
-        | Tautology t -> t.Expr, Prop.T.Expr
-        | Contradiction f -> f.Expr, Prop.F.Expr
+        | Equivalence(a, b) -> a, b
+        | Tautology a -> a, (Prop.T).Expr
+        | Contradiction a -> a, (Prop.F).Expr
 
 [<AutoOpen>]
 module LogicalRules = 
@@ -240,26 +236,8 @@ module LogicalRules =
             failwithf "The proof of %A == %A is not complete" (src p.A) (src p.B) 
         else Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
 
-    /// Substitute a formula with the form a = b that is true in a theory.
-    let Lemma (a:Expr<'t>) theory steps  = 
-        match a |> body with 
-        | Equiv(l, r) -> Proof(l, r, theory, steps) |> Subst 
-        | _ -> failwithf "The expression %A is not recognized as a valid expression for substitution." (src a)  
-
-    /// /// Substitute a logical formula with the form a = b that is axiomatically true in s.
-    let Lemma' (a:Expr<'t>) steps  = Lemma a S steps 
-
-    /// Substitute a formula of the form a = b that is axiomatically true in a theory.
-    let Axiom (a:Expr<'t>) = 
-        match (a |> body) with
-        | Equiv(l, r) -> let p = Proof(l, r, S, [], true) in Subst p
-        | _ -> failwithf "The expression %A is not recognized as a valid expression for substitution." (src a)
-
-    /// Substitute a logical formula of the form a = b that is axiomatically true.
-    let Axiom' (a:Expr<'t>) = 
-        match (a |> body) with
-        | Equiv(l, r) -> let p = Proof(l, r, S, [], true) in Subst p
-        | _ -> failwithf "The expression %A is not recognized as a valid logical expression for substitution." (src a)
+    /// Substitute a theorem into another proof.
+    let Lemma (t:Theorem) = t.Proof |> Subst 
         
     /// Reduce logical constants in expression. 
     let Reduce' = S.Rules.[0]
@@ -279,36 +257,30 @@ module LogicalRules =
     /// Collect distributed logical terms in expression.
     let Collect' = S.Rules.[5]
 
-    /// Substitute identical logical terms in expression.
-    let Ident' = S.Rules.[6]
-
     /// Substitute idempotent logical terms in expression.
-    let Idemp' = S.Rules.[7]
+    let Idemp' = S.Rules.[6]
 
     /// Logical expression satisfies law of excluded middle.
-    let ExcludedMiddle = S.Rules.[8]
+    let ExcludedMiddle = S.Rules.[7]
 
     /// Logical expression satisfies golden rule.
-    let GoldenRule = S.Rules.[9]
+    let GoldenRule = S.Rules.[8]
 
 [<AutoOpen>]
 module Proof =     
     let True = Prop.T
     let False = Prop.F
-    let inline taut f = f == True
-    let inline contra f = f == False
-
     let theory axioms rules = Theory(axioms, rules)
-    let proof' a b theory steps = Proof(a, b, theory, steps)
-    let proof (a:Formula<_>, b:Formula<_>) (theory: Theory) (steps: RuleApplication list) = proof' a.Expr b.Expr theory steps
-    let axiom (a, b) theory  = proof (a,b) theory []
-    let axiom' expr  = 
-        match expr |> body with 
-        | Equiv(l, r) -> proof' l r S [] 
-        | _ -> failwithf "The expression %A is not recognized as a valid logical expression for substitution." (src expr)  
-    let lemma expr theory steps  = 
-        match expr |> body with 
-        | Equiv(l, r) -> proof' l r theory steps 
-        | _ -> failwithf "The expression %A is not recognized as a valid expression for substitution." (src expr)  
-    let lemma' expr steps  = lemma expr S steps
-    let theorem (stmt:TheoremStmt<_>) (proof) = Theorem(stmt, proof)
+    let proof (a:Formula<_,_>, b:Formula<_,_>) theory steps = Proof(a.Expr, b.Expr, theory, steps)
+    let proof' a b steps = Proof(a, b, S, steps)
+    let theorem stmt proof = Theorem(stmt, proof)
+    let taut (f:Formula<_, _>) theory steps = theorem (Tautology(f.Expr)) (Proof(f.Expr, True.Expr, theory, steps))
+    let taut' f steps = taut f S steps
+    let contr (f:Formula<_, bool>) theory steps = theorem (Contradiction(f.Expr)) (Proof(f.Expr, True.Expr, theory, steps))
+    let contr' f steps = contr f S steps 
+    let ident (f:Formula<_ , bool>) theory steps  = 
+        match f.Expr with 
+        | Equiv(l, r) -> theorem (Equivalence(l, r)) (Proof(l, r, theory, steps)) 
+        | _ -> failwithf "The expression %A is not recognized as an identity." (src f.Expr)  
+    let ident' (f:Formula<_,  bool>) steps  = ident f S steps
+    

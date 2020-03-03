@@ -3,28 +3,21 @@
 open Sylph
 open Operators
 
-let A = F(fun p q -> p = q = q = p)
+let A = F (fun p q -> p = q = q = p)
 let C = F (fun p q r -> p |&| q |&| r)
 
 open BooleanAlgebra
-let p1 = proof (taut A) boolean_algebra [
+let p1 = taut A boolean_algebra [
     RightAssoc |> EntireA
 ]
 
-let B = F(fun p q -> not p = q = p = not q)
 
-let p2 = proof (taut B) S [
-        LeftA Collect
-        EntireA RightAssoc
-        RightA Commute
-        RightA Collect
-        RightA Commute
-    ]
+let D = F (fun p -> p ||| true)
+let id1 = ident' (F (fun (p:bool) -> true = (p = p))) [Commute' |> RightA]
 
-let D = F(fun (p:bool) -> p ||| true)
-let a1 = <@ fun (p:bool) -> true = (p = p) @> |> lemma' [Commute' |> RightA]
-
-let p3 = proof (taut D) S [
-    a1 |> Subst |> RightA
+let p3 = taut' D  [
+    Lemma id1 |> RightA
     Distrib |> EntireA
 ]
+
+//let t = theorem (Tautology D) p3

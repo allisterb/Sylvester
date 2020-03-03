@@ -7,6 +7,7 @@ open FSharp.Quotations.ExprShape
 
 open Sylvester
   
+/// Logical operators for formulas.
 module Operators =
     let (!!) (l:bool)  = not l
     let (|&|) (l:bool) (r:bool) = l && r
@@ -118,6 +119,9 @@ module EquationalLogic =
         // x && (y || z) == x && y || x && z
         | And(a3, Or(b3, b4)), Or(And(a1, b1), And(a2, b2)) when sequal a1 a2 && sequal a1 a3 && sequal2 b1 b2 b3 b4 -> Some <@@ (%%a1 && %%b1) ||| (%%a2 && %%b2) @@>
                 
+        // p ||| (q = r) == p = q ||| p = r
+        | Or(a1, Equiv(a2, a3)), Or(Equiv(b1, b2), Equiv(b3, b4)) when sequal a1 b1 && sequal a1 b3 && sequal a2 b2 && sequal a3 b4 -> Some <@@ (%%b1 = %%b2) ||| (%%b3 = %%b4) @@>
+
         // not (x |&| y) == not x ||| not y
         | Not(And(a1, a2)), Or(Not(b1), Not(b2)) when sequal2 a1 a2 b1 b2 -> Some <@@ not %%b1 ||| not %%b2 @@>
         
@@ -127,20 +131,15 @@ module EquationalLogic =
         // p != q == not p = q
         | NotEquiv(a1, a2), Equiv(Not(a3), a4) when sequal2 a1 a2 a3 a4 -> Some <@@ not (%%a3: bool) = (%%a4: bool) @@>
         
-        // p ||| (q = r)
-        | Or(a1, Equiv(a2, a3)), Or(Equiv(b1, b2), Equiv(b3, b4)) when sequal a1 b1 && sequal a1 b3 && sequal a2 b2 && sequal a3 b4 -> Some <@@ (%%b1 = %%b2) ||| (%%b3 = %%b4) @@>
         | _ -> None
-    
+
+           
     /// Identity axioms
     let (|Identity|_|) = 
         function
         // x = x == true
         | Equiv(a1, a2), Bool true when sequal a1 a2 -> Some <@@ true @@>
-
-        // x != x == false
-        //| Not(Equiv x), Bool false -> Some <@@ false @@>
-        //| NotEquiv x, Bool false  -> Some <@@ false @@>
-
+        
         // false = not true
         | Bool false, Not(Bool true) -> Some <@@ not true @@>
         
@@ -155,16 +154,19 @@ module EquationalLogic =
         
         | _ -> None
 
+    /// Idempotent axioms
     let (|Idempotent|_|) = 
         function
         | Or(a1, a2), a3 when sequal a1 a2 && sequal a1 a3 -> Some <@@ (%%a3:bool) @@>
         | _ -> None
 
+    /// Axiom of the excluded middle
     let (|ExcludedMiddle|_|) =
         function
         | Or(a1, Not(a2)), Bool true when sequal a1 a2 -> Some <@@ (%%a2: bool) @@>
         | _ -> None
 
+    /// Golden rule axiom
     let (|GoldenRule|_|) =
         function
         | Equiv(Equiv(Equiv(And(p1, q1), p2), q2), Or(p3, q3)), Bool true when sequal p1 p2 && sequal p2 p3 && sequal q1 q2 && sequal q2 q3 -> Some <@@ true @@>
@@ -202,6 +204,7 @@ module EquationalLogic =
 
     (* Inference rules *) 
     
+    /// Reduce logical constants
     let rec reduce_constants  =
         function
         | Or(Bool l, Bool r) -> Expr.Value(l ||| r)        
@@ -211,6 +214,7 @@ module EquationalLogic =
         | Equiv(Bool l, Bool r) -> Expr.Value((l = r))
         | expr -> traverse expr reduce_constants
     
+    /// Logical operators are right associative.
     let rec right_assoc =
         function
         | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
@@ -218,6 +222,7 @@ module EquationalLogic =
         | Equiv(Equiv(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@> 
         | expr -> traverse expr right_assoc
     
+    /// Logical operators are left associative.
     let rec left_assoc =
         function
         | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
@@ -225,6 +230,7 @@ module EquationalLogic =
         | Equiv(a1, Equiv(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
         | expr -> traverse expr left_assoc
     
+    /// Logical operators commute.
     let rec commute =
         function
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
@@ -235,6 +241,7 @@ module EquationalLogic =
         | Not(Equiv(a1, a2)) -> <@@ not ((%%a2:bool) = (%%a1:bool)) @@>
         | expr -> traverse expr commute
     
+    /// Distribute logical terms
     let rec distrib =
         function
         | Or(a1, And(a2, a3)) -> <@@ %%a1 |&| %%a2 ||| %%a1 |&| %%a3 @@> 
@@ -242,6 +249,7 @@ module EquationalLogic =
         | Not(And(a1, a2)) -> <@@ not %%a1 ||| not %%a2 @@>
         | expr -> traverse expr distrib
     
+    /// Collect distributed logical terms.
     let rec collect =
         function
         | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
@@ -250,32 +258,7 @@ module EquationalLogic =
         | Equiv(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
         | expr -> traverse expr collect
     
-    let rec ident = 
-        function
-        // x = x == true
-        | Equiv(a1, a2) when sequal a1 a2 -> <@@ true @@>
-        
-        // x != x == false
-        | NotEquiv(a1, a2) when sequal a1 a2 -> <@@ false @@>
-        | Not(Equiv(a1, a2)) when sequal a1 a2 -> <@@ false @@>
-
-        // false == not true
-        | Bool false  -> <@@ not true @@>
-        | Not(Bool true)  -> <@@ false @@>
-        
-        // x == x || false
-        | a1 -> <@@ %%a1 ||| false @@>
-        | Or(a1, Bool false) -> <@@ %%a1 @@>
-            
-        // x = x and true
-        | a1  -> <@@ %%a1 |&| true @@>
-        | And(a1, Bool true) -> <@@ %%a1 @@>
-            
-        // x != y == !(x = y)
-        | NotEquiv(a1, a2) -> <@@ not((%%a1:bool) = (%%a2:bool))  @@>
-        | Not(Equiv(a1, a2)) -> <@@ (%%a1:bool) != (%%a2:bool)  @@>
-        | expr -> traverse expr ident
-        
+    /// ||| operator is idempotent    
     let rec idemp =
         function
         | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>

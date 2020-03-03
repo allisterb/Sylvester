@@ -10,9 +10,6 @@ module BooleanAlgebra =
     /// Logical operators in expression
     let commute = EquationalLogic.commute
 
-    let Axiom = Axiom'
-
-    let Lemma = Lemma'
     /// Reduce logical constants in expression. 
     let Reduce = S.Rules.[0]
 
@@ -34,13 +31,10 @@ module BooleanAlgebra =
     /// Substitute identical logical terms in expression.
     let Ident = S.Rules.[6]
 
-    /// Substitute idempotent logical terms in expression.
-    let Idemp = Theory.S.Rules.[7]
-
     /// Logical expression satisfies law of excluded middle.
-    let ExcludedMiddle = Theory.S.Rules.[8]
+    let ExcludedMiddle = Theory.S.Rules.[7]
 
     /// Logical expression satisfies golden rule.
-    let GoldenRule = Theory.S.Rules.[9]
+    let GoldenRule = Theory.S.Rules.[8]
 
 
