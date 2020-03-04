@@ -18,10 +18,15 @@ type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list
     
     let logBuilder = System.Text.StringBuilder()
     let q = defaultArg quiet false
+    let output (s:string) = 
+        match defaultDisplay with
+            | Text -> printfn "%s" (replaceCommonLogicalSymbols s)
+            | _ -> printfn "%s" (replaceCommonLogicalSymbols s)
+
     let prooflog (x:string) = 
         do 
             logBuilder.Append(x) |> ignore
-            if not q then printfn "%s" x
+            if not q then output x
     
     let mutable astate, bstate = (a, b)
     let mutable state:(Expr * Expr * string) list = [] 
@@ -93,7 +98,10 @@ type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list
             else failwith "Cannot join these proofs. The RHS of the first proof is not the LHS of the 2nd proof."
         else
             failwith "Cannot join these proofs because they use different theories."
-        
+    interface IDisplay with
+        member x.Output(item:'t) = item.ToString()
+        member x.Transform(str:string) = str
+
 and Axioms = (Expr * Expr -> bool)
 
 and AxiomDescription = AxiomDescription of string * int * string
