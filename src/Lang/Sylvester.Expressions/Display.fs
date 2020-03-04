@@ -21,4 +21,6 @@ module Display =
          .Replace("|-", "\u22A2")
          .Replace(" not ", " \u00AC ")
          .Replace("not ", "\u00AC ")
+         .Replace(" * ", " \u22C5 ")
+         .Replace("* ", "\u22C5 ")
          .Replace("!!", " \u00AC ")

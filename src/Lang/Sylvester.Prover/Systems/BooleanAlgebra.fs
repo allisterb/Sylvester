@@ -4,10 +4,10 @@
 module BooleanAlgebra =
     let boolean_algebra = Theory.S
 
-    /// Reduce logical constants in expression.
+    /// Reduce constants in expression.
     let reduce_constants = EquationalLogic.reduce_constants
 
-    /// Logical operators in expression
+    /// Expression is commutative.
     let commute = EquationalLogic.commute
 
     /// Reduce logical constants in expression. 

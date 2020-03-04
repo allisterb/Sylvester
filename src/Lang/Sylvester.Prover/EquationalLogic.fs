@@ -134,13 +134,12 @@ module EquationalLogic =
         
         | _ -> None
 
-           
     /// Identity axioms
     let (|Identity|_|) = 
         function
         // x = x == true
         | Equiv(a1, a2), Bool true when sequal a1 a2 -> Some <@@ true @@>
-        
+                
         // false = not true
         | Bool false, Not(Bool true) -> Some <@@ not true @@>
         
@@ -205,7 +204,7 @@ module EquationalLogic =
 
     (* Inference rules *) 
     
-    /// Reduce logical constants
+    /// Reduce logical constants.
     let rec reduce_constants  =
         function
         | Or(Bool l, Bool r) -> Expr.Value(l ||| r)        
@@ -242,7 +241,7 @@ module EquationalLogic =
         | Not(Equiv(a1, a2)) -> <@@ not ((%%a2:bool) = (%%a1:bool)) @@>
         | expr -> traverse expr commute
     
-    /// Distribute logical terms
+    /// Distribute logical terms.
     let rec distrib =
         function
         | Or(a1, And(a2, a3)) -> <@@ %%a1 |&| %%a2 ||| %%a1 |&| %%a3 @@> 

@@ -282,17 +282,20 @@ module Proof =
     let proof (a:Formula<_,_>, b:Formula<_,_>) theory steps = Proof(a.Expr, b.Expr, theory, steps)
     let proof' a b steps = Proof(a, b, S, steps)
     let theorem (a, b) theory steps = Theorem(Equivalence(a, b), proof(a, b) theory steps)
-    let taut (f:Formula<'u, 'v>) theory steps = 
+    let taut (e:Expr<'u->'v>) theory steps = 
+        let f = F e
         do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
         Theorem(Taut(f), Proof (f.Expr, True.Expr, theory, steps))  
     let taut' f steps = taut f S steps
-    let contr (f:Formula<'u, 'v>) theory steps = 
+    let contr (e:Expr<'u -> 'v>) theory steps = 
+        let f = F e
         do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
         Theorem((Contr f), proof (f, False) theory steps)
     let contr' f steps = contr f S steps 
-    let ident (f:Formula<_, _>) theory steps  = 
+    let ident (e:Expr<'u -> 'v>) theory steps  = 
+        let f = F e
         match f.Expr with 
         | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps)) 
         | _ -> failwithf "The expression %A is not recognized as an identity." (src f.Expr)  
-    let ident' (f:Formula<_,  _>) steps  = ident f S steps
+    let ident' f steps  = ident f S steps
     
