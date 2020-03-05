@@ -10,3 +10,6 @@
 [submodule "ext/unquote"]
 	path = ext/unquote
 	url = https://github.com/allisterb/unquote.git
+[submodule "ext/FSketch"]
+	path = ext/FSketch
+	url = https://github.com/allisterb/FSketch.git
