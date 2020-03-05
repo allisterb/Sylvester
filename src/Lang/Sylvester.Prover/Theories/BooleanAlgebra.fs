@@ -4,12 +4,6 @@
 module BooleanAlgebra =
     let boolean_algebra = Theory.S
 
-    /// Reduce constants in expression.
-    let reduce_constants = EquationalLogic.reduce_constants
-
-    /// Expression is commutative.
-    let commute = EquationalLogic.commute
-
     /// Reduce logical constants in expression. 
     let Reduce = S.Rules.[0]
 
@@ -28,8 +22,8 @@ module BooleanAlgebra =
     /// Collect distributed logical terms in expression.
     let Collect = S.Rules.[5]
 
-    /// Substitute identical logical terms in expression.
-    let Ident = S.Rules.[6]
+    /// Logical operators are idempotent.
+    let Idemp = S.Rules.[6]
 
     /// Logical expression satisfies law of excluded middle.
     let ExcludedMiddle = Theory.S.Rules.[7]

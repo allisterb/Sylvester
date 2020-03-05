@@ -1,17 +1,81 @@
 ﻿namespace Sylph
 
 open FSharp.Quotations
-open FSharp.Quotations.Patterns
-open FSharp.Quotations.DerivedPatterns
-open FSharp.Reflection
+
 open Sylvester
 open Operators
 open EquationalLogic
 
-type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:bool) =
-    let S:Theory = Theory.S
+type Theory(axioms: Axioms, rules: Rules, ?descriptions:AxiomDescription list) =
+    member val Axioms = axioms
+    member val Rules = rules
+    member val Descriptions = defaultArg descriptions []
+    member x.AxiomaticallyEqual a b = x.Axioms (a, b)
+    static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEqual a b
+    static member (|-) ((c:Theory), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEqual a.Expr b.Expr
+
+    /// The default logical theory used in Sylph proofs.
+    static member val S =    
+        /// Reduce logical constants in expression. 
+        let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
+
+        /// Logical operators in expression are left-associative.
+        let S_LeftAssoc = Rule("Logical operators in (expression) are left-associative", left_assoc)
+        
+        /// Logical operators in expression are right associative.
+        let S_RightAssoc = Rule("Logical operators in (expression) are right-associative", right_assoc)
+          
+        /// Logical operators in expression commute.
+        let S_Commute = Rule("Logical operators in (expression) are commutative", commute)
+
+        /// distribute lgical tems in over addition in expression.
+        let S_Distrib = Rule("Distribute logical terms in (expression)", distrib)
+        
+        /// Collect distributed terms in expression.
+        let S_Collect = Rule("Collect distributed logical terms in (expression)", collect)
+
+        /// Substitue idempotent terms in expression.
+        let S_Idemp = Rule("Substitute idempotent logical terms in (expression)", idemp)
+
+        /// Replace identical terms in expression.
+        let S_ExcludedMiddle = Rule("Logical terms in (expression) satisfy the law of excluded middle", excluded_middle)
+
+        /// Replace identical terms in expression.
+        let S_GoldenRule = Rule("Logical terms in (expression) satisfy the golden rule", golden_rule)
+
+        Theory(logical_axioms, [
+            S_Reduce
+            S_LeftAssoc
+            S_RightAssoc
+            S_Commute
+            S_Distrib
+            S_Collect
+            S_Idemp
+            S_ExcludedMiddle
+            S_GoldenRule
+        ], List.concat [S_Ident_Desc])
+
+and Axioms = (Expr * Expr -> bool)
+
+and Rule = 
+    | Rule of string * (Expr -> Expr ) 
+    | Subst of string * Proof * (Proof -> Expr -> Expr)
+with
+    member x.Name = 
+        match x with 
+        | (Rule(n, _)) -> n
+        | (Subst(n, _, _)) -> n
+    member x.Apply = 
+        match x with
+        | (Rule(_, r)) -> r
+        | (Subst(_, p, r)) -> r p
+       
+and Rules = Rule list 
+
+and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:bool) =
+    static let mutable L:Theory = Theory.S
     let ruleNames = List.concat [
-            (S.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
+            (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
@@ -34,7 +98,7 @@ type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list
 
     do sprintf "Proof of A: %s == B: %s:" (src a) (src b) |> prooflog
     do 
-        if S |- (a, b) || theory |- (a, b)  then
+        if L |- (a, b) || theory |- (a, b)  then
            sprintf "|- %s == %s" (src a) (src b) |> prooflog
            sprintf "Proof complete." |> prooflog
            stepCount <- steps.Length
@@ -46,7 +110,7 @@ type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list
         do 
             match step.Rule with
             | (Rule(n, _)) -> if (not (ruleNames |> List.contains n)) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
-            | (Subst(n, p, _)) -> if not (p.System = S || (p.System = theory)) then failwithf "Substitution rule at step %i (%s) does not use the rules of S or the current theory." stepId n
+            | (Subst(n, p, _)) -> if not (p.System = L || (p.System = theory)) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
         let (_a, _b) = step.Apply (astate, bstate)
         let msg =
             if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
@@ -61,14 +125,14 @@ type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list
         astate <- _a
         bstate <- _b
         state <- state @ [(astate, bstate, msg)]
-        if theory |- (astate, bstate) then 
-            sprintf "Proof complete." |> prooflog 
+        if theory |- (astate, bstate) || L |- (astate, bstate) then 
+            sprintf "Proof complete. Final state: |- %s = %s" (src astate) (src bstate)|> prooflog 
             stepCount <- steps.Length
         else
             sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog
             stepCount <- stepCount + 1
 
-    do if stepCount = 0 && not(theory |- (a, b)) then
+    do if stepCount = 0 && not(theory |- (a, b) || L |- (a, b)) then
         sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog
     member val A = a
     member val B = b
@@ -80,6 +144,9 @@ type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list
     member val BState = bstate
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
+
+    /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
+    static member Logic with get() = L and set(v) = L <- v
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
     static member (|-) ((proof:Proof), (A:Formula<_,_>, B:Formula<_,_>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
     
@@ -101,25 +168,6 @@ type Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list
     interface IDisplay with
         member x.Output(item:'t) = item.ToString()
         member x.Transform(str:string) = str
-
-and Axioms = (Expr * Expr -> bool)
-
-and AxiomDescription = AxiomDescription of string * int * string
-
-and Rule = 
-    | Rule of string * (Expr -> Expr ) 
-    | Subst of string * Proof * (Proof -> Expr -> Expr)
-with
-    member x.Name = 
-        match x with 
-        | (Rule(n, _)) -> n
-        | (Subst(n, _, _)) -> n
-    member x.Apply = 
-        match x with
-        | (Rule(_, r)) -> r
-        | (Subst(_, p, r)) -> r p
-       
-and Rules = Rule list 
 
 and RuleApplication =
     | EntireA of Rule
@@ -160,53 +208,6 @@ with
                 | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in a, binary_call(o, m, l, s)
                 | _ -> failwithf "B is not a binary operation: %s." (src a)
  
-and Theory(axioms: Axioms, rules: Rules) =
-    member val Axioms = axioms
-    member val Rules = rules
-    member x.AxiomaticallyEqual a b = x.Axioms (a, b)
-    static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEqual a b
-    static member (|-) ((c:Theory), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEqual a.Expr b.Expr
-
-    /// The theory of equational logic used by Sylph.
-    static member val S =    
-        /// Reduce logical constants in expression. 
-        let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
-
-        /// Logical operators in expression are left-associative.
-        let S_LeftAssoc = Rule("Logical operators in (expression) are left-associative", left_assoc)
-        
-        /// Logical operators in expression are right associative.
-        let S_RightAssoc = Rule("Logical operators in (expression) are right-associative", right_assoc)
-          
-        /// Logical operators in expression commute.
-        let S_Commute = Rule("Logical operators in (expression) are commutative", commute)
-
-        /// distribute lgical tems in over addition in expression.
-        let S_Distrib = Rule("Distribute logical terms in (expression)", distrib)
-        
-        /// Collect distributed terms in expression.
-        let S_Collect = Rule("Collect distributed logical terms in (expression)", collect)
-
-        /// Substitue idempotent terms in expression.
-        let S_Idemp = Rule("Substitute idempotent logical terms in (expression)", idemp)
-
-        /// Replace identical terms in expression.
-        let S_ExcludedMiddle = Rule("Logical terms in (expression) satisfy the law of excluded middle", excluded_middle)
-
-        /// Replace identical terms in expression.
-        let S_GoldenRule = Rule("Logical terms in (expression) satisfy the golden rule", golden_rule)
-
-        Theory(logical_axioms, [
-            S_Reduce
-            S_LeftAssoc
-            S_RightAssoc
-            S_Commute
-            S_Distrib
-            S_Collect
-            S_Idemp
-            S_ExcludedMiddle
-            S_GoldenRule
-        ])
 
 type Theorem<'u, 'v> internal (stmt: TheoremStmt<'u, 'v>, proof:Proof) = 
     let (a, b) = stmt.Members
@@ -228,6 +229,7 @@ and TheoremStmt<'u, 'v> =
         | Taut a -> a.Expr, Formula<'u, 'v>.T.Expr
         | Contr a -> a.Expr, Formula<'u, 'v>.F.Expr
         | Ident a -> match a.Expr with | Equiv(l, r) -> l, r | _ -> failwithf "The formula %A is not an identity." a.Expr
+
 [<AutoOpen>]
 module LogicalRules = 
     /// The theory of equational logic that defines the logical axioms and inference rules for proofs.
@@ -244,7 +246,7 @@ module LogicalRules =
             failwithf "The proof of %A == %A is not complete" (src p.A) (src p.B) 
         else Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
 
-    /// Substitute a theorem into another proof.
+    /// Substitute a theorem with a completed proof into another proof.
     let Lemma (lemma:Theorem<'u,'v>) = if not (lemma.Proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (src lemma.A) (src lemma.B) else lemma.Proof |> Subst 
         
     /// Reduce logical constants in expression. 
@@ -282,20 +284,23 @@ module Proof =
     let proof (a:Formula<_,_>, b:Formula<_,_>) theory steps = Proof(a.Expr, b.Expr, theory, steps)
     let proof' a b steps = Proof(a, b, S, steps)
     let theorem (a, b) theory steps = Theorem(Equivalence(a, b), proof(a, b) theory steps)
-    let taut (e:Expr<'u->'v>) theory steps = 
+    let taut theory steps (e:Expr<'u->'v>) = 
         let f = F e
         do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
         Theorem(Taut(f), Proof (f.Expr, True.Expr, theory, steps))  
-    let taut' f steps = taut f S steps
-    let contr (e:Expr<'u -> 'v>) theory steps = 
+    let logical_theorem steps f = taut S steps f
+    let contr theory steps (e:Expr<'u -> 'v>) = 
         let f = F e
         do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
         Theorem((Contr f), proof (f, False) theory steps)
-    let contr' f steps = contr f S steps 
-    let ident (e:Expr<'u -> 'v>) theory steps  = 
+    let logical_contr steps f = contr S steps f
+    let axiom theory e = taut theory [] e
+    let logical_axiom e = axiom S e
+    let ident theory steps  (e:Expr<'u -> 'v>) = 
         let f = F e
         match f.Expr with 
         | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps)) 
         | _ -> failwithf "The expression %A is not recognized as an identity." (src f.Expr)  
-    let ident' f steps  = ident f S steps
-    
+    let logical_ident steps f = ident S steps f
+    let ident_axiom theory e = ident theory [] e
+    let logical_ident_axiom e = logical_ident [] e
