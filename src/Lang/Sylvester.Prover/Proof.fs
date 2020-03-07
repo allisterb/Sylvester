@@ -15,32 +15,23 @@ type Theory(axioms: Axioms, rules: Rules, ?descriptions:AxiomDescription list) =
     static member (|-) ((c:Theory), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEqual a.Expr b.Expr
 
     /// The default logical theory used in Sylph proofs.
-    static member val S =    
-        /// Reduce logical constants in expression. 
+    static member val S =     
         let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
 
-        /// Logical operators in expression are left-associative.
         let S_LeftAssoc = Rule("Logical operators in (expression) are left-associative", left_assoc)
         
-        /// Logical operators in expression are right associative.
         let S_RightAssoc = Rule("Logical operators in (expression) are right-associative", right_assoc)
           
-        /// Logical operators in expression commute.
         let S_Commute = Rule("Logical operators in (expression) are commutative", commute)
 
-        /// distribute lgical tems in over addition in expression.
         let S_Distrib = Rule("Distribute logical terms in (expression)", distrib)
         
-        /// Collect distributed terms in expression.
         let S_Collect = Rule("Collect distributed logical terms in (expression)", collect)
 
-        /// Substitue idempotent terms in expression.
         let S_Idemp = Rule("Substitute idempotent logical terms in (expression)", idemp)
 
-        /// Replace identical terms in expression.
         let S_ExcludedMiddle = Rule("Logical terms in (expression) satisfy the law of excluded middle", excluded_middle)
 
-        /// Replace identical terms in expression.
         let S_GoldenRule = Rule("Logical terms in (expression) satisfy the golden rule", golden_rule)
 
         Theory(logical_axioms, [
@@ -73,6 +64,7 @@ with
 and Rules = Rule list 
 
 and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:bool) =
+    /// The logical theory used for the proof.
     static let mutable L:Theory = Theory.S
     let ruleNames = List.concat [
             (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
@@ -232,7 +224,7 @@ and TheoremStmt<'u, 'v> =
 
 [<AutoOpen>]
 module LogicalRules = 
-    /// The theory of equational logic that defines the logical axioms and inference rules for proofs.
+    /// The default theory of equational logic that defines the logical axioms and inference rules for proofs.
     let S = Theory.S
 
     let rec subst (p:Proof) = 

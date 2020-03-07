@@ -1,14 +1,41 @@
 ﻿namespace Sylph
 
-open Microsoft.FSharp.Quotations
-open Microsoft.FSharp.Quotations.Patterns
-open Microsoft.FSharp.Quotations.DerivedPatterns
+open FSharp.Quotations
+open FSharp.Quotations.Patterns
+open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 open FormulaPatterns
 
+/// Formalizes theory of (+), (-), and (*) operations on integer values and variables.
 module IntegerAlgebra =    
     
+    (* Patterns *)
+
+    let (|Zero|_|) =
+        function
+        | SByte 0y
+        | Byte 0uy
+        | Int16 0s
+        | UInt16 0us
+        | Int32 0
+        | UInt32 0u
+        | Int64 0L
+        | UInt64 0UL -> Some true
+        | _ -> None
+
+    let (|One|_|) =
+        function
+        | SByte 1y
+        | Byte 1uy
+        | Int16 1s
+        | UInt16 1us
+        | Int32 1
+        | UInt32 1u
+        | Int64 1L
+        | UInt64 1UL -> Some true
+        | _ -> None
+
     /// Commutativity axioms
     let (|Commute|_|) =
         function
@@ -27,33 +54,27 @@ module IntegerAlgebra =
         | Multiply(Multiply(a1, a2), a3), Multiply(b1, Multiply(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some <@@ %%b1 * (%%b2 * %%b3) @@>
         | _ -> None
 
-    /// Distributivity axioms
+    /// Distributivity axiom
     let (|Distrib|_|) =
         function
         // x * (y + z) == x * y + x * z
         | Multiply(a3, Add(b3, b4)), Add(Multiply(a1, b1), Multiply(a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some <@@ (%%a1 * %%b1) + (%%a2 * %%b2) @@>
         | _ -> None
 
-    // x + 0 = x
-    let (|AddIdentity|_|) = 
+    /// Identity axioms
+    let (|Identity|_|) = 
         function
-        | a1, Add(a2, Int32 0) when sequal a1 a2 -> Some a1
-        | Add(a1, Int32 0), a2 when sequal a1 a2 -> Some <@@ true @@>
-        | _ -> None
-
-    // x * 1 = x
-    let (|MulIdentity|_|) = 
-        function
-        | a1, Multiply(a2, Int32 1) when sequal a1 a2 -> Some <@@ a1 @@>     
-        | Multiply(a1, Int32 1), a2 when sequal a1 a2 -> Some <@@ a1 @@>
+        // x + 0 = x
+        | Add(a1, Zero _), a2 when sequal a1 a2 -> Some <@@ true @@>
+        // x * 1 = x
+        | Multiply(a1, One _), a2 when sequal a1 a2 -> Some <@@ a1 @@>
         | _ -> None
 
     let integer_axioms = 
         function  
         | Assoc x 
         | Commute x
-        | AddIdentity x
-        | MulIdentity x
+        | Identity x
         | Distrib x -> true
         | _ -> false
                 
@@ -109,7 +130,7 @@ module IntegerAlgebra =
         | expr -> traverse expr collect
 
     /// Reduce equal constants in expression. 
-    let Reduce = Rule("Reduce constants in (expression)", reduce_constants)
+    let Reduce = Rule("Reduce integer constants in (expression)", reduce_constants)
 
     /// Expression is left associative.
     let LeftAssoc = Rule("(expression) is left-associative", left_assoc)

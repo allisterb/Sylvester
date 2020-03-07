@@ -24,6 +24,7 @@
     <Compile Include="Formula.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Theories\BooleanAlgebra.fs" />
+    <Compile Include="Theories\PropositionalCalculus.fs" />
     <Compile Include="Theories\IntegerAlgebra.fs" />
   </ItemGroup>
 

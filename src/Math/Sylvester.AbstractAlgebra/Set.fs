@@ -23,7 +23,7 @@ with
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
-            |Set s -> failwith "Cannot enumerate a set defined by a set builder statement. Use a sequence instead."
+            |Set _ -> failwith "Cannot enumerate a set defined by a set builder statement. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -70,6 +70,7 @@ with
         |Seq s -> s.Contains elem // May fail if sequence is infinite
         |Set s -> s.Pred elem
     
+    /// Indicator function for an element.
     member x.Indicate elem = if x.HasElement elem then 1 else 0
 
     /// Determine if the set contains another set as a subset.
@@ -78,9 +79,9 @@ with
         | Empty, _ -> false
         | _, Empty -> true
      
-        |_, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
+        | _, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
         
-        |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
+        |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by a set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
         |Set _, Set _ ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
 
     interface IComparable<Set<'t>> with
@@ -269,3 +270,6 @@ module Set =
     
     /// A singleton set containing 0. 
     let Zero = FiniteSet<N<1>, int>([|0|])
+
+    /// The universal set.
+    let U:Set<obj> = SetBuilder (fun _ -> true) |> Set
