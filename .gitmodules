@@ -13,3 +13,6 @@
 [submodule "ext/FSketch"]
 	path = ext/FSketch
 	url = https://github.com/allisterb/FSketch.git
+[submodule "ext/SharpVG"]
+	path = ext/SharpVG
+	url = https://github.com/allisterb/SharpVG.git
