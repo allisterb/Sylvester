@@ -1,4 +1,5 @@
-#load "MathInclude.fsx"
+//#load "MathInclude.fsx"
+#r ".\\..\\..\\src\\Visualization\\Sylvester.Viz.FSketch\\bin\\Debug\\net45\\Sylvester.Viz.FSketch.dll"
 
 [<RequireQualifiedAccess>]
 type PrinterRegistration =
@@ -8,12 +9,9 @@ type PrinterRegistration =
     | RenderedScene = 0x08
     | All = 0x0F
 
-#if HAS_FSI_ADDHTMLPRINTER
-let RegisterPrinters (printerRegistration:PrinterRegistration) =
+open FSketch
+open FSketch.Dsl
+open FSketch.Builder
+open FSketch.Svg.SvgParser
 
-    if printerRegistration &&& PrinterRegistration.Shapes = PrinterRegistration.Shapes then
-        fsi.AddHtmlPrinter(fun (shapes:FSketch.Shapes) ->
-                                let svg = FSketch.Svg.SvgDrawer.Draw shapes
-                                Seq.empty, svg)
-
-#endif
+let svg = FromFile "graph.svg"

@@ -7,15 +7,16 @@ open FSharp.Quotations.ExprShape
 
 open Sylvester
 
-/// Text description of axioms
+/// Text description of axioms.
 type AxiomDescription = AxiomDescription of string * string 
-  
+
 /// Logical operators for formulas.
 module Operators =
     let (!!) (l:bool)  = not l
     let (|&|) (l:bool) (r:bool) = l && r
     let (|||) (l:bool) (r:bool) = l || r
     let (==>) (l:bool) (r:bool) = (not l) || r
+    let (<==) (l:bool) (r:bool) = r ==> l
 
 /// Formalizes the default equational logic used by Sylph called S.
 /// Based on E: http://www.cs.cornell.edu/home/gries/Logic/Equational.html
@@ -46,7 +47,7 @@ module EquationalLogic =
     let (|Symm|):(Expr * Expr)->(Expr * Expr) =
         function
         | (A, B) -> (B, A)
-       
+
     let (|Not|_|) =
         function
         | SpecificCall <@@ (!!) @@> (None,_,l::[]) -> Some l
@@ -74,6 +75,11 @@ module EquationalLogic =
         | SpecificCall <@@ (==>) @@> (None,_,l::r::[]) -> Some (l,r)
         | _ -> None
 
+    let (|Conseq|_|) =
+        function
+        | SpecificCall <@@ (<==) @@> (None,_,l::r::[]) -> Some (l,r)
+        | _ -> None
+
     (* Axioms *)
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
@@ -81,7 +87,7 @@ module EquationalLogic =
     /// * Decomposed to the same sequence of symbols i.e. strings.
     /// Since we are only concerned with string equality this law encompasses all 4 of the equational logic laws of equality:
     /// Symmetry, reflexivity, transitivity, and Leibniz's rule: A = B => S(A) = S(B)
-    let (|Equal|_|) =
+    let (|SEqual|_|) =
         function
         | (A, B) when sequal A B -> Some B
         | _ -> None
@@ -123,8 +129,8 @@ module EquationalLogic =
         // x && (y || z) == x && y || x && z
         | And(a3, Or(b3, b4)), Or(And(a1, b1), And(a2, b2)) when sequal a1 a2 && sequal a1 a3 && sequal2 b1 b2 b3 b4 -> Some <@@ (%%a1 && %%b1) ||| (%%a2 && %%b2) @@>
                 
-        // p ||| (q = r) == p = q ||| p = r
-        | Or(a1, Equiv(a2, a3)), Or(Equiv(b1, b2), Equiv(b3, b4)) when sequal a1 b1 && sequal a1 b3 && sequal a2 b2 && sequal a3 b4 -> Some <@@ (%%b1 = %%b2) ||| (%%b3 = %%b4) @@>
+        // p ||| (q = r) == p ||| q == p ||| r
+        | Or(a1, Equiv(a2, a3)), Equiv(Or(b1, b2), Or(b3, b4)) when sequal a1 b1 && sequal a1 b3 && sequal a2 b2 && sequal a3 b4 -> Some <@@ (%%b1 = %%b2) ||| (%%b3 = %%b4) @@>
 
         // not (x |&| y) == not x ||| not y
         | Not(And(a1, a2)), Or(Not(b1), Not(b2)) when sequal2 a1 a2 b1 b2 -> Some <@@ not %%b1 ||| not %%b2 @@>
@@ -140,26 +146,18 @@ module EquationalLogic =
         // x = x == true
         | Equiv(a1, a2), Bool true when sequal a1 a2 -> Some <@@ true @@>
                 
-        // false = not true
+        // false == not true
         | Bool false, Not(Bool true) -> Some <@@ not true @@>
         
-        // x = x || false
+        // x == x || false
         | a1, Or(a2, Bool false) when sequal a1 a2 -> Some <@@ %%a2 ||| false @@>
 
-        // x = x and true
+        // x == x and true
         | a1, And(a2, Bool true) when sequal a1 a2 -> Some <@@ %%a2 |&| true @@>        
                 
         // x <> y == not (x = y)
         | NotEquiv(a1, a2), Not(Equiv(a3, a4)) when sequal2 a1 a2 a3 a4 -> Some <@@ not((%%a3:bool) = (%%a4:bool)) @@> 
         | _ -> None
-
-    let S_Ident_Desc = [
-        AxiomDescription("Axiom of identity 0", sprintf "%A" (<@fun x -> (x = x) = true @> |> body |> src |> replaceCommonLogicalSymbols)) 
-        AxiomDescription("Axiom of identity 1", sprintf "%A" (<@fun () -> false = not true @> |> body |> src |> replaceCommonLogicalSymbols)) 
-        AxiomDescription("Axiom of identity 2", sprintf "%A" (<@fun x -> x = (x ||| false) @> |> body |> src |> replaceCommonLogicalSymbols)) 
-        AxiomDescription("Axiom of identity 3", sprintf "%A" (<@fun x -> x = (x |&| true) @> |> body |> src |> replaceCommonLogicalSymbols)) 
-        AxiomDescription("Axiom of identity 4", sprintf "%A" (<@fun x y -> (x <> y) = not(x = y) @> |> body |> src |> replaceCommonLogicalSymbols))
-    ]
     
     /// Duality axioms
     let (|Duality|_|) =
@@ -170,70 +168,54 @@ module EquationalLogic =
         | And(a1, a2), Not(Or(Not(a3), Not(a4))) when sequal2 a1 a2 a3 a4 -> Some <@@ not(%%a3) ||| not(%%a4) @@>
         | _ -> None
 
-    let S_Dual_Desc = [
-        AxiomDescription("Axiom of duality 0", sprintf "%A" (<@fun x y -> (x = y) = not(not x = not y) @> |> body |> src |> replaceCommonLogicalSymbols))
-        AxiomDescription("Axiom of duality 1", sprintf "%A" (<@fun () -> true = not false @> |> body |> src |> replaceCommonLogicalSymbols))
-        AxiomDescription("Axiom of duality 2", sprintf "%A" (<@fun x y -> x ||| y = not (not x |&| not y) @> |> body |> src |> replaceCommonLogicalSymbols))
-        AxiomDescription("Axiom of duality 3", sprintf "%A" (<@fun x y -> x |&| y = not (not x ||| not y) @> |> body |> src |> replaceCommonLogicalSymbols))
-
-    ]
-    /// Idempotent axioms
+    /// Idempotent axioms.
     let (|Idempotent|_|) = 
         function
+        | And(a1, a2), a3 when sequal a1 a2 && sequal a1 a3 -> Some <@@ (%%a3:bool) @@>
         | Or(a1, a2), a3 when sequal a1 a2 && sequal a1 a3 -> Some <@@ (%%a3:bool) @@>
         | _ -> None
 
-    /// Axiom of the excluded middle
+    /// Axiom of the excluded middle.
     let (|ExcludedMiddle|_|) =
         function
-        | Or(a1, Not(a2)), Bool true when sequal a1 a2 -> Some <@@ (%%a2: bool) @@>
+        | Or(a1, Not(a2)), Bool true when sequal a1 a2 -> Some <@@ true @@>
         | _ -> None
 
-    /// Golden rule axiom
+    /// Golden rule axiom.
     let (|GoldenRule|_|) =
         function
-        | Equiv(Equiv(Equiv(And(p1, q1), p2), q2), Or(p3, q3)), Bool true when sequal p1 p2 && sequal p2 p3 && sequal q1 q2 && sequal q2 q3 -> Some <@@ true @@>
+        | And(p1, q1), Equiv(Equiv(p2, q2), Or(p3, q3)) when sequal p1 p2 && sequal p1 p3 && sequal q1 q2 && sequal q2 q3 -> Some <@@ true @@>
         | _ -> None
 
-    let (|ConjLogicalAxioms|_|) =
+    /// Implication and consequence axioms.
+    let (|Implication|_|) =
         function
-        | Conj(Equal x) 
-        | Conj(Symmetry x) 
-        | Conj(Assoc x) 
-        | Conj(Distrib x) 
-        | Conj(Identity x) 
-        | Conj(Duality x)
-        | Conj(Idempotent x) 
-        | Conj(ExcludedMiddle x) 
-        | Conj(GoldenRule x) -> Some x
+        | Implies(a1, a2), Equiv(Or(a3, a4), a5) when sequal a1 a3 && sequal a2 a4 && sequal a4 a5 -> Some <@@ (%%a3 ||| %%a4) = %%a5 @@>
+        | Conseq(a1, a2), Implies(a3, a4) when sequal2 a1 a2 a4 a3 -> Some <@@ %%a3 ==> %%a4 @@>
+        | _ -> None
+
+    let (|LogicalAxioms|_|) =
+        function
+        | SEqual x
+        | Symmetry x
+        | Assoc x
+        | Distrib x
+        | Identity x
+        | Duality x
+        | Idempotent x
+        | ExcludedMiddle x
+        | GoldenRule x 
+        | Implication x-> Some x
         | _ -> None
 
     let (|SymmLogicalAxioms|_|) =
         function
-        | Symm(A, B) -> 
-            match (A, B) with 
-            | Equal x
-            | Symmetry x
-            | Assoc x
-            | Distrib x
-            | Identity x
-            | Duality x
-            | Idempotent x
-            | ExcludedMiddle x
-            | GoldenRule x -> Some x | _ -> None
+        | Symm(A, B) -> match (A, B) with | LogicalAxioms x -> Some x | _ -> None
 
     let logical_axioms =
         function
-        | Equal x
-        | Symmetry x
-        | Assoc x
-        | Distrib x 
-        | Identity x 
-        | Idempotent x
-        | ExcludedMiddle x
-        | GoldenRule x
-        | Duality x
-        | ConjLogicalAxioms x 
+        | LogicalAxioms x
+        | Conj(LogicalAxioms x) 
         | SymmLogicalAxioms x -> true
         | _ -> false
     
@@ -242,11 +224,11 @@ module EquationalLogic =
     /// Reduce logical constants.
     let rec reduce_constants  =
         function
-        | Or(Bool l, Bool r) -> Expr.Value(l ||| r)        
-        | Not(Bool l) -> Expr.Value(not l)        
+        | Equiv(Bool l, Bool r) -> Expr.Value((l = r))
+        | Not(Bool l) -> Expr.Value(not l)
+        | Or(Bool l, Bool r) -> Expr.Value(l ||| r)                
         | And(Bool l, Bool r) -> Expr.Value(l |&| r)
         | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
-        | Equiv(Bool l, Bool r) -> Expr.Value((l = r))
         | expr -> traverse expr reduce_constants
     
     /// Logical operators are right associative.
@@ -308,3 +290,34 @@ module EquationalLogic =
         function
         | Equiv(Equiv(Equiv(And(p1, q1), p2), q2), Or(p3, q3))  -> <@@ true @@>
         | expr -> traverse expr golden_rule
+
+    let S_Dual_Desc = [
+        AxiomDescription("Axiom of duality 0", sprintf "%A" (<@fun x y -> (x = y) = not(not x = not y) @> |> body |> src |> replaceCommonLogicalSymbols))
+        AxiomDescription("Axiom of duality 1", sprintf "%A" (<@fun () -> true = not false @> |> body |> src |> replaceCommonLogicalSymbols))
+        AxiomDescription("Axiom of duality 2", sprintf "%A" (<@fun x y -> x ||| y = not (not x |&| not y) @> |> body |> src |> replaceCommonLogicalSymbols))
+        AxiomDescription("Axiom of duality 3", sprintf "%A" (<@fun x y -> x |&| y = not (not x ||| not y) @> |> body |> src |> replaceCommonLogicalSymbols))
+    ]
+
+    let S_Ident_Desc = [
+        AxiomDescription("Axiom of identity 0", sprintf "%A" (<@fun x -> (x = x) = true @> |> body |> src |> replaceCommonLogicalSymbols)) 
+        AxiomDescription("Axiom of identity 1", sprintf "%A" (<@fun () -> false = not true @> |> body |> src |> replaceCommonLogicalSymbols)) 
+        AxiomDescription("Axiom of identity 2", sprintf "%A" (<@fun x -> x = (x ||| false) @> |> body |> src |> replaceCommonLogicalSymbols)) 
+        AxiomDescription("Axiom of identity 3", sprintf "%A" (<@fun x -> x = (x |&| true) @> |> body |> src |> replaceCommonLogicalSymbols)) 
+        AxiomDescription("Axiom of identity 4", sprintf "%A" (<@fun x y -> (x <> y) = not(x = y) @> |> body |> src |> replaceCommonLogicalSymbols))
+    ]
+
+/// These patterns will be used by other theories so redefine them here.
+module EquivPatterns =
+    let (|Equiv|_|) = 
+         function
+         | SpecificCall <@@ (=) @@> (None,_,l::r::[]) -> Some(l, r)
+         | _ -> None
+        
+    let (|Conj|_|) =
+        function
+        | Equiv(expr2), Bool true -> Some expr2
+        | _ -> None
+
+    let (|Symm|):(Expr * Expr)->(Expr * Expr) =
+        function
+        | (A, B) -> (B, A)

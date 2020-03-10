@@ -1,8 +1,8 @@
 ﻿namespace Sylph
 
 /// Propositional calculus using the axioms and rules of S.
-module PropositionalCalculus =
-    let propositional_calculus = Theory.S
+module PropCalculus =
+    let prop_calculus = Theory.S
 
     /// Reduce logical constants in expression. 
     let Reduce = S.Rules.[0]

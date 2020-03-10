@@ -210,14 +210,12 @@ type Theorem<'u, 'v> internal (stmt: TheoremStmt<'u, 'v>, proof:Proof) =
     member val Proof = proof
        
 and TheoremStmt<'u, 'v> = 
-    | Equivalence of Formula<'u, 'v> * Formula<'u, 'v>
     | Taut of Formula<'u, 'v>
     | Contr of Formula<'u, 'v>
     | Ident of Formula<'u, 'v>
     with
     member x.Members = 
         match x with
-        | Equivalence(a, b) -> a.Expr, b.Expr
         | Taut a -> a.Expr, Formula<'u, 'v>.T.Expr
         | Contr a -> a.Expr, Formula<'u, 'v>.F.Expr
         | Ident a -> match a.Expr with | Equiv(l, r) -> l, r | _ -> failwithf "The formula %A is not an identity." a.Expr
@@ -275,18 +273,17 @@ module Proof =
     let theory axioms rules = Theory(axioms, rules)
     let proof (a:Formula<_,_>, b:Formula<_,_>) theory steps = Proof(a.Expr, b.Expr, theory, steps)
     let proof' a b steps = Proof(a, b, S, steps)
-    let theorem (a, b) theory steps = Theorem(Equivalence(a, b), proof(a, b) theory steps)
-    let taut theory steps (e:Expr<'u->'v>) = 
+    let theorem theory steps (e:Expr<'u->'v>) = 
         let f = F e
         do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
         Theorem(Taut(f), Proof (f.Expr, True.Expr, theory, steps))  
-    let logical_theorem steps f = taut S steps f
+    let logical_theorem steps f = theorem S steps f
     let contr theory steps (e:Expr<'u -> 'v>) = 
         let f = F e
         do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
         Theorem((Contr f), proof (f, False) theory steps)
     let logical_contr steps f = contr S steps f
-    let axiom theory e = taut theory [] e
+    let axiom theory e = theorem theory [] e
     let logical_axiom e = axiom S e
     let ident theory steps  (e:Expr<'u -> 'v>) = 
         let f = F e

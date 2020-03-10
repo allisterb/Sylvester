@@ -6,9 +6,11 @@ open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 open FormulaPatterns
+open EquivPatterns
 
-/// Formalizes theory of (+), (-), and (*) operations on integer values and variables.
-module IntegerAlgebra =    
+/// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
+/// and unary inverse operation (-).
+module IntegerAlgebra =  
     
     (* Patterns *)
 
@@ -35,6 +37,8 @@ module IntegerAlgebra =
         | Int64 1L
         | UInt64 1UL -> Some true
         | _ -> None
+
+    (* Axioms *)
 
     /// Commutativity axioms
     let (|Commute|_|) =
@@ -65,28 +69,49 @@ module IntegerAlgebra =
     let (|Identity|_|) = 
         function
         // x + 0 = x
-        | Add(a1, Zero _), a2 when sequal a1 a2 -> Some <@@ true @@>
+        | Add(a1, Zero _), a2 when sequal a1 a2 -> Some <@@ a1 @@>
         // x * 1 = x
         | Multiply(a1, One _), a2 when sequal a1 a2 -> Some <@@ a1 @@>
         | _ -> None
 
+    let (|IntegerAxioms|_|) =
+        function
+        | Commute x 
+        | Assoc x
+        | Distrib x
+        | Identity x -> Some x
+        | _ -> None
+    
+    let (|SymmIntegerAxioms|_|) =
+        function
+        | Symm(A, B) -> match (A, B) with | IntegerAxioms x -> Some x | _ -> None
+
     let integer_axioms = 
         function  
-        | Assoc x 
-        | Commute x
-        | Identity x
-        | Distrib x -> true
+        | IntegerAxioms x
+        | Conj(IntegerAxioms x)
+        | SymmIntegerAxioms x -> true
         | _ -> false
                 
     let rec reduce_constants  =
         function
+        | Add(SByte l, SByte r) -> Expr.Value(l + r)
+        | Add(Byte l, Byte r) -> Expr.Value(l + r)
+        | Add(Int16 l, Int16 r) -> Expr.Value(l + r)
+        | Add(UInt16 l, UInt16 r) -> Expr.Value(l + r)
         | Add(Int32 l, Int32 r) -> Expr.Value(l + r)
         | Add(UInt32 l, UInt32 r) -> Expr.Value(l + r)
         | Add(Int64 l, Int64 r) -> Expr.Value(l + r)
+        | Add(UInt64 l, UInt64 r) -> Expr.Value(l + r)
         
+        | Subtract(SByte l, SByte r) -> Expr.Value(l - r)
+        | Subtract(Byte l, Byte r) -> Expr.Value(l - r)
+        | Subtract(Int16 l, Int16 r) -> Expr.Value(l - r)
+        | Subtract(UInt16 l, UInt16 r) -> Expr.Value(l - r)
         | Subtract(Int32 l, Int32 r) -> Expr.Value(l - r)
         | Subtract(UInt32 l, UInt32 r) -> Expr.Value(l - r)
         | Subtract(Int64 l, Int64 r) -> Expr.Value(l - r)
+        | Subtract(UInt64 l, UInt64 r) -> Expr.Value(l - r)
         
         | Multiply(Int32 l, Int32 r) -> Expr.Value(l * r)
         | Multiply(UInt32 l, UInt32 r) -> Expr.Value(l * r)
@@ -147,7 +172,8 @@ module IntegerAlgebra =
     /// Collect multiplication terms distributed over addition in expression.
     let Collect = Rule("Collect multiplication terms distributed over addition in (expression)", collect)
     
-    /// Axioms and rules for integer algebra.
+    /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
+    /// and unary inverse operation (~-).
     let integer_algebra = 
         Theory(integer_axioms, [
             Reduce 

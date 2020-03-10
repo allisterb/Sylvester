@@ -7,8 +7,8 @@ open FSharp.Quotations.DerivedPatterns
 open Sylvester
 open FormulaPatterns
 
-/// Formalizes the theory of boolean algebra of a set closed under 2 binary operations that are associative, commutative, and idempotent,
-/// 0 and 1 elements, and a complement operations.
+/// Formalizes the theory of Boolean algebra on a set closed under 2 binary operations that are associative, commutative, and idempotent,
+/// wiith identity elements 0 and 1, and a unary inverse or complement operation.
 module BooleanAlgebra =
     
     (* Patterns *)
@@ -21,6 +21,12 @@ module BooleanAlgebra =
 
     /// Meet operation.
     let (|Meet|_|) (op:'t->'t->'t) =
+        function
+        | SpecificCall <@@ op @@> (None,_,l::r::[]) -> Some (l,r)
+        | _ -> None
+
+    /// Order operation induced by join and meet operations.
+    let (|Order|_|) (op:'t->'t->bool) =
         function
         | SpecificCall <@@ op @@> (None,_,l::r::[]) -> Some (l,r)
         | _ -> None
@@ -52,7 +58,6 @@ module BooleanAlgebra =
         | Join joinOp (Join joinOp (a1, a2), a3), Join joinOp (b1, Join joinOp (b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some desc
         // x * y * z == x * (y * z)
         | Meet meetOp (Meet meetOp (a1, a2), a3), Meet meetOp (b1, Meet meetOp (b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some desc        
-        
         | _ -> None
      
     /// Commutativity axioms.
@@ -76,6 +81,8 @@ module BooleanAlgebra =
         function
         // x * (y + z) == x * y + x * z
         | Meet meetOp (a3, Join joinOp (b3, b4)), Join joinOp (Meet meetOp (a1, b1), Meet meetOp (a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some <@@ (%%a1 * %%b1) + (%%a2 * %%b2) @@>
+        // x + (y * z) == x * y + x * z
+        | Join joinOp (a3, Meet meetOp (b3, b4)), Meet meetOp (Join joinOp (a1, b1), Join joinOp (a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some <@@ (%%a1 * %%b1) + (%%a2 * %%b2) @@>
         | _ -> None
 
 //type BooleanAlgebra<'t when 't : equality>(join: 't->'t->'t, meet: 't->'t->'t, greatest:'t, least:'t, complement:'t -> 't) = 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100%" height="100%" viewBox="0 0 650 650" preserveAspectRatio="xMidYMid meet">
+<g transform="translate(20,40)">
+<g class="y axis" transform="translate(0,0)">
+<g class="tick" transform="translate(0,570)" style="opacity: 1;">
+<line x2="-6" y2="0"></line>
+<text dy=".32em" x="-9" y="0" style="text-anchor: end;">1</text></g>
+<g class="tick" transform="translate(0,506.66666666666663)" style="opacity: 1;">
+<line x2="-6" y2="0"></line>
+<text dy=".32em" x="-9" y="0" style="text-anchor: end;">2</text></g>
+<g class="tick" transform="translate(0,443.3333333333333)" style="opacity: 1;">
+<line x2="-6" y2="0"></line>
+<text dy=".32em" x="-9" y="0" style="text-anchor: end;">3
+</text>
+</g><g class="tick" transform="translate(0,380.00000000000006)" style="opacity: 1;"><line x2="-6" y2="0"></line><text dy=".32em" x="-9" y="0" style="text-anchor: end;">4</text></g><g class="tick" transform="translate(0,316.6666666666667)" style="opacity: 1;"><line x2="-6" y2="0"></line><text dy=".32em" x="-9" y="0" style="text-anchor: end;">5</text></g><g class="tick" transform="translate(0,253.33333333333331)" style="opacity: 1;"><line x2="-6" y2="0"></line><text dy=".32em" x="-9" y="0" style="text-anchor: end;">6</text></g><g class="tick" transform="translate(0,190.00000000000003)" style="opacity: 1;"><line x2="-6" y2="0"></line><text dy=".32em" x="-9" y="0" style="text-anchor: end;">7</text></g><g class="tick" transform="translate(0,126.66666666666666)" style="opacity: 1;"><line x2="-6" y2="0"></line><text dy=".32em" x="-9" y="0" style="text-anchor: end;">8</text></g><g class="tick" transform="translate(0,63.333333333333364)" style="opacity: 1;"><line x2="-6" y2="0"></line><text dy=".32em" x="-9" y="0" style="text-anchor: end;">9</text></g><g class="tick" transform="translate(0,0)" style="opacity: 1;"><line x2="-6" y2="0"></line><text dy=".32em" x="-9" y="0" style="text-anchor: end;">10</text></g><path class="domain" d="M-6,0H0V570H-6"></path></g><text text-anchor="middle" transform="translate(-10,285)rotate(-90)">Value</text><text text-anchor="middle" transform="translate(600,142.5)">Average</text><text text-anchor="middle" transform="translate(600,427.5)">Variance</text><rect class="variance" height="181.91115047370425" width="181.91115047370425" y="336.54442476314784" x="336.54442476314784" style="fill-opacity: 0.5; fill: rgb(100, 189, 255); stroke: rgb(100, 189, 255); stroke-width: 3;"></rect><rect class="average" height="0" width="0" y="142.5" x="427.5" style="fill-opacity: 0.5; fill: rgb(0, 208, 161); stroke: rgb(0, 208, 161); stroke-width: 3;"></rect><text class="label" text-anchor="middle" transform="translate(427.5,142.5)">NaN</text><text class="label" text-anchor="middle" transform="translate(427.5,427.5)">8.25</text><circle r="5" class="expectedCircle" cy="284.99999999999994" cx="0"></circle></g></svg>
