@@ -16,3 +16,6 @@
 [submodule "ext/SharpVG"]
 	path = ext/SharpVG
 	url = https://github.com/allisterb/SharpVG.git
+[submodule "ext/CoinMP"]
+	path = ext/CoinMP
+	url = https://github.com/coin-or/CoinMP.git
