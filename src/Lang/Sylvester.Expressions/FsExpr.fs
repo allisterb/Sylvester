@@ -13,7 +13,10 @@ open FSharp.Quotations.ExprShape
 module FsExpr =
     let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
     
-    let sequal (l:Expr) (r:Expr) = l.ToString() = r.ToString()
+    let sequal (l:Expr) (r:Expr) = 
+        (l.ToString() = r.ToString()) 
+        || l.ToString() = sprintf ("(%s)") (r.ToString())
+        || r.ToString() = sprintf ("(%s)") (l.ToString())
     
     let sequal2 (l1:Expr) (l2:Expr) (r1:Expr) (r2:Expr) = sequal l1 r1 && sequal l2 r2
     
@@ -29,9 +32,10 @@ module FsExpr =
         
     let rec body = 
         function
-        | Lambda(v1, Lambda(v2, b)) -> body (Expr.Lambda(v2, b))
-        | Lambda(v1, b) -> b
-        | expr -> failwithf "Expression %A is not a function." (src expr)
+        | Lambda(_, Lambda(v2, b)) -> body (Expr.Lambda(v2, b))
+        | Lambda(_, b) -> b
+        | Let(_, _, b) -> b
+        | expr -> expr//failwithf "Expression %A is not a function or let binding." (src expr)
 
     let traverse expr f =
         match expr with

@@ -10,8 +10,7 @@ open EquivPatterns
 
 /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
 /// and unary inverse operation (-).
-module IntegerAlgebra =  
-    
+module IntegerAlgebra =      
     (* Patterns *)
 
     let (|Zero|_|) =
@@ -23,7 +22,7 @@ module IntegerAlgebra =
         | Int32 0
         | UInt32 0u
         | Int64 0L
-        | UInt64 0UL -> Some true
+        | UInt64 0UL -> Some 0
         | _ -> None
 
     let (|One|_|) =
@@ -35,7 +34,7 @@ module IntegerAlgebra =
         | Int32 1
         | UInt32 1u
         | Int64 1L
-        | UInt64 1UL -> Some true
+        | UInt64 1UL -> Some 1
         | _ -> None
 
     (* Axioms *)
@@ -44,34 +43,34 @@ module IntegerAlgebra =
     let (|Commute|_|) =
         function
         // x + y == y + x
-        | Add(a1, a2), Add(b1, b2) when sequal2 a1 a2 b2 b1 -> Some <@@ %%b1 + %%b2 @@>     
+        | Add(a1, a2), Add(b1, b2) when sequal2 a1 a2 b2 b1 -> Some (axiom_desc "Commutativity" <@@ fun() -> %%a1 + %%a2 = %%a2 + %%a1 @@>)  
         // x * y == y * x
-        | Multiply(a1, a2), Multiply(b1, b2) when sequal2 a1 a2 b2 b1 -> Some <@@ %%b1 * %%b2 @@>  
+        | Multiply(a1, a2), Multiply(b1, b2) when sequal2 a1 a2 b2 b1 -> Some (axiom_desc "Commutativity" <@@ fun()-> %%a1 * %%a2 = %%a2 * %%a1 @@>)  
         | _ -> None
 
     /// Associativity axioms
     let (|Assoc|_|) =
         function
         // x + y + z == x + (y + z)
-        | Add(Add(a1, a2), a3), Add(b1, Add(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some <@@ %%b1 + (%%b2 + %%b3) @@>        
+        | Add(Add(a1, a2), a3), Add(b1, Add(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some (axiom_desc "Associativity" <@@fun() -> (%%b1 + %%b2) + %%b3 =  %%b1 + (%%b2 + %%b3) @@>)        
         // x * y * z == x * (y * z)
-        | Multiply(Multiply(a1, a2), a3), Multiply(b1, Multiply(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some <@@ %%b1 * (%%b2 * %%b3) @@>
+        | Multiply(Multiply(a1, a2), a3), Multiply(b1, Multiply(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some (axiom_desc "Associativity" <@@fun() -> (%%b1 * %%b2 * %%b3) = %%b1 * (%%b2 * %%b3) @@>)
         | _ -> None
 
     /// Distributivity axiom
     let (|Distrib|_|) =
         function
         // x * (y + z) == x * y + x * z
-        | Multiply(a3, Add(b3, b4)), Add(Multiply(a1, b1), Multiply(a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some <@@ (%%a1 * %%b1) + (%%a2 * %%b2) @@>
+        | Multiply(a3, Add(b3, b4)), Add(Multiply(a1, b1), Multiply(a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some (axiom_desc "Distributivity" <@@fun() -> %%a1 * (%%b3 * %%b4) = (%%a1 * %%b1) + (%%a2 * %%b2) @@>)
         | _ -> None
 
     /// Identity axioms
     let (|Identity|_|) = 
         function
         // x + 0 = x
-        | Add(a1, Zero _), a2 when sequal a1 a2 -> Some <@@ a1 @@>
+        | Add(a1, Zero zero), a2 when sequal a1 a2 -> Some (axiom_desc "Identity" <@@fun() -> %%a1 + zero = %%a1@@>)
         // x * 1 = x
-        | Multiply(a1, One _), a2 when sequal a1 a2 -> Some <@@ a1 @@>
+        | Multiply(a1, One one), a2 when sequal a1 a2 -> Some (axiom_desc "Identity" <@@fun() -> %%a1 * one = %%a1 @@>)
         | _ -> None
 
     let (|IntegerAxioms|_|) =
@@ -90,8 +89,8 @@ module IntegerAlgebra =
         function  
         | IntegerAxioms x
         | Conj(IntegerAxioms x)
-        | SymmIntegerAxioms x -> true
-        | _ -> false
+        | SymmIntegerAxioms x -> Some x
+        | _ -> None
                 
     let rec reduce_constants  =
         function
@@ -174,12 +173,11 @@ module IntegerAlgebra =
     
     /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
     /// and unary inverse operation (~-).
-    let integer_algebra = 
-        Theory(integer_axioms, [
+    let integer_algebra = Theory(integer_axioms, [
             Reduce 
             LeftAssoc 
             RightAssoc 
             Commute 
             Distrib
             Collect
-        ])
+    ], id)

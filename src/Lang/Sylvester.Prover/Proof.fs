@@ -3,17 +3,16 @@
 open FSharp.Quotations
 
 open Sylvester
-open Operators
 open EquationalLogic
+open Formula
 
-type Theory(axioms: Axioms, rules: Rules, ?descriptions:AxiomDescription list) =
+type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
     member val Axioms = axioms
     member val Rules = rules
-    member val Descriptions = defaultArg descriptions []
-    member x.AxiomaticallyEqual a b = x.Axioms (a, b)
+    member val FormulaPrinter = defaultArg formulaPrinter id
+    member x.AxiomaticallyEqual a b = x.Axioms (a, b) |> Option.isSome
     static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEqual a b
-    static member (|-) ((c:Theory), (a, b):Formula<_,_> * Formula<_,_>) = c.AxiomaticallyEqual a.Expr b.Expr
-
+   
     /// The default logical theory used in Sylph proofs.
     static member val S =     
         let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
@@ -44,9 +43,12 @@ type Theory(axioms: Axioms, rules: Rules, ?descriptions:AxiomDescription list) =
             S_Idemp
             S_ExcludedMiddle
             S_GoldenRule
-        ], List.concat [S_Ident_Desc])
+        ], print_S_Operators)
 
-and Axioms = (Expr * Expr -> bool)
+    static member val internal Trivial = 
+        Theory( (fun (_:Expr,_:Expr) ->  Some(axiom_desc "Assumption" <@fun x y -> x = y @>)), [])
+
+and Axioms = (Expr * Expr -> AxiomDescription option)
 
 and Rule = 
     | Rule of string * (Expr -> Expr ) 
@@ -70,14 +72,15 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
             (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
+    let rules = List.concat [L.Rules; theory.Rules ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
     
     let logBuilder = System.Text.StringBuilder()
     let q = defaultArg quiet false
     let output (s:string) = 
         match defaultDisplay with
-            | Text -> printfn "%s" (replaceCommonLogicalSymbols s)
-            | _ -> printfn "%s" (replaceCommonLogicalSymbols s)
+            | Text -> printfn "%s" (theory.FormulaPrinter s)
+            | _ -> printfn "%s" (theory.FormulaPrinter s)
 
     let prooflog (x:string) = 
         do 
@@ -87,21 +90,30 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     let mutable astate, bstate = (a, b)
     let mutable state:(Expr * Expr * string) list = [] 
     let mutable stepCount = 0
-
-    do sprintf "Proof of A: %s == B: %s:" (src a) (src b) |> prooflog
     do 
-        if L |- (a, b) || theory |- (a, b)  then
-           sprintf "|- %s == %s" (src a) (src b) |> prooflog
-           sprintf "Proof complete." |> prooflog
-           stepCount <- steps.Length
-    
+        if theory.GetType() = typeof<Assumption> then 
+            do sprintf "Assume A: %s == B: %s:" (src a) (src b) |> prooflog
+            stepCount <- steps.Length
+        else
+            do sprintf "Proof of A: %s == B: %s:" (src a) (src b) |> prooflog
+            do
+                if L |- (a, b)  then
+                   let axeq = L.Axioms (a, b)
+                   sprintf "|- %s == %s [Logical Axiom of %s]." (src a) (src b) axeq.Value.Name |> prooflog
+                   sprintf "Proof complete." |> prooflog
+                   stepCount <- steps.Length               
+                if theory |- (a, b)  then
+                    let axeq = theory.Axioms (a, b)
+                    sprintf "|- %s == %s [Axiom of %s]." (src a) (src b) axeq.Value.Name |> prooflog
+                    sprintf "Proof complete." |> prooflog
+                    stepCount <- steps.Length
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
         let stepId = stepCount + 1
         let stepName = stepNames.[stepCount]
         do 
             match step.Rule with
-            | (Rule(n, _)) -> if (not (ruleNames |> List.contains n)) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
+            | (Rule(n, d)) -> if (not (ruleNames |> List.contains n)) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
             | (Subst(n, p, _)) -> if not (p.System = L || (p.System = theory)) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
         let (_a, _b) = step.Apply (astate, bstate)
         let msg =
@@ -130,7 +142,8 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     member val B = b
     member val System = theory
     member val Steps = steps
-    member val Complete = theory |- (astate, bstate)
+    abstract Complete:bool
+    default val Complete = theory |- (astate, bstate)
     member val State = state
     member val AState = astate
     member val BState = bstate
@@ -140,7 +153,7 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = L and set(v) = L <- v
     static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
-    static member (|-) ((proof:Proof), (A:Formula<_,_>, B:Formula<_,_>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
+    //static member (|-) ((proof:Proof), (A:Fo, B:Formula<_,_>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
     
     static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
     static member (+) (l:Proof, r:Proof) = 
@@ -160,6 +173,8 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     interface IDisplay with
         member x.Output(item:'t) = item.ToString()
         member x.Transform(str:string) = str
+
+and Assumption internal(a:Expr,  b:Expr) = inherit Proof(a, b, Theory.Trivial, [], true)
 
 and RuleApplication =
     | EntireA of Rule
@@ -201,7 +216,7 @@ with
                 | _ -> failwithf "B is not a binary operation: %s." (src a)
  
 
-type Theorem<'u, 'v> internal (stmt: TheoremStmt<'u, 'v>, proof:Proof) = 
+type Theorem internal (stmt: TheoremStmt, proof:Proof) = 
     let (a, b) = stmt.Members
     do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
     member val A = a
@@ -209,16 +224,16 @@ type Theorem<'u, 'v> internal (stmt: TheoremStmt<'u, 'v>, proof:Proof) =
     member val System = proof.System
     member val Proof = proof
        
-and TheoremStmt<'u, 'v> = 
-    | Taut of Formula<'u, 'v>
-    | Contr of Formula<'u, 'v>
-    | Ident of Formula<'u, 'v>
+and TheoremStmt = 
+    | Taut of Expr
+    | Contr of Expr
+    | Ident of Expr
     with
     member x.Members = 
         match x with
-        | Taut a -> a.Expr, Formula<'u, 'v>.T.Expr
-        | Contr a -> a.Expr, Formula<'u, 'v>.F.Expr
-        | Ident a -> match a.Expr with | Equiv(l, r) -> l, r | _ -> failwithf "The formula %A is not an identity." a.Expr
+        | Taut a -> a, True.Raw
+        | Contr a -> a, False.Raw
+        | Ident a -> match a with | Equiv(l, r) -> l, r | _ -> failwithf "The formula %A is not an identity." (src a)
 
 [<AutoOpen>]
 module LogicalRules = 
@@ -237,8 +252,11 @@ module LogicalRules =
         else Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
 
     /// Substitute a theorem with a completed proof into another proof.
-    let Lemma (lemma:Theorem<'u,'v>) = if not (lemma.Proof.Complete) then failwithf "The provided proof of %s==%s is not complete." (src lemma.A) (src lemma.B) else lemma.Proof |> Subst 
-        
+    let Lemma (lemma:Theorem) = lemma.Proof |> Subst 
+       
+    /// Substitute an assumption.
+    let Assume (a,b) = Assumption(a, b) |> Subst 
+       
     /// Reduce logical constants in expression. 
     let Reduce' = S.Rules.[0]
 
@@ -268,28 +286,26 @@ module LogicalRules =
 
 [<AutoOpen>]
 module Proof =        
-    let True = Formula<_,_>.T
-    let False = Formula<_,_>.F
     let theory axioms rules = Theory(axioms, rules)
-    let proof (a:Formula<_,_>, b:Formula<_,_>) theory steps = Proof(a.Expr, b.Expr, theory, steps)
+    let proof (a:Expr, b:Expr) theory steps = Proof(a, b, theory, steps)
     let proof' a b steps = Proof(a, b, S, steps)
-    let theorem theory steps (e:Expr<'u->'v>) = 
-        let f = F e
-        do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
-        Theorem(Taut(f), Proof (f.Expr, True.Expr, theory, steps))  
-    let logical_theorem steps f = theorem S steps f
-    let contr theory steps (e:Expr<'u -> 'v>) = 
-        let f = F e
-        do if not (range_type typeof<'u -> 'v> = typeof<bool>) then failwithf "The formula %A does not have a truth value." f.Src
+    let theorem theory steps (e:Expr<'t>) = 
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        Theorem(Taut(f), Proof (f, True, theory, steps))  
+    let contr theory steps (e:Expr<'t>) = 
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         Theorem((Contr f), proof (f, False) theory steps)
-    let logical_contr steps f = contr S steps f
-    let axiom theory e = theorem theory [] e
-    let logical_axiom e = axiom S e
-    let ident theory steps  (e:Expr<'u -> 'v>) = 
-        let f = F e
-        match f.Expr with 
+    let ident theory steps  (e:Expr<_>) = 
+        let f = e |> expand |> body
+        match f with 
         | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps)) 
-        | _ -> failwithf "The expression %A is not recognized as an identity." (src f.Expr)  
-    let logical_ident steps f = ident S steps f
+        | _ -> failwithf "The expression %A is not recognized as an identity." (src f)  
+    let axiom theory e = theorem theory [] e
     let ident_axiom theory e = ident theory [] e
+    let logical_contr steps f = contr S steps f
+    let logical_theorem steps f = theorem S steps f
+    let logical_axiom e = axiom S e
+    let logical_ident steps f = ident S steps f
     let logical_ident_axiom e = logical_ident [] e

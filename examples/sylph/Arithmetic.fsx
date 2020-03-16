@@ -1,5 +1,21 @@
 #load "Include.fsx"
+open Sylvester
 open Sylph
+open IntegerAlgebra
+
+[<Formula>]
+let f6 x = 3 * x * x + 3 * 4 * x + 3 * 5 = 0
+
+let x = var<int>
+//let F5 = F <@fun x -> 3 * (x * x + 4 * x + 5) @>
+//let f6 = <@ 3 * x * x + 3 * 4 * x + 3 * 5 = 0@>
+let g = ident_axiom integer_algebra <@ 3 * x * x = 3 * (x * x) @>
+g.Proof.Complete
+//let p2 = ident integer_algebra [g |> EntireA] <@f6@>
+
+//g.Proof.Complete
+
+F6.Expr |> collect |> collect |> src 
 
 // Define some integer formulae of interest
 let F1 = F (fun x -> 2 * x + 8 = 2 * x + 3 + 5)

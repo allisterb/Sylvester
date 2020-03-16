@@ -5,12 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="R.fs" />
-    <Compile Include="Measure.fs" />
+    <Compile Include="Library.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
+    <PackageReference Include="LpSolveDotNet" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 
 </Project>
