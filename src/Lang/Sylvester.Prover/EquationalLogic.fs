@@ -5,6 +5,7 @@ open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
+open FormulaPatterns
     
 /// Text description of axioms.
 [<AutoOpen>]
@@ -33,59 +34,6 @@ module AxiomDescriptions =
 /// we can drop the restriction that a substitution must replace only variables in an expression 
 /// and consider general textual substitution with syntactically valid expressions.0
 module EquationalLogic =
-    (* Patterns *)
-    
-    // The (=) operator is logical equivalence which is associative i.e we can say a = b = c.
-    // The == operator is conjunctional equality: A == B == C means A == B and A == C.
-    // This is the opposite convention to what Gries et.al adopts for E but we must
-    // do it this way because of limitations on how we can use the F# (=) operator. 
-    let (|Equiv|_|) =
-         function
-         | SpecificCall <@@ (=) @@> (None,_,l::r::[]) -> Some(l, r)
-         | _ -> None
-        
-    // We need to define axioms for both the conjunctive and associative sense of =.
-    let (|Conj|_|) =
-        function
-        | Equiv(expr2), Bool true -> Some expr2
-        | _ -> None
-
-    // We need to define axioms symmetrically because of the symmetric properties of ==.
-    let (|Symm|):(Expr * Expr)->(Expr * Expr) =
-        function
-        | (A, B) -> (B, A)
-
-    let (|Not|_|) =
-        function
-        | SpecificCall <@@ not @@> (None,_,l::[]) -> Some l
-        | _ -> None
-
-    let (|NotEquiv|_|) =
-         function
-         | Not(Equiv(l, r)) -> Some (l, r)
-         | SpecificCall <@@ (<>) @@> (None,_,l::r::[]) -> Some (l, r)
-         | _ -> None
-
-    let (|And|_|)  =
-        function
-        | SpecificCall <@@ (|&|) @@> (None,_,l::r::[]) -> Some (l,r)
-        | _ -> None
-
-    let (|Or|_|) =
-        function
-        | SpecificCall <@@ (|||) @@> (None,_,l::r::[]) -> Some (l,r)
-        | _ -> None
-
-    let (|Implies|_|) =
-        function
-        | SpecificCall <@@ (==>) @@> (None,_,l::r::[]) -> Some (l,r)
-        | _ -> None
-
-    let (|Conseq|_|) =
-        function
-        | SpecificCall <@@ (<==) @@> (None,_,l::r::[]) -> Some (l,r)
-        | _ -> None
-
     (* Axioms *)
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 

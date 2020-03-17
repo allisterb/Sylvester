@@ -55,6 +55,8 @@ module FsExpr =
           let expanded = 
             match expr with
             | WithValue(_, _, e) -> rexpand vars e
+            | Coerce(e, t) -> rexpand vars e
+            | ValueWithName(o, t, n) -> rexpand vars (Expr.Value(o, t))
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])
@@ -62,6 +64,7 @@ module FsExpr =
             | PropertyGet(body, PropertyGetterWithReflectedDefinition p, []) -> 
                 let this = match body with Some b -> b | None -> p
                 rexpand vars this
+            | PropertyGet(None, p, []) -> rexpand vars (Expr.Var(Var(p.Name, p.PropertyType)))
             // If the variable has an assignment, then replace it with the expression
             | ExprShape.ShapeVar v when Map.containsKey v vars -> vars.[v]    
             // Else apply rexpand recursively on all sub-expressions

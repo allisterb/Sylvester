@@ -42,6 +42,13 @@ module Set =
           
     [<Fact>]
     let ``ff``() = 
-        let A, B = var2<Set<obj>>
-        let f = ident set_algebra [] <@ A |+| B = Empty @>
-        Assert.NotNull f
+        let x,y = var2<Set<obj>>
+        
+        //let l1 = ident_axiom set_algebra <@y = y@> |> Lemma |> EntireA
+        
+        let t_3_1 = <@(x |+| y = U) |&| (x |*| y = Set.Empty) ==> (y = x)@> |> theorem set_algebra []
+        
+        let l1 = ident_axiom set_algebra <@(y |+| Set.Empty) = y@>
+        
+        
+        Assert.NotNull t_3_1

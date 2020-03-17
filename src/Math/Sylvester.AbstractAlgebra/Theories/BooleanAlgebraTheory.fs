@@ -16,30 +16,30 @@ module BooleanAlgebraTheory =
     /// Join operation.
     let (|Join|_|) (op:Expr<'t->'t->'t>) =
         function
-        | SpecificCall <@ %op @> (None,_,l::r::[]) -> Some (l,r)
+        | SpecificCall op (None,_,l::r::[]) -> Some (l,r)
         | _ -> None
 
     /// Meet operation.
     let (|Meet|_|) (op:Expr<'t->'t->'t>) =
         function
-        | SpecificCall <@ %op @> (None,_,l::r::[]) -> Some (l,r)
+        | SpecificCall op (None,_,l::r::[]) -> Some (l,r)
         | _ -> None
 
     /// Order operation induced by closure of set under (%join) or (%meet) operations.
     let (|Order|_|) (op:Expr<'t->'t->bool>) =
         function
-        | SpecificCall <@ %op @> (None,_,l::r::[]) -> Some (l,r)
+        | SpecificCall op (None,_,l::r::[]) -> Some (l,r)
         | _ -> None
 
     /// Complement operation.
     let (|Comp|_|) (op:Expr<'t->'t>) =
         function
-        | SpecificCall <@ %op @> (None,_,r::[]) -> Some (r)
+        | SpecificCall op  (None,_,r::[]) -> Some (r)
         | _ -> None
 
     let (|ValueObj|_|) (v:'t) =
         function
-        | Value(z, t) when t = typeof<'t> && (z :?> 't) = v -> Some v
+        | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Some (Expr.Value(v))
         | _ -> None
 
     (* Axioms *)
@@ -78,9 +78,9 @@ module BooleanAlgebraTheory =
     /// Idempotent axioms
     let (|Idempotent|_|) (join: Expr<'t->'t->'t>)(meet: Expr<'t->'t->'t>)   = 
         function
-        // x + a == x
+        // x + x == x
         | Join join (a1, a2) when sequal a1 a2  -> Some (axiom_desc "Idempotent" <@ fun (x:'t) -> (%join) x x = x @>)
-        // x * 1 = x
+        // x * x = x
         | Meet meet (a1, a2) when sequal a1 a2  -> Some (axiom_desc "Idempotent" <@ fun (x:'t) -> (%meet) x x = x @>)
         
         | _ -> None

@@ -3,6 +3,7 @@
 open FSharp.Quotations
 
 open Sylvester
+open FormulaPatterns
 open EquationalLogic
 
 type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
@@ -68,8 +69,8 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     /// The logical theory used for the proof.
     static let mutable L:Theory = Theory.S
     let ruleNames = List.concat [
-            (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name + r.Apply.ToString()) 
-            theory.Rules |> List.map (fun (r:Rule) -> r.Name + r.Apply.ToString())
+            (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
+            theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
     
@@ -111,8 +112,8 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         let stepName = stepNames.[stepCount]
         do 
             match step.Rule with
-            | (Rule(n, d)) -> if (not (ruleNames |> List.contains (n + d.ToString()))) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
-            | (Subst(n, p, _)) -> if not (p.Theory = L || (p.Theory = theory)) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
+            | (Rule(n, d)) -> if (not (ruleNames |> List.contains (n))) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
+            | (Subst(n, p, _)) -> if not ((p.Theory = L) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
         let (_a, _b) = step.Apply (astate, bstate)
         let msg =
             if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
@@ -127,8 +128,15 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         astate <- _a
         bstate <- _b
         state <- state @ [(astate, bstate, msg)]
-        if theory |- (astate, bstate) || L |- (astate, bstate) then 
-            sprintf "Proof complete. Final state: |- %s = %s" (src astate) (src bstate)|> prooflog 
+        if L |- (astate, bstate) then 
+            let axeq = L.Axioms (astate, bstate)
+            sprintf "|- %s == %s. [Logical Axiom of %s]" (src astate) (src bstate) axeq.Value.Name |> prooflog
+            sprintf "Proof complete." |> prooflog
+            stepCount <- steps.Length
+        else if theory |- (astate, bstate) then
+            let axeq = theory.Axioms (astate, bstate)
+            sprintf "|- %s == %s. [Axiom of %s]" (src astate) (src bstate) axeq.Value.Name |> prooflog
+            sprintf "Proof complete." |> prooflog 
             stepCount <- steps.Length
         else
             sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog
@@ -141,7 +149,7 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     member val Theory = theory
     member val Steps = steps
     abstract Complete:bool
-    default val Complete = theory |- (astate, bstate)
+    default val Complete = L |- (astate, bstate) || theory |- (astate, bstate)
     member val State = state
     member val AState = astate
     member val BState = bstate
