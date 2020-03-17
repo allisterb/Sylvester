@@ -271,5 +271,8 @@ module Set =
     /// A singleton set containing 0. 
     let Zero = FiniteSet<N<1>, int>([|0|])
 
-    /// The universal set.
-    let U:Set<obj> = SetBuilder (fun _ -> true) |> Set
+    /// The universal set
+    let U<'t when 't : equality> = SetBuilder (fun (_:'t) -> true) |> Set
+
+
+    

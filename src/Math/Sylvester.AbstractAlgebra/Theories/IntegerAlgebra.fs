@@ -6,7 +6,6 @@ open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 open FormulaPatterns
-open EquivPatterns
 
 /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
 /// and unary inverse operation (-).

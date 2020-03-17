@@ -4,7 +4,6 @@ open FSharp.Quotations
 
 open Sylvester
 open EquationalLogic
-open Formula
 
 type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
     member val Axioms = axioms
@@ -46,7 +45,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
         ], print_S_Operators)
 
     static member val internal Trivial = 
-        Theory( (fun (_:Expr,_:Expr) ->  Some(axiom_desc "Assumption" <@fun x y -> x = y @>)), [])
+        Theory((fun (_:Expr,_:Expr) ->  Some(axiom_desc "Assumption" <@fun x y -> x = y @>)), [])
 
 and Axioms = (Expr * Expr -> AxiomDescription option)
 
@@ -69,10 +68,9 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     /// The logical theory used for the proof.
     static let mutable L:Theory = Theory.S
     let ruleNames = List.concat [
-            (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
-            theory.Rules |> List.map (fun (r:Rule) -> r.Name)
+            (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name + r.Apply.ToString()) 
+            theory.Rules |> List.map (fun (r:Rule) -> r.Name + r.Apply.ToString())
         ]
-    let rules = List.concat [L.Rules; theory.Rules ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
     
     let logBuilder = System.Text.StringBuilder()
@@ -99,12 +97,12 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
             do
                 if L |- (a, b)  then
                    let axeq = L.Axioms (a, b)
-                   sprintf "|- %s == %s [Logical Axiom of %s]." (src a) (src b) axeq.Value.Name |> prooflog
+                   sprintf "|- %s == %s. [Logical Axiom of %s]" (src a) (src b) axeq.Value.Name |> prooflog
                    sprintf "Proof complete." |> prooflog
                    stepCount <- steps.Length               
                 if theory |- (a, b)  then
                     let axeq = theory.Axioms (a, b)
-                    sprintf "|- %s == %s [Axiom of %s]." (src a) (src b) axeq.Value.Name |> prooflog
+                    sprintf "|- %s == %s. [Axiom of %s]" (src a) (src b) axeq.Value.Name |> prooflog
                     sprintf "Proof complete." |> prooflog
                     stepCount <- steps.Length
     do while stepCount < steps.Length do
@@ -113,8 +111,8 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         let stepName = stepNames.[stepCount]
         do 
             match step.Rule with
-            | (Rule(n, d)) -> if (not (ruleNames |> List.contains n)) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
-            | (Subst(n, p, _)) -> if not (p.System = L || (p.System = theory)) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
+            | (Rule(n, d)) -> if (not (ruleNames |> List.contains (n + d.ToString()))) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
+            | (Subst(n, p, _)) -> if not (p.Theory = L || (p.Theory = theory)) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
         let (_a, _b) = step.Apply (astate, bstate)
         let msg =
             if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
@@ -140,7 +138,7 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog
     member val A = a
     member val B = b
-    member val System = theory
+    member val Theory = theory
     member val Steps = steps
     abstract Complete:bool
     default val Complete = theory |- (astate, bstate)
@@ -152,21 +150,20 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
 
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = L and set(v) = L <- v
-    static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete
-    //static member (|-) ((proof:Proof), (A:Fo, B:Formula<_,_>)) = proof.A = A.Expr && proof.B = B.Expr && proof.Complete
+    static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete 
     
-    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.System, l.Steps @ [r])
+    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.Theory, l.Steps @ [r])
     static member (+) (l:Proof, r:Proof) = 
         let rec subst (p:Proof) = 
             function 
             | A when (sequal (p.A) (A)) && p.Complete -> p.B  
             | expr -> traverse expr (subst p)
         let (last_l_astate, _, _) = l.State |> Seq.last
-        if l.System = r.System then 
+        if l.Theory = r.Theory then 
             if sequal last_l_astate r.A  then
-                let l2 = Proof(l.A, last_l_astate, l.System, l.Steps, true) in
+                let l2 = Proof(l.A, last_l_astate, l.Theory, l.Steps, true) in
                 let s = Subst(sprintf "Joining proof of %s == %s to proof of %s == %s" (src l.A) (src last_l_astate) (src r.A) (src r.B), l2, fun proof e -> subst proof e) |> EntireA in
-                Proof(l.A, r.B, l.System, s::r.Steps)  
+                Proof(l.A, r.B, l.Theory, s::r.Steps)  
             else failwith "Cannot join these proofs. The RHS of the first proof is not the LHS of the 2nd proof."
         else
             failwith "Cannot join these proofs because they use different theories."
@@ -215,13 +212,11 @@ with
                 | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in a, binary_call(o, m, l, s)
                 | _ -> failwithf "B is not a binary operation: %s." (src a)
  
-
 type Theorem internal (stmt: TheoremStmt, proof:Proof) = 
     let (a, b) = stmt.Members
     do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
     member val A = a
     member val B = b
-    member val System = proof.System
     member val Proof = proof
        
 and TheoremStmt = 

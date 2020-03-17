@@ -3,19 +3,9 @@
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
-open FSharp.Quotations.ExprShape
 
 open Sylvester
-
-/// Logical operators for formulas.
-[<AutoOpen>]
-module Operators =
-    let (!!) (l:bool)  = not l
-    let (|&|) (l:bool) (r:bool) = l && r
-    let (|||) (l:bool) (r:bool) = l || r
-    let (==>) (l:bool) (r:bool) = (not l) || r
-    let (<==) (l:bool) (r:bool) = r ==> l
-
+    
 /// Text description of axioms.
 [<AutoOpen>]
 module AxiomDescriptions = 
@@ -35,7 +25,7 @@ module AxiomDescriptions =
        
     /// Create an axiom description from a name and an example formula.
     let axiom_desc name example  = AxiomDescription(name, example |> body |> src |> print_S_Operators)
-    
+
 /// Formalizes the default equational propsitional logic used by Sylph called S.
 /// Based on E: https://www.cs.cornell.edu/fbs/publications/94-1455.pdf
 ///             http://www.cs.cornell.edu/home/gries/Logic/Equational.html
@@ -310,20 +300,3 @@ module EquationalLogic =
         function
         | Equiv(Equiv(Equiv(And(p1, q1), p2), q2), Or(p3, q3))  -> <@@ true @@>
         | expr -> traverse expr golden_rule
-
-
-/// These patterns will be used by other theories so redefine them here.
-module EquivPatterns =
-    let (|Equiv|_|) = 
-         function
-         | SpecificCall <@@ (=) @@> (None,_,l::r::[]) -> Some(l, r)
-         | _ -> None
-        
-    let (|Conj|_|) =
-        function
-        | Equiv(expr2), Bool true -> Some expr2
-        | _ -> None
-
-    let (|Symm|):(Expr * Expr)->(Expr * Expr) =
-        function
-        | (A, B) -> (B, A)

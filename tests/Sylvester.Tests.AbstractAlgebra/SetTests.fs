@@ -8,6 +8,8 @@ module Set =
     open Xunit
 
     open Sylvester
+    open Sylph
+    open SetAlgebraTheory
 
     [<Fact>]
     let ``Can equate predicates`` () =
@@ -38,3 +40,8 @@ module Set =
         let h = lt.Prod
         Assert.Equal(4, h.Length)
           
+    [<Fact>]
+    let ``ff``() = 
+        let A, B = var2<Set<obj>>
+        let f = ident set_algebra [] <@ A |+| B = Empty @>
+        Assert.NotNull f

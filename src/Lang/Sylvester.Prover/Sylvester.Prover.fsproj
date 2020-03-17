@@ -20,13 +20,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="EquationalLogic.fs" />
     <Compile Include="Formula.fs" />
+    <Compile Include="EquationalLogic.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Theories\S.fs" />
     <Compile Include="Theories\PropCalculus.fs" />
-    <Compile Include="Theories\IntegerAlgebra.fs" />
-    <Compile Include="Theories\BooleanAlgebra.fs" />
   </ItemGroup>
 
   <ItemGroup>

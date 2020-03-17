@@ -2,7 +2,7 @@
 
 /// Additional theorems of S useful in proofs.
 module S =
-    // not p = q == p == not q
+    /// not p = q = p = not q
     let NotEquivSymmetry = 
         let t = <@fun p q -> not p = q = p = not q @> |> theorem S [
             Collect' |> LeftA

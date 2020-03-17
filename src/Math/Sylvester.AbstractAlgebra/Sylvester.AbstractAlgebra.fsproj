@@ -40,6 +40,9 @@
     <Compile Include="BooleanAlgebra.fs" />
     <Compile Include="SetAlgebra.fs" />
     <Compile Include="Combination.fs" />
+    <Compile Include="Theories\BooleanAlgebraTheory.fs" />
+    <Compile Include="Theories\IntegerAlgebra.fs" />
+    <Compile Include="Theories\SetAlgebraTheory.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +65,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Base\Sylvester.Kinds\Sylvester.Kinds.fsproj" />
     <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
+    <ProjectReference Include="..\..\Lang\Sylvester.Prover\Sylvester.Prover.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
