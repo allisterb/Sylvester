@@ -19,3 +19,6 @@
 [submodule "ext/CoinMP"]
 	path = ext/CoinMP
 	url = https://github.com/coin-or/CoinMP.git
+[submodule "ext/XPlot"]
+	path = ext/XPlot
+	url = https://github.com/allisterb/XPlot.git
