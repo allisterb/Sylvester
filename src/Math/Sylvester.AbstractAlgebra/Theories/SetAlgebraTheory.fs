@@ -2,7 +2,7 @@
 
 module SetAlgebraTheory =
     open BooleanAlgebraTheory    
-    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory(<@Set.(|+|)@>, <@Set.(|*|)@>, Set.Empty, Set.U<'t>, <@id@>)
+    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory(<@Set.(|+|)@>, <@Set.(|*|)@>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@id@>)
 
     let ReduceIdemp = set_algebra.Rules.[0]
 

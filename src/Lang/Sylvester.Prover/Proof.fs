@@ -223,6 +223,7 @@ with
 type Theorem internal (stmt: TheoremStmt, proof:Proof) = 
     let (a, b) = stmt.Members
     do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
+    do if not proof.Complete then failwithf "The provided proof of %s==%s is not complete." (src a) (src b)
     member val A = a
     member val B = b
     member val Proof = proof
@@ -289,9 +290,13 @@ module LogicalRules =
 
 [<AutoOpen>]
 module Proof =        
-    let theory axioms rules = Theory(axioms, rules)
-    let proof (a:Expr, b:Expr) theory steps = Proof(a, b, theory, steps)
-    let proof' a b steps = Proof(a, b, S, steps)
+    let proof (e:Expr<'t>) theory steps =         
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        match f with 
+        | Implies(l, r) -> Proof(f, True, theory, steps)
+        | Equiv(l, r) -> Proof(l, r, theory, steps)
+        | _ -> failwithf "The expression %A is not recognized as a theorem statement." (src f)  
     let theorem theory steps (e:Expr<'t>) = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
@@ -299,7 +304,7 @@ module Proof =
     let contr theory steps (e:Expr<'t>) = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem((Contr f), proof (f, False) theory steps)
+        Theorem((Contr f), Proof (f, False, theory, steps))
     let ident theory steps  (e:Expr<_>) = 
         let f = e |> expand |> body
         match f with 
@@ -307,8 +312,9 @@ module Proof =
         | _ -> failwithf "The expression %A is not recognized as an identity." (src f)  
     let axiom theory e = theorem theory [] e
     let ident_axiom theory e = ident theory [] e
-    let logical_contr steps f = contr S steps f
-    let logical_theorem steps f = theorem S steps f
-    let logical_axiom e = axiom S e
-    let logical_ident steps f = ident S steps f
+
+    let logical_contr steps f = contr Proof.Logic steps f
+    let logical_theorem steps f = theorem Proof.Logic steps f
+    let logical_axiom e = axiom Proof.Logic e
+    let logical_ident steps f = ident Proof.Logic steps f
     let logical_ident_axiom e = logical_ident [] e

@@ -65,31 +65,31 @@ module BooleanAlgebraTheory =
         | _ -> None
 
     /// Identity axioms.
-    let (|Identity|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t) (one: 't)  = 
+    let (|Identity|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:Expr<'t>) (one: Expr<'t>)  = 
         function
         // x + 0 == x
-        | Join join (a1, ValueObj zero _), a2 when sequal a1 a2  -> Some (axiom_desc "Identity" <@ fun (x:'t) -> (%join) x zero = zero @>)
+        | Join join (a1, z), a2 when sequal a1 a2 && sequal zero z -> Some (axiom_desc "Identity" <@ fun (x:'t) -> (%join) x (%zero) = (%zero) @>)
         // x * 1 = x
-        | Meet meet (a1, ValueObj one _), a2 when sequal a1 a2  -> Some (axiom_desc "Identity" <@ fun (x:'t) -> (%meet) x one = x @>)
+        | Meet meet (a1, o), a2 when sequal a1 a2 && sequal one o -> Some (axiom_desc "Identity" <@ fun (x:'t) -> (%meet) x (%one) = x @>)
         // 1 <> 0
-        | Equiv((ValueObj one _), (ValueObj zero _)), Bool true -> Some (axiom_desc "Identity" <@ fun () -> one <> zero @>)
+        | Equiv((ValueObj one _), (ValueObj zero _)), Bool false -> Some (axiom_desc "Identity" <@ fun () -> one <> zero @>)
         | _ -> None
 
     /// Idempotent axioms
-    let (|Idempotent|_|) (join: Expr<'t->'t->'t>)(meet: Expr<'t->'t->'t>)   = 
+    let (|Idempotent|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>)   = 
         function
         // x + x == x
-        | Join join (a1, a2) when sequal a1 a2  -> Some (axiom_desc "Idempotent" <@ fun (x:'t) -> (%join) x x = x @>)
+        | Join join (a1, a2), a3 when sequal a1 a2 && sequal a1 a3 -> Some (axiom_desc "Idempotency" <@ fun (x:'t) -> (%join) x x = x @>)
         // x * x = x
-        | Meet meet (a1, a2) when sequal a1 a2  -> Some (axiom_desc "Idempotent" <@ fun (x:'t) -> (%meet) x x = x @>)
+        | Meet meet (a1, a2), a3 when sequal a1 a2 && sequal a1 a3 -> Some (axiom_desc "Idempotency" <@ fun (x:'t) -> (%meet) x x = x @>)
         
         | _ -> None
         
     /// Inverse axioms.
-    let (|Inverse|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t) (one:'t) (comp:Expr<'t -> 't>)  =
+    let (|Inverse|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp:Expr<'t -> 't>)  =
         function
-        | Join join (a1, Comp comp (a2)), one  when sequal a1 a2 -> Some (axiom_desc "Inverse" <@ fun (x:'t) -> (%join) x ((%comp) x) = zero @>)
-        | Meet meet (a1, Comp comp (a2)), ValueObj zero _ when sequal a1 a2 -> Some (axiom_desc "Inverse" <@ fun (x:'t) -> (%meet) x ((%comp) x) = one @>)
+        | Join join (a1, Comp comp (a2)), z  when sequal a1 a2 && sequal zero z -> Some (axiom_desc "Inverse" <@ fun (x:'t) -> (%join) x ((%comp) x) = (%zero) @>)
+        | Meet meet (a1, Comp comp (a2)), o when sequal a1 a2 && sequal one o-> Some (axiom_desc "Inverse" <@ fun (x:'t) -> (%meet) x ((%comp) x) = (%one) @>)
         | _ -> None
 
     /// Distributivity axioms.
@@ -105,7 +105,7 @@ module BooleanAlgebraTheory =
 
     (* Rules *)
 
-    let rec reduce_idemp (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t)  (one:'t) (comp:Expr<'t -> 't>) =
+    let rec reduce_idemp (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>)  (one: Expr<'t>) (comp:Expr<'t -> 't>) =
         function
         | Join join (a1, a2) when sequal a1 a2 -> <@@ %%a1 @@>
         | Meet meet (a1, a2) when sequal a1 a2 -> <@@ %%a1 @@> 
@@ -113,13 +113,13 @@ module BooleanAlgebraTheory =
         | Meet join (a1, ValueObj comp a2) when sequal a1 a2 -> <@@ one @@>
         | expr -> traverse expr (reduce_idemp join meet zero one comp)
 
-    let rec reduce_ident (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t)  (one:'t) (comp:Expr<'t -> 't>) =
+    let rec reduce_ident (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>)  (one: Expr<'t>) (comp:Expr<'t -> 't>) =
         function
         | Join join (a1, ValueObj zero _) -> <@@ %%a1 @@>
         | Meet meet (a1, ValueObj one _) -> <@@ %%a1 @@>
         | expr -> traverse expr (reduce_ident join meet zero one comp)
 
-    let rec reduce_comp (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t) (one:'t) (comp:Expr<'t -> 't>) =
+    let rec reduce_comp (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp:Expr<'t -> 't>) =
         function
         | Join join (a1, ValueObj comp a2) when sequal a1 a2 -> <@@ zero @@>
         | Meet join (a1, ValueObj comp a2) when sequal a1 a2 -> <@@ one @@>
@@ -151,20 +151,21 @@ module BooleanAlgebraTheory =
         | Join join (a1, Meet meet (a2, a3)) -> <@@ (%meet) ((%join) %%a1 %%a2)  ((%join) %%a1 %%a3) @@> 
         | expr -> traverse expr (distrib join meet)
 
-    let (|BooleanAlgebraAxioms|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t) (one:'t) (comp: Expr<'t->'t>) = 
+    let (|BooleanAlgebraAxioms|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) = 
         function
         | Assoc join meet x
         | Commute join meet x
         | Identity join meet zero one x
+        | Idempotent join meet x
         | Inverse join meet zero one comp x
         | Distrib join meet x -> Some x
         | _ -> None
 
-    let (|SymmBooleanAlgebraAxioms|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t) (one:'t) (comp: Expr<'t->'t>) =
+    let (|SymmBooleanAlgebraAxioms|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) =
         function
         | Symm(A, B) -> match (A, B) with | BooleanAlgebraAxioms join meet zero one comp x -> Some x | _ -> None
 
-    let boolean_algebra_axioms (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero:'t) (one:'t) (comp: Expr<'t->'t>) = 
+    let boolean_algebra_axioms (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) = 
         function  
         | BooleanAlgebraAxioms join meet zero one comp x
         | Conj(BooleanAlgebraAxioms join meet zero one comp x)
@@ -192,7 +193,7 @@ module BooleanAlgebraTheory =
     /// Expression is commutative.
     let Distrib join meet = Rule("(expression) is distributive", distrib join meet)
 
-    type BooleanAlgebraTheory<'t when 't: equality>(join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero:'t, one:'t, comp: Expr<'t->'t>) = 
+    type BooleanAlgebraTheory<'t when 't: equality>(join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>) = 
         inherit Theory(boolean_algebra_axioms join meet zero one comp, [
             ReduceIdemp join meet zero one comp
             ReduceIdent join meet zero one comp
