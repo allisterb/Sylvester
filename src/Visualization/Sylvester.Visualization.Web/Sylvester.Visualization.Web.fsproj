@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\ext\SharpVG\SharpVG\SharpVG.fsproj" />
+    <ProjectReference Include="..\..\..\ext\XPlot\src\XPlot.Plotly\XPlot.Plotly.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
