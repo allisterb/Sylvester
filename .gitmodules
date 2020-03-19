@@ -22,3 +22,9 @@
 [submodule "ext/XPlot"]
 	path = ext/XPlot
 	url = https://github.com/allisterb/XPlot.git
+[submodule "ext/Expect.NET"]
+	path = ext/Expect.NET
+	url = https://github.com/allisterb/Expect.NET.git
+[submodule "ext/mathnet-symbolics"]
+	path = ext/mathnet-symbolics
+	url = https://github.com/mathnet/mathnet-symbolics.git
