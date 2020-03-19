@@ -11,32 +11,32 @@ open FSharp.Quotations.Patterns
 type LogicalPredicate<'t when 't: equality> = 't -> bool
 
 //// A logical predicate expression.
-type IPredicateExpr<'t when 't: equality> = 
+type ILogicalPredicateExpr<'t when 't: equality> = 
     abstract member Pred:LogicalPredicate<'t>
     abstract member Expr:Expr
     abstract member ExprString:string
 /// A logical statement that can define a set using a predicate for set membership.
-type ISetBuilder<'t when 't: equality> = IPredicateExpr<'t>
+type ISetBuilder<'t when 't: equality> = ILogicalPredicateExpr<'t>
 
 //// A logical predicate expression
-type PredicateExpr<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>) = 
+type LogicalPredicateExpr<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>) = 
     let v,t,e = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
     member val Pred = v :?> LogicalPredicate<'t>
     member val Expr = e
     member val ExprString = exprToString e
-    interface IPredicateExpr<'t> with
+    interface ILogicalPredicateExpr<'t> with
         member val Pred = v :?> LogicalPredicate<'t>
         member val Expr = e
         member val ExprString = exprToString e
-    interface IEquatable<PredicateExpr<'t>> with member a.Equals(b) = a.ExprString = b.ExprString
+    interface IEquatable<LogicalPredicateExpr<'t>> with member a.Equals(b) = a.ExprString = b.ExprString
     override a.Equals (_b:obj) = 
             match _b with 
-            | :? PredicateExpr<'t> as b -> (a :> IEquatable<PredicateExpr<'t>>).Equals b
+            | :? LogicalPredicateExpr<'t> as b -> (a :> IEquatable<LogicalPredicateExpr<'t>>).Equals b
             | _ -> false
     override a.GetHashCode() = (exprToString a.Expr).GetHashCode() 
  
 /// A statement that defines a set using a predicate for set membership.
-type SetBuilder<'t when 't : equality> = PredicateExpr<'t>
+type SetBuilder<'t when 't : equality> = LogicalPredicateExpr<'t>
 
 /// A generator defines a sequence together with a logical predicate that tests for set membership. 
 type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>, s:seq<'t>) = 
@@ -58,7 +58,10 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<
 /// A sequence generating function.
 and GeneratingFunction<'t when 't: equality> = int -> 't
 
-type Pred<'t when 't: equality> = PredicateExpr<'t>    
+/// A logical predicate expression.
+type Pred<'t when 't: equality> = LogicalPredicateExpr<'t>    
+
+/// A generator defines a sequence together with a logical predicate that tests for set membership.
 type Gen<'t when 't: equality> = SetGenerator<'t>
 
 [<AutoOpen>]

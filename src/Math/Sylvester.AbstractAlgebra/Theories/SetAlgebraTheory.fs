@@ -2,7 +2,17 @@
 
 module SetAlgebraTheory =
     open BooleanAlgebraTheory    
-    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory(<@Set.(|+|)@>, <@Set.(|*|)@>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@id@>)
+
+    /// Print set algebra operator symbols
+    let print_S_Operators (s:string) = 
+        s.Replace("|+|", "\u222A")
+         .Replace("|*|", "\u2229")
+         .Replace("==", "\u2261")
+         .Replace("|-", "\u22A2")
+         .Replace(" not ", " \u00AC ")
+         .Replace("not ", "\u00AC ")
+
+    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory(<@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ id @>)
 
     let ReduceIdemp = set_algebra.Rules.[0]
 

@@ -4,11 +4,11 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 using System.Threading;
-
+using System.Threading.Tasks;
 namespace Sylvester
 {
     #region Delegates
-    public delegate void OnExit(Process P);
+    public delegate void OnExit(Process process);
 
     public delegate void OnOutput(string line);
 
@@ -35,7 +35,7 @@ namespace Sylvester
             {
                 UseShellExecute = false,
                 RedirectStandardError = true,
-                RedirectStandardInput = false,
+                RedirectStandardInput = true,
                 RedirectStandardOutput = true
             };
             Process.EnableRaisingEvents = true;
@@ -119,6 +119,10 @@ namespace Sylvester
         public void Start()
         {
             ThrowIfNotInitialized();
+            if (this.IsStarted)
+            {
+                throw new InvalidOperationException($"The process {Process.StartInfo.FileName} is already started");
+            }
             Process.Start();
             Process.BeginErrorReadLine();
             Process.BeginOutputReadLine();
@@ -147,6 +151,10 @@ namespace Sylvester
             
         }
 
+        //public async Task WriteInputAsync()
+        //{
+        //    this.Process.StandardInput.
+        //}
         protected void ThrowIfNotStarted()
         {
             if (!IsStarted)

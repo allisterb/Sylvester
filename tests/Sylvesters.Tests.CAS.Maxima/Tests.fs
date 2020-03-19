@@ -4,5 +4,5 @@ open System
 open Xunit
 
 [<Fact>]
-let ``My test`` () =
-    Assert.True(true)
+let ``Can start maxima process`` () =
+    let m = new Maxi

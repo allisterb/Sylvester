@@ -1,5 +1,7 @@
 ﻿namespace Sylph
 
+open FSharp.Quotations
+
 /// Propositional calculus using the axioms and rules of S.
 module PropCalculus =
     let prop_calculus = Theory.S
@@ -30,3 +32,24 @@ module PropCalculus =
 
     /// Logical expression satisfies golden rule.
     let GoldenRule = Theory.S.Rules.[8]
+
+    // Additional theorems of S useful in proofs.
+
+    /// not p = q = p = not q
+    let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = 
+        let t = <@ not %p = %q = %p = not %q @> |> theorem S [
+            Collect |> LeftA
+            RightAssoc |> EntireA
+            Commute |> RightA
+            Collect |> RightA
+            Commute |> RightA
+        ] 
+        Lemma t
+    
+    // not not p == p
+    let DoubleNegation (p:Expr<bool>) (q:Expr<bool>) = 
+        let t = <@ (%p <> %q) = not %p = %q @> |> logical_theorem [
+                RightAssoc |> EntireA
+                Collect |> EntireA
+            ]
+        Lemma t

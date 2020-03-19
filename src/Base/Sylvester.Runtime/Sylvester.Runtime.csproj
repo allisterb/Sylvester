@@ -13,4 +13,7 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ext\Expect.NET\Expect.NET\Expect.NETStandard.csproj" />
+  </ItemGroup>
 </Project>

@@ -20,26 +20,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="SetBuilder.fs" />
-    <Compile Include="Set.fs" />
-    <Compile Include="Relation.fs" />
-    <Compile Include="Operation.fs" />
-    <Compile Include="Function.fs" />
-    <Compile Include="Structure.fs" />
-    <Compile Include="Category.fs" />
-    <Compile Include="Order.fs" />
-    <Compile Include="Groupoid.fs" />
-    <Compile Include="Semigroup.fs" />
-    <Compile Include="Monoid.fs" />
-    <Compile Include="Arithmetic.fs" />
-    <Compile Include="Group.fs" />
-    <Compile Include="Ring.fs" />
-    <Compile Include="Ideal.fs" />
-    <Compile Include="Field.fs" />
-    <Compile Include="Lattice.fs" />
-    <Compile Include="BooleanAlgebra.fs" />
-    <Compile Include="SetAlgebra.fs" />
-    <Compile Include="Combination.fs" />
+    <Compile Include="Definitions\SetBuilder.fs" />
+    <Compile Include="Definitions\Set.fs" />
+    <Compile Include="Definitions\Relation.fs" />
+    <Compile Include="Definitions\Operation.fs" />
+    <Compile Include="Definitions\Function.fs" />
+    <Compile Include="Definitions\Structure.fs" />
+    <Compile Include="Definitions\Category.fs" />
+    <Compile Include="Definitions\Order.fs" />
+    <Compile Include="Definitions\Groupoid.fs" />
+    <Compile Include="Definitions\Semigroup.fs" />
+    <Compile Include="Definitions\Monoid.fs" />
+    <Compile Include="Definitions\Arithmetic.fs" />
+    <Compile Include="Definitions\Group.fs" />
+    <Compile Include="Definitions\Ring.fs" />
+    <Compile Include="Definitions\Ideal.fs" />
+    <Compile Include="Definitions\Field.fs" />
+    <Compile Include="Definitions\Lattice.fs" />
+    <Compile Include="Definitions\BooleanAlgebra.fs" />
+    <Compile Include="Definitions\SetAlgebra.fs" />
+    <Compile Include="Definitions\Combination.fs" />
     <Compile Include="Theories\BooleanAlgebraTheory.fs" />
     <Compile Include="Theories\IntegerAlgebra.fs" />
     <Compile Include="Theories\SetAlgebraTheory.fs" />
