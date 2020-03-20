@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
@@ -22,8 +23,8 @@ namespace Sylvester
         {
             if (!File.Exists(cmd))
             {
-                Error("The executable {0} could not be found.", cmd);
-                return;
+                throw new Exception($"The executable {cmd} could not be found.");
+                
             }
             Process = new Process();
             Cmd = relativeToAssemblyDir ? Path.Combine(AssemblyDirectory.FullName, cmd) : cmd;
@@ -63,7 +64,7 @@ namespace Sylvester
             if (!string.IsNullOrEmpty(e.Data))
             {
                 Debug(e.Data);
-                ErrorBuilder.AppendLine(e.Data);
+                ErrorOutput.Push(e.Data);
                 OnError?.Invoke(e.Data);
             }
         }
@@ -78,7 +79,7 @@ namespace Sylvester
             if (!string.IsNullOrEmpty(e.Data))
             {
                 Debug(e.Data);
-                OutputBuilder.AppendLine(e.Data);
+                Output.Push(e.Data);
                 OnOutput?.Invoke(e.Data);
             }
         }
@@ -100,11 +101,9 @@ namespace Sylvester
 
         public bool? HasExited => Process?.HasExited;
 
-        public string Output => OutputBuilder.ToString();
+        public ConcurrentStack<string> Output { get; } = new ConcurrentStack<string>();
 
-        StringBuilder OutputBuilder { get; } = new StringBuilder();
-
-        StringBuilder ErrorBuilder { get; } = new StringBuilder();
+        public ConcurrentStack<string> ErrorOutput { get; } = new ConcurrentStack<string>();
 
         public OnExit OnExit { get; protected set; }
 
@@ -132,7 +131,6 @@ namespace Sylvester
 
         public void Stop()
         {
-            ThrowIfNotInitialized();
             ThrowIfNotStarted();
             Process.Kill();
             Process.Dispose();
@@ -141,7 +139,6 @@ namespace Sylvester
 
         public void WaitForExit()
         {
-            ThrowIfNotInitialized();
             ThrowIfNotStarted();
             Process.WaitForExit();
         }
@@ -151,12 +148,11 @@ namespace Sylvester
             
         }
 
-        //public async Task WriteInputAsync()
-        //{
-        //    this.Process.StandardInput.
-        //}
+        public void WriteInputLine(string line) => Process.StandardInput.WriteLine(line);
+        public Task WriteInputLineAsync(string line) => Process.StandardInput.WriteLineAsync(line);
         protected void ThrowIfNotStarted()
         {
+            ThrowIfNotInitialized();
             if (!IsStarted)
             {
                 throw new InvalidOperationException($"Process {Process.StartInfo.FileName} not started.");

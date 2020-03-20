@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Runtime.fs" />
+    <Compile Include="Expect.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ext\Expect.NET\Expect.NET\Expect.NETStandard.csproj" />
     <ProjectReference Include="..\Sylvester.Runtime\Sylvester.Runtime.csproj" />
   </ItemGroup>
 

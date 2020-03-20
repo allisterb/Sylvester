@@ -2,6 +2,8 @@
 
 open System
 
+open ExpectNet
+
 [<AutoOpen>]
 module FsRuntime =
      
@@ -83,22 +85,12 @@ module FsRuntime =
 
     let try'' f x = tryCatchAsync' f x
 
-    let inline (?) (l:bool) (r, j) = if l then r else j
-
-    let inline (!?) (x:Option<_>) = x.IsSome
-
     let inline (!>) f = tryCatch f
 
     let inline (!>>) f = tryCatch' f   
     
     let inline (!>>>) f = tryCatchAsync' f
-
-    let inline (!!) (r: #Runtime) = init r
-
-    let inline (!!>) (r: #Runtime) = init' r 
-
-    let inline (!>?) res = test res
-
+    
     let inline (|>>) res f = switch' res f
 
     let inline (|>>>) res f = switchAsync' res f

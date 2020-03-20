@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\ext\Expect.NET\Expect.NET\Expect.NETStandard.csproj" />
+    <ProjectReference Include="..\..\Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj" />
     <ProjectReference Include="..\..\Base\Sylvester.Runtime\Sylvester.Runtime.csproj" />
   </ItemGroup>
 
