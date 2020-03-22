@@ -318,3 +318,21 @@ module Proof =
     let logical_axiom e = axiom Proof.Logic e
     let logical_ident steps f = ident Proof.Logic steps f
     let logical_ident_axiom e = logical_ident [] e
+
+    let id_ax_a theory expr = expr |> ident_axiom theory |> Lemma |> EntireA
+    let id_ax_b theory expr = expr |> ident_axiom theory |> Lemma |> EntireB
+
+    let id_ax_l_a theory expr = expr |> ident_axiom theory |> Lemma |> LeftA
+    let id_ax_l_b theory expr = expr |> ident_axiom theory |> Lemma |> LeftB
+
+    let id_ax_r_a theory expr = expr |> ident_axiom theory |> Lemma |> RightA
+    let id_ax_r_b theory expr = expr |> ident_axiom theory |> Lemma |> RightB
+
+    let id_a theory proof expr = expr |> ident theory proof |> Lemma |> EntireA
+    let id_b theory proof expr = expr |> ident theory proof |> Lemma |> EntireB
+
+    let id_l_a theory proof expr = expr |> ident theory proof |> Lemma |> LeftA
+    let id_l_b theory proof expr = expr |> ident theory proof |> Lemma |> LeftB
+
+    let id_r_a theory proof expr = expr |> ident theory proof |> Lemma |> RightA
+    let id_r_b theory proof expr = expr |> ident theory proof |> Lemma |> RightB

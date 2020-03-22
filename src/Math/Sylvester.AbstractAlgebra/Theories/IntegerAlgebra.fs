@@ -1,4 +1,4 @@
-﻿namespace Sylph
+﻿namespace Sylvester
 
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
@@ -12,7 +12,6 @@ open FormulaDescriptions
 /// and unary inverse operation (-).
 module IntegerAlgebra =      
     let desc = axiom_desc "Integer Algebra" id
-    
     (* Axioms *)
     let (|IntegerAlgebraAxioms|_|) =
         function        
@@ -32,6 +31,7 @@ module IntegerAlgebra =
         | BinaryOpDefnR <@ (-) @> <@ (+) @> <@ (~-) @> x 
         
         | LeftCancel <@ (*) @> x -> Some (desc x)
+        | LeftCancel <@ (+) @> x -> Some (desc x)
 
         | _ -> None
     
@@ -121,3 +121,22 @@ module IntegerAlgebra =
             Distrib
             Collect
     ], id)
+
+    let int_id_ax_a expr = id_ax_a integer_algebra expr
+    let int_id_ax_b expr = id_ax_b integer_algebra expr
+    
+    let int_id_a expr proof = id_a integer_algebra proof expr
+    let int_id_b expr proof = id_b integer_algebra proof expr
+
+    let int_id_ax_r_a expr = id_ax_r_a integer_algebra expr
+    let int_id_ax_r_b expr = id_ax_r_b integer_algebra expr
+
+    let int_id_ax_l_a expr = id_ax_l_a integer_algebra expr
+    let int_id_ax_l_b expr = id_ax_l_b integer_algebra expr
+
+    let int_id_r_a proof expr = id_r_a integer_algebra proof expr
+    let int_id_r_b proof expr = id_r_b integer_algebra proof expr
+
+    let int_id_l_a proof expr = id_l_a integer_algebra proof expr
+    let int_id_l_b proof expr = id_l_b integer_algebra proof expr
+

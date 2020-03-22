@@ -33,6 +33,19 @@ module PropCalculus =
     /// Logical expression satisfies golden rule.
     let GoldenRule = Theory.S.Rules.[8]
 
+    //Short cuts
+    let eq_id_ax_a expr = id_ax_a S expr
+    let eq_id_ax_b expr = id_ax_b S expr
+    
+    let eq_id_a expr proof = id_a S proof expr
+    let eq_id_b expr proof = id_b S proof expr
+
+    let eq_id_ax_r_a expr = id_ax_r_a S expr
+    let eq_id_ax_r_b expr = id_ax_r_b S expr
+
+    let eq_id_ax_l_a expr = id_ax_l_a S expr
+    let eq_id_ax_l_b expr = id_ax_l_b S expr
+
     // Additional theorems of S useful in proofs.
 
     /// p = p = true

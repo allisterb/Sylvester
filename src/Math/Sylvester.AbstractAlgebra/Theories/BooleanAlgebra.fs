@@ -115,7 +115,7 @@ module BooleanAlgebraTheory =
     /// Expression is commutative.
     let Distrib join meet = Rule("(expression) is distributive", distrib join meet)
 
-    type BooleanAlgebraTheory<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>) = 
+    type BooleanAlgebraTheory<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>, ?formulaPrinter:string->string) = 
         inherit Theory(boolean_algebra_axioms theoryName join meet zero one comp, [
             ReduceIdemp join meet zero one comp
             ReduceIdent join meet zero one comp
@@ -124,4 +124,4 @@ module BooleanAlgebraTheory =
             RightAssoc join meet
             Commute join meet
             Distrib join meet
-        ])
+        ], defaultArg formulaPrinter id)
