@@ -23,7 +23,8 @@ namespace Sylvester
         {
             if (!File.Exists(cmd))
             {
-                throw new Exception($"The executable {cmd} could not be found.");
+                Error("The executable {0} could not be found.", cmd);
+                return;
                 
             }
             Process = new Process();

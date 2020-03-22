@@ -9,8 +9,8 @@ module MaximaTests =
 
     [<Fact>]
     let ``Can start maxima process`` () =
-        let m = new Maxima("C:\\maxima-5.43.2\\bin\\maxima.bat")
+        let m = Maxima.start "C:\\maxima-5.43.2\\bin\\maxima.bat"
         Assert.True(m.Initialized)
-        Assert.NotEmpty(m.ConsoleProcess.Output)
-        m.Session.Expect.Contains
+        Assert.NotNull(Maxima.console_process m)
+        Assert.NotNull(Maxima.version m)
         m.ConsoleProcess.Stop()

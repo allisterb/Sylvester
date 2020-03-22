@@ -1,19 +1,34 @@
 ﻿namespace Sylvester
 
+open System.Collections.Concurrent
+open System.Linq
+
 open ExpectNet
+open Expect
 
 type Maxima(?maximaCmd:string) =
     inherit Runtime()
     let cmd = defaultArg maximaCmd "maxima"
     let p = new ConsoleProcess(cmd, [||])
-    do if p.Initialized then p.Start()
+    let initialized, s = 
+        if p.Initialized then 
+            let start = tryCatch (p.Start) ()  
+            match start with
+            | Success _ ->
+                true, Expect.Spawn(new ProcessSpawnable(p.Process), System.Environment.NewLine, base.CancellationToken) |> Some
+            | Failure exn -> false, None
+        else false, None
+    let failIfNotInitialized x = if initialized then failwith "The Maxima process is not started." else x
 
-    override x.Initialized = p.Initialized && p.IsStarted
+    override x.Initialized = initialized
     
-    member val ConsoleProcess = p 
+    member x.ConsoleProcess = failIfNotInitialized p  
     
-    member val Session = Expect.Spawn(new ProcessSpawnable(p.Process), System.Environment.NewLine, base.CancellationToken)
-    
-    member x.Send = x.Session.Send.Line
+    member x.ConsoleSession = failIfNotInitialized s
+   
+module Maxima =
+    let start path = new Maxima(path)
+    let session (m:Maxima) = m.ConsoleSession
 
-    member x.Expect = x.Session.Expect
+    
+    

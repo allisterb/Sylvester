@@ -1,9 +1,9 @@
-﻿namespace Sylph
+﻿namespace Sylvester
 
 open FSharp.Quotations
 
-open Sylvester
 open FormulaPatterns
+open FormulaDescriptions
 open EquationalLogic
 
 type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
@@ -33,7 +33,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let S_GoldenRule = Rule("Logical terms in (expression) satisfy the golden rule", golden_rule)
 
-        Theory(logical_axioms, [
+        Theory(equational_logic_axioms, [
             S_Reduce
             S_LeftAssoc
             S_RightAssoc
@@ -46,7 +46,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
         ], print_S_Operators)
 
     static member val internal Trivial = 
-        Theory((fun (_:Expr,_:Expr) ->  Some(axiom_desc "Assumption" <@fun x y -> x = y @>)), [])
+        Theory((fun (_:Expr,_:Expr) ->  Some(axiom_desc "Assumption" id (pattern_desc "Assumption" <@fun x y -> x = y @>))), [])
 
 and Axioms = (Expr * Expr -> AxiomDescription option)
 
@@ -96,16 +96,16 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         else
             do sprintf "Proof of A: %s == B: %s:" (src a) (src b) |> prooflog
             do
-                if L |- (a, b)  then
-                   let axeq = L.Axioms (a, b)
-                   sprintf "|- %s == %s. [Logical Axiom of %s]" (src a) (src b) axeq.Value.Name |> prooflog
-                   sprintf "Proof complete." |> prooflog
-                   stepCount <- steps.Length               
                 if theory |- (a, b)  then
                     let axeq = theory.Axioms (a, b)
-                    sprintf "|- %s == %s. [Axiom of %s]" (src a) (src b) axeq.Value.Name |> prooflog
+                    sprintf "|- %s == %s. [%s %s]" (src a) (src b) axeq.Value.TheoryName (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
                     sprintf "Proof complete." |> prooflog
                     stepCount <- steps.Length
+                else if L |- (a, b)  then
+                   let axeq = L.Axioms (a, b)
+                   sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+                   sprintf "Proof complete." |> prooflog
+                   stepCount <- steps.Length               
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
         let stepId = stepCount + 1
@@ -128,15 +128,15 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         astate <- _a
         bstate <- _b
         state <- state @ [(astate, bstate, msg)]
-        if L |- (astate, bstate) then 
-            let axeq = L.Axioms (astate, bstate)
-            sprintf "|- %s == %s. [Logical Axiom of %s]" (src astate) (src bstate) axeq.Value.Name |> prooflog
-            sprintf "Proof complete." |> prooflog
-            stepCount <- steps.Length
-        else if theory |- (astate, bstate) then
+        if theory |- (astate, bstate) then
             let axeq = theory.Axioms (astate, bstate)
-            sprintf "|- %s == %s. [Axiom of %s]" (src astate) (src bstate) axeq.Value.Name |> prooflog
+            sprintf "|- %s == %s. [%s %s]" (src astate) (src bstate) axeq.Value.TheoryName (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
             sprintf "Proof complete." |> prooflog 
+            stepCount <- steps.Length
+        else if L |- (astate, bstate) then 
+            let axeq = L.Axioms (astate, bstate)
+            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+            sprintf "Proof complete." |> prooflog
             stepCount <- steps.Length
         else
             sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog

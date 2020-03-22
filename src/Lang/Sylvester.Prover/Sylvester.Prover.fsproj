@@ -20,7 +20,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Formula.fs" />
+    <Compile Include="FormulaDescriptions.fs" />
+    <Compile Include="FormulaPatterns.fs" />
     <Compile Include="EquationalLogic.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Theories\PropCalculus.fs" />
