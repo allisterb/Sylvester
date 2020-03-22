@@ -14,7 +14,6 @@ module IntegerAlgebra =
     let desc = axiom_desc "Integer Algebra" id
     
     (* Axioms *)
-
     let (|IntegerAlgebraAxioms|_|) =
         function        
         | Assoc <@ (+) @> x
@@ -28,7 +27,12 @@ module IntegerAlgebra =
         | Commute <@ (+) @> x
         | Commute <@ (*) @> x
 
-        | Distrib <@ (*) @> <@ (+) @> x -> Some (desc x)
+        | Distrib <@ (*) @> <@ (+) @> x 
+
+        | BinaryOpDefnR <@ (-) @> <@ (+) @> <@ (~-) @> x 
+        
+        | LeftCancel <@ (*) @> x -> Some (desc x)
+
         | _ -> None
     
     let (|SymmIntegerAxioms|_|) =

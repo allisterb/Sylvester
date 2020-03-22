@@ -179,6 +179,21 @@ module FormulaPatterns =
         | Binary op1 (a1, a2), Unary op3 (Binary op2 (a3, a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc "Definition" <@ fun x y -> (%op1) x y = (%op2) x y @>)
         | _ -> None
 
+    let (|BinaryOpDefnR|_|) (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
+        function
+        | Binary op1 (a1, a2), (Binary op2 (a3, Unary op3 a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc "Definition" <@ fun x y -> (%op1) x y = (%op2) x y @>)
+        | _ -> None
+
+    let (|BinaryOpDefnL|_|) (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
+        function
+        | Binary op1 (a1, a2), (Binary op2 (Unary op3 a3, a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc "Definition" <@ fun x y -> (%op1) x y = (%op2) x y @>)
+        | _ -> None
+
+    let (|LeftCancel|_|) (op:Expr<'t->'t->'t>)  =
+        function
+        | Equiv(Binary op (a1, b), Binary op (a2, c)), Equiv(b1, c1) when sequal a1 a1 && sequal b b1 && sequal c c1 -> Some (pattern_desc "Left Cancellation" <@ fun a b c -> ((%op) a b = (%op) a c) = (b = c) @>)
+        | _ -> None
+
     let (|Value|_|) (v:'t) =
         function
         | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Some (Expr.Value(v))
@@ -193,7 +208,6 @@ module Formula =
    type Formula = ReflectedDefinitionAttribute
    
    // Methods for creating variable names for formulas
-   
    let var<'t> = Unchecked.defaultof<'t>
    let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
    let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
