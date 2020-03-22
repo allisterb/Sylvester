@@ -28,6 +28,8 @@ module FormulaDescriptions =
     let axiom_desc theoryName (printer:string->string) (patternDesc:PatternDescription)  = 
         AxiomDescription(theoryName, PatternDescription(patternDesc.Name, (printer patternDesc.Description)))
 
+    let set_axiom_desc_theory (a:AxiomDescription) theoryName  = AxiomDescription(theoryName, PatternDescription(a.Name, a.Description))
+    
     let get_desc<'t> = 
         let a = typeof<'t>.GetCustomAttributes( typeof<DescAttribute>, true)
         if (a = null || a.Length = 0) then ("","") else let d = (a.[0] :?> DescAttribute) in (d.Name, d.Description)

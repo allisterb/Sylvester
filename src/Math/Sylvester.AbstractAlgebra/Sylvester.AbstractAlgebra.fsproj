@@ -40,9 +40,9 @@
     <Compile Include="Definitions\BooleanAlgebra.fs" />
     <Compile Include="Definitions\SetAlgebra.fs" />
     <Compile Include="Definitions\Combination.fs" />
-    <Compile Include="Theories\BooleanAlgebraTheory.fs" />
+    <Compile Include="Theories\BooleanAlgebra.fs" />
     <Compile Include="Theories\IntegerAlgebra.fs" />
-    <Compile Include="Theories\SetAlgebraTheory.fs" />
+    <Compile Include="Theories\SetAlgebra.fs" />
   </ItemGroup>
 
   <ItemGroup>

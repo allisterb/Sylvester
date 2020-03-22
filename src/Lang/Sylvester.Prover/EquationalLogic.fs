@@ -80,11 +80,11 @@ module EquationalLogic =
         | UnaryDistrib <@ not @> <@ (|&|) @> x  // not (x |&| y) = not x ||| not y
         | UnaryDistrib <@ not @> <@ (=) @> x 
        
-        | Identity <@false@> <@ (not true) @> x
-        | Identity <@true@> <@ (not false) @> x
+        | Defn <@false@> <@ (not true) @> x
+        | Defn <@true@> <@ (not false) @> x
 
-        | OpIdentity <@ (|&|) @> <@ true @> x
-        | OpIdentity <@ (|||) @> <@ false @> x
+        | Identity <@ (|&|) @> <@ true @> x
+        | Identity <@ (|||) @> <@ false @> x
                 
         | Duality <@ (=) @> <@ (<>) @> <@ not @> x
         | Duality <@ (<>) @> <@ (=) @> <@ not @> x

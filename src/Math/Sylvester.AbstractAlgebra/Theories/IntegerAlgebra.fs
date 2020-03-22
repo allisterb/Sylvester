@@ -6,114 +6,51 @@ open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 open FormulaPatterns
+open FormulaDescriptions
 
 /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
 /// and unary inverse operation (-).
 module IntegerAlgebra =      
-    (* Patterns *)
-
-    let (|Zero|_|) =
-        function
-        | SByte 0y
-        | Byte 0uy
-        | Int16 0s
-        | UInt16 0us
-        | Int32 0
-        | UInt32 0u
-        | Int64 0L
-        | UInt64 0UL -> Some 0
-        | _ -> None
-
-    let (|One|_|) =
-        function
-        | SByte 1y
-        | Byte 1uy
-        | Int16 1s
-        | UInt16 1us
-        | Int32 1
-        | UInt32 1u
-        | Int64 1L
-        | UInt64 1UL -> Some 1
-        | _ -> None
-
+    let desc = axiom_desc "Integer Algebra" id
+    
     (* Axioms *)
 
-    /// Commutativity axioms
-    let (|Commute|_|) =
-        function
-        // x + y == y + x
-        | Add(a1, a2), Add(b1, b2) when sequal2 a1 a2 b2 b1 -> Some (axiom_desc "Commutativity" <@@ fun() -> %%a1 + %%a2 = %%a2 + %%a1 @@>)  
-        // x * y == y * x
-        | Multiply(a1, a2), Multiply(b1, b2) when sequal2 a1 a2 b2 b1 -> Some (axiom_desc "Commutativity" <@@ fun()-> %%a1 * %%a2 = %%a2 * %%a1 @@>)  
-        | _ -> None
+    let (|IntegerAlgebraAxioms|_|) =
+        function        
+        | Assoc <@ (+) @> x
+        | Assoc <@ (*) @> x
+        
+        | Identity <@ (+) @> <@ 0 @> x 
+        | Identity <@ (*) @> <@ 1 @> x
+        
+        | Inverse <@ (+) @> <@ (~-) @> <@ 0 @> x
 
-    /// Associativity axioms
-    let (|Assoc|_|) =
-        function
-        // x + y + z == x + (y + z)
-        | Add(Add(a1, a2), a3), Add(b1, Add(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some (axiom_desc "Associativity" <@@fun() -> (%%b1 + %%b2) + %%b3 =  %%b1 + (%%b2 + %%b3) @@>)        
-        // x * y * z == x * (y * z)
-        | Multiply(Multiply(a1, a2), a3), Multiply(b1, Multiply(b2, b3)) when sequal3 a1 a2 a3 b1 b2 b3 -> Some (axiom_desc "Associativity" <@@fun() -> (%%b1 * %%b2 * %%b3) = %%b1 * (%%b2 * %%b3) @@>)
-        | _ -> None
+        | Commute <@ (+) @> x
+        | Commute <@ (*) @> x
 
-    /// Distributivity axiom
-    let (|Distrib|_|) =
-        function
-        // x * (y + z) == x * y + x * z
-        | Multiply(a3, Add(b3, b4)), Add(Multiply(a1, b1), Multiply(a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> Some (axiom_desc "Distributivity" <@@fun() -> %%a1 * (%%b3 * %%b4) = (%%a1 * %%b1) + (%%a2 * %%b2) @@>)
-        | _ -> None
-
-    /// Identity axioms
-    let (|Identity|_|) = 
-        function
-        // x + 0 = x
-        | Add(a1, Zero zero), a2 when sequal a1 a2 -> Some (axiom_desc "Identity" <@@fun() -> %%a1 + zero = %%a1@@>)
-        // x * 1 = x
-        | Multiply(a1, One one), a2 when sequal a1 a2 -> Some (axiom_desc "Identity" <@@fun() -> %%a1 * one = %%a1 @@>)
-        | _ -> None
-
-    let (|IntegerAxioms|_|) =
-        function
-        | Commute x 
-        | Assoc x
-        | Distrib x
-        | Identity x -> Some x
+        | Distrib <@ (*) @> <@ (+) @> x -> Some (desc x)
         | _ -> None
     
     let (|SymmIntegerAxioms|_|) =
         function
-        | Symm(A, B) -> match (A, B) with | IntegerAxioms x -> Some x | _ -> None
+        | Symm(A, B) -> 
+            match (A, B) with 
+            | IntegerAlgebraAxioms x -> Some x 
+            | Conj(IntegerAlgebraAxioms x) -> Some x
+            | _ -> None
 
-    let integer_axioms = 
+    let integer_algebra_axioms = 
         function  
-        | IntegerAxioms x
-        | Conj(IntegerAxioms x)
+        | IntegerAlgebraAxioms x
+        | Conj(IntegerAlgebraAxioms x)
         | SymmIntegerAxioms x -> Some x
         | _ -> None
                 
     let rec reduce_constants  =
         function
-        | Add(SByte l, SByte r) -> Expr.Value(l + r)
-        | Add(Byte l, Byte r) -> Expr.Value(l + r)
-        | Add(Int16 l, Int16 r) -> Expr.Value(l + r)
-        | Add(UInt16 l, UInt16 r) -> Expr.Value(l + r)
         | Add(Int32 l, Int32 r) -> Expr.Value(l + r)
-        | Add(UInt32 l, UInt32 r) -> Expr.Value(l + r)
-        | Add(Int64 l, Int64 r) -> Expr.Value(l + r)
-        | Add(UInt64 l, UInt64 r) -> Expr.Value(l + r)
-        
-        | Subtract(SByte l, SByte r) -> Expr.Value(l - r)
-        | Subtract(Byte l, Byte r) -> Expr.Value(l - r)
-        | Subtract(Int16 l, Int16 r) -> Expr.Value(l - r)
-        | Subtract(UInt16 l, UInt16 r) -> Expr.Value(l - r)
-        | Subtract(Int32 l, Int32 r) -> Expr.Value(l - r)
-        | Subtract(UInt32 l, UInt32 r) -> Expr.Value(l - r)
-        | Subtract(Int64 l, Int64 r) -> Expr.Value(l - r)
-        | Subtract(UInt64 l, UInt64 r) -> Expr.Value(l - r)
-        
+        | Subtract(Int32 l, Int32 r) -> Expr.Value(l - r)        
         | Multiply(Int32 l, Int32 r) -> Expr.Value(l * r)
-        | Multiply(UInt32 l, UInt32 r) -> Expr.Value(l * r)
-        | Multiply(Int64 l, Int64 r) -> Expr.Value(l * r)
 
         | expr -> traverse expr reduce_constants
     
@@ -172,7 +109,7 @@ module IntegerAlgebra =
     
     /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
     /// and unary inverse operation (~-).
-    let integer_algebra = Theory(integer_axioms, [
+    let integer_algebra = Theory(integer_algebra_axioms, [
             Reduce 
             LeftAssoc 
             RightAssoc 

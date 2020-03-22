@@ -131,14 +131,9 @@ module FormulaPatterns =
         | _ -> None
 
     /// x + 0 == x
-    let (|OpIdentity|_|) (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
+    let (|Identity|_|) (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
         function
         | Binary op (a1, z), a2 when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Identity" <@ fun (x:'t) -> (%op) x (%zero) = (%zero) @>)
-        | _ -> None
-
-    let (|Identity|_|) (a:Expr<'t>) (b:Expr<'t>) = 
-        function
-        | (a1, b1) when sequal2 a1 b1 a b -> Some (pattern_desc "Equality" <@ %a = %b @>)
         | _ -> None
 
     /// x * (y + z) == x * y + x * z
@@ -182,6 +177,11 @@ module FormulaPatterns =
     let (|BinaryOpDefn|_|) (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
         function
         | Binary op1 (a1, a2), Unary op3 (Binary op2 (a3, a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc "Definition" <@ fun x y -> (%op1) x y = (%op2) x y @>)
+        | _ -> None
+
+    let (|Value|_|) (v:'t) =
+        function
+        | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Some (Expr.Value(v))
         | _ -> None
 
 [<AutoOpen>]
