@@ -4,7 +4,6 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
-open Sylvester
 open FormulaPatterns
 open FormulaDescriptions
 
@@ -17,21 +16,15 @@ module IntegerAlgebra =
         function        
         | Assoc <@ (+) @> x
         | Assoc <@ (*) @> x
-        
         | Identity <@ (+) @> <@ 0 @> x 
         | Identity <@ (*) @> <@ 1 @> x
-        
         | Inverse <@ (+) @> <@ (~-) @> <@ 0 @> x
-
         | Commute <@ (+) @> x
         | Commute <@ (*) @> x
-
         | Distrib <@ (*) @> <@ (+) @> x 
-
-        | BinaryOpDefnR <@ (-) @> <@ (+) @> <@ (~-) @> x 
-        
-        | LeftCancel <@ (*) @> x -> Some (desc x)
-        | LeftCancel <@ (+) @> x -> Some (desc x)
+        | LeftCancel <@ (*) @> x 
+        | LeftCancel <@ (+) @> x
+        | BinaryOpDefnR <@ (-) @> <@ (+) @> <@ (~-) @> x -> Some (desc x) 
 
         | _ -> None
     
@@ -93,6 +86,13 @@ module IntegerAlgebra =
         | Subtract(Multiply(a1, a2), Multiply(a3, a4)) when sequal a2 a4 -> <@@ %%a2 * (%%a1 - %%a3) @@>
         | expr -> traverse expr collect
 
+    let rec left_cancel =
+        function
+        | NewTuple(Add(a1, a2)::Add(a3, a4)::[]) when sequal a1 a3 -> <@@ (%%a2:int) = (%%a4:int) @@>
+        | NewTuple(Multiply(a1, a2)::Multiply(a3, a4)::[]) when sequal a1 a3 -> <@@ (%%a2:int) = (%%a4:int) @@>
+        | NewTuple(Subtract(a1, a2)::Subtract(a3, a4)::[]) when sequal a1 a3 -> <@@ (%%a2:int) = (%%a4:int) @@>
+        | expr -> traverse expr left_cancel
+
     /// Reduce equal constants in expression. 
     let Reduce = Rule("Reduce integer constants in (expression)", reduce_constants)
 
@@ -111,6 +111,9 @@ module IntegerAlgebra =
     /// Collect multiplication terms distributed over addition in expression.
     let Collect = Rule("Collect multiplication terms distributed over addition in (expression)", collect)
     
+    /// Cancel equivalent temrs on the LHS in expression.
+    let LeftCancel = Rule("Cancel equivalent terms on the LHS in (expression)", left_cancel)
+
     /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
     /// and unary inverse operation (~-).
     let integer_algebra = Theory(integer_algebra_axioms, [
@@ -120,23 +123,26 @@ module IntegerAlgebra =
             Commute 
             Distrib
             Collect
+            LeftCancel
     ], id)
 
+    (* Shortcuts for proofs*)
+    let int_id_ax_ab expr = id_ax_ab integer_algebra expr
     let int_id_ax_a expr = id_ax_a integer_algebra expr
     let int_id_ax_b expr = id_ax_b integer_algebra expr
     
-    let int_id_a expr proof = id_a integer_algebra proof expr
-    let int_id_b expr proof = id_b integer_algebra proof expr
-
     let int_id_ax_r_a expr = id_ax_r_a integer_algebra expr
     let int_id_ax_r_b expr = id_ax_r_b integer_algebra expr
 
     let int_id_ax_l_a expr = id_ax_l_a integer_algebra expr
     let int_id_ax_l_b expr = id_ax_l_b integer_algebra expr
+ 
+    let int_id_ab proof expr = id_ab integer_algebra proof expr
+    let int_id_a proof expr = id_a integer_algebra proof expr
+    let int_id_b proof expr = id_b integer_algebra proof expr
 
     let int_id_r_a proof expr = id_r_a integer_algebra proof expr
     let int_id_r_b proof expr = id_r_b integer_algebra proof expr
 
     let int_id_l_a proof expr = id_l_a integer_algebra proof expr
     let int_id_l_b proof expr = id_l_b integer_algebra proof expr
-

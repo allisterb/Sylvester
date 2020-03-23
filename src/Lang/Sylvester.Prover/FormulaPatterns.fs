@@ -111,14 +111,19 @@ module FormulaPatterns =
         | Call(None, method, Sequence(l, r)::[]) when method.Name = "Sum" -> Some (l, r)
         | _ -> None
 
+    let (|Binary|_|) (op:Expr<'t->'t->'t>) =
+        function
+        | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
+        | _ -> None
+
     let (|Unary|_|) (op:Expr<'t->'t>)=
         function
         | SpecificCall op (None,_,r::[]) when r.Type = typeof<'t> -> Some r
         | _ -> None
 
-    let (|Binary|_|) (op:Expr<'t->'t->'t>) =
+    let (|BinaryCall|_|)  =
         function
-        | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
+        | Call(_,_,l::r::[]) when l.Type = r.Type -> Some (l,r)
         | _ -> None
 
     /// (x + y) + z = x + (y + z)
@@ -157,7 +162,7 @@ module FormulaPatterns =
     /// x + (-x) == zero
     let (|Inverse|_|) (op: Expr<'t->'t->'t>) (inverse: Expr<'t -> 't>) (zero: Expr<'t>)   =
         function
-        | Binary op (a1, Unary inverse (a2)), z  when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Inverse" <@ fun (x:'t) -> (%op) x ((%inverse) x) = (%zero) @>)
+        | Binary op (a1, Unary inverse (a2)), z  when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Invertibility" <@ fun (x:'t) -> (%op) x ((%inverse) x) = (%zero) @>)
         | _ -> None
 
     /// x + x == x
@@ -202,7 +207,7 @@ module FormulaPatterns =
     let (|RightCancel|_|) (op:Expr<'t->'t->'t>)  =
         function
         | Equiv(Binary op (b, a1), Binary op (c, a2)), Equiv(b1, c1) when sequal a1 a1 && sequal b b1 && sequal c c1 
-            -> Some (pattern_desc "rIGHT Cancellation" <@ fun a b c -> ((%op) b a = (%op) c a) = (b = c) @>)
+            -> Some (pattern_desc "Right Cancellation" <@ fun a b c -> ((%op) b a = (%op) c a) = (b = c) @>)
         | _ -> None
 
     let (|Value|_|) (v:'t) =
@@ -218,7 +223,7 @@ module Formula =
    // Make Formula an alias for the reflected definition attribute
    type Formula = ReflectedDefinitionAttribute
    
-   // Methods for creating variable names for formulas
+   // Methods for introducing variable names for formulas
    let var<'t> = Unchecked.defaultof<'t>
    let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
    let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>

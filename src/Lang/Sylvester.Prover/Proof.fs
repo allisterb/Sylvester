@@ -98,12 +98,12 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
             do
                 if theory |- (a, b)  then
                     let axeq = theory.Axioms (a, b)
-                    sprintf "|- %s == %s. [%s %s]" (src a) (src b) axeq.Value.TheoryName (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
+                    sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
                     sprintf "Proof complete." |> prooflog
                     stepCount <- steps.Length
                 else if L |- (a, b)  then
                    let axeq = L.Axioms (a, b)
-                   sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+                   sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical axiom of %s" axeq.Value.Name) |> prooflog
                    sprintf "Proof complete." |> prooflog
                    stepCount <- steps.Length               
     do while stepCount < steps.Length do
@@ -130,12 +130,12 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         state <- state @ [(astate, bstate, msg)]
         if theory |- (astate, bstate) then
             let axeq = theory.Axioms (astate, bstate)
-            sprintf "|- %s == %s. [%s %s]" (src astate) (src bstate) axeq.Value.TheoryName (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
+            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
             sprintf "Proof complete." |> prooflog 
             stepCount <- steps.Length
         else if L |- (astate, bstate) then 
             let axeq = L.Axioms (astate, bstate)
-            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name = "Definition" then "Definition" else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical axiom of %s" axeq.Value.Name) |> prooflog
             sprintf "Proof complete." |> prooflog
             stepCount <- steps.Length
         else
@@ -188,6 +188,7 @@ and RuleApplication =
     | LeftB of Rule
     | RightA of Rule
     | RightB of Rule
+    | AB of Rule
 with
     member x.Rule = 
         match x with
@@ -197,29 +198,35 @@ with
         | LeftB rule -> rule
         | RightA rule -> rule
         | RightB rule -> rule
+        | AB rule -> rule
     member x.RuleName = x.Rule.Name
     member x.Apply(a:Expr, b:Expr) =       
         match x with
         | EntireA rule -> rule.Apply a, b
         | EntireB rule -> a, rule.Apply b
         | LeftA rule -> 
-                match a with
-                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r), b
-                | _ -> failwith "A is not a binary operation."
+            match a with
+            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r), b
+            | _ -> failwith "A is not a binary operation."
         | LeftB rule -> 
-                match b with
-                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in a, binary_call(o, m, s, r)
-                | _ -> failwith "B is not a binary operation."
-
+            match b with
+            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in a, binary_call(o, m, s, r)
+            | _ -> failwith "B is not a binary operation."
         | RightA rule -> 
-                match a with
-                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s), b
-                | _ -> failwithf "A is not a binary operation: %s." (src a)
+            match a with
+            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s), b
+            | _ -> failwithf "A is not a binary operation: %s." (src a)
         | RightB rule -> 
-                match b with
-                | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in a, binary_call(o, m, l, s)
-                | _ -> failwithf "B is not a binary operation: %s." (src a)
- 
+            match b with
+            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in a, binary_call(o, m, l, s)
+            | _ -> failwithf "B is not a binary operation: %s." (src a)
+        | AB rule ->
+            let expr = rule.Apply (Expr.NewTuple(a::b::[]))
+            match expr with
+            | Equiv(l, r) -> l, r
+            | Patterns.NewTuple(l::r::[]) -> l, r
+            | _ -> failwithf "Rule %s did not return a valid expression." rule.Name
+
 type Theorem internal (stmt: TheoremStmt, proof:Proof) = 
     let (a, b) = stmt.Members
     do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
@@ -319,8 +326,11 @@ module Proof =
     let logical_ident steps f = ident Proof.Logic steps f
     let logical_ident_axiom e = logical_ident [] e
 
+    let id_ax_ab theory expr = expr |> ident_axiom theory |> Lemma |> AB
+
     let id_ax_a theory expr = expr |> ident_axiom theory |> Lemma |> EntireA
     let id_ax_b theory expr = expr |> ident_axiom theory |> Lemma |> EntireB
+    
 
     let id_ax_l_a theory expr = expr |> ident_axiom theory |> Lemma |> LeftA
     let id_ax_l_b theory expr = expr |> ident_axiom theory |> Lemma |> LeftB
@@ -328,6 +338,8 @@ module Proof =
     let id_ax_r_a theory expr = expr |> ident_axiom theory |> Lemma |> RightA
     let id_ax_r_b theory expr = expr |> ident_axiom theory |> Lemma |> RightB
 
+    let id_ab theory proof expr = expr |> ident theory proof |> Lemma |> AB
+    
     let id_a theory proof expr = expr |> ident theory proof |> Lemma |> EntireA
     let id_b theory proof expr = expr |> ident theory proof |> Lemma |> EntireB
 

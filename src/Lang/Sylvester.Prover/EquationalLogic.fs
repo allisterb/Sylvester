@@ -4,7 +4,6 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
-open Sylvester
 open FormulaPatterns
 open FormulaDescriptions
 
@@ -30,7 +29,7 @@ module EquationalLogic =
 
     let (|TruthDefn|_|) =
         function
-        | Equiv(a1, a2), Bool true when sequal a1 a2 -> Some (pattern_desc "Definition" <@fun x -> x = x @>)
+        | Equiv(a1, a2), Bool true when sequal a1 a2 -> Some (pattern_desc "Definition" <@fun x -> x = x = true @>)
         | _ -> None
 
     let (|NotEquivDefn|_|) =
@@ -59,10 +58,9 @@ module EquationalLogic =
 
     let (|EquationalLogicAxioms|_|) = 
         function
-        | SEqual x
-
-        | TruthDefn x
-        | BinaryOpDefn <@ (<>) @> <@ (=) @> <@not@>  x
+        | SEqual x // x = x == true
+        | TruthDefn x // x = x = true
+        | BinaryOpDefn <@ (<>) @> <@ (=) @> <@not@>  x // x <> y = not (x = y)
 
         | Assoc <@ (|&|) @> x // x |&| y |&| z = x |&| (y |&| z)
         | Assoc <@ (|||) @> x // x ||| y ||| z = x ||| (y ||| z)
@@ -110,7 +108,6 @@ module EquationalLogic =
         | EquationalLogicAxioms x
         | Conj(EquationalLogicAxioms x) 
         | SymmEquationalLogicAxioms x -> Some x
-      
         | _ -> None
     
     (* Inference rules *) 
