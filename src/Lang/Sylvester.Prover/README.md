@@ -7,9 +7,7 @@
 ```fsharp
 // Load the Sylvester abstract algebra package which contains the integer_algebra theory
 #r "nuget: Sylvester.AbstractAlgebra" 
-// Load Jupyter helpers for the .NET Core kernel
-#load "netcore.fsx"
-```
+
 ```fsharp
 open Sylvester
 open IntegerAlgebra 
