@@ -5,17 +5,17 @@
 [Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (symbolic proof helper) is a language-integrated proof assistant for F#.
 
 ```fsharp
-// Load the Sylvester abstract algebra package which contains the integer_algebra theory
+// Load the Sylvester abstract algebra package which contains the integer_algebra theory.
 #r "nuget: Sylvester.AbstractAlgebra" 
-
+```
 ```fsharp
 open Sylvester
 open IntegerAlgebra 
 
-// Declare some integer variables for use in formulae
+// Declare some integer variables for use in formulae.
 let a,b,c = var3<int>
 
-// Prove the identity a * 0 = 0 use the rules and axioms of integer algebra
+// Prove the identity a * 0 = 0 use the rules and axioms of integer algebra.
 let p1 = proof <@ a * 0 = 0 @> integer_algebra [
     // a * 0 = a * 0 + 0 is axiomatic in the integer_algebra theory.
     let lemma1 = <@ a * 0 = a * 0 + 0 @> |> int_id_ax
