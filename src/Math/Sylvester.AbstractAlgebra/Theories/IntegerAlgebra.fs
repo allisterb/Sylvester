@@ -10,7 +10,11 @@ open FormulaDescriptions
 /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
 /// and unary inverse operation (-).
 module IntegerAlgebra =      
-    let desc = axiom_desc "Integer Algebra" id
+    /// Print Unicode logical operator symbols
+    let print_integer_algebra_operators (s:string) = 
+        s.Replace("*", "\u22C5")
+    let desc = axiom_desc "Integer Algebra" print_integer_algebra_operators
+    
     (* Axioms *)
     let (|IntegerAlgebraAxioms|_|) =
         function        
@@ -124,25 +128,24 @@ module IntegerAlgebra =
             Distrib
             Collect
             LeftCancel
-    ], id)
+    ], print_integer_algebra_operators)
 
-    (* Shortcuts for proofs*)
+    (* proof step shortcuts*)
+     
+    let int_id_ax expr = id_ax integer_algebra expr 
     let int_id_ax_ab expr = id_ax_ab integer_algebra expr
     let int_id_ax_a expr = id_ax_a integer_algebra expr
     let int_id_ax_b expr = id_ax_b integer_algebra expr
-    
     let int_id_ax_r_a expr = id_ax_r_a integer_algebra expr
     let int_id_ax_r_b expr = id_ax_r_b integer_algebra expr
-
     let int_id_ax_l_a expr = id_ax_l_a integer_algebra expr
     let int_id_ax_l_b expr = id_ax_l_b integer_algebra expr
- 
+
+    let int_id expr = id_lem integer_algebra expr
     let int_id_ab proof expr = id_ab integer_algebra proof expr
     let int_id_a proof expr = id_a integer_algebra proof expr
     let int_id_b proof expr = id_b integer_algebra proof expr
-
     let int_id_r_a proof expr = id_r_a integer_algebra proof expr
     let int_id_r_b proof expr = id_r_b integer_algebra proof expr
-
     let int_id_l_a proof expr = id_l_a integer_algebra proof expr
     let int_id_l_b proof expr = id_l_b integer_algebra proof expr

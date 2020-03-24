@@ -33,48 +33,49 @@ module PropCalculus =
     /// Logical expression satisfies golden rule.
     let GoldenRule = Theory.S.Rules.[8]
 
-    //Short cuts
-    let eq_id_ax_a expr = id_ax_a S expr
-    let eq_id_ax_b expr = id_ax_b S expr
+    (* proof step shortcuts *)
     
-    let eq_id_a expr proof = id_a S proof expr
-    let eq_id_b expr proof = id_b S proof expr
+    let eq_id_ax expr = id_ax prop_calculus expr
+    let eq_id_ax_ab expr = id_ax_ab prop_calculus expr
+    let eq_id_ax_a expr = id_ax_a prop_calculus expr
+    let eq_id_ax_b expr = id_ax_b prop_calculus expr
+    let eq_id_ax_r_a expr = id_ax_r_a prop_calculus expr
+    let eq_id_ax_r_b expr = id_ax_r_b prop_calculus expr
+    let eq_id_ax_l_a expr = id_ax_l_a prop_calculus expr
+    let eq_id_ax_l_b expr = id_ax_l_b prop_calculus expr
 
-    let eq_id_ax_r_a expr = id_ax_r_a S expr
-    let eq_id_ax_r_b expr = id_ax_r_b S expr
+    let eq_id expr = ident expr prop_calculus 
+    let eq_id_ab expr = id_ax_ab prop_calculus expr
+    let eq_id_a expr proof = id_a prop_calculus proof expr
+    let eq_id_b expr proof = id_b prop_calculus proof expr
+    let eq_id_r_a expr = id_r_a prop_calculus expr
+    let eq_id_r_b expr = id_r_b prop_calculus expr
+    let eq_id_l_a expr = id_l_a prop_calculus expr
+    let eq_id_l_b expr = id_l_b prop_calculus expr
 
-    let eq_id_ax_l_a expr = id_ax_l_a S expr
-    let eq_id_ax_l_b expr = id_ax_l_b S expr
-
-    // Additional theorems of S useful in proofs.
+    (* Additional theorems of S useful in proofs. *)
 
     /// p = p = true
-    let TruthDefn (p:Expr<bool>) = <@ (%p = %p) = true @> |> ident_axiom prop_calculus |> Lemma
+    let TruthDefn (p:Expr<bool>) = <@ (%p = %p) = true @> |> id_ax prop_calculus 
 
     // not p = p = false
-    let FalseDefn (p:Expr<bool>) = 
-        let t = <@not %p = %p @> |> contr prop_calculus [
+    let FalseDefn (p:Expr<bool>) = <@not %p = %p @> |> contr_lem prop_calculus [
             Collect |> EntireA
-            <@(%p = %p) = true @> |> ident_axiom prop_calculus |> Lemma |> EntireA
+            <@(%p = %p) = true @> |> eq_id_ax_a
         ]
-        Lemma t
-
+        
     /// not p = q = p = not q
-    let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = 
-        let t = <@ not %p = %q = %p = not %q @> |> theorem S [
+    let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = <@ not %p = %q = %p = not %q @> |> lemma prop_calculus [
             Collect |> LeftA
             RightAssoc |> EntireA
             Commute |> RightA
             Collect |> RightA
             Commute |> RightA
         ] 
-        Lemma t
-    
+        
     // not not p == p
-    // Theorem 3.12 
-    let DoubleNegation (p:Expr<bool>) =
-        let t = <@ not (not %p) = %p @> |> theorem prop_calculus [
+    let DoubleNegation (p:Expr<bool>) = <@ not (not %p) = %p @> |> lemma prop_calculus [
             Collect |> EntireA
             FalseDefn p |> EntireA
         ]
-        Lemma t
+       

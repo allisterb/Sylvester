@@ -2,7 +2,31 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allisterb/sylph-notebooks.git/master?filepath=Sylph.ipynb)
 [![NuGet](https://img.shields.io/nuget/v/Sylph.svg)](https://www.nuget.org/packages/Sylph/)
 
-[Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (Sylvester proof helper) is a language-integrated interactive theorem prover for F# which helps a user formally prove two F# functions or expressions are equivalent according to the axioms and rules of a particular proof system.
+[Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (Sylvester proof helper) is a language-integrated proof assistant for F#.
+
+```fsharp
+open Sylvester
+open IntegerAlgebra 
+
+// Declare some integer variables for use in proofs
+let a,b,c = var3<int>
+
+// Prove the identity a * 0 = 0 use the rules and axioms of integer algebra
+let t1 = ident <@ a * 0 = 0 @> integer_algebra [
+    // a * 0 = a * 0 + 0
+    let lemma1 = <@ a * 0 = a * 0 + 0 @> |> int_id_ax
+    // -(a * 0 ) + (a * 0) = 0
+    let lemma2 = <@ 0 = -(a * 0) + (a * 0) @> |> int_id [Commute |> EntireB]
+    lemma1 |> EntireA
+    Commute |> EntireA
+    lemma2 |> LeftA    
+    lemma2 |> EntireB
+    RightAssoc |> EntireA
+    LeftCancel |> AB
+    Collect |> EntireA
+    Reduce |> EntireA
+]
+```
 
 Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# function of a particular type for which a code quotation and full expression tree are available. Formulas in a theorem do not have to be logical formulas but any 2 F#/.NET functions of the same type where it makes sense to reason about them equationally. 
 

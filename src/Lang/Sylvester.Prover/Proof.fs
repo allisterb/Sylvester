@@ -65,7 +65,7 @@ with
        
 and Rules = Rule list 
 
-and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?quiet:bool) =
+and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     /// The logical theory used for the proof.
     static let mutable L:Theory = Theory.S
     let ruleNames = List.concat [
@@ -75,16 +75,17 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
     
     let logBuilder = System.Text.StringBuilder()
-    let q = defaultArg quiet false
+    let l = defaultArg lemma false
+    let proof_sep = if l then System.Environment.NewLine else ""
     let output (s:string) = 
         match defaultDisplay with
-            | Text -> printfn "%s" (theory.FormulaPrinter s)
-            | _ -> printfn "%s" (theory.FormulaPrinter s)
+            | Text -> printfn "%s" ((L.FormulaPrinter >> theory.FormulaPrinter) s)
+            | _ -> printfn "%s" ((L.FormulaPrinter >> theory.FormulaPrinter) s)
 
     let prooflog (x:string) = 
         do 
             logBuilder.Append(x) |> ignore
-            if not q then output x
+            if not l then output x else output ("[Lemma] " + x)
     
     let mutable astate, bstate = (a, b)
     let mutable state:(Expr * Expr * string) list = [] 
@@ -99,12 +100,12 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
                 if theory |- (a, b)  then
                     let axeq = theory.Axioms (a, b)
                     sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
-                    sprintf "Proof complete." |> prooflog
+                    sprintf "Proof complete." + proof_sep |> prooflog
                     stepCount <- steps.Length
                 else if L |- (a, b)  then
                    let axeq = L.Axioms (a, b)
                    sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical axiom of %s" axeq.Value.Name) |> prooflog
-                   sprintf "Proof complete." |> prooflog
+                   sprintf "Proof complete." + proof_sep |> prooflog
                    stepCount <- steps.Length               
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
@@ -116,14 +117,25 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
             | (Subst(n, p, _)) -> if not ((p.Theory = L) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
         let (_a, _b) = step.Apply (astate, bstate)
         let msg =
-            if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
-                sprintf "%i. %s: (%s, %s) == (%s, %s)." (stepId) (stepName.Replace("(expression)", "A and B")) (src astate) (src bstate) (src _a) (src _b)
-            else if not (sequal _a astate) then
-                sprintf "%i. %s: %s == %s." (stepId) (stepName.Replace("(expression)", "A")) (src astate) (src _a)
-            else if not (sequal _b bstate) then
-                sprintf "%i. %s: %s == %s." (stepId) (stepName.Replace("(expression)", "B")) (src bstate) (src _b)
-            else
-                sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A or B")) 
+            match step.Rule with
+            | (Rule(_, _)) -> 
+                if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
+                    sprintf "%i. %s: (%s, %s) == (%s, %s)." (stepId) (stepName.Replace("(expression)", "A and B")) (src astate) (src bstate) (src _a) (src _b)
+                else if not (sequal _a astate) then
+                    sprintf "%i. %s: %s == %s." (stepId) (stepName.Replace("(expression)", "A")) (src astate) (src _a)
+                else if not (sequal _b bstate) then
+                    sprintf "%i. %s: %s == %s." (stepId) (stepName.Replace("(expression)", "B")) (src bstate) (src _b)
+                else
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A or B")) 
+            | (Subst(_,_,_)) ->
+                if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
+                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "A and B")) 
+                else if not (sequal _a astate) then
+                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "A")) 
+                else if not (sequal _b bstate) then
+                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "B"))
+                else
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A or B"))
         do prooflog msg
         astate <- _a
         bstate <- _b
@@ -131,12 +143,12 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         if theory |- (astate, bstate) then
             let axeq = theory.Axioms (astate, bstate)
             sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
-            sprintf "Proof complete." |> prooflog 
+            sprintf "Proof complete." + proof_sep |> prooflog 
             stepCount <- steps.Length
         else if L |- (astate, bstate) then 
             let axeq = L.Axioms (astate, bstate)
             sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical axiom of %s" axeq.Value.Name) |> prooflog
-            sprintf "Proof complete." |> prooflog
+            sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
         else
             sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog
@@ -304,47 +316,56 @@ module Proof =
         | Implies(l, r) -> Proof(f, True, theory, steps)
         | Equiv(l, r) -> Proof(l, r, theory, steps)
         | _ -> failwithf "The expression %A is not recognized as a theorem statement." (src f)  
-    let theorem theory steps (e:Expr<'t>) = 
+    let theorem (e:Expr<'t>) theory steps  = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         Theorem(Taut(f), Proof (f, True, theory, steps))  
-    let contr theory steps (e:Expr<'t>) = 
+    let contr (e:Expr<'t>) theory steps = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         Theorem((Contr f), Proof (f, False, theory, steps))
-    let ident theory steps  (e:Expr<_>) = 
+    let ident (e:Expr<_>) theory steps  = 
         let f = e |> expand |> body
         match f with 
         | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps)) 
+        | _ -> failwithf "The expression %A is not recognized as an identity." (src f)      
+
+    (* Lemmas *)
+    let lemma theory steps (e:Expr<'t>) = 
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        Theorem(Taut(f), Proof (f, True, theory, steps, true)) |> Lemma  
+    let ax theory e = lemma theory [] e
+    let contr_lem theory steps (e:Expr<'t>) = 
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        Theorem((Contr f), Proof (f, False, theory, steps, true)) |> Lemma
+    let id_lem theory steps  (e:Expr<_>) = 
+        let f = e |> expand |> body
+        match f with 
+        | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps, true)) |> Lemma
         | _ -> failwithf "The expression %A is not recognized as an identity." (src f)  
-    let axiom theory e = theorem theory [] e
-    let ident_axiom theory e = ident theory [] e
-
-    let logical_contr steps f = contr Proof.Logic steps f
-    let logical_theorem steps f = theorem Proof.Logic steps f
-    let logical_axiom e = axiom Proof.Logic e
-    let logical_ident steps f = ident Proof.Logic steps f
-    let logical_ident_axiom e = logical_ident [] e
-
-    let id_ax_ab theory expr = expr |> ident_axiom theory |> Lemma |> AB
-
-    let id_ax_a theory expr = expr |> ident_axiom theory |> Lemma |> EntireA
-    let id_ax_b theory expr = expr |> ident_axiom theory |> Lemma |> EntireB
+    let id_ax theory e = id_lem theory [] e
     
+    let ax' e = ax Proof.Logic e
+    let contr_lem' steps f = contr_lem Proof.Logic steps f
+    let id_lem' steps f = id_lem Proof.Logic steps f
+    let id_ax' e = id_lem' [] e
 
-    let id_ax_l_a theory expr = expr |> ident_axiom theory |> Lemma |> LeftA
-    let id_ax_l_b theory expr = expr |> ident_axiom theory |> Lemma |> LeftB
-
-    let id_ax_r_a theory expr = expr |> ident_axiom theory |> Lemma |> RightA
-    let id_ax_r_b theory expr = expr |> ident_axiom theory |> Lemma |> RightB
-
-    let id_ab theory proof expr = expr |> ident theory proof |> Lemma |> AB
+    (* proof step shortcuts *)
     
-    let id_a theory proof expr = expr |> ident theory proof |> Lemma |> EntireA
-    let id_b theory proof expr = expr |> ident theory proof |> Lemma |> EntireB
+    let id_ax_ab theory expr = expr |> id_ax theory |> AB
+    let id_ax_a theory expr = expr |> id_ax theory |> EntireA
+    let id_ax_b theory expr = expr |> id_ax theory |> EntireB
+    let id_ax_l_a theory expr = expr |> id_ax theory |> LeftA
+    let id_ax_l_b theory expr = expr |> id_ax theory |> LeftB
+    let id_ax_r_a theory expr = expr |> id_ax theory |> RightA
+    let id_ax_r_b theory expr = expr |> id_ax theory |> RightB
 
-    let id_l_a theory proof expr = expr |> ident theory proof |> Lemma |> LeftA
-    let id_l_b theory proof expr = expr |> ident theory proof |> Lemma |> LeftB
-
-    let id_r_a theory proof expr = expr |> ident theory proof |> Lemma |> RightA
-    let id_r_b theory proof expr = expr |> ident theory proof |> Lemma |> RightB
+    let id_ab theory proof expr = expr |> id_lem theory proof |> AB
+    let id_a theory proof expr = expr |> id_lem theory proof |> EntireA
+    let id_b theory proof expr = expr |> id_lem theory proof |> EntireB
+    let id_l_a theory proof expr = expr |> id_lem theory proof |> LeftA
+    let id_l_b theory proof expr = expr |> id_lem theory proof |> LeftB
+    let id_r_a theory proof expr = expr |> id_lem theory proof |> RightA
+    let id_r_b theory proof expr = expr |> id_lem theory proof |> RightB

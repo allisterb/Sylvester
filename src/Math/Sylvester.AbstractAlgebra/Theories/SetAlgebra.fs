@@ -4,11 +4,11 @@ module SetAlgebraTheory =
     open BooleanAlgebraTheory    
 
     /// Print set algebra operator symbols
-    let print_SetAlgebra_Operators (s:string) = 
+    let print_set_algebra_operators (s:string) = 
         s.Replace("|+|", "\u222A")
          .Replace("|*|", "\u2229")
 
-    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ id @>, print_SetAlgebra_Operators)
+    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ id @>, print_set_algebra_operators)
 
     let ReduceIdemp = set_algebra.Rules.[0]
 

@@ -162,7 +162,7 @@ module FormulaPatterns =
     /// x + (-x) == zero
     let (|Inverse|_|) (op: Expr<'t->'t->'t>) (inverse: Expr<'t -> 't>) (zero: Expr<'t>)   =
         function
-        | Binary op (a1, Unary inverse (a2)), z  when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Invertibility" <@ fun (x:'t) -> (%op) x ((%inverse) x) = (%zero) @>)
+        | Binary op (a1, Unary inverse (a2)), z  when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Definition of inverse" <@ fun (x:'t) -> (%op) x ((%inverse) x) = (%zero) @>)
         | _ -> None
 
     /// x + x == x
