@@ -1,5 +1,5 @@
 # Sylph
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allisterb/sylph-notebooks.git/master?filepath=Sylph.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allisterb/sylph-notebooks.git/master)
 [![NuGet](https://img.shields.io/nuget/v/Sylph.svg)](https://www.nuget.org/packages/Sylph/)
 
 [Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (symbolic proof helper) is a language-integrated proof assistant for F#.
