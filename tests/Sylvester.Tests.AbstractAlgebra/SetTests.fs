@@ -8,7 +8,6 @@ module Set =
     open Xunit
 
     open Sylvester
-    open Sylph
     open SetAlgebraTheory
 
     [<Fact>]
@@ -43,12 +42,5 @@ module Set =
     [<Fact>]
     let ``ff``() = 
         let x,y = var2<Set<obj>>
-        
-        //let l1 = ident_axiom set_algebra <@y = y@> |> Lemma |> EntireA
-        
-        let t_3_1 = <@(x |+| y = U) |&| (x |*| y = Set.Empty) ==> (y = x)@> |> theorem set_algebra []
-        
-        let l1 = ident_axiom set_algebra <@(y |+| Set.Empty) = y@>
-        
-        
-        Assert.NotNull t_3_1
+        Assert.True(set_algebra |- <@ (x |*| y) = (y |*| x) @>)
+      

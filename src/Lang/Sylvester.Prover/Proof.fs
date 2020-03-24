@@ -10,9 +10,16 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
     member val Axioms = axioms
     member val Rules = rules
     member val FormulaPrinter = defaultArg formulaPrinter id
-    member x.AxiomaticallyEqual a b = x.Axioms (a, b) |> Option.isSome
+    member x.AxiomaticallyEqual a b = x.Axioms (a, b) |> Option.isSome  
     static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEqual a b
-   
+    static member (|-) (t:Theory, e:Expr<'t>) =         
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        match f with 
+        | Equiv (a, b) -> t |- (a, b)
+        | Implies (a, b)-> t |- (a, b)
+        | _ -> failwithf "The expression %A is not recognized as a theorem statement." (src f)
+
     /// The default logical theory used in Sylph proofs.
     static member val S =     
         let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
@@ -104,7 +111,7 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
                     stepCount <- steps.Length
                 else if L |- (a, b)  then
                    let axeq = L.Axioms (a, b)
-                   sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical axiom of %s" axeq.Value.Name) |> prooflog
+                   sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
                    sprintf "Proof complete." + proof_sep |> prooflog
                    stepCount <- steps.Length               
     do while stepCount < steps.Length do
@@ -147,7 +154,7 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
             stepCount <- steps.Length
         else if L |- (astate, bstate) then 
             let axeq = L.Axioms (astate, bstate)
-            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical axiom of %s" axeq.Value.Name) |> prooflog
+            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
         else
@@ -170,8 +177,14 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
 
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = L and set(v) = L <- v
-    static member (|-) ((proof:Proof), (a, b)) = proof.A = a && proof.B = b && proof.Complete 
-    
+    static member (|-) (proof:Proof, (a:Expr, b:Expr)) = sequal2 proof.A proof.B a b && proof.Complete
+    static member (|-) (proof:Proof, e:Expr<'t>) =         
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        match f with 
+        | Equiv (a, b) -> proof |- (a, b)
+        | Implies (a, b)-> proof |- (a, b)
+        | _ -> failwithf "The expression %A is not recognized as a theorem statement." (src f)     
     static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.Theory, l.Steps @ [r])
     static member (+) (l:Proof, r:Proof) = 
         let rec subst (p:Proof) = 

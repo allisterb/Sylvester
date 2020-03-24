@@ -2,24 +2,37 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allisterb/sylph-notebooks.git/master?filepath=Sylph.ipynb)
 [![NuGet](https://img.shields.io/nuget/v/Sylph.svg)](https://www.nuget.org/packages/Sylph/)
 
-[Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (Sylvester proof helper) is a language-integrated proof assistant for F#.
+[Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (symbolic proof helper) is a language-integrated proof assistant for F#.
 
+```fsharp
+// Load the Sylvester abstract algebra package which contains the integer_algebra theory
+#r "nuget: Sylvester.AbstractAlgebra" 
+// Load Jupyter helpers for the .NET Core kernel
+#load "netcore.fsx"
+```
 ```fsharp
 open Sylvester
 open IntegerAlgebra 
 
-// Declare some integer variables for use in proofs
+// Declare some integer variables for use in formulae
 let a,b,c = var3<int>
 
 // Prove the identity a * 0 = 0 use the rules and axioms of integer algebra
-let t1 = ident <@ a * 0 = 0 @> integer_algebra [
-    // a * 0 = a * 0 + 0
+let p1 = proof <@ a * 0 = 0 @> integer_algebra [
+    // a * 0 = a * 0 + 0 is axiomatic in the integer_algebra theory.
     let lemma1 = <@ a * 0 = a * 0 + 0 @> |> int_id_ax
-    // -(a * 0 ) + (a * 0) = 0
+    
+    // 0 = -(a * 0 ) + (a * 0) can be proved in the integer_algebra theory.
     let lemma2 = <@ 0 = -(a * 0) + (a * 0) @> |> int_id [Commute |> EntireB]
+    
+    // Substitute the identity in lemma1 into A
     lemma1 |> EntireA
+    
+    // A is commutative
     Commute |> EntireA
+    // Subsititute the identity in lemma2 into the left of A
     lemma2 |> LeftA    
+    // Subsititute the identity in lemma2 into B
     lemma2 |> EntireB
     RightAssoc |> EntireA
     LeftCancel |> AB
@@ -28,140 +41,155 @@ let t1 = ident <@ a * 0 = 0 @> integer_algebra [
 ]
 ```
 
-Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# function of a particular type for which a code quotation and full expression tree are available. Formulas in a theorem do not have to be logical formulas but any 2 F#/.NET functions of the same type where it makes sense to reason about them equationally. 
+    [Lemma] Proof of A: a ⋅ 0 ≡ B: a ⋅ 0 + 0:
+    [Lemma] ⊢ a ⋅ 0 ≡ a ⋅ 0 + 0. [Axiom of Identity]
+    [Lemma] Proof complete.
+    
+    [Lemma] Proof of A: 0 ≡ B: -(a ⋅ 0) + a ⋅ 0:
+    [Lemma] 1. B is commutative: -(a ⋅ 0) + a ⋅ 0 ≡ a ⋅ 0 + -(a ⋅ 0).
+    [Lemma] ⊢ 0 ≡ a ⋅ 0 + -(a ⋅ 0). [Definition of Inverse]
+    [Lemma] Proof complete.
+    
+    Proof of A: a ⋅ 0 ≡ B: 0:
+    1. Substitute a ⋅ 0 in A with a ⋅ 0 + 0.
+    Proof incomplete. Current state: a ⋅ 0 + 0 ≡ 0.
+    2. A is commutative: a ⋅ 0 + 0 ≡ 0 + a ⋅ 0.
+    Proof incomplete. Current state: 0 + a ⋅ 0 ≡ 0.
+    3. Substitute 0 in A with -(a ⋅ 0) + a ⋅ 0.
+    Proof incomplete. Current state: -(a ⋅ 0) + a ⋅ 0 + a ⋅ 0 ≡ 0.
+    4. Substitute 0 in A with -(a ⋅ 0) + a ⋅ 0.
+    Proof incomplete. Current state: -(a ⋅ 0) + a ⋅ 0 + a ⋅ 0 ≡ -(a ⋅ 0) + a ⋅ 0.
+    5. A is right-associative: -(a ⋅ 0) + a ⋅ 0 + a ⋅ 0 ≡ -(a ⋅ 0) + (a ⋅ 0 + a ⋅ 0).
+    Proof incomplete. Current state: -(a ⋅ 0) + (a ⋅ 0 + a ⋅ 0) ≡ -(a ⋅ 0) + a ⋅ 0.
+    6. Cancel equivalent terms on the LHS in A and B: (-(a ⋅ 0) + (a ⋅ 0 + a ⋅ 0), -(a ⋅ 0) + a ⋅ 0) ≡ (a ⋅ 0 + a ⋅ 0, a ⋅ 0).
+    Proof incomplete. Current state: a ⋅ 0 + a ⋅ 0 ≡ a ⋅ 0.
+    7. Collect multiplication terms distributed over addition in A: a ⋅ 0 + a ⋅ 0 ≡ a ⋅ (0 + 0).
+    Proof incomplete. Current state: a ⋅ (0 + 0) ≡ a ⋅ 0.
+    8. Reduce integer constants in A: a ⋅ (0 + 0) ≡ a ⋅ 0.
+    ⊢ a ⋅ 0 ≡ a ⋅ 0. [Logical Axiom of Equality]
+    Proof complete.
+    
 
-In Sylph F# functions of the same type lose their interpretation and become sequences of symbols that match certain patterns and can be transformed in certain ways.
+Unlike other theorem provers Sylph does not require an external DSL or parser for expressing theorem statements, or an external interactive environment for creating and storing the state of proofs. Theorems are expressed as the equivalence of 2 formulas and a [formula](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Formula.fs) is defined as any F# expression of a particular type for which a code quotation and full expression tree is available. Formulas in a theorem do not have to be logical formulas but any 2 valid F# expressions of the same type where it makes sense to reason about them equationally.
+
 
 ```fsharp
-// Use the Sylph NuGet package
-#r "nuget: Sylph"
+// Define a formula of interest using an ordinary function with the Formula attribute
+[<Formula>]
+let f1 x = 3 * x + 6 + 2 * x + 4
+
+// Or use an expression directly
+let f2 = <@ a * a + 6 * b + 5@>
 ```
-```fsharp
-open Sylph
-
-// Define some integer formulae of interest
-let F1 = F (fun x -> 2 * x + 8)
-let F2 = F (fun x -> 2 * x + 3 + 5)
-let F3 = F (fun x -> 3 * x + 6 + 2 * x + 4)
-let F4 = F (fun x -> 5 * x + 10)
-```
 
 
 ```fsharp
-// Or use a reflected definition
-
-[<ReflectedDefinition>]
-let f5 x = x * x + 4 * x
-
-let F5 = F f5
-
 // Each formula has a symbolic expression
-F1.Expr
+expand <@ f1 @>
 ```
 
 
 
 
-    Lambda (x,
-            Call (None, op_Addition,
-                  [Call (None, op_Multiply, [Value (2), x]), Value (8)]))
+Lambda (x,
+        Call (None, op_Addition,
+              [Call (None, op_Addition,
+                     [Call (None, op_Addition,
+                            [Call (None, op_Multiply, [Value (3), x]), Value (6)]),
+                      Call (None, op_Multiply, [Value (2), x])]), Value (4)]))
 
 
 
 
 ```fsharp
 // And can also be decompiled to the F# source
-F1.Src
+src f2
 ```
 
 
 
 
-    "fun x -> 2 * x + 8"
+    a * a + 6 * b + 5
 
 
 
-Proofs are constructed according to the axioms and rules of a [proof system](https://github.com/allisterb/Sylvester/blob/master/src/Lang/Sylvester.Prover/Systems/IntegerArithmetic.fs) which define the rules that can be used to match and transform formula expressions that preserve equivalence.
+Proofs are constructed according to the axioms and rules of [theories](https://github.com/allisterb/Sylvester/blob/master/src/Math/Sylvester.AbstractAlgebra/Theories/) which define the rules that can be used to match and transform formula expressions that preserve equivalence.
 
 
 ```fsharp
-// Open the integer arithmetic proof system
-open IntegerArithmetic
-
-// Define some integer arithmetic formulae
-let a = F (fun x -> 3 * x + 5)
-let b = F (fun x -> 5 + 3 * x)
-let c = F (fun x -> 6 * x)
-
 //Some theorems are true axiomatically 
-// e.g the formulae a and b are equivalent because of the commutativity axiom of integer arithmetic.
-integer_arithmetic |- (a <=> b)
+integer_algebra |- <@ (a + b) = (b + a) @>  
 ```
 
 
 
 
-    true
+    True
 
 
 
-[Axioms](https://github.com/allisterb/Sylvester/blob/5811b1f544d94057b40728b9086b7ccd940428ab/src/Lang/Sylvester.Prover/Systems/IntegerArithmetic.fs#L13) are pure functions that match patterns in primitive unary and binary formulas e.g the addition identity axiom for integer arithmetic is [defined](https://github.com/allisterb/Sylvester/blob/3117e5611d7f258290853a10d8c3925e39194836/src/Lang/Sylvester.Prover/Systems/IntegerArithmetic.fs#L47) as:
+
+```fsharp
+//Provable directly from axioms
+let t2 = ident <@ a + b + c = a + (b + c)@> integer_algebra []
+```
+
+    Proof of A: a + b + c ≡ B: a + (b + c):
+    ⊢ a + b + c ≡ a + (b + c). [Axiom of Associativity]
+    Proof complete.
+    
+
+Axioms are pure functions or schemas that match patterns in primitive unary and binary formulas, which define a set of formulae that are always equivalent in a theory e.g an identity axiom for a theory is defined as:
 
 ````fsharp
- let (|AddIdentity|_|) = 
+/// x + 0 == x
+let (|Identity|_|) (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
     function
-    | a1, Add(a2, Int32 0) when sequal a1 a2 -> Some true
-    | Lambda(_, a1), Lambda(_, Add(a2, Int32 0)) when sequal a1 a2 -> Some true
-    | Add(a1, Int32 0), a2 when sequal a1 a2 -> Some true
-    | Lambda(_, Add(a1, Int32 0)), Lambda(_, a2) when sequal a1 a2 -> Some true
+    | Binary op (a1, z), a2 when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Identity" <@ fun (x:'t) -> (%op) x (%zero) = (%zero) @>)
     | _ -> None
 ````
 
 
 ```fsharp
-// True because of the addition identity axiom
-integer_arithmetic |- (c <=> F(fun x -> 6*x + 0))
+// True by the addition identity axiom
+integer_algebra |- <@ c + a + 0 = c + a @> 
 ```
 
 
 
 
-    true
+    True
 
 
 
-Proof systems also contain rules that are valid ways to transform two function expressions when they are not in a primitive unary or binary form. Theorems usully require a *proof* which is just a `list` of rule applications that must all be instances of rules defined only by the proof system.
+Theores also contain rules that are valid ways to transform two formulas when they are not in a primitive unary or binary form. Theorems that two formulae are equivalent usully require a *proof* which is just a `list` of rule applications that must all be instances of rules defined only by the proof system.
 
 
 ```fsharp
-// Not provable directly from axioms: 2x + 3 + 5 <=> 2x + 8 
-integer_arithmetic |- (F1 <=> F2)
+// Not provable directly from axioms: 2a + 5 + 3 = 2a + 8 
+let p3 = proof <@ 2 * a + 5 + 3 = 2 * a + 8@> integer_algebra []
 ```
 
-
-
-
-    false
-
-
+    Proof of A: 2 ⋅ a + 5 + 3 ≡ B: 2 ⋅ a + 8:
+    Proof incomplete. Current state: 2 ⋅ a + 5 + 3 ≡ 2 ⋅ a + 8.
+    
 
 
 ```fsharp
-// Proof of F1 <=> F2 using two steps
-let p1 = proof (F1 <=> F2) integer_arithmetic [
-        right_assoc_b 
-        equal_constants_a_b
+// Proof of 2a + 5 + 3 = 2a + 8 using two steps
+let p3 = proof <@ 2 * a + 5 + 3 = 2 * a + 8@> integer_algebra [
+        RightAssoc |> EntireA
+        Reduce |> EntireA
     ]
 ```
 
-
-    Proof of A: fun x -> 2 * x + 8 <=> B: fun x -> 2 * x + 3 + 5:
-    1. B is right-associative: fun x -> 2 * x + 3 + 5 <=> fun x -> 2 * x + (3 + 5)
-    Proof incomplete.
-    2. Reduce equal constants in A and B: fun x -> 2 * x + (3 + 5) <=> fun x -> 2 * x + 8
+    Proof of A: 2 ⋅ a + 5 + 3 ≡ B: 2 ⋅ a + 8:
+    1. A is right-associative: 2 ⋅ a + 5 + 3 ≡ 2 ⋅ a + (5 + 3).
+    Proof incomplete. Current state: 2 ⋅ a + (5 + 3) ≡ 2 ⋅ a + 8.
+    2. Reduce integer constants in A: 2 ⋅ a + (5 + 3) ≡ 2 ⋅ a + 8.
+    ⊢ 2 ⋅ a + 8 ≡ 2 ⋅ a + 8. [Logical Axiom of Equality]
     Proof complete.
-
-
+    
 
 Rules are defined as recursive pure functions that preserve equivalence between two formulae e.g the rule of right associativity for arithmetic operators is implemented as:
 
@@ -177,21 +205,13 @@ let rec right_assoc =
 
 ```fsharp
 // Apply the right_assoc rule to a formula expression and compare
-F2.Expr, right_assoc F2.Expr
+<@ 2 * a + 5 + 3 = 2 * a + 8@> |> src, <@ 2 * a + 5 + 3 = 2 * a + 8@> |> right_assoc |> src
 ```
 
 
 
 
-    (Lambda (x,
-            Call (None, op_Addition,
-                  [Call (None, op_Addition,
-                         [Call (None, op_Multiply, [Value (2), x]), Value (3)]),
-                   Value (5)])),
-     Lambda (x,
-            Call (None, op_Addition,
-                  [Call (None, op_Multiply, [Value (2), x]),
-                   Call (None, op_Addition, [Value (3), Value (5)])])))
+<table><thead><tr><th>Item1</th><th>Item2</th></tr></thead><tbody><tr><td>2 * a + 5 + 3 = 2 * a + 8</td><td>2 * a + (5 + 3) = 2 * a + 8</td></tr></tbody></table>
 
 
 
@@ -200,215 +220,190 @@ Rules are normal F# functions that can be chained together:
 
 ```fsharp
 // Rules on formula expressions can be chained together.
-(right_assoc >> equal_constants) F2.Expr
+<@ 2 * a + 5 + 3 = 2 * a + 8@> |> right_assoc |> reduce_constants |> src 
 ```
 
 
 
 
-    Lambda (x,
-            Call (None, op_Addition,
-                  [Call (None, op_Multiply, [Value (2), x]), Value (8)]))
+    2 * a + 8 = 2 * a + 8
 
 
+
+In the above case we can see that identity is true since one can be transformed into another and we use these two rules in our proof.
 
 
 ```fsharp
-// Apply two rules and compare the resulting source
-src F2.Expr, (right_assoc >> equal_constants >> src) F2.Expr
+p3.Steps
 ```
 
 
 
 
-    ("fun x -> 2 * x + 3 + 5", "fun x -> 2 * x + 8")
+<table><thead><tr><th><i>index</i></th><th>Item</th><th>Tag</th><th>IsEntireA</th><th>IsEntireB</th><th>IsLeftA</th><th>IsLeftB</th><th>IsRightA</th><th>IsRightB</th><th>IsAB</th><th>Rule</th><th>RuleName</th></tr></thead><tbody><tr><td>0</td><td>{ Sylvester.Rule+Rule: Item1: (expression) is right-associative, Item2: { Sylvester.IntegerAlgebra+RightAssoc@107:  }, Tag: 0, IsRule: True, IsSubst: False, Name: (expression) is right-associative, Apply: { Sylvester.IntegerAlgebra+RightAssoc@107:  } }</td><td>0</td><td>True</td><td>False</td><td>False</td><td>False</td><td>False</td><td>False</td><td>False</td><td>{ Sylvester.Rule+Rule: Item1: (expression) is right-associative, Item2: { Sylvester.IntegerAlgebra+RightAssoc@107:  }, Tag: 0, IsRule: True, IsSubst: False, Name: (expression) is right-associative, Apply: { Sylvester.IntegerAlgebra+RightAssoc@107:  } }</td><td>(expression) is right-associative</td></tr><tr><td>1</td><td>{ Sylvester.Rule+Rule: Item1: Reduce integer constants in (expression), Item2: { Sylvester.IntegerAlgebra+Reduce@101:  }, Tag: 0, IsRule: True, IsSubst: False, Name: Reduce integer constants in (expression), Apply: { Sylvester.IntegerAlgebra+Reduce@101:  } }</td><td>0</td><td>True</td><td>False</td><td>False</td><td>False</td><td>False</td><td>False</td><td>False</td><td>{ Sylvester.Rule+Rule: Item1: Reduce integer constants in (expression), Item2: { Sylvester.IntegerAlgebra+Reduce@101:  }, Tag: 0, IsRule: True, IsSubst: False, Name: Reduce integer constants in (expression), Apply: { Sylvester.IntegerAlgebra+Reduce@101:  } }</td><td>Reduce integer constants in (expression)</td></tr></tbody></table>
 
 
 
-In the above case we can see that the two formulae F1 and F2 are equivalent since one can be transformed into another and we use these two rules in our proof `p1`.
-
-
-```fsharp
-p1.Steps
-```
-
-
-
-
-    [Rule ("B is right-associative",<fun:right_assoc_b@218>);
-     Rule ("Reduce equal constants in A and B",<fun:equal_constants_a_b@206>)]
-
-
+When a proof is constructed each step is checked and executed and the resulting state of the pair of formulae logged and stored. This is a longer proof using more rules of inference for integer algebra:
 
 
 ```fsharp
-p1 |- (F1 <=> F2)
-```
-
-
-
-
-    true
-
-
-
-When a proof is constructed each step is checked and executed and the resulting state of the pair of formulae logged and stored. This is a longer proof using more rules of inference for integer arithmetic:
-
-
-```fsharp
-// 3 * x + 6 + 2 * x + 4 <=> 5 * x + 10
-let p2 = proof (F3 <=> F4) integer_arithmetic [
-    right_assoc_a 
-    commute_a_right
-    right_assoc_a 
-    left_assoc_a_right
-    equal_constants_a_b
-    commute_a_right
-    left_assoc_a
-    collect_a_left
-    equal_constants_a_b
-    commute_a_left
+// 3 * x + 6 + 2 * x + 4 = 5 * x + 10
+let p4 = proof <@ fun x -> 3 * x + 6 + 2 * x + 4 = 5 * x + 10 @> integer_algebra [
+    RightAssoc |> EntireA
+    Commute |> RightA
+    RightAssoc |> EntireA 
+    LeftAssoc |> RightA
+    Reduce |> AB
+    Commute |> RightA
+    LeftAssoc |> EntireA
+    Collect |> LeftA
+    Reduce |> EntireA
+    Commute |> LeftA
     ]
 ```
 
-
-    Proof of A: fun x -> 3 * x + 6 + 2 * x + 4 <=> B: fun x -> 5 * x + 10:
-    1. A is right-associative: fun x -> 3 * x + 6 + 2 * x + 4 <=> fun x -> 3 * x + 6 + (2 * x + 4)
-    Proof incomplete.
-    2. Right side of A is commutative: fun x -> 3 * x + 6 + (2 * x + 4) <=> fun x -> 3 * x + 6 + (4 + 2 * x)
-    Proof incomplete.
-    3. A is right-associative: fun x -> 3 * x + 6 + (4 + 2 * x) <=> fun x -> 3 * x + (6 + (4 + 2 * x))
-    Proof incomplete.
-    4. Right side of A is left-associative: fun x -> 3 * x + (6 + (4 + 2 * x)) <=> fun x -> 3 * x + (6 + 4 + 2 * x)
-    Proof incomplete.
-    5. Reduce equal constants in A and B: fun x -> 3 * x + (6 + 4 + 2 * x) <=> fun x -> 3 * x + (10 + 2 * x)
-    Proof incomplete.
-    6. Right side of A is commutative: fun x -> 3 * x + (10 + 2 * x) <=> fun x -> 3 * x + (2 * x + 10)
-    Proof incomplete.
-    7. A is left-associative: fun x -> 3 * x + (2 * x + 10) <=> fun x -> 3 * x + 2 * x + 10
-    Proof incomplete.
-    8. Collect multiplication terms distributed over addition in left-side of A: fun x -> 3 * x + 2 * x + 10 <=> fun x -> x * (3 + 2) + 10
-    Proof incomplete.
-    9. Reduce equal constants in A and B: fun x -> x * (3 + 2) + 10 <=> fun x -> x * 5 + 10
-    Proof incomplete.
-    10. Left side of A is commutative: fun x -> x * 5 + 10 <=> fun x -> 5 * x + 10
+    Proof of A: 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ B: 5 ⋅ x + 10:
+    1. A is right-associative: 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ 3 ⋅ x + 6 + (2 ⋅ x + 4).
+    Proof incomplete. Current state: 3 ⋅ x + 6 + (2 ⋅ x + 4) ≡ 5 ⋅ x + 10.
+    2. A is commutative: 3 ⋅ x + 6 + (2 ⋅ x + 4) ≡ 3 ⋅ x + 6 + (4 + 2 ⋅ x).
+    Proof incomplete. Current state: 3 ⋅ x + 6 + (4 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    3. A is right-associative: 3 ⋅ x + 6 + (4 + 2 ⋅ x) ≡ 3 ⋅ x + (6 + (4 + 2 ⋅ x)).
+    Proof incomplete. Current state: 3 ⋅ x + (6 + (4 + 2 ⋅ x)) ≡ 5 ⋅ x + 10.
+    4. A is left-associative: 3 ⋅ x + (6 + (4 + 2 ⋅ x)) ≡ 3 ⋅ x + (6 + 4 + 2 ⋅ x).
+    Proof incomplete. Current state: 3 ⋅ x + (6 + 4 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    5. Reduce integer constants in A: 3 ⋅ x + (6 + 4 + 2 ⋅ x) ≡ 3 ⋅ x + (10 + 2 ⋅ x).
+    Proof incomplete. Current state: 3 ⋅ x + (10 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    6. A is commutative: 3 ⋅ x + (10 + 2 ⋅ x) ≡ 3 ⋅ x + (2 ⋅ x + 10).
+    Proof incomplete. Current state: 3 ⋅ x + (2 ⋅ x + 10) ≡ 5 ⋅ x + 10.
+    7. A is left-associative: 3 ⋅ x + (2 ⋅ x + 10) ≡ 3 ⋅ x + 2 ⋅ x + 10.
+    Proof incomplete. Current state: 3 ⋅ x + 2 ⋅ x + 10 ≡ 5 ⋅ x + 10.
+    8. Collect multiplication terms distributed over addition in A: 3 ⋅ x + 2 ⋅ x + 10 ≡ x ⋅ (3 + 2) + 10.
+    Proof incomplete. Current state: x ⋅ (3 + 2) + 10 ≡ 5 ⋅ x + 10.
+    9. Reduce integer constants in A: x ⋅ (3 + 2) + 10 ≡ x ⋅ 5 + 10.
+    Proof incomplete. Current state: x ⋅ 5 + 10 ≡ 5 ⋅ x + 10.
+    10. A is commutative: x ⋅ 5 + 10 ≡ 5 ⋅ x + 10.
+    ⊢ 5 ⋅ x + 10 ≡ 5 ⋅ x + 10. [Logical Axiom of Equality]
     Proof complete.
-
-
+    
 
 
 ```fsharp
 // Proof state after sixth step
-p2.State.[5]
+p4.State.[5]
 ```
 
 
 
 
-    (Lambda (x,
-            Call (None, op_Addition,
-                  [Call (None, op_Multiply, [Value (3), x]),
-                   Call (None, op_Addition,
-                         [Call (None, op_Multiply, [Value (2), x]), Value (10)])])),
-     Lambda (x,
-            Call (None, op_Addition,
-                  [Call (None, op_Multiply, [Value (5), x]), Value (10)])),
-     "6. Right side of A is commutative: fun x -> 3 * x + (10 + 2 * x) <=> fun x -> 3 * x + (2 * x + 10)")
+<table><thead><tr><th>Item1</th><th>Item2</th><th>Item3</th></tr></thead><tbody><tr><td>{ Microsoft.FSharp.Quotations.FSharpExpr: CustomAttributes: [  ], Type: System.Int32 }</td><td>{ Microsoft.FSharp.Quotations.FSharpExpr: CustomAttributes: [  ], Type: System.Int32 }</td><td>6. A is commutative: 3 * x + (10 + 2 * x) == 3 * x + (2 * x + 10).</td></tr></tbody></table>
 
 
 
-There are two kinds of rules: 
-* A general substitution rule which says that in any proof a formula B can be substituted for a formula A when a proof exists for A <=> B in the same system.
-* Rules derived from axioms of a particular proof system and the substitution rule.
-    
-The substitution rule also allows proofs to be created in stages e.g we can create a partial proof of F3 <=> F4.
+There are two kinds of rules: rules derived from axioms of a particular theory and a general substitution rule (derived from the axiom of symbolic equality) which says that in any proof a formula B can be substituted for a formula A when a proof exists for A = B in the same system. The substitution rule is what allows proofs to be created in stages e.g we can create a partial proof of the last theorem.
 
 
 ```fsharp
-// 3 * x + 6 + 2 * x + 4 <=> 5 * x + 10
-let p3 = proof (F3 <=> F4) integer_arithmetic [
-    right_assoc_a 
-    commute_a_right
-    right_assoc_a 
-    left_assoc_a_right
-    equal_constants_a_b
+[<Formula>]
+let f4 x = 3 * x + 6 + 2 * x + 4 = 5 * x + 10 
+    
+let p5 = proof <@ f4 @> integer_algebra [
+    RightAssoc |> EntireA
+    Commute |> RightA
+    RightAssoc |> EntireA 
+    LeftAssoc |> RightA
+    Reduce |> AB
 ]
 ```
 
-
-    Proof of A: fun x -> 3 * x + 6 + 2 * x + 4 <=> B: fun x -> 5 * x + 10:
-    1. A is right-associative: fun x -> 3 * x + 6 + 2 * x + 4 <=> fun x -> 3 * x + 6 + (2 * x + 4)
-    Proof incomplete.
-    2. Right side of A is commutative: fun x -> 3 * x + 6 + (2 * x + 4) <=> fun x -> 3 * x + 6 + (4 + 2 * x)
-    Proof incomplete.
-    3. A is right-associative: fun x -> 3 * x + 6 + (4 + 2 * x) <=> fun x -> 3 * x + (6 + (4 + 2 * x))
-    Proof incomplete.
-    4. Right side of A is left-associative: fun x -> 3 * x + (6 + (4 + 2 * x)) <=> fun x -> 3 * x + (6 + 4 + 2 * x)
-    Proof incomplete.
-    5. Reduce equal constants in A and B: fun x -> 3 * x + (6 + 4 + 2 * x) <=> fun x -> 3 * x + (10 + 2 * x)
-    Proof incomplete.
-
-
+    Proof of A: 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ B: 5 ⋅ x + 10:
+    1. A is right-associative: 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ 3 ⋅ x + 6 + (2 ⋅ x + 4).
+    Proof incomplete. Current state: 3 ⋅ x + 6 + (2 ⋅ x + 4) ≡ 5 ⋅ x + 10.
+    2. A is commutative: 3 ⋅ x + 6 + (2 ⋅ x + 4) ≡ 3 ⋅ x + 6 + (4 + 2 ⋅ x).
+    Proof incomplete. Current state: 3 ⋅ x + 6 + (4 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    3. A is right-associative: 3 ⋅ x + 6 + (4 + 2 ⋅ x) ≡ 3 ⋅ x + (6 + (4 + 2 ⋅ x)).
+    Proof incomplete. Current state: 3 ⋅ x + (6 + (4 + 2 ⋅ x)) ≡ 5 ⋅ x + 10.
+    4. A is left-associative: 3 ⋅ x + (6 + (4 + 2 ⋅ x)) ≡ 3 ⋅ x + (6 + 4 + 2 ⋅ x).
+    Proof incomplete. Current state: 3 ⋅ x + (6 + 4 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    5. Reduce integer constants in A: 3 ⋅ x + (6 + 4 + 2 ⋅ x) ≡ 3 ⋅ x + (10 + 2 ⋅ x).
+    Proof incomplete. Current state: 3 ⋅ x + (10 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    
 
 If we then work on another proof which completes this proof we can join these two proofs together
 
 
 ```fsharp
-let p4 = proof (F(fun x -> 3 * x + (10 + 2 * x)) <=> F4) integer_arithmetic [
-    commute_a_right
-    left_assoc_a
-    collect_a_left
-    equal_constants_a_b
-    commute_a_left
+let p6 = proof <@ fun x -> 3 * x + (10 + 2 * x) = 5 * x + 10 @> integer_algebra [    
+    Commute |> RightA
+    LeftAssoc |> EntireA
+    Collect |> LeftA
+    Reduce |> EntireA
+    Commute |> LeftA
 ]
 ```
 
-
-    Proof of A: fun x -> 3 * x + (10 + 2 * x) <=> B: fun x -> 5 * x + 10:
-    1. Right side of A is commutative: fun x -> 3 * x + (10 + 2 * x) <=> fun x -> 3 * x + (2 * x + 10)
-    Proof incomplete.
-    2. A is left-associative: fun x -> 3 * x + (2 * x + 10) <=> fun x -> 3 * x + 2 * x + 10
-    Proof incomplete.
-    3. Collect multiplication terms distributed over addition in left-side of A: fun x -> 3 * x + 2 * x + 10 <=> fun x -> x * (3 + 2) + 10
-    Proof incomplete.
-    4. Reduce equal constants in A and B: fun x -> x * (3 + 2) + 10 <=> fun x -> x * 5 + 10
-    Proof incomplete.
-    5. Left side of A is commutative: fun x -> x * 5 + 10 <=> fun x -> 5 * x + 10
+    Proof of A: 3 ⋅ x + (10 + 2 ⋅ x) ≡ B: 5 ⋅ x + 10:
+    1. A is commutative: 3 ⋅ x + (10 + 2 ⋅ x) ≡ 3 ⋅ x + (2 ⋅ x + 10).
+    Proof incomplete. Current state: 3 ⋅ x + (2 ⋅ x + 10) ≡ 5 ⋅ x + 10.
+    2. A is left-associative: 3 ⋅ x + (2 ⋅ x + 10) ≡ 3 ⋅ x + 2 ⋅ x + 10.
+    Proof incomplete. Current state: 3 ⋅ x + 2 ⋅ x + 10 ≡ 5 ⋅ x + 10.
+    3. Collect multiplication terms distributed over addition in A: 3 ⋅ x + 2 ⋅ x + 10 ≡ x ⋅ (3 + 2) + 10.
+    Proof incomplete. Current state: x ⋅ (3 + 2) + 10 ≡ 5 ⋅ x + 10.
+    4. Reduce integer constants in A: x ⋅ (3 + 2) + 10 ≡ x ⋅ 5 + 10.
+    Proof incomplete. Current state: x ⋅ 5 + 10 ≡ 5 ⋅ x + 10.
+    5. A is commutative: x ⋅ 5 + 10 ≡ 5 ⋅ x + 10.
+    ⊢ 5 ⋅ x + 10 ≡ 5 ⋅ x + 10. [Logical Axiom of Equality]
     Proof complete.
+    
+
+
+```fsharp
+// Join p5 and p6 together to complete the proof of f4
+let p7 = p5 + p6
+```
+
+    [Lemma] Proof of A: 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ B: 3 ⋅ x + (10 + 2 ⋅ x):
+    [Lemma] 1. A is right-associative: 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ 3 ⋅ x + 6 + (2 ⋅ x + 4).
+    [Lemma] Proof incomplete. Current state: 3 ⋅ x + 6 + (2 ⋅ x + 4) ≡ 3 ⋅ x + (10 + 2 ⋅ x).
+    [Lemma] 2. A is commutative: 3 ⋅ x + 6 + (2 ⋅ x + 4) ≡ 3 ⋅ x + 6 + (4 + 2 ⋅ x).
+    [Lemma] Proof incomplete. Current state: 3 ⋅ x + 6 + (4 + 2 ⋅ x) ≡ 3 ⋅ x + (10 + 2 ⋅ x).
+    [Lemma] 3. A is right-associative: 3 ⋅ x + 6 + (4 + 2 ⋅ x) ≡ 3 ⋅ x + (6 + (4 + 2 ⋅ x)).
+    [Lemma] Proof incomplete. Current state: 3 ⋅ x + (6 + (4 + 2 ⋅ x)) ≡ 3 ⋅ x + (10 + 2 ⋅ x).
+    [Lemma] 4. A is left-associative: 3 ⋅ x + (6 + (4 + 2 ⋅ x)) ≡ 3 ⋅ x + (6 + 4 + 2 ⋅ x).
+    [Lemma] Proof incomplete. Current state: 3 ⋅ x + (6 + 4 + 2 ⋅ x) ≡ 3 ⋅ x + (10 + 2 ⋅ x).
+    [Lemma] 5. Reduce integer constants in A: 3 ⋅ x + (6 + 4 + 2 ⋅ x) ≡ 3 ⋅ x + (10 + 2 ⋅ x).
+    [Lemma] ⊢ 3 ⋅ x + (10 + 2 ⋅ x) ≡ 3 ⋅ x + (10 + 2 ⋅ x). [Logical Axiom of Equality]
+    [Lemma] Proof complete.
+    
+    Proof of A: 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ B: 5 ⋅ x + 10:
+    1. Joining proof of 3 ⋅ x + 6 + 2 ⋅ x + 4 ≡ 3 ⋅ x + (10 + 2 ⋅ x) to proof of 3 ⋅ x + (10 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    Proof incomplete. Current state: 3 ⋅ x + (10 + 2 ⋅ x) ≡ 5 ⋅ x + 10.
+    2. A is commutative: 3 ⋅ x + (10 + 2 ⋅ x) ≡ 3 ⋅ x + (2 ⋅ x + 10).
+    Proof incomplete. Current state: 3 ⋅ x + (2 ⋅ x + 10) ≡ 5 ⋅ x + 10.
+    3. A is left-associative: 3 ⋅ x + (2 ⋅ x + 10) ≡ 3 ⋅ x + 2 ⋅ x + 10.
+    Proof incomplete. Current state: 3 ⋅ x + 2 ⋅ x + 10 ≡ 5 ⋅ x + 10.
+    4. Collect multiplication terms distributed over addition in A: 3 ⋅ x + 2 ⋅ x + 10 ≡ x ⋅ (3 + 2) + 10.
+    Proof incomplete. Current state: x ⋅ (3 + 2) + 10 ≡ 5 ⋅ x + 10.
+    5. Reduce integer constants in A: x ⋅ (3 + 2) + 10 ≡ x ⋅ 5 + 10.
+    Proof incomplete. Current state: x ⋅ 5 + 10 ≡ 5 ⋅ x + 10.
+    6. A is commutative: x ⋅ 5 + 10 ≡ 5 ⋅ x + 10.
+    ⊢ 5 ⋅ x + 10 ≡ 5 ⋅ x + 10. [Logical Axiom of Equality]
+    Proof complete.
+    
+
+
+```fsharp
+p7 |- <@ f4 @>
+```
+
+
+
+
+    True
 
 
 
 
 ```fsharp
-// Join p3 and p4 together to complete the proof of F3 <=> F4 
-let p5 = p3 + p4
+
 ```
-
-
-    Proof of A: fun x -> 3 * x + 6 + 2 * x + 4 <=> B: fun x -> 5 * x + 10:
-    1. Joining proof of fun x -> 3 * x + 6 + 2 * x + 4 <=> fun x -> 3 * x + (10 + 2 * x) to proof of fun x -> 3 * x + (10 + 2 * x) <=> fun x -> 5 * x + 10.: fun x -> 3 * x + 6 + 2 * x + 4 <=> fun x -> 3 * x + (10 + 2 * x)
-    Proof incomplete.
-    2. Right side of A is commutative: fun x -> 3 * x + (10 + 2 * x) <=> fun x -> 3 * x + (2 * x + 10)
-    Proof incomplete.
-    3. A is left-associative: fun x -> 3 * x + (2 * x + 10) <=> fun x -> 3 * x + 2 * x + 10
-    Proof incomplete.
-    4. Collect multiplication terms distributed over addition in left-side of A: fun x -> 3 * x + 2 * x + 10 <=> fun x -> x * (3 + 2) + 10
-    Proof incomplete.
-    5. Reduce equal constants in A and B: fun x -> x * (3 + 2) + 10 <=> fun x -> x * 5 + 10
-    Proof incomplete.
-    6. Left side of A is commutative: fun x -> x * 5 + 10 <=> fun x -> 5 * x + 10
-    Proof complete.
-
-
-
-
-```fsharp
-p5 |- (F3 <=> F4)
-```
-
-
-
-
-    true
-
-

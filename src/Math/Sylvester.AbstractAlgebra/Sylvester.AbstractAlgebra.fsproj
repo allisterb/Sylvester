@@ -3,18 +3,18 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <UserSecretsId>319d1de7-61b8-4062-9ca2-995dd9eda8af</UserSecretsId>
-    <Version>0.2.3.0</Version>
+    <Version>0.2.3</Version>
     <Authors>Allister Beharry</Authors>
     <Description>F# Library for defining, exploring and proving concepts in abstract algebra.</Description>
     <Product>Sylvester</Product>
     <Company>Allister Beharry</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>First release with basic definitions up to rings.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add BooleanAlgebra and SetAlgebra theories for use with the Sylph proof assistant.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/src/Math/Sylvester.AbstractAlgebra</PackageProjectUrl>
     <Copyright>Copyright (c) 2019 2020 by Allister Beharry</Copyright>
     <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageTags>fsharp math abstract algebra theory</PackageTags>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>

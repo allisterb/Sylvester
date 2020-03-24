@@ -131,7 +131,6 @@ module IntegerAlgebra =
     ], print_integer_algebra_operators)
 
     (* proof step shortcuts*)
-     
     let int_id_ax expr = id_ax integer_algebra expr 
     let int_id_ax_ab expr = id_ax_ab integer_algebra expr
     let int_id_ax_a expr = id_ax_a integer_algebra expr

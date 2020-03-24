@@ -111,12 +111,12 @@ module FormulaPatterns =
         | Call(None, method, Sequence(l, r)::[]) when method.Name = "Sum" -> Some (l, r)
         | _ -> None
 
-    let (|Binary|_|) (op:Expr<'t->'t->'t>) =
+    let (|Binary|_|) (op:Expr<'t->'t->'u>) =
         function
         | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
         | _ -> None
 
-    let (|Unary|_|) (op:Expr<'t->'t>)=
+    let (|Unary|_|) (op:Expr<'t->'u>)=
         function
         | SpecificCall op (None,_,r::[]) when r.Type = typeof<'t> -> Some r
         | _ -> None
@@ -149,20 +149,20 @@ module FormulaPatterns =
     let (|Distrib|_|) (op1: Expr<'t->'t->'t>) (op2: Expr<'t->'t->'t>)  = 
         function
         | Binary op1 (a3, Binary op2 (b3, b4)), Binary op2 (Binary op1 (a1, b1), Binary op1 (a2, b2)) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> 
-                Some (pattern_desc "Distributive" <@ fun x y z -> (%op1) x ((%op2) y z) = (%op2) ((%op1) x y) ((%op1) x z) @>)
+                Some (pattern_desc "Distributivity" <@ fun x y z -> (%op1) x ((%op2) y z) = (%op2) ((%op1) x y) ((%op1) x z) @>)
         | _ -> None
 
     ///  -(y + z) == -x  * - z
     let (|UnaryDistrib|_|) (op1: Expr<'t->'t>) (op2: Expr<'t->'t->'t>)  = 
         function
         | Unary op1 (Binary op2 (a1, a2)), Binary op2 (Unary op1 a3, Unary op1 a4) when sequal a1 a3 && sequal a2 a4 -> 
-                Some (pattern_desc "Distributive" <@ fun x y -> (%op1) ((%op2) x y) = (%op2) ((%op1) x ) ((%op1) y) @>)
+                Some (pattern_desc "Distributivity" <@ fun x y -> (%op1) ((%op2) x y) = (%op2) ((%op1) x ) ((%op1) y) @>)
         | _ -> None
 
     /// x + (-x) == zero
     let (|Inverse|_|) (op: Expr<'t->'t->'t>) (inverse: Expr<'t -> 't>) (zero: Expr<'t>)   =
         function
-        | Binary op (a1, Unary inverse (a2)), z  when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Definition of inverse" <@ fun (x:'t) -> (%op) x ((%inverse) x) = (%zero) @>)
+        | Binary op (a1, Unary inverse (a2)), z  when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Definition of Inverse" <@ fun (x:'t) -> (%op) x ((%inverse) x) = (%zero) @>)
         | _ -> None
 
     /// x + x == x
@@ -180,22 +180,22 @@ module FormulaPatterns =
 
     let (|Defn|_|) (l:Expr<'t>) (r:Expr<'t>) =
         function
-        | a1, a2 when sequal2 a1 a2 l r -> Some (pattern_desc "Definition" <@ l = r @>)
+        | a1, a2 when sequal2 a1 a2 l r -> Some (pattern_desc (sprintf "Definition of %s" (src l)) <@ l = r @>)
         | _ -> None
 
     let (|BinaryOpDefn|_|) (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
         function
-        | Binary op1 (a1, a2), Unary op3 (Binary op2 (a3, a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc "Definition" <@ fun x y -> (%op1) x y = (%op2) x y @>)
+        | Binary op1 (a1, a2), Unary op3 (Binary op2 (a3, a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc (sprintf "Definition of %s" (src op1)) <@ fun x y -> (%op1) x y = (%op2) x y @>)
         | _ -> None
 
     let (|BinaryOpDefnL|_|) (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
         function
-        | Binary op1 (a1, a2), (Binary op2 (Unary op3 a3, a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc "Definition" <@ fun x y -> (%op1) x y = (%op2) x y @>)
+        | Binary op1 (a1, a2), (Binary op2 (Unary op3 a3, a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc (sprintf "Definition of %s" (src op1)) <@ fun x y -> (%op1) x y = (%op2) x y @>)
         | _ -> None
 
     let (|BinaryOpDefnR|_|) (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
         function
-        | Binary op1 (a1, a2), (Binary op2 (a3, Unary op3 a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc "Definition" <@ fun x y -> (%op1) x y = (%op2) x y @>)
+        | Binary op1 (a1, a2), (Binary op2 (a3, Unary op3 a4)) when sequal2 a1 a2 a3 a4 -> Some (pattern_desc (sprintf "Definition of %s" (src op1)) <@ fun x y -> (%op1) x y = (%op2) x y @>)
         | _ -> None
 
     let (|LeftCancel|_|) (op:Expr<'t->'t->'t>)  =
@@ -217,8 +217,7 @@ module FormulaPatterns =
 
 [<AutoOpen>]
 module Formula =  
-   let True =  <@ true @>
-   let False = <@ false @>
+   open FormulaPatterns
 
    // Make Formula an alias for the reflected definition attribute
    type Formula = ReflectedDefinitionAttribute
@@ -228,3 +227,6 @@ module Formula =
    let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
    let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
    let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
+   
+   let True =  <@ true @>
+   let False = <@ false @>
