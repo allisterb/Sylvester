@@ -4,8 +4,8 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
-open FormulaPatterns
-open FormulaDescriptions
+open Patterns
+open Descriptions
 
 /// Formalizes the default equational propsitional logic used by Sylph called S.
 /// Based on E: https://www.cs.cornell.edu/fbs/publications/94-1455.pdf
@@ -30,7 +30,13 @@ module EquationalLogic =
     /// true == p == p
     let (|TruthDefn|_|) =
         function
-        | Equiv(a1, a2) when sequal a1 a2 -> Some (pattern_desc "Definition of true" <@fun x -> x == x = true @>)
+        | Equiv(Bool true, Equiv(a1, a2)) when sequal a1 a2 -> Some (pattern_desc "Definition of true" <@fun x -> x == x = true @>)
+        | _ -> None
+
+    /// false == not ture
+    let (|FalseDefn|_|) =
+        function
+        | Equiv(Bool false, Not(Bool true)) -> Some (pattern_desc "Definition of true" <@fun x -> x == x = true @>)
         | _ -> None
 
     /// p ||| not p
@@ -58,7 +64,9 @@ module EquationalLogic =
     let equational_logic_axioms = 
         function
         | SEqual x
+
         | TruthDefn x
+        | FalseDefn x
 
         | Assoc <@(==)@> <@ (==) @> x
         | Assoc <@(==)@> <@ (|&|) @> x
@@ -72,13 +80,14 @@ module EquationalLogic =
         | Distrib <@(==)@> <@ (|||) @> <@ (==) @> x  // x ||| (y = z) == x ||| y == x ||| z
         
         | UnaryDistrib <@(==)@> <@ not @> <@ (|&|) @> x  // not (x |&| y) = not x ||| not y
-        | UnaryDistrib <@(==)@> <@ not @> <@ (=) @> x 
+        | UnaryDistrib <@(==)@> <@ not @> <@ (==) @> x 
        
+        | Identity <@(==)@> <@ (==) @> <@ true @> x
         | Identity <@(==)@> <@ (|&|) @> <@ true @> x
         | Identity <@(==)@> <@ (|||) @> <@ false @> x
                 
-        | Duality <@(==)@> <@ (=) @> <@ (<>) @> <@ not @> x
-        | Duality <@(==)@> <@ (<>) @> <@ (=) @> <@ not @> x
+        | Duality <@(==)@> <@ (==) @> <@ (!=) @> <@ not @> x
+        | Duality <@(==)@> <@ (!=) @> <@ (==) @> <@ not @> x
 
         | Idempotency <@(==)@> <@ (|&|) @> x
         | Idempotency <@(==)@> <@ (|||) @> x 
@@ -121,7 +130,7 @@ module EquationalLogic =
         function
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
         | And(a1, a2) -> <@@ %%a2 |&| %%a1 @@>
-        | Equiv(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
+        | Equiv(a1, a2) -> <@@ (%%a2:bool) == (%%a1:bool) @@>
         | Not(Or(a1, a2)) -> <@@ not (%%a2 ||| %%a1) @@>
         | Not(And(a1, a2)) -> <@@ not (%%a2 |&| %%a1) @@>
         | Not(Equiv(a1, a2)) -> <@@ not ((%%a2:bool) == (%%a1:bool)) @@>
@@ -141,7 +150,7 @@ module EquationalLogic =
         | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
         | Or(And(a1, a2),  And(a3, a4)) when sequal a2 a4 -> <@@ %%a2 |&| (%%a1 ||| %%a3) @@>    
         | Or(Not(a1), Not(a2)) when sequal a1 a2 -> <@@ not(%%a1 |&| %%a2) @@>
-        | Equiv(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
+        | Equiv(Not a1, a2)  -> <@@ not((%%a1:bool) == (%%a2:bool)) @@>
         | expr -> traverse expr collect
     
     /// ||| operator is idempotent.    

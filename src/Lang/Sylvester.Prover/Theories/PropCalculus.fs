@@ -34,40 +34,38 @@ module PropCalculus =
     let GoldenRule = Theory.S.Rules.[8]
 
     (* proof step shortcuts *)
-    
     let eq_id_ax expr = id_ax prop_calculus expr
     let eq_id_ax_lr expr = id_ax_lr prop_calculus expr
     let eq_id_ax_l expr = id_ax_l prop_calculus expr
     let eq_id_ax_r expr = id_ax_r prop_calculus expr
 
-    let eq_id expr = ident prop_calculus expr 
-    let eq_id_lr expr = id_ax_lr prop_calculus expr
-    let eq_id_l expr proof = id_l prop_calculus proof expr
-    let eq_id_r expr proof = id_r prop_calculus proof expr
+    let eq_id steps expr = ident prop_calculus steps expr 
+    let eq_id_lr steps expr = id_lr prop_calculus steps expr
+    let eq_id_l steps expr= id_l prop_calculus steps expr
+    let eq_id_r steps expr = id_r prop_calculus steps expr
 
     (* Additional theorems of S useful in proofs. *)
 
     /// p == p == true
     let TruthDefn (p:Expr<bool>) = <@ (%p == %p) == true @> |> id_ax prop_calculus 
 
-    // not p = p = false
+    /// not p = p = false
     let FalseDefn (p:Expr<bool>) = <@(not %p == %p) == false@> |> ident prop_calculus [
             Collect |> L
             <@(%p = %p) = true @> |> eq_id_ax_l
         ]
-        
+                
+    /// not not p == p
+    let DoubleNegation (p:Expr<bool>) = <@ not (not %p) = %p @> |> ident prop_calculus [
+            Collect |> L
+            FalseDefn p |> L
+        ]
+
     /// not p = q = p = not q
-    let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = <@ not %p = %q = %p = not %q @> |> lemma prop_calculus [
+    let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = theorem <@ not %p = %q = %p = not %q @> prop_calculus [
             Collect |> L
             RightAssoc |> LR
             Commute |> R
             Collect |> R
             Commute |> R
         ] 
-        
-    // not not p == p
-    let DoubleNegation (p:Expr<bool>) = <@ not (not %p) = %p @> |> lemma prop_calculus [
-            Collect |> L
-            FalseDefn p |> L
-        ]
-       

@@ -9,7 +9,7 @@ type DescAttribute(name: string, ?desc: string ) =
     member val Name:string = name with get, set
     member val Description:string = defaultArg desc ""
 
-module FormulaDescriptions =
+module Descriptions =
     /// Text description of a formula pattern.
     type PatternDescription = PatternDescription of string * string with
         member x.Name = let (PatternDescription(n, d)) = x in n

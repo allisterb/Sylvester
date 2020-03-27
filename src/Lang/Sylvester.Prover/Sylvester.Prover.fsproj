@@ -22,8 +22,8 @@ Add PropCalculus, BooleanAlgebra, and SetAlgebra theories.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="FormulaDescriptions.fs" />
-    <Compile Include="FormulaPatterns.fs" />
+    <Compile Include="Descriptions.fs" />
+    <Compile Include="Patterns.fs" />
     <Compile Include="EquationalLogic.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Tactics.fs" />

@@ -2,8 +2,8 @@
 
 open FSharp.Quotations
 
-open FormulaPatterns
-open FormulaDescriptions
+open Descriptions
+open Patterns
 open EquationalLogic
 
 type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
@@ -65,7 +65,7 @@ with
        
 and Rules = Rule list 
 
-and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
+and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?subProof:bool) =
     /// The logical theory used for the proof.
     static let mutable ProofLogic:Theory = Theory.S
     let ruleNames = List.concat [
@@ -75,7 +75,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
     
     let logBuilder = System.Text.StringBuilder()
-    let l = defaultArg lemma false
+    let l = defaultArg subProof false
     let proof_sep = if l then System.Environment.NewLine else ""
     let output (s:string) = 
         match defaultDisplay with
@@ -148,16 +148,17 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     do if stepCount = 0 && not(theory |- a || ProofLogic |- a ) then
         sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
     member val Expr = a
-    member val L = 
+    member val LastState = _state
+    member __.L = 
         match a with
         | Equals(l, _) -> l
         | Equiv(l, _) -> l
-        | _ -> a
-    member val R = 
+        | _ -> failwith "This expression is not an identity."
+    member __.R = 
         match a with
         | Equals(_, r) -> r
-        | Equals(_, r) -> r
-        | _ -> a
+        | Equiv(_, r) -> r
+        | _ -> failwith "This expression is not an identity."
     member val Theory = theory
     member val Steps = steps
     abstract Complete:bool
@@ -201,7 +202,7 @@ with
             | _ -> failwith "Expression is not a binary operation."
         | R rule -> 
             match expr with
-            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r)
+            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s)
             | _ -> failwith "Expression is not a binary operation."
              
 type Theorem internal (expr: Expr, proof:Proof) = 
@@ -217,7 +218,7 @@ module LogicalRules =
 
     let rec subst (p:Proof) = 
         function
-        | e when sequal e p.Expr && p.Complete -> p.Expr  
+        | e when sequal e p.L && p.Complete -> p.R  
         | expr -> traverse expr (subst p)
     
     /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x = a.
@@ -227,7 +228,7 @@ module LogicalRules =
         else Subst(sprintf "Substitute %s in expression with %s" (src p.L) (src p.R), p, fun proof e -> subst proof e) 
 
     /// Substitute a theorem with a completed proof into another proof.
-    let Lemma (lemma:Theorem) = lemma.Proof |> Subst 
+    let Ident (ident:Theorem) = ident.Proof |> Subst 
        
     /// Substitute an assumption.
     let Assume expr = Assumption(expr) |> Subst 
@@ -270,20 +271,13 @@ module Proof =
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         Theorem(f, Proof (f, theory, steps))
         
-    (* Lemmas *)
-    let lemma theory steps e = 
+    (* Identities *)
+    let ident theory steps (e:Expr<'t>) =
         let f = e |> expand |> body
-        do if not (range_type e.Type = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem(f, Proof (f, theory, steps))  |> Lemma
-    let lemma' steps e = lemma Proof.Logic steps e
-    let ax theory e = lemma theory [] e
-    let ax' e = lemma' [] e
-    let ident theory steps e =
-        let f = e |> expand |> body
-        do if not (range_type e.Type = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         match f with
-        | Equals(_, _) -> lemma theory steps f
-        | Equiv(_, _) -> lemma theory steps f
+        | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident 
+        | Equiv(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
         | _ -> failwithf "The expression %s is not an identity" (src f)
     let ident' steps e = ident Proof.Logic steps e
     let id_ax theory e = ident theory [] e
@@ -296,4 +290,4 @@ module Proof =
     
     let id_lr theory proof expr = expr |> ident theory proof |> LR
     let id_l theory proof expr = expr |> ident theory proof |> L
-    let id_r theory proof expr = expr |> ident theory proof |> LR
+    let id_r theory proof expr = expr |> ident theory proof |> R

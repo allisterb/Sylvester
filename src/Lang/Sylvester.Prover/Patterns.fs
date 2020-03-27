@@ -4,7 +4,7 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
-open FormulaDescriptions
+open Descriptions
 
 /// Logical operators for formulas.
 [<AutoOpen>]
@@ -16,20 +16,20 @@ module Operators =
     let (==) (l:bool) (r:bool) = l = r
     let (!=) (l:bool) (r:bool) = l <> r
 
-/// Formula patterns used in axioms
-module FormulaPatterns =    
+/// Patterns used in theory axioms
+module Patterns =    
     /// (Conjunctional) Equality
     let (|Equals|_|) = 
          function
          | SpecificCall <@@ (=) @@> (None,_,l::r::[]) when l.Type = r.Type -> Some(l, r)
          | _ -> None
 
-    /// Logical equivalence
+    /// Logical equivalence. 
     let (|Equiv|_|) = 
          function
          | SpecificCall <@@ (==) @@> (None,_,l::r::[]) when l.Type = typeof<bool> && r.Type = typeof<bool> -> Some(l, r)
          | _ -> None
-        
+    
     let (|Not|_|) =
         function
         | SpecificCall <@@ not @@> (None,_,l::[]) -> Some l
@@ -122,8 +122,6 @@ module FormulaPatterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
-    (* Axiom patterns *)
-    
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
     /// * Syntactically valid F# expressions
     /// * Decomposed to the same sequence of symbols i.e. strings.
@@ -131,7 +129,14 @@ module FormulaPatterns =
     /// Symmetry, reflexivity, transitivity, and Leibniz's rule: A = B => S(A) = S(B)
     let (|SEqual|_|) =
         function
-        | Equals(A, B) when sequal A B -> Some (pattern_desc "Equality" <@ fun x y -> x = y @>)
+        | Equals(A, B) when sequal A B -> Some (pattern_desc "Symbolic Equality" <@ fun x y -> x = y @>)
+        | _ -> None
+
+    /// (x = x)
+    let (|Reflex|_|) (op:Expr<'t->'t->'t>) =
+        function
+        | Binary op (a1, a2) when sequal a1 a2 -> 
+            Some (pattern_desc (sprintf "Reflexivity of %s" (src op)) <@ fun x -> (%op) x x @>)
         | _ -> None
 
     /// (x + y) + z = x + (y + z)
@@ -150,7 +155,7 @@ module FormulaPatterns =
     /// x + 0 = x
     let (|Identity|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
         function
-        | Binary eq (Binary op (a1, z), a2) when sequal a1 a2 && sequal zero z -> Some (pattern_desc "Identity" <@ fun (x:'t) -> (%eq) ((%op) x (%zero)) (%zero) @>)
+        | Binary eq (Binary op (a1, z), a2) when sequal a1 a2 && sequal zero z -> Some (pattern_desc (sprintf "Identity of %s" (src op)) <@ fun (x:'t) -> (%eq) ((%op) x (%zero)) (%zero) @>)
         | _ -> None
 
     /// x * (y + z) = x * y + x * z
@@ -187,7 +192,7 @@ module FormulaPatterns =
         | _ -> None
 
     /// Define the LHS by the RHS
-    let (|Defn|_|) (eq:Expr<'t->'t->bool>)  (l:Expr<'t>) (r:Expr<'t>) =
+    let (|Defn|_|) (eq:Expr<'t->'t->bool>) (l:Expr<'t>) (r:Expr<'t>) =
         function
         | Binary eq (a1, a2) when sequal2 a1 a2 l r -> Some (pattern_desc (sprintf "Definition of %s" (src l)) <@ (%eq) %l %r @>)
         | _ -> None
@@ -228,8 +233,6 @@ module FormulaPatterns =
 
 [<AutoOpen>]
 module Formula =  
-   open FormulaPatterns
-
    // Make Formula an alias for the reflected definition attribute
    type Formula = ReflectedDefinitionAttribute
    
