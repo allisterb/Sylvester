@@ -36,46 +36,38 @@ module PropCalculus =
     (* proof step shortcuts *)
     
     let eq_id_ax expr = id_ax prop_calculus expr
-    let eq_id_ax_ab expr = id_ax_ab prop_calculus expr
-    let eq_id_ax_a expr = id_ax_a prop_calculus expr
-    let eq_id_ax_b expr = id_ax_b prop_calculus expr
-    let eq_id_ax_r_a expr = id_ax_r_a prop_calculus expr
-    let eq_id_ax_r_b expr = id_ax_r_b prop_calculus expr
-    let eq_id_ax_l_a expr = id_ax_l_a prop_calculus expr
-    let eq_id_ax_l_b expr = id_ax_l_b prop_calculus expr
+    let eq_id_ax_lr expr = id_ax_lr prop_calculus expr
+    let eq_id_ax_l expr = id_ax_l prop_calculus expr
+    let eq_id_ax_r expr = id_ax_r prop_calculus expr
 
-    let eq_id expr = ident expr prop_calculus 
-    let eq_id_ab expr = id_ax_ab prop_calculus expr
-    let eq_id_a expr proof = id_a prop_calculus proof expr
-    let eq_id_b expr proof = id_b prop_calculus proof expr
-    let eq_id_r_a expr = id_r_a prop_calculus expr
-    let eq_id_r_b expr = id_r_b prop_calculus expr
-    let eq_id_l_a expr = id_l_a prop_calculus expr
-    let eq_id_l_b expr = id_l_b prop_calculus expr
+    let eq_id expr = ident prop_calculus expr 
+    let eq_id_lr expr = id_ax_lr prop_calculus expr
+    let eq_id_l expr proof = id_l prop_calculus proof expr
+    let eq_id_r expr proof = id_r prop_calculus proof expr
 
     (* Additional theorems of S useful in proofs. *)
 
-    /// p = p = true
-    let TruthDefn (p:Expr<bool>) = <@ (%p = %p) = true @> |> id_ax prop_calculus 
+    /// p == p == true
+    let TruthDefn (p:Expr<bool>) = <@ (%p == %p) == true @> |> id_ax prop_calculus 
 
     // not p = p = false
-    let FalseDefn (p:Expr<bool>) = <@not %p = %p @> |> contr_lem prop_calculus [
-            Collect |> EntireA
-            <@(%p = %p) = true @> |> eq_id_ax_a
+    let FalseDefn (p:Expr<bool>) = <@(not %p == %p) == false@> |> ident prop_calculus [
+            Collect |> L
+            <@(%p = %p) = true @> |> eq_id_ax_l
         ]
         
     /// not p = q = p = not q
     let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = <@ not %p = %q = %p = not %q @> |> lemma prop_calculus [
-            Collect |> LeftA
-            RightAssoc |> EntireA
-            Commute |> RightA
-            Collect |> RightA
-            Commute |> RightA
+            Collect |> L
+            RightAssoc |> LR
+            Commute |> R
+            Collect |> R
+            Commute |> R
         ] 
         
     // not not p == p
     let DoubleNegation (p:Expr<bool>) = <@ not (not %p) = %p @> |> lemma prop_calculus [
-            Collect |> EntireA
-            FalseDefn p |> EntireA
+            Collect |> L
+            FalseDefn p |> L
         ]
        

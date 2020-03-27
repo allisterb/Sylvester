@@ -1,13 +1,13 @@
-#load "..\\math\\MathInclude.fsx"
+#load "Include.fsx"
 
 open Sylvester
-open Sylph
-open SetAlgebraTheory
+open PropCalculus
+let p,q,r = var3<bool>
+
+let p1 = proof <@p == q == q == p @> S [
+    LR RightAssoc
+] 
 
 
-let x,y, z = var3<Set<obj>>
-//let t_3_1 = <@(x |+| y = U) |&| (x |*| y = Set.Empty) ==> (y = x)@> |> theorem set_algebra []
-
-//(expand <@(y |+| y) = y@>) |> body 
-//let l1 = ident_axiom set_algebra <@x |*| U = (x) @>
-<@ U  @> 
+<@p == q == q == p @> |> expand |> src
+//proof <@U = U@> set_algebra []

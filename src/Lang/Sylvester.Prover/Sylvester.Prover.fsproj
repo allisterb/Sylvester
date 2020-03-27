@@ -26,6 +26,7 @@ Add PropCalculus, BooleanAlgebra, and SetAlgebra theories.</PackageReleaseNotes>
     <Compile Include="FormulaPatterns.fs" />
     <Compile Include="EquationalLogic.fs" />
     <Compile Include="Proof.fs" />
+    <Compile Include="Tactics.fs" />
     <Compile Include="Theories\PropCalculus.fs" />
   </ItemGroup>
 

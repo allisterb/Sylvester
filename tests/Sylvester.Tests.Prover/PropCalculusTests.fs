@@ -7,6 +7,6 @@ module PropCalculusTests =
     open PropCalculus
     
     [<Fact>]
-    let ``operator works`` =
-        Assert.True(prop_calculus |- <@ fun p q -> p |&| q = q |&| p @>)
+    let ``operator works``() =
+        Assert.True(prop_calculus |- <@ fun p q -> p |&| q == q |&| p @>)
         

@@ -7,6 +7,8 @@ module SetAlgebraTheory =
     let print_set_algebra_operators (s:string) = 
         s.Replace("|+|", "\u222A")
          .Replace("|*|", "\u2229")
+         .Replace("Empty", "\u2205")
+         .Replace("U", "\uD835")
 
     let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ id @>, print_set_algebra_operators)
 

@@ -183,14 +183,17 @@ with
         |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), a.Intersect b) |> Set.ofGen
         |(_, _) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
 
+    ///Set 'is element of' operator
+    static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
+
+    /// Set 'is subset of' operator.
+    static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
+
     /// Set create subset operator.
     static member (|>|) (l:Set<'t>, r:LogicalPredicate<'t>) = l.Subset r
 
     /// Set filter subsets operator.
     static member (|>>|) (l:Set<'t>, r:LogicalPredicate<Set<'t>>) = l.Powerset.Subset r
-
-    /// Set has subset operator.
-    static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
 
     /// Set difference operator
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
@@ -235,6 +238,9 @@ module Set =
     /// Set intersection operator.
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
 
+    /// Set element of operator
+    let (|?|) (l:ISet<'t>) (e:'t) = l.Set.HasElement e
+
     /// Set subset relation.
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
 
@@ -272,6 +278,3 @@ module Set =
 
     /// The universal set
     let U<'t when 't : equality> = SetBuilder (fun (_:'t) -> true) |> Set
-
-
-    

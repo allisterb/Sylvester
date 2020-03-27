@@ -10,15 +10,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
     member val Axioms = axioms
     member val Rules = rules
     member val FormulaPrinter = defaultArg formulaPrinter id
-    member x.AxiomaticallyEqual a b = x.Axioms (a, b) |> Option.isSome  
-    static member (|-) ((c:Theory), (a, b)) = c.AxiomaticallyEqual a b
-    static member (|-) (t:Theory, e:Expr<'t>) =         
-        let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        match f with 
-        | Equiv (a, b) -> t |- (a, b)
-        | Implies (a, b)-> t |- (a, b)
-        | _ -> failwithf "The expression %A is not recognized as a theorem statement." (src f)
+    member x.AxiomaticallyEquiv a  = x.Axioms a |> Option.isSome  
+    static member (|-) ((c:Theory), a) = c.AxiomaticallyEquiv a
 
     /// The default logical theory used in Sylph proofs.
     static member val S =     
@@ -53,12 +46,12 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
         ], print_S_Operators)
 
     static member val internal Trivial = 
-        Theory((fun (_:Expr,_:Expr) ->  Some(axiom_desc "Assumption" id (pattern_desc "Assumption" <@fun x y -> x = y @>))), [])
+        Theory((fun (_:Expr) ->  Some(axiom_desc "Assumption" id (pattern_desc "Assumption" <@fun x y -> x = y @>))), [])
 
-and Axioms = (Expr * Expr -> AxiomDescription option)
+and Axioms = (Expr -> AxiomDescription option)
 
 and Rule = 
-    | Rule of string * (Expr -> Expr ) 
+    | Rule of string * (Expr -> Expr) 
     | Subst of string * Proof * (Proof -> Expr -> Expr)
 with
     member x.Name = 
@@ -72,11 +65,11 @@ with
        
 and Rules = Rule list 
 
-and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
+and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     /// The logical theory used for the proof.
-    static let mutable L:Theory = Theory.S
+    static let mutable ProofLogic:Theory = Theory.S
     let ruleNames = List.concat [
-            (L.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
+            (ProofLogic.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
@@ -86,32 +79,32 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
     let proof_sep = if l then System.Environment.NewLine else ""
     let output (s:string) = 
         match defaultDisplay with
-            | Text -> printfn "%s" ((L.FormulaPrinter >> theory.FormulaPrinter) s)
-            | _ -> printfn "%s" ((L.FormulaPrinter >> theory.FormulaPrinter) s)
+            | Text -> printfn "%s" ((ProofLogic.FormulaPrinter >> theory.FormulaPrinter) s)
+            | _ -> printfn "%s" ((ProofLogic.FormulaPrinter >> theory.FormulaPrinter) s)
 
     let prooflog (x:string) = 
         do 
             logBuilder.Append(x) |> ignore
             if not l then output x else output ("[Lemma] " + x)
     
-    let mutable astate, bstate = (a, b)
-    let mutable state:(Expr * Expr * string) list = [] 
+    let mutable _state = a
+    let mutable state:(Expr * string) list = [] 
     let mutable stepCount = 0
     do 
         if theory.GetType() = typeof<Assumption> then 
-            do sprintf "Assume A: %s == B: %s:" (src a) (src b) |> prooflog
+            do sprintf "Assume %s." (src a) |> prooflog
             stepCount <- steps.Length
         else
-            do sprintf "Proof of A: %s == B: %s:" (src a) (src b) |> prooflog
+            do sprintf "Proof of %s:" (src a) |> prooflog
             do
-                if theory |- (a, b)  then
-                    let axeq = theory.Axioms (a, b)
-                    sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
+                if theory |- a  then
+                    let axeq = theory.Axioms a
+                    sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
                     sprintf "Proof complete." + proof_sep |> prooflog
                     stepCount <- steps.Length
-                else if L |- (a, b)  then
-                   let axeq = L.Axioms (a, b)
-                   sprintf "|- %s == %s. [%s]" (src a) (src b) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+                else if ProofLogic |- a   then
+                   let axeq = ProofLogic.Axioms a
+                   sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
                    sprintf "Proof complete." + proof_sep |> prooflog
                    stepCount <- steps.Length               
     do while stepCount < steps.Length do
@@ -121,156 +114,102 @@ and Proof internal(a:Expr,  b:Expr, theory: Theory, steps: RuleApplication list,
         do 
             match step.Rule with
             | (Rule(n, d)) -> if (not (ruleNames |> List.contains (n))) then failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
-            | (Subst(n, p, _)) -> if not ((p.Theory = L) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
-        let (_a, _b) = step.Apply (astate, bstate)
+            | (Subst(n, p, _)) -> if not ((p.Theory = ProofLogic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
+        let _a = step.Apply _state
         let msg =
             match step.Rule with
             | (Rule(_, _)) -> 
-                if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
-                    sprintf "%i. %s: (%s, %s) == (%s, %s)." (stepId) (stepName.Replace("(expression)", "A and B")) (src astate) (src bstate) (src _a) (src _b)
-                else if not (sequal _a astate) then
-                    sprintf "%i. %s: %s == %s." (stepId) (stepName.Replace("(expression)", "A")) (src astate) (src _a)
-                else if not (sequal _b bstate) then
-                    sprintf "%i. %s: %s == %s." (stepId) (stepName.Replace("(expression)", "B")) (src bstate) (src _b)
+                if not ((sequal _a _state)) then
+                    sprintf "%i. %s: %s = %s." (stepId) (stepName.Replace("(expression)", "expression")) (src _state) (src _a) 
                 else
-                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A or B")) 
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression")) 
             | (Subst(_,_,_)) ->
-                if (not ((sequal _a astate)) && (not (sequal _b bstate))) then
-                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "A and B")) 
-                else if not (sequal _a astate) then
-                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "A")) 
-                else if not (sequal _b bstate) then
-                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "B"))
+                if not ((sequal _a _state))  then
+                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "expression")) 
                 else
-                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "A or B"))
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
         do prooflog msg
-        astate <- _a
-        bstate <- _b
-        state <- state @ [(astate, bstate, msg)]
-        if theory |- (astate, bstate) then
-            let axeq = theory.Axioms (astate, bstate)
-            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
+        _state <- _a
+        state <- state @ [(_state, msg)]
+        if theory |- _state then
+            let axeq = theory.Axioms _state
+            sprintf "|- %s. [%s]" (src _state)(if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog 
             stepCount <- steps.Length
-        else if L |- (astate, bstate) then 
-            let axeq = L.Axioms (astate, bstate)
-            sprintf "|- %s == %s. [%s]" (src astate) (src bstate) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+        else if ProofLogic |- _state then 
+            let axeq = ProofLogic.Axioms _state
+            sprintf "|- %s. [%s]" (src _state) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
         else
-            sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog
+            sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
             stepCount <- stepCount + 1
 
-    do if stepCount = 0 && not(theory |- (a, b) || L |- (a, b)) then
-        sprintf "Proof incomplete. Current state: %s == %s." (src astate) (src bstate) |> prooflog
-    member val A = a
-    member val B = b
+    do if stepCount = 0 && not(theory |- a || ProofLogic |- a ) then
+        sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
+    member val Expr = a
+    member val L = 
+        match a with
+        | Equals(l, _) -> l
+        | Equiv(l, _) -> l
+        | _ -> a
+    member val R = 
+        match a with
+        | Equals(_, r) -> r
+        | Equals(_, r) -> r
+        | _ -> a
     member val Theory = theory
     member val Steps = steps
     abstract Complete:bool
-    default val Complete = L |- (astate, bstate) || theory |- (astate, bstate)
+    default val Complete = ProofLogic |- _state || theory |- _state
     member val State = state
-    member val AState = astate
-    member val BState = bstate
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
 
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
-    static member Logic with get() = L and set(v) = L <- v
-    static member (|-) (proof:Proof, (a:Expr, b:Expr)) = sequal2 proof.A proof.B a b && proof.Complete
-    static member (|-) (proof:Proof, e:Expr<'t>) =         
-        let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        match f with 
-        | Equiv (a, b) -> proof |- (a, b)
-        | Implies (a, b)-> proof |- (a, b)
-        | _ -> failwithf "The expression %A is not recognized as a theorem statement." (src f)     
-    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.A, l.B, l.Theory, l.Steps @ [r])
-    static member (+) (l:Proof, r:Proof) = 
-        let rec subst (p:Proof) = 
-            function 
-            | A when (sequal (p.A) (A)) && p.Complete -> p.B  
-            | expr -> traverse expr (subst p)
-        let (last_l_astate, _, _) = l.State |> Seq.last
-        if l.Theory = r.Theory then 
-            if sequal last_l_astate r.A  then
-                let l2 = Proof(l.A, last_l_astate, l.Theory, l.Steps, true) in
-                let s = Subst(sprintf "Joining proof of %s == %s to proof of %s == %s" (src l.A) (src last_l_astate) (src r.A) (src r.B), l2, fun proof e -> subst proof e) |> EntireA in
-                Proof(l.A, r.B, l.Theory, s::r.Steps)  
-            else failwith "Cannot join these proofs. The RHS of the first proof is not the LHS of the 2nd proof."
-        else
-            failwith "Cannot join these proofs because they use different theories."
+    static member Logic with get() = ProofLogic and set(v) = ProofLogic <- v
+    static member (|-) (proof:Proof, expr:Expr) = sequal proof.Expr expr  && proof.Complete
+    //static member (|-) (proof:Proof, e:Expr<'t>) =         
+        //let f = e |> expand |> body
+        //do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+
+    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.Expr, l.Theory, l.Steps @ [r])
+
     interface IDisplay with
         member x.Output(item:'t) = item.ToString()
         member x.Transform(str:string) = str
 
-and Assumption internal(a:Expr,  b:Expr) = inherit Proof(a, b, Theory.Trivial, [], true)
+and Assumption internal(expr:Expr) = inherit Proof(expr, Theory.Trivial, [], true)
 
 and RuleApplication =
-    | EntireA of Rule
-    | EntireB of Rule
-    | LeftA of Rule
-    | LeftB of Rule
-    | RightA of Rule
-    | RightB of Rule
-    | AB of Rule
+    | L  of Rule
+    | R of Rule
+    | LR of Rule
 with
     member x.Rule = 
         match x with
-        | EntireA rule -> rule
-        | EntireB rule -> rule
-        | LeftA rule -> rule
-        | LeftB rule -> rule
-        | RightA rule -> rule
-        | RightB rule -> rule
-        | AB rule -> rule
+        | LR rule -> rule
+        | L rule -> rule
+        | R rule -> rule
     member x.RuleName = x.Rule.Name
-    member x.Apply(a:Expr, b:Expr) =       
+    member x.Apply(expr:Expr) =       
         match x with
-        | EntireA rule -> rule.Apply a, b
-        | EntireB rule -> a, rule.Apply b
-        | LeftA rule -> 
-            match a with
-            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r), b
-            | _ -> failwith "A is not a binary operation."
-        | LeftB rule -> 
-            match b with
-            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in a, binary_call(o, m, s, r)
-            | _ -> failwith "B is not a binary operation."
-        | RightA rule -> 
-            match a with
-            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s), b
-            | _ -> failwithf "A is not a binary operation: %s." (src a)
-        | RightB rule -> 
-            match b with
-            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in a, binary_call(o, m, l, s)
-            | _ -> failwithf "B is not a binary operation: %s." (src a)
-        | AB rule ->
-            let expr = rule.Apply (Expr.NewTuple(a::b::[]))
+        | LR rule -> rule.Apply expr
+        | L rule -> 
             match expr with
-            | Equiv(l, r) -> l, r
-            | Patterns.NewTuple(l::r::[]) -> l, r
-            | _ -> failwithf "Rule %s did not return a valid expression." rule.Name
-
-type Theorem internal (stmt: TheoremStmt, proof:Proof) = 
-    let (a, b) = stmt.Members
-    do if not ((sequal proof.A a) && (sequal proof.B b)) then failwithf "The provided proof is not a proof of %s==%s" (src a) (src b)
-    do if not proof.Complete then failwithf "The provided proof of %s==%s is not complete." (src a) (src b)
-    member val A = a
-    member val B = b
+            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r)
+            | _ -> failwith "Expression is not a binary operation."
+        | R rule -> 
+            match expr with
+            | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r)
+            | _ -> failwith "Expression is not a binary operation."
+             
+type Theorem internal (expr: Expr, proof:Proof) = 
+    do if not (sequal expr proof.Expr) then failwithf "The provided proof is not a proof of %s." (src expr)
+    do if not proof.Complete then failwithf "The provided proof of %s is not complete." (src expr)
+    member val Expr = expr
     member val Proof = proof
        
-and TheoremStmt = 
-    | Taut of Expr
-    | Contr of Expr
-    | Ident of Expr
-    with
-    member x.Members = 
-        match x with
-        | Taut a -> a, True.Raw
-        | Contr a -> a, False.Raw
-        | Ident a -> match a with | Equiv(l, r) -> l, r | _ -> failwithf "The formula %A is not an identity." (src a)
-
 [<AutoOpen>]
 module LogicalRules = 
     /// The default theory of equational logic that defines the logical axioms and inference rules for proofs.
@@ -278,20 +217,20 @@ module LogicalRules =
 
     let rec subst (p:Proof) = 
         function
-        | A when (sequal (p.A) (A)) && p.Complete -> p.B  
+        | e when sequal e p.Expr && p.Complete -> p.Expr  
         | expr -> traverse expr (subst p)
     
-    /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x == a.
+    /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x = a.
     let Subst (p:Proof) = 
         if not p.Complete then 
-            failwithf "The proof of %A == %A is not complete" (src p.A) (src p.B) 
-        else Subst(sprintf "Substitute %s in A with %s" (src p.A) (src p.B), p, fun proof e -> subst proof e) 
+            failwithf "The proof of %A is not complete" (src p.Expr)  
+        else Subst(sprintf "Substitute %s in expression with %s" (src p.L) (src p.R), p, fun proof e -> subst proof e) 
 
     /// Substitute a theorem with a completed proof into another proof.
     let Lemma (lemma:Theorem) = lemma.Proof |> Subst 
        
     /// Substitute an assumption.
-    let Assume (a,b) = Assumption(a, b) |> Subst 
+    let Assume expr = Assumption(expr) |> Subst 
        
     /// Reduce logical constants in expression. 
     let Reduce' = S.Rules.[0]
@@ -325,60 +264,36 @@ module Proof =
     let proof (e:Expr<'t>) theory steps =         
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        match f with 
-        | Implies(l, r) -> Proof(f, True, theory, steps)
-        | Equiv(l, r) -> Proof(l, r, theory, steps)
-        | _ -> failwithf "The expression %A is not recognized as a theorem statement." (src f)  
+        Proof(f, theory, steps)
     let theorem (e:Expr<'t>) theory steps  = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem(Taut(f), Proof (f, True, theory, steps))  
-    let contr (e:Expr<'t>) theory steps = 
-        let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem((Contr f), Proof (f, False, theory, steps))
-    let ident (e:Expr<_>) theory steps  = 
-        let f = e |> expand |> body
-        match f with 
-        | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps)) 
-        | _ -> failwithf "The expression %A is not recognized as an identity." (src f)      
-
+        Theorem(f, Proof (f, theory, steps))
+        
     (* Lemmas *)
-    let lemma theory steps (e:Expr<'t>) = 
+    let lemma theory steps e = 
         let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem(Taut(f), Proof (f, True, theory, steps, true)) |> Lemma  
+        do if not (range_type e.Type = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        Theorem(f, Proof (f, theory, steps))  |> Lemma
+    let lemma' steps e = lemma Proof.Logic steps e
     let ax theory e = lemma theory [] e
-    let contr_lem theory steps (e:Expr<'t>) = 
+    let ax' e = lemma' [] e
+    let ident theory steps e =
         let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem((Contr f), Proof (f, False, theory, steps, true)) |> Lemma
-    let id_lem theory steps  (e:Expr<_>) = 
-        let f = e |> expand |> body
-        match f with 
-        | Equiv(l, r) -> Theorem((Ident f), Proof(l, r, theory, steps, true)) |> Lemma
-        | _ -> failwithf "The expression %A is not recognized as an identity." (src f)  
-    let id_ax theory e = id_lem theory [] e
-    
-    let ax' e = ax Proof.Logic e
-    let contr_lem' steps f = contr_lem Proof.Logic steps f
-    let id_lem' steps f = id_lem Proof.Logic steps f
-    let id_ax' e = id_lem' [] e
+        do if not (range_type e.Type = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        match f with
+        | Equals(_, _) -> lemma theory steps f
+        | Equiv(_, _) -> lemma theory steps f
+        | _ -> failwithf "The expression %s is not an identity" (src f)
+    let ident' steps e = ident Proof.Logic steps e
+    let id_ax theory e = ident theory [] e
+    let id_ax' e = id_ax Proof.Logic e
 
     (* proof step shortcuts *)
+    let id_ax_lr theory expr = expr |> id_ax theory |> LR
+    let id_ax_l theory expr = expr |> id_ax theory |> L
+    let id_ax_r theory expr = expr |> id_ax theory |> R
     
-    let id_ax_ab theory expr = expr |> id_ax theory |> AB
-    let id_ax_a theory expr = expr |> id_ax theory |> EntireA
-    let id_ax_b theory expr = expr |> id_ax theory |> EntireB
-    let id_ax_l_a theory expr = expr |> id_ax theory |> LeftA
-    let id_ax_l_b theory expr = expr |> id_ax theory |> LeftB
-    let id_ax_r_a theory expr = expr |> id_ax theory |> RightA
-    let id_ax_r_b theory expr = expr |> id_ax theory |> RightB
-
-    let id_ab theory proof expr = expr |> id_lem theory proof |> AB
-    let id_a theory proof expr = expr |> id_lem theory proof |> EntireA
-    let id_b theory proof expr = expr |> id_lem theory proof |> EntireB
-    let id_l_a theory proof expr = expr |> id_lem theory proof |> LeftA
-    let id_l_b theory proof expr = expr |> id_lem theory proof |> LeftB
-    let id_r_a theory proof expr = expr |> id_lem theory proof |> RightA
-    let id_r_b theory proof expr = expr |> id_lem theory proof |> RightB
+    let id_lr theory proof expr = expr |> ident theory proof |> LR
+    let id_l theory proof expr = expr |> ident theory proof |> L
+    let id_r theory proof expr = expr |> ident theory proof |> LR

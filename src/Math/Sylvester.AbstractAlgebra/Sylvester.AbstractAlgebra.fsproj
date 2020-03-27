@@ -14,7 +14,7 @@
     <Copyright>Copyright (c) 2019 2020 by Allister Beharry</Copyright>
     <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageTags>fsharp math abstract algebra theory</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
@@ -48,6 +48,7 @@
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.0.0" />
     <PackageReference Include="Sylvester.Collections" Version="0.2.3" />
+    <PackageReference Include="Sylph" Version="0.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,12 +61,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Base\Sylvester.Kinds\Sylvester.Kinds.fsproj" />
-    <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
-    <ProjectReference Include="..\..\Lang\Sylvester.Prover\Sylvester.Prover.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
