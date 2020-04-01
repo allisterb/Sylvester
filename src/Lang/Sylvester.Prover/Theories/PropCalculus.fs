@@ -64,17 +64,41 @@ module PropCalculus =
 
     (* Additional theorems of S useful in proofs. *)
 
-    /// p == p == true
-    let TruthDefn (p:Expr<bool>) = <@ (%p = %p) = true @> |> id_ax prop_calculus 
+    // true
+    let Truth = theorem prop_calculus <@ true @> [
+        eq_id_ax_lr <@ true = (true = true) @>
+    ]
+
+    /// p = p = true
+    let TruthDefn (p:Expr<bool>) = id_ax prop_calculus <@ (%p = %p) = true @>  
 
     /// not p = p = false
-    let FalseDefn (p:Expr<bool>) = <@(not %p = %p) = false@> |> ident prop_calculus [
+    let FalseDefn (p:Expr<bool>) =  ident prop_calculus <@(not %p = %p) = false@> [
             Collect |> L
             <@(%p = %p) = true @> |> eq_id_ax_l
         ]
                 
+    /// not false = true
+    let NotFalseDefnTrue = 
+        let stmt = <@ not false = true @>
+        let lemma1 = eq_id <@ true = (false = false) @> [
+            LR Commute
+            TruthDefn <@ false @> |> L
+        ]
+        let lemma2 = eq_id <@ (false = false) = true @> [
+            TruthDefn <@ false @> |> L
+        ]
+        eq_id stmt [
+            LR Commute
+            L lemma1
+            LR RightAssoc
+            R Commute
+            R Collect
+            R lemma2 
+        ]
+
     /// not not p == p
-    let DoubleNegation (p:Expr<bool>) = <@ not (not %p) = %p @> |> ident prop_calculus [
+    let DoubleNegation (p:Expr<bool>) = ident prop_calculus <@ not (not %p) = %p @>  [
             Collect |> L
             FalseDefn p |> L
         ]

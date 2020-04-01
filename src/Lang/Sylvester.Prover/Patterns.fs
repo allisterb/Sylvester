@@ -107,12 +107,6 @@ module Patterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
-    /// We must define patterns for axioms symmetrically also.
-    let (|Symm|) =
-        function
-        | Equals(A, B) -> Some (B, A)
-        | _ -> None
-
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
     /// * Syntactically valid F# expressions
     /// * Decomposed to the same sequence of symbols i.e. strings.
@@ -124,7 +118,7 @@ module Patterns =
         | _ -> None
 
     /// (x = x)
-    let (|Reflex|_|) (op:Expr<'t->'t->'t>) =
+    let (|Reflex|_|) (op:Expr<'t->'t->bool>) =
         function
         | Binary op (a1, a2) when sequal a1 a2 -> 
             Some (pattern_desc (sprintf "Reflexivity of %s" (src op)) <@ fun x -> (%op) x x @>)

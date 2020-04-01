@@ -218,17 +218,16 @@ module LogicalRules =
     /// The default theory of equational logic that defines the logical axioms and inference rules for proofs.
     let S = Theory.S
 
-    let rec subst (p:Proof) (recurse:bool) = 
+    let rec subst (p:Proof) = 
         function
         | l when sequal l p.L && p.Complete -> p.R
-        | r when sequal r p.R && p.Complete -> p.L
-        | expr -> if recurse then traverse expr (subst (p) (recurse)) else expr
+        | expr -> traverse expr (subst p) 
     
     /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x = a.
     let Subst (p:Proof) = 
         if not p.Complete then 
             failwithf "The proof of %A is not complete" (src p.Expr)  
-        else Subst(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof false e) 
+        else Subst(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof e) 
 
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
@@ -272,17 +271,21 @@ module Proof =
     let theorem theory (e:Expr<'t>) steps  = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem(f, Proof (f, theory, steps))
-        
+        Theorem(f, Proof(e, theory, steps))
+    let lemma theory (e:Expr<'t>) steps  = 
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        Theorem(f, Proof (f, theory, steps, true))
+    
     (* Identities *)
-    let ident theory steps (e:Expr<'t>) =
+    let ident theory (e:Expr<'t>) steps =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         match f with
         | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
         | _ -> failwithf "The expression %s is not an identity" (src f)
-    let ident' steps e = ident Proof.Logic steps e
-    let id_ax theory e = ident theory [] e
+    let ident' steps e = ident Proof.Logic e steps
+    let id_ax theory e = ident theory e []
     let id_ax' e = id_ax Proof.Logic e
 
     (* proof step shortcuts *)

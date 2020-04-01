@@ -38,6 +38,11 @@ module EquationalLogic =
         | Equals(Bool false, Not(Bool true)) -> Some (pattern_desc "Definition of false" <@fun x -> x = x = true @>)
         | _ -> None
 
+    let (|NotDistrib|_|) =
+        function
+        | Equals(NotEquals(a1, a2), Equals(Not(b1), b2)) when sequal2 a1 a2 b1 b2 -> Some (pattern_desc "Distributivity" <@fun x y -> not(x = y) = (not x = y) @>)
+        | _ -> None
+
     /// p ||| not p
     let (|ExcludedMiddle|_|) =
         function
@@ -66,6 +71,7 @@ module EquationalLogic =
 
         | TruthDefn x
         | FalseDefn x
+        | Reflex <@ (=) @> x
 
         | Assoc <@(=)@> <@ (=) @> x
         | Assoc <@(=)@> <@ (|&|) @> x
@@ -75,6 +81,7 @@ module EquationalLogic =
         | Commute <@(=)@> <@ (|&|) @> x
         | Commute <@(=)@> <@ (|||) @> x 
        
+        | NotDistrib x
         | Distrib <@(=)@> <@ (|&|) @> <@ (|||) @> x  // x && (y || z) = x && y || x && z 
         | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // x ||| (y = z) = x ||| y = x ||| z
         
