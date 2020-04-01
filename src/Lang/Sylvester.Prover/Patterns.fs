@@ -13,23 +13,14 @@ module Operators =
     let (|||) (l:bool) (r:bool) = l || r
     let (==>) (l:bool) (r:bool) = (not l) || r
     let (<==) (l:bool) (r:bool) = r ==> l
-    let (==) (l:bool) (r:bool) = l = r
-    let (!=) (l:bool) (r:bool) = l <> r
-
+ 
 /// Patterns used in theory axioms
-module Patterns =    
-    /// (Conjunctional) Equality
+module Patterns =   
     let (|Equals|_|) = 
          function
          | SpecificCall <@@ (=) @@> (None,_,l::r::[]) when l.Type = r.Type -> Some(l, r)
          | _ -> None
-
-    /// Logical equivalence. 
-    let (|Equiv|_|) = 
-         function
-         | SpecificCall <@@ (==) @@> (None,_,l::r::[]) when l.Type = typeof<bool> && r.Type = typeof<bool> -> Some(l, r)
-         | _ -> None
-    
+   
     let (|Not|_|) =
         function
         | SpecificCall <@@ not @@> (None,_,l::[]) -> Some l
@@ -39,12 +30,6 @@ module Patterns =
          function
          | Not(Equals(l, r)) -> Some (l, r)
          | SpecificCall <@@ (<>) @@> (None,_,l::r::[]) -> Some (l, r)
-         | _ -> None
-
-    let (|NotEquiv|_|) =
-         function
-         | Not(Equiv(l, r)) -> Some (l, r)
-         | SpecificCall <@@ (!=) @@> (None,_,l::r::[]) -> Some (l, r)
          | _ -> None
 
     let (|And|_|)  =
@@ -120,6 +105,12 @@ module Patterns =
     let (|UnaryCall|_|)  =
         function
         | Call(_,_,r::[]) -> Some r
+        | _ -> None
+
+    /// We must define patterns for axioms symmetrically also.
+    let (|Symm|) =
+        function
+        | Equals(A, B) -> Some (B, A)
         | _ -> None
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 

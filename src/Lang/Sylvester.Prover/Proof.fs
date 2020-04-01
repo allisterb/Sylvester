@@ -65,7 +65,7 @@ with
        
 and Rules = Rule list 
 
-and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?subProof:bool) =
+and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     /// The logical theory used for the proof.
     static let mutable ProofLogic:Theory = Theory.S
     let ruleNames = List.concat [
@@ -75,7 +75,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?subProo
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
     
     let logBuilder = System.Text.StringBuilder()
-    let l = defaultArg subProof false
+    let l = defaultArg lemma false
     let proof_sep = if l then System.Environment.NewLine else ""
     let output (s:string) = 
         match defaultDisplay with
@@ -120,12 +120,12 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?subProo
             match step.Rule with
             | (Rule(_, _)) -> 
                 if not ((sequal _a _state)) then
-                    sprintf "%i. %s: %s = %s." (stepId) (stepName.Replace("(expression)", "expression")) (src _state) (src _a) 
+                    sprintf "%i. %s: %s \u2192 %s." (stepId) (stepName.Replace("(expression)", step.Pos)) (src _state) (src _a) 
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression")) 
             | (Subst(_,_,_)) ->
                 if not ((sequal _a _state))  then
-                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", "expression")) 
+                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
         do prooflog msg
@@ -152,12 +152,10 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?subProo
     member __.L = 
         match a with
         | Equals(l, _) -> l
-        | Equiv(l, _) -> l
         | _ -> failwith "This expression is not an identity."
     member __.R = 
         match a with
         | Equals(_, r) -> r
-        | Equiv(_, r) -> r
         | _ -> failwith "This expression is not an identity."
     member val Theory = theory
     member val Steps = steps
@@ -166,7 +164,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?subProo
     member val State = state
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
-
+    member __.Msg msg = prooflog msg
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = ProofLogic and set(v) = ProofLogic <- v
     static member (|-) (proof:Proof, expr:Expr) = sequal proof.Expr expr  && proof.Complete
@@ -204,7 +202,11 @@ with
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s)
             | _ -> failwith "Expression is not a binary operation."
-             
+    member x.Pos =
+        match x with
+        | LR _ -> "expression"
+        | L _ -> "left of expression"
+        | R _ -> "right of expression"
 type Theorem internal (expr: Expr, proof:Proof) = 
     do if not (sequal expr proof.Expr) then failwithf "The provided proof is not a proof of %s." (src expr)
     do if not proof.Complete then failwithf "The provided proof of %s is not complete." (src expr)
@@ -216,18 +218,19 @@ module LogicalRules =
     /// The default theory of equational logic that defines the logical axioms and inference rules for proofs.
     let S = Theory.S
 
-    let rec subst (p:Proof) = 
+    let rec subst (p:Proof) (recurse:bool) = 
         function
-        | e when sequal e p.L && p.Complete -> p.R  
-        | expr -> traverse expr (subst p)
+        | l when sequal l p.L && p.Complete -> p.R
+        | r when sequal r p.R && p.Complete -> p.L
+        | expr -> if recurse then traverse expr (subst (p) (recurse)) else expr
     
     /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x = a.
     let Subst (p:Proof) = 
         if not p.Complete then 
             failwithf "The proof of %A is not complete" (src p.Expr)  
-        else Subst(sprintf "Substitute %s in expression with %s" (src p.L) (src p.R), p, fun proof e -> subst proof e) 
+        else Subst(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof false e) 
 
-    /// Substitute a theorem with a completed proof into another proof.
+    /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
        
     /// Substitute an assumption.
@@ -262,11 +265,11 @@ module LogicalRules =
 
 [<AutoOpen>]
 module Proof =        
-    let proof (e:Expr<'t>) theory steps =         
+    let proof theory (e:Expr<'t>) steps =         
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         Proof(f, theory, steps)
-    let theorem (e:Expr<'t>) theory steps  = 
+    let theorem theory (e:Expr<'t>) steps  = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         Theorem(f, Proof (f, theory, steps))
@@ -276,8 +279,7 @@ module Proof =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
         match f with
-        | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident 
-        | Equiv(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
+        | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
         | _ -> failwithf "The expression %s is not an identity" (src f)
     let ident' steps e = ident Proof.Logic steps e
     let id_ax theory e = ident theory [] e

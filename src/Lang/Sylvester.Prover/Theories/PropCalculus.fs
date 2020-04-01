@@ -33,6 +33,24 @@ module PropCalculus =
     /// Logical expression satisfies golden rule.
     let GoldenRule = Theory.S.Rules.[8]
 
+    let reduce_constants = EquationalLogic.reduce_constants
+
+    let left_assoc = EquationalLogic.left_assoc
+
+    let right_assoc = EquationalLogic.right_assoc
+
+    let commute = EquationalLogic.commute
+
+    let distrib = EquationalLogic.distrib
+
+    let collect = EquationalLogic.collect
+
+    let idemp = EquationalLogic.idemp
+
+    let excluded_middle = EquationalLogic.excluded_middle
+
+    let golden_rule = EquationalLogic.golden_rule
+
     (* proof step shortcuts *)
     let eq_id_ax expr = id_ax prop_calculus expr
     let eq_id_ax_lr expr = id_ax_lr prop_calculus expr
@@ -47,10 +65,10 @@ module PropCalculus =
     (* Additional theorems of S useful in proofs. *)
 
     /// p == p == true
-    let TruthDefn (p:Expr<bool>) = <@ (%p == %p) == true @> |> id_ax prop_calculus 
+    let TruthDefn (p:Expr<bool>) = <@ (%p = %p) = true @> |> id_ax prop_calculus 
 
     /// not p = p = false
-    let FalseDefn (p:Expr<bool>) = <@(not %p == %p) == false@> |> ident prop_calculus [
+    let FalseDefn (p:Expr<bool>) = <@(not %p = %p) = false@> |> ident prop_calculus [
             Collect |> L
             <@(%p = %p) = true @> |> eq_id_ax_l
         ]
@@ -61,8 +79,9 @@ module PropCalculus =
             FalseDefn p |> L
         ]
 
+    //let Reflex
     /// not p = q = p = not q
-    let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = theorem <@ not %p = %q = %p = not %q @> prop_calculus [
+    let NotEquivSymmetry (p:Expr<bool>) (q:Expr<bool>) = theorem prop_calculus <@ not %p = %q = %p = not %q @> [
             Collect |> L
             RightAssoc |> LR
             Commute |> R

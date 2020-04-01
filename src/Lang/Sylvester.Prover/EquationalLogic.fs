@@ -18,46 +18,45 @@ module EquationalLogic =
     let print_S_Operators (s:string) = 
         s.Replace("|||", "\u2228")
          .Replace("|&|", "\u2227")
-         .Replace("==", "\u2261")
          .Replace("|-", "\u22A2")
          .Replace(" not ", " \u00AC ")
          .Replace("not ", "\u00AC ")
 
     let desc = axiom_desc "Equational Logic" print_S_Operators
     
-    (* Axiom Patterns *)
+    (* Patterns *)
 
-    /// true == p == p
+    /// true = p = p
     let (|TruthDefn|_|) =
         function
-        | Equiv(Bool true, Equiv(a1, a2)) when sequal a1 a2 -> Some (pattern_desc "Definition of true" <@fun x -> x == x = true @>)
+        | Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> Some (pattern_desc "Definition of true" <@fun x -> x = x = true @>)
         | _ -> None
 
-    /// false == not ture
+    /// false = not ture
     let (|FalseDefn|_|) =
         function
-        | Equiv(Bool false, Not(Bool true)) -> Some (pattern_desc "Definition of true" <@fun x -> x == x = true @>)
+        | Equals(Bool false, Not(Bool true)) -> Some (pattern_desc "Definition of false" <@fun x -> x = x = true @>)
         | _ -> None
 
     /// p ||| not p
     let (|ExcludedMiddle|_|) =
         function
-        | Or(a1, Not(a2)) when sequal a1 a2 -> Some (pattern_desc "Excluded Middle" <@fun x -> x ||| not x @>)
+        | Or(a1, Not(a2)) when sequal a1 a2 -> Some (pattern_desc "the Excluded Middle" <@fun x -> x ||| not x @>)
         | _ -> None
 
-    /// p |&| q == p == q ||| p == q 
+    /// p |&| q = p = q ||| p = q 
     let (|GoldenRule|_|) =
         function
-        | Equiv(And(p1, q1), Equiv(Equiv(p2, q2), Or(p3, q3))) when sequal p1 p2 && sequal p1 p3 && sequal q1 q2 && sequal q2 q3 -> 
-                                                                Some (pattern_desc "Golden Rule" <@fun x y -> x |&| y = (x = y) = (x ||| y) @>)
+        | Equals(And(p1, q1), Equals(Equals(p2, q2), Or(p3, q3))) when sequal p1 p2 && sequal p1 p3 && sequal q1 q2 && sequal q2 q3 -> 
+                                                                Some (pattern_desc "the Golden Rule" <@fun x y -> x |&| y = (x = y) = (x ||| y) @>)
         | _ -> None
 
-    /// p ==> q = p ||| q ||| q
+    /// p => q = p ||| q ||| q
     let (|Implication|_|) =
         function
-        | Equiv(Implies(a1, a2), Equiv(Or(a3, a4), a5)) when sequal a1 a3 && sequal a2 a4 && sequal a4 a5 -> 
+        | Equals(Implies(a1, a2), Equals(Or(a3, a4), a5)) when sequal a1 a3 && sequal a2 a4 && sequal a4 a5 -> 
                                                                 Some (pattern_desc "Implication" <@fun x y-> (x ==> y) = ((x ||| y) = y)@>)
-        | Equiv(Conseq(a1, a2), Implies(a3, a4)) when sequal2 a1 a2 a4 a3 -> 
+        | Equals(Conseq(a1, a2), Implies(a3, a4)) when sequal2 a1 a2 a4 a3 -> 
                                                                 Some (pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @>)
         | _ -> None
 
@@ -68,41 +67,42 @@ module EquationalLogic =
         | TruthDefn x
         | FalseDefn x
 
-        | Assoc <@(==)@> <@ (==) @> x
-        | Assoc <@(==)@> <@ (|&|) @> x
-        | Assoc <@(==)@> <@ (|||) @> x 
+        | Assoc <@(=)@> <@ (=) @> x
+        | Assoc <@(=)@> <@ (|&|) @> x
+        | Assoc <@(=)@> <@ (|||) @> x 
         
-        | Commute <@(==)@> <@ (==) @> x
-        | Commute <@(==)@> <@ (|&|) @> x
-        | Commute <@(==)@> <@ (|||) @> x 
+        | Commute <@(=)@> <@ (=) @> x
+        | Commute <@(=)@> <@ (|&|) @> x
+        | Commute <@(=)@> <@ (|||) @> x 
        
-        | Distrib <@(==)@> <@ (|&|) @> <@ (|||) @> x  // x && (y || z) == x && y || x && z 
-        | Distrib <@(==)@> <@ (|||) @> <@ (==) @> x  // x ||| (y = z) == x ||| y == x ||| z
+        | Distrib <@(=)@> <@ (|&|) @> <@ (|||) @> x  // x && (y || z) = x && y || x && z 
+        | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // x ||| (y = z) = x ||| y = x ||| z
         
-        | UnaryDistrib <@(==)@> <@ not @> <@ (|&|) @> x  // not (x |&| y) = not x ||| not y
-        | UnaryDistrib <@(==)@> <@ not @> <@ (==) @> x 
+        | UnaryDistrib <@(=)@> <@ not @> <@ (|&|) @> x  // not (x |&| y) = not x ||| not y
+        | UnaryDistrib <@(=)@> <@ not @> <@ (=) @> x 
        
-        | Identity <@(==)@> <@ (==) @> <@ true @> x
-        | Identity <@(==)@> <@ (|&|) @> <@ true @> x
-        | Identity <@(==)@> <@ (|||) @> <@ false @> x
+        | Identity <@(=)@> <@ (=) @> <@ true @> x
+        | Identity <@(=)@> <@ (|&|) @> <@ true @> x
+        | Identity <@(=)@> <@ (|||) @> <@ false @> x
                 
-        | Duality <@(==)@> <@ (==) @> <@ (!=) @> <@ not @> x
-        | Duality <@(==)@> <@ (!=) @> <@ (==) @> <@ not @> x
+        | Duality <@(=)@> <@ (=) @> <@ (<>) @> <@ not @> x
+        | Duality <@(=)@> <@ (<>) @> <@ (=) @> <@ not @> x
 
-        | Idempotency <@(==)@> <@ (|&|) @> x
-        | Idempotency <@(==)@> <@ (|||) @> x 
+        | Idempotency <@(=)@> <@ (|&|) @> x
+        | Idempotency <@(=)@> <@ (|||) @> x 
         
         | ExcludedMiddle x
         | GoldenRule x
         | Implication x -> Some (desc x)
         | _ -> None
 
+    
     (* Inference rules *) 
     
     /// Reduce logical constants.
     let rec reduce_constants  =
         function
-        | Equiv(Bool l, Bool r) -> Expr.Value((l = r))
+        | Equals(Bool l, Bool r) -> Expr.Value((l = r))
         | Not(Bool l) -> Expr.Value(not l)
         | Or(Bool l, Bool r) -> Expr.Value(l ||| r)                
         | And(Bool l, Bool r) -> Expr.Value(l |&| r)
@@ -114,7 +114,7 @@ module EquationalLogic =
         function
         | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
         | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@>
-        | Equiv(Equiv(a1, a2), a3) -> <@@ (%%a1:bool) == ((%%a2:bool) == (%%a3:bool)) @@> 
+        | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@> 
         | expr -> traverse expr right_assoc
     
     /// Logical operators are left associative.
@@ -122,7 +122,7 @@ module EquationalLogic =
         function
         | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
         | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@>
-        | Equiv(a1, Equiv(a2, a3)) -> <@@ ((%%a1:bool) == (%%a2:bool)) == (%%a3:bool) @@>
+        | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
         | expr -> traverse expr left_assoc
     
     /// Logical operators commute.
@@ -130,17 +130,17 @@ module EquationalLogic =
         function
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
         | And(a1, a2) -> <@@ %%a2 |&| %%a1 @@>
-        | Equiv(a1, a2) -> <@@ (%%a2:bool) == (%%a1:bool) @@>
+        | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
         | Not(Or(a1, a2)) -> <@@ not (%%a2 ||| %%a1) @@>
         | Not(And(a1, a2)) -> <@@ not (%%a2 |&| %%a1) @@>
-        | Not(Equiv(a1, a2)) -> <@@ not ((%%a2:bool) == (%%a1:bool)) @@>
+        | Not(Equals(a1, a2)) -> <@@ not ((%%a2:bool) = (%%a1:bool)) @@>
         | expr -> traverse expr commute
     
     /// Distribute logical terms.
     let rec distrib =
         function
         | Or(a1, And(a2, a3)) -> <@@ %%a1 |&| %%a2 ||| %%a1 |&| %%a3 @@> 
-        | Or(a1, Equiv(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) == ((%%a1) ||| (%%a3)) @@> 
+        | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@> 
         | Not(And(a1, a2)) -> <@@ not %%a1 ||| not %%a2 @@>
         | expr -> traverse expr distrib
     
@@ -150,7 +150,7 @@ module EquationalLogic =
         | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
         | Or(And(a1, a2),  And(a3, a4)) when sequal a2 a4 -> <@@ %%a2 |&| (%%a1 ||| %%a3) @@>    
         | Or(Not(a1), Not(a2)) when sequal a1 a2 -> <@@ not(%%a1 |&| %%a2) @@>
-        | Equiv(Not a1, a2)  -> <@@ not((%%a1:bool) == (%%a2:bool)) @@>
+        | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
         | expr -> traverse expr collect
     
     /// ||| operator is idempotent.    
@@ -166,5 +166,5 @@ module EquationalLogic =
 
     let rec golden_rule =
         function
-        | Equiv(Equiv(Equiv(And(p1, q1), p2), q2), Or(p3, q3))  -> <@@ true @@>
+        | Equals(Equals(Equals(And(p1, q1), p2), q2), Or(p3, q3))  -> <@@ true @@>
         | expr -> traverse expr golden_rule

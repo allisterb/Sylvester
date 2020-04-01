@@ -15,8 +15,8 @@ module FsExpr =
     
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 
-        || l.ToString() = sprintf ("(%s)") (r.ToString())
-        || r.ToString() = sprintf ("(%s)") (l.ToString())
+        || l.ToString() = sprintf "(%s)" (r.ToString())
+        || r.ToString() = sprintf "(%s)" (l.ToString())
     
     let sequal2 (l1:Expr) (l2:Expr) (r1:Expr) (r2:Expr) = sequal l1 r1 && sequal l2 r2
     
@@ -35,18 +35,13 @@ module FsExpr =
         | Lambda(_, Lambda(v2, b)) -> body (Expr.Lambda(v2, b))
         | Lambda(_, b) -> b
         | Let(_, _, b) -> b
-        | expr -> expr//failwithf "Expression %A is not a function or let binding." (src expr)
+        | expr -> expr
 
     let traverse expr f =
         match expr with
         | ShapeVar v -> Expr.Var v
         | ShapeLambda (v, body) -> Expr.Lambda (v, f body)
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
-
-    let binary_call (so, m, l, r) =
-        match so with
-        | None -> Expr.Call(m, l::r::[])
-        | Some o -> Expr.Call(o, m, l::r::[])
 
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.
@@ -77,8 +72,23 @@ module FsExpr =
           | _ -> expanded
 
         rexpand Map.empty expr
-    
+
+    let expand_left = 
+        function
+        | Call(_,_,l::r::[]) when l.Type = r.Type -> expand l 
+        | expr -> failwithf "%s is not a binary expression." (src expr)
+
+    let expand_right = 
+        function
+        | Call(_,_,l::r::[]) when l.Type = r.Type -> expand r
+        | expr -> failwithf "%s is not a binary expression." (src expr)
+
     let expandReflectedDefinitionParam = 
         function
         | WithValue(v, t, e) -> (v, t, expand e)
         | _ -> failwith "Expression is not a reflected definition parameter."
+
+    let binary_call (so, m, l, r) =
+        match so with
+        | None -> Expr.Call(m, l::r::[])
+        | Some o -> Expr.Call(o, m, l::r::[])
