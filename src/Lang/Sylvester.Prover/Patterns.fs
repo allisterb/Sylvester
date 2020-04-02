@@ -131,7 +131,13 @@ module Patterns =
             Some (pattern_desc "Associativity" <@ fun x y z -> (%eq) ((%op) ((%op) x y) z) ((%op) x ((%op) y z)) @>)
         | _ -> None
 
-    /// x + y = y + x
+    /// (x = y = y) = x
+    let (|Symm|_|) (op:Expr<'t->'t->'t>)   =
+        function
+        | Binary op (Binary op (Binary op (a1, a2), a3), a4)  when sequal2 a1 a2 a4 a3-> Some (pattern_desc "Symmetry" <@ fun x y  -> (%op) (((%op) x y)) ((%op) y x) @>)
+        | _ -> None 
+
+    /// (x + y) = (y + x)
     let (|Commute|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) =
         function
         | Binary eq (Binary op (a1, a2), Binary op (b1, b2)) when sequal2 a1 a2 b2 b1 -> Some (pattern_desc "Commutativity" <@fun (x:'t) (y:'t) -> (%eq) ((%op) x y) ((%op) y x) @>)   

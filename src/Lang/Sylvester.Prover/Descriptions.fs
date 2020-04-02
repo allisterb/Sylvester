@@ -4,10 +4,10 @@ open System
 open System.Reflection
 
 /// Description attribute that can be applied to types or variables
-type DescAttribute(name: string, ?desc: string ) =
+type DescAttribute(desc: string, ?example:string) =
     inherit System.Attribute()
-    member val Name:string = name with get, set
-    member val Description:string = defaultArg desc ""
+    member val Description:string = desc with get, set
+    member val Example:string = defaultArg example ""
 
 module Descriptions =
     /// Text description of a formula pattern.
@@ -32,4 +32,4 @@ module Descriptions =
     
     let get_desc<'t> = 
         let a = typeof<'t>.GetCustomAttributes( typeof<DescAttribute>, true)
-        if (a = null || a.Length = 0) then ("","") else let d = (a.[0] :?> DescAttribute) in (d.Name, d.Description)
+        if (a = null || a.Length = 0) then "" else let d = (a.[0] :?> DescAttribute) in d.Description

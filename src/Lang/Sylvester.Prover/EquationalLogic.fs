@@ -30,12 +30,14 @@ module EquationalLogic =
     let (|TruthDefn|_|) =
         function
         | Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> Some (pattern_desc "Definition of true" <@fun x -> x = x = true @>)
+        | Bool true -> Some (pattern_desc "Definition of true" <@ true @>)
         | _ -> None
 
     /// false = not ture
     let (|FalseDefn|_|) =
         function
         | Equals(Bool false, Not(Bool true)) -> Some (pattern_desc "Definition of false" <@fun x -> x = x = true @>)
+        | Not(Bool false) -> Some (pattern_desc "Definition of false" <@ not true @>)
         | _ -> None
 
     let (|NotDistrib|_|) =
@@ -71,16 +73,13 @@ module EquationalLogic =
 
         | TruthDefn x
         | FalseDefn x
-        | Reflex <@ (=) @> x
-
+        
         | Assoc <@(=)@> <@ (=) @> x
         | Assoc <@(=)@> <@ (|&|) @> x
         | Assoc <@(=)@> <@ (|||) @> x 
         
-        | Commute <@(=)@> <@ (=) @> x
-        | Commute <@(=)@> <@ (|&|) @> x
-        | Commute <@(=)@> <@ (|||) @> x 
-       
+        | Symm <@ (=) @> x
+      
         | NotDistrib x
         | Distrib <@(=)@> <@ (|&|) @> <@ (|||) @> x  // x && (y || z) = x && y || x && z 
         | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // x ||| (y = z) = x ||| y = x ||| z

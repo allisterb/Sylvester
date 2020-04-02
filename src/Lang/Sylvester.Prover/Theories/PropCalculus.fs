@@ -64,11 +64,7 @@ module PropCalculus =
 
     (* Additional theorems of S useful in proofs. *)
 
-    // true
-    let Truth = theorem prop_calculus <@ true @> [
-        eq_id_ax_lr <@ true = (true = true) @>
-    ]
-
+    (*
     /// p = p = true
     let TruthDefn (p:Expr<bool>) = id_ax prop_calculus <@ (%p = %p) = true @>  
 
@@ -112,3 +108,5 @@ module PropCalculus =
             Collect |> R
             Commute |> R
         ] 
+
+    *)
