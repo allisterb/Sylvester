@@ -12,7 +12,8 @@ open Descriptions
 ///             http://www.cs.cornell.edu/home/gries/Logic/Equational.html
 /// The main difference is that since we only have to deal with symbolic equality (not mathematical equality)
 /// we can drop the restriction that a substitution must replace only variables in an expression 
-/// and consider general textual substitution with syntactically valid expressions.0
+/// and consider general textual substitution with syntactically valid expressions.
+/// The number after each axiom corresponds to the number of the axiom in the textbook A Logical Approach to Discrete Math by Gries et.al.
 module EquationalLogic =
     /// Print Unicode logical operator symbols
     let print_S_Operators (s:string) = 
@@ -27,88 +28,78 @@ module EquationalLogic =
     (* Patterns *)
 
     /// true = p = p
-    let (|TruthDefn|_|) =
+    let (|TrueDef|_|) =
         function
-        | Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> Some (pattern_desc "Definition of true" <@fun x -> x = x = true @>)
-        | Bool true -> Some (pattern_desc "Definition of true" <@ true @>)
+        | Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> pattern_desc "Definition of true" <@fun x -> x = x = true @> |> Some
+        | Bool true -> pattern_desc "Definition of true" <@ true @> |> Some // This isn't defined as an axiom in E but is included here for convenience.
         | _ -> None
 
-    /// false = not ture
-    let (|FalseDefn|_|) =
+    /// false = not true
+    let (|FalseDef|_|) =
         function
-        | Equals(Bool false, Not(Bool true)) -> Some (pattern_desc "Definition of false" <@fun x -> x = x = true @>)
-        | Not(Bool false) -> Some (pattern_desc "Definition of false" <@ not true @>)
+        | Equals(Bool false, Not(Bool true)) -> pattern_desc "Definition of false" <@ false = not true @> |> Some
+        | Not(Bool false) -> pattern_desc "Definition of false" <@ not true @> |> Some // This isn't defined as an axiom in E but is included here for convenience.
         | _ -> None
 
+    /// not (p = q) = not p = q
     let (|NotDistrib|_|) =
         function
-        | Equals(NotEquals(a1, a2), Equals(Not(b1), b2)) when sequal2 a1 a2 b1 b2 -> Some (pattern_desc "Distributivity" <@fun x y -> not(x = y) = (not x = y) @>)
+        | Equals(Not(Equals(a1, a2)), Equals(Not(b1), b2)) when sequal2 a1 a2 b1 b2 -> pattern_desc "Distributivity" <@fun x y -> not(x = y) = (not x = y) @> |> Some
         | _ -> None
 
     /// p ||| not p
     let (|ExcludedMiddle|_|) =
         function
-        | Or(a1, Not(a2)) when sequal a1 a2 -> Some (pattern_desc "the Excluded Middle" <@fun x -> x ||| not x @>)
+        | Or(a1, Not(a2)) when sequal a1 a2 -> pattern_desc "the Excluded Middle" <@fun x -> x ||| not x @> |> Some
         | _ -> None
 
     /// p |&| q = p = q ||| p = q 
     let (|GoldenRule|_|) =
         function
-        | Equals(And(p1, q1), Equals(Equals(p2, q2), Or(p3, q3))) when sequal p1 p2 && sequal p1 p3 && sequal q1 q2 && sequal q2 q3 -> 
-                                                                Some (pattern_desc "the Golden Rule" <@fun x y -> x |&| y = (x = y) = (x ||| y) @>)
+        | Equals(And(p1, q1), Equals(Equals(p2, q2), Or(p3, q3))) when sequal p1 p2 && sequal p2 p3 && sequal q1 q2 && sequal q2 q3 -> 
+                                                                pattern_desc "the Golden Rule" <@fun x y -> x |&| y = (x = y) = (x ||| y) @> |> Some
         | _ -> None
 
-    /// p => q = p ||| q ||| q
+    /// p ==> q = p ||| q ||| q
     let (|Implication|_|) =
         function
         | Equals(Implies(a1, a2), Equals(Or(a3, a4), a5)) when sequal a1 a3 && sequal a2 a4 && sequal a4 a5 -> 
-                                                                Some (pattern_desc "Implication" <@fun x y-> (x ==> y) = ((x ||| y) = y)@>)
+                                                                pattern_desc "Implication" <@fun x y-> (x ==> y) = ((x ||| y) = y)@> |> Some
         | Equals(Conseq(a1, a2), Implies(a3, a4)) when sequal2 a1 a2 a4 a3 -> 
-                                                                Some (pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @>)
+                                                                pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @> |> Some
         | _ -> None
 
+    (* Axioms *)
     let equational_logic_axioms = 
         function
         | SEqual x
+        | TrueDef x // (3.3)
+        | FalseDef x //(3.8)
+        | BinaryOpDef <@ (=) @> <@ (<>) @> <@ (=) @> <@ not @> x // (3.10)
+        
+        | Assoc <@(=)@> <@ (=) @> x  // (3.1)
+        | Assoc <@(=)@> <@ (|||) @> x // (3.25)
+        
+        | Symm <@ (=) @> x // (3.2)
+        | Symm <@ (|||) @> x // (3.24)
 
-        | TruthDefn x
-        | FalseDefn x
-        
-        | Assoc <@(=)@> <@ (=) @> x
-        | Assoc <@(=)@> <@ (|&|) @> x
-        | Assoc <@(=)@> <@ (|||) @> x 
-        
-        | Symm <@ (=) @> x
-      
-        | NotDistrib x
-        | Distrib <@(=)@> <@ (|&|) @> <@ (|||) @> x  // x && (y || z) = x && y || x && z 
-        | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // x ||| (y = z) = x ||| y = x ||| z
-        
-        | UnaryDistrib <@(=)@> <@ not @> <@ (|&|) @> x  // not (x |&| y) = not x ||| not y
-        | UnaryDistrib <@(=)@> <@ not @> <@ (=) @> x 
+        | NotDistrib x // (3.9) 
+        | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // (3.27)      
        
-        | Identity <@(=)@> <@ (=) @> <@ true @> x
-        | Identity <@(=)@> <@ (|&|) @> <@ true @> x
-        | Identity <@(=)@> <@ (|||) @> <@ false @> x
-                
-        | Duality <@(=)@> <@ (=) @> <@ (<>) @> <@ not @> x
-        | Duality <@(=)@> <@ (<>) @> <@ (=) @> <@ not @> x
-
-        | Idempotency <@(=)@> <@ (|&|) @> x
-        | Idempotency <@(=)@> <@ (|||) @> x 
+        | Idempotency <@(=)@> <@ (|||) @> x // (3.26)
         
-        | ExcludedMiddle x
-        | GoldenRule x
+        | ExcludedMiddle x // (3.28)
+        | GoldenRule x // (3.35)
         | Implication x -> Some (desc x)
         | _ -> None
 
-    
     (* Inference rules *) 
     
     /// Reduce logical constants.
     let rec reduce_constants  =
         function
         | Equals(Bool l, Bool r) -> Expr.Value((l = r))
+        | NotEquals(Bool l, Bool r) -> Expr.Value(l <> r)
         | Not(Bool l) -> Expr.Value(not l)
         | Or(Bool l, Bool r) -> Expr.Value(l ||| r)                
         | And(Bool l, Bool r) -> Expr.Value(l |&| r)
@@ -120,7 +111,8 @@ module EquationalLogic =
         function
         | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
         | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@>
-        | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@> 
+        | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@>
+        | NotEquals(NotEquals(a1, a2), a3) -> <@@ (%%a1:bool) <> ((%%a2:bool) <> (%%a3:bool)) @@>
         | expr -> traverse expr right_assoc
     
     /// Logical operators are left associative.
@@ -129,6 +121,7 @@ module EquationalLogic =
         | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
         | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@>
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
+        | NotEquals(a1, NotEquals(a2, a3)) -> <@@ ((%%a1:bool) <> (%%a2:bool)) <> (%%a3:bool) @@>
         | expr -> traverse expr left_assoc
     
     /// Logical operators commute.
@@ -137,9 +130,9 @@ module EquationalLogic =
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
         | And(a1, a2) -> <@@ %%a2 |&| %%a1 @@>
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
+        | NotEquals(a1, a2) -> <@@ (%%a2:bool) <> (%%a1:bool) @@>
         | Not(Or(a1, a2)) -> <@@ not (%%a2 ||| %%a1) @@>
         | Not(And(a1, a2)) -> <@@ not (%%a2 |&| %%a1) @@>
-        | Not(Equals(a1, a2)) -> <@@ not ((%%a2:bool) = (%%a1:bool)) @@>
         | expr -> traverse expr commute
     
     /// Distribute logical terms.
@@ -148,6 +141,7 @@ module EquationalLogic =
         | Or(a1, And(a2, a3)) -> <@@ %%a1 |&| %%a2 ||| %%a1 |&| %%a3 @@> 
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@> 
         | Not(And(a1, a2)) -> <@@ not %%a1 ||| not %%a2 @@>
+        | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | expr -> traverse expr distrib
     
     /// Collect distributed logical terms.

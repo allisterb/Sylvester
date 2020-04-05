@@ -17,7 +17,7 @@ module IntegerAlgebra =
     
     (* Axioms *)
     let (|IntegerAlgebraAxioms|_|) =
-        function        
+        function                    
         | Assoc <@ (+) @> x
         | Assoc <@ (*) @> x
         | Identity <@ (+) @> <@ 0 @> x 
@@ -28,7 +28,7 @@ module IntegerAlgebra =
         | Distrib <@ (*) @> <@ (+) @> x 
         | LeftCancel <@ (*) @> x 
         | LeftCancel <@ (+) @> x
-        | BinaryOpDefnR <@ (-) @> <@ (+) @> <@ (~-) @> x -> Some (desc x) 
+        | BinaryOpDefR <@ (-) @> <@ (+) @> <@ (~-) @> x -> Some (desc x) 
 
         | _ -> None
     

@@ -1,8 +1,18 @@
 ﻿namespace Sylvester
 
-[<AutoOpen>]
-module Tactics =
-    let with_lemma (l:Theorem) (p:Proof) =
-        do if not (sequal l.Stmt p.LastState) then failwithf "The last state of the proof is not the first state of the lemma."
-        do p.Msg (sprintf "Completing proof with lemma \u22A2 %s." (src l.Stmt))
-        Proof(p.Expr, p.Theory, List.concat [p.Steps; l.Proof.Steps])
+open Patterns
+
+[<RequireQualifiedAccess>]
+module Tactics = 
+    /// Switch the LHS of an identity with the RHS.
+    let SwitchLR commute rule =
+        let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
+        let (l, r) = 
+            match proof.Stmt with 
+            | BinaryCall(l, r) -> (l, r)
+            | _ -> failwith "This theorem is not an identity."
+        let p = Proof(<@@ (%%r:bool) = (%%l:bool) @@>, proof.Theory, LR commute :: proof.Steps, true) in 
+            Theorem(<@@ (%%r:bool) = (%%l:bool) @@>, p) |> Ident
+
+    
+

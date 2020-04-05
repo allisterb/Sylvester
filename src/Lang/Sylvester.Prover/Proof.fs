@@ -65,6 +65,7 @@ with
         | Rule(_, r) -> r
         | Subst(_, p, r) -> r p
         | Lemma l -> fun _ -> l.LastState
+
        
 and Rules = Rule list 
 
@@ -162,7 +163,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
 
     do if stepCount = 0 && not(theory |- a || logic |- a ) then
         sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
-    member val Expr = a
+    member val Stmt = a
     member val LastState = _state
     member __.L = 
         match a with
@@ -182,12 +183,12 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     member __.Msg msg = prooflog msg
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = logic and set(v) = logic <- v
-    static member (|-) (proof:Proof, expr:Expr) = sequal proof.Expr expr  && proof.Complete
+    static member (|-) (proof:Proof, expr:Expr) = sequal proof.Stmt expr  && proof.Complete
     //static member (|-) (proof:Proof, e:Expr<'t>) =         
         //let f = e |> expand |> body
         //do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
 
-    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.Expr, l.Theory, l.Steps @ [r])
+    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.Stmt, l.Theory, l.Steps @ [r])
 
     interface IDisplay with
         member x.Output(item:'t) = item.ToString()
@@ -223,7 +224,7 @@ with
         | L _ -> "left of expression"
         | R _ -> "right of expression"
 and Theorem internal (expr: Expr, proof:Proof) = 
-    do if not (sequal expr proof.Expr) then failwithf "The provided proof is not a proof of %s." (src expr)
+    do if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
     do if not proof.Complete then failwithf "The provided proof of %s is not complete." (src expr)
     member val Stmt = expr
     member val LastState = proof.LastState
@@ -233,9 +234,6 @@ and Theorem internal (expr: Expr, proof:Proof) =
 
 [<AutoOpen>]
 module LogicalRules = 
-    /// The default theory of equational logic that defines the logical axioms and inference rules for proofs.
-    let S = Theory.S
-
     let rec subst (p:Proof) = 
         function
         | l when sequal l p.L && p.Complete -> p.R
@@ -244,7 +242,7 @@ module LogicalRules =
     /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x = a.
     let Subst (p:Proof) = 
         if not p.Complete then 
-            failwithf "The proof of %A is not complete" (src p.Expr)  
+            failwithf "The proof of %A is not complete" (src p.Stmt)  
         else Subst(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof e)
         
     /// Substitute an identity with a completed proof into another proof.
@@ -256,31 +254,31 @@ module LogicalRules =
     let Assume expr = Assumption(expr) |> Subst 
        
     /// Reduce logical constants in expression. 
-    let Reduce' = S.Rules.[0]
+    let Reduce' = Proof.Logic.Rules.[0]
 
     /// Logical expression is left associative.
-    let LeftAssoc' = S.Rules.[1]
+    let LeftAssoc' = Proof.Logic.Rules.[1]
     
     /// Logical expression is right associative.
-    let RightAssoc' = S.Rules.[2]
+    let RightAssoc' = Proof.Logic.Rules.[2]
       
     /// Logical expression is commutative.
-    let Commute' = S.Rules.[3]
+    let Commute' = Proof.Logic.Rules.[3]
 
     /// Distribute logical terms in expression.
-    let Distrib' = S.Rules.[4]
+    let Distrib' = Proof.Logic.Rules.[4]
     
     /// Collect distributed logical terms in expression.
-    let Collect' = S.Rules.[5]
+    let Collect' = Proof.Logic.Rules.[5]
 
     /// Substitute idempotent logical terms in expression.
-    let Idemp' = S.Rules.[6]
+    let Idemp' = Proof.Logic.Rules.[6]
 
     /// Logical expression satisfies law of excluded middle.
-    let ExcludedMiddle = S.Rules.[7]
+    let ExcludedMiddle = Proof.Logic.Rules.[7]
 
     /// Logical expression satisfies golden rule.
-    let GoldenRule = S.Rules.[8]
+    let GoldenRule = Proof.Logic.Rules.[8]
 
 [<AutoOpen>]
 module Proof =        
@@ -291,7 +289,7 @@ module Proof =
     let theorem theory (e:Expr<'t>) steps  = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
-        Theorem(f, Proof(e, theory, steps))
+        Theorem(f, Proof(f, theory, steps))
     let axiom theory (e:Expr<'t>)  = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
