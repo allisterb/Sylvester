@@ -3,20 +3,45 @@
 open Sylvester
 open PropCalculus
 
-// Declare some variables we can reuse in formulae
-let p,q,r = var3<bool>
+let True p = eq_id_ax <@ true = (%p = %p) @>  
+   
+let False p = eq_id <@ false = (not %p = %p) @> [
+    LR Collect
+    True <@ %p @> |> SwitchLR |> R
+] 
 
-<@ not p = q = p = not q @> |> expand_left |> src
+// not false = true
+let NotFalse = 
+    let stmt = <@not false = true@>
+    let lemma1 = eq_id <@ true = (false = false) @> [
+        LR Commute
+        True <@ false @> |> SwitchLR |> L
+    ]
+    let lemma2 = eq_id <@ (false = false) = true @> [
+        True <@ false @> |> SwitchLR  |> L
+    ]
+    ident prop_calculus stmt [
+        LR Commute
+        L lemma1
+        LR RightAssoc
+        R Commute
+        R Collect
+        R lemma2 
+    ]
+    
+let DoubleNegation p = ident prop_calculus <@not (not %p) = %p @> [
+        LR Collect
+        False <@ %p @> |> SwitchLR |> LR
+    ]
 
-let id1 = theorem prop_calculus <@ (p = (q = q)) = p @>  [
-    L LeftAssoc 
-    LR RightAssoc
+/// not p = q = p = not q
+let NotEquivSymmetry p q = ident prop_calculus <@ not %p = %q = %p = not %q @> [
+    Collect |> L
+    RightAssoc |> LR
+    Commute |> R
+    Collect |> R
+    Commute |> R
 ]
 
-let p1 = proof prop_calculus <@ p = p = q = q @>  [
-    LR RightAssoc
-    LR RightAssoc
-    Ident(id1) |> R
-]
-
-//id1.Proof.Expr |> expand_left |> src
+let p = false
+DoubleNegation <@ p @> 

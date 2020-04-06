@@ -65,42 +65,35 @@ module PropCalculus =
     let eq_id_r steps expr = id_r prop_calculus steps expr
 
     (* Tactics *)
-    /// Switch the LHS of an identity with the RHS
-    let SwitchLR = Tactics.SwitchLR Commute
+
+    /// Switch the LHS of an identity with the RHS.
+    let Transpose = Tactics.Transpose Commute
 
     (* Additional theorems of S useful in proofs. *)
     
     /// true = (p = p)
     let True p = eq_id_ax <@ true = (%p = %p) @>  
 
+    /// false = (not p = p)
     let False p = eq_id <@ false = (not %p = %p) @> [
      LR Collect
-     True <@ %p @> |> Tactics.SwitchLR Commute |> R
+     True <@ %p @> |> Transpose |> R
     ] 
 
     /// not false = true
-    let NotFalse = 
-     let stmt = <@not false = true@>
-     let lemma1 = eq_id <@ true = (false = false) @> [
-         LR Commute
-         True <@ false @> |> SwitchLR |> L
-     ]
-     let lemma2 = eq_id <@ (false = false) = true @> [
-         True <@ false @> |> SwitchLR  |> L
-     ]
-     ident prop_calculus stmt [
-         LR Commute
-         L lemma1
-         LR RightAssoc
-         R Commute
-         R Collect
-         R lemma2 
-     ]
+    let NotFalse = ident prop_calculus <@not false = true@> [
+        LR Commute
+        True <@ false @> |> L
+        LR RightAssoc
+        R Commute
+        R Collect
+        True <@ false @> |> Transpose |> R 
+    ]
  
     /// not not p = p
     let DoubleNegation p = ident prop_calculus <@not (not %p) = %p @> [
          LR Collect
-         False <@ %p @> |> SwitchLR |> LR
+         False <@ %p @> |> Transpose |> LR
      ]
 
     /// not p = q = p = not q
