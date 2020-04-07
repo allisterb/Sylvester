@@ -28,3 +28,6 @@
 [submodule "ext/mathnet-symbolics"]
 	path = ext/mathnet-symbolics
 	url = https://github.com/mathnet/mathnet-symbolics.git
+[submodule "ext/FunScript"]
+	path = ext/FunScript
+	url = https://github.com/allisterb/FunScript.git
