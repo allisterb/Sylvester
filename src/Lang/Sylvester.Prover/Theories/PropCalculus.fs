@@ -2,8 +2,6 @@
 
 open FSharp.Quotations
 
-open Patterns
-
 /// Propositional calculus using the axioms and rules of S.
 module PropCalculus =
     let prop_calculus = Theory.S
@@ -11,31 +9,36 @@ module PropCalculus =
     /// Reduce logical constants in expression. 
     let Reduce = Theory.S.Rules.[0]
 
+    /// Reduce logical identity terms in expression. 
+    let ReduceIdent = Theory.S.Rules.[1]
+
     /// Logical expression is left associative.
-    let LeftAssoc = Theory.S.Rules.[1]
+    let LeftAssoc = Theory.S.Rules.[2]
 
     /// Logical expression is right associative.
-    let RightAssoc = Theory.S.Rules.[2]
+    let RightAssoc = Theory.S.Rules.[3]
   
     /// Logical expression is commutative.
-    let Commute = Theory.S.Rules.[3]
+    let Commute = Theory.S.Rules.[4]
 
     /// Distribute logical terms in expression.
-    let Distrib = Theory.S.Rules.[4]
+    let Distrib = Theory.S.Rules.[5]
 
     /// Collect distributed logical terms in expression.
-    let Collect = Theory.S.Rules.[5]
+    let Collect = Theory.S.Rules.[6]
 
     /// Logical operators are idempotent.
-    let Idemp = Theory.S.Rules.[6]
+    let Idemp = Theory.S.Rules.[7]
 
     /// Logical expression satisfies law of excluded middle.
-    let ExcludedMiddle = Theory.S.Rules.[7]
+    let ExcludedMiddle = Theory.S.Rules.[8]
 
     /// Logical expression satisfies golden rule.
-    let GoldenRule = Theory.S.Rules.[8]
+    let GoldenRule = Theory.S.Rules.[9]
 
     let reduce_constants = EquationalLogic.reduce_constants
+
+    let reduce_ident = EquationalLogic.reduce_ident
 
     let left_assoc = EquationalLogic.left_assoc
 
@@ -64,10 +67,20 @@ module PropCalculus =
     let eq_id_l steps expr= id_l prop_calculus steps expr
     let eq_id_r steps expr = id_r prop_calculus steps expr
 
+    (* Parameterized rules *)
+    let CommuteWith p q = eq_id_ax <@ (%p ||| %q) = (%q ||| %p)@>
+
+    let LeftAssocWith p q r = eq_id <@ (%p ||| (%q ||| %r)) = ((%p ||| %q) ||| %r) @> [LR LeftAssoc]
+
+    let RightAssocWith p q r = eq_id_ax <@ ((%p ||| %q) ||| %r) = (%p ||| (%q ||| %r)) @>
+
     (* Tactics *)
 
     /// Switch the LHS of an identity with the RHS.
     let Transpose = Tactics.Transpose Commute
+
+    /// A theorem T is equivalent to T = true
+    let Taut = Tactics.Taut ReduceIdent
 
     (* Additional theorems of S useful in proofs. *)
     
@@ -77,7 +90,7 @@ module PropCalculus =
     /// false = (not p = p)
     let False p = eq_id <@ false = (not %p = %p) @> [
      LR Collect
-     True <@ %p @> |> Transpose |> R
+     True p |> Transpose |> R
     ] 
 
     /// not false = true
@@ -93,7 +106,7 @@ module PropCalculus =
     /// not not p = p
     let DoubleNegation p = ident prop_calculus <@not (not %p) = %p @> [
          LR Collect
-         False <@ %p @> |> Transpose |> LR
+         False p |> Transpose |> LR
      ]
 
     /// not p = q = p = not q
@@ -103,4 +116,21 @@ module PropCalculus =
          Commute |> R
          Collect |> R
          Commute |> R
+    ]
+
+    /// p ||| true = true
+    let TrueZero p = ident prop_calculus <@ %p ||| true = true @> [
+        True p |> LR 
+        LR Distrib
+        LR Idemp
+    ]
+
+    /// p ||| false = p
+    let FalseIdent p = ident prop_calculus <@ %p ||| false = %p @> [
+        False p |> LR
+        L Distrib
+        LR RightAssoc
+        R Idemp
+        True p |> R
+        L ExcludedMiddle
     ]

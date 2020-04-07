@@ -17,6 +17,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
     static member val S =     
         let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
 
+        let S_ReduceIdent = Rule("Reduce logical identities in (expression)", reduce_ident)
+
         let S_LeftAssoc = Rule("Logical operators in (expression) are left-associative", left_assoc)
         
         let S_RightAssoc = Rule("Logical operators in (expression) are right-associative", right_assoc)
@@ -35,6 +37,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         Theory(equational_logic_axioms, [
             S_Reduce
+            S_ReduceIdent
             S_LeftAssoc
             S_RightAssoc
             S_Commute
@@ -88,7 +91,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     let prooflog (x:string) = 
         do 
             logBuilder.Append(x) |> ignore
-            if not l then output x else output ("[Lemma] " + x)
+            if not l || x.StartsWith "[Lemma]" then output x else output ("        " + x)
     
     let mutable _state = a
     let mutable state:(Expr * string) list = [] 
@@ -97,8 +100,12 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
         if theory.GetType() = typeof<Assumption> then 
             do sprintf "Assume %s." (src a) |> prooflog
             stepCount <- steps.Length
-        else
-            do sprintf "Proof of %s:" (src a) |> prooflog
+        else 
+            do 
+                if l then 
+                    sprintf "[Lemma] %s:" (src a) |> prooflog
+                else
+                    sprintf "Proof of %s:" (src a) |> prooflog
             do
                 if theory |- a  then
                     let axeq = theory.Axioms a

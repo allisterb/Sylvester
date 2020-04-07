@@ -53,7 +53,7 @@ module EquationalLogic =
         | Or(a1, Not(a2)) when sequal a1 a2 -> pattern_desc "the Excluded Middle" <@fun x -> x ||| not x @> |> Some
         | _ -> None
 
-    /// p |&| q = p = q ||| p = q 
+    /// p |&| q = p = q = p ||| q 
     let (|GoldenRule|_|) =
         function
         | Equals(And(p1, q1), Equals(Equals(p2, q2), Or(p3, q3))) when sequal p1 p2 && sequal p2 p3 && sequal q1 q2 && sequal q2 q3 -> 
@@ -81,7 +81,7 @@ module EquationalLogic =
         | Assoc <@(=)@> <@ (|||) @> x // (3.25)
         
         | Symm <@ (=) @> x // (3.2)
-        | Symm <@ (|||) @> x // (3.24)
+        | Commute <@ (=) @> <@ (|||) @> x // (3.24)
 
         | NotDistrib x // (3.9) 
         | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // (3.27)      
@@ -106,6 +106,14 @@ module EquationalLogic =
         | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
         | expr -> traverse expr reduce_constants
     
+    /// Reduce logical identities
+    let rec reduce_ident = 
+        function
+        | Equals(p, Bool true) -> <@@ p @@>
+        | Or(p, Bool false) -> <@@ p @@>
+        | And(p, Bool true) -> <@@ p @@>
+        | expr -> traverse expr reduce_ident
+
     /// Logical operators are right associative.
     let rec right_assoc =
         function
@@ -166,5 +174,5 @@ module EquationalLogic =
 
     let rec golden_rule =
         function
-        | Equals(Equals(Equals(And(p1, q1), p2), q2), Or(p3, q3))  -> <@@ true @@>
+        | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = (%%p:bool) ||| (%%q:bool) @@>
         | expr -> traverse expr golden_rule
