@@ -55,12 +55,16 @@ let FalseIdent p = proof prop_calculus <@ %p ||| false = %p @> [
 ]
 
 let OrDistrib p q r = proof prop_calculus <@ (%p ||| (%q ||| %r)) = ((%p ||| %q) ||| (%p ||| %r)) @> [
-    eq_id_ax <@ (%p ||| %q) = (%q ||| %p)@> |> R
+    CommuteWith p q |> R
+    R RightAssoc
+    LeftAssocWith p p r |> R
+    R Idemp
     R LeftAssoc
-    //R Idemp
+    L LeftAssoc
+    CommuteWith p q |> L
 ]
 
-(OrDistrib <@ p @> <@ q @> <@ r @>).LastState |> expand_right |> expand_left |> expand_right |> src
+OrDistrib <@ p @> <@ q @> <@ r @> |> last_state |> expand_right |>  src
 
 
 /// not p = q = p = not q
@@ -69,3 +73,5 @@ let OrDistrib p q r = proof prop_calculus <@ (%p ||| (%q ||| %r)) = ((%p ||| %q)
 //]
 //let p = false
 //GoldenRule1 <@ p @> <@ q @> 
+
+//(p |&| q) ||| q
