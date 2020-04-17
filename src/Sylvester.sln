@@ -232,6 +232,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bindings", "Bindings", "{C6
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FunScript.Bindings.D3", "..\ext\FunScript\src\extra\FunScript.Bindings.D3\FunScript.Bindings.D3.fsproj", "{7F8D77A7-C21B-43F6-9FBB-477B3DCDE077}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FunScript.Bindings.JSXGraph", "..\ext\FunScript\src\extra\FunScript.Bindings.JSXGraph\FunScript.Bindings.JSXGraph.fsproj", "{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1379,6 +1381,24 @@ Global
 		{7F8D77A7-C21B-43F6-9FBB-477B3DCDE077}.Release|x64.Build.0 = Release|Any CPU
 		{7F8D77A7-C21B-43F6-9FBB-477B3DCDE077}.Release|x86.ActiveCfg = Release|Any CPU
 		{7F8D77A7-C21B-43F6-9FBB-477B3DCDE077}.Release|x86.Build.0 = Release|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Debug|x64.Build.0 = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Debug|x86.Build.0 = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Nuget|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Nuget|Any CPU.Build.0 = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Nuget|x64.ActiveCfg = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Nuget|x64.Build.0 = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Nuget|x86.ActiveCfg = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Nuget|x86.Build.0 = Debug|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Release|x64.Build.0 = Release|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Release|x86.ActiveCfg = Release|Any CPU
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1468,6 +1488,7 @@ Global
 		{99A24728-6C3F-487B-825A-F9C1E149EE66} = {B9705B80-0702-41ED-96A4-83864AF9BF3F}
 		{C6A74737-1A01-42F0-813E-A9BF83817084} = {B9705B80-0702-41ED-96A4-83864AF9BF3F}
 		{7F8D77A7-C21B-43F6-9FBB-477B3DCDE077} = {C6A74737-1A01-42F0-813E-A9BF83817084}
+		{AB38E711-BDDB-4125-BFA6-CDB757C15E6E} = {C6A74737-1A01-42F0-813E-A9BF83817084}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}
