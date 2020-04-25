@@ -17,8 +17,6 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
     static member val S =     
         let S_Reduce = Rule("Reduce logical constants in (expression)", reduce_constants)
 
-        let S_ReduceIdent = Rule("Reduce logical identities in (expression)", reduce_ident)
-
         let S_LeftAssoc = Rule("Logical operators in (expression) are left-associative", left_assoc)
         
         let S_RightAssoc = Rule("Logical operators in (expression) are right-associative", right_assoc)
@@ -37,7 +35,6 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         Theory(equational_logic_axioms, [
             S_Reduce
-            S_ReduceIdent
             S_LeftAssoc
             S_RightAssoc
             S_Commute

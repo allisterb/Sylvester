@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Unicode.fs" />
     <Compile Include="Display.fs" />
     <Compile Include="FsStmt.fs" />
     <Compile Include="FsExpr.fs" />

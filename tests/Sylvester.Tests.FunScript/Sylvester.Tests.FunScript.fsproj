@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="JSXTests.fs" />
     <Compile Include="D3Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -21,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ext\FunScript\src\extra\FunScript.Bindings.D3\FunScript.Bindings.D3.fsproj" />
+    <ProjectReference Include="..\..\ext\FunScript\src\extra\FunScript.Bindings.JSXGraph\FunScript.Bindings.JSXGraph.fsproj" />
     <ProjectReference Include="..\..\ext\FunScript\src\main\FunScript.Bindings.Base\FunScript.Bindings.Base.fsproj" />
     <ProjectReference Include="..\..\ext\FunScript\src\main\FunScript.Interop\FunScript.Interop.NETStandard.fsproj" />
     <ProjectReference Include="..\..\ext\FunScript\src\main\FunScript\FunScript.NETStandard.fsproj" />

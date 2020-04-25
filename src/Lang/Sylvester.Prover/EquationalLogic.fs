@@ -70,6 +70,7 @@ module EquationalLogic =
         | _ -> None
 
     (* Axioms *)
+
     let equational_logic_axioms = 
         function
         | SEqual x
@@ -93,7 +94,7 @@ module EquationalLogic =
         | Implication x -> Some (desc x)
         | _ -> None
 
-    (* Inference rules *) 
+    (* Admissible inference rules *) 
     
     /// Reduce logical constants.
     let rec reduce_constants  =
@@ -106,58 +107,36 @@ module EquationalLogic =
         | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
         | expr -> traverse expr reduce_constants
     
-    /// Reduce logical identities
-    let rec reduce_ident = 
-        function
-        | Equals(p, Bool true) -> <@@ p @@>
-        | Or(p, Bool false) -> <@@ p @@>
-        | And(p, Bool true) -> <@@ p @@>
-        | expr -> traverse expr reduce_ident
-
     /// Logical operators are right associative.
     let rec right_assoc =
         function
         | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
-        | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@>
         | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@>
-        | NotEquals(NotEquals(a1, a2), a3) -> <@@ (%%a1:bool) <> ((%%a2:bool) <> (%%a3:bool)) @@>
         | expr -> traverse expr right_assoc
     
     /// Logical operators are left associative.
     let rec left_assoc =
         function
         | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
-        | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@>
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
-        | NotEquals(a1, NotEquals(a2, a3)) -> <@@ ((%%a1:bool) <> (%%a2:bool)) <> (%%a3:bool) @@>
         | expr -> traverse expr left_assoc
     
     /// Logical operators commute.
     let rec commute =
         function
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
-        | And(a1, a2) -> <@@ %%a2 |&| %%a1 @@>
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
-        | NotEquals(a1, a2) -> <@@ (%%a2:bool) <> (%%a1:bool) @@>
-        | Not(Or(a1, a2)) -> <@@ not (%%a2 ||| %%a1) @@>
-        | Not(And(a1, a2)) -> <@@ not (%%a2 |&| %%a1) @@>
         | expr -> traverse expr commute
     
     /// Distribute logical terms.
     let rec distrib =
         function
-        | Or(a1, And(a2, a3)) -> <@@ %%a1 |&| %%a2 ||| %%a1 |&| %%a3 @@> 
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@> 
-        | Not(And(a1, a2)) -> <@@ not %%a1 ||| not %%a2 @@>
-        | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | expr -> traverse expr distrib
     
     /// Collect distributed logical terms.
     let rec collect =
         function
-        | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
-        | Or(And(a1, a2),  And(a3, a4)) when sequal a2 a4 -> <@@ %%a2 |&| (%%a1 ||| %%a3) @@>    
-        | Or(Not(a1), Not(a2)) when sequal a1 a2 -> <@@ not(%%a1 |&| %%a2) @@>
         | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
         | expr -> traverse expr collect
     
@@ -174,5 +153,5 @@ module EquationalLogic =
 
     let rec golden_rule =
         function
-        | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = (%%p:bool) ||| (%%q:bool) @@>
+        | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = ((%%p:bool) ||| (%%q:bool)) @@>
         | expr -> traverse expr golden_rule

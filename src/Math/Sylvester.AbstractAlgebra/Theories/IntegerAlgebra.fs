@@ -4,8 +4,8 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
-open FormulaPatterns
-open FormulaDescriptions
+open Patterns
+open Descriptions
 
 /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
 /// and unary inverse operation (-).

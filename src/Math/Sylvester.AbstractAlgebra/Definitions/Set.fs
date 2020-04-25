@@ -35,7 +35,7 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Generator g1, Generator g2 -> g1.ExprString = g2.ExprString
+            |Generator g1, Generator g2 -> g1.ToString() = g2.ToString()
             |Set expr1, Set expr2 ->  expr1 = expr2
             |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && 
                               b |> Seq.forall (fun x -> a.HasElement x)
@@ -50,17 +50,17 @@ with
     override a.GetHashCode() = 
         match a with
         | Empty -> 0
-        | Generator g -> g.ExprString.GetHashCode()
+        | Generator g -> g.ToString().GetHashCode()
         | Seq s -> s.GetHashCode()
-        | Set p -> p.ExprString.GetHashCode()
+        | Set p -> p.ToString().GetHashCode()
 
     /// Create a subset of the set using a predicate.
-    member x.Subset(f: LogicalPredicate<'t>) = 
+    member x.Subset(f: Test<'t>) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Generator g -> Seq(SetGenerator((fun x -> g.Pred(x) && f(x)), x |> Seq.filter f))
+        |Generator g -> Seq(SetGenerator((fun x -> g.Test(x) && f(x)), x |> Seq.filter f))
         |Seq _ -> Seq(x |> Seq.filter f) 
-        |Set s -> SetBuilder(fun x -> s.Pred(x) && f(x)) |> Set
+        |Set s -> SetBuilder(fun x -> s.Test(x) && f(x)) |> Set
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
@@ -68,7 +68,7 @@ with
         |Empty -> false
         |Generator g -> g.HasElement elem
         |Seq s -> s.Contains elem // May fail if sequence is infinite
-        |Set s -> s.Pred elem
+        |Set s -> s.Test elem
     
     /// Indicator function for an element.
     member x.Indicate elem = if x.HasElement elem then 1 else 0
@@ -102,9 +102,9 @@ with
     member a.Difference b =
         match a with
         | Empty -> Empty
-        | Generator g -> SetGenerator((fun x -> g.Pred(x) && not(x = b)), a |> Seq.except [b]) |> Set.ofGen
+        | Generator g -> SetGenerator((fun x -> g.Test(x) && not(x = b)), a |> Seq.except [b]) |> Set.ofGen
         | Seq _ -> Seq(a |> Seq.except [b])
-        | Set builder -> SetBuilder(fun x -> builder.Pred(x) && not(x = b)) |> Set
+        | Set builder -> SetBuilder(fun x -> builder.Test(x) && not(x = b)) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
     
@@ -190,10 +190,10 @@ with
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
 
     /// Set create subset operator.
-    static member (|>|) (l:Set<'t>, r:LogicalPredicate<'t>) = l.Subset r
+    static member (|>|) (l:Set<'t>, r:Test<'t>) = l.Subset r
 
     /// Set filter subsets operator.
-    static member (|>>|) (l:Set<'t>, r:LogicalPredicate<Set<'t>>) = l.Powerset.Subset r
+    static member (|>>|) (l:Set<'t>, r:Test<Set<'t>>) = l.Powerset.Subset r
 
     /// Set difference operator
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
@@ -245,10 +245,10 @@ module Set =
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
 
     /// Set create subset
-    let (|>|) (l:ISet<'t>) (r:LogicalPredicate<'t>) = l.Set |>| r
+    let (|>|) (l:ISet<'t>) (r:Test<'t>) = l.Set |>| r
     
     /// Set filter subset
-    let (|>>|) (l:ISet<'t>) (r:LogicalPredicate<Set<'t>>) = l.Set.Powerset |>| r
+    let (|>>|) (l:ISet<'t>) (r:Test<Set<'t>>) = l.Set.Powerset |>| r
     
     /// Set difference operator.
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set

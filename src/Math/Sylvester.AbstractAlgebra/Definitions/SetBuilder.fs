@@ -7,59 +7,54 @@ open System.Linq
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-/// A logical predicate.
-type LogicalPredicate<'t when 't: equality> = 't -> bool
+type Test<'t> = 't -> bool
 
-//// A logical predicate expression.
-type ILogicalPredicateExpr<'t when 't: equality> = 
-    abstract member Pred:LogicalPredicate<'t>
-    abstract member Expr:Expr
-    abstract member ExprString:string
-/// A logical statement that can define a set using a predicate for set membership.
-type ISetBuilder<'t when 't: equality> = ILogicalPredicateExpr<'t>
+/// A logical predicate tests if an expression or condition is true or false.
+type ILogicalPredicate<'t when 't: equality> = 
+    abstract Test:Test<'t>
+    abstract Expr:Expr<'t -> bool>
 
-//// A logical predicate expression
-type LogicalPredicateExpr<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>) = 
-    let v,t,e = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
-    member val Pred = v :?> LogicalPredicate<'t>
-    member val Expr = e
-    member val ExprString = exprToString e
-    interface ILogicalPredicateExpr<'t> with
-        member val Pred = v :?> LogicalPredicate<'t>
-        member val Expr = e
-        member val ExprString = exprToString e
-    interface IEquatable<LogicalPredicateExpr<'t>> with member a.Equals(b) = a.ExprString = b.ExprString
+/// A logical predicate tests if an expression or condition is true or false.
+type LogicalPredicate<'t when 't: equality>([<ReflectedDefinition(true)>] test:Expr<'t -> bool>) = 
+    let v = match test with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    member val Test = v :?> ('t -> bool)
+    member val Expr = test
+    override x.ToString() = x.Expr |> src
+    interface ILogicalPredicate<'t> with
+        member val Test = v :?> ('t -> bool)
+        member val Expr = test
+    interface IEquatable<LogicalPredicate<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
             match _b with 
-            | :? LogicalPredicateExpr<'t> as b -> (a :> IEquatable<LogicalPredicateExpr<'t>>).Equals b
+            | :? LogicalPredicate<'t> as b -> (a :> IEquatable<LogicalPredicate<'t>>).Equals b
             | _ -> false
-    override a.GetHashCode() = (exprToString a.Expr).GetHashCode() 
+    override a.GetHashCode() = (a.ToString()).GetHashCode() 
+
+/// A logical statement that can define a set using a predicate for set membership.
+type ISetBuilder<'t when 't: equality> = ILogicalPredicate<'t>
  
 /// A statement that defines a set using a predicate for set membership.
-type SetBuilder<'t when 't : equality> = LogicalPredicateExpr<'t>
+type SetBuilder<'t when 't : equality> = LogicalPredicate<'t>
 
 /// A generator defines a sequence together with a logical predicate that tests for set membership. 
-type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] pred:Expr<LogicalPredicate<'t>>, s:seq<'t>) = 
-    let pv,pt,pe = match pred with | WithValue(v, t, e) -> v,t,e | _ -> failwith "Unexpected expression."
-    member val Pred = pv :?> LogicalPredicate<'t>
-    member val Expr = pe
-    member val ExprString = exprToString pe
-    ///member val Seq = s
-    member x.HasElement elem = x.Pred elem
+type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] test:Expr<'t -> bool>, s:seq<'t>) = 
+    let pv = match test with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    member val Test = pv :?> ('t -> bool)
+    member val Expr = test
+    member x.HasElement elem = x.Test elem
     interface IEnumerable<'t> with
         member x.GetEnumerator () = s.GetEnumerator() 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
     interface ISetBuilder<'t> with
-        member val Pred = pv :?> LogicalPredicate<'t>
-        member val Expr = pe
-        member val ExprString = exprToString pe
-    
+        member val Test = pv :?> ('t -> bool)
+        member val Expr = test
+     
 /// A sequence generating function.
 and GeneratingFunction<'t when 't: equality> = int -> 't
 
 /// A logical predicate expression.
-type Pred<'t when 't: equality> = LogicalPredicateExpr<'t>    
+type Pred<'t when 't: equality> = LogicalPredicate<'t>    
 
 /// A generator defines a sequence together with a logical predicate that tests for set membership.
 type Gen<'t when 't: equality> = SetGenerator<'t>
@@ -171,7 +166,3 @@ module SetBuilder =
                                 k := !l
                                 l :=  m
         }
-
-
-
-

@@ -11,6 +11,10 @@ module ProofOps =
 
     let right_state p = p |> last_state |> expand_right
 
+    let left_src p = p |> left_state |> src
+
+    let right_src p = p |> right_state |> src
+
 module Tactics = 
     /// Switch the LHS of an identity with the RHS.
     let Transpose commute rule =
@@ -24,8 +28,8 @@ module Tactics =
             Theorem(stmt, p) |> Ident
 
     /// A theorem T is equivalent to T = true
-    let Taut reduce rule  =
+    let Taut steps rule  =
         let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
         let stmt = <@@ (%% proof.Stmt) = true @@>
-        let p = Proof(stmt, proof.Theory, LR reduce :: proof.Steps, true) in 
+        let p = Proof(stmt, proof.Theory, steps :: proof.Steps, true) in 
             Theorem(stmt, p) |> Ident
