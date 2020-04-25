@@ -28,14 +28,14 @@ module EquationalLogic =
     (* Patterns *)
 
     /// true = p = p
-    let (|TrueDef|_|) =
+    let (|DefTrue|_|) =
         function
         | Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> pattern_desc "Definition of true" <@fun x -> x = x = true @> |> Some
         | Bool true -> pattern_desc "Definition of true" <@ true @> |> Some // This isn't defined as an axiom in E but is included here for convenience.
         | _ -> None
 
     /// false = not true
-    let (|FalseDef|_|) =
+    let (|DefFalse|_|) =
         function
         | Equals(Bool false, Not(Bool true)) -> pattern_desc "Definition of false" <@ false = not true @> |> Some
         | Not(Bool false) -> pattern_desc "Definition of false" <@ not true @> |> Some // This isn't defined as an axiom in E but is included here for convenience.
@@ -74,8 +74,8 @@ module EquationalLogic =
     let equational_logic_axioms = 
         function
         | SEqual x
-        | TrueDef x // (3.3)
-        | FalseDef x //(3.8)
+        | DefTrue x // (3.3)
+        | DefFalse x //(3.8)
         | BinaryOpDef <@ (=) @> <@ (<>) @> <@ (=) @> <@ not @> x // (3.10)
         
         | Assoc <@(=)@> <@ (=) @> x  // (3.1)
@@ -94,7 +94,7 @@ module EquationalLogic =
         | Implication x -> Some (desc x)
         | _ -> None
 
-    (* Admissible inference rules *) 
+    (* Expression tree functions for rules *) 
     
     /// Reduce logical constants.
     let rec reduce_constants  =

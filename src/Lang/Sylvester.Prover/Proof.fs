@@ -257,33 +257,6 @@ module LogicalRules =
     /// Substitute an assumption.
     let Assume expr = Assumption(expr) |> Subst 
        
-    /// Reduce logical constants in expression. 
-    let Reduce' = Proof.Logic.Rules.[0]
-
-    /// Logical expression is left associative.
-    let LeftAssoc' = Proof.Logic.Rules.[1]
-    
-    /// Logical expression is right associative.
-    let RightAssoc' = Proof.Logic.Rules.[2]
-      
-    /// Logical expression is commutative.
-    let Commute' = Proof.Logic.Rules.[3]
-
-    /// Distribute logical terms in expression.
-    let Distrib' = Proof.Logic.Rules.[4]
-    
-    /// Collect distributed logical terms in expression.
-    let Collect' = Proof.Logic.Rules.[5]
-
-    /// Substitute idempotent logical terms in expression.
-    let Idemp' = Proof.Logic.Rules.[6]
-
-    /// Logical expression satisfies law of excluded middle.
-    let ExcludedMiddle = Proof.Logic.Rules.[7]
-
-    /// Logical expression satisfies golden rule.
-    let GoldenRule = Proof.Logic.Rules.[8]
-
 [<AutoOpen>]
 module Proof =        
     let proof theory (e:Expr<'t>) steps =         

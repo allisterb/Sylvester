@@ -16,3 +16,4 @@ let ``3.36`` = proof prop_calculus <@(p |&| q) = (q |&| p) @> [
     CommuteOr <@ q @> <@ p @> |> R
     CommuteEq <@ q @> <@ p @> |> R 
 ]
+

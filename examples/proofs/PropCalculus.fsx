@@ -57,3 +57,11 @@ let ConjIdent p = proof prop_calculus <@ %p ||| false = %p @> [
     DefTrue p |> R
     L ExcludedMiddle
 ]
+
+let DefOr2 = ident prop_calculus <@ (p ||| q) = (p ||| not q = p) @> [
+    LR LeftAssoc
+    CollectOrEq <@ p @> <@ q @> <@ not q @> |> L
+    CommuteEq <@ q @> <@ not q @> |> L
+    DefFalse <@ q @> |> Transpose |> L
+    IdentOr <@ p @> |> L      
+]

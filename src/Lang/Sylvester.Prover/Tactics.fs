@@ -17,7 +17,7 @@ module ProofOps =
 
 module Tactics = 
     /// Switch the LHS of an identity with the RHS.
-    let Transpose commute rule =
+    let Trn commute rule =
         let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
         let (l, r) = 
             match proof.Stmt with 
@@ -27,9 +27,14 @@ module Tactics =
         let p = Proof(stmt, proof.Theory, LR commute :: proof.Steps, true) in 
             Theorem(stmt, p) |> Ident
 
-    /// A theorem T is equivalent to T = true
-    let Taut steps rule  =
+    /// (p = p) = true.
+    let Taut ident rule =
         let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
-        let stmt = <@@ (%% proof.Stmt) = true @@>
-        let p = Proof(stmt, proof.Theory, steps :: proof.Steps, true) in 
+        let (l, r) = 
+            match proof.Stmt with 
+            | BinaryCall(l, r) -> (l, r)
+            | _ -> failwith "This theorem is not an identity."
+        let expr = proof.Stmt
+        let stmt = <@@ (%%expr) = true @@>
+        let p = Proof(stmt, proof.Theory, (expr |> ident |> LR) :: proof.Steps, true) in 
             Theorem(stmt, p) |> Ident
