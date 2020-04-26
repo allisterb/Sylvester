@@ -1,6 +1,5 @@
 ﻿namespace Sylvester
 
-open FSharp.Quotations.DerivedPatterns
 open Patterns
 
 [<AutoOpen>]
@@ -27,13 +26,9 @@ module Tactics =
         let p = Proof(stmt, proof.Theory, LR commute :: proof.Steps, true) in 
             Theorem(stmt, p) |> Ident
 
-    /// (p = p) = true.
+    /// If A is a theorem then the identity A = true is a theorem.
     let Taut ident rule =
         let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
-        let (l, r) = 
-            match proof.Stmt with 
-            | BinaryCall(l, r) -> (l, r)
-            | _ -> failwith "This theorem is not an identity."
         let expr = proof.Stmt
         let stmt = <@@ (%%expr) = true @@>
         let p = Proof(stmt, proof.Theory, (expr |> ident |> LR) :: proof.Steps, true) in 

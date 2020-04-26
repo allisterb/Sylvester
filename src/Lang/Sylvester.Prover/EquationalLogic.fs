@@ -42,7 +42,7 @@ module EquationalLogic =
         | _ -> None
 
     /// not (p = q) = not p = q
-    let (|NotDistrib|_|) =
+    let (|DistribNot|_|) =
         function
         | Equals(Not(Equals(a1, a2)), Equals(Not(b1), b2)) when sequal2 a1 a2 b1 b2 -> pattern_desc "Distributivity" <@fun x y -> not(x = y) = (not x = y) @> |> Some
         | _ -> None
@@ -84,7 +84,7 @@ module EquationalLogic =
         | Symm <@ (=) @> x // (3.2)
         | Commute <@ (=) @> <@ (|||) @> x // (3.24)
 
-        | NotDistrib x // (3.9) 
+        | DistribNot x // (3.9) 
         | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // (3.27)      
        
         | Idempotency <@(=)@> <@ (|||) @> x // (3.26)
@@ -110,40 +110,45 @@ module EquationalLogic =
     /// Logical operators are right associative.
     let rec right_assoc =
         function
-        | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
         | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@>
+        | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
+        | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@> // Include associativity of and as an admitted rule since the formal proof is long
         | expr -> traverse expr right_assoc
     
     /// Logical operators are left associative.
     let rec left_assoc =
         function
-        | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
+        | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
+        | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@> // Include associativity of and as an admitted rule since the formal proof is long
         | expr -> traverse expr left_assoc
     
     /// Logical operators commute.
     let rec commute =
         function
-        | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
+        | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
         | expr -> traverse expr commute
     
     /// Distribute logical terms.
     let rec distrib =
         function
-        | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@> 
+        | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
+        | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
+        | Or(a1, Or(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) ||| ((%%a1) ||| (%%a3)) @@>
         | expr -> traverse expr distrib
     
     /// Collect distributed logical terms.
     let rec collect =
         function
         | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
+        | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 = %%a4) @@>
         | expr -> traverse expr collect
     
     /// ||| operator is idempotent.    
     let rec idemp =
         function
-        | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
+        | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>   
         | expr -> traverse expr idemp
 
     let rec excluded_middle =
