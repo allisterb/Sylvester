@@ -62,10 +62,10 @@ module PropCalculus =
      
     (* Tactics *)
 
-    /// Switch the LHS of an identity with the RHS.
+    /// If A = B is a theorem then so is B = A.
     let Trn = Tactics.Trn Commute
     
-    /// If A is a theorem then the identity A = true is a theorem.
+    /// If A = B is a theorem then so is (A = B) = true.
     let Taut =  
         let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L Commute; LR RightAssoc], true)) |> Ident  
         Tactics.Taut ieq
@@ -154,7 +154,7 @@ module PropCalculus =
     ]
 
     /// (p ||| q) = (p ||| not q = p)
-    let ident2_or p q = ident prop_calculus <@ (%p ||| %q) = ((%p ||| not %q) = %p) @> [
+    let ident_or_not p q = ident prop_calculus <@ (%p ||| %q) = ((%p ||| not %q) = %p) @> [
         LR LeftAssoc
         collect_or_eq <@ %p @> <@ %q @> <@ not %q @> |> L
         commute_eq <@ %q @> <@ not %q @> |> L
@@ -165,8 +165,10 @@ module PropCalculus =
     /// (p ||| p) = p
     let idemp_or p =  id_ax prop_calculus <@ (%p ||| %p) = %p @>
     
+    /// p ||| (q ||| r) = (p ||| q) = (p ||| r) 
     let distrib_or p q r = ident  prop_calculus <@ (%p ||| (%q ||| %r)) = ((%p ||| %q) ||| (%p ||| %r)) @> [Distrib |> L]
 
+    /// (p ||| q) = (p ||| r) = p ||| (q ||| r)
     let collect_or p q r = distrib_or p q r |> Trn
 
     /// not (p = q) = not p = q
@@ -203,6 +205,7 @@ module PropCalculus =
     /// p <> (q <> r) = (p <> q) <> r  
     let left_assoc_not_eq p q r = right_assoc_not_eq p q r |> Trn
 
+    /// p |&| q = ((p = q) = (p ||| q))
     let golden_rule p q = id_ax prop_calculus <@ (%p |&| %q) = (%p = %q = (%p ||| %q)) @>
 
     /// p |&| q = q |&| p
@@ -255,12 +258,14 @@ module PropCalculus =
         RightAssoc |> LR
     ]
 
+    /// (p |&| (p ||| q)) = p
     let absorb_and p q = ident prop_calculus <@ (%p |&| (%p ||| %q)) = %p @> [
         L GoldenRule
         left_assoc_or <@ %p @> <@ %p @> <@ %q @> |> L
         idemp_or <@ %p @> |> L
     ]
 
+    /// (p ||| (p |&| q)) = p
     let absorb_or p q = ident prop_calculus <@ (%p ||| (%p |&| %q)) = %p @> [
         GoldenRule |> L
         Distrib |> L

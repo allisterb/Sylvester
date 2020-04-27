@@ -15,7 +15,7 @@ module ProofOps =
     let right_src p = p |> right_state |> src
 
 module Tactics = 
-    /// Switch the LHS of an identity with the RHS.
+    /// If A = B is a theorem then so is B = A.
     let Trn commute rule =
         let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
         let (l, r) = 
@@ -26,7 +26,7 @@ module Tactics =
         let p = Proof(stmt, proof.Theory, LR commute :: proof.Steps, true) in 
             Theorem(stmt, p) |> Ident
 
-    /// If A is a theorem then the identity A = true is a theorem.
+    /// If A = B is a theorem then so is (A = B) = true.
     let Taut ident rule =
         let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
         let expr = proof.Stmt
