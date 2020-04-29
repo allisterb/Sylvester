@@ -54,6 +54,7 @@ type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: U
             new ISubGroup<'t> with 
                 member a.Parent = x :> IGroup<'t>
                 member a.Set = x.Set.Subset p
+                member a.Equals b = x.Set.Equals b
                 member a.Op = x.Op
                 member a.Identity = x.Identity
                 member a.Inverse  = x.Inverse
@@ -93,6 +94,7 @@ module Group =
         { 
                 new IAdditiveGroup<'t> with
                     member x.Set = set.Set
+                    member x.Equals y = x.Set.Equals y
                     member x.Op = op
                     member x.Identity = zero
                     member x.Inverse = (~-)
@@ -110,6 +112,7 @@ module Group =
         {
             new IMultiplicativeGroup<'t> with
                     member x.Set = set.Set
+                    member x.Equals y = x.Set.Equals y
                     member x.Op = FSharpPlus.Math.Generic.(*)
                     member x.Identity = one
                     member x.Inverse = inv

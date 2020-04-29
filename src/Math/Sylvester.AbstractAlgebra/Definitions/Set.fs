@@ -215,7 +215,9 @@ with
     
     interface ISet<'t> with member x.Set = x
 
-and ISet<'t when 't: equality> = abstract member Set:Set<'t>
+and ISet<'t when 't: equality> = 
+    inherit IEquatable<Set<'t>>
+    abstract member Set:Set<'t>
 
 and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Length = number<'n>
@@ -223,6 +225,7 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Set = Seq items
     interface ISet<'t> with
         member x.Set = x.Set
+        member x.Equals y = x.Set.Equals y
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
@@ -260,7 +263,7 @@ module Set =
     
     /// Cartesian product operator.
     let (|**|) (l:ISet<'t>) (r:ISet<'t>) = l.Set * r.Set
-
+    
     let infiniteSeq f g = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
 
     let infiniteSeq2 f g = Gen(f, g |> Seq.initInfinite |> Seq.pairwise) |> Set.ofGen

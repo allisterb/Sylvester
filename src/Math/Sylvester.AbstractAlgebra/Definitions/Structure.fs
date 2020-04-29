@@ -14,6 +14,7 @@ type Struct<'t, 'n when 't: equality and 'n :> Number>(set: ISet<'t>, ops: Ops<'
     member val Ops = ops    
     interface IStruct<'t, 'n> with
         member val Set = set.Set
+        member x.Equals y = x.Set.Equals y
         member val Ops = ops
 
 /// A structure that has an identity element.

@@ -31,14 +31,12 @@ module EquationalLogic =
     let (|DefTrue|_|) =
         function
         | Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> pattern_desc "Definition of true" <@fun x -> x = x = true @> |> Some
-        | Bool true -> pattern_desc "Definition of true" <@ true @> |> Some // This isn't defined as an axiom in E but is included here for convenience.
         | _ -> None
 
     /// false = not true
     let (|DefFalse|_|) =
         function
         | Equals(Bool false, Not(Bool true)) -> pattern_desc "Definition of false" <@ false = not true @> |> Some
-        | Not(Bool false) -> pattern_desc "Definition of false" <@ not true @> |> Some // This isn't defined as an axiom in E but is included here for convenience.
         | _ -> None
 
     /// not (p = q) = not p = q
@@ -94,7 +92,7 @@ module EquationalLogic =
         | Implication x -> Some (desc x)
         | _ -> None
 
-    (* Expression tree functions for rules *) 
+    (* Admissible rules *) 
     
     /// Reduce logical constants.
     let rec reduce_constants  =
@@ -135,7 +133,7 @@ module EquationalLogic =
         function
         | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
-        | Or(a1, Or(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) ||| ((%%a1) ||| (%%a3)) @@>
+        | And(a1, And(a2, a3)) -> <@@ ((%%a1)  |&| (%%a2)) |&| ((%%a1) |&| (%%a3)) @@>
         | expr -> traverse expr distrib
     
     /// Collect distributed logical terms.

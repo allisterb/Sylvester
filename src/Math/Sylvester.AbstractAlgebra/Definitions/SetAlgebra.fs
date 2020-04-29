@@ -15,7 +15,7 @@ type SigmaAlgebra<'t when 't: equality>(subsets: Set<Set<'t>>, complement: Unary
     new(set: Set<'t>, subsets:Set<Set<'t>>) = SigmaAlgebra(subsets, set.Complement)
 
 [<AutoOpen>]
-module SetAlgebra =
+module SetsSetAlgebra =
     type Set<'t when 't : equality> with
         member x.AsAlgebra = SetAlgebra(x)
         static member toAlgebra (s:Set<Set<'t>>) = s.AsAlgebra 

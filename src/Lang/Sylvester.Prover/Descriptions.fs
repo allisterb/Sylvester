@@ -28,7 +28,7 @@ module Descriptions =
     let axiom_desc theoryName (printer:string->string) (patternDesc:PatternDescription)  = 
         AxiomDescription(theoryName, PatternDescription(patternDesc.Name, (printer patternDesc.Description)))
 
-    let set_axiom_desc_theory (a:AxiomDescription) theoryName  = AxiomDescription(theoryName, PatternDescription(a.Name, a.Description))
+    let set_axiom_desc_theory theoryName (a:AxiomDescription)  = AxiomDescription(theoryName, PatternDescription(a.Name, a.Description))
     
     let get_desc<'t> = 
         let a = typeof<'t>.GetCustomAttributes( typeof<DescAttribute>, true)

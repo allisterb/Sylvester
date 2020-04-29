@@ -18,33 +18,23 @@ module IntegerAlgebra =
     (* Axioms *)
     let (|IntegerAlgebraAxioms|_|) =
         function                    
-        | Assoc <@ (+) @> x
-        | Assoc <@ (*) @> x
-        | Identity <@ (+) @> <@ 0 @> x 
-        | Identity <@ (*) @> <@ 1 @> x
-        | Inverse <@ (+) @> <@ (~-) @> <@ 0 @> x
-        | Commute <@ (+) @> x
-        | Commute <@ (*) @> x
-        | Distrib <@ (*) @> <@ (+) @> x 
+        | Assoc <@(=)@> <@ (+) @> x
+        | Assoc <@(=)@> <@ (*) @> x
+        | Identity <@(=)@> <@ (+) @> <@ 0 @> x 
+        | Identity <@(=)@> <@ (*) @> <@ 1 @> x
+        | Inverse <@(=)@> <@ (+) @> <@ (~-) @> <@ 0 @> x
+        | Commute <@(=)@> <@ (+) @> x
+        | Commute <@(=)@> <@ (*) @> x
+        | Distrib <@(=)@> <@ (*) @> <@ (+) @> x 
         | LeftCancel <@ (*) @> x 
         | LeftCancel <@ (+) @> x
-        | BinaryOpDefR <@ (-) @> <@ (+) @> <@ (~-) @> x -> Some (desc x) 
+        | BinaryOpDefR <@(=)@> <@ (-) @> <@ (+) @> <@ (~-) @> x -> Some (desc x) 
 
         | _ -> None
     
-    let (|SymmIntegerAxioms|_|) =
-        function
-        | Symm(A, B) -> 
-            match (A, B) with 
-            | IntegerAlgebraAxioms x -> Some x 
-            | Conj(IntegerAlgebraAxioms x) -> Some x
-            | _ -> None
-
     let integer_algebra_axioms = 
         function  
-        | IntegerAlgebraAxioms x
-        | Conj(IntegerAlgebraAxioms x)
-        | SymmIntegerAxioms x -> Some x
+        | IntegerAlgebraAxioms x -> Some x
         | _ -> None
                 
     let rec reduce_constants  =
@@ -132,19 +122,4 @@ module IntegerAlgebra =
 
     (* proof step shortcuts*)
     let int_id_ax expr = id_ax integer_algebra expr 
-    let int_id_ax_ab expr = id_ax_ab integer_algebra expr
-    let int_id_ax_a expr = id_ax_a integer_algebra expr
-    let int_id_ax_b expr = id_ax_b integer_algebra expr
-    let int_id_ax_r_a expr = id_ax_r_a integer_algebra expr
-    let int_id_ax_r_b expr = id_ax_r_b integer_algebra expr
-    let int_id_ax_l_a expr = id_ax_l_a integer_algebra expr
-    let int_id_ax_l_b expr = id_ax_l_b integer_algebra expr
-
-    let int_id expr = id_lem integer_algebra expr
-    let int_id_ab proof expr = id_ab integer_algebra proof expr
-    let int_id_a proof expr = id_a integer_algebra proof expr
-    let int_id_b proof expr = id_b integer_algebra proof expr
-    let int_id_r_a proof expr = id_r_a integer_algebra proof expr
-    let int_id_r_b proof expr = id_r_b integer_algebra proof expr
-    let int_id_l_a proof expr = id_l_a integer_algebra proof expr
-    let int_id_l_b proof expr = id_l_b integer_algebra proof expr
+    let int_id expr = ident integer_algebra expr

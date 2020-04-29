@@ -1,7 +1,7 @@
 ﻿namespace Sylvester
 
-module SetAlgebraTheory =
-    open BooleanAlgebraTheory    
+module SetAlgebra =
+    open BooleanAlgebra    
 
     /// Print set algebra operator symbols
     let print_set_algebra_operators (s:string) = 
@@ -28,20 +28,5 @@ module SetAlgebraTheory =
 
     (* proof step shortcuts*)
      
-    let set_id_ax expr = id_ax set_algebra expr 
-    let set_id_ax_ab expr = id_ax_ab set_algebra expr
-    let set_id_ax_a expr = id_ax_a set_algebra expr
-    let set_id_ax_b expr = id_ax_b set_algebra expr
-    let set_id_ax_r_a expr = id_ax_r_a set_algebra expr
-    let set_id_ax_r_b expr = id_ax_r_b set_algebra expr
-    let set_id_ax_l_a expr = id_ax_l_a set_algebra expr
-    let set_id_ax_l_b expr = id_ax_l_b set_algebra expr
-
-    let set_id expr = id_lem set_algebra expr
-    let set_id_ab proof expr = id_ab set_algebra proof expr
-    let set_id_a proof expr = id_a set_algebra proof expr
-    let set_id_b proof expr = id_b set_algebra proof expr
-    let set_id_r_a proof expr = id_r_a set_algebra proof expr
-    let set_id_r_b proof expr = id_r_b set_algebra proof expr
-    let set_id_l_a proof expr = id_l_a set_algebra proof expr
-    let set_id_l_b proof expr = id_l_b set_algebra proof expr
+    let set_id_ax expr = id_ax set_algebra expr     
+    let set_id expr = ident set_algebra expr

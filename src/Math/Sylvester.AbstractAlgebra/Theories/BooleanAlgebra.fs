@@ -5,48 +5,38 @@ open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
-open FormulaPatterns
-open FormulaDescriptions
+open Patterns
+open Descriptions
 
 /// Theory of Boolean algebra on a set closed under 2 binary operations that are associative, commutative, and idempotent,
 /// with identity elements 0 and 1, and a unary inverse or complement operation.
-module BooleanAlgebraTheory =
+module BooleanAlgebra =
     let desc = axiom_desc "Boolean Algebra" id
 
     let (|BooleanAlgebraAxioms|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) = 
         function
-        | Assoc join x
-        | Assoc meet x
+        | Assoc <@(=)@> join x
+        | Assoc <@(=)@> meet x
                 
-        | Identity join zero x
-        | Identity meet one x
+        | Identity <@(=)@> join zero x
+        | Identity <@(=)@> meet one x
                 
-        | Inverse join comp zero x
-        | Inverse meet comp one x
+        | Inverse <@(=)@> join comp zero x
+        | Inverse <@(=)@> meet comp one x
 
-        | Idempotency join x
-        | Idempotency meet x
+        | Idempotency <@(=)@> join x
+        | Idempotency <@(=)@> meet x
 
-        | Commute join x
-        | Commute meet x
+        | Commute <@(=)@> join x
+        | Commute <@(=)@> meet x
 
-        | Distrib join meet x 
-        | Distrib meet join x -> Some (desc x)
+        | Distrib <@(=)@> join meet x 
+        | Distrib <@(=)@> meet join x -> desc x |> Some
         | _ -> None
-
-    let (|SymmBooleanAlgebraAxioms|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) =
-        function
-        | Symm(A, B) -> 
-            match (A, B) with 
-            | BooleanAlgebraAxioms join meet zero one comp x -> Some x
-            | Conj(BooleanAlgebraAxioms join meet zero one comp x) -> Some x
-            | _ -> None
 
     let boolean_algebra_axioms (theoryName:string) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) = 
         function  
-        | BooleanAlgebraAxioms join meet zero one comp x
-        | Conj(BooleanAlgebraAxioms join meet zero one comp x)
-        | SymmBooleanAlgebraAxioms join meet zero one comp x -> Some (set_axiom_desc_theory x theoryName)
+        | BooleanAlgebraAxioms join meet zero one comp x -> Some (set_axiom_desc_theory x theoryName)
         | _ -> None
 
     (* Rules *)

@@ -30,7 +30,9 @@ type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>]
         member val Test = v :?> Test<'t * 't>
         member val Expr = test
     member x.Set = set.Prod.Subset(x.Pred)
-    interface ISet<'t * 't> with member x.Set = x.Set
+    interface ISet<'t * 't> with 
+        member x.Set = x.Set
+        member x.Equals y = x.Set.Equals y
     interface Generic.IEnumerable<'t * 't> with
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't> =
             let s = x.Set :> Generic.IEnumerable<'t *'t> in s.GetEnumerator()
