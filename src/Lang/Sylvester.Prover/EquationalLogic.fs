@@ -110,7 +110,7 @@ module EquationalLogic =
         function
         | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@>
         | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
-        | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@> // Include associativity of and as an admitted rule since the formal proof is long
+        //| And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@> // Include associativity of and as an admitted rule since the formal proof is long
         | expr -> traverse expr right_assoc
     
     /// Logical operators are left associative.
@@ -118,7 +118,7 @@ module EquationalLogic =
         function
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
         | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
-        | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@> // Include associativity of and as an admitted rule since the formal proof is long
+        //| And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@> // Include associativity of and as an admitted rule since the formal proof is long
         | expr -> traverse expr left_assoc
     
     /// Logical operators commute.
@@ -133,7 +133,7 @@ module EquationalLogic =
         function
         | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
-        | And(a1, And(a2, a3)) -> <@@ ((%%a1)  |&| (%%a2)) |&| ((%%a1) |&| (%%a3)) @@>
+        //| And(a1, And(a2, a3)) -> <@@ ((%%a1)  |&| (%%a2)) |&| ((%%a1) |&| (%%a3)) @@>
         | expr -> traverse expr distrib
     
     /// Collect distributed logical terms.

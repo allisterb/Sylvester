@@ -12,8 +12,10 @@ open Descriptions
 /// with identity elements 0 and 1, and a unary inverse or complement operation.
 module BooleanAlgebra =
     let desc = axiom_desc "Boolean Algebra" id
+    
+    (* Axioms *)
 
-    let (|BooleanAlgebraAxioms|_|) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) = 
+    let boolean_algebra_axioms (theoryName:string) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) = 
         function
         | Assoc <@(=)@> join x
         | Assoc <@(=)@> meet x
@@ -31,15 +33,11 @@ module BooleanAlgebra =
         | Commute <@(=)@> meet x
 
         | Distrib <@(=)@> join meet x 
-        | Distrib <@(=)@> meet join x -> desc x |> Some
-        | _ -> None
-
-    let boolean_algebra_axioms (theoryName:string) (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp: Expr<'t->'t>) = 
-        function  
-        | BooleanAlgebraAxioms join meet zero one comp x -> Some (set_axiom_desc_theory x theoryName)
+        | Distrib <@(=)@> meet join x -> (set_axiom_desc_theory (desc x) theoryName)  |> Some
         | _ -> None
 
     (* Rules *)
+    
     let rec reduce_idemp (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>)  (one: Expr<'t>) (comp:Expr<'t -> 't>) =
         function
         | Binary join (a1, a2) when sequal a1 a2 -> <@@ %%a1 @@>

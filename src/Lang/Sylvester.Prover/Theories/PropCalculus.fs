@@ -304,3 +304,20 @@ module PropCalculus =
         Distrib |> L
         idemp_or p  |> L
     ]
+
+    let ident_and_eq_all p q r = ident prop_calculus <@ (%p |&| %q |&| %r) = (%p = %q = %r = (%p ||| %q) = (%q ||| %r) = (%r ||| %p) = (%p ||| %q ||| %r)) @> [
+        golden_rule <@ %p @> <@ %q @> |> L
+        golden_rule <@ (%p = %q) = (%p ||| %q) @> <@ %r @> |> L 
+        commute_or <@ ((%p = %q) = (%p ||| %q)) @> <@ %r @> |> L
+        distrib_or_eq <@ %r @> <@ %p = %q @> <@ %p ||| %q @> |> L
+        distrib_or_eq <@ %r @> <@ %p @> <@ %q @> |> L
+        right_assoc_eq <@ %p = %q@> <@ %p ||| %q @> <@ %r @> |> L
+        commute_eq <@ %p ||| %q @> <@ %r @> |> L
+        commute_or <@ %r @> <@ %q @> |> L
+        commute_eq <@ %r ||| %p @> <@ %q ||| %r @> |> L
+        commute_or <@ %r @> <@ %p ||| %q @> |> L
+        L LeftAssoc
+        L LeftAssoc
+        L LeftAssoc
+    ] 
+    

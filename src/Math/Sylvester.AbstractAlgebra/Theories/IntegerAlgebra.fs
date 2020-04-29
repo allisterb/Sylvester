@@ -16,7 +16,7 @@ module IntegerAlgebra =
     let desc = axiom_desc "Integer Algebra" print_integer_algebra_operators
     
     (* Axioms *)
-    let (|IntegerAlgebraAxioms|_|) =
+    let integer_algebra_axioms =
         function                    
         | Assoc <@(=)@> <@ (+) @> x
         | Assoc <@(=)@> <@ (*) @> x
@@ -29,14 +29,8 @@ module IntegerAlgebra =
         | LeftCancel <@ (*) @> x 
         | LeftCancel <@ (+) @> x
         | BinaryOpDefR <@(=)@> <@ (-) @> <@ (+) @> <@ (~-) @> x -> Some (desc x) 
-
         | _ -> None
-    
-    let integer_algebra_axioms = 
-        function  
-        | IntegerAlgebraAxioms x -> Some x
-        | _ -> None
-                
+                    
     let rec reduce_constants  =
         function
         | Add(Int32 l, Int32 r) -> Expr.Value(l + r)
@@ -105,7 +99,7 @@ module IntegerAlgebra =
     /// Collect multiplication terms distributed over addition in expression.
     let Collect = Rule("Collect multiplication terms distributed over addition in (expression)", collect)
     
-    /// Cancel equivalent temrs on the LHS in expression.
+    /// Cancel equivalent terms on the LHS in expression.
     let LeftCancel = Rule("Cancel equivalent terms on the LHS in (expression)", left_cancel)
 
     /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
@@ -123,3 +117,9 @@ module IntegerAlgebra =
     (* proof step shortcuts*)
     let int_id_ax expr = id_ax integer_algebra expr 
     let int_id expr = ident integer_algebra expr
+
+    let ident_add p = ident integer_algebra <@ (%p + 0) = %p @> [
+        L Commute
+        LR RightAssoc
+    ]
+
