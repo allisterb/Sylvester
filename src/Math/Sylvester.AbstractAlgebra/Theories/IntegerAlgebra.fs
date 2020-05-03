@@ -82,25 +82,25 @@ module IntegerAlgebra =
         | expr -> traverse expr left_cancel
 
     /// Reduce equal constants in expression. 
-    let Reduce = Rule("Reduce integer constants in (expression)", reduce_constants)
+    let Reduce = Admit("Reduce integer constants in (expression)", reduce_constants)
 
     /// Expression is left associative.
-    let LeftAssoc = Rule("(expression) is left-associative", left_assoc)
+    let LeftAssoc = Admit("(expression) is left-associative", left_assoc)
     
     /// Expression is right associative.
-    let RightAssoc = Rule("(expression) is right-associative", right_assoc)
+    let RightAssoc = Admit("(expression) is right-associative", right_assoc)
       
     /// Expression is commutative.
-    let Commute = Rule("(expression) is commutative", commute)
+    let Commute = Admit("(expression) is commutative", commute)
 
     /// Multiplication distributes over addition in expression.
-    let Distrib = Rule("Multiplication distributes over addition in (expression)", distrib)
+    let Distrib = Admit("Multiplication distributes over addition in (expression)", distrib)
     
     /// Collect multiplication terms distributed over addition in expression.
-    let Collect = Rule("Collect multiplication terms distributed over addition in (expression)", collect)
+    let Collect = Admit("Collect multiplication terms distributed over addition in (expression)", collect)
     
     /// Cancel equivalent terms on the LHS in expression.
-    let LeftCancel = Rule("Cancel equivalent terms on the LHS in (expression)", left_cancel)
+    let LeftCancel = Admit("Cancel equivalent terms on the LHS in (expression)", left_cancel)
 
     /// Theory of algebraic operations on a ring of integers with binary operations (+) and (*), identities 0 and 1, 
     /// and unary inverse operation (~-).
@@ -122,4 +122,3 @@ module IntegerAlgebra =
         L Commute
         LR RightAssoc
     ]
-

@@ -16,9 +16,23 @@ module ProofOps =
     let right_src p = p |> right_state |> src
 
 module Tactics = 
+    /// The constant true is a theorem
+    let Truth commute rule = 
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+        let l = 
+            match proof.Stmt with 
+            | Equals(l, r) when sequal r <@ true @> -> l
+            | _ -> failwith "This theorem is not an identity with the constant true."
+        let theory = proof.Theory
+        let true_id = ident theory <@(true = true) = true@> [LR commute]
+      
+        let stmt = <@@ (%%l:bool) = (true = true) @@>
+        let p = Proof(stmt, proof.Theory, R true_id :: proof.Steps, true) in 
+                Theorem(stmt, p) |> Ident
+
     /// If A = B is a theorem then so is B = A.
     let Trn commute rule =
-        let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let stmt = 
             match proof.Stmt with 
             | Equals(l, r) -> <@@ (%%r:bool) = (%%l:bool) @@>
@@ -28,7 +42,7 @@ module Tactics =
 
     /// If (L = R) = X is a theorem then so is (R = L) = X.
     let TrnL commute rule =
-        let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let (l, r) = 
             match proof.Stmt with 
             | Equals(l, r) -> (l, r)
@@ -44,7 +58,7 @@ module Tactics =
 
     /// If X = (L = R) is a theorem then so is X = (R = L).
     let TrnR commute rule =
-        let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let (l, r) = 
             match proof.Stmt with 
             | Equals(l, r) -> (l, r)
@@ -60,8 +74,9 @@ module Tactics =
 
     /// If A = B is a theorem then so is (A = B) = true.
     let Taut ident rule =
-        let proof = match rule with | Rule.Subst(_,p,_) -> p | _ ->  failwith "This rule is not a substitution."
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived."
+        let theory = proof.Theory
         let expr = proof.Stmt
         let stmt = <@@ (%%expr) = true @@>
-        let p = Proof(stmt, proof.Theory, (expr |> ident |> LR) :: proof.Steps, true) in 
-            Theorem(stmt, p) |> Ident
+        let p = Proof(stmt, theory, (expr |> ident |> LR) :: proof.Steps, true) in 
+            Theorem(stmt, p) |> Ident        

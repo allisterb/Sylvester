@@ -33,7 +33,7 @@ module BooleanAlgebra =
         | Commute <@(=)@> meet x
 
         | Distrib <@(=)@> join meet x 
-        | Distrib <@(=)@> meet join x -> (set_axiom_desc_theory (desc x) theoryName)  |> Some
+        | Distrib <@(=)@> meet join x -> desc x |> set_axiom_desc_theory theoryName |> Some
         | _ -> None
 
     (* Rules *)
@@ -83,25 +83,25 @@ module BooleanAlgebra =
         | expr -> traverse expr (distrib join meet)
 
     /// Idempotent operation in (expression) can be reduced.
-    let ReduceIdemp join meet zero one comp = Rule("Idempotent operation in (expression) can be reduced", reduce_idemp join meet zero one comp)
+    let ReduceIdemp join meet zero one comp = Admit("Idempotent operation in (expression) can be reduced", reduce_idemp join meet zero one comp)
     
     /// Identity in (expression) can be reduced.
-    let ReduceIdent join meet zero one comp = Rule("Identity in (expression) can be reduced", reduce_ident join meet zero one comp)
+    let ReduceIdent join meet zero one comp = Admit("Identity in (expression) can be reduced", reduce_ident join meet zero one comp)
 
     /// Complement operation in (expression) can be reduced.
-    let ReduceComp join meet zero one comp = Rule("Complement operation in (expression) can be reduced", reduce_comp join meet zero one comp)
+    let ReduceComp join meet zero one comp = Admit("Complement operation in (expression) can be reduced", reduce_comp join meet zero one comp)
     
     /// Expression is left-associative.
-    let LeftAssoc join meet = Rule("(expression) is left-associative", left_assoc join meet)
+    let LeftAssoc join meet = Admit("(expression) is left-associative", left_assoc join meet)
     
     /// Expression is right associative.
-    let RightAssoc join meet = Rule("(expression) is right-associative", right_assoc join meet)
+    let RightAssoc join meet = Admit("(expression) is right-associative", right_assoc join meet)
 
     /// Expression is commutative.
-    let Commute join meet = Rule("(expression) is commutative", commute join meet)
+    let Commute join meet = Admit("(expression) is commutative", commute join meet)
 
     /// Expression is commutative.
-    let Distrib join meet = Rule("(expression) is distributive", distrib join meet)
+    let Distrib join meet = Admit("(expression) is distributive", distrib join meet)
 
     type BooleanAlgebraTheory<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>, ?formulaPrinter:string->string) = 
         inherit Theory(boolean_algebra_axioms theoryName join meet zero one comp, [
