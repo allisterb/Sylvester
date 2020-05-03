@@ -4,10 +4,6 @@
 
 [Sylph](https://github.com/allisterb/Sylvester/tree/master/src/Lang/Sylvester.Prover) (symbolic proof helper) is a language-integrated proof assistant for F#.
 
-# Sylph
-
-Sylph (symbolic proof helper) is a language-integrated proof assistant for F#. 
-
 
 ```fsharp
 // Load the Sylph NuGet package
