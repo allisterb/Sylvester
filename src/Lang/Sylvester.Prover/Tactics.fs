@@ -80,3 +80,13 @@ module Tactics =
         let stmt = <@@ (%%expr) = true @@>
         let p = Proof(stmt, theory, (expr |> ident |> LR) :: proof.Steps, true) in 
             Theorem(stmt, p) |> Ident        
+
+    /// If (A1 = A2) = A3 is a theorem then so is A1 = (A2 = A3)
+    let RightAssoc' lassoc rule =
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+        let stmt = 
+            match proof.Stmt with 
+            | Equals(Equals(l1, l2), r) -> <@@ (%%l1:bool) = ((%%l2:bool) = (%%r:bool)) @@>
+            | _ -> failwith "This theorem is not an identity."
+        let p = Proof(stmt, proof.Theory, LR lassoc :: proof.Steps, true) in 
+            Theorem(stmt, p) |> Ident

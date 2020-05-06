@@ -83,3 +83,40 @@ let ``3.44b`` = proof prop_calculus <@ p ||| (not p |&| q) = (p ||| q) @> [
     ExcludedMiddle |> L
     ident_eq <@ p ||| q @> |> TrnL |> L
 ] 
+
+let ``3.45`` = proof prop_calculus <@ p ||| (q |&| r) = ((p ||| q) |&| (p ||| r)) @> [
+    GoldenRule |> L
+    GoldenRule |> R
+    Distrib |> L
+    Distrib |> L
+    distrib_or <@ p @> <@ q @> <@ r @> |> L
+]
+
+let ``3.46`` = proof prop_calculus <@ not (p |&| q) = (not p ||| not q) @> [
+    GoldenRule |> L
+    Distrib |> L
+    Distrib |> L 
+    ident_or_or_not <@ not p @> <@ not q @> |> R
+    double_negation <@ q @> |> R
+    ident_or_not_or <@ q @> <@ p @> |> TrnL |> R
+    Commute |> R
+    commute_or <@ q @> <@ p @> |> R
+]
+
+let p347 = proof prop_calculus <@ p = q = (not p = not q) @> [
+    LeftAssoc |> LR
+    commute_eq <@ p = q @> <@ not p @> |> L
+    commute_eq <@ p @> <@ q @> |> L
+    LeftAssoc |> LR
+    symm_not_eq <@ p @> <@ q @> |> Lemma |> LR
+]
+
+let ``3,47`` = proof prop_calculus <@ not (p ||| q) = (not p |&| not q) @> [
+    golden_rule <@ p @> <@ q @> |> Trn |> TrnL |> RightAssoc' |> L
+    Commute |> L
+    Distrib |> L
+    distrib_not_and <@ p @> <@ q @> |> L
+    Commute |> LR
+    symm_eq_not_eq <@ p @> <@ q @> |> R
+    Commute |> R
+]
