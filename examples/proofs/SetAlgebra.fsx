@@ -1,10 +1,10 @@
-#load "Include.fsx"
+#load "MathInclude.fsx"
 
 open Sylvester
-open PropCalculus
-let p,q,r = var3<bool>
+open SetAlgebra
+let A,B,C = var3<Set<obj>>
 
 
-let p1 = proof <@ not p == q == p == q @> S [
+let p1 = proof set_algebra <@ A |+| A = A @> [
     //eq_id_lr <@ true == (p == p) @>
 ] 

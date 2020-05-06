@@ -5,11 +5,11 @@ open PropCalculus
 
 let p,q,r = var3<bool>
 
-proof prop_calculus <@(true = true) = true@> [LR Commute]
+//proof prop_calculus <@(true = true) = true@> [LR Commute]
 let ``3.12`` = proof prop_calculus <@ not (not p) = p @> [
         Collect |> LR
         def_false <@ p @> |> Trn |> LR
-        not_false |> LR
+        not_false |> Truth |> LR
         
         //def_true <@ p @> |> LR
 ]
@@ -70,3 +70,16 @@ let ``3.43B`` = proof prop_calculus <@ (p ||| (p |&| q)) = p @> [
     Distrib |> L
     idemp_or <@ p @> |> L
 ]
+
+let ``3.44b`` = proof prop_calculus <@ p ||| (not p |&| q) = (p ||| q) @> [
+    GoldenRule |> L
+    commute_or <@ not p @> <@ q @> |> L
+    right_assoc_eq <@ not p @> <@ q @> <@ q ||| not p @> |> L
+    ident_or_or_not <@ q @> <@ p @> |> Trn |> TrnL |> L
+    Distrib |> L 
+    commute_or <@ q @> <@ p @> |> L
+    left_assoc_or <@ p @> <@ p @> <@ q @> |> L
+    idemp_or <@ p @> |> L
+    ExcludedMiddle |> L
+    ident_eq <@ p ||| q @> |> TrnL |> L
+] 

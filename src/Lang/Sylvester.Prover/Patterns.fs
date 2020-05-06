@@ -35,22 +35,22 @@ module Patterns =
 
     let (|And|_|)  =
         function
-        | SpecificCall <@@ (|&|) @@> (None,_,l::r::[]) -> Some (l,r)
+        | SpecificCall <@@ (|&|) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Or|_|) =
         function
-        | SpecificCall <@@ (|||) @@> (None,_,l::r::[]) -> Some (l,r)
+        | SpecificCall <@@ (|||) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Implies|_|) =
         function
-        | SpecificCall <@@ (==>) @@> (None,_,l::r::[]) -> Some (l,r)
+        | SpecificCall <@@ (==>) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Conseq|_|) =
         function
-        | SpecificCall <@@ (<==) @@> (None,_,l::r::[]) -> Some (l,r)
+        | SpecificCall <@@ (<==) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Add|_|) =

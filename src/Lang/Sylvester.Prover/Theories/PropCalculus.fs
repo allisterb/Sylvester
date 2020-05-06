@@ -55,6 +55,8 @@ module PropCalculus =
     /// Logical expression satisfies golden rule.
     let GoldenRule = Theory.S.Rules.[8]
 
+    let Implication = Theory.S.Rules.[9]
+
     (* proof step shortcuts *)
     
     let ppc_id steps expr = ident prop_calculus steps expr
@@ -357,3 +359,31 @@ module PropCalculus =
         Distrib |> L
         idemp_or p  |> L
     ]
+
+    /// p |&| (not p ||| q) = (p |&| q)
+    let absorb_and_not p q = proof prop_calculus <@ %p |&| (not %p ||| %q) = (%p |&| %q) @> [
+        GoldenRule |> L
+        left_assoc_or p <@ not %p @> q |> L
+        ExcludedMiddle |> L
+        zero_or q |> TrnL |> L
+        ident_eq <@ %p = (not %p ||| %q) @> |> L
+        commute_or <@ not %p @> q |> L
+        ident_or_not_or q p |> L
+        LeftAssoc |> L
+        commute_or q p |> L
+        golden_rule p q |> Trn |> L
+    ]
+
+    /// p ||| (not p |&| q) = (p ||| q)
+    let absorb_or_not p q = ident prop_calculus <@ %p ||| (not %p |&| %q) = (%p ||| %q) @> [
+        GoldenRule |> L
+        commute_or <@ not %p @> q  |> L
+        right_assoc_eq <@ not %p @> q  <@ %q ||| not %p @> |> L
+        ident_or_or_not q  p |> Trn |> TrnL |> L
+        Distrib |> L 
+        commute_or q p |> L
+        left_assoc_or p p q |> L
+        idemp_or p |> L
+        ExcludedMiddle |> L
+        ident_eq <@ %p ||| %q @> |> TrnL |> L
+    ] 

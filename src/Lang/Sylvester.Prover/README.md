@@ -31,35 +31,6 @@ let p1 = proof prop_calculus <@ p = p = q = q @>  [
     Commute |> LR
 ]
 ```
-
-    [Lemma] true = (false = false):
-            ⊢ true = (false = false). [Definition of true]
-            Proof complete.
-    
-    [Lemma] true = (false = false):
-            ⊢ true = (false = false). [Definition of true]
-            Proof complete.
-    
-    [Lemma] false = false = true:
-            1. Logical operators in expression are commutative: false = false = true → true = (false = false).
-            ⊢ true = (false = false). [Definition of true]
-            Proof complete.
-    
-    [Lemma] ¬ false = true:
-            1. Logical operators in expression are commutative: ¬ false = true → true = ¬ false.
-            Proof incomplete. Current state: true = ¬ false.
-            2. Substitute true ≡ false = false into left of expression.
-            Proof incomplete. Current state: false = false = ¬ false.
-            3. Logical operators in expression are right-associative: false = false = ¬ false → false = (false = ¬ false).
-            Proof incomplete. Current state: false = (false = ¬ false).
-            4. Logical operators in right of expression are commutative: false = (false = ¬ false) → false = (¬ false = false).
-            Proof incomplete. Current state: false = (¬ false = false).
-            5. Collect distributed logical terms in right of expression: false = (¬ false = false) → false = ¬ (false = false).
-            Proof incomplete. Current state: false = ¬ (false = false).
-            6. Substitute false = false ≡ true into right of expression.
-            ⊢ false = ¬ true. [Definition of false]
-            Proof complete.
-    
     [Lemma] true = (q = q):
             ⊢ true = (q = q). [Definition of true]
             Proof complete.

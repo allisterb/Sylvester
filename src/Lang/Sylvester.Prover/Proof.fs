@@ -4,7 +4,6 @@ open FSharp.Quotations
 
 open Descriptions
 open Patterns
-open EquationalLogic
 
 type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
     member val Axioms = axioms
@@ -15,25 +14,27 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
     /// The default logical theory used in Sylph proofs.
     static member val S =     
-        let S_Reduce = Admit("Reduce logical constants in (expression)", reduce_constants)
+        let S_Reduce = Admit("Reduce logical constants in (expression)", EquationalLogic.reduce_constants)
 
-        let S_LeftAssoc = Admit("Logical operators in (expression) are left-associative", left_assoc)
+        let S_LeftAssoc = Admit("Logical operators in (expression) are left-associative", EquationalLogic.left_assoc)
         
-        let S_RightAssoc = Admit("Logical operators in (expression) are right-associative", right_assoc)
+        let S_RightAssoc = Admit("Logical operators in (expression) are right-associative", EquationalLogic.right_assoc)
           
-        let S_Commute = Admit("Logical operators in (expression) are commutative", commute)
+        let S_Commute = Admit("Logical operators in (expression) are commutative", EquationalLogic.commute)
 
-        let S_Distrib = Admit("Distribute logical terms in (expression)", distrib)
+        let S_Distrib = Admit("Distribute logical terms in (expression)", EquationalLogic.distrib)
         
-        let S_Collect = Admit("Collect distributed logical terms in (expression)", collect)
+        let S_Collect = Admit("Collect distributed logical terms in (expression)", EquationalLogic.collect)
 
-        let S_Idemp = Admit("Substitute idempotent logical terms in (expression)", idemp)
+        let S_Idemp = Admit("Substitute idempotent logical terms in (expression)", EquationalLogic.idemp)
 
-        let S_ExcludedMiddle = Admit("Logical terms in (expression) satisfy the law of excluded middle", excluded_middle)
+        let S_ExcludedMiddle = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic.excluded_middle)
 
-        let S_GoldenRule = Admit("Logical terms in (expression) satisfy the golden rule", golden_rule)
+        let S_GoldenRule = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic.golden_rule)
 
-        Theory(equational_logic_axioms, [
+        let S_Implication = Admit("Substitute definition of implication into (expression)", EquationalLogic.implication)
+
+        Theory(EquationalLogic.equational_logic_axioms, [
             S_Reduce
             S_LeftAssoc
             S_RightAssoc
@@ -43,7 +44,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             S_Idemp
             S_ExcludedMiddle
             S_GoldenRule
-        ], print_S_Operators)
+            S_Implication
+        ],EquationalLogic.print_S_Operators)
 
     static member val internal Trivial = 
         Theory((fun (_:Expr) ->  Some(axiom_desc "Assumption" id (pattern_desc "Assumption" <@fun x y -> x = y @>))), [])
@@ -80,7 +82,6 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
         match defaultDisplay with
             | Text -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
             | _ -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
-
     let prooflog (x:string) = 
         do 
             logBuilder.Append(x) |> ignore
@@ -89,27 +90,33 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     let mutable _state = a
     let mutable state:(Expr * string) list = [] 
     let mutable stepCount = 0
+
     do 
         if theory.GetType() = typeof<Assumption> then 
             do sprintf "Assume %s." (src a) |> prooflog
             stepCount <- steps.Length
-        else 
-            do 
-                if l then 
-                    sprintf "[Lemma] %s:" (src a) |> prooflog
-                else
-                    sprintf "Proof of %s:" (src a) |> prooflog
-            do
-                if theory |- a  then
-                    let axeq = theory.Axioms a
-                    sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
-                    sprintf "Proof complete." + proof_sep |> prooflog
-                    stepCount <- steps.Length
-                else if logic |- a   then
-                   let axeq = logic.Axioms a
-                   sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
-                   sprintf "Proof complete." + proof_sep |> prooflog
-                   stepCount <- steps.Length               
+        else  
+            if l then 
+                sprintf "[Lemma] %s:" (src a) |> prooflog
+            else
+                sprintf "Proof of %s:" (src a) |> prooflog
+        
+            if theory |- a  then
+                let axeq = theory.Axioms a
+                sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
+                sprintf "Proof complete." + proof_sep |> prooflog
+                stepCount <- steps.Length
+            
+            else if logic |- a   then
+                let axeq = logic.Axioms a
+                sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+                sprintf "Proof complete." + proof_sep |> prooflog
+                stepCount <- steps.Length               
+    
+    do if steps.Length = 0 && not(theory |- a || logic |- a ) then
+        sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
+
+    // Iterate through proof steps
     do while stepCount < steps.Length do
         let step = steps.[stepCount]
         let stepId = stepCount + 1
@@ -120,8 +127,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
                                 failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
             | Derive(n, p, _) -> 
                 if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
-                    failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
-                          
+                    failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n                  
         let _a = 
             match step.Rule with
             | Admit(_,_) -> step.Apply _state
@@ -138,7 +144,6 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
-            
         do prooflog msg
         _state <- _a
         state <- state @ [(_state, msg)]
@@ -155,9 +160,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
         else
             sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
             stepCount <- stepCount + 1
-
-    do if stepCount = 0 && not(theory |- a || logic |- a ) then
-        sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
+    
     member val Stmt = a
     member val LastState = _state
     member __.L = 
@@ -176,10 +179,10 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
     member __.Msg msg = prooflog msg
+    
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = logic and set(v) = logic <- v
     static member (|-) (proof:Proof, expr:Expr) = sequal proof.Stmt expr  && proof.Complete
- 
     static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.Stmt, l.Theory, l.Steps @ [r])
 
     interface IDisplay with

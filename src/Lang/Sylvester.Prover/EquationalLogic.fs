@@ -58,7 +58,7 @@ module EquationalLogic =
                                                                 pattern_desc "the Golden Rule" <@fun x y -> x |&| y = (x = y) = (x ||| y) @> |> Some
         | _ -> None
 
-    /// p ==> q = p ||| q ||| q
+    /// p ==> q = ((p ||| q) = q)
     let (|Implication|_|) =
         function
         | Equals(Implies(a1, a2), Equals(Or(a3, a4), a5)) when sequal a1 a3 && sequal a2 a4 && sequal a4 a5 -> 
@@ -156,3 +156,8 @@ module EquationalLogic =
         function
         | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = ((%%p:bool) ||| (%%q:bool)) @@>
         | expr -> traverse expr golden_rule
+
+    let rec implication = 
+        function
+        | Implies(p, q) -> <@@ (%%p ||| %%q) = %%p @@>
+        | expr -> traverse expr implication
