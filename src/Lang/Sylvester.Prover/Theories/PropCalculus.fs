@@ -282,8 +282,8 @@ module PropCalculus =
         commute_eq <@ %r ||| %p @> <@ %q ||| %r @> |> L
         commute_or r <@ %p ||| %q @> |> L
         L LeftAssoc
-        LL LeftAssoc
-        LLLL LeftAssoc
+        LeftAssoc |> L |> L'
+        LeftAssoc |> L |> L' |> L' |> L'
     ]
     
     /// p |&| q |&| r = p |&| (q |&| r)

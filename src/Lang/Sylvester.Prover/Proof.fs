@@ -195,19 +195,15 @@ and RuleApplication =
     | L  of Rule
     | R of Rule
     | LR of Rule
-    | LL of Rule
-    | LLL of Rule
-    | LLLL of Rule
+    | L' of RuleApplication
 with
     member x.Rule = 
         match x with
         | LR rule -> rule
         | L rule -> rule
         | R rule -> rule
-        | LL rule -> rule
-        | LLL rule -> rule
-        | LLLL rule -> rule
-        
+        | L' ra -> ra.Rule
+            
     member x.RuleName = x.Rule.Name
     member x.Apply(expr:Expr) =       
         match x with
@@ -220,35 +216,19 @@ with
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s)
             | _ -> failwith "Expression is not a binary operation."
-        | LL rule -> 
-             match expr with
-             | Patterns.Call(o, m, l::r::[]) -> 
-                let a = L rule 
-                let s = a.Apply l
+        | L' ra ->
+            match expr with
+            | Patterns.Call(o, m, l::r::[]) -> 
+                let s = ra.Apply l
                 binary_call(o, m, s, r)
-             | _ -> failwith "Expression is not a binary operation."
-        | LLL rule -> 
-             match expr with
-             | Patterns.Call(o, m, l::r::[]) -> 
-                let a = LL rule 
-                let s = a.Apply l
-                binary_call(o, m, s, r)
-             | _ -> failwith "Expression is not a binary operation."
-        | LLLL rule -> 
-             match expr with
-             | Patterns.Call(o, m, l::r::[]) -> 
-                let a = LLL rule 
-                let s = a.Apply l
-                binary_call(o, m, s, r)
-             | _ -> failwith "Expression is not a binary operation."
+            | _ -> failwith "Expression is not a binary operation."
     member x.Pos =
         match x with
         | LR _ -> "expression"
         | L _ -> "left of expression"
         | R _ -> "right of expression"
-        | LL _ -> "left (2) of expression"
-        | LLL _ -> "left (3) of expression"
-        | LLLL _ -> "left (4) of expression"
+        | L' _ -> "left (recursive) of expression"
+        
 and Theorem internal (expr: Expr, proof:Proof) = 
     do if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
     do if not proof.Complete then failwithf "The provided proof of %s is not complete." (src expr)
