@@ -196,6 +196,7 @@ and RuleApplication =
     | R of Rule
     | LR of Rule
     | L' of RuleApplication
+    | R' of RuleApplication
 with
     member x.Rule = 
         match x with
@@ -203,6 +204,7 @@ with
         | L rule -> rule
         | R rule -> rule
         | L' ra -> ra.Rule
+        | R' ra -> ra.Rule
             
     member x.RuleName = x.Rule.Name
     member x.Apply(expr:Expr) =       
@@ -222,12 +224,20 @@ with
                 let s = ra.Apply l
                 binary_call(o, m, s, r)
             | _ -> failwith "Expression is not a binary operation."
+        | R' ra ->
+             match expr with
+             | Patterns.Call(o, m, l::r::[]) -> 
+                 let s = ra.Apply r
+                 binary_call(o, m, l, s)
+             | _ -> failwith "Expression is not a binary operation."
+
     member x.Pos =
         match x with
         | LR _ -> "expression"
         | L _ -> "left of expression"
         | R _ -> "right of expression"
-        | L' _ -> "left (recursive) of expression"
+        | L' ra -> sprintf "left-%sof expression" ra.Pos
+        | R' ra -> sprintf "right-%sof expression" ra.Pos
         
 and Theorem internal (expr: Expr, proof:Proof) = 
     do if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
