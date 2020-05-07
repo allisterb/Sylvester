@@ -110,54 +110,54 @@ module EquationalLogic =
         function
         | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@>
         | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
-        | expr -> traverse expr right_assoc
+        | expr -> expr 
     
     /// Logical operators are left associative.
     let rec left_assoc =
         function
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
         | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
-        | expr -> traverse expr left_assoc
+        | expr -> expr 
     
     /// Logical operators commute.
     let rec commute =
         function
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
-        | expr -> traverse expr commute
+        | expr -> expr 
     
     /// Distribute logical terms.
     let rec distrib =
         function
         | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
-     
-        | expr -> traverse expr distrib
+        | expr -> expr
     
     /// Collect distributed logical terms.
     let rec collect =
         function
         | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
         | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 = %%a4) @@>
-        | expr -> traverse expr collect
+        | expr -> expr
     
     /// ||| operator is idempotent.    
     let rec idemp =
         function
-        | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>   
-        | expr -> traverse expr idemp
+        | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
+        | Equals(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
+        | expr ->expr
 
     let rec excluded_middle =
         function
         | Or(a1, Not(a2)) when sequal a1 a2 -> <@@ true @@>
-        | expr -> traverse expr excluded_middle
+        | expr -> expr
 
     let rec golden_rule =
         function
         | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = ((%%p:bool) ||| (%%q:bool)) @@>
-        | expr -> traverse expr golden_rule
+        | expr -> expr
 
     let rec implication = 
         function
         | Implies(p, q) -> <@@ (%%p ||| %%q) = %%p @@>
-        | expr -> traverse expr implication
+        | expr -> expr
