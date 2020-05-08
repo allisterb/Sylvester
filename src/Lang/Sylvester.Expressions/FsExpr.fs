@@ -92,3 +92,8 @@ module FsExpr =
         match so with
         | None -> Expr.Call(m, l::r::[])
         | Some o -> Expr.Call(o, m, l::r::[])
+
+    let unary_call (so, m, l) =
+        match so with
+        | None -> Expr.Call(m, [l])
+        | Some o -> Expr.Call(o, m, [l])

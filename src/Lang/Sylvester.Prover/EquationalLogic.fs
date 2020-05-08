@@ -92,10 +92,22 @@ module EquationalLogic =
         | Implication x -> Some (desc x)
         | _ -> None
 
-    (* Admissible rules *) 
+    (* Expression functions for admissible rules *) 
     
+    /// Definition of true
+    let _def_true =
+        function
+        | Equals(a1, a2) when sequal a1 a2 -> <@@ true @@>
+        | expr -> expr
+    
+    /// Definition of true
+    let _def_false =
+        function
+        | NotEquals(a1, a2) when sequal a1 a2 -> <@@ false @@>
+        | expr -> expr
+   
     /// Reduce logical constants.
-    let rec reduce_constants  =
+    let _reduce_constants  =
         function
         | Equals(Bool l, Bool r) -> Expr.Value((l = r))
         | NotEquals(Bool l, Bool r) -> Expr.Value(l <> r)
@@ -103,61 +115,62 @@ module EquationalLogic =
         | Or(Bool l, Bool r) -> Expr.Value(l ||| r)                
         | And(Bool l, Bool r) -> Expr.Value(l |&| r)
         | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
-        | expr -> traverse expr reduce_constants
+        | expr -> expr
     
-    /// Logical operators are right associative.
-    let rec right_assoc =
+    /// Binary logical operators are right associative.
+    let _right_assoc =
         function
         | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@>
         | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
         | expr -> expr 
     
     /// Logical operators are left associative.
-    let rec left_assoc =
+    let _left_assoc =
         function
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
+        | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
         | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
         | expr -> expr 
     
     /// Logical operators commute.
-    let rec commute =
+    let _commute =
         function
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
         | expr -> expr 
     
     /// Distribute logical terms.
-    let rec distrib =
+    let _distrib =
         function
         | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
         | expr -> expr
     
     /// Collect distributed logical terms.
-    let rec collect =
+    let rec _collect =
         function
         | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
         | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 = %%a4) @@>
         | expr -> expr
     
     /// ||| operator is idempotent.    
-    let rec idemp =
+    let rec _idemp =
         function
         | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | Equals(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | expr ->expr
 
-    let rec excluded_middle =
+    let rec _excluded_middle =
         function
         | Or(a1, Not(a2)) when sequal a1 a2 -> <@@ true @@>
         | expr -> expr
 
-    let rec golden_rule =
+    let rec _golden_rule =
         function
         | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = ((%%p:bool) ||| (%%q:bool)) @@>
         | expr -> expr
 
-    let rec implication = 
+    let rec _implication = 
         function
         | Implies(p, q) -> <@@ (%%p ||| %%q) = %%p @@>
         | expr -> expr

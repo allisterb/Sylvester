@@ -9,6 +9,11 @@ module PropCalculusTests =
     [<Fact>]
     let ``operator works``() =
         let p,q,r = var3<bool>
+        let z = proof prop_calculus <@ false = (not p = p) @> [
+            R Collect
+            DefTrue |> R |> LR'
+        ] 
+        Assert.NotNull z
         Assert.True(prop_calculus |- <@ p = q = q = p @>)
         Assert.NotNull(axiom prop_calculus <@ true @>)
         // Theorem 3.2

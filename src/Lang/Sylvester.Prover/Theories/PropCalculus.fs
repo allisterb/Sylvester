@@ -6,56 +6,66 @@ open FSharp.Quotations
 module PropCalculus =
     let prop_calculus = Theory.S
 
-    (* Expression tree functions used in admissible rules *)
+    (* Expression functions for admissible rules *)
     
-    let _reduce_constants = EquationalLogic.reduce_constants
+    let _def_true = EquationalLogic._def_true
 
-    let _left_assoc = EquationalLogic.left_assoc
+    let _def_false = EquationalLogic._def_false
 
-    let _right_assoc = EquationalLogic.right_assoc
+    let _reduce_constants = EquationalLogic._reduce_constants
 
-    let _commute = EquationalLogic.commute
+    let _left_assoc = EquationalLogic._left_assoc
 
-    let _distrib = EquationalLogic.distrib
+    let _right_assoc = EquationalLogic._right_assoc
 
-    let _collect = EquationalLogic.collect
+    let _commute = EquationalLogic._commute
 
-    let _idemp = EquationalLogic.idemp
+    let _distrib = EquationalLogic._distrib
 
-    let _excluded_middle = EquationalLogic.excluded_middle
+    let _collect = EquationalLogic._collect
 
-    let _golden_rule = EquationalLogic.golden_rule
+    let _idemp = EquationalLogic._idemp
+
+    let _excluded_middle = EquationalLogic._excluded_middle
+
+    let _golden_rule = EquationalLogic._golden_rule
 
     (* Admissible rules *)
 
+    /// Substitute definition of true in expression.
+    let DefTrue = Theory.S.Rules.[0]
+
+    /// Substitute definition of false in expression.
+    let DefFalse = Theory.S.Rules.[1]
+
     /// Reduce logical constants in expression. 
-    let Reduce = Theory.S.Rules.[0]
+    let Reduce = Theory.S.Rules.[2]
 
     /// Logical expression is left associative.
-    let LeftAssoc = Theory.S.Rules.[1]
+    let LeftAssoc = Theory.S.Rules.[3]
 
     /// Logical expression is right associative.
-    let RightAssoc = Theory.S.Rules.[2]
+    let RightAssoc = Theory.S.Rules.[4]
   
     /// Logical expression is commutative.
-    let Commute = Theory.S.Rules.[3]
+    let Commute = Theory.S.Rules.[5]
 
     /// Distribute logical terms in expression.
-    let Distrib = Theory.S.Rules.[4]
+    let Distrib = Theory.S.Rules.[6]
 
     /// Collect distributed logical terms in expression.
-    let Collect = Theory.S.Rules.[5]
+    let Collect = Theory.S.Rules.[7]
 
     /// Logical operators are idempotent.
-    let Idemp = Theory.S.Rules.[6]
+    let Idemp = Theory.S.Rules.[8]
 
     /// Logical expression satisfies law of excluded middle.
-    let ExcludedMiddle = Theory.S.Rules.[7]
+    let ExcludedMiddle = Theory.S.Rules.[9]
 
     /// Logical expression satisfies golden rule.
-    let GoldenRule = Theory.S.Rules.[8]
+    let GoldenRule = Theory.S.Rules.[10]
 
-    let Implication = Theory.S.Rules.[9]
+    let Implication = Theory.S.Rules.[11]
 
     (* proof step shortcuts *)
     
@@ -87,12 +97,11 @@ module PropCalculus =
 
     let RightAssoc' = Tactics.RightAssoc' LeftAssoc
 
-    (* Derived ruleS *)
+    (* Derived rules *)
     
     /// true = (p = p)
     let def_true p = id_ax prop_calculus <@ true = (%p = %p) @>  
 
-    
     /// false = (not p = p)
     let def_false p = ident prop_calculus <@ false = (not %p = %p) @> [
         R Collect
@@ -112,7 +121,7 @@ module PropCalculus =
     let left_assoc_eq p q r = ident prop_calculus <@ (%p = (%q = %r)) = ((%p = %q) = %r) @> [R RightAssoc]
 
     /// (p = q) = r = p = (q = r)
-    let right_assoc_eq p q r = left_assoc_eq p q r |> Trn
+    let right_assoc_eq p q r = id_ax prop_calculus <@ ((%p = %q) = %r) = (%p = (%q = %r)) @>
 
     /// not false = true
     let not_false = ident prop_calculus <@not false = true@> [
@@ -179,7 +188,8 @@ module PropCalculus =
     /// p ||| true = true
     let zero_or p = ident prop_calculus <@ (%p ||| true) = true @> [
         def_true p |> LR 
-        LR Distrib
+        Distrib |> L
+        Distrib |> R
         idemp_or p |> L
     ]
 
@@ -308,13 +318,11 @@ module PropCalculus =
         commute_or <@ %q ||| %r @> p |> R
         left_assoc_or p q r |> R
         right_assoc_eq <@ %p = %q = %r @> <@ %q ||| %r @> <@ %r ||| %p @> |> R
-        LeftAssoc |> R
-        right_assoc_eq <@ %p = %q = %r = (%q ||| %r) @> <@ %r ||| %p @> <@ %p ||| %q @> |> R
-        commute_eq <@ (%r ||| %p) @> <@ %p ||| %q @> |> R
-        LeftAssoc |> R
-        right_assoc_eq <@ %p = %q = %r @> <@ %q ||| %r @> <@ %p ||| %q @> |> R
-        commute_eq <@ %q ||| %r @> <@ %p ||| %q @> |> R
-        LeftAssoc |> R
+        RightAssoc |> L |> R'
+        Commute |> R |> L' |> R'
+        LeftAssoc |> R |> L' |> R'
+        LeftAssoc |> L |> R'
+        LeftAssoc |> L |> L' |> R'
     ]
 
     /// p |&| (q |&| r) = p |&| q |&| r
@@ -338,7 +346,7 @@ module PropCalculus =
 
     /// p |&| false = false
     let zero_and p = ident prop_calculus <@ (%p |&| false) = false @> [
-      LR GoldenRule
+      golden_rule p <@ false @> |> L
       ident_or p |> L
       LR RightAssoc
     ]

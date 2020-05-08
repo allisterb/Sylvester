@@ -14,38 +14,44 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
     /// The default logical theory used in Sylph proofs.
     static member val S =     
-        let S_Reduce = Admit("Reduce logical constants in (expression)", EquationalLogic.reduce_constants)
+        let DefTrue = Admit("Substitute definition of true in (expression)", EquationalLogic._def_true)
 
-        let S_LeftAssoc = Admit("Logical operators in (expression) are left-associative", EquationalLogic.left_assoc)
+        let DefFalse = Admit("Substitute definition of false in (expression)", EquationalLogic._def_false)
+
+        let Reduce = Admit("Reduce logical constants in (expression)", EquationalLogic._reduce_constants)
+
+        let LeftAssoc = Admit("Logical operators in (expression) are left-associative", EquationalLogic._left_assoc)
         
-        let S_RightAssoc = Admit("Logical operators in (expression) are right-associative", EquationalLogic.right_assoc)
+        let RightAssoc = Admit("Logical operators in (expression) are right-associative", EquationalLogic._right_assoc)
           
-        let S_Commute = Admit("Logical operators in (expression) are commutative", EquationalLogic.commute)
+        let Commute = Admit("Logical operators in (expression) are commutative", EquationalLogic._commute)
 
-        let S_Distrib = Admit("Distribute logical terms in (expression)", EquationalLogic.distrib)
+        let Distrib = Admit("Distribute logical terms in (expression)", EquationalLogic._distrib)
         
-        let S_Collect = Admit("Collect distributed logical terms in (expression)", EquationalLogic.collect)
+        let Collect = Admit("Collect distributed logical terms in (expression)", EquationalLogic._collect)
 
-        let S_Idemp = Admit("Substitute idempotent logical terms in (expression)", EquationalLogic.idemp)
+        let Idemp = Admit("Substitute idempotent logical terms in (expression)", EquationalLogic._idemp)
 
-        let S_ExcludedMiddle = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic.excluded_middle)
+        let ExcludedMiddle = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic._excluded_middle)
 
-        let S_GoldenRule = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic.golden_rule)
+        let GoldenRule = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic._golden_rule)
 
-        let S_Implication = Admit("Substitute definition of implication into (expression)", EquationalLogic.implication)
+        let Implication = Admit("Substitute definition of implication into (expression)", EquationalLogic._implication)
 
         Theory(EquationalLogic.equational_logic_axioms, [
-            S_Reduce
-            S_LeftAssoc
-            S_RightAssoc
-            S_Commute
-            S_Distrib
-            S_Collect
-            S_Idemp
-            S_ExcludedMiddle
-            S_GoldenRule
-            S_Implication
-        ],EquationalLogic.print_S_Operators)
+            DefTrue
+            DefFalse
+            Reduce
+            LeftAssoc
+            RightAssoc
+            Commute
+            Distrib
+            Collect
+            Idemp
+            ExcludedMiddle
+            GoldenRule
+            Implication
+        ], EquationalLogic.print_S_Operators)
 
     static member val internal Trivial = 
         Theory((fun (_:Expr) ->  Some(axiom_desc "Assumption" id (pattern_desc "Assumption" <@fun x y -> x = y @>))), [])
@@ -205,7 +211,7 @@ with
         | R rule -> rule
         | L' ra -> ra.Rule
         | R' ra -> ra.Rule
-            
+        
     member x.RuleName = x.Rule.Name
     member x.Apply(expr:Expr) =       
         match x with
@@ -220,24 +226,19 @@ with
             | _ -> failwith "Expression is not a binary operation."
         | L' ra ->
             match expr with
-            | Patterns.Call(o, m, l::r::[]) -> 
-                let s = ra.Apply l
-                binary_call(o, m, s, r)
+            | Patterns.Call(o, m, l::r::[]) -> let s = ra.Apply l in binary_call(o, m, s, r)
             | _ -> failwith "Expression is not a binary operation."
         | R' ra ->
-             match expr with
-             | Patterns.Call(o, m, l::r::[]) -> 
-                 let s = ra.Apply r
-                 binary_call(o, m, l, s)
-             | _ -> failwith "Expression is not a binary operation."
-
+            match expr with
+            | Patterns.Call(o, m, l::r::[]) -> let s = ra.Apply r in binary_call(o, m, l, s)
+            | _ -> failwith "Expression is not a binary operation."
     member x.Pos =
         match x with
         | LR _ -> "expression"
         | L _ -> "left of expression"
         | R _ -> "right of expression"
-        | L' ra -> sprintf "left-%sof expression" ra.Pos
-        | R' ra -> sprintf "right-%sof expression" ra.Pos
+        | L' ra -> sprintf "left-%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | R' ra -> sprintf "right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         
 and Theorem internal (expr: Expr, proof:Proof) = 
     do if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
