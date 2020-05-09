@@ -433,6 +433,16 @@ module PropCalculus =
             golden_rule <@ %p ||| %q @> <@ %p ||| %r @> |> Trn |> L
         ]
 
+    /// p |&| (q ||| r) = ((p |&| q) ||| (p |&| r))
+    let distrib_and_or p q r =  ident prop_calculus <@ %p |&| (%q ||| %r) = ((%p |&| %q) ||| (%p |&| %r)) @> [
+        distrib_or_and <@ %p |&| %q @> p r|> R
+        absorb_or p q |> TrnL |> R
+        distrib_or_and r p q |> TrnL |> R
+        LeftAssoc |> R
+        commute_or r p |>R
+        absorb_and p r |> R
+        Commute |> R |> R'
+    ]
     /// not (p |&| q) = not p ||| not q
     let distrib_not_and p q = ident prop_calculus <@ not (%p |&| %q) = (not %p ||| not %q) @> [
         GoldenRule |> L
