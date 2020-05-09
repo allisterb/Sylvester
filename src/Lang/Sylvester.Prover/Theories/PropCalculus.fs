@@ -398,7 +398,7 @@ module PropCalculus =
     let absorb_and_not p q = proof prop_calculus <@ %p |&| (not %p ||| %q) = (%p |&| %q) @> [
         GoldenRule |> L
         left_assoc_or p <@ not %p @> q |> L
-        ExcludedMiddle |> L
+        excluded_middle p |> L
         zero_or q |> TrnL |> L
         ident_eq <@ %p = (not %p ||| %q) @> |> L
         commute_or <@ not %p @> q |> L
@@ -426,11 +426,11 @@ module PropCalculus =
     let distrib_or_and p q r = 
         failifnotdistinct3 p q r
         ident prop_calculus <@ %p ||| (%q |&| %r) = ((%p ||| %q) |&| (%p ||| %r)) @> [
-            GoldenRule |> L
-            GoldenRule |> R
+            GoldenRule |> R |> L'
             Distrib |> L
-            Distrib |> L
+            Distrib |> L |> L'
             distrib_or_or p q r |> L
+            golden_rule <@ %p ||| %q @> <@ %p ||| %r @> |> Trn |> L
         ]
 
     /// not (p |&| q) = not p ||| not q
