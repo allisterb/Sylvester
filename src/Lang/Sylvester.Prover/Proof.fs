@@ -265,13 +265,9 @@ module LogicalRules =
             | l when sequal l p.L && p.Complete -> p.R
             | expr -> traverse expr (subst p) 
 
-        let rec rsubst p e = 
-            let s =  subst p e
-            if sequal s e then s else (rsubst p s)
-
         if not p.Complete then 
             failwithf "The proof of %A is not complete" (src p.Stmt)  
-        else Derive(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> rsubst proof e)
+        else Derive(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof e)
         
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
@@ -304,3 +300,10 @@ module Proof =
     let ident' steps e = ident Proof.Logic e steps
     let id_ax theory e = ident theory e []
     let id_ax' e = id_ax Proof.Logic e
+
+    (* Check parameters of proof functions *)
+    let failifnotdistinct3 p q r =
+        do if sequal p q || sequal p r || sequal q r then failwith "This proof requires 3 distinct parameters or invalid proofs may be created." 
+
+    let failifnotdistinct4 p q r s=
+        do if sequal p q || sequal p r || sequal p s || sequal q r || sequal q s || sequal r s then failwith "This proof requires 4 distinct parameters or invalid proofs may be created." 
