@@ -108,7 +108,7 @@ let p347 = proof prop_calculus <@ p = q = (not p = not q) @> [
     commute_eq <@ p = q @> <@ not p @> |> L
     commute_eq <@ p @> <@ q @> |> L
     LeftAssoc |> LR
-    symm_not_eq <@ p @> <@ q @> |> Lemma |> LR
+    symm_not_eq <@ p @> <@ q @> |> Lemma
 ]
 
 let ``3,47`` = proof prop_calculus <@ not (p ||| q) = (not p |&| not q) @> [

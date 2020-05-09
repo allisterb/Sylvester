@@ -203,6 +203,7 @@ and RuleApplication =
     | LR of Rule
     | L' of RuleApplication
     | R' of RuleApplication
+    | LR' of RuleApplication
 with
     member x.Rule = 
         match x with
@@ -211,6 +212,7 @@ with
         | R rule -> rule
         | L' ra -> ra.Rule
         | R' ra -> ra.Rule
+        | LR' ra -> ra.Rule
         
     member x.RuleName = x.Rule.Name
     member x.Apply(expr:Expr) =       
@@ -232,6 +234,10 @@ with
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = ra.Apply r in binary_call(o, m, l, s)
             | _ -> failwith "Expression is not a binary operation."
+        | LR' ra ->
+            match expr with
+            | Patterns.Call(o, m, l::[]) -> let s = ra.Apply l in unary_call(o, m, s)
+            | _ -> failwith "Expression is not a binary operation."
     member x.Pos =
         match x with
         | LR _ -> "expression"
@@ -239,6 +245,7 @@ with
         | R _ -> "right of expression"
         | L' ra -> sprintf "left-%s of expression" (ra.Pos.Replace(" of expression", ""))
         | R' ra -> sprintf "right-%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | LR' ra -> sprintf "left-right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         
 and Theorem internal (expr: Expr, proof:Proof) = 
     do if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
@@ -258,9 +265,13 @@ module LogicalRules =
             | l when sequal l p.L && p.Complete -> p.R
             | expr -> traverse expr (subst p) 
 
+        let rec rsubst p e = 
+            let s =  subst p e
+            if sequal s e then s else (rsubst p s)
+
         if not p.Complete then 
             failwithf "The proof of %A is not complete" (src p.Stmt)  
-        else Derive(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof e)
+        else Derive(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> rsubst proof e)
         
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
