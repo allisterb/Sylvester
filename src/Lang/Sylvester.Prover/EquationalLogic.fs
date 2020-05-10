@@ -93,19 +93,7 @@ module EquationalLogic =
         | _ -> None
 
     (* Expression functions for admissible rules *) 
-    
-    /// Definition of true
-    let _def_true =
-        function
-        | Equals(a1, a2) when sequal a1 a2 -> <@@ true @@>
-        | expr -> expr
-    
-    /// Definition of true
-    let _def_false =
-        function
-        | NotEquals(a1, a2) when sequal a1 a2 -> <@@ false @@>
-        | expr -> expr
-   
+       
     /// Reduce logical constants.
     let _reduce_constants  =
         function

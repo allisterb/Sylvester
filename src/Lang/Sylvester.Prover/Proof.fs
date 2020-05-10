@@ -14,43 +14,37 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
     /// The default logical theory used in Sylph proofs.
     static member val S =     
-        let DefTrue = Admit("Substitute definition of true in (expression)", EquationalLogic._def_true)
+        let reduce = Admit("Reduce logical constants in (expression)", EquationalLogic._reduce_constants)
 
-        let DefFalse = Admit("Substitute definition of false in (expression)", EquationalLogic._def_false)
-
-        let Reduce = Admit("Reduce logical constants in (expression)", EquationalLogic._reduce_constants)
-
-        let LeftAssoc = Admit("Logical operators in (expression) are left-associative", EquationalLogic._left_assoc)
+        let left_assoc = Admit("Logical operators in (expression) are left-associative", EquationalLogic._left_assoc)
         
-        let RightAssoc = Admit("Logical operators in (expression) are right-associative", EquationalLogic._right_assoc)
+        let right_assoc = Admit("Logical operators in (expression) are right-associative", EquationalLogic._right_assoc)
           
-        let Commute = Admit("Logical operators in (expression) are commutative", EquationalLogic._commute)
+        let commute = Admit("Logical operators in (expression) are commutative", EquationalLogic._commute)
 
-        let Distrib = Admit("Distribute logical terms in (expression)", EquationalLogic._distrib)
+        let distrib = Admit("Distribute logical terms in (expression)", EquationalLogic._distrib)
         
-        let Collect = Admit("Collect distributed logical terms in (expression)", EquationalLogic._collect)
+        let collect = Admit("Collect distributed logical terms in (expression)", EquationalLogic._collect)
 
-        let Idemp = Admit("Substitute idempotent logical terms in (expression)", EquationalLogic._idemp)
+        let idemp = Admit("Substitute idempotent logical terms in (expression)", EquationalLogic._idemp)
 
-        let ExcludedMiddle = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic._excluded_middle)
+        let excluded_middle = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic._excluded_middle)
 
-        let GoldenRule = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic._golden_rule)
+        let golden_rule = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic._golden_rule)
 
-        let Implication = Admit("Substitute definition of implication into (expression)", EquationalLogic._implication)
+        let implication = Admit("Substitute definition of implication into (expression)", EquationalLogic._implication)
 
         Theory(EquationalLogic.equational_logic_axioms, [
-            DefTrue
-            DefFalse
-            Reduce
-            LeftAssoc
-            RightAssoc
-            Commute
-            Distrib
-            Collect
-            Idemp
-            ExcludedMiddle
-            GoldenRule
-            Implication
+            reduce
+            left_assoc
+            right_assoc
+            commute
+            distrib
+            collect
+            idemp
+            excluded_middle
+            golden_rule
+            implication
         ], EquationalLogic.print_S_Operators)
 
     static member val internal Trivial = 
