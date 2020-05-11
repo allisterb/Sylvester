@@ -126,6 +126,7 @@ module EquationalLogic =
         function
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
         | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
+        | And(a1, a2) -> <@@ %%a2 |&| %%a1 @@>
         | expr -> expr 
     
     /// Distribute logical terms.
@@ -163,5 +164,5 @@ module EquationalLogic =
 
     let rec _implication = 
         function
-        | Implies(p, q) -> <@@ (%%p ||| %%q) = %%p @@>
+        | Implies(p, q) -> <@@ (%%p ||| %%q) = %%q @@>
         | expr -> expr

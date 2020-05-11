@@ -7,6 +7,9 @@ open PropCalculus
 let p,q,r,s = var4<bool>
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 
-let def_true p = ident prop_calculus <@ true = (%p = %p) @> [
-    DefTrue |> L
+let ``3.59`` = proof prop_calculus <@ p ==> q = (not p ||| q) @> [
+    implication |> L
+    ident_or_not_or q' p' |> CommuteL |> R
+    commute |> R
+    commute |> L |> R'
 ]

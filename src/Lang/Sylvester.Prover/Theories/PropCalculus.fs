@@ -502,7 +502,22 @@ module PropCalculus =
         symm_eq_not_eq p q |> R
     ]
 
-    let ident_and_eq p q  = proof prop_calculus <@ %p |&| (%q = %p) = (%p |&| %q) @> [
+    let distrib_and_eq p q r = 
+        failifnotdistinct3 p q r
+        ident prop_calculus <@ %p |&| (%q = %r) =   ((%p |&| %q) = (%p |&| %r) = %p) @> [
+            golden_rule' |> L
+            distrib |> R |> L'
+            left_assoc |> L |> L'
+            left_assoc |> L
+            right_assoc |> L
+            commute_eq_eq <@ %p = %q @> r <@ %p ||| %q @> <@ %p ||| %r @> |> L
+            golden_rule p q |> LeftAssoc |> L
+            golden_rule p r |> LeftAssoc |> LeftAssocL |> RightAssoc |> Commute |> L 
+            golden_rule p q |> Commute |> L
+            left_assoc |> L
+        ]
+
+    let ident_and_eq p q  = ident prop_calculus <@ %p |&| (%q = %p) = (%p |&| %q) @> [
         golden_rule' |> L
         distrib |> R |> L'
         left_assoc |> L |> L'

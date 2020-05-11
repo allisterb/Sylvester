@@ -30,6 +30,15 @@ module Tactics =
         let p = Proof(stmt, proof.Theory, R true_id :: proof.Steps, true) in 
                 Theorem(stmt, p) |> Ident
 
+    /// If A = B is a theorem then so is (A = B) = true.
+    let Taut ident rule =
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived."
+        let theory = proof.Theory
+        let expr = proof.Stmt
+        let stmt = <@@ (%%expr) = true @@>
+        let p = Proof(stmt, theory, (expr |> ident |> LR) :: proof.Steps, true) in 
+            Theorem(stmt, p) |> Ident 
+
     /// If A = B is a theorem then so is B = A.
     let Commute commute rule =
         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
@@ -143,13 +152,3 @@ module Tactics =
              | _ -> failwith "This theorem is not an identity."
          let p = Proof(stmt, proof.Theory, R rassoc :: proof.Steps, true) in 
              Theorem(stmt, p) |> Ident
-
-
-    /// If A = B is a theorem then so is (A = B) = true.
-    let Taut ident rule =
-        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived."
-        let theory = proof.Theory
-        let expr = proof.Stmt
-        let stmt = <@@ (%%expr) = true @@>
-        let p = Proof(stmt, theory, (expr |> ident |> LR) :: proof.Steps, true) in 
-            Theorem(stmt, p) |> Ident 

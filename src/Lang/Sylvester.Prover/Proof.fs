@@ -69,6 +69,8 @@ and Rules = Rule list
 
 and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     static let mutable logic:Theory = Theory.S /// The logical theory used for the proof.
+    static let mutable logLevel:int = 1 /// The proof log level.
+
     let ruleNames = List.concat [
             (logic.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
@@ -77,29 +79,54 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     
     let logBuilder = System.Text.StringBuilder()
     let l = defaultArg lemma false
+    let isAxiom = l && steps.Length = 0
     let proof_sep = if l then System.Environment.NewLine else ""
-    let output (s:string) = 
-        match defaultDisplay with
-            | Text -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
-            | _ -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
-    let prooflog (x:string) = 
-        do 
-            logBuilder.Append(x) |> ignore
-            if not l || x.StartsWith "[Lemma]" then output x else output ("        " + x)
     
+    // Proof logging
+    let _prooflog (steps:RuleApplication list) (level:int) (isLemma:bool) (x:string) = 
+        let output (s:string) = 
+            logBuilder.Append(x) |> ignore
+            match defaultDisplay with
+                | Text -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
+                | _ -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
+        do 
+            let isShortLemmaProof = isLemma && steps.Length <= 2
+            if not isLemma then 
+                output x
+            else if isLemma && level > 2 then
+                output ("        " + x)
+            else if not isShortLemmaProof && level >= 1 then
+                    output ("        " + x)         
+    let prooflog = _prooflog steps logLevel l
+    let alwayslog = _prooflog steps 3 false
+    do if not l then 
+        match logLevel with
+        | 0 -> alwayslog <| sprintf "Proof log level is %i. Only necessary output will be printed."  logLevel
+        | 1 -> alwayslog <| sprintf "Proof log level is %i. Short proofs of lemmas will not be printed."  logLevel
+        | 2 -> alwayslog <| sprintf "Proof log level is %i. All proofs of lemmas will be printed."  logLevel
+        | 3 -> alwayslog <| sprintf "Proof log level is %i. All proofs of axioms and lemmas will be printed."  logLevel
+        | _ -> failwith "Unknown proof log level"
+
     let mutable _state = a
     let mutable state:(Expr * string) list = [] 
     let mutable stepCount = 0
-
-    do 
+    do
         if theory.GetType() = typeof<Assumption> then 
             do sprintf "Assume %s." (src a) |> prooflog
             stepCount <- steps.Length
         else  
-            if l then 
-                sprintf "[Lemma] %s:" (src a) |> prooflog
-            else
-                sprintf "Proof of %s:" (src a) |> prooflog
+            if isAxiom && logLevel <= 2 then 
+                sprintf "[Axiom] %s." (src a) |> alwayslog
+            else if isAxiom && logLevel > 2 then 
+                sprintf "[Axiom] %s:" (src a) |> alwayslog
+            else if l && logLevel > 2 then 
+                sprintf "[Lemma] %s:" (src a) |> alwayslog
+            else if l && logLevel < 2 && steps.Length <= 2 then 
+                sprintf "[Lemma] %s." (src a) |> alwayslog
+            else if l && logLevel < 2 && steps.Length >= 2 then 
+                sprintf "[Lemma] %s:" (src a) |> alwayslog
+            else if not l then
+                sprintf "Proof of %s:" (src a) |> alwayslog
         
             if theory |- a  then
                 let axeq = theory.Axioms a
@@ -150,7 +177,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
         if theory |- _state then
             let axeq = theory.Axioms _state
             sprintf "|- %s. [%s]" (src _state)(if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
-            sprintf "Proof complete." + proof_sep |> prooflog 
+            sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
         else if logic |- _state then 
             let axeq = logic.Axioms _state
@@ -178,8 +205,10 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     member val State = state
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
-    member __.Msg msg = prooflog msg
+    member __.Msg msg = prooflog
     
+    /// Proof log level.
+    static member LogLevel with get() = logLevel and set(v) = logLevel <- v
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = logic and set(v) = logic <- v
     static member (|-) (proof:Proof, expr:Expr) = sequal proof.Stmt expr  && proof.Complete
