@@ -133,6 +133,8 @@ module EquationalLogic =
         function
         | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
+        | Not(Or(a1, a2)) -> <@@ (not %%a1) |&| (not %%a2) @@>
+        | Not(And(a1, a2)) -> <@@ (not %%a1) ||| (not %%a2) @@>
         | expr -> expr
     
     /// Collect distributed logical terms.

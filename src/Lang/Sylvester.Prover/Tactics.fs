@@ -31,7 +31,7 @@ module Tactics =
                 Theorem(stmt, p) |> Ident
 
     /// If A = B is a theorem then so is B = A.
-    let Commute' commute rule =
+    let Commute commute rule =
         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let stmt = 
             match proof.Stmt with 
@@ -73,7 +73,7 @@ module Tactics =
             Theorem(stmt, p) |> Ident
 
     /// If (A1 = A2) = A3 is a theorem then so is A1 = (A2 = A3)
-    let RightAssoc' lassoc rule =
+    let RightAssoc lassoc rule =
          let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
          let stmt = 
              match proof.Stmt with 
@@ -83,7 +83,7 @@ module Tactics =
              Theorem(stmt, p) |> Ident
 
     /// If A1 = (A2 =  A3) is a theorem then so is (A1 = A2) = A3
-    let LeftAssoc' rassoc rule =
+    let LeftAssoc rassoc rule =
          let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
          let stmt = 
              match proof.Stmt with 
@@ -91,7 +91,60 @@ module Tactics =
              | _ -> failwith "This theorem is not an identity."
          let p = Proof(stmt, proof.Theory, LR rassoc :: proof.Steps, true) in 
              Theorem(stmt, p) |> Ident
-    
+
+    let RightAssocL lassoc rule =
+         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+         let (l, r) = 
+             match proof.Stmt with 
+             | Equals(l, r) -> (l, r)
+             | _ -> failwith "This theorem is not an identity."
+         let stmt = 
+             match l with 
+             | Equals(Equals(l1, l2), r2) -> <@@ ((%%l1:bool) = ((%%l2:bool) = (%%r2:bool))) = (%%r:bool) @@>
+             | _ -> failwith "This theorem is not an identity."
+         let p = Proof(stmt, proof.Theory, L lassoc :: proof.Steps, true) in 
+             Theorem(stmt, p) |> Ident
+
+    let RightAssocR lassoc rule =
+         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+         let (l, r) = 
+             match proof.Stmt with 
+             | Equals(l, r) -> (l, r)
+             | _ -> failwith "This theorem is not an identity."
+         let stmt = 
+             match r with 
+             | Equals(Equals(l1, l2), r2) -> <@@ (%%l:bool) = ((%%l1:bool) = ((%%l2:bool) = (%%r2:bool)))  @@>
+             | _ -> failwith "This theorem is not an identity."
+         let p = Proof(stmt, proof.Theory, R lassoc :: proof.Steps, true) in 
+             Theorem(stmt, p) |> Ident
+
+    let LeftAssocL rassoc rule =
+         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+         let (l, r) = 
+             match proof.Stmt with 
+             | Equals(l, r) -> (l, r)
+             | _ -> failwith "This theorem is not an identity."
+         let stmt = 
+             match l with 
+             | Equals(l1, Equals(r1, r2)) -> <@@ (((%%l1:bool) = (%%r1:bool)) = (%%r2:bool)) = (%%r:bool) @@>
+             | _ -> failwith "This theorem is not an identity."
+         let p = Proof(stmt, proof.Theory, L rassoc :: proof.Steps, true) in 
+             Theorem(stmt, p) |> Ident
+
+    let LeftAssocR rassoc rule =
+         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+         let (l, r) = 
+             match proof.Stmt with 
+             | Equals(l, r) -> (l, r)
+             | _ -> failwith "This theorem is not an identity."
+         let stmt = 
+             match r with 
+             | Equals(l1, Equals(r1, r2)) -> <@@ (%%l:bool) = (((%%l1:bool) = (%%r1:bool)) = (%%r2:bool)) @@>
+             | _ -> failwith "This theorem is not an identity."
+         let p = Proof(stmt, proof.Theory, R rassoc :: proof.Steps, true) in 
+             Theorem(stmt, p) |> Ident
+
+
     /// If A = B is a theorem then so is (A = B) = true.
     let Taut ident rule =
         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived."
