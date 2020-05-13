@@ -113,7 +113,7 @@ module EquationalLogic =
         | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@>
         | expr -> expr 
     
-    /// Logical operators are left associative.
+    /// Binary logical operators are left associative.
     let _left_assoc =
         function
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
@@ -121,7 +121,7 @@ module EquationalLogic =
         | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@>
         | expr -> expr 
     
-    /// Logical operators commute.
+    /// Binary logical operators commute.
     let _commute =
         function
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
@@ -134,6 +134,8 @@ module EquationalLogic =
         function
         | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
+        | Or(p, And(q, r)) -> <@@ (%%p ||| %%q) |&| (%%p ||| %%r) @@>
+        | And(p, Or(q, r)) -> <@@ (%%p |&| %%q) ||| (%%p |&| %%r) @@>
         | Not(Or(a1, a2)) -> <@@ (not %%a1) |&| (not %%a2) @@>
         | Not(And(a1, a2)) -> <@@ (not %%a1) ||| (not %%a2) @@>
         | expr -> expr
@@ -143,6 +145,10 @@ module EquationalLogic =
         function
         | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
         | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 = %%a4) @@>
+        | And(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 |&| %%a4) @@>
+        | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
+        | Or(Not p , Not q) -> <@@ not (%%p |&| %%q) @@>
+        | And(Not p , Not q) -> <@@ not (%%p ||| %%q) @@>
         | expr -> expr
     
     /// ||| operator is idempotent.    
@@ -162,7 +168,21 @@ module EquationalLogic =
         | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = ((%%p:bool) ||| (%%q:bool)) @@>
         | expr -> expr
 
-    let rec _implication = 
+    let rec _def_implies = 
         function
         | Implies(p, q) -> <@@ (%%p ||| %%q) = %%q @@>
         | expr -> expr
+
+    let _distrib_implies =
+        function
+        | And(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ (%%p1:bool) |&| (%%q:bool) @@>
+        | And(p1, Implies(_, p2)) when sequal p1 p2 -> <@@ (%%p1:bool) @@>
+        | Or(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ true @@>
+        | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ==> (%%p1:bool) @@>
+        | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
+        | expr -> expr
+
+    let _shunting =
+        function
+        | Implies(And(p, q), r) -> <@@ %%p ==> %%q ==> %%r @@>
+            | expr -> expr

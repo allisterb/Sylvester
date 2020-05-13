@@ -28,11 +28,13 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let idemp = Admit("Substitute idempotent logical terms in (expression)", EquationalLogic._idemp)
 
-        let excluded_middle = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic._excluded_middle)
+        let excluded_middle' = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic._excluded_middle)
 
-        let golden_rule = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic._golden_rule)
+        let golden_rule' = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic._golden_rule)
 
-        let implication = Admit("Substitute definition of implication into (expression)", EquationalLogic._implication)
+        let def_implies' = Admit("Substitute definition of implication into (expression)", EquationalLogic._def_implies)
+
+        let shunting' = Admit("Shunt implication in (expression)", EquationalLogic._shunting)
 
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
@@ -42,9 +44,10 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             distrib
             collect
             idemp
-            excluded_middle
-            golden_rule
-            implication
+            excluded_middle'
+            golden_rule'
+            def_implies'
+            shunting'
         ], EquationalLogic.print_S_Operators)
 
     static member val internal Trivial = 
@@ -80,9 +83,9 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     let logBuilder = System.Text.StringBuilder()
     let l = defaultArg lemma false
     let isAxiom = l && steps.Length = 0
-    let proof_sep = if l then System.Environment.NewLine else ""
     
     // Proof logging
+    let proof_sep = ""
     let _prooflog (steps:RuleApplication list) (level:int) (isLemma:bool) (x:string) = 
         let output (s:string) = 
             logBuilder.Append(x) |> ignore
@@ -102,10 +105,10 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     do if not l then 
         match logLevel with
         | 0 -> alwayslog <| sprintf "Proof log level is %i. Only necessary output will be printed."  logLevel
-        | 1 -> alwayslog <| sprintf "Proof log level is %i. Short proofs of lemmas will not be printed."  logLevel
+        | 1 -> alwayslog <| sprintf "Proof log level is %i. Short proofs of lemmas won't be printed."  logLevel
         | 2 -> alwayslog <| sprintf "Proof log level is %i. All proofs of lemmas will be printed."  logLevel
         | 3 -> alwayslog <| sprintf "Proof log level is %i. All proofs of axioms and lemmas will be printed."  logLevel
-        | _ -> failwith "Unknown proof log level"
+        | _ -> failwith "Unknown proof log level."
 
     let mutable _state = a
     let mutable state:(Expr * string) list = [] 
@@ -198,6 +201,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
         match a with
         | Equals(_, r) -> r
         | _ -> failwith "This expression is not an identity."
+    member val IsLemma = l
     member val Theory = theory
     member val Steps = steps
     abstract Complete:bool
@@ -271,8 +275,12 @@ with
         | LR' ra -> sprintf "left-right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         
 and Theorem internal (expr: Expr, proof:Proof) = 
-    do if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
-    do if not proof.Complete then failwithf "The provided proof of %s is not complete." (src expr)
+    do 
+        if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
+        if not proof.Complete then 
+            if not proof.IsLemma then
+                failwithf "The provided proof of theorem %s is not complete." (src expr)
+            else failwithf "The provided proof of lemma %s is not complete. This can be caused by derived rules that take paramemters when an unexpectd substitution occcurs using parameters that are not unique. Add an addendum to the proof using the Addeddum tactic or use a non-parameterized proof instead."  (src expr) 
     member val Stmt = expr
     member val LastState = proof.LastState
     member val Proof = proof
@@ -287,10 +295,9 @@ module LogicalRules =
             function
             | l when sequal l p.L && p.Complete -> p.R
             | expr -> traverse expr (subst p) 
-
         if not p.Complete then 
             failwithf "The proof of %A is not complete" (src p.Stmt)  
-        else Derive(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof e)
+        Derive(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof e)
         
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 

@@ -78,7 +78,7 @@ module Tactics =
             | _ -> failwith "The rHS of this theorem is not an identity."
 
         let stmt = <@@ ((%%l:bool)) = (%%r1:bool) @@>
-        let p = Proof(stmt, proof.Theory, L commute :: proof.Steps, true) in 
+        let p = Proof(stmt, proof.Theory, R commute :: proof.Steps, true) in 
             Theorem(stmt, p) |> Ident
 
     /// If (A1 = A2) = A3 is a theorem then so is A1 = (A2 = A3)
