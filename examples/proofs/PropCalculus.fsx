@@ -37,6 +37,42 @@ let ``3.62`` = proof prop_calculus <@p ==> (q = r) = ((p |&| q) = (p |&| r))@> [
     distrib_and_eq p' q' r' |> L
 ]
 
+
+let ``3.71`` = proof prop_calculus <@ p ==> p @> [
+    def_implies' |> LR
+]
+
+let ``3.76a`` = ident prop_calculus <@ p ==> (p ||| q) @> [
+    def_implies' |> LR
+    left_assoc |> L
+    idemp_or p' |> L
+]
+
+let ``3.76c`` = proof prop_calculus <@ p |&| q ==> p ||| q @> [
+    def_implies' |> L
+    commute |> L |> L'
+    distrib |> L |> L'
+    commute |> LR
+    idemp_or p' |> LR
+    distrib |> L |> R'
+    idemp_and p' |> LR
+    distrib |> LR
+    distrib |> R |> L'
+    distrib |> L
+    idemp_or p' |> L
+    distrib |> L
+    commute_or q' p' |> L
+    idemp_and <@ p ||| q @> |> L
+    commute |> L |> L'
+    distrib |> L |> L'
+    idemp_and q' |> L
+    absorb_or q' p' |> CommuteL |> L
+    commute |> R |> L'
+    left_assoc |> L
+    idemp_or q' |> L
+] 
+
+(*
 let ``3.63`` = proof prop_calculus <@p ==> (q = r) = ((p ==> q) = (p ==> r))@> [
     distrib_implies_eq_implies p' q' r' |> L
     ident_implies_eq_and_eq p' q' |> L |> R'
@@ -62,7 +98,13 @@ let ``3.68`` = proof prop_calculus <@ (p ||| (p ==> q)) = true @> [
     idemp_or p' |> L
     ident_eq <@ (p ||| q) = (p ||| q) @> |> LR
 ]
-(*
+
+let ``3.75``  = proof prop_calculus <@ (false ==> p) = true @> [
+    def_implies' |> L
+    ident_or p' |> CommuteL |> L
+    commute |> LR
+]
+
 let ``3.66a`` = proof prop_calculus <@ p ==> (p ||| q) @> [
     def_implies' |> LR
     left_assoc |> L

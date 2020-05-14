@@ -26,7 +26,7 @@ module PropCalculus =
 
     let _golden_rule = EquationalLogic._golden_rule
 
-    let _shunting = EquationalLogic._shunting
+    let _shunt = EquationalLogic._shunt
 
     (* Admissible rules *)
 
@@ -589,6 +589,10 @@ module PropCalculus =
         commute |> LR
         commute_or p q |> R
     ]
+
+    let reflex_implies p = ident prop_calculus <@ p ==> p @> [
+        def_implies' |> LR
+    ]
         
     let zero_implies p = ident prop_calculus <@ %p ==> true = true @> [
         def_implies' |> L
@@ -596,7 +600,7 @@ module PropCalculus =
         ident_eq <@ true @> |> L
     ]
 
-    let ident_implies p = ident prop_calculus <@ (true ==> %p) = %p @> [
+    let ident_conseq_true p = ident prop_calculus <@ (true ==> %p) = %p @> [
         def_implies' |> L
         zero_or p |> CommuteL |> L
         right_assoc |> LR
@@ -617,13 +621,37 @@ module PropCalculus =
         ident_or p |> CommuteL |> L
         commute |> LR
     ]
-
-    let reflex_implies p = ident prop_calculus <@ p ==> p @> [
+    let weaken p q = ident prop_calculus <@  (%p |&| %q ) ==> %p @> [
         def_implies' |> LR
+        commute |> L
+        absorb_or p q |> Lemma
     ]
-
     let weaken_or p q = ident prop_calculus <@ %p ==> (%p ||| %q) @> [
         def_implies' |> LR
         left_assoc |> L
         idemp_or p |> L
+    ]
+
+    let weaken_and p q = proof prop_calculus <@ %p |&| %q ==> %p ||| %q @> [
+        def_implies' |> L
+        commute |> L |> L'
+        distrib |> L |> L'
+        commute |> LR
+        idemp_or p |> LR
+        distrib |> L |> R'
+        idemp_and p |> LR
+        distrib |> LR
+        distrib |> R |> L'
+        distrib |> L
+        idemp_or p |> L
+        distrib |> L
+        commute_or q p |> L
+        idemp_and <@ %p ||| %q @> |> L
+        commute |> L |> L'
+        distrib |> L |> L'
+        idemp_and q |> L
+        absorb_or q p |> CommuteL |> L
+        commute |> R |> L'
+        left_assoc |> L
+        idemp_or q |> L
     ]

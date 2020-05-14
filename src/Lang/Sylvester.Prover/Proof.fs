@@ -34,7 +34,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let def_implies' = Admit("Substitute definition of implication into (expression)", EquationalLogic._def_implies)
 
-        let shunting' = Admit("Shunt implication in (expression)", EquationalLogic._shunting)
+        let shunt' = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
 
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
@@ -47,7 +47,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             excluded_middle'
             golden_rule'
             def_implies'
-            shunting'
+            shunt'
         ], EquationalLogic.print_S_Operators)
 
     static member val internal Trivial = 

@@ -135,6 +135,7 @@ module EquationalLogic =
         | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
         | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
         | Or(p, And(q, r)) -> <@@ (%%p ||| %%q) |&| (%%p ||| %%r) @@>
+        | Or(p, Or(q, r)) -> <@@ (%%p ||| %%q) ||| (%%p ||| %%r) @@>
         | And(p, Or(q, r)) -> <@@ (%%p |&| %%q) ||| (%%p |&| %%r) @@>
         | Not(Or(a1, a2)) -> <@@ (not %%a1) |&| (not %%a2) @@>
         | Not(And(a1, a2)) -> <@@ (not %%a1) ||| (not %%a2) @@>
@@ -147,6 +148,7 @@ module EquationalLogic =
         | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 = %%a4) @@>
         | And(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 |&| %%a4) @@>
         | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
+        | Or(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 ||| %%a4) @@>
         | Or(Not p , Not q) -> <@@ not (%%p |&| %%q) @@>
         | And(Not p , Not q) -> <@@ not (%%p ||| %%q) @@>
         | expr -> expr
@@ -182,7 +184,12 @@ module EquationalLogic =
         | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
         | expr -> expr
 
-    let _shunting =
+    let _shunt =
         function
         | Implies(And(p, q), r) -> <@@ %%p ==> %%q ==> %%r @@>
-            | expr -> expr
+        | expr -> expr
+
+    let _weaken =
+        function
+        | Implies(And(p1, q1), And(p2, q2)) when sequal2 p1 q1 p2 q2 -> <@@ %%p1 ||| %%q1 @@> 
+        | expr -> expr
