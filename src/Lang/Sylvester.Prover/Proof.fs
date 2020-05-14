@@ -36,6 +36,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let shunt' = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
 
+        let distrib_implies' = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
+
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc
@@ -48,6 +50,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             golden_rule'
             def_implies'
             shunt'
+            distrib_implies'
         ], EquationalLogic.print_S_Operators)
 
     static member val internal Trivial = 
@@ -216,8 +219,14 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = logic and set(v) = logic <- v
     static member (|-) (proof:Proof, expr:Expr) = sequal proof.Stmt expr  && proof.Complete
-    static member (+) (l:Proof, r:RuleApplication) = if l.Complete then failwith "Cannot add a step to a completed proof." else Proof(l.Stmt, l.Theory, l.Steps @ [r])
-
+    static member (+) (l:Proof, r:RuleApplication) = 
+        if l.Complete then 
+            failwith "Cannot add a step to a completed proof." 
+        else Proof(l.Stmt, l.Theory, l.Steps @ [r])
+    static member (+) (l:Proof, r:RuleApplication list) = 
+        if l.Complete then 
+            failwith "Cannot add a step to a completed proof." 
+        else Proof(l.Stmt, l.Theory, l.Steps @ r)
     interface IDisplay with
         member x.Output(item:'t) = item.ToString()
         member x.Transform(str:string) = str

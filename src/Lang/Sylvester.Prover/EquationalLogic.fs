@@ -175,6 +175,12 @@ module EquationalLogic =
         | Implies(p, q) -> <@@ (%%p ||| %%q) = %%q @@>
         | expr -> expr
 
+    let _shunt =
+        function
+        | Implies(And(p, q), r) -> <@@ %%p ==> %%q ==> %%r @@>
+        | expr -> expr
+        | expr -> expr
+
     let _distrib_implies =
         function
         | And(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ (%%p1:bool) |&| (%%q:bool) @@>
@@ -182,14 +188,4 @@ module EquationalLogic =
         | Or(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ true @@>
         | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ==> (%%p1:bool) @@>
         | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
-        | expr -> expr
-
-    let _shunt =
-        function
-        | Implies(And(p, q), r) -> <@@ %%p ==> %%q ==> %%r @@>
-        | expr -> expr
-
-    let _weaken =
-        function
-        | Implies(And(p1, q1), And(p2, q2)) when sequal2 p1 q1 p2 q2 -> <@@ %%p1 ||| %%q1 @@> 
         | expr -> expr

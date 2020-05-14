@@ -72,6 +72,28 @@ let ``3.76c`` = proof prop_calculus <@ p |&| q ==> p ||| q @> [
     idemp_or q' |> L
 ] 
 
+let proof prop_calculus <@  (p |&| q ) ==> p@> [
+    def_implies' |> LR
+    commute |> L
+    absorb_or p' q' |> Lemma
+]
+
+proof prop_calculus <@ p ==> true @> [
+    def_implies' |> LR
+    zero_or p' |> L
+    //ident_eq <@ true @> |> L
+]
+
+let ``3.76d`` = proof prop_calculus <@ (p ||| (q |&| r)) ==> (p ||| q) @> [
+    distrib |> L
+    weaken_and <@ p ||| q @> <@ p ||| r @> |> Lemma'
+]
+
+let ``3.76e`` = proof prop_calculus <@ (p |&| q)  ==> (p |&| (q ||| r)) @> [
+    distrib |> R
+    weaken <@ p |&| q @> <@ p |&| r @> |> Lemma'
+]
+
 (*
 let ``3.63`` = proof prop_calculus <@p ==> (q = r) = ((p ==> q) = (p ==> r))@> [
     distrib_implies_eq_implies p' q' r' |> L
