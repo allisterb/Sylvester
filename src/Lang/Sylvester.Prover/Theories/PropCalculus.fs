@@ -691,3 +691,19 @@ module PropCalculus =
         commute_and p q |> LR
         weaken_and q p |> Lemma'
     ]
+
+    let case_analysis_1 p q r = ident prop_calculus <@( %p ==> %r) |&| (%q ==> %r) = (%p ||| %q  ==> %r) @> [
+        ident_implies_not_or <@ %p ||| %q @> r |> R
+        distrib|> L |> R'
+        distrib_or_and r <@ not %p @> <@ not %q @> |> CommuteL |> R
+        commute |> L |> R'
+        commute |> R |> R'
+        ident_implies_not_or p r |> Commute |> R
+        ident_implies_not_or q r |> Commute |> R
+    ]
+
+    let case_analysis_2 p r = ident prop_calculus <@ (%p ==> %r) |&| (not %p ==> %r ) = %r @> [
+        case_analysis_1 p <@not %p @> r |> LR
+        excluded_middle' |> L |> L'
+        ident_conseq_true r |> Lemma
+    ]

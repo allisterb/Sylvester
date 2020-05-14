@@ -37,12 +37,12 @@ let ``3.62`` = proof prop_calculus <@p ==> (q = r) = ((p |&| q) = (p |&| r))@> [
     distrib_and_eq p' q' r' |> L
 ]
 
-
 let ``3.71`` = proof prop_calculus <@ p ==> p @> [
     def_implies' |> LR
 ]
 
-let ``3.76a`` = ident prop_calculus <@ p ==> (p ||| q) @> [
+
+let ``3.76a`` = proof prop_calculus <@ p ==> (p ||| q) @> [
     def_implies' |> LR
     left_assoc |> L
     idemp_or p' |> L
@@ -72,7 +72,7 @@ let ``3.76c`` = proof prop_calculus <@ p |&| q ==> p ||| q @> [
     idemp_or q' |> L
 ] 
 
-let proof prop_calculus <@  (p |&| q ) ==> p@> [
+proof prop_calculus <@  (p |&| q ) ==> p @> [
     def_implies' |> LR
     commute |> L
     absorb_or p' q' |> Lemma
@@ -94,53 +94,24 @@ let ``3.76e`` = proof prop_calculus <@ (p |&| q)  ==> (p |&| (q ||| r)) @> [
     weaken <@ p |&| q @> <@ p |&| r @> |> Lemma'
 ]
 
-(*
-let ``3.63`` = proof prop_calculus <@p ==> (q = r) = ((p ==> q) = (p ==> r))@> [
-    distrib_implies_eq_implies p' q' r' |> L
-    ident_implies_eq_and_eq p' q' |> L |> R'
-    ident_implies_eq_and_eq p' r' |> R |> R'
+let ``3.77`` = proof prop_calculus <@ p |&| (p ==> q) ==> q @> [
+    ident_and_implies p' q' |> L
+    commute_and p' q' |> LR
+    weaken_and q' p' |> Taut' |> LR
+]
+
+let ``3.78`` = proof prop_calculus <@( p ==> r) |&| (q ==> r) = (p ||| q  ==> r) @> [
+    ident_implies_not_or <@p ||| q@> r' |> R
+    distrib|> L |> R'
+    distrib_or_and r' <@ not p @> <@ not q@> |> CommuteL |> R
+    commute |> L |> R'
     commute |> R |> R'
-    left_assoc |> R 
-    right_assoc |> L |> R'
-    def_true p' |> Commute |> R
-    ident_eq <@ p |&| q @> |> L |> R'
+    ident_implies_not_or p' r' |> Commute |> R
+    ident_implies_not_or q' r' |> Commute |> R
 ]
 
-let ``3.66`` = proof prop_calculus <@ p |&| (p ==> q) = (p |&| q) @> [
-    ident_implies_eq_and_eq p' q' |> L
-    distrib_and_eq p' <@ p |&| q @> p' |> L
-    left_assoc |> L |> L' |> L'
-    idemp_and p' |> L 
+let ``3.79`` = proof prop_calculus <@ (p ==> r) |&| (not p ==> r ) = r @> [
+    case_analysis_1 p' <@not p @> r' |> LR
+    excluded_middle' |> L |> L'
+    ident_conseq_true r' |> Lemma
 ]
-
-let ``3.68`` = proof prop_calculus <@ (p ||| (p ==> q)) = true @> [
-    def_implies' |> R |> L'
-    distrib |> L
-    left_assoc |> L |> L'
-    idemp_or p' |> L
-    ident_eq <@ (p ||| q) = (p ||| q) @> |> LR
-]
-
-let ``3.75``  = proof prop_calculus <@ (false ==> p) = true @> [
-    def_implies' |> L
-    ident_or p' |> CommuteL |> L
-    commute |> LR
-]
-
-let ``3.66a`` = proof prop_calculus <@ p ==> (p ||| q) @> [
-    def_implies' |> LR
-    left_assoc |> L
-    idemp_or p' |> L
-]
-
-let ``3.76b`` = proof prop_calculus <@ p ||| (p ==> q) = (p |&| q) @> [
-    ident_implies_eq_and_eq p' q' |> L
-    distrib_and_eq p' <@ p |&| q @> p' |> L
-    left_assoc |> L |> L' |> L'
-    idemp_and p' |> L 
-]
-
-let ``3.71`` = proof prop_calculus <@ (p ==> p) @> [
-    def_implies' |> LR
-]
-*)
