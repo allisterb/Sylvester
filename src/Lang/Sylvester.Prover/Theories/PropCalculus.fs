@@ -483,6 +483,13 @@ module PropCalculus =
         ident_or p |> L
     ]
 
+    let ident_eq_and_or_and p q = ident prop_calculus <@ (%p = %q) = (%p |&| %q) ||| (not %p |&| not %q) @> [
+        collect |> R
+        commute |> L |> L'
+        commute |> L
+        commute |> R |> L'
+        golden_rule p q |> LeftAssoc |> L
+    ]
     let ident_and_and_not p q = ident prop_calculus <@ (%p |&| %q) = (%p |&| not %q = not %p) @> [
         left_assoc |> LR
         golden_rule' |> L |> L'
@@ -707,3 +714,23 @@ module PropCalculus =
         excluded_middle' |> L |> L'
         ident_conseq_true r |> Lemma
     ]
+
+    let mutual_implication p q = ident prop_calculus <@ ((%p ==> %q) |&| (%q ==> %p)) = %p = %q @> [
+        right_assoc |> LR
+        ident_implies_not_or p q |> L
+        ident_implies_not_or q p |> L  
+        distrib |> L  
+        commute |> L |> L' |> L'
+        commute |> R |> L'
+        distrib |> L |> L'
+        distrib |> R |> L'
+        distrib |> L |> L' |> L'
+        commute |> L |> L'
+        distrib |> L |> L'
+        contr q |> CommuteL |> L
+        contr p |> L
+        ident_or <@ %p |&| %q @> |> CommuteL |> L
+        ident_or <@ not %q |&| not %p @> |> CommuteL |> L
+        commute |> L |> L'
+        ident_eq_and_or_and p q |> Commute |> Lemma
+        ]

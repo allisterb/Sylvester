@@ -25,7 +25,6 @@ module Tactics =
             | _ -> failwith "This theorem is not an identity with the constant true."
         let theory = proof.Theory
         let true_id = ident theory <@(true = true) = true@> [LR commute]
-      
         let stmt = <@@ (%%l:bool) = (true = true) @@>
         let p = Proof(stmt, proof.Theory, R true_id :: proof.Steps, true) in 
                 Theorem(stmt, p) |> Ident
