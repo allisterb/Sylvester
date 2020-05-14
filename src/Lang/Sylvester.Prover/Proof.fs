@@ -28,15 +28,15 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let idemp = Admit("Substitute idempotent logical terms in (expression)", EquationalLogic._idemp)
 
-        let excluded_middle' = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic._excluded_middle)
+        let excluded_middle = Admit("Logical terms in (expression) satisfy the law of excluded middle", EquationalLogic._excluded_middle)
 
-        let golden_rule' = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic._golden_rule)
+        let golden_rule = Admit("Logical terms in (expression) satisfy the golden rule", EquationalLogic._golden_rule)
 
-        let def_implies' = Admit("Substitute definition of implication into (expression)", EquationalLogic._def_implies)
+        let def_implies = Admit("Substitute definition of implication into (expression)", EquationalLogic._def_implies)
 
-        let shunt' = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
+        let shunt = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
 
-        let distrib_implies' = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
+        let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
@@ -46,11 +46,11 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             distrib
             collect
             idemp
-            excluded_middle'
-            golden_rule'
-            def_implies'
-            shunt'
-            distrib_implies'
+            excluded_middle
+            golden_rule
+            def_implies
+            shunt
+            distrib_implies
         ], EquationalLogic.print_S_Operators)
 
     static member val internal Trivial = 
