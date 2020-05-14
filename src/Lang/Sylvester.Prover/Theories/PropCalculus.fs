@@ -685,3 +685,9 @@ module PropCalculus =
         distrib |> R
         weaken <@ %p |&| %q @> <@ %p |&| %r @> |> Lemma'
     ]
+
+    let modus_ponens p q = theorem prop_calculus <@ %p |&| (%p ==> %q) ==> %q @> [
+        ident_and_implies p q |> L
+        commute_and p q |> LR
+        weaken_and q p |> Lemma'
+    ]
