@@ -619,7 +619,7 @@ module PropCalculus =
         commute_or p q |> R
     ]
 
-    let reflex_implies p = theorem prop_calculus <@ p ==> p @> [
+    let reflex_implies p = theorem prop_calculus <@ %p ==> %p @> [
         def_implies |> LR
     ]
         
@@ -649,6 +649,17 @@ module PropCalculus =
         def_false p |> LR
     ]
     
+    let shunt' p q r = ident prop_calculus <@ %p |&| %q ==> %r = (%p ==> (%q ==> %r)) @> [
+        ident_implies_eq_and_eq <@ %p |&| %q @> r |> L
+        ident_implies_eq_and_eq q r |> R
+        ident_implies_eq_and_eq p <@ %q |&| %r = %q @> |> R
+        distrib_and_eq p <@ %q |&| %r @> q |> R
+        left_assoc_and p q r |> R
+        right_assoc |> R
+        def_true p |> Commute |> R
+        left_assoc |> LR
+        commute |> LR
+    ]
 
     let weaken p q = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
         ident_eq <@ (%p ==> (%p ||| %q)) @> |> LR
@@ -726,6 +737,7 @@ module PropCalculus =
         ident_conseq_true r |> Lemma
     ]
 
+    /// (p ==> q) |&| (q ==> p) = p = q
     let mutual_implication' p q = ident prop_calculus <@ ((%p ==> %q) |&| (%q ==> %p)) = (%p = %q) @> [
         right_assoc |> LR
         ident_implies_not_or p q |> L
@@ -747,3 +759,9 @@ module PropCalculus =
         commute |> R
         ident_eq_and_or_not p q |> L
     ]
+
+    /// (p ==> q) |&| (q ==> p) ==> p = q
+    let implies_anti_symm p q = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %p) ==> (%p = %q) @> [
+        mutual_implication' p q |> L  
+        reflex_implies <@ p = q @> |> Lemma'
+    ] 

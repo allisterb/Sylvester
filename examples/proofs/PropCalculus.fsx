@@ -7,13 +7,27 @@ open PropCalculus
 let p,q,r,s = var4<bool>
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 
+let ``3.52`` = proof prop_calculus <@p = q = ((p |&| q) ||| (not p |&| not q))@> [
+    ident_or_or_not <@ p |&| q@> <@ not p |&| not q@> |> R
+    distrib_not_and <@ not p @> <@ not q@> |> R
+    double_negation p' |> R
+    double_negation q' |> R
+    distrib |> L |> R'
+    absorb_or p' q' |> CommuteL |> R
+    commute_and p' q' |> R
+    absorb_or q' p' |> CommuteL |> R
+    commute_and q' p' |> R
+    left_assoc |> LR
+    commute |> LR
+] 
+
 proof prop_calculus <@ (p = q) = (p |&| q) ||| (not p |&| not q) @> [
-    collect |> R
-    commute |> L |> L'
-    commute |> L
-    commute |> R |> L'
-    golden_rule' p' q' |> LeftAssoc |> L
-]
+        collect |> R
+        commute |> L |> L'
+        commute |> L
+        commute |> R |> L'
+        golden_rule' p' q' |> LeftAssoc |> L
+    ]
 
 
 let ``3.59`` = proof prop_calculus <@ p ==> q = (not p ||| q) @> [
@@ -125,22 +139,7 @@ let ``3.79`` = proof prop_calculus <@ (p ==> r) |&| (not p ==> r ) = r @> [
     ident_conseq_true r' |> Lemma
 ]
 
-let ``3.80`` = proof prop_calculus <@ ((p ==> q) |&| (q ==> p)) = p = q @> [
-    right_assoc |> LR
-    ident_implies_not_or p' q' |> L
-    ident_implies_not_or q' p' |> L  
-    distrib |> L  
-    commute |> L |> L' |> L'
-    commute |> R |> L'
-    distrib |> L |> L'
-    distrib |> R |> L'
-    distrib |> L |> L' |> L'
-    commute |> L |> L'
-    distrib |> L |> L'
-    contr q' |> CommuteL |> L
-    contr p' |> L
-    ident_or <@ p |&| q @> |> CommuteL |> L
-    ident_or <@ not q |&| not p @> |> CommuteL |> L
-    commute |> L |> L'
-    ident_eq_and_or_and p' q' |> Commute |> Lemma
-]
+let ``3.81`` = proof prop_calculus <@ (p ==> q) |&| (q ==> p) ==> (p = q) @> [
+  mutual_implication' p' q' |> L  
+  reflex_implies <@ p = q @> |> Lemma'
+] 

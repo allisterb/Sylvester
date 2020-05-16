@@ -37,6 +37,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
         let shunt = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
 
         let mutual_implication = Admit("The (expression) contains a mutual implication.", EquationalLogic._mutual_implication)
+
+        let mutual_implication = Admit("The (expression) contains a mutual implication.", EquationalLogic._mutual_implication)
         
         let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
