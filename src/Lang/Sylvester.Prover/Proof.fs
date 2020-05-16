@@ -36,6 +36,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let shunt = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
 
+        let mutual_implication = Admit("The (expression) contains a mutual implication.", EquationalLogic._mutual_implication)
+        
         let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
         Theory(EquationalLogic.equational_logic_axioms, [
@@ -50,6 +52,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             golden_rule
             def_implies
             shunt
+            mutual_implication
             distrib_implies
         ], EquationalLogic.print_S_Operators)
 

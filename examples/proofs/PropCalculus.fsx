@@ -7,22 +7,24 @@ open PropCalculus
 let p,q,r,s = var4<bool>
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 
-let ``3.52`` = proof prop_calculus <@ (p = q) = (p |&| q) ||| (not p |&| not q) @> [
+proof prop_calculus <@ (p = q) = (p |&| q) ||| (not p |&| not q) @> [
     collect |> R
     commute |> L |> L'
     commute |> L
     commute |> R |> L'
-    golden_rule p' q' |> LeftAssoc |> L
+    golden_rule' p' q' |> LeftAssoc |> L
 ]
+
+
 let ``3.59`` = proof prop_calculus <@ p ==> q = (not p ||| q) @> [
-    def_implies' |> L
+    def_implies |> L
     ident_or_not_or q' p' |> CommuteL |> R
     commute |> R
     commute |> L |> R'
 ]
 
 let ``3.60`` = proof prop_calculus <@ p ==> q = ((p |&| q) = p) @> [
-    def_implies' |> L
+    def_implies |> L
     commute |> LR
     right_assoc |> LR
     commute |> R |> R' 
@@ -30,7 +32,7 @@ let ``3.60`` = proof prop_calculus <@ p ==> q = ((p |&| q) = p) @> [
 ]
 
 let ``3.61`` = proof prop_calculus <@ p ==> q = (not q ==> not p) @> [
-    def_implies' |> R
+    def_implies |> R
     commute |> R
     commute |> R |> R'
     distrib_not_and p' q' |> Commute |> R |> R'
@@ -45,18 +47,18 @@ let ``3.62`` = proof prop_calculus <@p ==> (q = r) = ((p |&| q) = (p |&| r))@> [
 ]
 
 let ``3.71`` = proof prop_calculus <@ p ==> p @> [
-    def_implies' |> LR
+    def_implies |> LR
 ]
 
 
 let ``3.76a`` = proof prop_calculus <@ p ==> (p ||| q) @> [
-    def_implies' |> LR
+    def_implies |> LR
     left_assoc |> L
     idemp_or p' |> L
 ]
 
 let ``3.76c`` = proof prop_calculus <@ p |&| q ==> p ||| q @> [
-    def_implies' |> L
+    def_implies |> L
     commute |> L |> L'
     distrib |> L |> L'
     commute |> LR
@@ -86,7 +88,7 @@ proof prop_calculus <@  (p |&| q ) ==> p @> [
 ]
 
 proof prop_calculus <@ p ==> true @> [
-    def_implies' |> LR
+    def_implies |> LR
     zero_or p' |> L
     //ident_eq <@ true @> |> L
 ]
