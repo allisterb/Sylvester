@@ -770,7 +770,11 @@ module PropCalculus =
     ]
 
     /// (p ==> q) |&| (q ==> p) ==> p = q
-    let implies_anti_symm p q = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %p) ==> (%p = %q) @> [
+    let antisymm_implies p q = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %p) ==> (%p = %q) @> [
         mutual_implication' p q |> L  
         reflex_implies <@ p = q @> |> Lemma'
     ] 
+
+    //let transitive_implies_and p q r = ident prop_calculus <@ %p ==> %q |&| %q ==> %r ==> (%p ==> %r) @> [
+    //
+    //]

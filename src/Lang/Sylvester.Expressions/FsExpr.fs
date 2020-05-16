@@ -44,6 +44,15 @@ module FsExpr =
         | ShapeLambda (v, body) -> Expr.Lambda (v, replace_var name value body)
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o, List.map (replace_var name value) exprs)
 
+    let get_vars expr =
+        let rec rget_vars prev expr =
+            match expr with
+            | ShapeVar v -> prev @ [v]
+            | ShapeLambda (v, body) -> rget_vars (prev @ [v]) body
+            | ShapeCombination (o, exprs) ->  List.map (rget_vars prev) exprs |> List.collect id
+            
+        rget_vars [] expr |> List.distinctBy (fun v -> v.Name)
+
     let traverse expr f =
         match expr with
         | ShapeVar v -> Expr.Var v
