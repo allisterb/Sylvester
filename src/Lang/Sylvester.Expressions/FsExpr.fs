@@ -37,6 +37,13 @@ module FsExpr =
         | Let(_, _, b) -> b
         | expr -> expr
 
+    let rec replace_var (name:string) value expr  =
+        match expr with
+        | ShapeVar v  when v.Name = name ->  value
+        | ShapeVar v -> Expr.Var v
+        | ShapeLambda (v, body) -> Expr.Lambda (v, replace_var name value body)
+        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o, List.map (replace_var name value) exprs)
+
     let traverse expr f =
         match expr with
         | ShapeVar v -> Expr.Var v

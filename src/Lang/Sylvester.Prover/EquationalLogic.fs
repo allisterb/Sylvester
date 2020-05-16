@@ -181,15 +181,6 @@ module EquationalLogic =
         | expr -> expr
         | expr -> expr
 
-    let _distrib_implies =
-        function
-        | And(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ (%%p1:bool) |&| (%%q:bool) @@>
-        | And(p1, Implies(_, p2)) when sequal p1 p2 -> <@@ (%%p1:bool) @@>
-        | Or(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ true @@>
-        | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ==> (%%p1:bool) @@>
-        | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
-        | expr -> expr
-
     let _modus_ponens =
         function
         | And(p1, Implies(p2, q2)) when sequal p1 p2 -> q2
@@ -198,4 +189,13 @@ module EquationalLogic =
     let _mutual_implication = 
         function
         | And(Implies(p1, q1), Implies(q2, p2)) when sequal2 p1 q1 p2 q2-> <@@ (%%p1:bool) = (%%q1:bool) @@>
+        | expr -> expr
+
+    let _distrib_implies =
+        function
+        | And(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ (%%p1:bool) |&| (%%q:bool) @@>
+        | And(p1, Implies(_, p2)) when sequal p1 p2 -> <@@ (%%p1:bool) @@>
+        | Or(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ true @@>
+        | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ==> (%%p1:bool) @@>
+        | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
         | expr -> expr

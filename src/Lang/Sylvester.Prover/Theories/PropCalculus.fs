@@ -28,6 +28,8 @@ module PropCalculus =
 
     let _shunt = EquationalLogic._shunt
 
+    let _modus_ponens = EquationalLogic._modus_ponens
+    
     let _mutual_implication = EquationalLogic._mutual_implication
 
     let _distrib_implies = EquationalLogic._distrib_implies
@@ -65,9 +67,11 @@ module PropCalculus =
 
     let shunt = Theory.S.Rules.[10]
 
-    let mutual_implication = Theory.S.Rules.[11]
+    let modus_ponens = Theory.S.Rules.[11]
 
-    let distrib_implies = Theory.S.Rules.[12]
+    let mutual_implication = Theory.S.Rules.[12]
+
+    let distrib_implies = Theory.S.Rules.[13]
 
     (* proof step shortcuts *)
     
@@ -649,6 +653,7 @@ module PropCalculus =
         def_false p |> LR
     ]
     
+    /// p |&| q ==> r = (p ==> (q ==> r))
     let shunt' p q r = ident prop_calculus <@ %p |&| %q ==> %r = (%p ==> (%q ==> %r)) @> [
         ident_implies_eq_and_eq <@ %p |&| %q @> r |> L
         ident_implies_eq_and_eq q r |> R
@@ -661,6 +666,7 @@ module PropCalculus =
         commute |> LR
     ]
 
+    /// p ==> p ||| q
     let weaken p q = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
         ident_eq <@ (%p ==> (%p ||| %q)) @> |> LR
         def_implies |> LR
@@ -668,13 +674,16 @@ module PropCalculus =
         idemp_or p |> L
     ]
 
+    /// p |&| q ==> p
     let weaken_and p q = theorem prop_calculus <@ (%p |&| %q ) ==> %p @> [
         ident_eq <@ ((%p |&| %q ) ==> %p) @> |> LR
         def_implies |> LR
         commute |> L
         absorb_or p q |> Lemma
     ]
-    let weaken_or p q = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
+    
+    /// p ==> p |&| q 
+    let strenghten_or p q = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
         ident_eq <@ (%p ==> (%p ||| %q)) @> |> LR
         def_implies |> LR
         left_assoc |> L
