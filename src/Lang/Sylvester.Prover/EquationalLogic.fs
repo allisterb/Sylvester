@@ -67,6 +67,10 @@ module EquationalLogic =
                                                                 pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @> |> Some
         | _ -> None
 
+    let (|Leibniz|_|) =
+        function
+        | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var e f Ee) Ef  ->  pattern_desc "Leibniz" <@fun e f E F-> (e = f) ==> E(e) = F(f)@> |> Some
+        | _ -> None
     (* Axioms *)
 
     let equational_logic_axioms = 
@@ -89,7 +93,9 @@ module EquationalLogic =
         
         | ExcludedMiddle x // (3.28)
         | GoldenRule x // (3.35)
-        | Implication x -> Some (desc x)
+        | Implication x 
+        | Leibniz x -> Some (desc x)
+        
         | _ -> None
 
     (* Expression functions for admissible rules *) 

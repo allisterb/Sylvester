@@ -37,22 +37,31 @@ module FsExpr =
         | Let(_, _, b) -> b
         | expr -> expr
 
-    let rec replace_var (name:string) value expr  =
+    let rec replace_var_expr (name:string) value expr  =
         match expr with
         | ShapeVar v  when v.Name = name ->  value
         | ShapeVar v -> Expr.Var v
-        | ShapeLambda (v, body) -> Expr.Lambda (v, replace_var name value body)
-        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o, List.map (replace_var name value) exprs)
+        | ShapeLambda (v, body) -> Expr.Lambda (v, replace_var_expr name value body)
+        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o, List.map (replace_var_expr name value) exprs)
+
+    let rec replace_var (var1:Var) (var2:Var) (expr:Expr) : Expr  =
+        match expr with
+        | ShapeVar v  when v.Name = var1.Name -> Expr.Var var2
+        | ShapeVar v -> Expr.Var v
+        | ShapeLambda (v, body) -> Expr.Lambda (v, replace_var var1 var2 body)
+        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o, List.map (replace_var var1 var2) exprs)
 
     let get_vars expr =
         let rec rget_vars prev expr =
             match expr with
             | ShapeVar v -> prev @ [v]
             | ShapeLambda (v, body) -> rget_vars (prev @ [v]) body
-            | ShapeCombination (o, exprs) ->  List.map (rget_vars prev) exprs |> List.collect id
+            | ShapeCombination (_, exprs) ->  List.map (rget_vars prev) exprs |> List.collect id
             
         rget_vars [] expr |> List.distinctBy (fun v -> v.Name)
 
+    let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
+    
     let traverse expr f =
         match expr with
         | ShapeVar v -> Expr.Var v
