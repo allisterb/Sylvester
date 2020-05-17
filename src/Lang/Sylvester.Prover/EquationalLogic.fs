@@ -201,7 +201,7 @@ module EquationalLogic =
     let _subst_and =
         function
         | And(Equals(Var e, Var f), E) when E |> contains e -> 
-            let E' = replace_var e f E in 
+            let E' = replace_var e f E  
             let e' = Expr.Var e
             let f' = Expr.Var f
             <@@ ((%%e':bool) = (%%f':bool)) |&| %%E' @@>
@@ -210,7 +210,7 @@ module EquationalLogic =
     let _subst_implies =
         function
         | Implies(Equals(Var e, Var f), E) when E |> contains e -> 
-            let E' = replace_var e f E in 
+            let E' = replace_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
             <@@ ((%%e':bool) = (%%f':bool)) ==> %%E' @@>
@@ -219,10 +219,10 @@ module EquationalLogic =
     let _subst_and_implies =
         function
         | Implies(And(q, Equals(Var e, Var f)), E) when E |> contains e -> 
-            let E' = replace_var e f E in 
+            let E' = replace_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
-            <@@ ((%%q:bool) |&| (%%e':bool) = %%f':bool) ==> %%E' @@>
+            <@@ ((%%q:bool) |&| ((%%e':bool) = %%f':bool)) ==> %%E' @@>
         | expr -> expr
 
     let _subst_true =

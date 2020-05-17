@@ -155,3 +155,13 @@ let ``3.84`` = proof prop_calculus <@ p |&| q ==> r = (p ==> (q ==> r)) @> [
     left_assoc |> LR
     commute |> LR
 ]
+
+let ``3.84`` = proof prop_calculus <@ p |&| q ==> (p |&| (q ||| r)) @> [
+    subst_true |> LR
+    commute |> L
+    subst_true |> LR
+    distrib |> R
+    idemp_and <@ true @> |> L |> R'
+    zero_or <@ true |&| r@> |> CommuteL |> R
+    implies_true <@ q |&| p @> |> Lemma'
+]

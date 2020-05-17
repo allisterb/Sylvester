@@ -240,15 +240,14 @@ module PropCalculus =
 
     /// p ||| true = true
     let zero_or p = ident prop_calculus <@ (%p ||| true) = true @> [
-        def_true p |> LR 
+        def_true p |> R |> L'
         distrib |> L
-        distrib |> R
-        idemp_or p |> L
+        commute |> LR
     ]
 
     /// p ||| false = p
     let ident_or p = ident prop_calculus <@ (%p ||| false) = %p @> [
-        def_false p |> L
+        def_false p |> R |> L'
         L distrib
         LR right_assoc
         idemp_or p |> R
