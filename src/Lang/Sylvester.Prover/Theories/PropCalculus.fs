@@ -32,6 +32,18 @@ module PropCalculus =
     
     let _mutual_implication = EquationalLogic._mutual_implication
 
+    let _subst_and = EquationalLogic._subst_and
+
+    let _subst_implies = EquationalLogic._subst_implies
+
+    let _subst_and_implies = EquationalLogic._subst_and_implies
+
+    let _subst_true = EquationalLogic._subst_true
+
+    let _subst_false = EquationalLogic._subst_false
+
+    let _subst_or_and = EquationalLogic._subst_or_and
+
     let _distrib_implies = EquationalLogic._distrib_implies
 
     (* Admissible rules *)
@@ -71,7 +83,19 @@ module PropCalculus =
 
     let mutual_implication = Theory.S.Rules.[12]
 
-    let distrib_implies = Theory.S.Rules.[13]
+    let subst_and = Theory.S.Rules.[13]
+
+    let subst_implies = Theory.S.Rules.[14]
+
+    let subst_and_implies = Theory.S.Rules.[15]
+
+    let subst_true = Theory.S.Rules.[16]
+
+    let subst_false = Theory.S.Rules.[17]
+
+    let subst_or_and = Theory.S.Rules.[18]
+
+    let distrib_implies = Theory.S.Rules.[19]
 
     (* proof step shortcuts *)
     
@@ -675,15 +699,15 @@ module PropCalculus =
     ]
 
     /// p |&| q ==> p
-    let weaken_and p q = theorem prop_calculus <@ (%p |&| %q ) ==> %p @> [
+    let strenghten_and p q = theorem prop_calculus <@ (%p |&| %q ) ==> %p @> [
         ident_eq <@ ((%p |&| %q ) ==> %p) @> |> LR
         def_implies |> LR
         commute |> L
         absorb_or p q |> Lemma
     ]
     
-    /// p ==> p |&| q 
-    let strenghten_or p q = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
+    /// p ==> p ||| q 
+    let weaken_or p q = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
         ident_eq <@ (%p ==> (%p ||| %q)) @> |> LR
         def_implies |> LR
         left_assoc |> L
@@ -716,7 +740,7 @@ module PropCalculus =
 
     let weaken_or_and p q r = theorem prop_calculus <@ (%p ||| (%q |&| %r)) ==> (%p ||| %q) @> [
         distrib |> L
-        weaken_and <@ %p ||| %q @> <@ %p ||| %r @> |> Lemma'
+        strenghten_and <@ %p ||| %q @> <@ %p ||| %r @> |> Lemma'
     ]
 
     let weaken_and_and_or p q r = theorem prop_calculus <@ (%p |&| %q)  ==> (%p |&| (%q ||| %r)) @> [
@@ -727,7 +751,7 @@ module PropCalculus =
     let modus_ponens' p q = theorem prop_calculus <@ %p |&| (%p ==> %q) ==> %q @> [
         ident_and_implies p q |> L
         commute_and p q |> LR
-        weaken_and q p |> Lemma'
+        strenghten_and q p |> Lemma'
     ]
 
     let case_analysis_1 p q r = ident prop_calculus <@( %p ==> %r) |&| (%q ==> %r) = (%p ||| %q  ==> %r) @> [
@@ -769,12 +793,22 @@ module PropCalculus =
         ident_eq_and_or_not p q |> L
     ]
 
-    /// (p ==> q) |&| (q ==> p) ==> p = q
+    /// (p ==> q) |&| (q ==> p) ==> (p = q)
     let antisymm_implies p q = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %p) ==> (%p = %q) @> [
         mutual_implication' p q |> L  
         reflex_implies <@ p = q @> |> Lemma'
-    ] 
+    ]
 
-    //let transitive_implies_and p q r = ident prop_calculus <@ %p ==> %q |&| %q ==> %r ==> (%p ==> %r) @> [
-    //
-    //]
+    /// (p ==> q) |&| (q ==> r) ==> (p ==> r)
+    let trans_implies p q r = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %r) ==> (%p ==> %r) @> [
+        shunt' <@ (%p ==> %q) |&| (%q ==> %r)@> p r |> Commute |> LR
+        commute |> L
+        left_assoc |> L
+        ident_and_implies p q |> L
+        right_assoc |> L
+        ident_and_implies q r |> L
+        commute |> L
+        commute |> L |> L'
+        right_assoc |> L
+        strenghten_and r <@ %q |&| %p @> |> Lemma'
+    ]

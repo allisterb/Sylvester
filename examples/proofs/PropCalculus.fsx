@@ -109,7 +109,7 @@ proof prop_calculus <@ p ==> true @> [
 
 let ``3.76d`` = proof prop_calculus <@ (p ||| (q |&| r)) ==> (p ||| q) @> [
     distrib |> L
-    weaken_and <@ p ||| q @> <@ p ||| r @> |> Lemma'
+    strenghten_and <@ p ||| q @> <@ p ||| r @> |> Lemma'
 ]
 
 let ``3.76e`` = proof prop_calculus <@ (p |&| q)  ==> (p |&| (q ||| r)) @> [
@@ -120,7 +120,7 @@ let ``3.76e`` = proof prop_calculus <@ (p |&| q)  ==> (p |&| (q ||| r)) @> [
 let ``3.77`` = proof prop_calculus <@ p |&| (p ==> q) ==> q @> [
     ident_and_implies p' q' |> L
     commute_and p' q' |> LR
-    weaken_and q' p' |> Taut' |> LR
+    strenghten_and q' p' |> Taut' |> LR
 ]
 
 let ``3.78`` = proof prop_calculus <@( p ==> r) |&| (q ==> r) = (p ||| q  ==> r) @> [
@@ -143,3 +143,15 @@ let ``3.81`` = proof prop_calculus <@ (p ==> q) |&| (q ==> p) ==> (p = q) @> [
   mutual_implication' p' q' |> L  
   reflex_implies <@ p = q @> |> Lemma'
 ] 
+
+let ``3.84`` = proof prop_calculus <@ p |&| q ==> r = (p ==> (q ==> r)) @> [
+    ident_implies_eq_and_eq <@ p |&| q@> r' |> L
+    ident_implies_eq_and_eq q' r' |> R
+    ident_implies_eq_and_eq p' <@q |&| r = q@> |> R
+    distrib_and_eq p' <@q |&| r@> <@ q @> |> R
+    left_assoc_and p' q' r' |> R
+    right_assoc |> R
+    def_true p' |> Commute |> R
+    left_assoc |> LR
+    commute |> LR
+]

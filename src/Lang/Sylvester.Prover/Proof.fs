@@ -40,6 +40,18 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let mutual_implication = Admit("The (expression) contains a mutual implication.", EquationalLogic._mutual_implication)
         
+        let subst_and = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_and)
+
+        let subst_implies = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_implies)
+
+        let subst_and_implies = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_and_implies)
+
+        let subst_true = Admit("Substitute an equivalent subexpression in (expression) with the constant true. ", EquationalLogic._subst_true)
+
+        let subst_false = Admit("Substitute an equivalent subexpression in (expression) with the constant false. ", EquationalLogic._subst_false)
+
+        let subst_or_and = Admit("Use the Shannon substitution in (expression). ", EquationalLogic._subst_or_and)
+
         let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
         Theory(EquationalLogic.equational_logic_axioms, [
@@ -56,6 +68,12 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             shunt
             modus_ponens
             mutual_implication
+            subst_and
+            subst_implies
+            subst_and_implies
+            subst_true
+            subst_false
+            subst_or_and
             distrib_implies
         ], EquationalLogic.print_S_Operators)
 
