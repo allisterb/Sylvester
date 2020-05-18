@@ -29,18 +29,18 @@ module Tactics =
         let p = Proof(stmt, proof.Theory, R true_id :: proof.Steps, true) in 
         Theorem(stmt, p) |> Ident
 
-    /// If A = B is a theorem then so is (A = B) = true.
-    let Taut ident rule =
-        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+    /// If A is a theorem then so is A = true
+    let Taut ident (t:Theorem) =
+        let proof = t.Proof
         let theory = proof.Theory
         let expr = proof.Stmt
         let stmt = <@@ (%%expr) = true @@>
         let p = Proof(stmt, theory, (expr |> ident |> LR) :: proof.Steps, true) in 
         Theorem(stmt, p) |> Ident 
 
-    /// If A is a theorem then so is A = true
-    let Taut' ident (t:Theorem) =
-        let proof = t.Proof
+    /// If A = B is a theorem then so is (A = B) = true.
+    let Taut' ident (rule:Rule) =
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let theory = proof.Theory
         let expr = proof.Stmt
         let stmt = <@@ (%%expr) = true @@>

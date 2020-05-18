@@ -107,6 +107,20 @@ module PropCalculus =
     /// The constant true is a theorem
     let Truth = Tactics.Truth commute
 
+    /// If A is a theorem then so is A = true.
+    let Taut =  
+        let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L commute; LR right_assoc], true)) |> Ident  
+        Tactics.Taut ieq
+
+    /// If A = B is a theorem then so is (A = B) = true.
+    let Taut' t = 
+        let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L commute; LR right_assoc], true)) |> Ident 
+        Tactics.Taut' ieq t
+        
+    let Lemma = Taut >> Truth >> LR
+    
+    let Lemma' = Taut' >> Truth >> LR
+
     /// If A = B is a theorem then so is B = A.
     let Commute = Tactics.Commute commute
     
@@ -115,20 +129,6 @@ module PropCalculus =
 
     /// If A = (L = R) is a theorem then so is A = (R = L).
     let CommuteR = Tactics.CommuteR commute
-
-    /// If A = B is a theorem then so is (A = B) = true.
-    let Taut =  
-        let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L commute; LR right_assoc], true)) |> Ident  
-        Tactics.Taut ieq
-
-    /// If A is a theorem then so is A = true.
-    let Taut' t = 
-        let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L commute; LR right_assoc], true)) |> Ident 
-        Tactics.Taut' ieq t
-        
-    let Lemma = Taut >> Truth >> LR
-    
-    let Lemma' = Taut' >> Truth >> LR
 
     let LeftAssoc = Tactics.LeftAssoc right_assoc
 
@@ -201,7 +201,7 @@ module PropCalculus =
         commute_eq <@ %p = %q @> <@ not %p @> |> L
         commute_eq p q |> L
         left_assoc |> L
-        symm_not_eq p q |> Lemma
+        symm_not_eq p q |> Lemma'
     ]
 
     /// ((p = q) = (r = s)) = ((p = r) = (q = s))
@@ -379,7 +379,7 @@ module PropCalculus =
     let idemp_and p = ident prop_calculus <@ (%p |&| %p) = %p @> [
         L golden_rule
         right_assoc |> LR
-        idemp_or p |> Taut |> R
+        idemp_or p |> Taut' |> R
         LR commute 
     ] 
     
@@ -573,6 +573,8 @@ module PropCalculus =
         golden_rule' p q |> Commute |> CommuteL |> LeftAssocL |> L
     ]
 
+    let def_implies' p q = id_ax prop_calculus <@ (%p ==> %q) = (%p ||| %q = %q) @>
+
     /// p ==> q = (not p ||| q)
     let ident_implies_not_or p q = ident prop_calculus <@ %p ==> %q = (not %p ||| %q) @> [
         def_implies |> L
@@ -598,7 +600,7 @@ module PropCalculus =
         distrib_not_and p q |> Commute |> R |> R'
         symm_eq_not_eq p <@ %p |&| %q @> |> Commute |> R 
         commute |> R
-        ident_implies_eq_and_eq p q |> Lemma
+        ident_implies_eq_and_eq p q |> Lemma'
     ]
 
     // p ==> (q = r) = ((p |&| q) = (p |&| r))
@@ -606,7 +608,7 @@ module PropCalculus =
         ident prop_calculus <@ %p ==> (%q = %r) = ((%p |&| %q) = (%p |&| %r))@> [
             ident_implies_eq_and_eq p <@ %q = %r @> |> L
             distrib_and_eq p q r |> L
-        ]
+    ]
 
     /// p ==> (q = r) = ((p ==> q) = (p ==> r))
     let distrib_implies_eq_implies p q r = ident prop_calculus <@ %p ==> (%q = %r) = ((%p ==> %q) = (%p ==> %r))@> [
@@ -646,20 +648,24 @@ module PropCalculus =
         commute_or p q |> R
     ]
 
+    /// p ==> p
     let reflex_implies p = theorem prop_calculus <@ %p ==> %p @> [
         def_implies |> LR
     ]
         
+    /// p ==> true
     let implies_true p = theorem prop_calculus <@ %p ==> true @> [
         def_implies |> LR
         zero_or p |> L
     ]
 
+    /// false ==> p
     let conseq_false p = theorem prop_calculus <@ false ==> %p @> [
         def_implies |> LR
-        ident_or p |> CommuteL |> Lemma
+        ident_or p |> CommuteL |> Lemma'
     ]
 
+    /// (true ==> p) = p
     let ident_conseq_true p = ident prop_calculus <@ (true ==> %p) = %p @> [
         def_implies |> L
         zero_or p |> CommuteL |> L
@@ -667,6 +673,7 @@ module PropCalculus =
         commute |> LR
     ]
 
+    /// p ==> false = (not p)
     let ident_implies_false_not p = ident prop_calculus <@ (%p ==> false) = not %p @> [
         def_implies |> L
         ident_or p |> L
@@ -689,20 +696,12 @@ module PropCalculus =
         commute |> LR
     ]
 
-    /// p ==> p ||| q
-    let weaken p q = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
-        ident_eq <@ (%p ==> (%p ||| %q)) @> |> LR
-        def_implies |> LR
-        left_assoc |> L
-        idemp_or p |> L
-    ]
-
     /// p |&| q ==> p
     let strenghten_and p q = theorem prop_calculus <@ (%p |&| %q ) ==> %p @> [
         ident_eq <@ ((%p |&| %q ) ==> %p) @> |> LR
         def_implies |> LR
         commute |> L
-        absorb_or p q |> Lemma
+        absorb_or p q |> Lemma'
     ]
     
     /// p ==> p ||| q 
@@ -713,6 +712,7 @@ module PropCalculus =
         idemp_or p |> L
     ]
 
+    /// p |&| q ==> p ||| q
     let weaken_and_or p q = theorem prop_calculus <@ %p |&| %q ==> %p ||| %q @> [
         def_implies |> L
         commute |> L |> L'
@@ -739,20 +739,21 @@ module PropCalculus =
 
     let weaken_or_and p q r = theorem prop_calculus <@ (%p ||| (%q |&| %r)) ==> (%p ||| %q) @> [
         distrib |> L
-        strenghten_and <@ %p ||| %q @> <@ %p ||| %r @> |> Lemma'
+        strenghten_and <@ %p ||| %q @> <@ %p ||| %r @> |> Lemma
     ]
 
     let weaken_and_and_or p q r = theorem prop_calculus <@ (%p |&| %q)  ==> (%p |&| (%q ||| %r)) @> [
         distrib |> R
-        weaken <@ %p |&| %q @> <@ %p |&| %r @> |> Lemma'
+        weaken_or <@ %p |&| %q @> <@ %p |&| %r @> |> Lemma
     ]
 
     let modus_ponens' p q = theorem prop_calculus <@ %p |&| (%p ==> %q) ==> %q @> [
         ident_and_implies p q |> L
         commute_and p q |> LR
-        strenghten_and q p |> Lemma'
+        strenghten_and q p |> Lemma
     ]
 
+    /// (p ==> r) |&| (q ==> r) = (p ||| q ==> r)
     let case_analysis_1 p q r = ident prop_calculus <@( %p ==> %r) |&| (%q ==> %r) = (%p ||| %q  ==> %r) @> [
         ident_implies_not_or <@ %p ||| %q @> r |> R
         distrib|> L |> R'
@@ -763,13 +764,14 @@ module PropCalculus =
         ident_implies_not_or q r |> Commute |> R
     ]
 
-    let case_analysis_2 p r = ident prop_calculus <@ (%p ==> %r) |&| (not %p ==> %r ) = %r @> [
+    /// (p ==> r) |&| (not p ==> r) = r
+    let case_analysis_2 p r = ident prop_calculus <@ (%p ==> %r) |&| (not %p ==> %r) = %r @> [
         case_analysis_1 p <@not %p @> r |> LR
         excluded_middle |> L |> L'
-        ident_conseq_true r |> Lemma
+        ident_conseq_true r |> Lemma'
     ]
 
-    /// (p ==> q) |&| (q ==> p) = p = q
+    /// (p ==> q) |&| (q ==> p) = (p = q)
     let mutual_implication' p q = ident prop_calculus <@ ((%p ==> %q) |&| (%q ==> %p)) = (%p = %q) @> [
         right_assoc |> LR
         ident_implies_not_or p q |> L
@@ -795,7 +797,7 @@ module PropCalculus =
     /// (p ==> q) |&| (q ==> p) ==> (p = q)
     let antisymm_implies p q = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %p) ==> (%p = %q) @> [
         mutual_implication' p q |> L  
-        reflex_implies <@ p = q @> |> Lemma'
+        reflex_implies <@ p = q @> |> Lemma
     ]
 
     /// (p ==> q) |&| (q ==> r) ==> (p ==> r)
@@ -809,5 +811,18 @@ module PropCalculus =
         commute |> L
         commute |> L |> L'
         right_assoc |> L
-        strenghten_and r <@ %q |&| %p @> |> Lemma'
+        strenghten_and r <@ %q |&| %p @> |> Lemma
+    ]
+
+    /// (p ==> q) ==> ((p ||| r) ==> (q ||| r))
+    let mono_or p q r =  ident prop_calculus <@ (%p ==> %q) ==> ((%p ||| %r) ==> (%q ||| %r)) @> [
+        def_implies |> R
+        commute_or_or p r q r |> L |> R'
+        idemp_or r |> L |> R'
+        commute_or <@ %p ||| %q @> r |> L |> R'
+        commute_or q r |> R |> R'
+        collect_or_eq r <@ %p ||| %q @> q |> R
+        commute |> R
+        def_implies' p q |> Commute |> R
+        weaken_or <@ %p ==> %q @> r |> Lemma
     ]

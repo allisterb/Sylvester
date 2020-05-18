@@ -165,3 +165,15 @@ let ``3.84`` = proof prop_calculus <@ p |&| q ==> (p |&| (q ||| r)) @> [
     zero_or <@ true |&| r@> |> CommuteL |> R
     implies_true <@ q |&| p @> |> Lemma'
 ]
+
+let ``4.1`` = proof prop_calculus <@ (p ==> q) ==> ((p ||| r) ==> (q ||| r)) @> [
+    def_implies |> R
+    commute_or_or p' r' q' r' |> L |> R'
+    idemp_or r' |> L |> R'
+    commute_or <@ p ||| q @> r' |> L |> R'
+    commute_or q' r' |> R |> R'
+    collect_or_eq r' <@ p ||| q @> q' |> R
+    commute |> R
+    def_implies' p' q' |> Commute |> R
+    weaken_or <@ p ==> q @> r' |> Lemma'
+]
