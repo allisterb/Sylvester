@@ -795,13 +795,13 @@ module PropCalculus =
     ]
 
     /// (p ==> q) |&| (q ==> p) ==> (p = q)
-    let antisymm_implies p q = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %p) ==> (%p = %q) @> [
+    let antisymm_implies p q = theorem prop_calculus <@ (%p ==> %q) |&| (%q ==> %p) ==> (%p = %q) @> [
         mutual_implication' p q |> L  
         reflex_implies <@ p = q @> |> Lemma
     ]
 
     /// (p ==> q) |&| (q ==> r) ==> (p ==> r)
-    let trans_implies p q r = ident prop_calculus <@ (%p ==> %q) |&| (%q ==> %r) ==> (%p ==> %r) @> [
+    let trans_implies p q r = theorem prop_calculus <@ (%p ==> %q) |&| (%q ==> %r) ==> (%p ==> %r) @> [
         shunt' <@ (%p ==> %q) |&| (%q ==> %r)@> p r |> Commute |> LR
         commute |> L
         left_assoc |> L
@@ -814,8 +814,38 @@ module PropCalculus =
         strenghten_and r <@ %q |&| %p @> |> Lemma
     ]
 
-    /// (p ==> q) ==> ((p ||| r) ==> (q ||| r))
-    let mono_or p q r =  ident prop_calculus <@ (%p ==> %q) ==> ((%p ||| %r) ==> (%q ||| %r)) @> [
+    /// (p = q) |&| (q ==> r) ==> (p ==> r)
+    let trans_implies_eq p q r = theorem prop_calculus <@ (%p = %q) |&| (%q ==> %r) ==> (%p ==> %r) @> [
+        mutual_implication' p q |> Commute |> L
+        shunt' <@ (%p ==> %q) |&| (%q ==> %p) |&| (%q ==> %r)@> p r |> Commute |> LR
+        commute |> L
+        left_assoc |> L
+        left_assoc |> L |> L'
+        ident_and_implies p q |> L |> L'
+        right_assoc |> L |> L'
+        ident_and_implies q p |> L |> L'
+        commute |> R |> L' |> L'
+        left_assoc |> L |> L'
+        idemp_and p |> L |> L'
+        right_assoc |> L
+        ident_and_implies q r |> L
+        left_assoc |> L
+        commute |> L
+        strenghten_and r <@ %p |&| %q @> |> Lemma
+    ]
+
+    let trans_implies_implies p q = theorem prop_calculus <@ %p ==> (%q ==> %p) @> [
+        def_implies |> R
+        def_implies |> LR
+        commute |> L |> R' |> L' 
+        distrib |> L
+        left_assoc |> L |> L'
+        idemp_or p |> L |> L' |> L'
+        commute |> L |> L' 
+        idemp_or p |> R |> L'
+    ]
+    /// (p ==> q) ==> ((p ||| r) ==> (q ||| r)
+    let mono_or p q r = theorem prop_calculus <@ (%p ==> %q) ==> ((%p ||| %r) ==> (%q ||| %r)) @> [
         def_implies |> R
         commute_or_or p r q r |> L |> R'
         idemp_or r |> L |> R'
