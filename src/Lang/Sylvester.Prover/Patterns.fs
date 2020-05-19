@@ -98,6 +98,9 @@ module Patterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
+ //   let (|Quantifier|_) =
+ //       function
+ //       | PropertyGet (Some (x), pi, [])
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
     /// * Syntactically valid F# expressions
     /// * Decomposed to the same sequence of symbols i.e. strings.

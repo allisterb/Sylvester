@@ -1,14 +1,23 @@
 namespace Sylvester.Tests.Prover
 
+open Sylvester 
+
 module PropCalculusTests =    
     open Xunit
     
     open Sylvester
     open PropCalculus
     
+    
     [<Fact>]
     let ``operator works``() =
-        let p,q,r = var3<bool>
+        
+        //[<Formula>]
+        //let x = (!!) [i, j, k] (i > 0) (i + j > 5)
+        
+        let z = <@ x.y @>
+        ()
+        (**
         // Theorem 3.31
         let ``3.31`` = proof prop_calculus <@ (p ||| (q ||| r)) = ((p ||| q) ||| (p ||| r)) @> [
             idemp_or <@ p @> |> Trn |> L
@@ -34,3 +43,4 @@ module PropCalculusTests =
                 R lemma1
             ]
         Assert.NotNull ``3.2``
+        *)
