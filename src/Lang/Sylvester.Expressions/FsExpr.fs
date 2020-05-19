@@ -62,8 +62,10 @@ module FsExpr =
 
     let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
     
-    let contains (var:Var) (expr:Expr) = get_var_names expr |> List.contains var.Name
+    let occurs (var:Var) (expr:Expr) = get_var_names expr |> List.contains var.Name
 
+    let name_occurs expr name = get_var_names expr |> List.contains name
+    
     let traverse expr f =
         match expr with
         | ShapeVar v -> Expr.Var v

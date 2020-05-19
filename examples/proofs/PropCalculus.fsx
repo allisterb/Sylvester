@@ -184,6 +184,16 @@ let ``3.84`` = proof prop_calculus <@ p |&| q ==> (p |&| (q ||| r)) @> [
     implies_true <@ q |&| p @> |> Lemma
 ]
 
+let ``3.84b`` = proof prop_calculus <@ p ==> (q ==> p) @> [
+    def_implies |> R
+    def_implies |> LR
+    commute |> L |> R' |> L' 
+    distrib |> L
+    left_assoc |> L |> L'
+    idemp_or p' |> L |> L' |> L'
+    commute |> L |> L' 
+    idemp_or p' |> R |> L'
+] 
 let ``4.1`` = proof prop_calculus <@ (p ==> q) ==> ((p ||| r) ==> (q ||| r)) @> [
     def_implies |> R
     commute_or_or p' r' q' r' |> L |> R'

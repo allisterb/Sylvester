@@ -6,16 +6,6 @@ open FSharp.Quotations.DerivedPatterns
 
 open Descriptions
 
-/// Logical operators for formulas.
-[<AutoOpen>]
-module Operators =
-    [<Unicode("\u2227")>]
-    let (|&|) (l:bool) (r:bool) = l && r
-    [<Unicode("\u2228")>]
-    let (|||) (l:bool) (r:bool) = l || r
-    let (==>) (l:bool) (r:bool) = (not l) || r
-    let (<==) (l:bool) (r:bool) = r ==> l
- 
 /// Patterns used in axioms
 module Patterns =   
     let (|Equals|_|) = 
@@ -222,14 +212,3 @@ module Patterns =
         function
         | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Expr.Value(v) |> Some
         | _ -> None
-
-[<AutoOpen>]
-module Formula =  
-    // Make Formula an alias for the reflected definition attribute
-    type Formula = ReflectedDefinitionAttribute
-   
-    // Introduce variable names for formulas
-    let var<'t> = Unchecked.defaultof<'t>
-    let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
-    let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
-    let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>

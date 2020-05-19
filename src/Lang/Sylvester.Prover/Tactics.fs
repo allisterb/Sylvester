@@ -160,3 +160,27 @@ module Tactics =
              | _ -> failwith "This theorem is not an identity."
          let p = Proof(stmt, proof.Theory, R rassoc :: proof.Steps, true) in 
          Theorem(stmt, p) |> Ident
+
+    let MutualImplication theory taut ident stmt =
+        let (l, r) = 
+            match stmt with 
+            | Equals(l, r) -> (l, r)
+            | _ -> failwith "This statement is not an identity."
+
+        let lhs steps =
+            let s = <@@ %%l ==> %%r @@>
+            let p = Proof(s, theory, steps, true) in
+            Theorem(s, p)
+
+        let rhs steps =
+            let s = <@@ %%r ==> %%l @@>
+            let p = Proof(s, theory, steps, true) in
+            Theorem(s, p)
+
+        let p lhs rhs = proof theory stmt [
+            ident |> LR
+            lhs |> taut |> L
+            rhs |> taut |> R
+        ]
+
+        lhs, rhs, p

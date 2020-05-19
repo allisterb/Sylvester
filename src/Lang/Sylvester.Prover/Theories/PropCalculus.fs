@@ -102,7 +102,7 @@ module PropCalculus =
     let ppc_id steps expr = ident prop_calculus steps expr
     let ppc_id_ax expr = id_ax prop_calculus expr
      
-    (* Tactics *)
+    (* Tactics for rules *)
 
     /// The constant true is a theorem
     let Truth = Tactics.Truth commute
@@ -141,6 +141,10 @@ module PropCalculus =
     let RightAssocL = Tactics.RightAssocL left_assoc
 
     let RightAssocR = Tactics.RightAssocR left_assoc
+
+    (* Tactics for proofs *)
+    
+    let MutualImplication stmt = Tactics.MutualImplication prop_calculus Taut mutual_implication stmt
 
     (* Derived rules *)
     

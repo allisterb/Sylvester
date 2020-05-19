@@ -71,7 +71,8 @@ module EquationalLogic =
         function
         | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var e f Ee) Ef  ->  pattern_desc "Leibniz" <@fun e f E F-> (e = f) ==> E(e) = F(f)@> |> Some
         | _ -> None
-    (* Axioms *)
+    
+    (* Axiom schemas *)
 
     let equational_logic_axioms = 
         function
@@ -200,7 +201,7 @@ module EquationalLogic =
 
     let _subst_and =
         function
-        | And(Equals(Var e, Var f), E) when E |> contains e -> 
+        | And(Equals(Var e, Var f), E) when E |> occurs e -> 
             let E' = replace_var e f E  
             let e' = Expr.Var e
             let f' = Expr.Var f
@@ -209,7 +210,7 @@ module EquationalLogic =
 
     let _subst_implies =
         function
-        | Implies(Equals(Var e, Var f), E) when E |> contains e -> 
+        | Implies(Equals(Var e, Var f), E) when E |> occurs e -> 
             let E' = replace_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
@@ -218,7 +219,7 @@ module EquationalLogic =
 
     let _subst_and_implies =
         function
-        | Implies(And(q, Equals(Var e, Var f)), E) when E |> contains e -> 
+        | Implies(And(q, Equals(Var e, Var f)), E) when E |> occurs e -> 
             let E' = replace_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
@@ -227,16 +228,16 @@ module EquationalLogic =
 
     let _subst_true =
         function
-        | Implies(Var p,  E) when E |> contains p -> 
+        | Implies(Var p,  E) when E |> occurs p -> 
             let E' = replace_var_expr p.Name <@ true @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) ==> %%E' @@>
-        | Implies(And(Var q, Var p),  E) when E |> contains p -> 
+        | Implies(And(Var q, Var p),  E) when E |> occurs p -> 
             let E' = replace_var_expr p.Name <@ true @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
             <@@ ((%%q':bool) |&| (%%p':bool)) ==> %%E' @@>
-        | And(Var p, E) when E |> contains p -> 
+        | And(Var p, E) when E |> occurs p -> 
             let E' = replace_var_expr p.Name <@ true @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) |&| %%E' @@>
@@ -244,16 +245,16 @@ module EquationalLogic =
 
     let _subst_false =
         function
-        | Implies(E, Var p) when E |> contains p -> 
+        | Implies(E, Var p) when E |> occurs p -> 
             let E' = replace_var_expr p.Name <@ false @> E in 
             let p' = Expr.Var p
             <@@ (%%E':bool) ==> (%%p':bool) @@>
-        | Implies(E, Or(Var p, Var q)) when E |> contains p -> 
+        | Implies(E, Or(Var p, Var q)) when E |> occurs p -> 
             let E' = replace_var_expr p.Name <@ false @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
             <@@ ((%%p':bool) ||| (%%q':bool)) ==> %%E' @@>
-        | Or(Var p, E) when E |> contains p -> 
+        | Or(Var p, E) when E |> occurs p -> 
             let E' = replace_var_expr p.Name <@ false @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) ||| %%E' @@>
@@ -261,7 +262,7 @@ module EquationalLogic =
 
     let _subst_or_and = 
         function
-        | Equals(E, Or(And(Var p1, Et), And(Not(Var p2), Ef))) when E |> contains p1 && p1.Name = p2.Name && Et = replace_var_expr p1.Name <@ true @> E && Ef = replace_var_expr p2.Name <@ false @> E -> 
+        | Equals(E, Or(And(Var p1, Et), And(Not(Var p2), Ef))) when E |> occurs p1 && p1.Name = p2.Name && Et = replace_var_expr p1.Name <@ true @> E && Ef = replace_var_expr p2.Name <@ false @> E -> 
             <@@ true @@>
         | expr -> expr
 
@@ -285,5 +286,3 @@ module EquationalLogic =
         | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ==> (%%p1:bool) @@>
         | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
         | expr -> expr
-
-    

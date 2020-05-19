@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Sylph</PackageId>
     <Version>0.2.6</Version>
     <Product>Sylvester proof helper</Product>
@@ -21,6 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Formulas.fs" />
     <Compile Include="Descriptions.fs" />
     <Compile Include="Patterns.fs" />
     <Compile Include="EquationalLogic.fs" />
