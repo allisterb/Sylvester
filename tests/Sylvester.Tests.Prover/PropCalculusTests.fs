@@ -11,12 +11,20 @@ module PropCalculusTests =
     
     [<Fact>]
     let ``operator works``() =
+        let p,q,r,s = var4<bool> 
+        let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
+        let i,j,k = var3<int>
+        let x = (!!) [i, j, k] (i > 0)  (i + j > 5) 
+        let z = x ||| p
+        //<@ z @> |> expand 
+        //let t = (!?)  p' <@ p 
+        p |&| x
         
         //[<Formula>]
         //let x = (!!) [i, j, k] (i > 0) (i + j > 5)
         
-        let z = <@ x.y @>
-        ()
+        //let z = <@ x.y @>
+       
         (**
         // Theorem 3.31
         let ``3.31`` = proof prop_calculus <@ (p ||| (q ||| r)) = ((p ||| q) ||| (p ||| r)) @> [
