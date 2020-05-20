@@ -117,6 +117,12 @@ module FsExpr =
         | WithValue(v, t, e) -> (v, t, expand e)
         | _ -> failwith "Expression is not a reflected definition parameter."
 
+    (*
+    let expand_list =
+        let rec rexpand_list (e:Expr list) =
+            function
+            | NewUnionCase(uc, Var v) -> e @ [v]
+      *)      
     let binary_call (so, m, l, r) =
         match so with
         | None -> Expr.Call(m, l::r::[])

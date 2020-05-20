@@ -98,9 +98,11 @@ module Patterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
- //   let (|Quantifier|_) =
- //       function
- //       | PropertyGet (Some (x), pi, [])
+    let (|Quantifier|_|) =
+        function
+        | NewUnionCase (uc, a::NewTuple(bound)::range::body::[]) when uc.Name = "Quantifier" -> bound |> List.map get_vars |> List.concat |> Some
+        | _ -> None
+     
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
     /// * Syntactically valid F# expressions
     /// * Decomposed to the same sequence of symbols i.e. strings.

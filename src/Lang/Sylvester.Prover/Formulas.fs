@@ -7,14 +7,15 @@ type Formula = ReflectedDefinitionAttribute
 
 type IQuantifier = interface end
 
-type Quantifier<'t, 'u> = Quantifier of ('t -> 't -> 't)  * ('u list) * bool * 't with interface IQuantifier
+[<Formula>]
+type Quantifier<'t, 'u> = Quantifier of ('t -> 't -> 't)  * 'u * bool * 't with 
+    interface IQuantifier
+    
 
 [<AutoOpen>]
 module Formulas =
         
-    (* Logical operators for formulas *)
-    
-    let get_bool_val (l:'l) (r: 'r) =
+    let private get_bool_val (l:'l) (r: 'r) =
         let lval = 
             match box l with
             | :? bool as b -> b
@@ -26,6 +27,8 @@ module Formulas =
              | :? IQuantifier -> false
              | _ -> failwith "The RHS of this expression does not have a truth value."
         lval, rval
+
+    (* Logical operators for formulas *)
 
     [<Unicode("\u2227")>]
     let (|&|) (l:'l) (r:'r) =
@@ -45,7 +48,7 @@ module Formulas =
         let lval, rval = get_bool_val l r
         rval ==> lval
 
-(* Introduce variable names for formulas *)
+    (* Introduce variable names for formulas *)
     
     let var<'t> = Unchecked.defaultof<'t>
     let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
