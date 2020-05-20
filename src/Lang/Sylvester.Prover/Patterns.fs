@@ -98,11 +98,24 @@ module Patterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
+    let (|ForAllOp|) = 
+        function
+        | Lambda (_, Lambda (_, SpecificCall <@ (|&|) @> _)) -> Some true
+        | Call(_, mi, _) when mi.Name = "forall" -> Some true
+        | _ -> None
+
     let (|Quantifier|_|) =
         function
-        | NewUnionCase (uc, a::NewTuple(bound)::range::body::[]) when uc.Name = "Quantifier" -> bound |> List.map get_vars |> List.concat |> Some
+        | NewUnionCase (uc, op::NewTuple(_bound)::range::body::[]) when uc.Name = "Quantifier" -> 
+            let bound = _bound |> List.map get_vars |> List.concat
+            (op, bound, range, body) |> Some
         | _ -> None
      
+    let (|ForAll|_|) =
+        function
+        | Quantifier(ForAllOp _, bound, range, body) -> Some (bound, range, body)
+        | _ -> None
+
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
     /// * Syntactically valid F# expressions
     /// * Decomposed to the same sequence of symbols i.e. strings.
