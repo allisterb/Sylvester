@@ -64,7 +64,8 @@ module Ring =
         let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
-                interface ITotalOrder<int> with
+                interface ITotalOrder<int> 
+                interface IPartialOrder<int> with
                     member x.Set = set
                     member x.Order = order
                 interface IHasLeast<int> with 
@@ -85,7 +86,8 @@ module Ring =
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
-                interface ITotalOrder<int> with
+                interface ITotalOrder<int> 
+                interface IPartialOrder<int> with
                     member x.Set = set
                     member x.Order = order
                 interface IHasGreatest<int> with 
@@ -125,7 +127,8 @@ module Ring =
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface IWellOrder<int> with
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
-            interface ITotalOrder<int> with
+            interface ITotalOrder<int>
+            interface IPartialOrder<int> with
                 member x.Set = set
                 member x.Order = order
             interface IHasLeast<int> with 

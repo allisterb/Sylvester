@@ -2,19 +2,16 @@
 
 open FSharp.Quotations
 
-// Make Formula an alias for the reflected definition attribute
+// Make Formula an alias for the reflected definition attribute.
 type Formula = ReflectedDefinitionAttribute
-
-type IQuantifier = interface end
 
 [<Formula>]
 type Quantifier<'t, 'u> = Quantifier of ('t -> 't -> 't)  * 'u * bool * 't with 
     interface IQuantifier
-    
+and IQuantifier = interface end
 
 [<AutoOpen>]
-module Formulas =
-        
+module Formulas =    
     let private get_bool_val (l:'l) (r: 'r) =
         let lval = 
             match box l with

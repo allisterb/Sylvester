@@ -2,8 +2,6 @@
 
 open System.Collections
 
-open Sylvester.Collections
-
 /// A set of elements with a partial order relation i.e. an operation that is reflexive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
     inherit ISet<'t>
@@ -18,10 +16,12 @@ type ITotalOrder<'t when 't: equality and 't : comparison> = inherit IPartialOrd
 
 /// A partially ordered set of elements bounded above.
 type IBoundedAbove<'t when 't : equality> =
+    inherit IPartialOrder<'t>
     abstract UpperBound: 't
 
 /// A partially ordered set of elements bounded below.
 type IBoundedBelow<'t when 't : equality> =
+    inherit IPartialOrder<'t>
     abstract LowerBound: 't
 
 /// A bounded partially ordered set.
@@ -66,19 +66,19 @@ type IWellOrder<'t when 't : equality and 't: comparison> =
 
 /// A set of elements with a partial order relation.
 type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) = 
-    inherit Struct<'t, card.one>(set, arrayOf1 (Order(order)))
+    member val Set = set.Set
     member val Order = order
     member x.Item(l:'t, r:'t) = x.Order l r
     member x.ToArray n = x |> Seq.take n |> Seq.toArray
     interface IPartialOrder<'t> with
         member val Set = set.Set
         member val Order = order
+        member x.Equals y = x.Set.Equals y
         member x.GetEnumerator(): Generic.IEnumerator<'t> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if (order a b) then -1 else 1)).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
 /// A set of elements with a total order relation.
-type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
-    inherit Poset<'t>(set, (<=))
+type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>, order: Order<'t>) =
+    inherit Poset<'t>(set, order)
     interface ITotalOrder<'t>
-

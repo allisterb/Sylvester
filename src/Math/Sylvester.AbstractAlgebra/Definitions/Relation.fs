@@ -29,7 +29,7 @@ type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>]
     interface ISetBuilder<'t * 't> with
         member val Test = v :?> Test<'t * 't>
         member val Expr = test
-    member x.Set = set.Prod.Subset(x.Pred)
+    member x.Set = set.Product.Subset(x.Pred)
     interface ISet<'t * 't> with 
         member x.Set = x.Set
         member x.Equals y = x.Set.Equals y
@@ -41,4 +41,4 @@ type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>]
 [<AutoOpen>]
 module Relation = 
     type Set<'t when 't : equality> with
-        member x.Rel(f: Test<'t * 't>) = Relation(x, f)
+        member x.Relation(f: Test<'t * 't>) = Relation(x, f)

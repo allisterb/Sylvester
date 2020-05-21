@@ -133,10 +133,12 @@ with
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i a}
                         seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
                 
-                Seq (Gen ((fun x -> a.HasSubset x), subsets))   
+                Seq (Gen((fun x -> a.HasSubset x), subsets))   
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a sequence instead."
 
-    member x.Prod = 
+    member x.ToSubsets f = x.Powerset.Subset f
+
+    member x.Product = 
         match x with
         |Empty -> Empty
         |Seq s -> Seq(Gen((fun (a,b) -> x.HasElement a && x.HasElement b), cart s))
@@ -153,7 +155,7 @@ with
             | NonFiniteSeq -> Seq(s |> Seq.distinct |> Seq.toArray)
         set.Powerset
 
-    static member toProd(s:Set<'t>) = s.Prod
+    static member toProduct(s:Set<'t>) = s.Product
  
     /// Set union operator.
     static member (|+|) (l, r) = 

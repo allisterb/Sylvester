@@ -220,11 +220,11 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     
     member val Stmt = a
     member val LastState = _state
-    member __.L = 
+    member val L = 
         match a with
         | Equals(l, _) -> l
         | _ -> failwith "This expression is not an identity."
-    member __.R = 
+    member val R = 
         match a with
         | Equals(_, r) -> r
         | _ -> failwith "This expression is not an identity."
@@ -236,7 +236,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     member val State = state
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
-    member __.Msg msg = prooflog
+    member val Msg = prooflog
     
     /// Proof log level.
     static member LogLevel with get() = logLevel and set(v) = logLevel <- v
@@ -273,7 +273,6 @@ with
         | L' ra -> ra.Rule
         | R' ra -> ra.Rule
         | LR' ra -> ra.Rule
-        
     member x.RuleName = x.Rule.Name
     member x.Apply(expr:Expr) =       
         match x with
@@ -363,10 +362,3 @@ module Proof =
     let ident' steps e = ident Proof.Logic e steps
     let id_ax theory e = ident theory e []
     let id_ax' e = id_ax Proof.Logic e
-
-    (* Check parameters of proof functions *)
-    let failifnotdistinct3 p q r =
-        do if sequal p q || sequal p r || sequal q r then failwith "This proof requires 3 distinct parameters or invalid proofs may be created." 
-
-    let failifnotdistinct4 p q r s=
-        do if sequal p q || sequal p r || sequal p s || sequal q r || sequal q s || sequal r s then failwith "This proof requires 4 distinct parameters or invalid proofs may be created." 

@@ -1,8 +1,11 @@
 #load "Include.fsx"
 
+open System.Linq
 open Sylvester
 open SetAlgebra
 
-let A,B,C = var3<Set<obj>>
+let dice = seq {1..6} |> Seq
 
-proof set_algebra <@ A |+| B = (B |+| A) @> []
+let outcomes = dice * dice
+
+let s = outcomes |> SigmaAlgebra
