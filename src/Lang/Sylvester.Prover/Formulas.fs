@@ -72,5 +72,5 @@ module Formulas =
 
     (* Propositions*)
     let prop text = Prop(None, text)
-    let prop_true (p:Proposition) = Prop(Some true, p.Text)
-    let prop_false (p:Proposition) = Prop(Some false, p.Text)
+    let set_prop_true (p:Proposition) = Prop(Some true, p.Text)
+    let set_prop_false (p:Proposition) = Prop(Some false, p.Text)

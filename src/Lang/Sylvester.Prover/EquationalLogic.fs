@@ -10,9 +10,6 @@ open Descriptions
 /// Formalizes the default equational propsitional logic used by Sylph called S.
 /// Based on E: https://www.cs.cornell.edu/fbs/publications/94-1455.pdf
 ///             http://www.cs.cornell.edu/home/gries/Logic/Equational.html
-/// The main difference is that since we only have to deal with symbolic equality (not mathematical equality)
-/// we can drop the restriction that a substitution must replace only variables in an expression 
-/// and consider general textual substitution with syntactically valid expressions.
 /// The number after each axiom corresponds to the number of the axiom in the textbook A Logical Approach to Discrete Math by Gries et.al.
 module EquationalLogic =
     /// Print Unicode logical operator symbols
@@ -25,7 +22,7 @@ module EquationalLogic =
 
     let desc = axiom_desc "Equational Logic" print_S_Operators
     
-    (* Patterns *)
+    (* Axioms *)
 
     /// true = p = p
     let (|True|_|) =
@@ -67,17 +64,16 @@ module EquationalLogic =
                                                                 pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @> |> Some
         | _ -> None
 
+    /// (e = f) ==> E(e) = E(f) 
     let (|Leibniz|_|) =
         function
-        | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var_var e f Ee) Ef  ->  pattern_desc "Leibniz" <@fun e f E F-> (e = f) ==> E(e) = F(f)@> |> Some
+        | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var_var e f Ee) Ef -> pattern_desc "Leibniz" <@fun e f E -> (e = f) ==> E(e) = E(f)@> |> Some
         | _ -> None
     
     let (|EmptyRange|_|) =
         function
-        //|Equals(Quantifier(SpecificCall <@ (|&|) @> _,_,Bool false,_ ), Bool true) -> pattern_desc "Empty range" <@ () @> |> Some
-        //|Equals(Quantifier(SpecificCall <@ (|||) @> _,_,Bool false,_ ), Bool false) -> pattern_desc "Empty range" <@ () @> |> Some
-        | Equals(ForAll(_,Bool false,_), Bool true) -> pattern_desc "Empty range" <@ () @> |> Some
-        | Equals(Exists(_,Bool false,_), Bool false) -> pattern_desc "Empty range" <@ () @> |> Some
+        | Equals(ForAll(_,Bool false,_), Bool true) -> pattern_desc "the Empty range" <@ () @> |> Some
+        | Equals(Exists(_,Bool false,_), Bool false) -> pattern_desc "the Empty range" <@ () @> |> Some
         | _ -> None
 
     //let (|OnePoint|_|) =

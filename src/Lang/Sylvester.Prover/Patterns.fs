@@ -98,10 +98,15 @@ module Patterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
+    let (|BoundVars|_|) =
+        function
+        | NewTuple(bound) -> bound |> List.map get_vars |> List.concat |> Some
+        | ExprShape.ShapeVar bound -> [bound] |> Some
+        | _ -> None
+
     let (|Quantifier|_|) =
         function
-        | NewUnionCase (uc, op::NewTuple(_bound)::range::body::[]) when uc.Name = "Quantifier" -> 
-            let bound = _bound |> List.map get_vars |> List.concat
+        | NewUnionCase (uc, op::BoundVars(bound)::range::body::[]) when uc.Name = "Quantifier" -> 
             (op, bound, range, body) |> Some
         | _ -> None
 
@@ -242,14 +247,12 @@ module Patterns =
         | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Expr.Value(v) |> Some
         | _ -> None
 
-    let internal get_quantifier_bound_vars =
+    let bound_vars =
         function
         | Quantifier(_, bound, _, _) -> bound 
-        | _ -> []
+        | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
 
-    //let internal get_quantifier_free_vars =
-    let internal occurs_free (vars: Var list) (quantifier:Expr) = 
-        let names = vars |> List.map (fun v -> v.Name)
-        quantifier |> get_quantifier_bound_vars |> List.exists (fun v -> names |> List.contains v.Name) 
-        
-        
+    let occurs_free (vars:Var list) quantifier = 
+        let all_vars = quantifier |> get_vars
+        let bound_vars = quantifier |> bound_vars
+        vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound_vars |> List.exists (fun bv -> vequal bv v)))
