@@ -191,6 +191,12 @@ with
     /// Set 'is subset of' operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
 
+    /// Set relative difference operator: A |^| B = A \ B.
+    static member (|^|) (l:Set<'t>, r:Set<'t>) = l.Difference r
+
+    /// Set relative complement operator: A |/| B = B \ A.
+    static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
+
     /// Set create subset operator.
     static member (|>|) (l:Set<'t>, r:Test<'t>) = l.Subset r
 
@@ -202,9 +208,6 @@ with
 
     /// Set element-wise difference operator
     static member (|-|) (l:Set<'t>, r:'t) = l.Difference r
-
-    /// Set relative complement operator: A |/| B = B \ A.
-    static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
 
     /// Set Cartesian product.
     static member (*) (l, r) = 

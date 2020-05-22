@@ -223,11 +223,11 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     member val L = 
         match a with
         | Equals(l, _) -> l
-        | _ -> failwith "This expression is not an identity."
+        | _ -> a
     member val R = 
         match a with
         | Equals(_, r) -> r
-        | _ -> failwith "This expression is not an identity."
+        | _ -> a
     member val IsLemma = l
     member val Theory = theory
     member val Steps = steps

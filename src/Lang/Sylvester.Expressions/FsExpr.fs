@@ -37,19 +37,24 @@ module FsExpr =
         | Let(_, _, b) -> b
         | expr -> expr
 
-    let rec replace_var_expr (name:string) value expr  =
+    let traverse expr f =
         match expr with
-        | ShapeVar v  when v.Name = name ->  value
         | ShapeVar v -> Expr.Var v
-        | ShapeLambda (v, body) -> Expr.Lambda (v, replace_var_expr name value body)
-        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o, List.map (replace_var_expr name value) exprs)
+        | ShapeLambda (v, body) -> Expr.Lambda (v, f body)
+        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
 
-    let rec replace_var (var1:Var) (var2:Var) (expr:Expr) : Expr  =
+    let subst_var_value (var:Var) (value: Expr) (expr:Expr)  =
+        expr.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some value else None)
+
+    let rec replace_var_expr (var:Var) (value:Expr) (expr:Expr)  =
         match expr with
-        | ShapeVar v  when v.Name = var1.Name -> Expr.Var var2
-        | ShapeVar v -> Expr.Var v
-        | ShapeLambda (v, body) -> Expr.Lambda (v, replace_var var1 var2 body)
-        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o, List.map (replace_var var1 var2) exprs)
+        | ShapeVar v  when vequal v var ->  value
+        | expr -> traverse expr (replace_var_expr var value)
+
+    let rec replace_var_var (var1:Var) (var2:Var) (expr:Expr)    =
+        match expr with
+        | ShapeVar v  when vequal v var1-> Expr.Var var2
+        | expr -> traverse expr (replace_var_var var1 var2)
 
     let get_vars expr =
         let rec rget_vars prev expr =
@@ -63,14 +68,6 @@ module FsExpr =
     let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
     
     let occurs (var:Var) (expr:Expr) = get_var_names expr |> List.contains var.Name
-
-    let name_occurs expr name = get_var_names expr |> List.contains name
-    
-    let traverse expr f =
-        match expr with
-        | ShapeVar v -> Expr.Var v
-        | ShapeLambda (v, body) -> Expr.Lambda (v, f body)
-        | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
 
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.

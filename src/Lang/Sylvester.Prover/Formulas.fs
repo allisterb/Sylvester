@@ -10,6 +10,11 @@ type Quantifier<'t, 'u> = Quantifier of ('t -> 't -> 't)  * 'u * bool * 't with
     interface IQuantifier
 and IQuantifier = interface end
 
+[<Formula>]
+type Proposition = Prop of bool option * string with 
+    member x.Text = let (Prop (_, text)) = x in text
+    member x.Value = let (Prop (value,_)) = x in value
+
 [<AutoOpen>]
 module Formulas =    
     let private get_bool_val (l:'l) (r: 'r) =
@@ -17,11 +22,13 @@ module Formulas =
             match box l with
             | :? bool as b -> b
             | :? IQuantifier -> false
+            | :? Proposition as p -> if p.Value.IsSome then p.Value.Value else failwith "This proposition has not been assigned a truth value."            
             | _ -> failwith "The LHS of this expression does not have a truth value."
         let rval = 
              match box r with
              | :? bool as b -> b
              | :? IQuantifier -> false
+             | :? Proposition as p -> if p.Value.IsSome then p.Value.Value else failwith "This proposition has not been assigned a truth value."
              | _ -> failwith "The RHS of this expression does not have a truth value."
         lval, rval
 
@@ -50,16 +57,20 @@ module Formulas =
     let var<'t> = Unchecked.defaultof<'t>
     let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
     let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
-    let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>  
- 
+    let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
+     
     (* Quantifiers*)
 
     [<ReflectedDefinition>]
     let forall bound range body = Quantifier((|&|), bound, range, body)
     [<ReflectedDefinition>]
     let exists bound range body = Quantifier((|||), bound, range, body)
-
     [<ReflectedDefinition>]
     let (!!) = forall 
     [<ReflectedDefinition>]
     let (!?) = exists
+
+    (* Propositions*)
+    let prop text = Prop(None, text)
+    let prop_true (p:Proposition) = Prop(Some true, p.Text)
+    let prop_false (p:Proposition) = Prop(Some false, p.Text)

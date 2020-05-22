@@ -17,5 +17,3 @@ module R =
     let closedinterval left right = R.Set.Subset(fun x -> x >= left && x <= right)
     let line (origin:R) (step:R) = infiniteSeq (fun x -> x >= origin) (fun n -> origin + (((float) n) * step))
     let axis step = line 0.0 step
-
-    

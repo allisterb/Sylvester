@@ -128,7 +128,7 @@ module Patterns =
         | _ -> None
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
-    /// * Syntactically valid F# expressions
+    /// * Syntactically valid F# expressions of the same type
     /// * Decomposed to the same sequence of symbols i.e. strings.
     /// Since we are only concerned with string equality this law encompasses all 4 of the equational logic laws of equality:
     /// Symmetry, reflexivity, transitivity, and Leibniz's rule: A = B <=> S(A) = S(B)
@@ -241,3 +241,15 @@ module Patterns =
         function
         | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Expr.Value(v) |> Some
         | _ -> None
+
+    let internal get_quantifier_bound_vars =
+        function
+        | Quantifier(_, bound, _, _) -> bound 
+        | _ -> []
+
+    //let internal get_quantifier_free_vars =
+    let internal occurs_free (vars: Var list) (quantifier:Expr) = 
+        let names = vars |> List.map (fun v -> v.Name)
+        quantifier |> get_quantifier_bound_vars |> List.exists (fun v -> names |> List.contains v.Name) 
+        
+        

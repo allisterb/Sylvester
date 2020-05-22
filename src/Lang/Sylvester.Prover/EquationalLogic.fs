@@ -28,13 +28,13 @@ module EquationalLogic =
     (* Patterns *)
 
     /// true = p = p
-    let (|DefTrue|_|) =
+    let (|True|_|) =
         function
         | Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> pattern_desc "Definition of true" <@fun x -> x = x = true @> |> Some
         | _ -> None
 
     /// false = not true
-    let (|DefFalse|_|) =
+    let (|False|_|) =
         function
         | Equals(Bool false, Not(Bool true)) -> pattern_desc "Definition of false" <@ false = not true @> |> Some
         | _ -> None
@@ -69,16 +69,28 @@ module EquationalLogic =
 
     let (|Leibniz|_|) =
         function
-        | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var e f Ee) Ef  ->  pattern_desc "Leibniz" <@fun e f E F-> (e = f) ==> E(e) = F(f)@> |> Some
+        | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var_var e f Ee) Ef  ->  pattern_desc "Leibniz" <@fun e f E F-> (e = f) ==> E(e) = F(f)@> |> Some
         | _ -> None
     
+    let (|EmptyRange|_|) =
+        function
+        //|Equals(Quantifier(SpecificCall <@ (|&|) @> _,_,Bool false,_ ), Bool true) -> pattern_desc "Empty range" <@ () @> |> Some
+        //|Equals(Quantifier(SpecificCall <@ (|||) @> _,_,Bool false,_ ), Bool false) -> pattern_desc "Empty range" <@ () @> |> Some
+        | Equals(ForAll(_,Bool false,_), Bool true) -> pattern_desc "Empty range" <@ () @> |> Some
+        | Equals(Exists(_,Bool false,_), Bool false) -> pattern_desc "Empty range" <@ () @> |> Some
+        | _ -> None
+
+    //let (|OnePoint|_|) =
+    //    function
+    //    |Equals(Quantifier(_,x1::[], Equals(Var x2, e1),E1), E2) when E1.Substitute(fun v -> -> pattern_desc "Empty range" <@ () @> |> Some
+    //    | _ -> None
     (* Axiom schemas *)
 
     let equational_logic_axioms = 
         function
         | SEqual x
-        | DefTrue x // (3.3)
-        | DefFalse x //(3.8)
+        | True x // (3.3)
+        | False x //(3.8)
         | BinaryOpDef <@ (=) @> <@ (<>) @> <@ (=) @> <@ not @> x // (3.10)
         
         | Assoc <@(=)@> <@ (=) @> x  // (3.1)
@@ -117,48 +129,48 @@ module EquationalLogic =
     let _right_assoc =
         function
         | Equals(Equals(a1, a2), a3) -> <@@ (%%a1:bool) = ((%%a2:bool) = (%%a3:bool)) @@>
-        | Or(Or(a1, a2), a3) -> <@@ %%a1 ||| (%%a2 ||| %%a3) @@>
-        | And(And(a1, a2), a3) -> <@@ %%a1 |&| (%%a2 |&| %%a3) @@>
+        | Or(Or(a1, a2), a3) -> <@@ (%%a1:bool) ||| ((%%a2:bool)||| (%%a3:bool)) @@>
+        | And(And(a1, a2), a3) -> <@@ (%%a1:bool) |&| ((%%a2:bool) |&| (%%a3:bool)) @@>
         | expr -> expr 
     
     /// Binary logical operators are left associative.
     let _left_assoc =
         function
         | Equals(a1, Equals(a2, a3)) -> <@@ ((%%a1:bool) = (%%a2:bool)) = (%%a3:bool) @@>
-        | Or(a1, Or(a2, a3)) -> <@@ (%%a1 ||| %%a2) ||| %%a3 @@>
-        | And(a1, And(a2, a3)) -> <@@ (%%a1 |&| %%a2) |&| %%a3 @@>
+        | Or(a1, Or(a2, a3)) -> <@@ ((%%a1:bool) ||| (%%a2:bool)) ||| (%%a3:bool) @@>
+        | And(a1, And(a2, a3)) -> <@@ ((%%a1:bool) |&| (%%a2:bool)) |&| (%%a3:bool) @@>
         | expr -> expr 
     
     /// Binary logical operators commute.
     let _commute =
         function
         | Equals(a1, a2) -> <@@ (%%a2:bool) = (%%a1:bool) @@>
-        | Or(a1, a2) -> <@@ %%a2 ||| %%a1 @@>
-        | And(a1, a2) -> <@@ %%a2 |&| %%a1 @@>
+        | Or(a1, a2) -> <@@ (%%a2:bool) ||| (%%a1:bool) @@>
+        | And(a1, a2) -> <@@ (%%a2:bool) |&| (%%a1:bool) @@>
         | expr -> expr 
     
     /// Distribute logical terms.
     let _distrib =
         function
-        | Not(Equals(a1, a2)) -> <@@ not %%a1 = %%a2 @@>
-        | Or(a1, Equals(a2, a3)) -> <@@ ((%%a1)  ||| (%%a2)) = ((%%a1) ||| (%%a3)) @@>
-        | Or(p, And(q, r)) -> <@@ (%%p ||| %%q) |&| (%%p ||| %%r) @@>
-        | Or(p, Or(q, r)) -> <@@ (%%p ||| %%q) ||| (%%p ||| %%r) @@>
-        | And(p, Or(q, r)) -> <@@ (%%p |&| %%q) ||| (%%p |&| %%r) @@>
-        | Not(Or(a1, a2)) -> <@@ (not %%a1) |&| (not %%a2) @@>
-        | Not(And(a1, a2)) -> <@@ (not %%a1) ||| (not %%a2) @@>
+        | Not(Equals(a1, a2)) -> <@@ not (%%a1:bool) = (%%a2:bool) @@>
+        | Or(a1, Equals(a2, a3)) -> <@@ (((%%a1:bool))  ||| ((%%a2:bool))) = (((%%a1:bool)) ||| ((%%a3:bool))) @@>
+        | Or(p, And(q, r)) -> <@@ ((%%p:bool) ||| (%%q:bool)) |&| ((%%p:bool) ||| (%%r:bool)) @@>
+        | Or(p, Or(q, r)) -> <@@ ((%%p:bool) ||| (%%q:bool)) ||| ((%%p:bool) ||| (%%r:bool)) @@>
+        | And(p, Or(q, r)) -> <@@ ((%%p:bool) |&| (%%q:bool)) ||| ((%%p:bool) |&| (%%r:bool)) @@>
+        | Not(Or(a1, a2)) -> <@@ (not (%%a1:bool)) |&| (not (%%a2:bool)) @@>
+        | Not(And(a1, a2)) -> <@@ (not (%%a1:bool)) ||| (not (%%a2:bool)) @@>
         | expr -> expr
     
     /// Collect distributed logical terms.
     let rec _collect =
         function
         | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
-        | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 = %%a4) @@>
-        | And(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 |&| %%a4) @@>
-        | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ %%a1 |&| (%%a2 ||| %%a4) @@>
-        | Or(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ %%a1 ||| (%%a2 ||| %%a4) @@>
-        | Or(Not p , Not q) -> <@@ not (%%p |&| %%q) @@>
-        | And(Not p , Not q) -> <@@ not (%%p ||| %%q) @@>
+        | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ (%%a1:bool) ||| ((%%a2:bool) = (%%a4:bool)) @@>
+        | And(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ (%%a1:bool) ||| ((%%a2:bool) |&| (%%a4:bool)) @@>
+        | Or(And(a1, a2), And(a3, a4)) when sequal a1 a3 -> <@@ (%%a1:bool) |&| ((%%a2:bool) ||| (%%a4:bool)) @@>
+        | Or(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ (%%a1:bool) ||| ((%%a2:bool) ||| (%%a4:bool)) @@>
+        | Or(Not p , Not q) -> <@@ not ((%%p:bool) |&| (%%q:bool)) @@>
+        | And(Not p , Not q) -> <@@ not ((%%p:bool) ||| (%%q:bool)) @@>
         | expr -> expr
     
     /// ||| operator is idempotent.    
@@ -180,12 +192,12 @@ module EquationalLogic =
 
     let rec _def_implies = 
         function
-        | Implies(p, q) -> <@@ (%%p ||| %%q) = %%q @@>
+        | Implies(p, q) -> <@@ ((%%p:bool) ||| (%%q:bool)) = (%%q:bool) @@>
         | expr -> expr
 
     let _shunt =
         function
-        | Implies(And(p, q), r) -> <@@ %%p ==> %%q ==> %%r @@>
+        | Implies(And(p, q), r) -> <@@ (%%p:bool) ==> (%%q:bool) ==> (%%r:bool) @@>
         | expr -> expr
         | expr -> expr
 
@@ -202,7 +214,7 @@ module EquationalLogic =
     let _subst_and =
         function
         | And(Equals(Var e, Var f), E) when E |> occurs e -> 
-            let E' = replace_var e f E  
+            let E' = replace_var_var e f E  
             let e' = Expr.Var e
             let f' = Expr.Var f
             <@@ ((%%e':bool) = (%%f':bool)) |&| %%E' @@>
@@ -211,7 +223,7 @@ module EquationalLogic =
     let _subst_implies =
         function
         | Implies(Equals(Var e, Var f), E) when E |> occurs e -> 
-            let E' = replace_var e f E 
+            let E' = replace_var_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
             <@@ ((%%e':bool) = (%%f':bool)) ==> %%E' @@>
@@ -220,7 +232,7 @@ module EquationalLogic =
     let _subst_and_implies =
         function
         | Implies(And(q, Equals(Var e, Var f)), E) when E |> occurs e -> 
-            let E' = replace_var e f E 
+            let E' = replace_var_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
             <@@ ((%%q:bool) |&| ((%%e':bool) = %%f':bool)) ==> %%E' @@>
@@ -229,16 +241,16 @@ module EquationalLogic =
     let _subst_true =
         function
         | Implies(Var p,  E) when E |> occurs p -> 
-            let E' = replace_var_expr p.Name <@ true @> E in 
+            let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) ==> %%E' @@>
         | Implies(And(Var q, Var p),  E) when E |> occurs p -> 
-            let E' = replace_var_expr p.Name <@ true @> E in 
+            let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
             <@@ ((%%q':bool) |&| (%%p':bool)) ==> %%E' @@>
         | And(Var p, E) when E |> occurs p -> 
-            let E' = replace_var_expr p.Name <@ true @> E in 
+            let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) |&| %%E' @@>
         | expr -> expr
@@ -246,23 +258,23 @@ module EquationalLogic =
     let _subst_false =
         function
         | Implies(E, Var p) when E |> occurs p -> 
-            let E' = replace_var_expr p.Name <@ false @> E in 
+            let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
             <@@ (%%E':bool) ==> (%%p':bool) @@>
         | Implies(E, Or(Var p, Var q)) when E |> occurs p -> 
-            let E' = replace_var_expr p.Name <@ false @> E in 
+            let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
             <@@ ((%%p':bool) ||| (%%q':bool)) ==> %%E' @@>
         | Or(Var p, E) when E |> occurs p -> 
-            let E' = replace_var_expr p.Name <@ false @> E in 
+            let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) ||| %%E' @@>
         | expr -> expr
 
     let _subst_or_and = 
         function
-        | Equals(E, Or(And(Var p1, Et), And(Not(Var p2), Ef))) when E |> occurs p1 && p1.Name = p2.Name && Et = replace_var_expr p1.Name <@ true @> E && Ef = replace_var_expr p2.Name <@ false @> E -> 
+        | Equals(E, Or(And(Var p1, Et), And(Not(Var p2), Ef))) when E |> occurs p1 && p1.Name = p2.Name && Et = replace_var_expr p1 <@ true @> E && Ef = replace_var_expr p2 <@ false @> E -> 
             <@@ true @@>
         | expr -> expr
 
