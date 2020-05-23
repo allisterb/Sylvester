@@ -76,6 +76,13 @@ module EquationalLogic =
         | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "the Empty range" <@ () @> |> Some
         | _ -> None
     
+    let (|DistribBody|_|) =
+        function
+        | Equals(And(ForAll(_, b1, R1, P), ForAll(_, b2, R2, Q)), ForAll(_, b3, R3, PQ)) 
+            when vequal_list b1 b2 && vequal_list b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) |&| (%%Q:bool) @@> PQ ->
+                pattern_desc "Distributivity" <@ () @> |> Some
+        | _ -> None//Binary <@ (|&|) @> ForAll(_,_,R ,p)
+
     let equational_logic_axioms = 
         function
         | SEqual x
@@ -101,7 +108,8 @@ module EquationalLogic =
         | Leibniz x  // (3.83)
         
         | EmptyRange x // (8.13)
-        | OnePoint x -> Some (desc x) // (8.14)
+        | OnePoint x 
+        | DistribBody x -> Some (desc x) // (8.14)
         | _ -> None
 
     (* Expression functions for admissible rules *) 

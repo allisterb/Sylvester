@@ -9,7 +9,7 @@ open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
                 
-[<AutoOpen>]
+[<AutoOpen>] 
 module FsExpr =
     let (!!) x = unbox x
 
@@ -31,6 +31,8 @@ module FsExpr =
     let vequal3 (lv1:Var) (lv2:Var) (lv3:Var) (rv1:Var) (rv2:Var) (rv3:Var) = vequal lv1 rv1 && vequal lv2 rv2 && vequal lv3 rv3
 
     let vequal_single (lv1:Var) (lv2:Var list) = lv2.Length = 1 && vequal lv2.Head lv1
+
+    let vequal_list (lv1:Var list) (lv2:Var list) = List.fold2(fun s v1 v2 -> s && vequal v1 v2) true lv1 lv2
 
     let src expr = decompile expr
         

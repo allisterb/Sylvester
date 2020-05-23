@@ -127,15 +127,27 @@ module Patterns =
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
 
+    let bound_vars =
+        function
+        | Quantifier(_,bound, _, _) -> bound 
+        | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
+
+    let occurs_free (vars:Var list) = 
+        function
+        | Quantifier(_,bound, _, body) as quantifier -> 
+            let all_vars = quantifier |> get_vars
+            vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
+        | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
+
     let (|Proposition|_|) =
         function
         | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
         | _ -> None
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
-    /// * Syntactically valid F# expressions of the same type
+    /// * Syntactically valid and type-checked F# expressions
     /// * Decomposed to the same sequence of symbols i.e. strings.
-    /// Since we are only concerned with string equality this law encompasses all 4 of the equational logic laws of equality:
+    /// This law encompasses all 4 of the equational logic laws of equality:
     /// Symmetry, reflexivity, transitivity, and Leibniz's rule: A = B <=> S(A) = S(B)
     let (|SEqual|_|) =
         function
@@ -242,24 +254,8 @@ module Patterns =
             -> pattern_desc "Right Cancellation" <@ fun a b c -> ((%op) b a = (%op) c a) = (b = c) @> |> Some
         | _ -> None
 
-    let (|Value|_|) (v:'t) =
-        function
-        | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Expr.Value(v) |> Some
-        | _ -> None
-
     let (|OnePoint|_|) =
         function
-        | Equals(Quantifier(_,bound, Equals(Var x, e), P1), P2) when vequal_single x bound && sequal P2 (subst_var_value x e P1) -> pattern_desc "the One-Point rule" <@ () @> |> Some
+        | Equals(Quantifier(_,bound, Equals(Var x, e), P1) as q, P2) when not (occurs_free [x] q) && vequal_single x bound && sequal P2 (subst_var_value x e P1) -> 
+            pattern_desc "the One-Point rule" <@ () @> |> Some
         | _ -> None
-
-    let bound_vars =
-        function
-        | Quantifier(_,bound, _, _) -> bound 
-        | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
-
-    let occurs_free (vars:Var list) = 
-        function
-        | Quantifier(_,bound_vars, _, _) as quantifier -> 
-            let all_vars = quantifier |> get_vars
-            vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound_vars |> List.exists (fun bv -> vequal bv v)))
-        | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
