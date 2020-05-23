@@ -72,16 +72,15 @@ module EquationalLogic =
     
     let (|EmptyRange|_|) =
         function
-        | Equals(ForAll(_,Bool false,_), Bool true) -> pattern_desc "the Empty range" <@ () @> |> Some
-        | Equals(Exists(_,Bool false,_), Bool false) -> pattern_desc "the Empty range" <@ () @> |> Some
+        | Equals(ForAll(_,_,Bool false,_), Bool true) -> pattern_desc "the Empty range" <@ () @> |> Some
+        | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "the Empty range" <@ () @> |> Some
         | _ -> None
 
-    //let (|OnePoint|_|) =
-    //    function
-    //    |Equals(Quantifier(_,x1::[], Equals(Var x2, e1),E1), E2) when E1.Substitute(fun v -> -> pattern_desc "Empty range" <@ () @> |> Some
-    //    | _ -> None
-    (* Axiom schemas *)
-
+    let (|OnePoint|_|) =
+        function
+        | Equals(Quantifier(_,bound, Equals(Var x, e), P1), P2) when vequal_single x bound && sequal P2 (subst_var_value x e P1) -> pattern_desc "the One-Point rule" <@ () @> |> Some
+        | _ -> None
+        
     let equational_logic_axioms = 
         function
         | SEqual x
@@ -103,9 +102,11 @@ module EquationalLogic =
         | ExcludedMiddle x // (3.28)
         | GoldenRule x // (3.35)
 
-        | Implication x  // 3.57 and 3.58
-        | Leibniz x -> Some (desc x) // (3.83)
+        | Implication x  // (3.57 and 3.58)
+        | Leibniz x  // (3.83)
         
+        | EmptyRange x // (8.13)
+        | OnePoint x -> Some (desc x) // (8.14)
         | _ -> None
 
     (* Expression functions for admissible rules *) 

@@ -5,52 +5,16 @@ open FSharp.Quotations
 // Make Formula an alias for the reflected definition attribute.
 type Formula = ReflectedDefinitionAttribute
 
-[<Formula>]
-type Quantifier<'t, 'u> = Quantifier of ('t -> 't -> 't)  * 'u * bool * 't with 
-    interface IQuantifier
-and IQuantifier = interface end
-
-[<Formula>]
-type Proposition = Prop of bool option * string with 
-    member x.Text = let (Prop (_, text)) = x in text
-    member x.Value = let (Prop (value,_)) = x in value
-
 [<AutoOpen>]
 module Formulas =    
-    let private get_bool_val (l:'l) (r: 'r) =
-        let lval = 
-            match box l with
-            | :? bool as b -> b
-            | :? IQuantifier -> false
-            | :? Proposition as p -> if p.Value.IsSome then p.Value.Value else failwith "This proposition has not been assigned a truth value."            
-            | _ -> failwith "The LHS of this expression does not have a truth value."
-        let rval = 
-             match box r with
-             | :? bool as b -> b
-             | :? IQuantifier -> false
-             | :? Proposition as p -> if p.Value.IsSome then p.Value.Value else failwith "This proposition has not been assigned a truth value."
-             | _ -> failwith "The RHS of this expression does not have a truth value."
-        lval, rval
-
     (* Logical operators for formulas *)
 
     [<Unicode("\u2227")>]
-    let (|&|) (l:'l) (r:'r) =
-        let lval, rval = get_bool_val l r
-        lval && rval
-
+    let (|&|) l r = l && r
     [<Unicode("\u2228")>]
-    let (|||) (l:'l) (r:'r) = 
-        let lval, rval = get_bool_val l r      
-        lval || rval
-
-    let (==>) (l:bool) (r:bool) = 
-        let lval, rval = get_bool_val l r
-        (not lval) || rval
-
-    let (<==) (l:bool) (r:bool) = 
-        let lval, rval = get_bool_val l r
-        rval ==> lval
+    let (|||) l r = l || r
+    let (==>) l r = not l || r
+    let (<==) l r = r ==> l
 
     (* Introduce variable names for formulas *)
     
@@ -58,19 +22,11 @@ module Formulas =
     let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
     let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
     let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
-     
-    (* Quantifiers*)
 
-    [<ReflectedDefinition>]
-    let forall bound range body = Quantifier((|&|), bound, range, body)
-    [<ReflectedDefinition>]
-    let exists bound range body = Quantifier((|||), bound, range, body)
-    [<ReflectedDefinition>]
-    let (!!) = forall 
-    [<ReflectedDefinition>]
-    let (!?) = exists
+    (* Propositions and quantifiers *)
 
-    (* Propositions*)
-    let prop text = Prop(None, text)
-    let set_prop_true (p:Proposition) = Prop(Some true, p.Text)
-    let set_prop_false (p:Proposition) = Prop(Some false, p.Text)
+    let prop (text:string) = Unchecked.defaultof<bool>
+    let forall<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
+    let exists<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
+    let sum<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
+    let product<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>

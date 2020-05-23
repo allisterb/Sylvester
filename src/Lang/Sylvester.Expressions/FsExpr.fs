@@ -11,6 +11,8 @@ open FSharp.Quotations.ExprShape
                 
 [<AutoOpen>]
 module FsExpr =
+    let (!!) x = unbox x
+
     let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
     
     let sequal (l:Expr) (r:Expr) = 
@@ -27,6 +29,8 @@ module FsExpr =
     let vequal2 (lv1:Var) (lv2:Var) (rv1:Var) (rv2:Var) = vequal lv1 rv1 && vequal lv2 rv2
     
     let vequal3 (lv1:Var) (lv2:Var) (lv3:Var) (rv1:Var) (rv2:Var) (rv3:Var) = vequal lv1 rv1 && vequal lv2 rv2 && vequal lv3 rv3
+
+    let vequal_single (lv1:Var) (lv2:Var list) = lv2.Length = 1 && vequal lv2.Head lv1
 
     let src expr = decompile expr
         
@@ -76,8 +80,9 @@ module FsExpr =
           let expanded = 
             match expr with
             | WithValue(_, _, e) -> rexpand vars e
-            | Coerce(e, t) -> rexpand vars e
+            | Coerce(e, _) -> rexpand vars e
             | ValueWithName(o, t, n) -> rexpand vars (Expr.Value(o, t))
+            //| Call(body, MethodWithReflectedDefinition meth, args) when meth.
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])
@@ -87,7 +92,7 @@ module FsExpr =
                 rexpand vars this
             | PropertyGet(None, p, []) -> rexpand vars (Expr.Var(Var(p.Name, p.PropertyType)))
             // If the variable has an assignment, then replace it with the expression
-            | ExprShape.ShapeVar v when Map.containsKey v vars -> vars.[v]    
+            | ExprShape.ShapeVar v when Map.containsKey v vars -> vars.[v]
             // Else apply rexpand recursively on all sub-expressions
             | _ -> traverse expr (rexpand vars)
           // After expanding, try reducing the expression - we can replace 'let' expressions and applications where the first argument is lambda.

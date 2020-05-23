@@ -13,12 +13,14 @@ module PropCalculusTests =
     let ``operator works``() =
         let p,q,r,s = var4<bool> 
         let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
-        let i,j,k = var3<int>
-        let x = (!!) [i, j, k] (i > 0)  (i + j > 5) 
-        let z = x ||| p
+        let x,i,j,k = var4<int>
+        let g = <@ !!sum (x) (x = 3) (x * x) = 9 @>
+        Assert.True (Theory.S |- g)
+        //let x = (!!) [i, j, k] (i > 0)  (i + j > 5) 
+        //let z = x ||| p
         //<@ z @> |> expand 
         //let t = (!?)  p' <@ p 
-        p |&| x
+        //p |&| x
         
         //[<Formula>]
         //let x = (!!) [i, j, k] (i > 0) (i + j > 5)

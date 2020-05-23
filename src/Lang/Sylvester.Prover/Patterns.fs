@@ -73,11 +73,6 @@ module Patterns =
         | Call(None, method, Range(l, r)::[]) when method.Name = "CreateSequence" -> Some (l, r)
         | _ -> None
 
-    let (|Sum|_|)  =
-        function
-        | Call(None, method, Sequence(l, r)::[]) when method.Name = "Sum" -> Some (l, r)
-        | _ -> None
-
     let (|Binary|_|) (op:Expr<'t->'t->'u>) =
         function
         | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
@@ -103,33 +98,36 @@ module Patterns =
         | NewTuple(bound) -> bound |> List.map get_vars |> List.concat |> Some
         | ExprShape.ShapeVar bound -> [bound] |> Some
         | _ -> None
-
-    let (|Quantifier|_|) =
-        function
-        | NewUnionCase (uc, op::BoundVars(bound)::range::body::[]) when uc.Name = "Quantifier" -> 
-            (op, bound, range, body) |> Some
-        | _ -> None
-
-    let (|ForAllOp|) = 
-        function
-        | Lambda (_, Lambda (_, SpecificCall <@ (|&|) @> _)) -> Some true
-        | Call(_, mi, _) when mi.Name = "forall" -> Some true
-        | _ -> None
-
-    let (|ExistsOp|) = 
-        function
-        | Lambda (_, Lambda (_, SpecificCall <@ (|||) @> _)) -> Some true
-        | Call(_, mi, _) when mi.Name = "exists" -> Some true
-        | _ -> None
      
     let (|ForAll|_|) =
         function
-        | Quantifier(ForAllOp _, bound, range, body) -> Some (bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "forall" -> Some(<@ (|&|) @>, bound, range, body)
         | _ -> None
 
     let (|Exists|_|) =
         function
-        | Quantifier(ExistsOp _, bound, range, body) -> Some (bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "exists" -> Some(<@ (|||) @>, bound, range, body)
+        | _ -> None
+
+    let (|Sum|_|) =
+        function
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "sum" -> Some(<@ (+) @>, bound, range, body)
+        | _ -> None
+
+    let (|Product|_|) =
+        function
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "product" -> Some(<@ (*) @>, bound, range, body)
+        | _ -> None
+
+    let (|Quantifier|_|) =
+        function
+        | ForAll x
+        | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
+        | _ -> None
+
+    let (|Proposition|_|) =
+        function
+        | Call(None, mi, text::[]) when mi.Name = "forall" -> Some text
         | _ -> None
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
@@ -249,10 +247,12 @@ module Patterns =
 
     let bound_vars =
         function
-        | Quantifier(_, bound, _, _) -> bound 
+        | Quantifier(_,bound, _, _) -> bound 
         | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
 
-    let occurs_free (vars:Var list) quantifier = 
-        let all_vars = quantifier |> get_vars
-        let bound_vars = quantifier |> bound_vars
-        vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound_vars |> List.exists (fun bv -> vequal bv v)))
+    let occurs_free (vars:Var list) = 
+        function
+        | Quantifier(_,bound_vars, _, _) as quantifier -> 
+            let all_vars = quantifier |> get_vars
+            vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound_vars |> List.exists (fun bv -> vequal bv v)))
+        | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
