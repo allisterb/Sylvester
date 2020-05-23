@@ -101,26 +101,28 @@ module Patterns =
      
     let (|ForAll|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "forall" -> Some(<@ (|&|) @>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "forall" -> Some(<@@ (|&|) @@>, bound, range, body)
         | _ -> None
 
     let (|Exists|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "exists" -> Some(<@ (|||) @>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "exists" -> Some(<@@ (|||) @@>, bound, range, body)
         | _ -> None
 
     let (|Sum|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "sum" -> Some(<@ (+) @>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "sum" -> Some(<@@ (+) @@>, bound, range, body)
         | _ -> None
 
     let (|Product|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "product" -> Some(<@ (*) @>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "product" -> Some(<@@ (*) @@>, bound, range, body)
         | _ -> None
 
     let (|Quantifier|_|) =
         function
+        | Sum x
+        | Product x
         | ForAll x
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
@@ -243,6 +245,11 @@ module Patterns =
     let (|Value|_|) (v:'t) =
         function
         | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Expr.Value(v) |> Some
+        | _ -> None
+
+    let (|OnePoint|_|) =
+        function
+        | Equals(Quantifier(_,bound, Equals(Var x, e), P1), P2) when vequal_single x bound && sequal P2 (subst_var_value x e P1) -> pattern_desc "the One-Point rule" <@ () @> |> Some
         | _ -> None
 
     let bound_vars =

@@ -75,12 +75,7 @@ module EquationalLogic =
         | Equals(ForAll(_,_,Bool false,_), Bool true) -> pattern_desc "the Empty range" <@ () @> |> Some
         | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "the Empty range" <@ () @> |> Some
         | _ -> None
-
-    let (|OnePoint|_|) =
-        function
-        | Equals(Quantifier(_,bound, Equals(Var x, e), P1), P2) when vequal_single x bound && sequal P2 (subst_var_value x e P1) -> pattern_desc "the One-Point rule" <@ () @> |> Some
-        | _ -> None
-        
+    
     let equational_logic_axioms = 
         function
         | SEqual x
