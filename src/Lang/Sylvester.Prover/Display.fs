@@ -18,7 +18,7 @@ module FormulaDisplay =
         | Some t ->  t
         | None -> s
 
-    let rec print_formula expr =
+    let rec print_formula expr = 
         match expr with
         | BinaryFormula(info, l, r) -> 
             let a = info.GetCustomAttributes(typeof<UnicodeAttribute>, true) in
