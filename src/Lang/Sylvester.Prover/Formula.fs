@@ -1,7 +1,5 @@
 ﻿namespace Sylvester
 
-open FSharp.Quotations
-
 // Make Formula an alias for the reflected definition attribute.
 type Formula = ReflectedDefinitionAttribute
 
@@ -31,3 +29,5 @@ module Formula =
     let exists<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
     let sum<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
     let product<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
+
+    let rec FormulaModuleType = getModuleType <@ FormulaModuleType @>

@@ -24,6 +24,7 @@
     <Compile Include="Formula.fs" />
     <Compile Include="Descriptions.fs" />
     <Compile Include="Patterns.fs" />
+    <Compile Include="Display.fs" />
     <Compile Include="EquationalLogic.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Tactics.fs" />

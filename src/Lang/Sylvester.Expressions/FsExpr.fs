@@ -15,6 +15,29 @@ module FsExpr =
 
     let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
     
+    let getFieldInfo = function
+    | FieldGet (_, fieldInfo) -> fieldInfo
+    | _ -> failwith "Expression is not a field."
+
+    let getPropertyInfo = function
+    | PropertyGet (_, info, _) -> info
+    | _ -> failwith "Expression is not a property."
+
+    let getMethodInfo = function
+    | Call (_, info, _) -> info
+    | _ -> failwith "Expression is not a method."
+
+    let rec getFuncName = function
+    | Call(None, methodInfo, _) -> methodInfo.Name
+    | Lambda(_, expr) -> getFuncName expr
+    | _ -> failwith "Expression is not a function."
+
+    let getFuncInfo (t:Type) expr = t.GetMethod(getFuncName expr)
+
+    let getModuleType = function
+    | PropertyGet (_, propertyInfo, _) -> propertyInfo.DeclaringType
+    | _ -> failwith "Expression is not a property."
+
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 
         || l.ToString() = sprintf "(%s)" (r.ToString())

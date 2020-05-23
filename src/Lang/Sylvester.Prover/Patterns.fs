@@ -107,8 +107,8 @@ module Patterns =
 
     let (|Exists|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::And(range, body)::[]) when mi.Name = "exists" -> Some(<@@ (|&|) @@>, bound, range, body)
-        | Call(None, mi, BoundVars(bound)::body::[]) when mi.Name = "exists" -> Some(<@@ (|&|) @@>, bound, <@@ true @@>, body)
+        | Call(None, mi, BoundVars(bound)::And(range, body)::[]) when mi.Name = "exists" -> Some(<@@ (|||) @@>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::body::[]) when mi.Name = "exists" -> Some(<@@ (|||) @@>, bound, <@@ true @@>, body)
         | _ -> None
 
     let (|Sum|_|) =
