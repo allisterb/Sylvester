@@ -19,6 +19,7 @@ module EquationalLogic =
          .Replace("|-", "\u22A2")
          .Replace(" not ", " \u00AC ")
          .Replace("not ", "\u00AC ")
+         .Replace("forall ", "\u2200 ") 
 
     let desc = axiom_desc "Equational Logic" print_S_Operators
     
@@ -81,7 +82,7 @@ module EquationalLogic =
         | Equals(And(ForAll(_, b1, R1, P), ForAll(_, b2, R2, Q)), ForAll(_, b3, R3, PQ)) 
             when vequal_list b1 b2 && vequal_list b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) |&| (%%Q:bool) @@> PQ ->
                 pattern_desc "Distributivity" <@ () @> |> Some
-        | _ -> None//Binary <@ (|&|) @> ForAll(_,_,R ,p)
+        | _ -> None
 
     let equational_logic_axioms = 
         function

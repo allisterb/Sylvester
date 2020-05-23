@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Formulas.fs" />
+    <Compile Include="Formula.fs" />
     <Compile Include="Descriptions.fs" />
     <Compile Include="Patterns.fs" />
     <Compile Include="EquationalLogic.fs" />
