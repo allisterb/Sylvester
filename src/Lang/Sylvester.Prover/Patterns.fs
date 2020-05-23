@@ -129,7 +129,7 @@ module Patterns =
 
     let (|Proposition|_|) =
         function
-        | Call(None, mi, text::[]) when mi.Name = "forall" -> Some text
+        | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
         | _ -> None
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
