@@ -32,7 +32,10 @@ module FsExpr =
     | Lambda(_, expr) -> getFuncName expr
     | _ -> failwith "Expression is not a function."
 
-    let getFuncInfo (t:Type) expr = t.GetMethod(getFuncName expr)
+    let getFuncInfo (t:Type) expr = 
+        match expr |> getFuncName |> t.GetMember |> List.ofArray with
+        | [] -> None
+        | _ -> t.GetMethod(getFuncName expr) |> Some
 
     let getModuleType = function
     | PropertyGet (_, propertyInfo, _) -> propertyInfo.DeclaringType

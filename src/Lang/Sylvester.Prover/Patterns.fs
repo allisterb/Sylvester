@@ -23,7 +23,7 @@ module Patterns =
          | SpecificCall <@@ (<>) @@> (None,_,l::r::[]) -> Some (l, r)
          | _ -> None
 
-    let (|And|_|)  =
+    let (|And|_|) =
         function
         | SpecificCall <@@ (|&|) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
@@ -91,6 +91,11 @@ module Patterns =
     let (|UnaryCall|_|)  =
         function
         | Call(_,_,r::[]) -> Some r
+        | _ -> None
+
+    let (|BinaryFormula|_|)  =
+        function
+        | Call(_,mi,l::r::[]) when l.Type = r.Type -> Some (mi, l, r)
         | _ -> None
 
     let (|BoundVars|_|) =
