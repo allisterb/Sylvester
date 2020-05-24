@@ -58,7 +58,7 @@ module FsExpr =
 
     let vequal_single (lv1:Var) (lv2:Var list) = lv2.Length = 1 && vequal lv2.Head lv1
 
-    let vequal_list (lv1:Var list) (lv2:Var list) = List.fold2(fun s v1 v2 -> s && vequal v1 v2) true lv1 lv2
+    let vequal' (lv1:Var list) (lv2:Var list) = List.fold2(fun s v1 v2 -> s && vequal v1 v2) true lv1 lv2
 
     let src expr = decompile expr
         
@@ -88,6 +88,8 @@ module FsExpr =
         | ShapeVar v  when vequal v var1-> Expr.Var var2
         | expr -> traverse expr (replace_var_var var1 var2)
 
+    let subst_all_value (expr:Expr) (value:Expr) = expr.Substitute(fun _ -> Some value)
+        
     let get_vars expr =
         let rec rget_vars prev expr =
             match expr with
@@ -99,7 +101,10 @@ module FsExpr =
 
     let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
     
-    let occurs (var:Var) (expr:Expr) = get_var_names expr |> List.contains var.Name
+    let occurs (var:Var list) (expr:Expr) = 
+        expr |> get_vars |> List.exists(fun v -> List.exists(fun vv -> vequal v vv) var)
+
+    let not_occurs (var:Var list) (expr:Expr) = not (occurs var expr)
 
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.

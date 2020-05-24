@@ -73,17 +73,36 @@ module EquationalLogic =
     
     let (|EmptyRange|_|) =
         function
-        | Equals(ForAll(_,_,Bool false,_), Bool true) -> pattern_desc "the Empty range" <@ () @> |> Some
-        | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "the Empty range" <@ () @> |> Some
+        | Equals(ForAll(_,_,Bool false,_), Bool true) -> pattern_desc "Empty Range" <@ () @> |> Some
+        | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "Empty Range" <@ () @> |> Some
         | _ -> None
     
-    let (|DistribBody|_|) =
+    let (|QuantifierDistrib|_|) =
         function
         | Equals(And(ForAll(_, b1, R1, P), ForAll(_, b2, R2, Q)), ForAll(_, b3, R3, PQ)) 
-            when vequal_list b1 b2 && vequal_list b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) |&| (%%Q:bool) @@> PQ ->
+            when vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) |&| (%%Q:bool) @@> PQ ->
+                pattern_desc "Distributivity of \u2200" <@ () @> |> Some
+        | Equals(Or(Exists(_, b1, R1, P), Exists(_, b2, R2, Q)), Exists(_, b3, R3, PQ)) 
+            when vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) ||| (%%Q:bool) @@> PQ ->
                 pattern_desc "Distributivity" <@ () @> |> Some
         | _ -> None
 
+    let (|RangeSplit|_|) =
+        function
+        | Equals(ForAll(_,b1, Or(R1, S1), P1), And(ForAll(_,b2, R, P2), ForAll(_,b3, S, P3))) 
+            when vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
+        | Equals(Exists(_,b1, Or(R1, S1), P1), Or(Exists(_,b2, R, P2), Exists(_,b3, S, P3))) 
+            when vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
+        | _ -> None
+
+    let (|Interchange|_|) =
+        function
+        | Equals(ForAll(_, x, R, ForAll(_, y, Q, P)), ForAll(_, y', Q', ForAll(_ ,x', R' ,P')))
+            when 
+                vequal' x x' && vequal' y y' && sequal P P' && sequal Q Q' && sequal R R' && not_occurs y R && not_occurs x Q
+                -> pattern_desc "the Interchange of Variables" <@ () @> |> Some
+        | _ -> None
+              
     let equational_logic_axioms = 
         function
         | SEqual x
@@ -110,7 +129,10 @@ module EquationalLogic =
         
         | EmptyRange x // (8.13)
         | OnePoint x 
-        | DistribBody x -> Some (desc x) // (8.14)
+        | Nesting x
+        | Renaming x
+        | QuantifierDistrib x 
+        | RangeSplit x -> Some (desc x) // (8.14)
         | _ -> None
 
     (* Expression functions for admissible rules *) 
@@ -214,7 +236,7 @@ module EquationalLogic =
 
     let _subst_and =
         function
-        | And(Equals(Var e, Var f), E) when E |> occurs e -> 
+        | And(Equals(Var e, Var f), E) when E |> occurs [e] -> 
             let E' = replace_var_var e f E  
             let e' = Expr.Var e
             let f' = Expr.Var f
@@ -223,7 +245,7 @@ module EquationalLogic =
 
     let _subst_implies =
         function
-        | Implies(Equals(Var e, Var f), E) when E |> occurs e -> 
+        | Implies(Equals(Var e, Var f), E) when E |> occurs [e] -> 
             let E' = replace_var_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
@@ -232,7 +254,7 @@ module EquationalLogic =
 
     let _subst_and_implies =
         function
-        | Implies(And(q, Equals(Var e, Var f)), E) when E |> occurs e -> 
+        | Implies(And(q, Equals(Var e, Var f)), E) when E |> occurs [e] -> 
             let E' = replace_var_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
@@ -241,16 +263,16 @@ module EquationalLogic =
 
     let _subst_true =
         function
-        | Implies(Var p,  E) when E |> occurs p -> 
+        | Implies(Var p,  E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) ==> %%E' @@>
-        | Implies(And(Var q, Var p),  E) when E |> occurs p -> 
+        | Implies(And(Var q, Var p),  E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
             <@@ ((%%q':bool) |&| (%%p':bool)) ==> %%E' @@>
-        | And(Var p, E) when E |> occurs p -> 
+        | And(Var p, E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) |&| %%E' @@>
@@ -258,16 +280,16 @@ module EquationalLogic =
 
     let _subst_false =
         function
-        | Implies(E, Var p) when E |> occurs p -> 
+        | Implies(E, Var p) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
             <@@ (%%E':bool) ==> (%%p':bool) @@>
-        | Implies(E, Or(Var p, Var q)) when E |> occurs p -> 
+        | Implies(E, Or(Var p, Var q)) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
             <@@ ((%%p':bool) ||| (%%q':bool)) ==> %%E' @@>
-        | Or(Var p, E) when E |> occurs p -> 
+        | Or(Var p, E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
             <@@ (%%p':bool) ||| %%E' @@>
@@ -275,7 +297,7 @@ module EquationalLogic =
 
     let _subst_or_and = 
         function
-        | Equals(E, Or(And(Var p1, Et), And(Not(Var p2), Ef))) when E |> occurs p1 && p1.Name = p2.Name && Et = replace_var_expr p1 <@ true @> E && Ef = replace_var_expr p2 <@ false @> E -> 
+        | Equals(E, Or(And(Var p1, Et), And(Not(Var p2), Ef))) when E |> occurs [p1] && p1.Name = p2.Name && Et = replace_var_expr p1 <@ true @> E && Ef = replace_var_expr p2 <@ false @> E -> 
             <@@ true @@>
         | expr -> expr
 

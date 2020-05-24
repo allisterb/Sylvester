@@ -6,7 +6,7 @@ open FSharp.Quotations.DerivedPatterns
 
 open Descriptions
 
-/// Patterns used in axioms
+/// Patterns used in formulas and axioms
 module Patterns =   
     let (|Equals|_|) = 
          function
@@ -146,10 +146,14 @@ module Patterns =
             vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
         | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
 
+    let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr) 
+
     let (|Proposition|_|) =
         function
         | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
         | _ -> None
+
+    (* Axioms *)
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
     /// * Syntactically valid and type-checked F# expressions
@@ -265,4 +269,16 @@ module Patterns =
         function
         | Equals(Quantifier(_,bound, Equals(Var x, e), P1) as q, P2) when not (occurs_free [x] q) && vequal_single x bound && sequal P2 (subst_var_value x e P1) -> 
             pattern_desc "the One-Point rule" <@ () @> |> Some
+        | _ -> None
+
+    let (|Nesting|_|) =
+        function
+        | Equals(Quantifier(_, x::y::[], And(R, Q), P), Quantifier(_, x'::[], R',Quantifier(_,y'::[], Q', P'))) 
+            when not_occurs [y] R && vequal2 x y x' y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ () @> |> Some
+        | _ -> None
+
+    let (|Renaming|_|) =
+        function
+        | Equals(Quantifier(_, x::[], R, P), Quantifier(_, y::[], R', P')) 
+            when not_occurs [y] R && not_occurs [y] P && sequal R' (replace_var_var x y R) && sequal P' (replace_var_var x y P) -> pattern_desc "Rename Variables" <@ () @> |> Some
         | _ -> None
