@@ -273,10 +273,10 @@ module Patterns =
 
     let (|Nesting|_|) =
         function
-        | Equals(Quantifier(_, x::y::[], R1, P), Quantifier(_, [x'], R2, Quantifier(_,[y'], R3, P'))) 
-            when not_occurs [y'] R1 && vequal x x' && vequal y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc "Interchange Variables" <@ () @> |> Some
-        | Equals(Quantifier(_, x::y::[], And(R, Q), P), Quantifier(_, [x'], R',Quantifier(_,[y'], Q', P'))) 
-            when not_occurs [y] R && vequal x x' && vequal y y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ () @> |> Some
+        | Equals(Quantifier(_, x::y, R1, P), Quantifier(_, [x'], R2, Quantifier(_,y', R3, P'))) 
+            when not_occurs y R1 && vequal x x' && vequal' y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc "Interchange Variables" <@ () @> |> Some
+        | Equals(Quantifier(_, x::y, And(R, Q), P), Quantifier(_, [x'], R',Quantifier(_,y', Q', P'))) 
+            when not_occurs y R && vequal x x' && vequal' y y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ () @> |> Some
         | _ -> None
 
     let (|Renaming|_|) =

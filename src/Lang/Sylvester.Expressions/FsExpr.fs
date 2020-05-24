@@ -58,7 +58,7 @@ module FsExpr =
 
     let vequal_single (lv1:Var) (lv2:Var list) = lv2.Length = 1 && vequal lv2.Head lv1
 
-    let vequal' (lv1:Var list) (lv2:Var list) = List.fold2(fun s v1 v2 -> s && vequal v1 v2) true lv1 lv2
+    let vequal' (lv1:Var list) (lv2:Var list) = lv1.Length = lv2.Length && List.fold2(fun s v1 v2 -> s && vequal v1 v2) true lv1 lv2
 
     let src expr = decompile expr
         
