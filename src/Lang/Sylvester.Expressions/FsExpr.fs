@@ -78,16 +78,28 @@ module FsExpr =
     let subst_var_value (var:Var) (value: Expr) (expr:Expr)  =
         expr.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some value else None)
 
+    let subst_var_value' (lvar:Var list) (lval:Expr list) (expr:Expr)  =
+        do if not (lvar.Length = lval.Length) then failwithf "The lengths of the variable/expression lists lists are not the same for replacement operation in %s." (src expr)
+        List.fold2 (fun e v s -> subst_var_value v s e) expr lvar lval
+
     let rec replace_var_expr (var:Var) (value:Expr) (expr:Expr)  =
         match expr with
         | ShapeVar v  when vequal v var ->  value
         | expr -> traverse expr (replace_var_expr var value)
 
-    let rec replace_var_var (var1:Var) (var2:Var) (expr:Expr)    =
+    let replace_var_expr' (lvar:Var list) (lexpr:Expr list) (expr:Expr)  =
+        do if not (lvar.Length = lexpr.Length) then failwithf "The lengths of the variable/expression lists lists are not the same for replacement operation in %s." (src expr)
+        List.fold2 (fun e v r -> replace_var_expr v r e) expr lvar lexpr
+
+    let rec replace_var_var (var1:Var) (var2:Var) (expr:Expr)  =
         match expr with
         | ShapeVar v  when vequal v var1-> Expr.Var var2
         | expr -> traverse expr (replace_var_var var1 var2)
 
+    let replace_var_var' (lvar1:Var list) (lvar2:Var list) (expr:Expr)  =
+        do if not (lvar1.Length = lvar2.Length) then failwithf "The lengths of the variable lists are not the same for replacement operation in %s." (src expr)
+        List.fold2 (fun e v1 v2 -> replace_var_var v1 v2 e) expr lvar1 lvar2
+       
     let subst_all_value (expr:Expr) (value:Expr) = expr.Substitute(fun _ -> Some value)
         
     let get_vars expr =

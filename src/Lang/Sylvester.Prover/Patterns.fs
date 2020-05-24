@@ -144,8 +144,8 @@ module Patterns =
         | Quantifier(_,bound, _, body) as quantifier -> 
             let all_vars = quantifier |> get_vars
             vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
-        | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
-
+        | expr -> occurs vars expr
+        
     let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr) 
 
     let (|Proposition|_|) =
@@ -274,13 +274,13 @@ module Patterns =
     let (|Nesting|_|) =
         function
         | Equals(Quantifier(_, x::y, R1, P), Quantifier(_, [x'], R2, Quantifier(_,y', R3, P'))) 
-            when not_occurs y R1 && vequal x x' && vequal' y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc "Interchange Variables" <@ () @> |> Some
+            when not_occurs_free y R1 && vequal x x' && vequal' y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc "Interchange Variables" <@ () @> |> Some
         | Equals(Quantifier(_, x::y, And(R, Q), P), Quantifier(_, [x'], R',Quantifier(_,y', Q', P'))) 
-            when not_occurs y R && vequal x x' && vequal' y y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ () @> |> Some
+            when not_occurs_free y R && vequal x x' && vequal' y y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ () @> |> Some
         | _ -> None
 
     let (|Renaming|_|) =
         function
-        | Equals(Quantifier(_, x::[], R, P), Quantifier(_, y::[], R', P')) 
-            when not_occurs [y] R && not_occurs [y] P && sequal R' (replace_var_var x y R) && sequal P' (replace_var_var x y P) -> pattern_desc "Rename Variables" <@ () @> |> Some
+        | Equals(Quantifier(_, x, R, P), Quantifier(_, y, R', P')) 
+            when x.Length = y.Length && not_occurs_free y R && not_occurs_free y P && sequal R' (replace_var_var' x y R) && sequal P' (replace_var_var' x y P) -> pattern_desc "Rename Variables" <@ () @> |> Some
         | _ -> None

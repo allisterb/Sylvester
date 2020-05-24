@@ -69,6 +69,11 @@ module EquationalLogic =
     let (|Leibniz|_|) =
         function
         | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var_var e f Ee) Ef -> pattern_desc "Leibniz" <@fun e f E -> (e = f) ==> E(e) = E(f)@> |> Some
+        | Implies(Equals(Var p, Var q), Equals(Quantifier(_, _, R, P), Quantifier(_, _, R', P'))) when sequal (replace_var_var p q R) R' && sequal (replace_var_var p q P) P' -> 
+            pattern_desc "Leibniz" <@fun p q E  -> (p = q) ==> E(p) = E(q) @> |> Some
+        | Implies(Implies(R , Equals(Var p, Var q)), Equals(Quantifier(_, _, R1, P), Quantifier(_, _, R2, P'))) when sequal R R1 && sequal R1 R2 && sequal (replace_var_var p q P) P' -> 
+            pattern_desc "Leibniz" <@fun p q E  -> (p = q) ==> E(p) = E(q) @> |> Some
+
         | _ -> None
     
     let (|EmptyRange|_|) =
@@ -80,27 +85,36 @@ module EquationalLogic =
     let (|QuantifierDistrib|_|) =
         function
         | Equals(And(ForAll(_, b1, R1, P), ForAll(_, b2, R2, Q)), ForAll(_, b3, R3, PQ)) 
-            when vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) |&| (%%Q:bool) @@> PQ ->
+            when 
+                vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) |&| (%%Q:bool) @@> PQ ->
                 pattern_desc "Distributivity of \u2200" <@ () @> |> Some
         | Equals(Or(Exists(_, b1, R1, P), Exists(_, b2, R2, Q)), Exists(_, b3, R3, PQ)) 
-            when vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) ||| (%%Q:bool) @@> PQ ->
+            when 
+                vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) ||| (%%Q:bool) @@> PQ ->
                 pattern_desc "Distributivity" <@ () @> |> Some
         | _ -> None
 
     let (|RangeSplit|_|) =
         function
-        | Equals(ForAll(_,b1, Or(R1, S1), P1), And(ForAll(_,b2, R, P2), ForAll(_,b3, S, P3))) 
-            when vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
+        | Equals(ForAll(_, b1, Or(R1, S1), P1), And(ForAll(_,b2, R, P2), ForAll(_,b3, S, P3))) 
+            when 
+                vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
         | Equals(Exists(_,b1, Or(R1, S1), P1), Or(Exists(_,b2, R, P2), Exists(_,b3, S, P3))) 
-            when vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
+            when 
+                vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
         | _ -> None
 
     let (|Interchange|_|) =
         function
         | Equals(ForAll(_, x, R, ForAll(_, y, Q, P)), ForAll(_, y', Q', ForAll(_ ,x', R' ,P')))
             when 
+                vequal' x x' && vequal' y y' && sequal3 P Q R P' Q' R' && not_occurs y R && not_occurs x Q
+                -> pattern_desc "the Interchange of Variables" <@ () @> |> Some
+        | Equals(Exists(_, x, R, Exists(_, y, Q, P)), Exists(_, y', Q', Exists(_ ,x', R' ,P')))
+            when 
                 vequal' x x' && vequal' y y' && sequal P P' && sequal Q Q' && sequal R R' && not_occurs y R && not_occurs x Q
                 -> pattern_desc "the Interchange of Variables" <@ () @> |> Some
+
         | _ -> None
               
     let equational_logic_axioms = 
@@ -132,7 +146,8 @@ module EquationalLogic =
         | Nesting x
         | Renaming x
         | QuantifierDistrib x 
-        | RangeSplit x -> Some (desc x) // (8.14)
+        | RangeSplit x 
+        | Interchange x -> Some (desc x) // (8.14)
         | _ -> None
 
     (* Expression functions for admissible rules *) 
