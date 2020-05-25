@@ -6,9 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Display.fs" />
-    <Compile Include="FsStmt.fs" />
     <Compile Include="FsExpr.fs" />
-    <Compile Include="ExprToString.fs" />
   </ItemGroup>
 
   <ItemGroup>

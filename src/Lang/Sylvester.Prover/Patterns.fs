@@ -8,6 +8,8 @@ open Descriptions
 
 /// Patterns used in formulas and axioms
 module Patterns =   
+    (* Formula patterns *)
+
     let (|Equals|_|) = 
          function
          | SpecificCall <@@ (=) @@> (None,_,l::r::[]) when l.Type = r.Type -> Some(l, r)
@@ -93,11 +95,6 @@ module Patterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
-    let (|BinaryFormula|_|)  =
-        function
-        | Call(_,mi,l::r::[]) when l.Type = r.Type -> Some (mi, l, r)
-        | _ -> None
-
     let (|BoundVars|_|) =
         function
         | NewTuple(bound) -> bound |> List.map get_vars |> List.concat |> Some
@@ -153,7 +150,29 @@ module Patterns =
         | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
         | _ -> None
 
-    (* Axioms *)
+    (* Formula display patterns *)
+
+    let (|UnaryFormula|_|)  =
+        function
+        | Call(_, mi, l::[]) -> Some (mi, l)
+        | _ -> None
+
+    let (|BinaryFormula|_|) =
+        function
+        | Call(_, mi,l::r::[]) when l.Type = r.Type -> Some (mi, l, r)
+        | _ -> None
+
+    let (|BoolVar|_|) =
+        function
+        | Var v when v.Type = typeof<bool> -> v.Name |> Some
+        | _ -> None
+
+    let (|NatVar|_|) =
+        function
+        | Var v when v.Type = typeof<int> -> v.Name |> Some
+        | _ -> None
+    
+    (* Axiom patterns *)
 
     /// Main axiom of Sylph's symbolic equality. A and B are equal if they are: 
     /// * Syntactically valid and type-checked F# expressions

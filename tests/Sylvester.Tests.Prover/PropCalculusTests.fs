@@ -14,8 +14,10 @@ module PropCalculusTests =
         let p,q,r,s = var4<bool> 
         let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
         let x,i,j,k = var4<int>
-        let g = <@ sum (x) (x = 3) (x * x) = 9 @>
-        Assert.True (Theory.S |- g)
+        let p1 = proof prop_calculus <@ forall (i,j) false ==> (i + j > 0) @> [] 
+        Assert.NotNull p1
+        //let g = <@ sum (x) (x = 3) (x * x) = 9 @>
+        //Assert.True (Theory.S |- g)
         //let x = (!!) [i, j, k] (i > 0)  (i + j > 5) 
         //let z = x ||| p
         //<@ z @> |> expand 

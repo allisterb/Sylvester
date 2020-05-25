@@ -11,6 +11,7 @@ module Formula =
     let (|&|) l r = l && r
     [<Unicode("\u2228")>]
     let (|||) l r = l || r
+    [<Unicode("\u21D2")>]
     let (==>) l r = not l || r
     let (<==) l r = r ==> l
 
