@@ -1,5 +1,12 @@
 ﻿namespace Sylvester
 
+open System
+
+[<AttributeUsage(AttributeTargets.Field ||| AttributeTargets.Property ||| AttributeTargets.Method)>]
+type UnicodeAttribute(symbol:string) =
+    inherit Attribute()
+    member val Symbol = symbol
+
 [<AutoOpen>]
 module Display =
     type DisplayType =

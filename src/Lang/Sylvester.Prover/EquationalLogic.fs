@@ -142,12 +142,12 @@ module EquationalLogic =
         | Leibniz x  // (3.83)
         
         | EmptyRange x // (8.13)
-        | OnePoint x 
+        | OnePoint x // (8.14)
         | Nesting x
         | Renaming x
         | QuantifierDistrib x 
         | RangeSplit x 
-        | Interchange x -> Some (desc x) // (8.14)
+        | Interchange x -> Some (desc x) 
         | _ -> None
 
     (* Expression functions for admissible rules *) 
@@ -335,4 +335,22 @@ module EquationalLogic =
         | Or(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ true @@>
         | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ==> (%%p1:bool) @@>
         | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
+        | expr -> expr
+        
+    let _empty_range = 
+        function
+        | ForAll(_,_,Bool false,_) -> <@@ true @@>
+        | Exists(_,_,Bool false,_) -> <@@ false @@>
+        | expr -> expr
+
+    let _quantifier_distrib =
+        function
+        | And(ForAll(_, b1, Bool true, P), ForAll(_, b2, Bool true, Q)) when vequal' b1 b2 -> 
+            let t = vars_to_tuple b1 in <@@ forall (%%t) (%%P:bool) |&| (%%Q:bool) @@>
+        | And(ForAll(_, b1, R, P), ForAll(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
+            let t = vars_to_tuple b1 in <@@ forall (%%t) (%%R:bool) ==> ((%%P:bool) |&| (%%Q:bool)) @@> 
+        | Or(Exists(_, b1, Bool true, P), Exists(_, b2, Bool true, Q)) when vequal' b1 b2 -> 
+            let t = vars_to_tuple b1 in <@@ exists (%%t) (%%P:bool) ||| (%%Q:bool) @@>
+        | Or(Exists(_, b1, R, P), Exists(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
+            let t = vars_to_tuple b1 in <@@ exists (%%t) (%%R:bool) ==> ((%%P:bool) ||| (%%Q:bool)) @@> 
         | expr -> expr

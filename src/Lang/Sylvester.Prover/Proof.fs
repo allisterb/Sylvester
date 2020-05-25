@@ -5,10 +5,10 @@ open FSharp.Quotations
 open Descriptions
 open Patterns
 
-type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
+type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
     member val Axioms = axioms
     member val Rules = rules
-    member val FormulaPrinter = defaultArg formulaPrinter id
+    member val PrintFormula = defaultArg formula_printer FormulaDisplay.print_formula
     member x.AxiomaticallyEquiv a  = a |> body |> expand |> x.Axioms |> Option.isSome  
     static member (|-) ((c:Theory), a) = c.AxiomaticallyEquiv a
 
@@ -54,6 +54,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
 
         let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
+        let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
+
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc
@@ -75,10 +77,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formulaPrinter:string->string) =
             subst_false
             subst_or_and
             distrib_implies
-        ], EquationalLogic.print_S_Operators)
-
-    static member val internal Trivial = 
-        Theory((fun (_:Expr) ->  Some(axiom_desc "Assumption" id (pattern_desc "Assumption" <@fun x y -> x = y @>))), [])
+            empty_range
+        ])
 
 and Axioms = (Expr -> AxiomDescription option)
 
@@ -98,15 +98,18 @@ with
 and Rules = Rule list 
 
 and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
-    static let mutable logic:Theory = Theory.S /// The logical theory used for the proof.
-    static let mutable logLevel:int = 1 /// The proof log level.
+    /// The logical theory used for the proof.
+    static let mutable logic:Theory = Theory.S
+    
+    /// The proof log level.
+    static let mutable logLevel:int = 1 
 
     let ruleNames = List.concat [
             (logic.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
-    
+    let print_formula = theory.PrintFormula
     let logBuilder = System.Text.StringBuilder()
     let l = defaultArg lemma false
     let isAxiom = l && steps.Length = 0
@@ -116,9 +119,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     let _prooflog (steps:RuleApplication list) (level:int) (isLemma:bool) (x:string) = 
         let output (s:string) = 
             logBuilder.Append(x) |> ignore
-            match defaultDisplay with
-                | Text -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
-                | _ -> printfn "%s" ((logic.FormulaPrinter >> theory.FormulaPrinter) s)
+            printfn "%s" s 
         do 
             let isShortLemmaProof = isLemma && steps.Length <= 2
             if not isLemma then 
@@ -141,37 +142,33 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     let mutable state:(Expr * string) list = [] 
     let mutable stepCount = 0
     do
-        if theory.GetType() = typeof<Assumption> then 
-            do sprintf "Assume %s." (src a) |> prooflog
-            stepCount <- steps.Length
-        else  
-            if isAxiom && logLevel <= 2 then 
-                sprintf "[Axiom] %s." (src a) |> alwayslog
-            else if isAxiom && logLevel > 2 then 
-                sprintf "[Axiom] %s:" (src a) |> alwayslog
-            else if l && logLevel > 2 then 
-                sprintf "[Lemma] %s:" (src a) |> alwayslog
-            else if l && logLevel < 2 && steps.Length <= 2 then 
-                sprintf "[Lemma] %s." (src a) |> alwayslog
-            else if l && logLevel < 2 && steps.Length >= 2 then 
-                sprintf "[Lemma] %s:" (src a) |> alwayslog
-            else if not l then
-                sprintf "Proof of %s:" (src a) |> alwayslog
+        if isAxiom && logLevel <= 2 then 
+            sprintf "[Axiom] %s." (print_formula a) |> alwayslog
+        else if isAxiom && logLevel > 2 then 
+            sprintf "[Axiom] %s:" (print_formula a) |> alwayslog
+        else if l && logLevel > 2 then 
+            sprintf "[Lemma] %s:" (print_formula a) |> alwayslog
+        else if l && logLevel < 2 && steps.Length <= 2 then 
+            sprintf "[Lemma] %s." (print_formula a) |> alwayslog
+        else if l && logLevel < 2 && steps.Length >= 2 then 
+            sprintf "[Lemma] %s:" (print_formula a) |> alwayslog
+        else if not l then
+            sprintf "Proof of %s:" (print_formula a) |> alwayslog
         
-            if theory |- a  then
-                let axeq = theory.Axioms a
-                sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
-                sprintf "Proof complete." + proof_sep |> prooflog
-                stepCount <- steps.Length
+        if theory |- a  then
+            let axeq = theory.Axioms a
+            sprintf "|- %s. [%s]" (print_formula a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
+            sprintf "Proof complete." + proof_sep |> prooflog
+            stepCount <- steps.Length
             
-            else if logic |- a   then
-                let axeq = logic.Axioms a
-                sprintf "|- %s. [%s]" (src a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
-                sprintf "Proof complete." + proof_sep |> prooflog
-                stepCount <- steps.Length               
+        else if logic |- a   then
+            let axeq = logic.Axioms a
+            sprintf "|- %s. [%s]" (print_formula a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+            sprintf "Proof complete." + proof_sep |> prooflog
+            stepCount <- steps.Length               
     
     do if steps.Length = 0 && not(theory |- a || logic |- a ) then
-        sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
+        sprintf "Proof incomplete. Current state: %s." (print_formula _state) |> prooflog
 
     // Iterate through proof steps
     do while stepCount < steps.Length do
@@ -193,7 +190,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
             match step.Rule with
             | Admit(_, _) -> 
                 if not ((sequal _a _state)) then
-                    sprintf "%i. %s: %s \u2192 %s." (stepId) (stepName.Replace("(expression)", step.Pos)) (src _state) (src _a) 
+                    sprintf "%i. %s: %s \u2192 %s." (stepId) (stepName.Replace("(expression)", step.Pos)) (print_formula _state) (print_formula _a) 
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression")) 
             | Derive(_,_,_) ->
@@ -206,16 +203,16 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
         state <- state @ [(_state, msg)]
         if theory |- _state then
             let axeq = theory.Axioms _state
-            sprintf "|- %s. [%s]" (src _state)(if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
+            sprintf "|- %s. [%s]" (print_formula _state)(if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name)|> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
         else if logic |- _state then 
             let axeq = logic.Axioms _state
-            sprintf "|- %s. [%s]" (src _state) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
+            sprintf "|- %s. [%s]" (print_formula _state) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
         else
-            sprintf "Proof incomplete. Current state: %s." (src _state) |> prooflog
+            sprintf "Proof incomplete. Current state: %s." (print_formula _state) |> prooflog
             stepCount <- stepCount + 1
     
     member val Stmt = a
@@ -254,8 +251,6 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     interface IDisplay with
         member x.Output(item:'t) = item.ToString()
         member x.Transform(str:string) = str
-
-and Assumption internal(expr:Expr) = inherit Proof(expr, Theory.Trivial, [], true)
 
 and RuleApplication =
     | L  of Rule
@@ -307,17 +302,18 @@ with
         | LR' ra -> sprintf "left-right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         
 and Theorem internal (expr: Expr, proof:Proof) = 
+    let print_formula = proof.Theory.PrintFormula
     do 
-        if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (src expr)
+        if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (print_formula expr)
         if not proof.Complete then 
             if not proof.IsLemma then
-                failwithf "The provided proof of theorem %s is not complete." (src expr)
-            else failwithf "The provided proof of lemma %s is not complete. This can be caused by derived rules that take paramemters when an unexpectd substitution occcurs using parameters that are not unique. Add an addendum to the proof using the Addeddum tactic or use a non-parameterized proof instead."  (src expr) 
+                failwithf "The provided proof of theorem %s is not complete." (print_formula expr)
+            else failwithf "The provided proof of lemma %s is not complete. This can be caused in derived rules when unexpected substitution occcurs in steps that are not specific enough."  (proof.Theory.PrintFormula expr) 
     member val Stmt = expr
     member val LastState = proof.LastState
     member val Proof = proof
     member val Theory = proof.Theory
-    member val Name = expr |> src
+    member val Name = expr |> print_formula
 
 [<AutoOpen>]
 module LogicalRules =     
@@ -328,37 +324,34 @@ module LogicalRules =
             | l when sequal l p.L && p.Complete -> p.R
             | expr -> traverse expr (subst p) 
         if not p.Complete then 
-            failwithf "The proof of %A is not complete" (src p.Stmt)  
-        Derive(sprintf "Substitute %s \u2261 %s into (expression)" (src p.L) (src p.R), p, fun proof e -> subst proof e)
+            failwithf "The proof of %A is not complete" (p.Theory.PrintFormula p.Stmt)  
+        Derive(sprintf "Substitute %s \u2261 %s into (expression)" (p.Theory.PrintFormula p.L) (p.Theory.PrintFormula p.R), p, fun proof e -> subst proof e)
         
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
-       
-    /// Substitute an assumption.
-    let Assume expr = Assumption(expr) |> Subst 
-       
+          
 [<AutoOpen>]
 module Proof =        
-    let proof theory (e:Expr<'t>) steps =         
+    let proof (theory:Theory) (e:Expr<'t>) steps =         
         let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Proof(f, theory, steps)
-    let theorem theory (e:Expr<'t>) steps  = 
+    let theorem (theory:Theory) (e:Expr<'t>) steps  = 
         let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps))
-    let axiom theory (e:Expr<'t>)  = 
+    let axiom (theory:Theory) (e:Expr<'t>)  = 
         let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof (f, theory, [], true))
     
     (* Identities *)
-    let ident theory (e:Expr<'t>) steps =
+    let ident (theory:Theory) (e:Expr<'t>) steps =
         let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (src f)
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         match f with
         | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
-        | _ -> failwithf "The expression %s is not an identity" (src f)
+        | _ -> failwithf "The expression %s is not an identity" (theory.PrintFormula f)
     let ident' steps e = ident Proof.Logic e steps
     let id_ax theory e = ident theory e []
     let id_ax' e = id_ax Proof.Logic e

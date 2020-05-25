@@ -26,7 +26,7 @@ module Formula =
     let prop (text:string) = Unchecked.defaultof<bool>
     [<Unicode("\u2200")>]
     let forall<'u> (bound:'u) (range_body:bool) = Unchecked.defaultof<bool>
-    let exists<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
+    let exists<'u> (bound:'u) (range_body:bool) = Unchecked.defaultof<bool>
     let sum<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
     let product<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
 
