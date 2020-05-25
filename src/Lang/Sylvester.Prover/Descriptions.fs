@@ -1,14 +1,5 @@
 ﻿namespace Sylvester
 
-open System
-open System.Reflection
-
-/// Description attribute that can be applied to types or variables
-type DescAttribute(desc: string, ?example:string) =
-    inherit System.Attribute()
-    member val Description:string = desc with get, set
-    member val Example:string = defaultArg example ""
-
 module Descriptions =
     /// Text description of a formula pattern.
     type PatternDescription = PatternDescription of string * string with
@@ -30,6 +21,3 @@ module Descriptions =
 
     let set_axiom_desc_theory theoryName (a:AxiomDescription)  = AxiomDescription(theoryName, PatternDescription(a.Name, a.Description))
     
-    let get_desc<'t> = 
-        let a = typeof<'t>.GetCustomAttributes( typeof<DescAttribute>, true)
-        if (a = null || a.Length = 0) then "" else let d = (a.[0] :?> DescAttribute) in d.Description

@@ -38,8 +38,18 @@ module FsExpr =
         | _ -> t.GetMethod(getFuncName expr) |> Some
 
     let getModuleType = function
-    | PropertyGet (_, propertyInfo, _) -> propertyInfo.DeclaringType
-    | _ -> failwith "Expression is not a property."
+    | PropertyGet (_, info, _) -> info.DeclaringType
+    | FieldGet (_, info) -> info.DeclaringType
+    | Call (_, info, _) -> info.DeclaringType
+    | _ -> failwith "Expression does not have information to retrieve module type."
+
+    let rec getExprName = function
+    | Call(None, info, _) -> info.Name
+    | Lambda(_, expr) -> getExprName expr
+    | PropertyGet (_, info, _) -> info.Name
+    | FieldGet (_, info) -> info.Name
+    | _ -> failwith "Expression does not have information to retrieve name."
+
 
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 
@@ -129,7 +139,6 @@ module FsExpr =
             | WithValue(_, _, e) -> rexpand vars e
             | Coerce(e, _) -> rexpand vars e
             | ValueWithName(o, t, n) -> rexpand vars (Expr.Value(o, t))
-            //| Call(body, MethodWithReflectedDefinition meth, args) when meth.
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])

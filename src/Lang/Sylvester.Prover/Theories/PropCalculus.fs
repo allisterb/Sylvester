@@ -860,3 +860,9 @@ module PropCalculus =
         def_implies' p q |> Commute |> R
         weaken_or <@ %p ==> %q @> r |> Lemma
     ]
+
+    let symbols = [ 
+        "p", "\u1D45D"
+        "q", "\u1D45E"
+    ]
+ 

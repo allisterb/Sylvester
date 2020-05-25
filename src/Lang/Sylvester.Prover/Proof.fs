@@ -8,7 +8,7 @@ open Patterns
 type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
     member val Axioms = axioms
     member val Rules = rules
-    member val PrintFormula = defaultArg formula_printer FormulaDisplay.print_formula
+    member val PrintFormula = defaultArg formula_printer Display.print_formula
     member x.AxiomaticallyEquiv a  = a |> body |> expand |> x.Axioms |> Option.isSome  
     static member (|-) ((c:Theory), a) = c.AxiomaticallyEquiv a
 

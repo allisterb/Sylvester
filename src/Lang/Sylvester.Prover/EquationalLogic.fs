@@ -78,7 +78,7 @@ module EquationalLogic =
     
     let (|EmptyRange|_|) =
         function
-        | Equals(ForAll(_,_,Bool false,_), Bool true) -> pattern_desc "Empty Range" <@ () @> |> Some
+        | ForAll(_,_,Bool false,_) -> pattern_desc "Empty Range" <@ () @> |> Some
         | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "Empty Range" <@ () @> |> Some
         | _ -> None
     

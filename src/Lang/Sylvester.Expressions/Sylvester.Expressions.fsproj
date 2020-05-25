@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Display.fs" />
     <Compile Include="FsExpr.fs" />
+    <Compile Include="Symbols.fs" />
+    <Compile Include="Display.fs" />
   </ItemGroup>
 
   <ItemGroup>

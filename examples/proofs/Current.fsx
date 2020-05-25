@@ -2,19 +2,17 @@
 
 open Sylvester
 open PropCalculus
-open Sylvester.Patterns
+open PredCalculus
+
 let p,q,r,s = var4<bool> 
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 let i,j,k = var3<int>
 
-[<Formula>]
-let x = forall (i, j, k) (i > 0)  (i + j > 5) 
+let n = getExprName <@ PropCalculus.Symbols.p @>
+let e = <@ PropCalculus.Symbols.p @>
 
-<@ x ||| p @> |> expand
+e.CustomAttributes//open System.Reflection
+//m.GetMe
+//proof pred_calculus <@ sum i (i = 3) (i * i) = (3 * 3) @> []
 
-let (bound, range, body) = 
-    match <@ x @> |> expand with
-    | ForAll(a, b, c) -> (a, b, c)
-    | _ -> failwith "Not a quantifier" 
 
-body

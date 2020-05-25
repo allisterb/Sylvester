@@ -7,11 +7,11 @@ type Formula = ReflectedDefinitionAttribute
 module Formula =    
     (* Logical operators for formulas *)
 
-    [<Unicode("\u2227")>]
+    [<Sym"\u2227">]
     let (|&|) l r = l && r
-    [<Unicode("\u2228")>]
+    [<Sym"\u2228">]
     let (|||) l r = l || r
-    [<Unicode("\u21D2")>]
+    [<Sym"\u21D2">]
     let (==>) l r = not l || r
     let (<==) l r = r ==> l
 
@@ -25,10 +25,13 @@ module Formula =
     (* Propositions and quantifiers *)
 
     let prop (text:string) = Unchecked.defaultof<bool>
-    [<Unicode("\u2200")>]
+    [<Sym"\u2200">]
     let forall<'u> (bound:'u) (range_body:bool) = Unchecked.defaultof<bool>
+    [<Sym"\u2203">]
     let exists<'u> (bound:'u) (range_body:bool) = Unchecked.defaultof<bool>
+    [<Sym"\u2211">]
     let sum<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
+    
     let product<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
 
     let rec FormulaModuleType = getModuleType <@ FormulaModuleType @>

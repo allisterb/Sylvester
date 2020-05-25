@@ -2,10 +2,12 @@
 
 open System
 
-[<AttributeUsage(AttributeTargets.Field ||| AttributeTargets.Property ||| AttributeTargets.Method)>]
+[<AttributeUsage(AttributeTargets.All)>]
 type UnicodeAttribute(symbol:string) =
     inherit Attribute()
     member val Symbol = symbol
+
+type SymAttribute = UnicodeAttribute
 
 [<AutoOpen>]
 module Display =
