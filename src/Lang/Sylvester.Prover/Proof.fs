@@ -56,7 +56,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
 
-        //let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
+        let trading = Admit("Move the quantifier's range into its body in (expression)", EquationalLogic._trading)
+
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc
@@ -79,6 +80,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             subst_or_and
             distrib_implies
             empty_range
+            trading
         ])
 
 and Axioms = (Expr -> AxiomDescription option)

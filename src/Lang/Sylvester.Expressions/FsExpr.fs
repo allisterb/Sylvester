@@ -23,20 +23,13 @@ module FsExpr =
     | PropertyGet (_, info, _) -> info
     | _ -> failwith "Expression is not a property."
 
-    let getMethodInfo = function
-    | Call (_, info, _) -> info
-    | _ -> failwith "Expression is not a method."
 
-    let rec getFuncName = function
-    | Call(None, methodInfo, _) -> methodInfo.Name
-    | Lambda(_, expr) -> getFuncName expr
+    let rec getFuncInfo = function
+    | Call(None, methodInfo, _) -> methodInfo
+    | Lambda(_, expr) -> getFuncInfo expr
     | _ -> failwith "Expression is not a function."
 
-    let getFuncInfo (t:Type) expr = 
-        match expr |> getFuncName |> t.GetMember |> List.ofArray with
-        | [] -> None
-        | _ -> t.GetMethod(getFuncName expr) |> Some
-
+ 
     let getModuleType = function
     | PropertyGet (_, info, _) -> info.DeclaringType
     | FieldGet (_, info) -> info.DeclaringType
@@ -50,6 +43,9 @@ module FsExpr =
     | FieldGet (_, info) -> info.Name
     | _ -> failwith "Expression does not have information to retrieve name."
 
+    let call expr p = 
+        let mi = getFuncInfo expr
+        Expr.Call(mi, p)
 
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 

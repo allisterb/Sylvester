@@ -352,6 +352,8 @@ module EquationalLogic =
             let t = vars_to_tuple b1 in <@@ exists (%%t) (%%R:bool) ((%%P:bool) ||| (%%Q:bool)) @@> 
         | expr -> expr
 
-//    let _trading = 
-//        function
-//        | 
+    let _trading = 
+        function
+        | ForAll(_, x, R, P) -> let v = vars_to_tuple x in call <@ forall' @> (v::(<@@ (%%R:bool) ==> (%%P:bool)@@>)::[])
+        | Exists(_, x, R, P) -> let v = vars_to_tuple x in call <@ exists' @> (v::(<@@ (%%R:bool) |&| (%%P:bool)@@>)::[])
+        | expr -> expr

@@ -143,8 +143,8 @@ module Patterns =
             vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
         | expr -> occurs vars expr
         
-    let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr) 
-
+    let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr)
+    
     let (|Proposition|_|) =
         function
         | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
