@@ -56,6 +56,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
 
+        //let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc

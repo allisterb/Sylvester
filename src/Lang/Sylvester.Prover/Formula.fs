@@ -24,7 +24,7 @@ module Formula =
 
     (* Propositions and quantifiers *)
 
-    let prop (text:string) = Unchecked.defaultof<bool>
+    let prop (sentence:string) = Unchecked.defaultof<bool>
     [<Symbol"\u2200">]
     let forall<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
     [<Symbol"\u2200">]

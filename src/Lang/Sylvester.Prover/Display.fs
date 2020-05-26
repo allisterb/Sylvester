@@ -30,7 +30,7 @@ module Display =
         function
         | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200%s | %s)" v (body |> print_formula)
         | ForAll(_, VariableDisplay v, range, body) -> sprintf "(\u2200%s |%s : %s)" v (range |> print_formula) (body |> print_formula)
-        | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203%s |%s)" v (body |> print_formula)
+        | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203%s | %s)" v (body |> print_formula)
         | Exists(_, VariableDisplay v, range, body) -> sprintf "(\u2203%s | %s : %s)" v (range |> print_formula) (body |> print_formula)
         | UnaryFormula(SymbolDisplay symbol , r) -> sprintf "%s %s" (print_formula r) (symbol)
         | BinaryFormula(SymbolDisplay symbol, l, r) -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)

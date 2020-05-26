@@ -4,7 +4,7 @@ open FSharp.Quotations
 
 open PropCalculus
 
-/// Propositional calculus using the axioms and rules of S.
+/// Predicate calculus using the axioms and rules of S.
 module PredCalculus =
     let pred_calculus = Theory.S
 

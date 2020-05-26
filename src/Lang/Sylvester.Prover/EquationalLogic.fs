@@ -99,13 +99,18 @@ module EquationalLogic =
         function
         | Equals(ForAll(_, x, R, ForAll(_, y, Q, P)), ForAll(_, y', Q', ForAll(_ ,x', R' ,P')))
             when 
-                vequal' x x' && vequal' y y' && sequal3 P Q R P' Q' R' && not_occurs y R && not_occurs x Q
+                vequal' x x' && vequal' y y' && sequal3 P Q R P' Q' R' && not_occurs_free y R && not_occurs_free x Q
                 -> pattern_desc "the Interchange of Variables" <@ () @> |> Some
         | Equals(Exists(_, x, R, Exists(_, y, Q, P)), Exists(_, y', Q', Exists(_ ,x', R' ,P')))
             when 
-                vequal' x x' && vequal' y y' && sequal P P' && sequal Q Q' && sequal R R' && not_occurs y R && not_occurs x Q
+                vequal' x x' && vequal' y y' && sequal P P' && sequal Q Q' && sequal R R' && not_occurs_free y R && not_occurs_free x Q
                 -> pattern_desc "the Interchange of Variables" <@ () @> |> Some
+        | _ -> None
 
+    let (|Trading|_|) =
+        function
+        | Equals(ForAll(_, x, R, P), ForAll(_, x', Bool true, Implies(R', P'))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Trading" <@ () @> |> Some
+        | Equals(Exists(_, x, R, P), Exists(_, x', Bool true, And(R', P'))) when vequal' x x' && sequal2 R P R' P' -> pattern_desc "Trading" <@ () @> |> Some
         | _ -> None
               
     let equational_logic_axioms = 
@@ -138,7 +143,8 @@ module EquationalLogic =
         | Renaming x
         | QuantifierDistrib x 
         | RangeSplit x 
-        | Interchange x -> Some (desc x) 
+        | Interchange x 
+        | Trading x -> Some (desc x) 
         | _ -> None
 
     (* Expression functions for admissible rules *) 
@@ -345,3 +351,7 @@ module EquationalLogic =
         | Or(Exists(_, b1, R, P), Exists(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
             let t = vars_to_tuple b1 in <@@ exists (%%t) (%%R:bool) ((%%P:bool) ||| (%%Q:bool)) @@> 
         | expr -> expr
+
+//    let _trading = 
+//        function
+//        | 
