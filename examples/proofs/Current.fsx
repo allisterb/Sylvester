@@ -1,18 +1,19 @@
 #load "Include.fsx"
 
 open Sylvester
-open PropCalculus
 open PredCalculus
 
 let p,q,r,s = var4<bool> 
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 let i,j,k = var3<int>
 
-let n = getExprName <@ PropCalculus.Symbols.p @>
-let e = <@ PropCalculus.Symbols.p @>
+[<Formula>]
+let p1 = forall (p, q) ((p ||| q) = true)
 
-e.CustomAttributes//open System.Reflection
-//m.GetMe
-//proof pred_calculus <@ sum i (i = 3) (i * i) = (3 * 3) @> []
+[<Formula>]
+let p2 = forall (p, q) ((r ||| s) = true)
 
+[<Formula>]
+let p3 = forall (p, q) (((p ||| q) = true) |&| ((r ||| s) = true))
 
+proof pred_calculus <@  (p1 |&| p2) = p3 @> []

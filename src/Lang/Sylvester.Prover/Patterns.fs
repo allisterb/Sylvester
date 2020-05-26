@@ -169,7 +169,7 @@ module Patterns =
 
     let (|NatVar|_|) =
         function
-        | Var v when v.Type = typeof<int> -> v.Name |> Some
+        | Var v when v.Type = typeof<uint32> -> v.Name |> Some
         | _ -> None
     
     (* Axiom patterns *)

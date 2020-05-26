@@ -12,16 +12,7 @@ open Descriptions
 ///             http://www.cs.cornell.edu/home/gries/Logic/Equational.html
 /// The number after each axiom corresponds to the number of the axiom in the textbook A Logical Approach to Discrete Math by Gries et.al.
 module EquationalLogic =
-    /// Print Unicode logical operator symbols
-    let print_S_Operators (s:string) = 
-        s.Replace("|||", "\u2228")
-         .Replace("|&|", "\u2227")
-         .Replace("|-", "\u22A2")
-         .Replace(" not ", " \u00AC ")
-         .Replace("not ", "\u00AC ")
-         .Replace("forall ", "\u2200 ") 
-
-    let desc = axiom_desc "Equational Logic" print_S_Operators
+    let desc = axiom_desc "Equational Logic"
     
     (* Axioms *)
 
@@ -91,7 +82,7 @@ module EquationalLogic =
         | Equals(Or(Exists(_, b1, R1, P), Exists(_, b2, R2, Q)), Exists(_, b3, R3, PQ)) 
             when 
                 vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) ||| (%%Q:bool) @@> PQ ->
-                pattern_desc "Distributivity" <@ () @> |> Some
+                pattern_desc "Distributivity of \u2203" <@ () @> |> Some
         | _ -> None
 
     let (|RangeSplit|_|) =

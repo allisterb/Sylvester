@@ -16,8 +16,8 @@ module Descriptions =
         member x.Description = let (AxiomDescription(n, d)) = x in d.Description
            
     /// Create an axiom name from a name and an example formula.
-    let axiom_desc theoryName (printer:string->string) (patternDesc:PatternDescription)  = 
-        AxiomDescription(theoryName, PatternDescription(patternDesc.Name, (printer patternDesc.Description)))
+    let axiom_desc theoryName (patternDesc:PatternDescription)  = 
+        AxiomDescription(theoryName, PatternDescription(patternDesc.Name, patternDesc.Description))
 
     let set_axiom_desc_theory theoryName (a:AxiomDescription)  = AxiomDescription(theoryName, PatternDescription(a.Name, a.Description))
     
