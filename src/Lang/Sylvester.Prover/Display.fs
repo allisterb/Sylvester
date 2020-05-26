@@ -8,31 +8,31 @@ open Patterns
 module Display = 
     let mutable transliterateGreekSymbols = true
 
-    let (|UnicodeDisplay|_|) (f:obj) = 
-        match f with
+    let (|SymbolDisplay|_|):obj -> string option = 
+        function
         | :? MethodInfo as info ->
-            let a = info.GetCustomAttributes(typeof<UnicodeAttribute>, true) in
-            if a = null || a.Length = 0 then None else let u = (a.[0] :?> UnicodeAttribute) in u.Symbol |> Some 
+            let a = info.GetCustomAttributes(typeof<SymbolAttribute>, true) in
+            if a = null || a.Length = 0 then None else let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
         | :? System.Type as t ->
-            let a = t.GetCustomAttributes(typeof<UnicodeAttribute>, true) in
-            if a = null || a.Length = 0 then None else let u = (a.[0] :?> UnicodeAttribute) in u.Symbol |> Some 
-         | _ -> None
+            let a = t.GetCustomAttributes(typeof<SymbolAttribute>, true) in
+            if a = null || a.Length = 0 then None else let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
+        | :? string as s when Symbols.Greek.ContainsKey s && transliterateGreekSymbols -> Symbols.Greek.[s] |> Some
+        | :? string as s -> s |> Some
+        | _ -> None
+
+    let (|VariableDisplay|_|):obj -> string option =
+        function
+        | :? Var as v -> v.Name |> Some
+        | :? (Var list) as vars -> vars |> List.fold(fun s v -> if s <> "" then sprintf "%s,%s" s v.Name else sprintf "%s" v.Name) "" |> Some
+        | _ -> None
 
     let rec print_formula = 
         function
-        | ForAll(_, bound, Bool true, body) -> 
-            let bound' = bound |> List.fold(fun s v -> let v' = (v |> Expr.Var |> print_formula) in if s <> "" then sprintf "%s, %s" s v' else sprintf "%s" v') ""
-            sprintf "\u2200 %s: (%s)" bound' (body |> print_formula)
-        | ForAll(_, bound, range, body) -> 
-            let bound' = bound |> List.fold(fun s v -> let v' = (v |> Expr.Var |> print_formula) in if s <> "" then sprintf "%s, %s" s v' else sprintf "%s" v') ""
-            sprintf "\u2200 %s: (%s \u21D2 %s)" bound' (range |> print_formula) (body |> print_formula)
-        | Exists(_, bound, Bool true, body) -> 
-            let bound' = bound |> List.fold(fun s v -> let v' = (v |> Expr.Var |> print_formula) in if s <> "" then sprintf "%s, %s" s v' else sprintf "%s" v') ""
-            sprintf "\u2203 %s: (%s)" bound' (body |> print_formula)
-        | Exists(_, bound, range, body) -> 
-            let bound' = bound |> List.fold(fun s v -> let v' = (v |> Expr.Var |> print_formula) in if s <> "" then sprintf "%s, %s" s v' else sprintf "%s" v') ""
-            sprintf "\u2203 %s: (%s \u21D2 %s)" bound' (range |> print_formula) (body |> print_formula)
-        | UnaryFormula(UnicodeDisplay(symbol), r) -> sprintf "%s %s" (print_formula r) (symbol)
-        | BinaryFormula(UnicodeDisplay(symbol), l, r) -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
+        | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200%s | %s)" v (body |> print_formula)
+        | ForAll(_, VariableDisplay v, range, body) -> sprintf "(\u2200%s |%s : %s)" v (range |> print_formula) (body |> print_formula)
+        | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203%s |%s)" v (body |> print_formula)
+        | Exists(_, VariableDisplay v, range, body) -> sprintf "(\u2203%s | %s : %s)" v (range |> print_formula) (body |> print_formula)
+        | UnaryFormula(SymbolDisplay symbol , r) -> sprintf "%s %s" (print_formula r) (symbol)
+        | BinaryFormula(SymbolDisplay symbol, l, r) -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
         | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
         | expr -> src expr

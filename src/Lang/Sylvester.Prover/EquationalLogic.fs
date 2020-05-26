@@ -337,11 +337,11 @@ module EquationalLogic =
     let _quantifier_distrib =
         function
         | And(ForAll(_, b1, Bool true, P), ForAll(_, b2, Bool true, Q)) when vequal' b1 b2 -> 
-            let t = vars_to_tuple b1 in <@@ forall (%%t) (%%P:bool) |&| (%%Q:bool) @@>
+            let t = vars_to_tuple b1 in <@@ forall' (%%t) (%%P:bool) |&| (%%Q:bool) @@>
         | And(ForAll(_, b1, R, P), ForAll(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
-            let t = vars_to_tuple b1 in <@@ forall (%%t) (%%R:bool) ==> ((%%P:bool) |&| (%%Q:bool)) @@> 
+            let t = vars_to_tuple b1 in <@@ forall (%%t) (%%R:bool) ((%%P:bool) |&| (%%Q:bool)) @@> 
         | Or(Exists(_, b1, Bool true, P), Exists(_, b2, Bool true, Q)) when vequal' b1 b2 -> 
-            let t = vars_to_tuple b1 in <@@ exists (%%t) (%%P:bool) ||| (%%Q:bool) @@>
+            let t = vars_to_tuple b1 in <@@ exists' (%%t) (%%P:bool) ||| (%%Q:bool) @@>
         | Or(Exists(_, b1, R, P), Exists(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
-            let t = vars_to_tuple b1 in <@@ exists (%%t) (%%R:bool) ==> ((%%P:bool) ||| (%%Q:bool)) @@> 
+            let t = vars_to_tuple b1 in <@@ exists (%%t) (%%R:bool) ((%%P:bool) ||| (%%Q:bool)) @@> 
         | expr -> expr

@@ -1,6 +1,11 @@
 ﻿namespace Sylvester
 
-open System.Collections.Generic
+open System
+
+[<AttributeUsage(AttributeTargets.All)>]
+type SymbolAttribute(symbol:string) =
+    inherit Attribute()
+    member val Symbol = symbol
 
 module Symbols =
 
