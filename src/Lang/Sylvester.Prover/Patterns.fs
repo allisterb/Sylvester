@@ -45,6 +45,11 @@ module Patterns =
         | SpecificCall <@@ (<==) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
+    let rec get_conjuncts =
+        function
+        | And(L, R) -> get_conjuncts L @ get_conjuncts R
+        | expr  -> [expr]
+
     let (|Add|_|) =
         function
         | SpecificCall <@@ (+) @@> (None,_,l::r::[]) -> Some(l, r)
@@ -138,8 +143,8 @@ module Patterns =
 
     let occurs_free (vars:Var list) = 
         function
-        | Quantifier(_,bound, _, body) as quantifier -> 
-            let all_vars = quantifier |> get_vars
+        | Quantifier(_,bound, _, body) -> 
+            let all_vars = body |> get_vars
             vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
         | expr -> occurs vars expr
         

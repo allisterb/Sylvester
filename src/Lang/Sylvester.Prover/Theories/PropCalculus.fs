@@ -142,11 +142,13 @@ module PropCalculus =
 
     let RightAssocR = Tactics.RightAssocR left_assoc
 
+    let Assume:(Proof -> Proof) = Tactics.Assume idemp  
+  
     (* Tactics for proofs *)
     
     let MutualImplication stmt = Tactics.MutualImplication prop_calculus Taut mutual_implication stmt
 
-    (* Derived rules *)
+    (* Theorems *)
     
     /// true = (p = p)
     let def_true p = id_ax prop_calculus <@ true = (%p = %p) @> 
@@ -642,6 +644,7 @@ module PropCalculus =
         ident_eq <@ (%p ||| %q) = (%p ||| %q) @> |> LR
     ]
 
+    /// p ||| (q ==> p) = (q ==> p)
     let ident_or_conseq p q = ident prop_calculus <@ %p ||| (%q ==> %p) = (%q ==> %p) @> [
         def_implies |> R |> L'
         distrib |> L
@@ -741,16 +744,19 @@ module PropCalculus =
         idemp_or q |> L
     ]
 
+    /// (p ||| (q |&| r)) ==> (p ||| q)
     let weaken_or_and p q r = theorem prop_calculus <@ (%p ||| (%q |&| %r)) ==> (%p ||| %q) @> [
         distrib |> L
         strenghten_and <@ %p ||| %q @> <@ %p ||| %r @> |> Lemma
     ]
 
+    /// (p |&| q) ==> (p |&| (q ||| r))
     let weaken_and_and_or p q r = theorem prop_calculus <@ (%p |&| %q)  ==> (%p |&| (%q ||| %r)) @> [
         distrib |> R
         weaken_or <@ %p |&| %q @> <@ %p |&| %r @> |> Lemma
     ]
 
+    /// p |&| (p ==> q) ==> q
     let modus_ponens' p q = theorem prop_calculus <@ %p |&| (%p ==> %q) ==> %q @> [
         ident_and_implies p q |> L
         commute_and p q |> LR
@@ -838,6 +844,7 @@ module PropCalculus =
         strenghten_and r <@ %p |&| %q @> |> Lemma
     ]
 
+    /// p ==> (q ==> p)
     let trans_implies_implies p q = theorem prop_calculus <@ %p ==> (%q ==> %p) @> [
         def_implies |> R
         def_implies |> LR
@@ -861,8 +868,8 @@ module PropCalculus =
         weaken_or <@ %p ==> %q @> r |> Lemma
     ]
 
-    let symbols = [ 
-        "p", "\u1D45D"
-        "q", "\u1D45E"
-    ]
- 
+    /// (p ==> q) = (p ==> p ==> q) 
+    let assume p q = ident prop_calculus <@ %p ==> %q = (%p ==> (%p ==> %q)) @> [
+        idemp_and p |> Commute |> L
+        shunt |> L
+    ] 

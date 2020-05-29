@@ -10,8 +10,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
     member val Rules = rules
     member val PrintFormula = defaultArg formula_printer Display.print_formula
     member x.AxiomaticallyEquiv a  = a |> body |> expand |> x.Axioms |> Option.isSome  
+    
     static member (|-) ((c:Theory), a) = c.AxiomaticallyEquiv a
-
     /// The default logical theory used in Sylph proofs.
     static member val S =     
         let reduce = Admit("Reduce logical constants in (expression)", EquationalLogic._reduce_constants)
@@ -58,6 +58,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let trading = Admit("Move the quantifier's range into its body in (expression)", EquationalLogic._trading)
 
+        let distrib_forall = Admit("||| distributes over forall in (expression)", EquationalLogic._distrib_forall)
+
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc
@@ -81,6 +83,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             distrib_implies
             empty_range
             trading
+            distrib_forall
         ])
 
 and Axioms = (Expr -> AxiomDescription option)
@@ -88,19 +91,22 @@ and Axioms = (Expr -> AxiomDescription option)
 and Rule = 
     | Admit of string * (Expr -> Expr) 
     | Derive of string * Proof * (Proof -> Expr -> Expr)
+    | Deduce of string * Proof * (Proof -> Expr -> Expr)
 with
     member x.Name = 
         match x with 
         | Admit(n, _) -> n
         | Derive(n, _, _) -> n
+        | Deduce(n, _, _) -> n
     member x.Apply = 
         match x with
         | Admit(_, r) -> r
         | Derive(_, p, r) -> r p
+        | Deduce(_, p, r) -> r p
        
 and Rules = Rule list 
 
-and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
+and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     /// The logical theory used for the proof.
     static let mutable logic:Theory = Theory.S
     
@@ -184,11 +190,16 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
                                 failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
             | Derive(n, p, _) -> 
                 if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
+                    failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
+            | Deduce(n, p, _) -> 
+                if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
                     failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n                  
+
         let _a = 
             match step.Rule with
             | Admit(_,_) -> step.Apply _state
             | Derive(_,_,_) -> step.Apply _state
+            | Deduce(_,_,_) -> step.Apply _state
         let msg =
             match step.Rule with
             | Admit(_, _) -> 
@@ -197,6 +208,11 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression")) 
             | Derive(_,_,_) ->
+                if not ((sequal _a _state))  then
+                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
+                else
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
+            | Deduce(_,_,_) ->
                 if not ((sequal _a _state))  then
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
@@ -231,8 +247,7 @@ and Proof internal(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:b
     member val IsLemma = l
     member val Theory = theory
     member val Steps = steps
-    abstract Complete:bool
-    default val Complete = logic |- _state || theory |- _state
+    abstract Complete:bool; default val Complete = logic |- _state || theory |- _state
     member val State = state
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder

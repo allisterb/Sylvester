@@ -113,6 +113,12 @@ module EquationalLogic =
         | Equals(Exists(_, x, R, P), Exists(_, x', Bool true, And(R', P'))) when vequal' x x' && sequal2 R P R' P' -> pattern_desc "Trading" <@ () @> |> Some
         | _ -> None
               
+    let (|ForAllDistrib|_|) =
+        function
+        | Equals(Or(P1, ForAll(_, x1, R1, Q1)), ForAll(_, x2, R2, Or(P2, Q2))) 
+            when not_occurs_free x1 P1 && vequal' x1 x2 && sequal P1 P2 && sequal2 Q1 R1 Q2 R2 -> pattern_desc "Distributivity of forall" <@ () @> |> Some
+        | _ -> None
+    
     let equational_logic_axioms = 
         function
         | SEqual x
@@ -144,7 +150,8 @@ module EquationalLogic =
         | QuantifierDistrib x 
         | RangeSplit x 
         | Interchange x 
-        | Trading x -> Some (desc x) 
+        | Trading x 
+        | ForAllDistrib x -> Some (desc x) 
         | _ -> None
 
     (* Expression functions for admissible rules *) 
@@ -213,6 +220,7 @@ module EquationalLogic =
         function
         | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | Equals(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
+        | And(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | expr ->expr
 
     let rec _excluded_middle =
@@ -354,6 +362,11 @@ module EquationalLogic =
 
     let _trading = 
         function
-        | ForAll(_, x, R, P) -> let v = vars_to_tuple x in call <@ forall' @> (v::(<@@ (%%R:bool) ==> (%%P:bool)@@>)::[])
-        | Exists(_, x, R, P) -> let v = vars_to_tuple x in call <@ exists' @> (v::(<@@ (%%R:bool) |&| (%%P:bool)@@>)::[])
+        | ForAll(_, x, R, P) -> let v = vars_to_tuple x in call <@ forall @> (v::(<@@ true @@>)::(<@@ (%%R:bool) ==> (%%P:bool)@@>)::[])
+        | Exists(_, x, R, P) -> let v = vars_to_tuple x in call <@ exists @> (v::(<@@ true @@>)::(<@@ (%%R:bool) |&| (%%P:bool)@@>)::[])
+        | expr -> expr
+
+    let _distrib_forall =
+        function
+        | Or(P, ForAll(_, x, R, Q)) when not_occurs_free x P -> let v = vars_to_tuple x in call <@ forall @> (v::R::(<@@ %%P ||| %%Q @@>)::[])
         | expr -> expr

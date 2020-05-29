@@ -17,7 +17,6 @@ module Display =
         | :? System.Type as t ->
             let a = t.GetCustomAttributes(typeof<SymbolAttribute>, true) in
             if a = null || a.Length = 0 then None else let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
-        | :? Expr as expr when Symbols.BuiltIn.ContainsKey (src expr) -> Symbols.BuiltIn.[src expr] |> Some
         | :? string as s when Symbols.Greek.ContainsKey s && transliterateGreekSymbols -> Symbols.Greek.[s] |> Some
         | :? string as s -> s |> Some
         | _ -> None
@@ -30,7 +29,7 @@ module Display =
 
     let rec print_formula = 
         function
-        | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200 %s | %s)" v (body |> print_formula)
+        | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (body |> print_formula)
         | ForAll(_, VariableDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (range |> print_formula) (body |> print_formula)
         | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203 %s | %s)" v (body |> print_formula)
         | Exists(_, VariableDisplay v, range, body) -> sprintf "(\u2203 %s | %s : %s)" v (range |> print_formula) (body |> print_formula)

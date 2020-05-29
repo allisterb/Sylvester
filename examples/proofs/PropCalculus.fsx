@@ -6,6 +6,7 @@ open PropCalculus
 /// true = (p = p)
 let p,q,r,s = var4<bool>
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
+let P,N,A,S = var4<bool>
 
 let ``3.52`` = proof prop_calculus <@p = q = ((p |&| q) ||| (not p |&| not q))@> [
     ident_or_or_not <@ p |&| q@> <@ not p |&| not q@> |> R

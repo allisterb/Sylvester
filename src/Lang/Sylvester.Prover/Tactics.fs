@@ -144,7 +144,7 @@ module Tactics =
          let stmt = 
              match l with 
              | Equals(l1, Equals(r1, r2)) -> <@@ (((%%l1:bool) = (%%r1:bool)) = (%%r2:bool)) = (%%r:bool) @@>
-             | _ -> failwith "This theorem is not an identity."
+             | _ -> failwith "The LHS of this theorem is not an identity."
          let p = Proof(stmt, proof.Theory, L rassoc :: proof.Steps, true) in 
          Theorem(stmt, p) |> Ident
 
@@ -157,7 +157,7 @@ module Tactics =
          let stmt = 
              match r with 
              | Equals(l1, Equals(r1, r2)) -> <@@ (%%l:bool) = (((%%l1:bool) = (%%r1:bool)) = (%%r2:bool)) @@>
-             | _ -> failwith "This theorem is not an identity."
+             | _ -> failwith "The RHS of this theorem is not an identity."
          let p = Proof(stmt, proof.Theory, R rassoc :: proof.Steps, true) in 
          Theorem(stmt, p) |> Ident
 
@@ -184,3 +184,12 @@ module Tactics =
         ]
 
         lhs, rhs, p
+
+    let Assume idemp (proof:Proof) =
+        //let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+        let ant,con = 
+            match proof.Stmt with 
+            | Implies(l, r) -> l, r
+            | _ -> failwith "This theorem does not have an antecedent."
+        let stmt = <@@ ((%%ant:bool) |&| (%%ant:bool)) ==> (%%con:bool) @@> 
+        Proof(stmt, proof.Theory, L idemp :: proof.Steps, true)  
