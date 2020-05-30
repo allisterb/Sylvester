@@ -97,7 +97,7 @@ with
         match x with 
         | Admit(n, _) -> n
         | Derive(n, _, _) -> n
-        | Deduce(n, _, _) -> n
+        | Deduce(n,_,_) -> n
     member x.Apply = 
         match x with
         | Admit(_, r) -> r
@@ -118,6 +118,11 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
+    let current_ant, current_conseq, current_conjuncts = 
+        match a with 
+        | Argument (ant, con, conj) -> (Some ant, Some con, Some conj)
+        | _ -> None, None, None
+
     let print_formula = theory.PrintFormula
     let logBuilder = System.Text.StringBuilder()
     let l = defaultArg lemma false
@@ -169,7 +174,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             sprintf "|- %s. [%s]" (print_formula a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
-            
         else if logic |- a   then
             let axeq = logic.Axioms a
             sprintf "|- %s. [%s]" (print_formula a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
@@ -186,20 +190,29 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
         let stepName = stepNames.[stepCount]
         do 
             match step.Rule with
-            | Admit(n, _) -> if (not (ruleNames |> List.contains (n))) then 
-                                failwithf "Rule at step %i (%s) is not a logical inference rule or part of the rules of the current theory." stepId n
+            | Admit(n,_) -> if (not (ruleNames |> List.contains (n))) then 
+                                failwithf "Rule at step %i (%s) is not an admitted logical inference rule or part of the admitted rules of the current theory." stepId n
             | Derive(n, p, _) -> 
                 if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
-                    failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n
-            | Deduce(n, p, _) -> 
+                    failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n
+            | Deduce(n,p,_) -> 
+                if current_ant.IsNone then failwithf "Deduction rule at step %i (%s) cannot be used since %s is not a logical implication with an antecedent and consequent." stepId n (print_formula a)
                 if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
-                    failwithf "Substitution rule at step %i (%s) does not use the rules of L or the current theory." stepId n                  
-
+                    failwithf "Deduction rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n                  
         let _a = 
             match step.Rule with
             | Admit(_,_) -> step.Apply _state
             | Derive(_,_,_) -> step.Apply _state
-            | Deduce(_,_,_) -> step.Apply _state
+            | Deduce(n,p,_) -> 
+                let ant,con,conj = 
+                    match p.Stmt with 
+                    | Argument(a, c, cj) -> a, c, cj 
+                    | _ -> failwithf "%s is not a logical implication with an antecedent and consequent." (print_formula p.Stmt) 
+                //let target = List.last conj
+                //let c' = conj |> List.rev |> List.tail
+                if conj |> List.exists(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
+                    failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." (conj |> List.find(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
+                step.Apply _state
         let msg =
             match step.Rule with
             | Admit(_, _) -> 
@@ -348,8 +361,35 @@ module LogicalRules =
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
           
+    /// Rule of modus ponens: Substitute p |&| p ==> q with true.
+    let Subst' (p:Proof) =
+        let rec subst (p:Proof)  = 
+            let con= 
+                match p.Stmt with 
+                | Argument(_, c, _) -> c
+                | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
+            let target = con
+            let replacement = <@@ true @@>
+            function
+            | l when sequal l target -> replacement
+            | expr -> traverse expr (subst p)
+        if not p.Complete then 
+                failwithf "The proof of %A is not complete" (p.Stmt |> p.Theory.PrintFormula)  
+        let ant,con,conj = 
+            match p.Stmt with 
+            | Argument(a, c, j) -> a, c, j 
+            | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
+        let target = conj |> List.last
+        let replacement = con
+        Deduce(sprintf "Deduce %s from %s in (expression)" (p.Theory.PrintFormula replacement) (p.Theory.PrintFormula ant), p, fun proof e -> subst proof e)
+        //let _conj = List.fold(fun s c -> if s <> "" then (sprintf " and %s" src c) else (sprintf " %s" src c) 
+        //let r = sprintf "Substitute %s \u2261 %s into (expression)." (p.Theory.PrintFormula target) (p.Theory.PrintFormula replacement)
+        //Deduce((), target, replacement, (fun t r e -> subst t r e))
+
+    let Deduce(t:Theorem) = t.Proof |> Subst'
+
 [<AutoOpen>]
-module Proof =        
+module Proof = 
     let proof (theory:Theory) (e:Expr<'t>) steps =         
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
@@ -358,6 +398,10 @@ module Proof =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps))
+    let lemma (theory:Theory) (e:Expr<'t>) steps  = 
+        let f = e |> expand |> body
+        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
+        Theorem(f, Proof(f, theory, steps, true))
     let axiom (theory:Theory) (e:Expr<'t>)  = 
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)

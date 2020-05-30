@@ -11,10 +11,8 @@ open FSharp.Quotations.ExprShape
                 
 [<AutoOpen>] 
 module FsExpr =
-    let (!!) x = unbox x
-
     let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
-    
+     
     let getFieldInfo = function
     | FieldGet (_, fieldInfo) -> fieldInfo
     | _ -> failwith "Expression is not a field."

@@ -50,6 +50,11 @@ module Patterns =
         | And(L, R) -> get_conjuncts L @ get_conjuncts R
         | expr  -> [expr]
 
+    let (|Argument|_|) =
+        function
+        | Implies(a, c) -> (a, c, get_conjuncts a) |> Some
+        | _ -> None
+
     let (|Add|_|) =
         function
         | SpecificCall <@@ (+) @@> (None,_,l::r::[]) -> Some(l, r)
