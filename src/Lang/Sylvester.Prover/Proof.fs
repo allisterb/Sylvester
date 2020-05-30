@@ -10,7 +10,6 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
     member val Rules = rules
     member val PrintFormula = defaultArg formula_printer Display.print_formula
     member x.AxiomaticallyEquiv a  = a |> body |> expand |> x.Axioms |> Option.isSome  
-    
     static member (|-) ((c:Theory), a) = c.AxiomaticallyEquiv a
     /// The default logical theory used in Sylph proofs.
     static member val S =     
@@ -198,7 +197,10 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             | Deduce(n,p,_) -> 
                 if current_ant.IsNone then failwithf "Deduction rule at step %i (%s) cannot be used since %s is not a logical implication with an antecedent and consequent." stepId n (print_formula a)
                 if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
-                    failwithf "Deduction rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n                  
+                    failwithf "Deduction rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n
+                match step with
+                | R _ -> ()
+                | _ -> failwith "A deduction rule can only be applied to the consequent of a logical implication."
         let _a = 
             match step.Rule with
             | Admit(_,_) -> step.Apply _state
@@ -211,7 +213,8 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 //let target = List.last conj
                 //let c' = conj |> List.rev |> List.tail
                 if conj |> List.exists(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
-                    failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." (conj |> List.find(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
+                    failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
+                        (conj |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
                 step.Apply _state
         let msg =
             match step.Rule with
@@ -361,32 +364,56 @@ module LogicalRules =
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
           
-    /// Rule of modus ponens: Substitute p |&| p ==> q with true.
+    /// Rule of modus ponens: Substitute the consequent of a theorem p ==> q with true in another theorem proof where p is one of the conjuncts of the antecedent.
     let Subst' (p:Proof) =
         let rec subst (p:Proof)  = 
             let con= 
                 match p.Stmt with 
                 | Argument(_, c, _) -> c
                 | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
-            let target = con
-            let replacement = <@@ true @@>
             function
-            | l when sequal l target -> replacement
+            | l when sequal l con -> <@@ true @@>
             | expr -> traverse expr (subst p)
         if not p.Complete then 
                 failwithf "The proof of %A is not complete" (p.Stmt |> p.Theory.PrintFormula)  
-        let ant,con,conj = 
+        let ant,con = 
             match p.Stmt with 
-            | Argument(a, c, j) -> a, c, j 
+            | Argument(a, c, _) -> a, c
             | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
-        let target = conj |> List.last
-        let replacement = con
-        Deduce(sprintf "Deduce %s from %s in (expression)" (p.Theory.PrintFormula replacement) (p.Theory.PrintFormula ant), p, fun proof e -> subst proof e)
-        //let _conj = List.fold(fun s c -> if s <> "" then (sprintf " and %s" src c) else (sprintf " %s" src c) 
-        //let r = sprintf "Substitute %s \u2261 %s into (expression)." (p.Theory.PrintFormula target) (p.Theory.PrintFormula replacement)
-        //Deduce((), target, replacement, (fun t r e -> subst t r e))
+        Rule.Deduce(sprintf "Deduce %s from %s and substitute with true in (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant), p, fun proof e -> subst proof e) |> R
 
+    /// Substitute the consequent of a theorem with a completed proof in another proof with true.
     let Deduce(t:Theorem) = t.Proof |> Subst'
+
+    /// Rule of modus ponens:  Substitute the LHS q of an identity p ==> (q = r) with the RHS r in another theorem proof where p is one of the conjuncts of the antecedent.
+    let Subst'' (p:Proof) =
+        let rec subst (p:Proof)  = 
+            let con = 
+                match p.Stmt with 
+                | Argument(_, c, _) -> c
+                | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
+            let lcon, rcon = 
+                match con with
+                | Equals(l, r) -> l, r
+                | _ -> failwithf "The theorem %s is not an identity." (con |> p.Theory.PrintFormula)
+            function
+            | l when sequal l lcon -> rcon
+            | expr -> traverse expr (subst p)
+
+        if not p.Complete then 
+                failwithf "The proof of %A is not complete" (p.Stmt |> p.Theory.PrintFormula)  
+        let ant,con = 
+            match p.Stmt with 
+            | Argument(a, c, _) -> a, c
+            | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
+        let lcon, rcon = 
+            match con with
+            | Equals(l, r) -> l, r
+            | _ -> failwithf "The theorem %s is not an identity." (con |> p.Theory.PrintFormula)
+    
+        Rule.Deduce(sprintf "Deduce %s from %s and substitute %s with %s in (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant) (p.Theory.PrintFormula lcon) (p.Theory.PrintFormula rcon), p, fun proof e -> subst proof e) |> R
+
+    let Deduce'(t:Theorem) = t.Proof |> Subst''
 
 [<AutoOpen>]
 module Proof = 
@@ -398,15 +425,17 @@ module Proof =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps))
-    let lemma (theory:Theory) (e:Expr<'t>) steps  = 
+    let theorem' (theory:Theory) (e:Expr<'t>) steps  = 
+        let f = e |> expand |> body
+        do match e with 
+            | Argument _ -> if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
+            | _ -> failwithf "The formula %s is not a logical implication." (e.Raw |> theory.PrintFormula)
+        Theorem(f, Proof(f, theory, steps))
+    let lemma (theory:Theory) (e:Expr<'t>) steps =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
-        Theorem(f, Proof(f, theory, steps, true))
-    let axiom (theory:Theory) (e:Expr<'t>)  = 
-        let f = e |> expand |> body
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
-        Theorem(f, Proof (f, theory, [], true))
-    
+        Theorem(f, Proof(f, theory, steps))
+
     (* Identities *)
     let ident (theory:Theory) (e:Expr<'t>) steps =
         let f = e |> expand |> body

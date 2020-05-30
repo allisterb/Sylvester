@@ -184,12 +184,3 @@ module Tactics =
         ]
 
         lhs, rhs, p
-
-    let Assume idemp (proof:Proof) =
-        //let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
-        let ant,con = 
-            match proof.Stmt with 
-            | Implies(l, r) -> l, r
-            | _ -> failwith "This theorem does not have an antecedent."
-        let stmt = <@@ ((%%ant:bool) |&| (%%ant:bool)) ==> (%%con:bool) @@> 
-        Proof(stmt, proof.Theory, L idemp :: proof.Steps, true)  
