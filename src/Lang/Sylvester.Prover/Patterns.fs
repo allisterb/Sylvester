@@ -47,7 +47,7 @@ module Patterns =
 
     let rec get_conjuncts =
         function
-        | And(L, R) -> get_conjuncts L @ get_conjuncts R
+        | And(L, R) as c -> [c] @ get_conjuncts L @ get_conjuncts R
         | expr  -> [expr]
 
     let (|Argument|_|) =

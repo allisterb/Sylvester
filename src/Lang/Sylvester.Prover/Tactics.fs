@@ -5,6 +5,8 @@ open Patterns
 
 [<AutoOpen>]
 module ProofOps =
+    let print_formula (p:Proof) = p.Theory.PrintFormula
+    
     let last_state (p:Proof) = p.LastState
 
     let left_state p = p |> last_state |> expand_left
@@ -14,6 +16,11 @@ module ProofOps =
     let left_src p = p |> left_state |> src
 
     let right_src p = p |> right_state |> src
+
+    let last_conjuncts (p:Proof) = 
+        match p.LastConjuncts with
+        | Some conj -> conj |> List.map (fun c -> c |> print_formula p)
+        | _ -> []
 
 module Tactics = 
     /// The constant true is a theorem

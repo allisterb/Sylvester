@@ -583,6 +583,15 @@ module PropCalculus =
         golden_rule' p q |> Commute |> CommuteL |> LeftAssocL |> L
     ]
 
+    let commute_and_and p q r s =  ident prop_calculus <@ ((%p |&| %q) |&| (%r |&| %s)) = ((%p |&| %r) |&| (%q |&| %s)) @> [
+        right_assoc_and p q <@ %r |&| %s @> |> L
+        left_assoc_and q r s |>  L
+        commute_and q r |> L
+        right_assoc_and r q s |> L
+        left_assoc_and p r <@ %q |&| %s @> |> L
+    ]
+
+
     /// p ==> q = (p ||| q = q)
     let def_implies' p q = id_ax prop_calculus <@ (%p ==> %q) = (%p ||| %q = %q) @>
 
@@ -873,9 +882,3 @@ module PropCalculus =
         def_implies' p q |> Commute |> R
         weaken_or <@ %p ==> %q @> r |> Lemma
     ]
-
-    /// (p ==> q) = (p ==> p ==> q) 
-    let assume p q = ident prop_calculus <@ %p ==> %q = (%p ==> (%p ==> %q)) @> [
-        idemp_and p |> Commute |> L
-        shunt |> L
-    ] 

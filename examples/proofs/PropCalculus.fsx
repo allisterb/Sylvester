@@ -206,3 +206,15 @@ let ``4.1`` = proof prop_calculus <@ (p ==> q) ==> ((p ||| r) ==> (q ||| r)) @> 
     def_implies' p' q' |> Commute |> R
     weaken_or <@ p ==> q @> r' |> Lemma
 ]
+
+let ``4.4`` = proof prop_calculus <@ p |&| q ==> (p = q) @> [
+    deduce <@ p |&| q ==> p @> [
+        strenghten_and p' q' |> Lemma
+    ]
+    deduce <@ p |&| q ==> q @> [
+        commute |> L
+        strenghten_and q' p' |> Lemma
+    ]
+    def_true <@ true @> |> Commute |> R
+    implies_true <@ p |&| q @> |> Lemma
+]
