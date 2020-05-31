@@ -117,11 +117,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
-    let current_ant, current_conseq, current_conjuncts = 
-        match a with 
-        | Argument (ant, con, conj) -> (Some ant, Some con, Some conj)
-        | _ -> None, None, None
-
     let print_formula = theory.PrintFormula
     let logBuilder = System.Text.StringBuilder()
     let l = defaultArg lemma false
@@ -184,6 +179,10 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
 
     // Iterate through proof steps
     do while stepCount < steps.Length do
+        let current_ant, current_conseq, current_conjuncts = 
+            match _state with 
+            | Argument (ant, con, conj) -> (Some ant, Some con, Some conj)
+            | _ -> None, None, None
         let step = steps.[stepCount]
         let stepId = stepCount + 1
         let stepName = stepNames.[stepCount]
@@ -209,10 +208,8 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 let ant,con,conj = 
                     match p.Stmt with 
                     | Argument(a, c, cj) -> a, c, cj 
-                    | _ -> failwithf "%s is not a logical implication with an antecedent and consequent." (print_formula p.Stmt) 
-                //let target = List.last conj
-                //let c' = conj |> List.rev |> List.tail
-                if conj |> List.exists(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
+                    | _ -> failwithf "%s is not a logical implication with an antecedent and consequent." (print_formula p.Stmt)
+                if conj |> List.forall(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
                     failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
                         (conj |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
                 step.Apply _state
@@ -249,7 +246,11 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
         else
             sprintf "Proof incomplete. Current state: %s." (print_formula _state) |> prooflog
             stepCount <- stepCount + 1
-    
+    let last_ant, last_conseq, last_conjuncts = 
+        match _state with 
+        | Argument (ant, con, conj) -> (Some ant, Some con, Some conj)
+        | _ -> None, None, None
+
     member val Stmt = a
     member val LastState = _state
     member val L = 
@@ -260,6 +261,9 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
         match a with
         | Equals(_, r) -> r
         | _ -> a
+    member val LastAntecedent = last_ant
+    member val LastConseq = last_conseq
+    member val LastConjuncts = last_conjuncts
     member val IsLemma = l
     member val Theory = theory
     member val Steps = steps
@@ -435,7 +439,7 @@ module Proof =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps))
-
+    
     (* Identities *)
     let ident (theory:Theory) (e:Expr<'t>) steps =
         let f = e |> expand |> body
@@ -446,3 +450,8 @@ module Proof =
     let ident' steps e = ident Proof.Logic e steps
     let id_ax theory e = ident theory e []
     let id_ax' e = id_ax Proof.Logic e
+
+    (* Deductions *)
+    let deduce (e:Expr<'t>) steps = theorem' Theory.S e steps |> Deduce
+
+    let deduce' (e:Expr<'t>) steps = theorem' Theory.S e steps |> Deduce'

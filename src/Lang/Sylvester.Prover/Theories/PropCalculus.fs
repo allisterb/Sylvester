@@ -146,16 +146,6 @@ module PropCalculus =
     
     let MutualImplication stmt = Tactics.MutualImplication prop_calculus Taut mutual_implication stmt
 
-    let lemma' (e:Expr<'t>) steps  =     
-        let f = e |> expand |> body
-        do match e with 
-            | Patterns.Argument _ -> if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (prop_calculus.PrintFormula f)
-            | _ -> failwithf "The formula %s is not a logical implication." (e.Raw |> prop_calculus.PrintFormula)
-        Theorem(f, Proof(f, prop_calculus, steps, true)) |> Lemma
-
-    let deduce (e:Expr<'t>) steps = theorem' prop_calculus e steps |> Deduce
-
-    let deduce' (e:Expr<'t>) steps = theorem' prop_calculus e steps |> Deduce'
     (* Theorems *)
     
     /// true = (p = p)
