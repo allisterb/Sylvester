@@ -109,7 +109,8 @@ module PropCalculus =
 
     /// If A is a theorem then so is A = true.
     let Taut =  
-        let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L commute; LR right_assoc], true)) |> Ident  
+        let ieq p = 
+            let stmt = <@@ ((%%p) = true) = (%%p) @@> in Theorem(stmt, Proof (stmt, prop_calculus, [L commute; LR right_assoc], true)) |> Ident  
         Tactics.Taut ieq
 
     /// If A = B is a theorem then so is (A = B) = true.
@@ -289,7 +290,6 @@ module PropCalculus =
 
     /// (p ||| q) = (p ||| r) = p ||| (q ||| r)
     let collect_or_or p q r = distrib_or_or p q r |> Commute
-
 
     /// not (p = q) = not p = q
     let distrib_not p q = ident prop_calculus <@ (not (%p = %q)) = (not %p = %q) @> [LR right_assoc]
@@ -583,6 +583,7 @@ module PropCalculus =
         golden_rule' p q |> Commute |> CommuteL |> LeftAssocL |> L
     ]
 
+    /// p |&| q |&| (r |&| s) = p |&| r |&| (q |&| s) 
     let commute_and_and p q r s =  ident prop_calculus <@ ((%p |&| %q) |&| (%r |&| %s)) = ((%p |&| %r) |&| (%q |&| %s)) @> [
         right_assoc_and p q <@ %r |&| %s @> |> L
         left_assoc_and q r s |>  L
@@ -590,7 +591,6 @@ module PropCalculus =
         right_assoc_and r q s |> L
         left_assoc_and p r <@ %q |&| %s @> |> L
     ]
-
 
     /// p ==> q = (p ||| q = q)
     let def_implies' p q = id_ax prop_calculus <@ (%p ==> %q) = (%p ||| %q = %q) @>

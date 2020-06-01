@@ -54,6 +54,8 @@ module EquationalLogic =
                                                                 pattern_desc "Implication" <@fun x y-> (x ==> y) = ((x ||| y) = y)@> |> Some
         | Equals(Conseq(a1, a2), Implies(a3, a4)) when sequal2 a1 a2 a4 a3 -> 
                                                                 pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @> |> Some
+        // This isn't in the original axioms for E but is included in S for convenience
+        | Implies(_, Bool true) -> pattern_desc "Implication" <@fun x -> x ==> true @> |> Some
         | _ -> None
 
     /// (e = f) ==> E(e) = E(f) 
@@ -64,7 +66,6 @@ module EquationalLogic =
             pattern_desc "Leibniz" <@fun p q E  -> (p = q) ==> E(p) = E(q) @> |> Some
         | Implies(Implies(R , Equals(Var p, Var q)), Equals(Quantifier(_, _, R1, P), Quantifier(_, _, R2, P'))) when sequal R R1 && sequal R1 R2 && sequal (replace_var_var p q P) P' -> 
             pattern_desc "Leibniz" <@fun p q E  -> (p = q) ==> E(p) = E(q) @> |> Some
-
         | _ -> None
     
     let (|EmptyRange|_|) =

@@ -272,7 +272,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     member val Subst = steps |> List.map (fun s  -> s.Apply) |> List.fold(fun e r -> e >> r) id
     member val Log = logBuilder
     member val Msg = prooflog
-    
     /// Proof log level.
     static member LogLevel with get() = logLevel and set(v) = logLevel <- v
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
@@ -354,6 +353,25 @@ and Theorem internal (expr: Expr, proof:Proof) =
     member val Name = expr |> print_formula
 
 [<AutoOpen>]
+module ProofOps =
+    let print_formula (p:Proof) = p.Theory.PrintFormula
+    
+    let last_state (p:Proof) = p.LastState
+
+    let left_state p = p |> last_state |> expand_left
+
+    let right_state p = p |> last_state |> expand_right
+
+    let left_src p = p |> left_state |> src
+
+    let right_src p = p |> right_state |> src
+
+    let last_conjuncts (p:Proof) = 
+        match p.LastConjuncts with
+        | Some conj -> conj |> List.map (fun c -> c |> print_formula p)
+        | _ -> []
+
+[<AutoOpen>]
 module LogicalRules =     
     /// Leibniz's rule : A behaves equivalently in a formula if we substitute a part of A: a with x when x = a.
     let Subst (p:Proof) = 
@@ -368,7 +386,7 @@ module LogicalRules =
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
           
-    /// Rule of modus ponens: Substitute the consequent of a theorem p ==> q with true in another theorem proof where p is one of the conjuncts of the antecedent.
+    /// Rule of modus ponens: Substitute the consequent of a proven theorem p ==> q with true in a proof where p is one of the conjuncts of the antecedent.
     let Subst' (p:Proof) =
         let rec subst (p:Proof)  = 
             let con= 
@@ -386,10 +404,10 @@ module LogicalRules =
             | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
         Rule.Deduce(sprintf "Deduce %s from %s and substitute with true in (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant), p, fun proof e -> subst proof e) |> R
 
-    /// Substitute the consequent of a theorem with a completed proof in another proof with true.
+    /// Substitute the consequent of a proven theorem p ==> q with true in a proof where p is one of the conjuncts of the antecedent.
     let Deduce(t:Theorem) = t.Proof |> Subst'
 
-    /// Rule of modus ponens:  Substitute the LHS q of an identity p ==> (q = r) with the RHS r in another theorem proof where p is one of the conjuncts of the antecedent.
+    /// Rule of modus ponens: Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Subst'' (p:Proof) =
         let rec subst (p:Proof)  = 
             let con = 
@@ -417,6 +435,7 @@ module LogicalRules =
     
         Rule.Deduce(sprintf "Deduce %s from %s and substitute %s with %s in (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant) (p.Theory.PrintFormula lcon) (p.Theory.PrintFormula rcon), p, fun proof e -> subst proof e) |> R
 
+    /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
 [<AutoOpen>]
@@ -453,5 +472,4 @@ module Proof =
 
     (* Deductions *)
     let deduce (e:Expr<'t>) steps = theorem' Theory.S e steps |> Deduce
-
     let deduce' (e:Expr<'t>) steps = theorem' Theory.S e steps |> Deduce'
