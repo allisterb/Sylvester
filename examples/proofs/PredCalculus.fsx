@@ -46,3 +46,16 @@ let ``9.6`` = proof pred_calculus <@ forall x N P = (P ||| forall' x (not N))  @
     commute_or P' <@ not N @> |> R
     ident_implies_not_or N' P' |> Commute |> R 
 ]
+
+let ``9.7`` = proof pred_calculus <@ not (forall' x (not N)) ==> (forall x N (P |&| Q) = (P |&| forall x N Q)) @> [
+    let lemma1 = proof pred_calculus <@ not (forall' x (not N)) ==> (forall' x (not N) = false) @> [
+        distrib_implies_eq_and <@ (not (forall' x (not N))) @> <@ forall' x (not N) @> <@ false @> |> LR
+        contr <@ forall' x (not N) @> |> CommuteL |> L
+        zero_and <@ not (forall' x (not N)) @> |> R   
+    ]
+    distrib_forall_and' x' N' P' Q' |> R
+    trade_forall_or_not x' N' P' |> R
+    deduce' lemma1
+    ident_or P' |> R
+    def_true <@ P |&| forall x N Q @> |> Commute |> R
+] 

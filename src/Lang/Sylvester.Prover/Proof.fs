@@ -344,7 +344,7 @@ with
         | R' ra -> sprintf "right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         | LR' ra -> sprintf "left-right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         
-and Theorem internal (expr: Expr, proof:Proof) = 
+and Theorem (expr: Expr, proof:Proof) = 
     let print_formula = proof.Theory.PrintFormula
     do 
         if not (sequal expr proof.Stmt) then failwithf "The provided proof is not a proof of %s." (print_formula expr)
@@ -357,6 +357,7 @@ and Theorem internal (expr: Expr, proof:Proof) =
     member val Proof = proof
     member val Theory = proof.Theory
     member val Name = expr |> print_formula
+    new (proof:Proof) = Theorem(proof.Stmt, proof)
 
 [<AutoOpen>]
 module ProofOps =
@@ -477,5 +478,5 @@ module Proof =
     let id_ax' e = id_ax Proof.Logic e
 
     (* Deductions *)
-    let deduce (e:Expr<'t>) steps = theorem' Theory.S e steps |> Deduce
-    let deduce' (e:Expr<'t>) steps = theorem' Theory.S e steps |> Deduce'
+    let deduce p = Theorem(p) |> Deduce
+    let deduce' p = Theorem(p) |> Deduce'
