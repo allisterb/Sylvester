@@ -74,7 +74,7 @@ module EquationalLogic =
         | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "Empty Range" <@ () @> |> Some
         | _ -> None
     
-    let (|QuantifierDistrib|_|) =
+    let (|QuantifierCollect|_|) =
         function
         | Equals(And(ForAll(_, b1, R1, P), ForAll(_, b2, R2, Q)), ForAll(_, b3, R3, PQ)) 
             when 
@@ -114,7 +114,7 @@ module EquationalLogic =
         | Equals(Exists(_, x, R, P), Exists(_, x', Bool true, And(R', P'))) when vequal' x x' && sequal2 R P R' P' -> pattern_desc "Trading" <@ () @> |> Some
         | _ -> None
               
-    let (|ForAllDistrib|_|) =
+    let (|ForAllDistribOr|_|) =
         function
         | Equals(Or(P1, ForAll(_, x1, R1, Q1)), ForAll(_, x2, R2, Or(P2, Q2))) 
             when not_occurs_free x1 P1 && vequal' x1 x2 && sequal P1 P2 && sequal2 Q1 R1 Q2 R2 -> pattern_desc "Distributivity of forall" <@ () @> |> Some
@@ -148,11 +148,11 @@ module EquationalLogic =
         | OnePoint x // (8.14)
         | Nesting x
         | Renaming x
-        | QuantifierDistrib x 
+        | QuantifierCollect x 
         | RangeSplit x 
         | Interchange x 
         | Trading x 
-        | ForAllDistrib x -> Some (desc x) 
+        | ForAllDistribOr x -> Some (desc x) 
         | _ -> None
 
     (* Expression functions for admissible rules *) 
@@ -349,25 +349,25 @@ module EquationalLogic =
         | Exists(_,_,Bool false,_) -> <@@ false @@>
         | expr -> expr
 
-    let _quantifier_distrib =
+    let _collect_forall_and =
         function
-        | And(ForAll(_, b1, Bool true, P), ForAll(_, b2, Bool true, Q)) when vequal' b1 b2 -> 
-            let t = vars_to_tuple b1 in <@@ forall' (%%t) (%%P:bool) |&| (%%Q:bool) @@>
         | And(ForAll(_, b1, R, P), ForAll(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
             let t = vars_to_tuple b1 in <@@ forall (%%t) (%%R:bool) ((%%P:bool) |&| (%%Q:bool)) @@> 
-        | Or(Exists(_, b1, Bool true, P), Exists(_, b2, Bool true, Q)) when vequal' b1 b2 -> 
-            let t = vars_to_tuple b1 in <@@ exists' (%%t) (%%P:bool) ||| (%%Q:bool) @@>
+        | expr -> expr
+
+    let _collect_exists_or =
+        function
         | Or(Exists(_, b1, R, P), Exists(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
             let t = vars_to_tuple b1 in <@@ exists (%%t) (%%R:bool) ((%%P:bool) ||| (%%Q:bool)) @@> 
         | expr -> expr
 
-    let _trading = 
+    let _trade = 
         function
         | ForAll(_, x, R, P) -> let v = vars_to_tuple x in call <@ forall @> (v::(<@@ true @@>)::(<@@ (%%R:bool) ==> (%%P:bool)@@>)::[])
         | Exists(_, x, R, P) -> let v = vars_to_tuple x in call <@ exists @> (v::(<@@ true @@>)::(<@@ (%%R:bool) |&| (%%P:bool)@@>)::[])
         | expr -> expr
 
-    let _distrib_forall =
+    let _distrib_or_forall =
         function
         | Or(P, ForAll(_, x, R, Q)) when not_occurs_free x P -> let v = vars_to_tuple x in call <@ forall @> (v::R::(<@@ %%P ||| %%Q @@>)::[])
         | expr -> expr

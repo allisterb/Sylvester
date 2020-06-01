@@ -32,8 +32,8 @@ module Formula =
     let forall'<'u> (bound:'u) (body:bool) = forall bound true body
     [<Symbol"\u2203">]
     let exists<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
-    [<Symbol"\u2203">]
-    let exists'<'u> (bound:'u) (range_body:bool) = Unchecked.defaultof<bool>
+    [<ReflectedDefinition>]
+    let exists'<'u> (bound:'u) (body:bool) = exists bound true body
     
     [<Symbol"\u2211">]
     let sum<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>

@@ -55,9 +55,13 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
 
-        let trading = Admit("Move the quantifier's range into its body in (expression)", EquationalLogic._trading)
+        let trade = Admit("Move the quantifier's range into its body in (expression)", EquationalLogic._trade)
 
-        let distrib_forall = Admit("||| distributes over forall in (expression)", EquationalLogic._distrib_forall)
+        let collect_forall_and = Admit("Collect \u2200 quantifer terms distributed over \u2227 in (expression)", EquationalLogic._collect_forall_and)
+
+        let collect_exists_or = Admit("Collect exists quantifer terms distributed over or in (expression)", EquationalLogic._collect_exists_or)
+
+        let distrib_or_forall = Admit("||| distributes over \u2203 in (expression)", EquationalLogic._distrib_or_forall)
 
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
@@ -81,8 +85,10 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             subst_or_and
             distrib_implies
             empty_range
-            trading
-            distrib_forall
+            trade
+            collect_forall_and
+            collect_exists_or
+            distrib_or_forall
         ])
 
 and Axioms = (Expr -> AxiomDescription option)
