@@ -24,7 +24,7 @@ module PredCalculus =
 
     (* Theorems *)
 
-    let trading_forall x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true %N ==> %P) @>
+    let trading_forall x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true (%N ==> %P)) @>
         
     let trading_foralll_and_implies x Q N P = ident pred_calculus <@ forall x (%Q |&| %N) %P = (forall x %Q (%N ==> %P)) @> [
         trading_forall x <@ %Q |&| %N @> P |> L

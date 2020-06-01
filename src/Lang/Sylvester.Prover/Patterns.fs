@@ -45,12 +45,11 @@ module Patterns =
         | SpecificCall <@@ (<==) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
-    let rec get_conjuncts =
-        function
-        | And(L, R) as c -> [c] @ get_conjuncts L @ get_conjuncts R
-        | expr  -> [expr]
-
     let (|Argument|_|) =
+        let rec get_conjuncts =
+            function
+            | And(L, R) as c -> [c] @ get_conjuncts L @ get_conjuncts R
+            | expr  -> [expr]
         function
         | Implies(a, c) -> (a, c, get_conjuncts a) |> Some
         | _ -> None
@@ -114,7 +113,6 @@ module Patterns =
     let (|ForAll|_|) =
         function
         | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "forall" -> Some(<@@ (|&|) @@>, bound, range, body)
-        | Call(None, mi, BoundVars(bound)::body::[]) when mi.Name = "forall'" -> Some(<@@ (|&|) @@>, bound, <@@ true @@>, body)
         | _ -> None
 
     let (|Exists|_|) =
@@ -140,6 +138,11 @@ module Patterns =
         | ForAll x
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
+    
+    let (|Proposition|_|) =
+        function
+        | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
+        | _ -> None
 
     let bound_vars =
         function
@@ -154,11 +157,6 @@ module Patterns =
         | expr -> occurs vars expr
         
     let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr)
-    
-    let (|Proposition|_|) =
-        function
-        | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
-        | _ -> None
 
     (* Formula display patterns *)
 
@@ -311,5 +309,5 @@ module Patterns =
     let (|Renaming|_|) =
         function
         | Equals(Quantifier(_, x, R, P), Quantifier(_, y, R', P')) 
-            when x.Length = y.Length && not_occurs_free y R && not_occurs_free y P && sequal R' (replace_var_var' x y R) && sequal P' (replace_var_var' x y P) -> pattern_desc "Rename Variables" <@ () @> |> Some
+            when not (vequal' x y) && x.Length = y.Length && not_occurs_free y R && not_occurs_free y P && sequal R' (replace_var_var' x y R) && sequal P' (replace_var_var' x y P) -> pattern_desc "Renaming Variables" <@ () @> |> Some
         | _ -> None

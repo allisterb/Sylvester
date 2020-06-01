@@ -24,7 +24,7 @@ module Display =
     let (|VariableDisplay|_|):obj -> string option =
         function
         | :? Var as v -> v.Name |> Some
-        | :? (Var list) as vars -> vars |> List.fold(fun s v -> if s <> "" then sprintf "%s,%s" s v.Name else sprintf "%s" v.Name) "" |> Some
+        | :? (Var list) as vars -> vars.Tail |> List.fold (fun s v -> sprintf "%s,%s" s v.Name) vars.Head.Name |> Some
         | _ -> None
 
     let rec print_formula = 

@@ -113,7 +113,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     static let mutable logLevel:int = 1 
 
     let ruleNames = List.concat [
-            (logic.Rules: Rule list) |> List.map (fun (r:Rule) -> r.Name) 
+            let logicRules = (logic.Rules: Rule list) in logicRules |> List.map (fun (r:Rule) -> r.Name) 
             theory.Rules |> List.map (fun (r:Rule) -> r.Name)
         ]
     let stepNames: string list = steps |> List.map (fun r -> r.RuleName)
@@ -205,13 +205,13 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             | Admit(_,_) -> step.Apply _state
             | Derive(_,_,_) -> step.Apply _state
             | Deduce(n,p,_) -> 
-                let ant,con,conj = 
+                let conjs = 
                     match p.Stmt with 
-                    | Argument(a, c, cj) -> a, c, cj 
+                    | Argument(_, _, cj) -> cj 
                     | _ -> failwithf "%s is not a logical implication with an antecedent and consequent." (print_formula p.Stmt)
-                if conj |> List.forall(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
+                if conjs |> List.forall(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
                     failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
-                        (conj |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
+                        (conjs |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
                 step.Apply _state
         let msg =
             match step.Rule with
