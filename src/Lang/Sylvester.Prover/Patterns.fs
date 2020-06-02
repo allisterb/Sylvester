@@ -157,6 +157,8 @@ module Patterns =
         
     let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr)
 
+    let failIfOccursFree v e = if occurs_free (v |> get_vars) e  then failwithf "One of the variables %A occurs free in the expression %s." v (src e)
+    
     (* Formula display patterns *)
 
     let (|UnaryFormula|_|)  =

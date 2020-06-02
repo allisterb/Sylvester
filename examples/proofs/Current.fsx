@@ -12,3 +12,5 @@ let y' = <@ y @>
 
 let P,Q, N, A= var4<bool>
 let P',Q', N' = <@ P @>, <@ Q @>, <@ N @>
+
+ 

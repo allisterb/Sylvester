@@ -28,8 +28,6 @@ module PredCalculus =
 
     (* Theorems *)
 
-    let failIfOccursFree v e = if Patterns.occurs_free (v |> get_vars) e  then failwithf "One of the variables %A occurs free in the expression %s." v (src e)
-
     let trade_forall x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true (%N ==> %P)) @>
         
     let trade_forall_and_implies x Q N P = ident pred_calculus <@ forall x (%Q |&| %N) %P = (forall x %Q (%N ==> %P)) @> [
@@ -39,7 +37,6 @@ module PredCalculus =
     ]
 
     let trade_forall_or_not x N P = ident pred_calculus <@ forall %x %N %P = (%P ||| forall' %x (not %N))  @> [
-        do failIfOccursFree x P
         distrib_or_forall |> R
         commute_or P <@ not %N @> |> R
         ident_implies_not_or N P |> Commute |> R 
@@ -50,3 +47,34 @@ module PredCalculus =
     let collect_forall_and' x N P Q = id_ax pred_calculus <@ ((forall %x %N %P) |&| (forall %x %N %Q)) = (forall %x %N (%P |&| %Q))@>
 
     let distrib_forall_and' x N P Q = collect_forall_and' x N P Q |> Commute
+
+    let distrib_forall_and_cond x N P Q = ident pred_calculus <@ not (forall' %x (not %N)) ==> (forall %x %N (%P |&| %Q) = (%P |&| forall %x %N %Q)) @> [
+        let lemma1 = proof pred_calculus <@ not (forall' %x (not %N)) ==> (forall' %x (not %N) = false) @> [
+            distrib_implies_eq_and <@ (not (forall' %x (not %N))) @> <@ forall' %x (not %N) @> <@ false @> |> LR
+            contr <@ forall' %x (not %N) @> |> CommuteL |> L
+            zero_and <@ not (forall' %x (not %N)) @> |> R   
+        ]
+        distrib_forall_and' x N P Q |> R
+        trade_forall_or_not x N P |> R
+        deduce' lemma1
+        ident_or P |> R
+        def_true <@ %P |&| forall %x %N %Q @> |> Commute |> R
+    ]
+
+    let ident_forall_true x N = ident pred_calculus <@ (forall %x %N true) = true @> [
+        trade_forall_or_not x N <@ true @> |> L
+        commute |> L
+        zero_or <@ forall' x (not %N ) @> |> L 
+    ]
+
+    let ident_forall_eq x N P Q = ident pred_calculus <@ forall x %N (%P = %Q) ==> (forall %x %N %P  = (forall %x %N %Q)) @> [
+        distrib_implies_eq_and <@ forall %x %N (%P = %Q) @> <@ forall %x %N %P @> <@ forall %x %N %Q @> |> LR
+        collect_forall_and |> L
+        collect_forall_and |> R
+        commute_and <@ %P = %Q @> P |> L
+        commute_and <@ %P = %Q @> Q |> R
+        commute_eq P Q |> L
+        ident_and_eq P Q |> L
+        ident_and_eq Q P |> R
+        commute_and Q P |> R
+    ]
