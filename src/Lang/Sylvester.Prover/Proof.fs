@@ -55,7 +55,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
 
-        let trade = Admit("Move the quantifier's range into its body in (expression)", EquationalLogic._trade)
+        let trade_body = Admit("Move the quantifier's range into its body in (expression)", EquationalLogic._trade_body)
 
         let collect_forall_and = Admit("Collect \u2200 quantifer terms distributed over \u2227 in (expression)", EquationalLogic._collect_forall_and)
 
@@ -63,6 +63,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let distrib_or_forall = Admit("||| distributes over \u2203 in (expression)", EquationalLogic._distrib_or_forall)
 
+        let split_range_forall = Admit("Split \u2200 quantifer range in (expression)", EquationalLogic._split_range_forall)
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc
@@ -85,10 +86,11 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             subst_or_and
             distrib_implies
             empty_range
-            trade
+            trade_body
             collect_forall_and
             collect_exists_or
             distrib_or_forall
+            split_range_forall
         ])
 
 and Axioms = (Expr -> AxiomDescription option)
@@ -455,16 +457,10 @@ module Proof =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps))
-    let theorem' (theory:Theory) (e:Expr<'t>) steps  = 
-        let f = e |> expand |> body
-        do match e with 
-            | Argument _ -> if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
-            | _ -> failwithf "The formula %s is not a logical implication." (e.Raw |> theory.PrintFormula)
-        Theorem(f, Proof(f, theory, steps))
     let lemma (theory:Theory) (e:Expr<'t>) steps =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
-        Theorem(f, Proof(f, theory, steps))
+        Theorem(f, Proof(f, theory, steps, true))
     
     (* Identities *)
     let ident (theory:Theory) (e:Expr<'t>) steps =

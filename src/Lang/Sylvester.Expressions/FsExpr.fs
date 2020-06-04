@@ -122,7 +122,10 @@ module FsExpr =
 
     let not_occurs (var:Var list) (expr:Expr) = not (occurs var expr)
 
-    let vars_to_tuple (vars:Var list) = vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
+    let vars_to_tuple (vars:Var list) = 
+        match vars with
+        | v::[] -> Expr.Var v
+        | _ -> vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
     
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.

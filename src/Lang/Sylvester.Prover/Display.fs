@@ -3,6 +3,7 @@
 open System.Reflection
 open FSharp.Quotations
 open FSharp.Quotations.DerivedPatterns
+
 open Patterns
     
 module Display = 

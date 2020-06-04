@@ -10,7 +10,7 @@ module PredCalculus =
     
     let _empty_range = EquationalLogic._empty_range
 
-    let _trade = EquationalLogic._trade
+    let _trade_body = EquationalLogic._trade_body
 
     let _distrib_or_forall = EquationalLogic._distrib_or_forall
 
@@ -18,7 +18,7 @@ module PredCalculus =
     
     let empty_range = Theory.S.Rules.[20] 
 
-    let trading = Theory.S.Rules.[21]
+    let trade_body = Theory.S.Rules.[21]
 
     let collect_forall_and = Theory.S.Rules.[22]
 
@@ -26,28 +26,39 @@ module PredCalculus =
 
     let distrib_or_forall = Theory.S.Rules.[24]
 
+    let split_range_forall = Theory.S.Rules.[25]
+
     (* Theorems *)
 
-    let trade_forall x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true (%N ==> %P)) @>
+    /// forall x N P = (forall x true (N ==> P))
+    let trade_forall_implies x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true (%N ==> %P)) @>
         
+    /// forall x (Q |&| N) P = (forall x Q (N ==> P))
     let trade_forall_and_implies x Q N P = ident pred_calculus <@ forall x (%Q |&| %N) %P = (forall x %Q (%N ==> %P)) @> [
-        trade_forall x <@ %Q |&| %N @> P |> L
+        trade_forall_implies x <@ %Q |&| %N @> P |> L
         shunt' Q N P |> L
-        trade_forall x Q  <@ %N==> %P @> |> Commute |> L
+        trade_forall_implies x Q  <@ %N==> %P @> |> Commute |> L
     ]
 
-    let trade_forall_or_not x N P = ident pred_calculus <@ forall %x %N %P = (%P ||| forall' %x (not %N))  @> [
+    /// forall x N P = (P ||| forall x true (not N))
+    let trade_forall_or_not x N P = ident pred_calculus <@ forall %x %N %P = (%P ||| forall' %x (not %N)) @> [
         distrib_or_forall |> R
         commute_or P <@ not %N @> |> R
         ident_implies_not_or N P |> Commute |> R 
     ]
 
+    let split_range_forall' x N1 N2 P = id_ax pred_calculus <@ forall %x (%N1 ||| %N2) P = ((forall %x %N1 P) |&| (forall %x %N2 P)) @>
+    
+    /// P ||| forall x N Q = (forall x N (P ||| Q))
     let distrib_or_forall' x N P Q = id_ax pred_calculus <@ %P ||| forall %x %N %Q = (forall %x %N (%P ||| %Q)) @>
 
-    let collect_forall_and' x N P Q = id_ax pred_calculus <@ ((forall %x %N %P) |&| (forall %x %N %Q)) = (forall %x %N (%P |&| %Q))@>
+    /// ((forall x N P) |&| (forall x N Q)) = (forall x N (P |&| Q)) 
+    let collect_forall_and' x N P Q = id_ax pred_calculus <@ ((forall %x %N %P) |&| (forall %x %N %Q)) = (forall %x %N (%P |&| %Q)) @>
 
+    /// (forall x N (P |&| Q))  = ((forall x N P) |&| (forall x N Q))
     let distrib_forall_and' x N P Q = collect_forall_and' x N P Q |> Commute
 
+    /// not (forall x true (not N)) ==> (forall x N (P |&| Q) = (P |&| forall x N Q))
     let distrib_forall_and_cond x N P Q = ident pred_calculus <@ not (forall' %x (not %N)) ==> (forall %x %N (%P |&| %Q) = (%P |&| forall %x %N %Q)) @> [
         let lemma1 = proof pred_calculus <@ not (forall' %x (not %N)) ==> (forall' %x (not %N) = false) @> [
             distrib_implies_eq_and <@ (not (forall' %x (not %N))) @> <@ forall' %x (not %N) @> <@ false @> |> LR
@@ -61,12 +72,14 @@ module PredCalculus =
         def_true <@ %P |&| forall %x %N %Q @> |> Commute |> R
     ]
 
+    /// (forall x N true) = true
     let ident_forall_true x N = ident pred_calculus <@ (forall %x %N true) = true @> [
         trade_forall_or_not x N <@ true @> |> L
         commute |> L
         zero_or <@ forall' x (not %N ) @> |> L 
     ]
 
+    /// forall x N (P = Q) ==> (forall x N P  = (forall x N Q))
     let ident_forall_eq x N P Q = ident pred_calculus <@ forall x %N (%P = %Q) ==> (forall %x %N %P  = (forall %x %N %Q)) @> [
         distrib_implies_eq_and <@ forall %x %N (%P = %Q) @> <@ forall %x %N %P @> <@ forall %x %N %Q @> |> LR
         collect_forall_and |> L
@@ -77,4 +90,14 @@ module PredCalculus =
         ident_and_eq P Q |> L
         ident_and_eq Q P |> R
         commute_and Q P |> R
+    ]
+
+    let strenghten_forall_range_or x R1 R2 P = theorem pred_calculus <@ (forall %x (%R1 ||| %R2) %P) ==> (forall %x %R1 %P) @> [
+        split_range_forall |> L
+        strenghten_and <@ forall %x %R1 %P @> <@ forall %x %R1 %P @> |> Lemma
+    ]
+
+    let strenghten_forall_body_and x N P Q = theorem pred_calculus <@ (forall %x %N (%P |&| %Q)) ==> (forall %x %N %P) @> [
+        distrib_forall_and' x N P Q |> L
+        strenghten_and <@ forall %x %N %P @> <@ forall %x %N %Q @> |> Lemma
     ]

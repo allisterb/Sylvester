@@ -14,30 +14,30 @@ let P,N,Q,S = var4<bool>
 let P', Q', N' = <@ P @>, <@ Q @>, <@ N @>
 
 let ``9.3a`` = proof pred_calculus <@ forall x N P = (forall' x (not N ||| P)) @> [
-    trade_forall x' N' P'  |> L
+    trade_forall_implies x' N' P'  |> L
     ident_implies_not_or <@ N @> <@ P @> |> L
 ]
 
 let ``9.3b`` = proof pred_calculus <@ forall x N P = (forall' x ((N |&| P) = N)) @> [
-    trade_forall x' N' P' |> L
+    trade_forall_implies x' N' P' |> L
     ident_implies_eq_and_eq N' P' |> L
 ]
 
 let ``9.3c`` = proof pred_calculus <@ forall x N P = (forall' x ((N ||| P) = P)) @> [
-    trade_forall x' <@ N @> <@ P @>  |> L
+    trade_forall_implies x' <@ N @> <@ P @>  |> L
     PropCalculus.def_implies' N' P' |> L
 ]
 
 let ``9.4a`` = proof pred_calculus <@ forall x (Q |&| N) P = (forall x Q (N ==> P)) @> [
-    trade_forall x' <@ Q |&| N @> P' |> L
+    trade_forall_implies x' <@ Q |&| N @> P' |> L
     shunt' Q' N' P' |> L
-    trade_forall x' Q' <@ N==> P @> |> Commute |> L  
+    trade_forall_implies x' Q' <@ N==> P @> |> Commute |> L  
 ]
 
 let ``9.4b``= proof pred_calculus <@ forall x (Q |&| N) P = (forall x Q (not N ||| P)) @> [
-    trade_forall x' <@ Q |&| N @> P' |> L
+    trade_forall_implies x' <@ Q |&| N @> P' |> L
     shunt' Q' N' P' |> L
-    trade_forall x' <@ Q @> <@ N==> P @> |> Commute |> L
+    trade_forall_implies x' <@ Q @> <@ N==> P @> |> Commute |> L
     ident_implies_not_or N' P' |> L
 ]
 
@@ -76,4 +76,9 @@ let ``9.9`` = proof pred_calculus <@ forall x N (P = Q) ==> (forall x N P  = (fo
      ident_and_eq P' Q' |> L
      ident_and_eq Q' P' |> R
      commute_and Q' P' |> R
+]
+
+let ``9.10`` = proof pred_calculus <@ (forall x (Q ||| N) P) ==> (forall x Q P) @> [
+    split_range_forall |> L
+    strenghten_and <@ forall x Q P @> <@ forall x N P @> |> Lemma
 ]

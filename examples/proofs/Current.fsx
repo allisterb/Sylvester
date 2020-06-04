@@ -13,4 +13,7 @@ let y' = <@ y @>
 let P,Q, N, A= var4<bool>
 let P',Q', N' = <@ P @>, <@ Q @>, <@ N @>
 
- 
+proof pred_calculus <@ forall x (Q ||| N) P ==> (forall x Q P) @> [
+    split_range_forall |> L
+    strenghten_and <@ (forall x Q P) @> <@ (forall x N P) @> |> Lemma
+]

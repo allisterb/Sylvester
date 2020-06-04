@@ -7,7 +7,7 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
-/// Formalizes the default equational propsitional logic used by Sylph called S.
+/// Formalizes the default equational logic used by Sylph called S.
 /// Based on E: https://www.cs.cornell.edu/fbs/publications/94-1455.pdf
 ///             http://www.cs.cornell.edu/home/gries/Logic/Equational.html
 /// The number after each axiom corresponds to the number of the axiom in the textbook A Logical Approach to Discrete Math by Gries et.al.
@@ -205,7 +205,7 @@ module EquationalLogic =
         | expr -> expr
     
     /// Collect distributed logical terms.
-    let rec _collect =
+    let _collect =
         function
         | Equals(Not a1, a2)  -> <@@ not((%%a1:bool) = (%%a2:bool)) @@>
         | Equals(Or(a1, a2), Or(a3, a4)) when sequal a1 a3 -> <@@ (%%a1:bool) ||| ((%%a2:bool) = (%%a4:bool)) @@>
@@ -217,24 +217,24 @@ module EquationalLogic =
         | expr -> expr
     
     /// ||| operator is idempotent.    
-    let rec _idemp =
+    let _idemp =
         function
         | Or(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | Equals(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | And(a1, a2) when sequal a1 a2 -> <@@ (%%a2:bool) @@>
         | expr ->expr
 
-    let rec _excluded_middle =
+    let _excluded_middle =
         function
         | Or(a1, Not(a2)) when sequal a1 a2 -> <@@ true @@>
         | expr -> expr
 
-    let rec _golden_rule =
+    let _golden_rule =
         function
         | And(p, q) -> <@@ (%%p:bool) = (%%q:bool) = ((%%p:bool) ||| (%%q:bool)) @@>
         | expr -> expr
 
-    let rec _def_implies = 
+    let _def_implies = 
         function
         | Implies(p, q) -> <@@ ((%%p:bool) ||| (%%q:bool)) = (%%q:bool) @@>
         | expr -> expr
@@ -352,7 +352,7 @@ module EquationalLogic =
     let _collect_forall_and =
         function
         | And(ForAll(_, b1, R, P), ForAll(_, b2, R', Q)) when vequal' b1 b2 && sequal R R' -> 
-            let t = vars_to_tuple b1 in call <@ forall @> (t::R::(<@@(%%P:bool) |&| (%%Q:bool)@@>)::[])//<@@ forall (%%t) (%%R:bool) ((%%P:bool) |&| (%%Q:bool)) @@> 
+            let t = vars_to_tuple b1 in call <@ forall @> (t::R::(<@@(%%P:bool) |&| (%%Q:bool)@@>)::[]) 
         | expr -> expr
 
     let _collect_exists_or =
@@ -361,7 +361,7 @@ module EquationalLogic =
             let t = vars_to_tuple b1 in call <@ exists @> (t::R:: (<@@ (%%P:bool) ||| (%%Q:bool) @@>)::[]) 
         | expr -> expr
 
-    let _trade = 
+    let _trade_body = 
         function
         | ForAll(_, x, R, P) -> let v = vars_to_tuple x in call <@ forall @> (v::(<@@ true @@>)::(<@@ (%%R:bool) ==> (%%P:bool)@@>)::[])
         | Exists(_, x, R, P) -> let v = vars_to_tuple x in call <@ exists @> (v::(<@@ true @@>)::(<@@ (%%R:bool) |&| (%%P:bool)@@>)::[])
@@ -370,4 +370,12 @@ module EquationalLogic =
     let _distrib_or_forall =
         function
         | Or(P, ForAll(_, x, R, Q)) when not_occurs_free x P -> let v = vars_to_tuple x in call <@ forall @> (v::R::(<@@ %%P ||| %%Q @@>)::[])
+        | expr -> expr
+
+    let _split_range_forall = 
+        function
+        | ForAll(_, x, Or(R1, R2), P) ->  
+            let c1 = let v = vars_to_tuple x in call <@ forall @> (v::R1::P::[])
+            let c2 = let v = vars_to_tuple x in call <@ forall @> (v::R2::P::[])
+            <@@ (%%c1:bool) |&| (%%c2:bool) @@>
         | expr -> expr
