@@ -27,9 +27,7 @@ module PropCalculus =
     let _golden_rule = EquationalLogic._golden_rule
 
     let _shunt = EquationalLogic._shunt
-
-    let _modus_ponens = EquationalLogic._modus_ponens
-    
+  
     let _mutual_implication = EquationalLogic._mutual_implication
 
     let _subst_and = EquationalLogic._subst_and
@@ -79,23 +77,21 @@ module PropCalculus =
 
     let shunt = Theory.S.Rules.[10]
 
-    let modus_ponens = Theory.S.Rules.[11]
+    let mutual_implication = Theory.S.Rules.[11]
 
-    let mutual_implication = Theory.S.Rules.[12]
+    let subst_and = Theory.S.Rules.[12]
 
-    let subst_and = Theory.S.Rules.[13]
+    let subst_implies = Theory.S.Rules.[13]
 
-    let subst_implies = Theory.S.Rules.[14]
+    let subst_and_implies = Theory.S.Rules.[14]
 
-    let subst_and_implies = Theory.S.Rules.[15]
+    let subst_true = Theory.S.Rules.[15]
 
-    let subst_true = Theory.S.Rules.[16]
+    let subst_false = Theory.S.Rules.[16]
 
-    let subst_false = Theory.S.Rules.[17]
+    let subst_or_and = Theory.S.Rules.[17]
 
-    let subst_or_and = Theory.S.Rules.[18]
-
-    let distrib_implies = Theory.S.Rules.[19]
+    let distrib_implies = Theory.S.Rules.[18]
 
     (* proof step shortcuts *)
     
@@ -476,6 +472,7 @@ module PropCalculus =
         golden_rule' <@ %p ||| %q @> <@ %p ||| %r @> |> Commute |> L
     ]
 
+    /// ((p ||| q) |&| (p ||| r)) = p ||| (q |&| r)
     let collect_or_and p q r = distrib_or_and p q r |> Commute
 
     /// p |&| (q ||| r) = ((p |&| q) ||| (p |&| r))
@@ -870,6 +867,7 @@ module PropCalculus =
         commute |> L |> L' 
         idemp_or p |> R |> L'
     ]
+
     /// (p ==> q) ==> ((p ||| r) ==> (q ||| r)
     let mono_or p q r = theorem prop_calculus <@ (%p ==> %q) ==> ((%p ||| %r) ==> (%q ||| %r)) @> [
         def_implies |> R

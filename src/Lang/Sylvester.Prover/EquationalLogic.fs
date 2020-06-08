@@ -245,11 +245,6 @@ module EquationalLogic =
         | expr -> expr
         | expr -> expr
 
-    let _modus_ponens =
-        function
-        | And(p1, Implies(p2, q2)) when sequal p1 p2 -> q2
-        | expr -> expr
-
     let _mutual_implication = 
         function
         | And(Implies(p1, q1), Implies(q2, p2)) when sequal2 p1 q1 p2 q2-> <@@ (%%p1:bool) = (%%q1:bool) @@>

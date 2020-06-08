@@ -78,7 +78,7 @@ let ``9.9`` = proof pred_calculus <@ forall x N (P = Q) ==> (forall x N P  = (fo
      commute_and Q' P' |> R
 ]
 
-let ``9.10`` = proof pred_calculus <@ (forall x (Q ||| N) P) ==> (forall x Q P) @> [
+let ``9.10``= proof pred_calculus <@ (forall x (Q ||| N) P) ==> (forall x Q P) @> [
     split_range_forall |> L
     strenghten_and <@ forall x Q P @> <@ forall x N P @> |> Lemma
 ]

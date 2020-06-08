@@ -35,8 +35,6 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let shunt = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
 
-        let modus_ponens = Admit("Modus ponens in (expression).", EquationalLogic._modus_ponens)
-
         let mutual_implication = Admit("The (expression) contains a mutual implication.", EquationalLogic._mutual_implication)
         
         let subst_and = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_and)
@@ -76,7 +74,6 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             golden_rule
             def_implies
             shunt
-            modus_ponens
             mutual_implication
             subst_and
             subst_implies
