@@ -81,7 +81,7 @@ module PredCalculus =
     ]
 
     /// forall x N (P = Q) ==> (forall x N P  = (forall x N Q))
-    let ident_forall_eq x N P Q = theorem pred_calculus <@ forall %x %N (%P = %Q) ==> (forall %x %N %P  = (forall %x %N %Q)) @> [
+    let distrib_forall_body x N P Q = theorem pred_calculus <@ forall %x %N (%P = %Q) ==> (forall %x %N %P  = (forall %x %N %Q)) @> [
         distrib_implies_eq_and <@ forall %x %N (%P = %Q) @> <@ forall %x %N %P @> <@ forall %x %N %Q @> |> LR
         collect_forall_and |> L
         collect_forall_and |> R
@@ -93,14 +93,24 @@ module PredCalculus =
         commute_and Q P |> R
     ]
 
-    /// forall %x (%R1 ||| %R2) %P ==> (forall %x %R1 %P)
+    /// forall x (R1 ||| R2) %P ==> (forall x R1 P)
     let strengthen_forall_range_or x R1 R2 P = theorem pred_calculus <@ (forall %x (%R1 ||| %R2) %P) ==> (forall %x %R1 %P) @> [
         split_range_forall |> L
-        strenghten_and <@ forall %x %R1 %P @> <@ forall %x %R1 %P @> |> Lemma
+        strengthen_and <@ forall %x %R1 %P @> <@ forall %x %R1 %P @> |> Lemma
     ]
 
     /// forall %x %N (%P |&| %Q) ==> (forall %x %N %P)
     let strengthen_forall_body_and x N P Q = theorem pred_calculus <@ (forall %x %N (%P |&| %Q)) ==> (forall %x %N %P) @> [
         distrib_forall_and' x N P Q |> L
-        strenghten_and <@ forall %x %N %P @> <@ forall %x %N %Q @> |> Lemma
+        strengthen_and <@ forall %x %N %P @> <@ forall %x %N %Q @> |> Lemma
+    ]
+
+    /// forall x N (Q ==> P) ==> ((forall x N Q) ==> (forall x N P))
+    let mono_forall_body x N Q P = theorem pred_calculus <@ forall %x %N (%Q ==> %P) ==> ((forall %x %N %Q) ==> (forall %x %N %P))@> [
+        shunt' <@ forall x %N (%Q ==> %P) @> <@ forall %x %N %Q @> <@ forall %x %N %P @> |> Commute |> LR
+        collect_forall_and |> L
+        commute_and <@ %Q ==> %P @> Q |> L
+        ident_and_implies Q P |> L
+        commute_and Q P |> L
+        strengthen_forall_body_and x N P Q |> Lemma
     ]

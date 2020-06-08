@@ -458,7 +458,8 @@ module Proof =
         let f = e |> expand |> body
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps, true))
-    
+    let axiom (theory:Theory) (e:Expr<'t>) = lemma theory e []
+
     (* Identities *)
     let ident (theory:Theory) (e:Expr<'t>) steps =
         let f = e |> expand |> body

@@ -82,3 +82,13 @@ let ``9.10``= proof pred_calculus <@ (forall x (Q ||| N) P) ==> (forall x Q P) @
     split_range_forall |> L
     strenghten_and <@ forall x Q P @> <@ forall x N P @> |> Lemma
 ]
+
+let ``9.12`` = proof pred_calculus <@ forall x N (Q ==> P) ==> ((forall x N Q) ==> (forall x N P))@> [
+    shunt' <@ forall x N (Q ==> P) @> <@ forall x N Q @> <@ forall x N P @> |> Commute |> LR
+    collect_forall_and |> L
+    commute_and <@ Q ==> P @> Q' |> L
+    ident_and_implies Q' P' |> L
+    commute_and Q' P' |> L
+    strengthen_forall_body_and x' N' P' Q' |> Lemma
+    
+]

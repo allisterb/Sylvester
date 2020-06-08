@@ -716,7 +716,7 @@ module PropCalculus =
     ]
 
     /// p |&| q ==> p
-    let strenghten_and p q = theorem prop_calculus <@ (%p |&| %q ) ==> %p @> [
+    let strengthen_and p q = theorem prop_calculus <@ (%p |&| %q ) ==> %p @> [
         ident_eq <@ ((%p |&| %q ) ==> %p) @> |> LR
         def_implies |> LR
         commute |> L
@@ -759,7 +759,7 @@ module PropCalculus =
     /// (p ||| (q |&| r)) ==> (p ||| q)
     let weaken_or_and p q r = theorem prop_calculus <@ (%p ||| (%q |&| %r)) ==> (%p ||| %q) @> [
         distrib |> L
-        strenghten_and <@ %p ||| %q @> <@ %p ||| %r @> |> Lemma
+        strengthen_and <@ %p ||| %q @> <@ %p ||| %r @> |> Lemma
     ]
 
     /// (p |&| q) ==> (p |&| (q ||| r))
@@ -769,10 +769,10 @@ module PropCalculus =
     ]
 
     /// p |&| (p ==> q) ==> q
-    let modus_ponens' p q = theorem prop_calculus <@ %p |&| (%p ==> %q) ==> %q @> [
+    let modus_ponens p q = theorem prop_calculus <@ %p |&| (%p ==> %q) ==> %q @> [
         ident_and_implies p q |> L
         commute_and p q |> LR
-        strenghten_and q p |> Lemma
+        strengthen_and q p |> Lemma
     ]
 
     /// (p ==> r) |&| (q ==> r) = (p ||| q ==> r)
@@ -833,7 +833,7 @@ module PropCalculus =
         commute |> L
         commute |> L |> L'
         right_assoc |> L
-        strenghten_and r <@ %q |&| %p @> |> Lemma
+        strengthen_and r <@ %q |&| %p @> |> Lemma
     ]
 
     /// (p = q) |&| (q ==> r) ==> (p ==> r)
@@ -853,7 +853,7 @@ module PropCalculus =
         ident_and_implies q r |> L
         left_assoc |> L
         commute |> L
-        strenghten_and r <@ %p |&| %q @> |> Lemma
+        strengthen_and r <@ %p |&| %q @> |> Lemma
     ]
 
     /// p ==> (q ==> p)

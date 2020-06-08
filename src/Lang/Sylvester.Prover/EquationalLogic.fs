@@ -241,7 +241,7 @@ module EquationalLogic =
 
     let _shunt =
         function
-        | Implies(And(p, q), r) -> <@@ (%%p:bool) ==> (%%q:bool) ==> (%%r:bool) @@>
+        | Implies(And(p, q), r) -> <@@ (%%p:bool) ==> ((%%q:bool) ==> (%%r:bool)) @@>
         | expr -> expr
         | expr -> expr
 
