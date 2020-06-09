@@ -16,17 +16,17 @@ module PredCalculus =
 
     (* Admissible rules *)
     
-    let empty_range = Theory.S.Rules.[19] 
+    let empty_range = Theory.S.Rules.[20] 
 
-    let trade_body = Theory.S.Rules.[20]
+    let trade_body = Theory.S.Rules.[21]
 
-    let collect_forall_and = Theory.S.Rules.[21]
+    let collect_forall_and = Theory.S.Rules.[22]
 
-    let collect_exists_or = Theory.S.Rules.[22]
+    let collect_exists_or = Theory.S.Rules.[23]
 
-    let distrib_or_forall = Theory.S.Rules.[23]
+    let distrib_or_forall = Theory.S.Rules.[24]
 
-    let split_range_forall = Theory.S.Rules.[24]
+    let split_range_forall = Theory.S.Rules.[25]
 
     (* Theorems *)
 
@@ -36,7 +36,7 @@ module PredCalculus =
     /// forall x (Q |&| N) P = (forall x Q (N ==> P))
     let trade_forall_and_implies x Q N P = ident pred_calculus <@ forall x (%Q |&| %N) %P = (forall x %Q (%N ==> %P)) @> [
         trade_forall_implies x <@ %Q |&| %N @> P |> L
-        shunt' Q N P |> L
+        shunt |> QB |> L'
         trade_forall_implies x Q  <@ %N==> %P @> |> Commute |> L
     ]
 
@@ -73,8 +73,8 @@ module PredCalculus =
         def_true <@ %P |&| forall %x %N %Q @> |> Commute |> R
     ]
 
-    /// (forall x N true) = true
-    let ident_forall_true x N = ident pred_calculus <@ (forall %x %N true) = true @> [
+    /// forall x N true = true
+    let ident_forall_true x N = ident pred_calculus <@ forall %x %N true = true @> [
         trade_forall_or_not x N <@ true @> |> L
         commute |> L
         zero_or <@ forall' x (not %N ) @> |> L 
@@ -99,7 +99,7 @@ module PredCalculus =
         strengthen_and <@ forall %x %R1 %P @> <@ forall %x %R1 %P @> |> Lemma
     ]
 
-    /// forall %x %N (%P |&| %Q) ==> (forall %x %N %P)
+    /// forall x N (P |&| Q) ==> (forall x N P)
     let strengthen_forall_body_and x N P Q = theorem pred_calculus <@ (forall %x %N (%P |&| %Q)) ==> (forall %x %N %P) @> [
         distrib_forall_and' x N P Q |> L
         strengthen_and <@ forall %x %N %P @> <@ forall %x %N %Q @> |> Lemma
@@ -107,7 +107,7 @@ module PredCalculus =
 
     /// forall x N (Q ==> P) ==> ((forall x N Q) ==> (forall x N P))
     let mono_forall_body x N Q P = theorem pred_calculus <@ forall %x %N (%Q ==> %P) ==> ((forall %x %N %Q) ==> (forall %x %N %P))@> [
-        shunt' <@ forall x %N (%Q ==> %P) @> <@ forall %x %N %Q @> <@ forall %x %N %P @> |> Commute |> LR
+        rshunt |> LR
         collect_forall_and |> L
         commute_and <@ %Q ==> %P @> Q |> L
         ident_and_implies Q P |> L

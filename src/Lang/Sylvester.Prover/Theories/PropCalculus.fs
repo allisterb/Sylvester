@@ -77,21 +77,23 @@ module PropCalculus =
 
     let shunt = Theory.S.Rules.[10]
 
-    let mutual_implication = Theory.S.Rules.[11]
+    let rshunt = Theory.S.Rules.[11]
 
-    let subst_and = Theory.S.Rules.[12]
+    let mutual_implication = Theory.S.Rules.[12]
 
-    let subst_implies = Theory.S.Rules.[13]
+    let subst_and = Theory.S.Rules.[13]
 
-    let subst_and_implies = Theory.S.Rules.[14]
+    let subst_implies = Theory.S.Rules.[14]
 
-    let subst_true = Theory.S.Rules.[15]
+    let subst_and_implies = Theory.S.Rules.[15]
 
-    let subst_false = Theory.S.Rules.[16]
+    let subst_true = Theory.S.Rules.[16]
 
-    let subst_or_and = Theory.S.Rules.[17]
+    let subst_false = Theory.S.Rules.[17]
 
-    let distrib_implies = Theory.S.Rules.[18]
+    let subst_or_and = Theory.S.Rules.[18]
+
+    let distrib_implies = Theory.S.Rules.[19]
 
     (* proof step shortcuts *)
     
@@ -824,7 +826,7 @@ module PropCalculus =
 
     /// (p ==> q) |&| (q ==> r) ==> (p ==> r)
     let trans_implies p q r = theorem prop_calculus <@ (%p ==> %q) |&| (%q ==> %r) ==> (%p ==> %r) @> [
-        shunt' <@ (%p ==> %q) |&| (%q ==> %r)@> p r |> Commute |> LR
+        rshunt |> LR
         commute |> L
         left_assoc |> L
         ident_and_implies p q |> L
@@ -839,7 +841,7 @@ module PropCalculus =
     /// (p = q) |&| (q ==> r) ==> (p ==> r)
     let trans_implies_eq p q r = theorem prop_calculus <@ (%p = %q) |&| (%q ==> %r) ==> (%p ==> %r) @> [
         mutual_implication' p q |> Commute |> L
-        shunt' <@ (%p ==> %q) |&| (%q ==> %p) |&| (%q ==> %r)@> p r |> Commute |> LR
+        rshunt |> LR
         commute |> L
         left_assoc |> L
         left_assoc |> L |> L'

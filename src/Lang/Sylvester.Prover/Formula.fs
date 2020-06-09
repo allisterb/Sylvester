@@ -22,10 +22,13 @@ module Formula =
     let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
     let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
 
-    (* Propositions and quantifiers *)
+    (* Propositions and predicates *)
 
     let prop (sentence:string) = Unchecked.defaultof<bool>
-    
+    let pred<'t> = fun (x:'t) -> Unchecked.defaultof<bool>
+
+    (* Quantifiers *)
+
     [<Symbol"\u2200">]
     let forall<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
     [<ReflectedDefinition>]

@@ -7,7 +7,6 @@ let p,q,r,s = var4<bool>
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 let P,N,A,S = var4<bool>
  
-
 let ``3.52`` = theorem prop_calculus <@ (p = q) = (p |&| q) ||| (not p |&| not q) @> [
         collect |> R
         commute |> L |> L'
@@ -133,7 +132,7 @@ let ``3.81`` = theorem prop_calculus <@ (p ==> q) |&| (q ==> p) ==> (p = q) @> [
 
 let ``3.82b`` = theorem prop_calculus <@ (p = q) |&| (q ==> r) ==> (p ==> r) @> [
     mutual_implication' p' q' |> Commute |> L
-    shunt' <@ (p ==> q) |&| (q ==> p) |&| (q ==> r)@> p' r' |> Commute |> LR
+    rshunt |> LR
     commute |> L
     left_assoc |> L
     left_assoc |> L |> L'
@@ -225,8 +224,7 @@ let ``4.4b`` = theorem prop_calculus <@ (p ==> r) ==> ((q ==> s) ==> (p |&| q ==
     left_assoc_and r' q' s'|>  R
     commute_and r' q' |> R
     right_assoc_and q' r' s' |> R
-    left_assoc_and p' q' <@ r |&| s @> |> R
-    
+    left_assoc_and p' q' <@ r |&| s @> |> R   
     commute |> L |> R'
     strengthen_and <@ r |&| s @> <@p |&| q @> |> Taut |> R
 ]

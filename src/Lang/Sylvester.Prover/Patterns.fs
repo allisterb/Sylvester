@@ -112,22 +112,22 @@ module Patterns =
      
     let (|ForAll|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "forall" -> Some(<@@ (|&|) @@>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "forall" -> Some(<@@ forall @@>, bound, range, body)
         | _ -> None
 
     let (|Exists|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "exists" -> Some(<@@ (|||) @@>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "exists" -> Some(<@@ exists @@>, bound, range, body)
         | _ -> None
 
     let (|Sum|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "sum" -> Some(<@@ (+) @@>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "sum" -> Some(<@@ sum @@>, bound, range, body)
         | _ -> None
 
     let (|Product|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "product" -> Some(<@@ (*) @@>, bound, range, body)
+        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "product" -> Some(<@@ product @@>, bound, range, body)
         | _ -> None
 
     let (|Quantifier|_|) =

@@ -35,6 +35,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let shunt = Admit("Shunt implication in (expression)", EquationalLogic._shunt)
 
+        let rshunt = Admit("Reverse shunt implication in (expression)", EquationalLogic._rshunt)
+
         let mutual_implication = Admit("The (expression) contains a mutual implication.", EquationalLogic._mutual_implication)
         
         let subst_and = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_and)
@@ -74,6 +76,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             golden_rule
             def_implies
             shunt
+            rshunt
             mutual_implication
             subst_and
             subst_implies
@@ -298,17 +301,22 @@ and RuleApplication =
     | L  of Rule
     | R of Rule
     | LR of Rule
+    | QR of Rule
+    | QB of Rule
     | L' of RuleApplication
     | R' of RuleApplication
     | LR' of RuleApplication
+    
 with
     member x.Rule = 
         match x with
-        | LR rule -> rule
-        | L rule -> rule
-        | R rule -> rule
-        | L' ra -> ra.Rule
-        | R' ra -> ra.Rule
+        | LR rule
+        | L rule
+        | R rule
+        | QR rule
+        | QB rule -> rule
+        | L' ra 
+        | R' ra 
         | LR' ra -> ra.Rule
     member x.RuleName = x.Rule.Name
     member x.Apply(expr:Expr) =       
@@ -322,6 +330,14 @@ with
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s)
             | _ -> failwith "Expression is not a binary operation."
+        | QR rule ->
+            match expr with
+            | Quantifier(op, x, range, body) -> let s = rule.Apply range in let v = vars_to_tuple x in call op (v::s::body::[])
+            | _ -> failwith "Expression is not a quantifier."
+        | QB rule ->
+            match expr with
+            | Quantifier(op, x, range, body) -> let s = rule.Apply body in let v = vars_to_tuple x in call op (v::range::s::[])
+            | _ -> failwith "Expression is not a quantifier."
         | L' ra ->
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = ra.Apply l in binary_call(o, m, s, r)
@@ -339,6 +355,8 @@ with
         | LR _ -> "expression"
         | L _ -> "left of expression"
         | R _ -> "right of expression"
+        | QR _ -> "quantifier range"
+        | QB _ -> "quantifier body"
         | L' ra -> sprintf "left-%s of expression" (ra.Pos.Replace(" of expression", ""))
         | R' ra -> sprintf "right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         | LR' ra -> sprintf "left-right-%s of expression" (ra.Pos.Replace(" of expression", ""))

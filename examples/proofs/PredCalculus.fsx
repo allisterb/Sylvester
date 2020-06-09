@@ -25,18 +25,18 @@ let ``9.3b`` = proof pred_calculus <@ forall x N P = (forall' x ((N |&| P) = N))
 
 let ``9.3c`` = proof pred_calculus <@ forall x N P = (forall' x ((N ||| P) = P)) @> [
     trade_forall_implies x' <@ N @> <@ P @>  |> L
-    PropCalculus.def_implies' N' P' |> L
+    def_implies' N' P' |> L
 ]
 
 let ``9.4a`` = proof pred_calculus <@ forall x (Q |&| N) P = (forall x Q (N ==> P)) @> [
     trade_forall_implies x' <@ Q |&| N @> P' |> L
-    shunt' Q' N' P' |> L
+    shunt |> QB |> L'
     trade_forall_implies x' Q' <@ N==> P @> |> Commute |> L  
 ]
 
 let ``9.4b``= proof pred_calculus <@ forall x (Q |&| N) P = (forall x Q (not N ||| P)) @> [
     trade_forall_implies x' <@ Q |&| N @> P' |> L
-    shunt' Q' N' P' |> L
+    shunt |> QB |> L'
     trade_forall_implies x' <@ Q @> <@ N==> P @> |> Commute |> L
     ident_implies_not_or N' P' |> L
 ]
@@ -60,13 +60,13 @@ let ``9.7`` = proof pred_calculus <@ not (forall' x (not N)) ==> (forall x N (P 
     def_true <@ P |&| forall x N Q @> |> Commute |> R
 ] 
 
-let ``9.8`` = proof pred_calculus <@ (forall x N true) = true @> [
+let ``9.8`` = theorem pred_calculus <@ forall x N true = true @> [
     trade_forall_or_not x' N' <@ true @> |> L
     commute |> L
     zero_or <@ forall' x (not N ) @> |> L 
 ]
 
-let ``9.9`` = proof pred_calculus <@ forall x N (P = Q) ==> (forall x N P  = (forall x N Q)) @> [
+let ``9.9`` = theorem pred_calculus <@ forall x N (P = Q) ==> (forall x N P  = (forall x N Q)) @> [
      distrib_implies_eq_and <@ forall x N (P = Q) @> <@ forall x N P @> <@ forall x N Q @> |> LR
      collect_forall_and |> L
      collect_forall_and |> R
@@ -80,11 +80,11 @@ let ``9.9`` = proof pred_calculus <@ forall x N (P = Q) ==> (forall x N P  = (fo
 
 let ``9.10``= proof pred_calculus <@ (forall x (Q ||| N) P) ==> (forall x Q P) @> [
     split_range_forall |> L
-    strenghten_and <@ forall x Q P @> <@ forall x N P @> |> Lemma
+    strengthen_and <@ forall x Q P @> <@ forall x N P @> |> Lemma
 ]
 
 let ``9.12`` = proof pred_calculus <@ forall x N (Q ==> P) ==> ((forall x N Q) ==> (forall x N P))@> [
-    shunt' <@ forall x N (Q ==> P) @> <@ forall x N Q @> <@ forall x N P @> |> Commute |> LR
+    rshunt |> LR
     collect_forall_and |> L
     commute_and <@ Q ==> P @> Q' |> L
     ident_and_implies Q' P' |> L
