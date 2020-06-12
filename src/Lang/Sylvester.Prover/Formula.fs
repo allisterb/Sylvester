@@ -25,7 +25,7 @@ module Formula =
     (* Propositions and predicates *)
 
     let prop (sentence:string) = Unchecked.defaultof<bool>
-    let pred<'t> = fun (x:'t) -> Unchecked.defaultof<bool>
+    let predicate<'t> = fun (x:'t) -> Unchecked.defaultof<bool>
 
     (* Quantifiers *)
 

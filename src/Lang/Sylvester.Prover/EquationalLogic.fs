@@ -54,8 +54,12 @@ module EquationalLogic =
                                                                 pattern_desc "Implication" <@fun x y-> (x ==> y) = ((x ||| y) = y)@> |> Some
         | Equals(Conseq(a1, a2), Implies(a3, a4)) when sequal2 a1 a2 a4 a3 -> 
                                                                 pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @> |> Some
-        // This isn't in the original axioms for E but is included in S for convenience
+        
+        // The following two axioms aren't in the original axioms for E but are included in S for convenience
+        /// p ==> true
         | Implies(_, Bool true) -> pattern_desc "Implication" <@fun x -> x ==> true @> |> Some
+        /// p ==> p
+        | Implies(E, E') when sequal E E' -> pattern_desc "Implication" <@fun x -> x ==> x @> |> Some
         | _ -> None
 
     /// (e = f) ==> E(e) = E(f) 
@@ -65,7 +69,7 @@ module EquationalLogic =
         | Implies(Equals(Var p, Var q), Equals(Quantifier(_, _, R, P), Quantifier(_, _, R', P'))) when sequal (replace_var_var p q R) R' && sequal (replace_var_var p q P) P' -> 
             pattern_desc "Leibniz" <@fun p q E  -> (p = q) ==> E(p) = E(q) @> |> Some
         | Implies(Implies(R , Equals(Var p, Var q)), Equals(Quantifier(_, _, R1, P), Quantifier(_, _, R2, P'))) when sequal R R1 && sequal R1 R2 && sequal (replace_var_var p q P) P' -> 
-            pattern_desc "Leibniz" <@fun p q E  -> (p = q) ==> E(p) = E(q) @> |> Some
+            pattern_desc "Leibniz" <@fun p q R E  -> (R ==> (p = q)) ==> E(p) = E(q) @> |> Some
         | _ -> None
     
     let (|EmptyRange|_|) =
@@ -120,6 +124,11 @@ module EquationalLogic =
             when not_occurs_free x1 P1 && vequal' x1 x2 && sequal P1 P2 && sequal2 Q1 R1 Q2 R2 -> pattern_desc "Distributivity of forall" <@ () @> |> Some
         | _ -> None
     
+    let (|GeneralizedDeMorgan|_|) =
+        function
+        | Equals(Exists(_, x, R, P), Not(ForAll(_, x', R', Not(P')))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Generalized De Morgan" <@ () @> |> Some
+        | _ -> None
+    
     let equational_logic_axioms = 
         function
         | SEqual x
@@ -133,9 +142,9 @@ module EquationalLogic =
         | Symm <@ (=) @> x // (3.2)
         | Commute <@ (=) @> <@ (|||) @> x // (3.24)
 
+        | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // (3.27)
         | DistribNot x // (3.9) 
-        | Distrib <@(=)@> <@ (|||) @> <@ (=) @> x  // (3.27)      
-       
+             
         | Idempotency <@(=)@> <@ (|||) @> x // (3.26)
         
         | ExcludedMiddle x // (3.28)
@@ -152,7 +161,8 @@ module EquationalLogic =
         | RangeSplit x 
         | Interchange x 
         | Trading x 
-        | ForAllDistribOr x -> Some (desc x) 
+        | ForAllDistribOr x 
+        | GeneralizedDeMorgan x -> Some (desc x) 
         | _ -> None
 
     (* Expression functions for admissible rules *) 
@@ -327,10 +337,14 @@ module EquationalLogic =
         | Bool false -> <@@ true @@>
         | Equals(p, q) -> <@@ (%%p:bool) <> (%%q:bool) @@>
         | Not(Equals(p, q)) -> <@@ (%%p:bool) = (%%q:bool) @@>
-        | Implies(p, q) -> <@@ not ((%%p:bool) ==> (%%q:bool)) @@>
-        | Not(Implies(p, q)) -> <@@ (%%p:bool) ==> (%%q:bool) @@>
+        | Implies(p, q) -> <@@ not ((%%p:bool) <== (%%q:bool)) @@>
+        | Not(Conseq(p, q)) -> <@@ (%%p:bool) ==> (%%q:bool) @@>
+        | Conseq(p, q) -> <@@ not ((%%p:bool) ==> (%%q:bool)) @@>
+        | Not(Implies(p, q)) -> <@@ (%%p:bool) <== (%%q:bool) @@>
         | And(p, q) -> <@@ (%%p:bool) ||| (%%q:bool) @@>
         | Or(p, q) -> <@@ (%%p:bool) |&| (%%q:bool) @@>
+        | ForAll(_, bound, range, body) -> let v = vars_to_tuple bound in call <@ exists @> (v::range::(<@@ not (%%body:bool) @@>)::[])
+        | Exists(_, bound, range, body) -> let v = vars_to_tuple bound in call <@ forall @> (v::range::(<@@ not (%%body:bool) @@>)::[]) 
         | expr -> traverse expr _dual
 
     let _distrib_implies =

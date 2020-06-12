@@ -8,6 +8,8 @@ module PredCalculus =
 
     (* Expression functions for admissible rules *)
     
+    let _dual = EquationalLogic._dual
+
     let _empty_range = EquationalLogic._empty_range
 
     let _trade_body = EquationalLogic._trade_body
@@ -16,17 +18,22 @@ module PredCalculus =
 
     (* Admissible rules *)
     
-    let empty_range = Theory.S.Rules.[20] 
+    let dual = Theory.S.Rules.[20]
 
-    let trade_body = Theory.S.Rules.[21]
+    let empty_range = Theory.S.Rules.[21] 
 
-    let collect_forall_and = Theory.S.Rules.[22]
+    let trade_body = Theory.S.Rules.[22]
 
-    let collect_exists_or = Theory.S.Rules.[23]
+    let collect_forall_and = Theory.S.Rules.[23]
 
-    let distrib_or_forall = Theory.S.Rules.[24]
+    let collect_exists_or = Theory.S.Rules.[24]
 
-    let split_range_forall = Theory.S.Rules.[25]
+    let distrib_or_forall = Theory.S.Rules.[25]
+
+    let split_range_forall = Theory.S.Rules.[26]
+
+    (* Instantiation *)
+    let inst quantifier var value = Instantiate pred_calculus quantifier var value
 
     (* Theorems *)
 

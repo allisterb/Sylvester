@@ -53,6 +53,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
+        let dual = Admit("Replace (expression) with its dual", EquationalLogic._dual)
+
         let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
 
         let trade_body = Admit("Move the quantifier's range into its body in (expression)", EquationalLogic._trade_body)
@@ -86,6 +88,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             subst_false
             subst_or_and
             distrib_implies
+            dual
             empty_range
             trade_body
             collect_forall_and
@@ -208,7 +211,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 match step with
                 | R _ -> ()
                 | _ -> failwith "A deduction rule can only be applied to the consequent of a logical implication."
-            | Instantiate(_, q, var_expr, value, r) -> 
+            | Instantiate(_, q, var_expr, value, _) -> 
                 match q with
                 | Quantifier(op, bound, range, body) -> 
                     let var_inst = 
@@ -222,7 +225,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                         let qop = call op (v::point_range::body::[]) in
                         call <@ (=) @> (qop::inst::[])
                     if not((theory |- one_point) || (logic |- one_point)) then
-                        failwithf "The current theory and logic do not prove %s" (print_formula one_point) 
+                        failwithf "The current theory and logic do not prove the instantiation %s." (print_formula one_point) 
                 | _ -> failwithf "The expression %s is not a quantifier." (print_formula q)
               
         let _a = 
@@ -486,19 +489,24 @@ module LogicalRules =
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
-    /// Instantiate a quantifier at a single point or value
+    /// Instantiate a quantifier at a single point or value.
     let Instantiate (theory:Theory) (_quantifier:Expr) (_var_inst:Expr)  (_value:Expr) =
         let print_formula = theory.PrintFormula
-        let quantifier = 
-            match (expand _quantifier) with | Quantifier(_, _, _, _) as q ->  q | _ -> failwithf "The expression %s is not a quantifier." (print_formula _quantifier)
+        let quantifier, bound = 
+            match (expand _quantifier) with 
+            | Quantifier(_,b, _, _) as q ->  q, b 
+            | _ -> failwithf "The expression %s is not a quantifier." (print_formula _quantifier)
         let var_inst = expand _var_inst
         let value = expand _value
-        let rec subst (q:Expr) (_v:Expr) (i:Expr) =
-            let var = match _v |> expand |> get_vars with v::[] -> v | _ -> failwithf "The expression %s is not a single-variable expression" (print_formula _v)
+        let rec subst (q:Expr) (v:Expr) (i:Expr) =
+            let var = 
+                match v |> expand |> get_vars with 
+                | _v::[] -> _v 
+                | _ -> failwithf "The expression %s is not a single variable expression" (print_formula v)
             function
-            | Quantifier(_, bound, range, body) as l when sequal l q -> subst_var_value var i body 
-            | expr -> traverse expr (subst q _v i)
-        Rule.Instantiate(sprintf "Instantiate %s using %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
+            | Quantifier(_, _, _, body) as l when sequal l q -> subst_var_value var i body 
+            | expr -> traverse expr (subst q v i)
+        Rule.Instantiate(sprintf "Instantiate %s with value %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
 
 [<AutoOpen>]
 module Proof = 
