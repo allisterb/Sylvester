@@ -249,7 +249,6 @@ module EquationalLogic =
         | Implies(p, Implies(q, r)) -> <@@ ((%%p:bool) |&| (%%q:bool)) ==> (%%r:bool) @@>
         | expr -> expr
 
-
     let _mutual_implication = 
         function
         | And(Implies(p1, q1), Implies(q2, p2)) when sequal2 p1 q1 p2 q2-> <@@ (%%p1:bool) = (%%q1:bool) @@>

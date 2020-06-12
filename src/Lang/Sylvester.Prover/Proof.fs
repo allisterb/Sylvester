@@ -59,11 +59,12 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let collect_forall_and = Admit("Collect \u2200 quantifer terms distributed over \u2227 in (expression)", EquationalLogic._collect_forall_and)
 
-        let collect_exists_or = Admit("Collect exists quantifer terms distributed over or in (expression)", EquationalLogic._collect_exists_or)
+        let collect_exists_or = Admit("Collect \u2203 quantifer terms distributed over or in (expression)", EquationalLogic._collect_exists_or)
 
-        let distrib_or_forall = Admit("||| distributes over \u2203 in (expression)", EquationalLogic._distrib_or_forall)
+        let distrib_or_forall = Admit("\u2228 distributes over \u2203 in (expression)", EquationalLogic._distrib_or_forall)
 
         let split_range_forall = Admit("Split \u2200 quantifer range in (expression)", EquationalLogic._split_range_forall)
+        
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc
@@ -98,25 +99,27 @@ and Axioms = (Expr -> AxiomDescription option)
 and Rule = 
     | Admit of string * (Expr -> Expr) 
     | Derive of string * Proof * (Proof -> Expr -> Expr)
-    | Deduce of string * Proof * (Proof -> Expr -> Expr)
+    | Deduce of string * Proof * (Proof -> Expr -> Expr) 
+    | Instantiate of string * Expr * Expr * Expr * (Expr -> Expr -> Expr -> Expr -> Expr)
 with
     member x.Name = 
         match x with 
         | Admit(n, _) -> n
         | Derive(n, _, _) -> n
         | Deduce(n,_,_) -> n
+        | Instantiate(n,_,_,_,_) -> n
     member x.Apply = 
         match x with
         | Admit(_, r) -> r
         | Derive(_, p, r) -> r p
         | Deduce(_, p, r) -> r p
-       
+        | Instantiate(_, q, var, value, r) -> r q var value
+        
 and Rules = Rule list 
 
 and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     /// The logical theory used for the proof.
     static let mutable logic:Theory = Theory.S
-    
     /// The proof log level.
     static let mutable logLevel:int = 1 
 
@@ -153,11 +156,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
         | 2 -> alwayslog <| sprintf "Proof log level is %i. All proofs of lemmas will be printed."  logLevel
         | 3 -> alwayslog <| sprintf "Proof log level is %i. All proofs of axioms and lemmas will be printed."  logLevel
         | _ -> failwith "Unknown proof log level."
-
-    let mutable _state = a
-    let mutable state:(Expr * string) list = [] 
-    let mutable stepCount = 0
-    do
         if isAxiom && logLevel <= 2 then 
             sprintf "[Axiom] %s." (print_formula a) |> alwayslog
         else if isAxiom && logLevel > 2 then 
@@ -170,19 +168,21 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             sprintf "[Lemma] %s:" (print_formula a) |> alwayslog
         else if not l then
             sprintf "Proof of %s:" (print_formula a) |> alwayslog
-        
-        if theory |- a  then
+
+    let mutable _state = a
+    let mutable state:(Expr * string) list = [] 
+    let mutable stepCount = 0
+    do if theory |- a  then
             let axeq = theory.Axioms a
             sprintf "|- %s. [%s]" (print_formula a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Axiom of %s" axeq.Value.Name) |> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length
-        else if logic |- a   then
+       else if logic |- a   then
             let axeq = logic.Axioms a
             sprintf "|- %s. [%s]" (print_formula a) (if axeq.Value.Name.StartsWith "Definition" then axeq.Value.Name else sprintf "Logical Axiom of %s" axeq.Value.Name) |> prooflog
             sprintf "Proof complete." + proof_sep |> prooflog
             stepCount <- steps.Length               
-    
-    do if steps.Length = 0 && not(theory |- a || logic |- a ) then
+       else if steps.Length = 0 && not(theory |- a || logic |- a ) then
         sprintf "Proof incomplete. Current state: %s." (print_formula _state) |> prooflog
 
     // Iterate through proof steps
@@ -208,6 +208,23 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 match step with
                 | R _ -> ()
                 | _ -> failwith "A deduction rule can only be applied to the consequent of a logical implication."
+            | Instantiate(_, q, var_expr, value, r) -> 
+                match q with
+                | Quantifier(op, bound, range, body) -> 
+                    let var_inst = 
+                        match get_vars var_expr with
+                        | [x] -> x 
+                        | _ -> failwithf "The expression %s is not a single variable expression." (print_formula var)
+                    let inst = subst_var_value var_inst value body
+                    let point_range = call <@ (=) @> (Expr.Var(var_inst)::value::[])
+                    let one_point = 
+                        let v = vars_to_tuple [var_inst] in 
+                        let qop = call op (v::point_range::body::[]) in
+                        call <@ (=) @> (qop::inst::[])
+                    if not((theory |- one_point) || (logic |- one_point)) then
+                        failwithf "The current theory and logic do not prove %s" (print_formula one_point) 
+                | _ -> failwithf "The expression %s is not a quantifier." (print_formula q)
+              
         let _a = 
             match step.Rule with
             | Admit(_,_) -> step.Apply _state
@@ -221,6 +238,8 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                     failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
                         (conjs |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
                 step.Apply _state
+            | Instantiate(_, q, var_expr, value, r) -> step.Apply _state
+
         let msg =
             match step.Rule with
             | Admit(_, _) -> 
@@ -234,6 +253,11 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
             | Deduce(_,_,_) ->
+                if not ((sequal _a _state))  then
+                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
+                else
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
+            | Instantiate(_, q, var_expr, value, r) ->
                 if not ((sequal _a _state))  then
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
@@ -461,6 +485,20 @@ module LogicalRules =
 
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
+
+    /// Instantiate a quantifier at a single point or value
+    let Instantiate (theory:Theory) (_quantifier:Expr) (_var_inst:Expr)  (_value:Expr) =
+        let print_formula = theory.PrintFormula
+        let quantifier = 
+            match (expand _quantifier) with | Quantifier(_, _, _, _) as q ->  q | _ -> failwithf "The expression %s is not a quantifier." (print_formula _quantifier)
+        let var_inst = expand _var_inst
+        let value = expand _value
+        let rec subst (q:Expr) (_v:Expr) (i:Expr) =
+            let var = match _v |> expand |> get_vars with v::[] -> v | _ -> failwithf "The expression %s is not a single-variable expression" (print_formula _v)
+            function
+            | Quantifier(_, bound, range, body) as l when sequal l q -> subst_var_value var i body 
+            | expr -> traverse expr (subst q _v i)
+        Rule.Instantiate(sprintf "Instantiate %s using %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
 
 [<AutoOpen>]
 module Proof = 

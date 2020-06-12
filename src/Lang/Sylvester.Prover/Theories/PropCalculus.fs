@@ -717,7 +717,7 @@ module PropCalculus =
         commute |> LR
     ]
 
-    /// p |&| q ==> p
+    /// (p |&| q) ==> p
     let strengthen_and p q = theorem prop_calculus <@ (%p |&| %q ) ==> %p @> [
         ident_eq <@ ((%p |&| %q ) ==> %p) @> |> LR
         def_implies |> LR
