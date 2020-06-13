@@ -35,6 +35,24 @@ module Tactics =
         let p = Proof(stmt, theory, (expr |> ident |> LR) :: proof.Steps, true) in 
         Theorem(stmt, p) |> Ident 
 
+    /// If A is theorem then so is the dual of A
+    let Dual dual (t:Theorem) = 
+        let proof = t.Proof
+        let theory = proof.Theory
+        let expr = proof.Stmt
+        let stmt = EquationalLogic._dual expr
+        let p = Proof(stmt, theory, (dual |> LR) :: proof.Steps, true) in
+        Theorem(stmt, p)
+
+    /// If A is theorem then so is the dual of A
+    let Dual' dual (rule:Rule) = 
+        let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
+        let theory = proof.Theory
+        let expr = proof.Stmt
+        let stmt = EquationalLogic._dual expr
+        let p = Proof(stmt, theory, (dual |> LR) :: proof.Steps, true) in
+        Theorem(stmt, p) |> Ident
+
     /// If A = B is a theorem then so is B = A.
     let Commute commute rule =
         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."

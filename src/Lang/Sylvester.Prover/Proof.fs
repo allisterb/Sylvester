@@ -159,6 +159,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
         | 2 -> alwayslog <| sprintf "Proof log level is %i. All proofs of lemmas will be printed."  logLevel
         | 3 -> alwayslog <| sprintf "Proof log level is %i. All proofs of axioms and lemmas will be printed."  logLevel
         | _ -> failwith "Unknown proof log level."
+    do 
         if isAxiom && logLevel <= 2 then 
             sprintf "[Axiom] %s." (print_formula a) |> alwayslog
         else if isAxiom && logLevel > 2 then 

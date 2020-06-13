@@ -8,8 +8,6 @@ module PredCalculus =
 
     (* Expression functions for admissible rules *)
     
-    let _dual = EquationalLogic._dual
-
     let _empty_range = EquationalLogic._empty_range
 
     let _trade_body = EquationalLogic._trade_body
@@ -18,8 +16,6 @@ module PredCalculus =
 
     (* Admissible rules *)
     
-    let dual = Theory.S.Rules.[20]
-
     let empty_range = Theory.S.Rules.[21] 
 
     let trade_body = Theory.S.Rules.[22]

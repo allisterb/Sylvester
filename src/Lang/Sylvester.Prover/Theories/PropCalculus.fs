@@ -44,6 +44,8 @@ module PropCalculus =
 
     let _distrib_implies = EquationalLogic._distrib_implies
 
+    let _dual = EquationalLogic._dual
+
     (* Admissible rules *)
 
     /// Reduce logical constants in expression. 
@@ -95,6 +97,8 @@ module PropCalculus =
 
     let distrib_implies = Theory.S.Rules.[19]
 
+    let dual = Theory.S.Rules.[20]
+
     (* proof step shortcuts *)
     
     let ppc_id steps expr = ident prop_calculus steps expr
@@ -111,6 +115,13 @@ module PropCalculus =
             let stmt = <@@ ((%%p) = true) = (%%p) @@> in Theorem(stmt, Proof (stmt, prop_calculus, [L commute; LR right_assoc], true)) |> Ident  
         Tactics.Taut ieq
 
+    let Dual t = Tactics.Dual dual t
+
+    let Dual' t = Tactics.Dual' dual t
+        //let deq p = 
+        //    let stmt = let d = _dual p in <@@ (%%p:bool) = (%%d:bool)@@> in Theorem(stmt, Proof (stmt, prop_calculus, [R dual], true))
+
+        
     /// If A = B is a theorem then so is (A = B) = true.
     let Taut' t = 
         let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L commute; LR right_assoc], true)) |> Ident 
