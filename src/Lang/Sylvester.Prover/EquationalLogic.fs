@@ -115,7 +115,7 @@ module EquationalLogic =
     let (|Trading|_|) =
         function
         | Equals(ForAll(_, x, R, P), ForAll(_, x', Bool true, Implies(R', P'))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Trading" <@ () @> |> Some
-        | Equals(Exists(_, x, R, P), Exists(_, x', Bool true, And(R', P'))) when vequal' x x' && sequal2 R P R' P' -> pattern_desc "Trading" <@ () @> |> Some
+        //| Equals(Exists(_, x, R, P), Exists(_, x', Bool true, And(R', P'))) when vequal' x x' && sequal2 R P R' P' -> pattern_desc "Trading" <@ () @> |> Some
         | _ -> None
               
     let (|ForAllDistribOr|_|) =
@@ -335,14 +335,14 @@ module EquationalLogic =
         function
         | Bool true -> <@@ false @@>
         | Bool false -> <@@ true @@>
-        | Equals(p, q) -> <@@ (%%p:bool) <> (%%q:bool) @@>
-        | Not(Equals(p, q)) -> <@@ (%%p:bool) = (%%q:bool) @@>
-        | Implies(p, q) -> <@@ not ((%%p:bool) <== (%%q:bool)) @@>
-        | Not(Conseq(p, q)) -> <@@ (%%p:bool) ==> (%%q:bool) @@>
-        | Conseq(p, q) -> <@@ not ((%%p:bool) ==> (%%q:bool)) @@>
-        | Not(Implies(p, q)) -> <@@ (%%p:bool) <== (%%q:bool) @@>
-        | And(p, q) -> <@@ (%%p:bool) ||| (%%q:bool) @@>
-        | Or(p, q) -> <@@ (%%p:bool) |&| (%%q:bool) @@>
+        | Equals(p, q) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) <> (%%_q:bool) @@>
+        | Not(Equals(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) = (%%_q:bool) @@>
+        | Implies(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) <== (%%_q:bool)) @@>
+        | Not(Conseq(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) ==> (%%_q:bool) @@>
+        | Conseq(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) ==> (%%_q:bool)) @@>
+        | Not(Implies(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) <== (%%_q:bool) @@>
+        | And(p, q) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) ||| (%%_q:bool) @@>
+        | Or(p, q) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) |&| (%%_q:bool) @@>
         | ForAll(_, bound, range, body) -> let v = vars_to_tuple bound in call <@ exists @> (v::range::(<@@ not (%%body:bool) @@>)::[])
         | Exists(_, bound, range, body) -> let v = vars_to_tuple bound in call <@ forall @> (v::range::(<@@ not (%%body:bool) @@>)::[]) 
         | expr -> traverse expr _dual

@@ -114,14 +114,7 @@ module PropCalculus =
         let ieq p = 
             let stmt = <@@ ((%%p) = true) = (%%p) @@> in Theorem(stmt, Proof (stmt, prop_calculus, [L commute; LR right_assoc], true)) |> Ident  
         Tactics.Taut ieq
-
-    let Dual t = Tactics.Dual dual t
-
-    let Dual' t = Tactics.Dual' dual t
-        //let deq p = 
-        //    let stmt = let d = _dual p in <@@ (%%p:bool) = (%%d:bool)@@> in Theorem(stmt, Proof (stmt, prop_calculus, [R dual], true))
-
-        
+    
     /// If A = B is a theorem then so is (A = B) = true.
     let Taut' t = 
         let ieq p = Theorem(<@@ ((%%p) = true) = (%%p) @@>, Proof (<@@ (%%p = true) = %%p @@>, prop_calculus, [L commute; LR right_assoc], true)) |> Ident 
@@ -397,7 +390,7 @@ module PropCalculus =
     ] 
     
     /// p |&| true = p
-    let ident_and p = proof prop_calculus <@ (%p |&| true) = %p @> [
+    let ident_and p = ident prop_calculus <@ (%p |&| true) = %p @> [
         L golden_rule
         LR right_assoc
         zero_or p |> R
@@ -413,11 +406,11 @@ module PropCalculus =
 
     /// p |&| (q |&| r) = (p |&| q) |&| (p |&| r)
     let distrib_and p q r = ident prop_calculus <@ (%p |&| (%q |&| %r)) = ((%p |&| %q) |&| (%p |&| %r)) @> [
-        idemp_and p |> Commute |> L
+        idemp_and p |> Commute |> L |> L'
         right_assoc |> L
-        left_assoc_and p q r |> L
-        commute_and p q |> L
-        right_assoc_and q p r |> L
+        left_assoc_and p q r |> R |> L'
+        commute_and p q |> R |> L'
+        right_assoc_and q p r |> R |> L'
         left_assoc |> L
     ]
 

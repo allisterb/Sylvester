@@ -9,7 +9,10 @@ let x,y = var2<bool>
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 let x' = <@ x @>
 let y' = <@ y @>
-let n, m = var2<int>
+let i, n, m = var3<int>
 let P,Q, N, A= var4<bool>
 let P',Q', N' = <@ P @>, <@ Q @>, <@ N @>
-let Pr x = false
+
+proof pred_calculus <@ exists x N (not P) = not (forall x N P) @> [
+  Dual |> LR
+] 

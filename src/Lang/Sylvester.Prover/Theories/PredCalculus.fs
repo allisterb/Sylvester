@@ -37,7 +37,7 @@ module PredCalculus =
     let trade_forall_implies x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true (%N ==> %P)) @>
         
     /// forall x (Q |&| N) P = (forall x Q (N ==> P))
-    let trade_forall_and_implies x Q N P = ident pred_calculus <@ forall x (%Q |&| %N) %P = (forall x %Q (%N ==> %P)) @> [
+    let trade_forall_and_implies x Q N P = ident pred_calculus <@ forall %x (%Q |&| %N) %P = (forall %x %Q (%N ==> %P)) @> [
         trade_forall_implies x <@ %Q |&| %N @> P |> L
         shunt |> QB |> L'
         trade_forall_implies x Q  <@ %N==> %P @> |> Commute |> L
@@ -96,7 +96,7 @@ module PredCalculus =
         commute_and Q P |> R
     ]
 
-    /// forall x (R1 ||| R2) %P ==> (forall x R1 P)
+    /// forall x (R1 ||| R2) P ==> (forall x R1 P)
     let strengthen_forall_range_or x R1 R2 P = theorem pred_calculus <@ (forall %x (%R1 ||| %R2) %P) ==> (forall %x %R1 %P) @> [
         split_range_forall |> L
         strengthen_and <@ forall %x %R1 %P @> <@ forall %x %R1 %P @> |> Lemma
@@ -116,4 +116,34 @@ module PredCalculus =
         ident_and_implies Q P |> L
         commute_and Q P |> L
         strengthen_forall_body_and x N P Q |> Lemma
+    ]
+
+    /// exists x N P = not (forall x N (not P))
+    let ident_exists_not_forall x N P= id_ax pred_calculus <@ exists %x %N %P = not (forall %x %N (not %P)) @>
+
+    /// not (exists x N (not P)) = forall x N P
+    let ident_not_exists_forall x N P = ident pred_calculus <@ not (exists %x %N (not %P)) = forall %x %N %P @> [
+        ident_exists_not_forall x N <@ not %P @> |> L 
+        double_negation P |> L 
+        double_negation <@ forall %x %N %P @> |> L
+    ]
+
+    /// not (exists x N P) = forall x N (not P)
+    let ident_not_exists_forall_not x N P = ident pred_calculus <@ not (exists %x %N %P) = forall %x %N (not %P) @> [
+        ident_exists_not_forall x N P |> L 
+        double_negation <@ forall %x %N (not %P) @> |> L 
+    ]
+
+    /// exists x N (not P) = not (forall x N P)
+    let ident_exists_not_forall_not x N P = ident pred_calculus <@ exists %x %N (not %P) = not (forall %x %N %P) @> [
+        ident_not_exists_forall x N P |> Commute |> R
+        double_negation <@ exists %x %N (not %P) @> |> R
+    ]
+
+    let trade_exists_and x N P = ident pred_calculus <@ exists %x %N %P = (exists' %x (%N |&| %P)) @> [
+        Dual |> L
+        Dual |> R
+        trade_body |> LR |> LR' |> L'
+        distrib_not_and N P |> R
+        ident_implies_not_or N <@ not %P@> |> LR |> LR' |> L'
     ]
