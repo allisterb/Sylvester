@@ -92,13 +92,13 @@ let ``9.12`` = theorem pred_calculus <@ forall x N (Q ==> P) ==> ((forall x N Q)
     strengthen_forall_body_and x' N' P' Q' |> Lemma    
 ]
 
-let ``9.18a`` = theorem pred_calculus <@ not (exists x N (not P)) = forall x N P @> [
+let ``9.18a``= theorem pred_calculus <@ not (exists x N (not P)) = forall x N P @> [
   ident_exists_not_forall x' N' <@ not P @> |> L 
   double_negation P' |> L 
   double_negation <@ forall x N P @> |> L
 ]
 
-let ``9.18b`` = theorem pred_calculus <@ not (exists x N P) = forall x N (not P) @> [
+let ``9.18b``= theorem pred_calculus <@ not (exists x N P) = forall x N (not P) @> [
   ident_exists_not_forall x' N' P' |> L 
   double_negation <@ forall x N (not P) @> |> L 
 ]
@@ -108,10 +108,47 @@ let ``9.18c`` = theorem pred_calculus <@ exists x N (not P) = not (forall x N P)
   double_negation <@ exists x N (not P) @> |> R
 ]
 
-let ``9.19`` = proof pred_calculus <@ exists x N P = (exists' x (N |&| P)) @> [
+let ``9.19``= theorem pred_calculus <@ exists x N P = (exists' x (N |&| P)) @> [
     Dual |> L
     Dual |> R
     trade_body |> LR |> LR' |> L'
     distrib_not_and N' P' |> R
     ident_implies_not_or N' <@ not P@> |> LR |> LR' |> L'
+]
+
+let ``9.20``= theorem pred_calculus <@ exists x (Q |&| N) P = (exists x Q (N |&| P)) @> [
+   trade_exists_and x' <@ Q |&| N @> P' |> L
+   right_assoc_and Q' N' P' |> LR |> L'
+   trade_exists_and x' Q' <@ N |&| P @> |> Commute |> L
+]
+
+let ``9.21`` = theorem pred_calculus <@ P |&| exists x N Q = (exists x N (P |&| Q))@> [
+    Dual |> R |> L'
+    double_negation P' |> Commute |> L |> L'
+    collect_not_or <@ not P @> <@ forall x N (not Q) @> |> L
+    distrib_or_forall' x' N' <@ not P @> <@ not Q @> |> LR |> LR' |> L'
+    Dual |> R
+    distrib_not_and P' Q' |> LR |> LR' |> R' 
+]
+
+let ``9.22`` = theorem pred_calculus <@ exists x N P = (P |&| (exists' x N)) @> [
+    do failIfOccursFree x' P'
+    distrib_and_exists_and x' <@ true @> P' N' |> R
+    trade_exists_and x' N' P' |> L
+    commute_and N' P' |> LR |> L'
+]
+
+let ``9.23`` = proof pred_calculus <@ exists' x N ==> ((exists x N (P ||| Q)) = (P ||| exists x N Q)) @> [
+    distrib_and_exists x' N' <@ P ||| Q @> |> L |> R'
+    distrib_and_or <@ exists' x N @> P' Q' |> CommuteL |> L |> R'
+    distrib_and_exists x' N' Q' |> Commute |> CommuteL |> L |> R'
+    axiom prop_calculus <@ exists' x N ==> exists' x N @> |> Deduce
+    ident_and <@ P @> |> CommuteL |> LR
+    def_true <@ P ||| (exists x N Q) @> |> Commute |> R
+]
+
+let ``9.24`` = proof pred_calculus <@ exists x N (false) = false @> [
+    distrib_and_exists x' N' <@ false @> |> L
+    commute |> L
+    zero_and <@ exists' x N @> |> L
 ]

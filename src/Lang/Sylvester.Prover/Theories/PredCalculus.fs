@@ -14,6 +14,9 @@ module PredCalculus =
 
     let _distrib_or_forall = EquationalLogic._distrib_or_forall
 
+    let failIfOccursFree x q = 
+        do if occurs (x |> get_vars) q then failwithf "The variable(s) in expression %s occur free in the expression %s." (src x) (src q)
+    
     (* Admissible rules *)
     
     let empty_range = Theory.S.Rules.[21] 
@@ -140,10 +143,53 @@ module PredCalculus =
         double_negation <@ exists %x %N (not %P) @> |> R
     ]
 
+    /// exists x N P = exists true x (N |&| P)
     let trade_exists_and x N P = ident pred_calculus <@ exists %x %N %P = (exists' %x (%N |&| %P)) @> [
         Dual |> L
         Dual |> R
         trade_body |> LR |> LR' |> L'
         distrib_not_and N P |> R
         ident_implies_not_or N <@ not %P@> |> LR |> LR' |> L'
+    ]
+
+    /// exists x (Q |&| N) P = (exists x Q (N |&| P))
+    let trade_exists_and_and x N P Q = ident pred_calculus <@ exists %x (%Q |&| %N) %P = (exists %x %Q (%N |&| %P)) @> [
+        trade_exists_and x <@ %Q |&| %N @> P |> L
+        right_assoc_and Q N P |> LR |> L'
+        trade_exists_and x Q <@ %N |&| %P @> |> Commute |> L
+    ]
+
+    /// P |&| exists x N Q = (exists x N (P |&| Q)) 
+    let distrib_and_exists_and x N P Q = ident pred_calculus <@ %P |&| exists %x %N %Q = (exists %x %N (%P |&| %Q)) @> [
+        do failIfOccursFree x P  
+        Dual |> R |> L'
+        double_negation P |> Commute |> L |> L'
+        collect_not_or <@ not %P @> <@ forall %x %N (not %Q) @> |> L
+        distrib_or_forall' x N <@ not %P @> <@ not %Q @> |> LR |> LR' |> L'
+        Dual |> R
+        distrib_not_and P Q |> LR |> LR' |> R' 
+    ]
+
+    /// exists x N P = (P |&| (exists x true N))
+    let distrib_and_exists x N P = ident pred_calculus <@ exists %x %N %P = (%P |&| (exists' %x %N)) @> [
+        do failIfOccursFree x P
+        distrib_and_exists_and x <@ true @> P N |> R
+        trade_exists_and x N P |> L
+        commute_and N P |> LR |> L'
+    ]
+
+    /// exists x true N ==> ((exists x N (P ||| Q)) = (P ||| exists x N Q))
+    let trade_exists_or x N P Q = theorem pred_calculus <@ exists' %x %N ==> ((exists %x %N (%P ||| %Q)) = (%P ||| exists %x %N %Q)) @> [
+        distrib_and_exists x N <@ %P ||| %Q @> |> L |> R'
+        distrib_and_or <@ exists' %x %N @> P Q |> CommuteL |> L |> R'
+        distrib_and_exists x N Q |> Commute |> CommuteL |> L |> R'
+        axiom prop_calculus <@ exists' %x %N ==> exists' %x %N @> |> Deduce
+        ident_and P |> CommuteL |> LR
+        def_true <@ %P ||| (exists %x %N %Q) @> |> Commute |> R
+    ]
+
+    let ident_exists_false x N = ident pred_calculus <@ exists %x %N (false) = false @> [
+        distrib_and_exists x N <@ false @> |> L
+        commute |> L
+        zero_and <@ exists' %x %N @> |> L
     ]

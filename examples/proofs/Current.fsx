@@ -13,6 +13,7 @@ let i, n, m = var3<int>
 let P,Q, N, A= var4<bool>
 let P',Q', N' = <@ P @>, <@ Q @>, <@ N @>
 
-proof pred_calculus <@ exists x N (not P) = not (forall x N P) @> [
-  Dual |> LR
-] 
+proof pred_calculus <@ exists' x N ==> ((exists x N (P ||| Q)) = P ||| exists x N Q) @> [
+    Dual |> L
+    Dual |> L |> R'
+]

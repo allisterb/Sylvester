@@ -503,6 +503,9 @@ module PropCalculus =
         commute_or q p |> R
     ]
 
+    /// not p ||| not q = not (p |&| q) 
+    let collect_not_and p q = distrib_not_and p q |> Commute
+
     /// not (p ||| q) = not p |&| not q
     let distrib_not_or p q = ident prop_calculus <@ not (%p ||| %q) = (not %p |&| not %q) @> [
         golden_rule' p q |> Commute |> CommuteL |> RightAssoc |> L
@@ -514,6 +517,9 @@ module PropCalculus =
         commute |> R
     ]
 
+    /// not p |&| not q = not (p ||| q)
+    let collect_not_or p q = distrib_not_or p q |> Commute
+    
     /// p ||| q = (p ||| not q = p)
     let ident_or_or_not_eq p q = ident prop_calculus <@ (%p ||| %q) = (%p ||| not %q = %p) @> [
         left_assoc |> LR
