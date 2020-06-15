@@ -21,13 +21,11 @@ module FsExpr =
     | PropertyGet (_, info, _) -> info
     | _ -> failwith "Expression is not a property."
 
-
     let rec getFuncInfo = function
     | Call(None, methodInfo, _) -> methodInfo
     | Lambda(_, expr) -> getFuncInfo expr
     | _ -> failwith "Expression is not a function."
 
- 
     let getModuleType = function
     | PropertyGet (_, info, _) -> info.DeclaringType
     | FieldGet (_, info) -> info.DeclaringType
@@ -118,7 +116,7 @@ module FsExpr =
     let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
     
     let occurs (var:Var list) (expr:Expr) = 
-        expr |> get_vars |> List.exists(fun v -> List.exists(fun vv -> vequal v vv) var)
+        expr |> get_vars |> List.exists(fun v -> var |> List.exists(fun vv -> vequal v vv))
 
     let not_occurs (var:Var list) (expr:Expr) = not (occurs var expr)
 

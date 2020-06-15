@@ -148,8 +148,12 @@ module Patterns =
         | Quantifier(_,bound, _, _) -> bound 
         | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
 
-    let occurs_free (vars:Var list) = 
+    let rec occurs_free (vars:Var list) = 
         function
+        | Quantifier(_, bound, _, Quantifier(_, _, _, body)) -> 
+            //occurs_free vars body
+            let all_vars = body |> get_vars
+            vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
         | Quantifier(_,bound, _, body) -> 
             let all_vars = body |> get_vars
             vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
@@ -157,7 +161,7 @@ module Patterns =
         
     let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr)
 
-    let failIfOccursFree v e = if occurs_free (v |> get_vars) e  then failwithf "One of the variables %A occurs free in the expression %s." v (src e)
+    let failIfOccursFree v e = if occurs_free (v |> get_vars) e then failwithf "One of the variables %A occurs free in the expression %s." v (src e)
     
     (* Formula display patterns *)
 

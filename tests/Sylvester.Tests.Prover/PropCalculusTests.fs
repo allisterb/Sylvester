@@ -7,15 +7,22 @@ module PropCalculusTests =
     
     open Sylvester
     open PropCalculus
-    
+    open PredCalculus
     
     [<Fact>]
     let ``operator works``() =
-        let p,q,r,s = var4<bool> 
-        let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
-        let x,i,j,k = var4<int>
-        let p1 = proof prop_calculus <@ forall (i,j) false ==> (i + j > 0) @> [] 
-        Assert.NotNull p1
+        let P,Q,N,S = var4<bool>
+        let x,y = var2<bool>
+        let pp = proof pred_calculus <@ exists x N (forall y Q P) ==> (forall y Q (exists x N P)) @> [
+            def_implies |> LR
+            distrib_or_forall |> L 
+        ]
+        Assert.NotNull pp
+        //let p,q,r,s = var4<bool> 
+        //let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
+        //let x,i,j,k = var4<int>
+        //let p1 = proof prop_calculus <@ forall (i,j) false ==> (i + j > 0) @> [] 
+        //Assert.NotNull p1
         //let g = <@ sum (x) (x = 3) (x * x) = 9 @>
         //Assert.True (Theory.S |- g)
         //let x = (!!) [i, j, k] (i > 0)  (i + j > 5) 

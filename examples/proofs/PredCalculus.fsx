@@ -163,4 +163,3 @@ let ``9.26`` = theorem pred_calculus <@ exists x N P ==> (exists x N (P ||| Q)) 
     distrib_exists_or' x' N' P' Q' |> R 
     weaken_or <@ exists x N P @> <@ exists x N Q @> |> Lemma
 ]
-

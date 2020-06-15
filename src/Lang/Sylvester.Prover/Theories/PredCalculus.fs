@@ -167,7 +167,7 @@ module PredCalculus =
     /// ((exists x N P) ||| (exists x N Q)) = (exists x N (P ||| Q)) 
     let collect_exists_or' x N P Q = id_ax pred_calculus <@ ((exists %x %N %P) ||| (exists %x %N %Q)) = (exists %x %N (%P ||| %Q)) @>
 
-    /// ((exists x N P) ||| (exists x N Q)) = (exists x N (P ||| Q)) 
+    /// exists x N (P ||| Q) = ((exists x N P) ||| (exists x N Q))   
     let distrib_exists_or' x N P Q = collect_exists_or' x N P Q |> Commute
 
     /// P |&| exists x N Q = (exists x N (P |&| Q)) 
@@ -191,6 +191,7 @@ module PredCalculus =
 
     /// exists x true N ==> ((exists x N (P ||| Q)) = (P ||| exists x N Q))
     let trade_exists_or x N P Q = theorem pred_calculus <@ exists' %x %N ==> ((exists %x %N (%P ||| %Q)) = (%P ||| exists %x %N %Q)) @> [
+        do failIfOccursFree x P
         distrib_and_exists x N <@ %P ||| %Q @> |> L |> R'
         distrib_and_or <@ exists' %x %N @> P Q |> CommuteL |> L |> R'
         distrib_and_exists x N Q |> Commute |> CommuteL |> L |> R'

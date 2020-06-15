@@ -63,7 +63,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let collect_exists_or = Admit("Collect \u2203 quantifer terms distributed over or in (expression)", EquationalLogic._collect_exists_or)
 
-        let distrib_or_forall = Admit("\u2228 distributes over \u2203 in (expression)", EquationalLogic._distrib_or_forall)
+        let distrib_or_forall = Admit("\u2228 distributes over \u2200 in (expression)", EquationalLogic._distrib_or_forall)
 
         let split_range_forall = Admit("Split \u2200 quantifer range in (expression)", EquationalLogic._split_range_forall)
         
