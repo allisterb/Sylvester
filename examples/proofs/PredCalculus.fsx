@@ -138,7 +138,7 @@ let ``9.22`` = theorem pred_calculus <@ exists x N P = (P |&| (exists' x N)) @> 
     commute_and N' P' |> LR |> L'
 ]
 
-let ``9.23`` = proof pred_calculus <@ exists' x N ==> ((exists x N (P ||| Q)) = (P ||| exists x N Q)) @> [
+let ``9.23`` = theorem pred_calculus <@ exists' x N ==> ((exists x N (P ||| Q)) = (P ||| exists x N Q)) @> [
     distrib_and_exists x' N' <@ P ||| Q @> |> L |> R'
     distrib_and_or <@ exists' x N @> P' Q' |> CommuteL |> L |> R'
     distrib_and_exists x' N' Q' |> Commute |> CommuteL |> L |> R'
@@ -147,8 +147,20 @@ let ``9.23`` = proof pred_calculus <@ exists' x N ==> ((exists x N (P ||| Q)) = 
     def_true <@ P ||| (exists x N Q) @> |> Commute |> R
 ]
 
-let ``9.24`` = proof pred_calculus <@ exists x N (false) = false @> [
+let ``9.24`` = theorem pred_calculus <@ exists x N (false) = false @> [
     distrib_and_exists x' N' <@ false @> |> L
     commute |> L
     zero_and <@ exists' x N @> |> L
 ]
+
+let ``9.25`` = theorem pred_calculus <@ exists x N P ==> (exists x (Q ||| N) P) @> [
+    split_range_exists |> R
+    commute |> R
+    weaken_or <@ exists x N P @> <@ exists x Q P @> |> Lemma   
+]
+
+let ``9.26`` = theorem pred_calculus <@ exists x N P ==> (exists x N (P ||| Q)) @> [
+    distrib_exists_or' x' N' P' Q' |> R 
+    weaken_or <@ exists x N P @> <@ exists x N Q @> |> Lemma
+]
+

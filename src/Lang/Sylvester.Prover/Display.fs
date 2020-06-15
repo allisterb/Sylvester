@@ -41,7 +41,14 @@ module Display =
             | _ -> sprintf "%s(%s)" (symbol) (print_formula r)
         | BinaryFormula(SymbolDisplay symbol, l, r) -> 
             match l, r with
-            | Var _, Var _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
+            | Var _, Var _ 
+            | Quantifier _, Var _
+            | Var _, Quantifier _ 
+            | Quantifier _, Quantifier _
+            | _, Not _ 
+            | Not _, _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
+            | Var _, _ -> sprintf "%s %s (%s)" (print_formula l) (symbol) (print_formula r)
+            | _, Var _ -> sprintf "(%s) %s %s" (print_formula l) (symbol) (print_formula r)
             | _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
         | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
         | expr -> src expr

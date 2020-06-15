@@ -67,6 +67,8 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let split_range_forall = Admit("Split \u2200 quantifer range in (expression)", EquationalLogic._split_range_forall)
         
+        let split_range_exists = Admit("Split \u2203 quantifer range in (expression)", EquationalLogic._split_range_exists)
+
         Theory(EquationalLogic.equational_logic_axioms, [
             reduce
             left_assoc
@@ -95,6 +97,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             collect_exists_or
             distrib_or_forall
             split_range_forall
+            split_range_exists
         ])
 
 and Axioms = (Expr -> AxiomDescription option)

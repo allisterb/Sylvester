@@ -15,7 +15,7 @@ module PredCalculus =
     let _distrib_or_forall = EquationalLogic._distrib_or_forall
 
     let failIfOccursFree x q = 
-        do if occurs (x |> get_vars) q then failwithf "The variable(s) in expression %s occur free in the expression %s." (src x) (src q)
+        do if occurs (x |> get_vars) q then failwithf "The variable(s) in expression %s occur free in the quantifier %s." (src x) (src q)
     
     (* Admissible rules *)
     
@@ -30,6 +30,8 @@ module PredCalculus =
     let distrib_or_forall = Theory.S.Rules.[25]
 
     let split_range_forall = Theory.S.Rules.[26]
+
+    let split_range_exists = Theory.S.Rules.[27]
 
     (* Instantiation *)
     let inst quantifier var value = Instantiate pred_calculus quantifier var value
@@ -122,7 +124,7 @@ module PredCalculus =
     ]
 
     /// exists x N P = not (forall x N (not P))
-    let ident_exists_not_forall x N P= id_ax pred_calculus <@ exists %x %N %P = not (forall %x %N (not %P)) @>
+    let ident_exists_not_forall x N P = id_ax pred_calculus <@ exists %x %N %P = not (forall %x %N (not %P)) @>
 
     /// not (exists x N (not P)) = forall x N P
     let ident_not_exists_forall x N P = ident pred_calculus <@ not (exists %x %N (not %P)) = forall %x %N %P @> [
@@ -159,6 +161,15 @@ module PredCalculus =
         trade_exists_and x Q <@ %N |&| %P @> |> Commute |> L
     ]
 
+    /// exists x (N1 ||| N2) P = ((exists x N1 P) |&| (exists x N2 P))
+    let split_range_exists' x N1 N2 P = id_ax pred_calculus <@ exists %x (%N1 ||| %N2) P = ((exists %x %N1 P) |&| (exists %x %N2 P)) @>
+    
+    /// ((exists x N P) ||| (exists x N Q)) = (exists x N (P ||| Q)) 
+    let collect_exists_or' x N P Q = id_ax pred_calculus <@ ((exists %x %N %P) ||| (exists %x %N %Q)) = (exists %x %N (%P ||| %Q)) @>
+
+    /// ((exists x N P) ||| (exists x N Q)) = (exists x N (P ||| Q)) 
+    let distrib_exists_or' x N P Q = collect_exists_or' x N P Q |> Commute
+
     /// P |&| exists x N Q = (exists x N (P |&| Q)) 
     let distrib_and_exists_and x N P Q = ident pred_calculus <@ %P |&| exists %x %N %Q = (exists %x %N (%P |&| %Q)) @> [
         do failIfOccursFree x P  
@@ -188,8 +199,21 @@ module PredCalculus =
         def_true <@ %P ||| (exists %x %N %Q) @> |> Commute |> R
     ]
 
+    /// exists x N (false) = false
     let ident_exists_false x N = ident pred_calculus <@ exists %x %N (false) = false @> [
         distrib_and_exists x N <@ false @> |> L
         commute |> L
         zero_and <@ exists' %x %N @> |> L
+    ]
+
+    /// exists x N P ==> (exists x (Q ||| N) P)
+    let weaken_exists_range x N P Q = theorem pred_calculus <@ exists %x %N %P ==> (exists %x (%Q ||| %N) %P) @> [
+        split_range_exists |> R
+        commute |> R
+        weaken_or <@ exists %x %N %P @> <@ exists %x %Q %P @> |> Lemma   
+    ]
+
+    let weaken_exists_body x N P Q = theorem pred_calculus <@ exists %x %N %P ==> (exists %x %N (%P ||| %Q)) @> [
+        distrib_exists_or' x N P Q |> R 
+        weaken_or <@ exists %x %N %P @> <@ exists %x %N %Q @> |> Lemma
     ]

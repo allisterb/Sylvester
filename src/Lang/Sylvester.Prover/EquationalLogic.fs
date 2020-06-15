@@ -115,7 +115,6 @@ module EquationalLogic =
     let (|Trading|_|) =
         function
         | Equals(ForAll(_, x, R, P), ForAll(_, x', Bool true, Implies(R', P'))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Trading" <@ () @> |> Some
-        //| Equals(Exists(_, x, R, P), Exists(_, x', Bool true, And(R', P'))) when vequal' x x' && sequal2 R P R' P' -> pattern_desc "Trading" <@ () @> |> Some
         | _ -> None
               
     let (|ForAllDistribOr|_|) =
@@ -391,4 +390,12 @@ module EquationalLogic =
             let c1 = let v = vars_to_tuple x in call <@ forall @> (v::R1::P::[])
             let c2 = let v = vars_to_tuple x in call <@ forall @> (v::R2::P::[])
             <@@ (%%c1:bool) |&| (%%c2:bool) @@>
+        | expr -> expr
+
+    let _split_range_exists = 
+        function
+        | Exists(_, x, Or(R1, R2), P) ->  
+            let c1 = let v = vars_to_tuple x in call <@ exists @> (v::R1::P::[])
+            let c2 = let v = vars_to_tuple x in call <@ exists @> (v::R2::P::[])
+            <@@ (%%c1:bool) ||| (%%c2:bool) @@>
         | expr -> expr
