@@ -509,22 +509,24 @@ module LogicalRules =
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
-    /// Instantiate a quantifier at a single point or value.
+    /// Instantiate a quantifier at a single point or value e.g forall x N Q = forall x N Q |&| Q [x = e].
     let Instantiate (theory:Theory) (_quantifier:Expr) (_var_inst:Expr)  (_value:Expr) =
         let print_formula = theory.PrintFormula
-        let quantifier, bound = 
+        let quantifier = 
             match (expand _quantifier) with 
-            | Quantifier(_,b, _, _) as q ->  q, b 
-            | _ -> failwithf "The expression %s is not a quantifier." (print_formula _quantifier)
+            | Quantifier(_,_, _, _) as q -> q //failwithf "The quantifer %s does not have a range of true." (_quantifier |> expand |> src)
+            | _ -> failwithf "The expression %s is not a quantifier." (_quantifier |> expand |> print_formula)
         let var_inst = expand _var_inst
         let value = expand _value
         let rec subst (q:Expr) (v:Expr) (i:Expr) =
             let var = 
                 match v |> expand |> get_vars with 
-                | _v::[] -> _v 
+                | [_v] -> _v 
                 | _ -> failwithf "The expression %s is not a single variable expression" (print_formula v)
             function
-            | Quantifier(_, _, _, body) as l when sequal l q -> subst_var_value var i body 
+            | Quantifier(_, _, _, body) as l when sequal l q ->             
+                let b = subst_var_value var i body
+                call <@ (|&|) @> (q::b::[])
             | expr -> traverse expr (subst q v i)
         Rule.Instantiate(sprintf "Instantiate %s with value %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
 

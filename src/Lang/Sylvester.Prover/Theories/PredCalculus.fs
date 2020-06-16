@@ -88,7 +88,7 @@ module PredCalculus =
         zero_or <@ forall' x (not %N ) @> |> L 
     ]
 
-    /// forall x N (P = Q) ==> (forall x N P  = (forall x N Q))
+    /// forall x N (P = Q) ==> (forall x N P = (forall x N Q))
     let distrib_forall_body x N P Q = theorem pred_calculus <@ forall %x %N (%P = %Q) ==> (forall %x %N %P  = (forall %x %N %Q)) @> [
         distrib_implies_eq_and <@ forall %x %N (%P = %Q) @> <@ forall %x %N %P @> <@ forall %x %N %Q @> |> LR
         collect_forall_and |> L
@@ -214,6 +214,7 @@ module PredCalculus =
         weaken_or <@ exists %x %N %P @> <@ exists %x %Q %P @> |> Lemma   
     ]
 
+    /// exists x N P ==> (exists x N (P ||| Q))
     let weaken_exists_body x N P Q = theorem pred_calculus <@ exists %x %N %P ==> (exists %x %N (%P ||| %Q)) @> [
         distrib_exists_or' x N P Q |> R 
         weaken_or <@ exists %x %N %P @> <@ exists %x %N %Q @> |> Lemma

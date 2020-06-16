@@ -25,9 +25,17 @@ proof pred_calculus <@ exists x N (Q ==> P) ==> ((exists x N Q) ==> (exists x N 
 *)
 let pp = proof pred_calculus <@ exists x N (forall y Q P) ==> (forall y Q (exists x N P)) @> [
     def_implies |> LR
-    //distrib_or_forall |> L 
+    distrib_or_forall |> L 
+    collect_exists_or' x' N' <@ forall y Q P@> P' |> L
+    trade_forall_implies y' Q' P' |> L
+    inst <@ forall' y (Q ==> P) @> y' <@ Q ==> P@> |> L
+    trade_forall_implies y' Q' P' |> Commute |> L
+    //ident_or_conseq P' <@ (forall y Q P) ==> Q @> |> CommuteL |> L
+    //idemp_or P' |> L
 ]
 
-let yy = pp |> last_state |> expand_left |> expand_left |> get_vars |> List.item 2
+//let yy = pp |> last_state |> expand_left |> expand_left |> get_vars |> List.item 2
 
-Patterns.occurs_free [yy] (pp |> last_state |> expand_left)
+//Patterns.occurs_free [yy] (pp |> last_state |> expand_left |> expand_left)
+
+//pp |> last_state |> expand_left |> expand_left |> src
