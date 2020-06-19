@@ -34,9 +34,7 @@ module PredCalculus =
     let split_range_exists = Theory.S.Rules.[27]
 
     (* Instantiation *)
-    //let inst quantifier var value = Instantiate pred_calculus quantifier var value
-
-    //let inst' quantifier var value = Instantiate' pred_calculus quantifier var value
+    let inst x P = Instantiate pred_calculus <@ forall' %x %P @> P [ident_conseq_true P |> Commute |> R; def_true P |> R]
     
     (* Theorems *)
 
@@ -126,6 +124,31 @@ module PredCalculus =
         ident_and_implies Q P |> L
         commute_and Q P |> L
         strengthen_forall_body_and x N P Q |> Lemma
+    ]
+
+    /// forall' x P ==> P
+    let forall_implies_inst' x P = theorem pred_calculus <@ forall' %x %P ==> %P @> [
+        inst x P |> L
+    ]
+
+    /// P ==> forall' %x %P
+    let forall_conseq_inst' x P = theorem pred_calculus <@ %P ==> forall' %x %P @> [
+        axiom pred_calculus <@ %P ==> %P @> |> Deduce
+        ident_forall_true' x |> R
+    ]
+
+    /// forall x N P ==> (N ==> P)
+    let forall_implies_inst x N P = theorem pred_calculus <@ forall %x %N %P ==> (%N ==> %P) @> [
+        trade_body |> L
+        inst x <@ %N ==> %P @> |> L
+        trade_forall_implies x N P |> Commute |> L
+    ]
+
+    /// N ==> P ==> forall x N P
+    let forall_conseq_inst x N P = theorem pred_calculus <@ %N ==> %P ==> (forall %x %N %P) @> [
+        trade_body |> R
+        forall_conseq_inst' x <@ %N ==> %P @> |> Lemma
+        trade_forall_implies x N P |> Commute |> R
     ]
 
     /// exists x N P = not (forall x N (not P))

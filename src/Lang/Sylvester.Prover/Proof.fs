@@ -518,7 +518,7 @@ module LogicalRules =
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
-    /// Instantiate a quantifier at a single point or value e.g forall x N [x = e] = Q [x = e].
+    /// Instantiate a quantifier at a single point or value e.g forall' x P [x = e] = P [x = e].
     let Instantiate (theory:Theory) (_quantifier:Expr) (_value:Expr) (steps: RuleApplication list)=
         let print_formula = theory.PrintFormula
         let quantifier, op, bound, body = 
@@ -527,65 +527,14 @@ module LogicalRules =
             | Quantifier _ as q -> failwithf "The quantifier %s must have a range of true to be replaced with an instantiation." (print_formula q)
             | _ -> failwithf "The expression %s is not a quantifier." (_quantifier |> expand |> print_formula)
         let var_inst = bound
-        do 
-            //if not (vequal var_inst bound) then failwithf "The variable %A to be instantiated is not the bound variable in quantifier %s." var_inst (print_formula quantifier)
-            if occurs_free [var_inst] body then failwithf "The variable %A occurs free in the body of quantifier %s" var_inst (print_formula quantifier)
+        do if occurs_free [var_inst] body then failwithf "The variable %A occurs free in the body of quantifier %s" var_inst (print_formula quantifier)
         let var_expr = vars_to_tuple [bound]
         let value = expand _value
-        let one_point = call <@ (=) @> (var_expr::value::[])
-        let body' = call <@ (==>) @> (one_point::body::[])
         let inst_value = subst_var_value var_inst value body
-        let iop = call <@ (==>) @> ((<@@ true @@>)::inst_value::[])
-        let inst_value' = subst_var_value var_inst value body'
-        let qop = call op (var_expr::(<@@ true @@>)::body::[])
-        //let i = call <@ (=) @> ((<@@ true @@>)::(subst_var_value var_inst value body)::[])
-        let stmt = call <@ (=) @> (qop::iop::[])
-        
+        let qop = call op (var_expr::(<@@ true @@>)::body::[])        
+        let stmt = call <@ (=) @> (qop::inst_value::[])
         let p = Proof(stmt, theory, steps, true) in p |> Theorem |> Ident
-        (*
-        let stmt = mat
-            | Quantifier(_, _,DerivedPatterns.Bool true, body) as l when sequal l q ->             
-                let b = subst_var_value var i body
-                call <@ (|&|) @> (q::b::[])
-            | Quantifier(op, bound, range, body) as l when sequal l q -> 
-                let body' = call <@ (==>) @> (range::body::[])
-                let b = subst_var_value var i body'
-                let q' = let v = vars_to_tuple bound in call op (v::(<@@ true @@>)::body'::[])
-                call <@ (|&|) @> (q::b::[])
-            | expr -> traverse expr (subst q v i
-        *)
-        //Rule.Instantiate(sprintf "Instantiate %s with value %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
 
-    (*
-    /// Instantiate a quantifier at a single point or value e.g forall x N Q = forall x N Q |&| Q [x = e].
-    let Instantiate' (theory:Theory) (_quantifier:Expr) (_var_inst:Expr)  (_value:Expr) =
-        let print_formula = theory.PrintFormula
-        let quantifier = 
-            match (expand _quantifier) with 
-            | Quantifier _ as q -> q
-            | expr -> failwithf "The expression %s is not a quantifier." (print_formula expr)
-        let var_inst = expand _var_inst
-        let value = expand _value
-        let rec subst (q:Expr) (v:Expr) (i:Expr) =
-            let var = 
-                match v |> expand |> get_vars with 
-                | [_v] -> _v 
-                | _ -> failwithf "The expression %s is not a single variable expression" (print_formula v)
-            let l, r = 
-                match q with
-                    | Quantifier(_, _, DerivedPatterns.Bool true, body) ->             
-                        let b = subst_var_value var i body
-                        call <@ (|&|) @> (q::b::[]), q
-                    | Quantifier(op, bound, range, body) -> 
-                        let body' = call <@ (==>) @> (range::body::[])
-                        let b = subst_var_value var i body'
-                        call <@ (|&|) @> (q::b::[]), q
-                    | _ -> failwithf "The expression %s is not a single variable expression" (print_formula v)
-            function
-            | expr when sequal expr l -> r             
-            | expr -> traverse expr (subst q v i)
-        Rule.Instantiate(sprintf "Instantiate %s with value %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
-    *)
 [<AutoOpen>]
 module Proof = 
     let proof (theory:Theory) (e:Expr<'t>) steps =         
