@@ -3,6 +3,7 @@
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
+open FSharp.Quotations.ExprShape
 
 open Descriptions
 
@@ -89,12 +90,12 @@ module Patterns =
         | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
         | _ -> None
 
-    let (|Unary|_|) (op:Expr<'t->'u>)=
+    let (|Unary|_|) (op:Expr<'t->'u>) =
         function
         | SpecificCall op (None,_,r::[]) when r.Type = typeof<'t> -> Some r
         | _ -> None
 
-    let (|BinaryCall|_|)  =
+    let (|BinaryCall|_|) =
         function
         | Call(_,_,l::r::[]) when l.Type = r.Type -> Some (l,r)
         | _ -> None
@@ -104,10 +105,16 @@ module Patterns =
         | Call(_,_,r::[]) -> Some r
         | _ -> None
 
+    let (|Proposition|_|) =
+        function
+        | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
+        | _ -> None
+
     let (|BoundVars|_|) =
         function
         | NewTuple(bound) -> bound |> List.map get_vars |> List.concat |> Some
         | ExprShape.ShapeVar bound -> [bound] |> Some
+        | ValueWithName(v,t,n) -> let bound = Var(n, t) in [bound] |> Some 
         | _ -> None
      
     let (|ForAll|_|) =
@@ -138,10 +145,6 @@ module Patterns =
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
     
-    let (|Proposition|_|) =
-        function
-        | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
-        | _ -> None
 
     let bound_vars =
         function
@@ -163,6 +166,15 @@ module Patterns =
 
     let failIfOccursFree v e = if occurs_free (v |> get_vars) e then failwithf "One of the variables %A occurs free in the expression %s." v (src e)
     
+    let get_quantifiers expr =
+        let rec rget_quantifiers prev =
+            function
+            | Quantifier (_,_,_,body) as q -> prev @ [q] @ (rget_quantifiers prev body)
+            | ShapeVar _ -> prev
+            | ShapeLambda (_, body) -> rget_quantifiers prev body
+            | ShapeCombination (_, exprs) ->  List.map (rget_quantifiers prev) exprs |> List.collect id
+        rget_quantifiers [] expr
+
     (* Formula display patterns *)
 
     let (|UnaryFormula|_|)  =
@@ -300,19 +312,22 @@ module Patterns =
     let (|OnePoint|_|) =
         function
         | Equals(Quantifier(_,[x], Equals(Var x', E), P), P') when not (occurs_free [x] E) && vequal x x' && sequal P' (subst_var_value x E P) -> 
-            pattern_desc "the One-Point Rule" <@ () @> |> Some
+            pattern_desc "the One-Point Rule" <@ fun x E P -> (forall x (x = E) P) = P @> |> Some
+        | Equals(Quantifier(_,[x], Bool true, P), Implies(Equals(E, E'), P')) when not (occurs_free [x] E) && sequal E E' && sequal P' (subst_var_value x E P) -> 
+            pattern_desc "the One-Point Rule" <@ fun x E P -> (forall x (x = E) P) = P @> |> Some
+
         | _ -> None
 
     let (|Nesting|_|) =
         function
         | Equals(Quantifier(_, x::y, R1, P), Quantifier(_, [x'], R2, Quantifier(_,y', R3, P'))) 
-            when not_occurs_free y R1 && vequal x x' && vequal' y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc "Interchange Variables" <@ () @> |> Some
+            when not_occurs_free y R1 && vequal x x' && vequal' y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc "Interchange Variables" <@ fun x -> not x @> |> Some
         | Equals(Quantifier(_, x::y, And(R, Q), P), Quantifier(_, [x'], R',Quantifier(_,y', Q', P'))) 
-            when not_occurs_free y R && vequal x x' && vequal' y y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ () @> |> Some
+            when not_occurs_free y R && vequal x x' && vequal' y y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ fun x -> not x @> |> Some
         | _ -> None
 
     let (|Renaming|_|) =
         function
         | Equals(Quantifier(_, x, R, P), Quantifier(_, y, R', P')) 
-            when not (vequal' x y) && x.Length = y.Length && not_occurs_free y R && not_occurs_free y P && sequal R' (replace_var_var' x y R) && sequal P' (replace_var_var' x y P) -> pattern_desc "Renaming Variables" <@ () @> |> Some
+            when not (vequal' x y) && x.Length = y.Length && not_occurs_free y R && not_occurs_free y P && sequal R' (replace_var_var' x y R) && sequal P' (replace_var_var' x y P) -> pattern_desc "Renaming Variables" <@ fun x -> not x @> |> Some
         | _ -> None

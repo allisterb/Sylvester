@@ -621,6 +621,25 @@ module PropCalculus =
         left_assoc |> R 
     ]
 
+    /// p |&| (p ==> q) = (p |&| q)
+    let ident_and_implies p q = ident prop_calculus <@ %p |&| (%p ==> %q) = (%p |&| %q) @> [
+        ident_implies_eq_and_eq p q |> L
+        distrib_and_eq p <@ %p |&| %q @> p |> L
+        left_assoc |> L |> L' |> L'
+        idemp_and p |> L
+    ]
+
+    /// p ||| (q ==> p) = (q ==> p)
+    let ident_or_conseq p q = ident prop_calculus <@ %p ||| (%q ==> %p) = (%q ==> %p) @> [
+        def_implies |> R |> L'
+        distrib |> L
+        commute_or q p |> L
+        left_assoc_or p p q |> L 
+        idemp_or p |> L
+        commute |> LR
+        commute_or p q |> R
+    ]
+
     /// p ==> q = (not q ==> not p)
     let def_implies_contr p q = ident prop_calculus <@ %p ==> %q = (not %q ==> not %p) @> [
         def_implies |> R
@@ -649,25 +668,6 @@ module PropCalculus =
         right_assoc |> L |> R'
         def_true p |> Commute |> R
         ident_eq <@ %p |&| %q @> |> L |> R'
-    ]
-
-    /// p |&| (p ==> q) = (p |&| q)
-    let ident_and_implies p q = ident prop_calculus <@ %p |&| (%p ==> %q) = (%p |&| %q) @> [
-        ident_implies_eq_and_eq p q |> L
-        distrib_and_eq p <@ %p |&| %q @> p |> L
-        left_assoc |> L |> L' |> L'
-        idemp_and p |> L
-    ]
-
-    /// p ||| (q ==> p) = (q ==> p)
-    let ident_or_conseq p q = ident prop_calculus <@ %p ||| (%q ==> %p) = (%q ==> %p) @> [
-        def_implies |> R |> L'
-        distrib |> L
-        commute_or q p |> L
-        left_assoc_or p p q |> L 
-        idemp_or p |> L
-        commute |> LR
-        commute_or p q |> R
     ]
 
     /// p ||| (p ==> q)

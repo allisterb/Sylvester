@@ -107,7 +107,7 @@ and Rule =
     | Dual of string * (Expr->Expr)
     | Derive of string * Proof * (Proof -> Expr -> Expr)
     | Deduce of string * Proof * (Proof -> Expr -> Expr) 
-    | Instantiate of string * Expr * Expr * Expr * (Expr -> Expr -> Expr -> Expr -> Expr)
+    | Instantiate of string * Proof * (Proof -> Expr -> Expr) * Var * Expr
 with
     member x.Name = 
         match x with 
@@ -122,7 +122,7 @@ with
         | Dual(_, r) -> r
         | Derive(_, p, r) -> r p
         | Deduce(_, p, r) -> r p
-        | Instantiate(_, q, var, value, r) -> r q var value
+        | Instantiate(_, p, r, _, _) -> r p
         
 and Rules = Rule list 
 
@@ -216,32 +216,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 if current_ant.IsNone then failwithf "Deduction rule at step %i (%s) cannot be used since %s is not a logical implication with an antecedent and consequent." stepId n (print_formula a)
                 if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
                     failwithf "Deduction rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n
-                match step with
-                | R _ -> ()
-                | _ -> failwith "A deduction rule can only be applied to the consequent of a logical implication."
-            | Instantiate(_, q, var_expr, value, _) -> 
-                match q with
-                | Quantifier(op, bound, range, body) -> 
-                    let var_inst = 
-                        match get_vars var_expr with
-                        | [x] -> x 
-                        | _ -> failwithf "The expression %s is not a single variable expression." (print_formula var)
-                    let inst = subst_var_value var_inst value body
-                    let point_range = call <@ (=) @> (Expr.Var(var_inst)::value::[])
-                    let one_point = 
-                        let v = vars_to_tuple [var_inst] in 
-                        let qop = call op (v::point_range::body::[]) in
-                        call <@ (=) @> (qop::inst::[])
-                    if not((theory |- one_point) || (logic |- one_point)) then
-                        failwithf "The current theory and logic do not prove the instantiation %s." (print_formula one_point) 
-                | _ -> failwithf "The expression %s is not a quantifier." (print_formula q)
-              
-        let _a = 
-            match step.Rule with
-            | Admit(_,_) -> step.Apply _state
-            | Dual (_,_) -> step.Apply _state
-            | Derive(_,_,_) -> step.Apply _state
-            | Deduce(n,p,_) -> 
                 let conjs = 
                     match p.Stmt with 
                     | Argument(_, _, cj) -> cj 
@@ -249,8 +223,28 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 if conjs |> List.forall(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
                     failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
                         (conjs |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
-                step.Apply _state
-            | Instantiate(_, _, _,_, _) -> step.Apply _state
+                match step with
+                | R _ -> ()
+                | _ -> failwith "A deduction rule can only be applied to the consequent of a logical implication."
+            | Instantiate(n, p, _, var_inst, value) ->                 
+                if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
+                    failwithf "Instantiation rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n  
+                let q, op, bound, range, body, inst_value, r =
+                    match p.Stmt with
+                    | Implies(And(Quantifier(op, bound, range, body) as q, E), r) -> q, op, bound, range, body, E, r
+                    | _ -> failwithf "The proof statement %s does not have the correct form for an instantiation rule." (print_formula p.Stmt) 
+                let quantfiers = get_quantifiers a
+                let inst = subst_var_value var_inst value body
+                do if not (sequal inst inst_value) then failwithf "The instantiated values do not match: %s,%s." (print_formula inst) (print_formula inst_value)
+                let point_range = call <@ (=) @> (Expr.Var(var_inst)::value::[])
+                let one_point = 
+                    let v = vars_to_tuple [var_inst] in 
+                    let qop = call op (v::point_range::body::[]) in
+                    call <@ (=) @> (qop::inst::[])
+                if not((theory |- one_point) || (logic |- one_point)) then
+                    failwithf "The current theory and logic do not prove the instantiation %s." (print_formula one_point) 
+                
+        let _a = step.Apply _state
 
         let msg =
             match step.Rule with
@@ -325,7 +319,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
     static member LogLevel with get() = logLevel and set(v) = logLevel <- v
     /// The default logical theory used by proofs. Defaults to S but can be changed to something else.
     static member Logic with get() = logic and set(v) = logic <- v
-    static member (|-) (proof:Proof, expr:Expr) = sequal proof.Stmt expr  && proof.Complete
+    static member (|-) (proof:Proof, expr:Expr) = sequal proof.Stmt expr && proof.Complete
     static member (+) (l:Proof, r:RuleApplication) = 
         if l.Complete then 
             failwith "Cannot add a step to a completed proof." 
@@ -347,6 +341,8 @@ and RuleApplication =
     | L' of RuleApplication
     | R' of RuleApplication
     | LR' of RuleApplication
+    | QR' of RuleApplication
+    | QB' of RuleApplication
     
 with
     member x.Rule = 
@@ -358,7 +354,9 @@ with
         | QB rule -> rule
         | L' ra 
         | R' ra 
-        | LR' ra -> ra.Rule
+        | LR' ra 
+        | QR' ra
+        | QB' ra -> ra.Rule
     member x.RuleName = x.Rule.Name
     member x.Apply(expr:Expr) =       
         match x with
@@ -391,6 +389,14 @@ with
             match expr with
             | Patterns.Call(o, m, l::[]) -> let s = ra.Apply l in unary_call(o, m, s)
             | _ -> failwith "Expression is not a binary operation."
+        | QR' ra ->
+            match expr with
+            | Quantifier(op, x, range, body) -> let s = ra.Apply range in let v = vars_to_tuple x in call op (v::s::body::[])
+            | _ -> failwith "Expression is not a quantifier."
+        | QB' ra ->
+            match expr with
+            | Quantifier(op, x, range, body) -> let s = ra.Apply body in let v = vars_to_tuple x in call op (v::range::s::[])
+            | _ -> failwith "Expression is not a quantifier."
     member x.Pos =
         match x with
         | LR _ -> "expression"
@@ -401,6 +407,9 @@ with
         | L' ra -> sprintf "left-%s of expression" (ra.Pos.Replace(" of expression", ""))
         | R' ra -> sprintf "right-%s of expression" (ra.Pos.Replace(" of expression", ""))
         | LR' ra -> sprintf "left-right-%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | QR' ra -> sprintf "quantifier-range-%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | QB' ra -> sprintf "quantifier-body-%s of expression" (ra.Pos.Replace(" of expression", ""))
+
         
 and Theorem (expr: Expr, proof:Proof) = 
     let print_formula = proof.Theory.PrintFormula
@@ -409,7 +418,7 @@ and Theorem (expr: Expr, proof:Proof) =
         if not proof.Complete then 
             if not proof.IsLemma then
                 failwithf "The provided proof of theorem %s is not complete." (print_formula expr)
-            else failwithf "The provided proof of lemma %s is not complete. This can be caused in derived rules when unexpected substitution occcurs in steps that are not specific enough."  (proof.Theory.PrintFormula expr) 
+            else failwithf "The provided proof of lemma %s is not complete. The last state is %s. This can happen in derived rules when a unexpected substitution occcurs in steps that are not specific enough."  (print_formula expr) (print_formula proof.LastState) 
     member val Stmt = expr
     member val LastState = proof.LastState
     member val Proof = proof
@@ -509,13 +518,52 @@ module LogicalRules =
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
+    /// Instantiate a quantifier at a single point or value e.g forall x N [x = e] = Q [x = e].
+    let Instantiate (theory:Theory) (_quantifier:Expr) (_value:Expr) (steps: RuleApplication list)=
+        let print_formula = theory.PrintFormula
+        let quantifier, op, bound, body = 
+            match (expand _quantifier) with 
+            | Quantifier (op, [x], DerivedPatterns.Bool true, body) as q -> q, op, x, body
+            | Quantifier _ as q -> failwithf "The quantifier %s must have a range of true to be replaced with an instantiation." (print_formula q)
+            | _ -> failwithf "The expression %s is not a quantifier." (_quantifier |> expand |> print_formula)
+        let var_inst = bound
+        do 
+            //if not (vequal var_inst bound) then failwithf "The variable %A to be instantiated is not the bound variable in quantifier %s." var_inst (print_formula quantifier)
+            if occurs_free [var_inst] body then failwithf "The variable %A occurs free in the body of quantifier %s" var_inst (print_formula quantifier)
+        let var_expr = vars_to_tuple [bound]
+        let value = expand _value
+        let one_point = call <@ (=) @> (var_expr::value::[])
+        let body' = call <@ (==>) @> (one_point::body::[])
+        let inst_value = subst_var_value var_inst value body
+        let iop = call <@ (==>) @> ((<@@ true @@>)::inst_value::[])
+        let inst_value' = subst_var_value var_inst value body'
+        let qop = call op (var_expr::(<@@ true @@>)::body::[])
+        //let i = call <@ (=) @> ((<@@ true @@>)::(subst_var_value var_inst value body)::[])
+        let stmt = call <@ (=) @> (qop::iop::[])
+        
+        let p = Proof(stmt, theory, steps, true) in p |> Theorem |> Ident
+        (*
+        let stmt = mat
+            | Quantifier(_, _,DerivedPatterns.Bool true, body) as l when sequal l q ->             
+                let b = subst_var_value var i body
+                call <@ (|&|) @> (q::b::[])
+            | Quantifier(op, bound, range, body) as l when sequal l q -> 
+                let body' = call <@ (==>) @> (range::body::[])
+                let b = subst_var_value var i body'
+                let q' = let v = vars_to_tuple bound in call op (v::(<@@ true @@>)::body'::[])
+                call <@ (|&|) @> (q::b::[])
+            | expr -> traverse expr (subst q v i
+        *)
+        //Rule.Instantiate(sprintf "Instantiate %s with value %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
+
+    (*
     /// Instantiate a quantifier at a single point or value e.g forall x N Q = forall x N Q |&| Q [x = e].
-    let Instantiate (theory:Theory) (_quantifier:Expr) (_var_inst:Expr)  (_value:Expr) =
+    let Instantiate' (theory:Theory) (_quantifier:Expr) (_var_inst:Expr)  (_value:Expr) =
         let print_formula = theory.PrintFormula
         let quantifier = 
             match (expand _quantifier) with 
-            | Quantifier(_,_, _, _) as q -> q //failwithf "The quantifer %s does not have a range of true." (_quantifier |> expand |> src)
-            | _ -> failwithf "The expression %s is not a quantifier." (_quantifier |> expand |> print_formula)
+            | Quantifier _ as q -> q
+            | expr -> failwithf "The expression %s is not a quantifier." (print_formula expr)
         let var_inst = expand _var_inst
         let value = expand _value
         let rec subst (q:Expr) (v:Expr) (i:Expr) =
@@ -523,13 +571,21 @@ module LogicalRules =
                 match v |> expand |> get_vars with 
                 | [_v] -> _v 
                 | _ -> failwithf "The expression %s is not a single variable expression" (print_formula v)
+            let l, r = 
+                match q with
+                    | Quantifier(_, _, DerivedPatterns.Bool true, body) ->             
+                        let b = subst_var_value var i body
+                        call <@ (|&|) @> (q::b::[]), q
+                    | Quantifier(op, bound, range, body) -> 
+                        let body' = call <@ (==>) @> (range::body::[])
+                        let b = subst_var_value var i body'
+                        call <@ (|&|) @> (q::b::[]), q
+                    | _ -> failwithf "The expression %s is not a single variable expression" (print_formula v)
             function
-            | Quantifier(_, _, _, body) as l when sequal l q ->             
-                let b = subst_var_value var i body
-                call <@ (|&|) @> (q::b::[])
+            | expr when sequal expr l -> r             
             | expr -> traverse expr (subst q v i)
         Rule.Instantiate(sprintf "Instantiate %s with value %s in (expression)" (print_formula quantifier) (print_formula value), quantifier, var_inst, value, subst)
-
+    *)
 [<AutoOpen>]
 module Proof = 
     let proof (theory:Theory) (e:Expr<'t>) steps =         

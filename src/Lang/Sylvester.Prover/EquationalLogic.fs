@@ -74,8 +74,8 @@ module EquationalLogic =
     
     let (|EmptyRange|_|) =
         function
-        | ForAll(_,_,Bool false,_) -> pattern_desc "Empty Range" <@ () @> |> Some
-        | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "Empty Range" <@ () @> |> Some
+        | ForAll(_,_,Bool false,_) -> pattern_desc "Empty Range" <@ fun x -> not x @> |> Some
+        | Equals(Exists(_,_,Bool false,_), Bool false) -> pattern_desc "Empty Range" <@ fun x -> not x @> |> Some
         | _ -> None
     
     let (|QuantifierCollect|_|) =
@@ -83,21 +83,21 @@ module EquationalLogic =
         | Equals(And(ForAll(_, b1, R1, P), ForAll(_, b2, R2, Q)), ForAll(_, b3, R3, PQ)) 
             when 
                 vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) |&| (%%Q:bool) @@> PQ ->
-                pattern_desc "Distributivity of \u2200" <@ () @> |> Some
+                pattern_desc "Distributivity of \u2200" <@ fun x -> not x @> |> Some
         | Equals(Or(Exists(_, b1, R1, P), Exists(_, b2, R2, Q)), Exists(_, b3, R3, PQ)) 
             when 
                 vequal' b1 b2 && vequal' b2 b3 && sequal R1 R2 && sequal R2 R3 && sequal <@@ (%%P:bool) ||| (%%Q:bool) @@> PQ ->
-                pattern_desc "Distributivity of \u2203" <@ () @> |> Some
+                pattern_desc "Distributivity of \u2203" <@ fun x -> not x @> |> Some
         | _ -> None
 
     let (|RangeSplit|_|) =
         function
         | Equals(ForAll(_, b1, Or(R1, S1), P1), And(ForAll(_,b2, R, P2), ForAll(_,b3, S, P3))) 
             when 
-                vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
+                vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ fun x -> not x @> |> Some
         | Equals(Exists(_,b1, Or(R1, S1), P1), Or(Exists(_,b2, R, P2), Exists(_,b3, S, P3))) 
             when 
-                vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ () @> |> Some
+                vequal' b1 b2 && vequal' b2 b3 && sequal2 R1 S1 R S && sequal P1 P2 && sequal P2 P3 -> pattern_desc "the Range Split" <@ fun x -> not x @> |> Some
         | _ -> None
 
     let (|Interchange|_|) =
@@ -105,27 +105,27 @@ module EquationalLogic =
         | Equals(ForAll(_, x, R, ForAll(_, y, Q, P)), ForAll(_, y', Q', ForAll(_ ,x', R' ,P')))
             when 
                 vequal' x x' && vequal' y y' && sequal3 P Q R P' Q' R' && not_occurs_free y R && not_occurs_free x Q
-                -> pattern_desc "the Interchange of Variables" <@ () @> |> Some
+                -> pattern_desc "the Interchange of Variables" <@ fun x -> not x @> |> Some
         | Equals(Exists(_, x, R, Exists(_, y, Q, P)), Exists(_, y', Q', Exists(_ ,x', R' ,P')))
             when 
                 vequal' x x' && vequal' y y' && sequal P P' && sequal Q Q' && sequal R R' && not_occurs_free y R && not_occurs_free x Q
-                -> pattern_desc "the Interchange of Variables" <@ () @> |> Some
+                -> pattern_desc "the Interchange of Variables" <@ fun x -> not x @> |> Some
         | _ -> None
 
     let (|Trading|_|) =
         function
-        | Equals(ForAll(_, x, R, P), ForAll(_, x', Bool true, Implies(R', P'))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Trading" <@ () @> |> Some
+        | Equals(ForAll(_, x, R, P), ForAll(_, x', Bool true, Implies(R', P'))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Trading" <@ fun x -> not x @> |> Some
         | _ -> None
               
     let (|ForAllDistribOr|_|) =
         function
         | Equals(Or(P1, ForAll(_, x1, R1, Q1)), ForAll(_, x2, R2, Or(P2, Q2))) 
-            when not_occurs_free x1 P1 && vequal' x1 x2 && sequal P1 P2 && sequal2 Q1 R1 Q2 R2 -> pattern_desc "Distributivity of forall" <@ () @> |> Some
+            when not_occurs_free x1 P1 && vequal' x1 x2 && sequal P1 P2 && sequal2 Q1 R1 Q2 R2 -> pattern_desc "Distributivity of forall" <@ fun x -> not x @> |> Some
         | _ -> None
     
     let (|GeneralizedDeMorgan|_|) =
         function
-        | Equals(Exists(_, x, R, P), Not(ForAll(_, x', R', Not(P')))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Generalized De Morgan" <@ () @> |> Some
+        | Equals(Exists(_, x, R, P), Not(ForAll(_, x', R', Not(P')))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Generalized De Morgan" <@ fun x -> not x @> |> Some
         | _ -> None
     
     let equational_logic_axioms = 
@@ -381,7 +381,7 @@ module EquationalLogic =
 
     let _distrib_or_forall =
         function
-        | Or(P, ForAll(_, x, R, Q)) when not_occurs_free x P -> let v = vars_to_tuple x in call <@ forall @> (v::R::(<@@ %%P ||| %%Q @@>)::[])
+        | Or(P, ForAll(_, x, R, P')) when not_occurs_free x P -> let v = vars_to_tuple x in call <@ forall @> (v::R::(<@@ %%P ||| %%P' @@>)::[])
         | expr -> expr
 
     let _split_range_forall = 
@@ -399,3 +399,4 @@ module EquationalLogic =
             let c2 = let v = vars_to_tuple x in call <@ exists @> (v::R2::P::[])
             <@@ (%%c1:bool) ||| (%%c2:bool) @@>
         | expr -> expr
+    

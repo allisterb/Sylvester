@@ -8,16 +8,31 @@ module PropCalculusTests =
     open Sylvester
     open PropCalculus
     open PredCalculus
-    
-    [<Fact>]
-    let ``operator works``() =
+
+    module Vars = 
         let P,Q,N,S = var4<bool>
         let x,y = var2<bool>
+
+    
+    open Vars
+    [<Fact>]
+    let ``operator works``() =
+        
+        let pp = proof pred_calculus <@ (forall' x P) ==> P @> [
+            Instantiate pred_calculus <@ forall' x P @> <@ x @> <@ P @> |> L
+            //axiom pred_calculus <@ P ==> P @> |> Deduce
+            //ident_forall_true' x' |> R
+        ]
+        Assert.NotNull pp
+        (*
+
         let pp = proof pred_calculus <@ exists x N (forall y Q P) ==> (forall y Q (exists x N P)) @> [
             def_implies |> LR
             distrib_or_forall |> L 
         ]
         Assert.NotNull pp
+        *)
+        //Assert.NotEmpty (Patterns.get_quantifiers <@ exists x N P @>)
         //let p,q,r,s = var4<bool> 
         //let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
         //let x,i,j,k = var4<int>

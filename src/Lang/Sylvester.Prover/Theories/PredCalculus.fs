@@ -34,8 +34,10 @@ module PredCalculus =
     let split_range_exists = Theory.S.Rules.[27]
 
     (* Instantiation *)
-    let inst quantifier var value = Instantiate pred_calculus quantifier var value
+    //let inst quantifier var value = Instantiate pred_calculus quantifier var value
 
+    //let inst' quantifier var value = Instantiate' pred_calculus quantifier var value
+    
     (* Theorems *)
 
     /// forall x N P = (forall x true (N ==> P))
@@ -85,8 +87,11 @@ module PredCalculus =
     let ident_forall_true x N = ident pred_calculus <@ forall %x %N true = true @> [
         trade_forall_or_not x N <@ true @> |> L
         commute |> L
-        zero_or <@ forall' x (not %N ) @> |> L 
+        zero_or <@ forall' %x (not %N ) @> |> L 
     ]
+
+    /// forall x true true = true
+    let ident_forall_true' x = ident_forall_true x <@ true @>
 
     /// forall x N (P = Q) ==> (forall x N P = (forall x N Q))
     let distrib_forall_body x N P Q = theorem pred_calculus <@ forall %x %N (%P = %Q) ==> (forall %x %N %P  = (forall %x %N %Q)) @> [

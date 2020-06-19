@@ -92,6 +92,11 @@ let ``9.12`` = theorem pred_calculus <@ forall x N (Q ==> P) ==> ((forall x N Q)
     strengthen_forall_body_and x' N' P' Q' |> Lemma    
 ]
 
+let ``9.16a``= proof pred_calculus <@ P ==> forall' x P @> [
+    axiom pred_calculus <@ P ==> P @> |> Deduce
+    ident_forall_true' x' |> R
+]
+
 let ``9.18a``= theorem pred_calculus <@ not (exists x N (not P)) = forall x N P @> [
   ident_exists_not_forall x' N' <@ not P @> |> L 
   double_negation P' |> L 

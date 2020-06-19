@@ -4,7 +4,7 @@ open FSharp.Quotations
 open Patterns
 
 module Tactics = 
-    /// The constant true is a theorem
+    /// A = true is a theorem
     let Truth commute rule = 
         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let l = 
@@ -35,7 +35,7 @@ module Tactics =
         let p = Proof(stmt, theory, (expr |> ident |> LR) :: proof.Steps, true) in 
         Theorem(stmt, p) |> Ident 
 
-    /// If A is theorem then so is the dual of A
+    /// If A is theorem then so is the dual of A.
     let Dual (t:Theorem) = 
         let proof = t.Proof
         let theory = proof.Theory
@@ -44,7 +44,7 @@ module Tactics =
         let p = Proof(stmt, theory, (Dual |> LR) :: proof.Steps, true) in
         Theorem(stmt, p)
 
-    /// If A is theorem then so is the dual of A
+    /// If A = B is an identity then so is the dual of A with B.
     let Dual' (rule:Rule) = 
         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let theory = proof.Theory
