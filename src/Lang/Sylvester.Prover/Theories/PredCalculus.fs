@@ -190,8 +190,8 @@ module PredCalculus =
 
     /// exists x N P = exists true x (N |&| P)
     let trade_exists_and x N P = ident pred_calculus <@ exists %x %N %P = (exists' %x (%N |&| %P)) @> [
-        Dual |> L
-        Dual |> R
+        dual |> L
+        dual |> R
         trade_body |> LR |> LR' |> L'
         distrib_not_and N P |> R
         ident_implies_not_or N <@ not %P@> |> LR |> LR' |> L'
@@ -216,11 +216,11 @@ module PredCalculus =
     /// P |&| exists x N Q = (exists x N (P |&| Q)) 
     let distrib_and_exists_and x N P Q = ident pred_calculus <@ %P |&| exists %x %N %Q = (exists %x %N (%P |&| %Q)) @> [
         do failIfOccursFree x P  
-        Dual |> R |> L'
+        dual |> R |> L'
         double_negation P |> Commute |> L |> L'
         collect_not_or <@ not %P @> <@ forall %x %N (not %Q) @> |> L
         distrib_or_forall' x N <@ not %P @> <@ not %Q @> |> LR |> LR' |> L'
-        Dual |> R
+        dual |> R
         distrib_not_and P Q |> LR |> LR' |> R' 
     ]
 

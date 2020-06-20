@@ -104,25 +104,19 @@ and Axioms = (Expr -> AxiomDescription option)
 
 and Rule = 
     | Admit of string * (Expr -> Expr) 
-    | Dual of string * (Expr->Expr)
     | Derive of string * Proof * (Proof -> Expr -> Expr)
     | Deduce of string * Proof * (Proof -> Expr -> Expr) 
-    | Instantiate of string * Proof * (Proof -> Expr -> Expr) * Var * Expr
 with
     member x.Name = 
         match x with 
         | Admit(n, _) -> n
-        | Dual (n, _) -> n
         | Derive(n, _, _) -> n
         | Deduce(n,_,_) -> n
-        | Instantiate(n,_,_,_,_) -> n
     member x.Apply = 
         match x with
         | Admit(_, r) -> r
-        | Dual(_, r) -> r
         | Derive(_, p, r) -> r p
         | Deduce(_, p, r) -> r p
-        | Instantiate(_, p, r, _, _) -> r p
         
 and Rules = Rule list 
 
@@ -208,7 +202,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             match step.Rule with
             | Admit(n,_) -> if (not (ruleNames |> List.contains (n))) then 
                                 failwithf "Rule at step %i (%s) is not an admitted logical inference rule or part of the admitted rules of the current theory." stepId n
-            | Dual(_,_) -> ()
             | Derive(n, p, _) -> 
                 if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
                     failwithf "Substitution rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n
@@ -226,23 +219,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 match step with
                 | R _ -> ()
                 | _ -> failwith "A deduction rule can only be applied to the consequent of a logical implication."
-            | Instantiate(n, p, _, var_inst, value) ->                 
-                if not ((p.Theory = logic) || (p.Theory = theory) || (p.Theory.GetType().IsAssignableFrom(theory.GetType()))) then 
-                    failwithf "Instantiation rule at step %i (%s) does not use the rules of the current proof logic or theory." stepId n  
-                let q, op, bound, range, body, inst_value, r =
-                    match p.Stmt with
-                    | Implies(And(Quantifier(op, bound, range, body) as q, E), r) -> q, op, bound, range, body, E, r
-                    | _ -> failwithf "The proof statement %s does not have the correct form for an instantiation rule." (print_formula p.Stmt) 
-                let quantfiers = get_quantifiers a
-                let inst = subst_var_value var_inst value body
-                do if not (sequal inst inst_value) then failwithf "The instantiated values do not match: %s,%s." (print_formula inst) (print_formula inst_value)
-                let point_range = call <@ (=) @> (Expr.Var(var_inst)::value::[])
-                let one_point = 
-                    let v = vars_to_tuple [var_inst] in 
-                    let qop = call op (v::point_range::body::[]) in
-                    call <@ (=) @> (qop::inst::[])
-                if not((theory |- one_point) || (logic |- one_point)) then
-                    failwithf "The current theory and logic do not prove the instantiation %s." (print_formula one_point) 
                 
         let _a = step.Apply _state
 
@@ -253,22 +229,12 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                     sprintf "%i. %s: %s \u2192 %s." (stepId) (stepName.Replace("(expression)", step.Pos)) (print_formula _state) (print_formula _a) 
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression")) 
-            | Dual (_,_) -> 
-                if not ((sequal _a _state)) then
-                    sprintf "%i. %s: %s \u2192 %s." (stepId) (stepName.Replace("(expression)", step.Pos)) (print_formula _state) (print_formula _a) 
-                else
-                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression")) 
             | Derive(_,_,_) ->
                 if not ((sequal _a _state))  then
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
             | Deduce(_,_,_) ->
-                if not ((sequal _a _state))  then
-                    sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
-                else
-                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
-            | Instantiate(_, q, var_expr, value, r) ->
                 if not ((sequal _a _state))  then
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
@@ -460,12 +426,6 @@ module LogicalRules =
     /// Substitute an identity with a completed proof into another proof.
     let Ident (ident:Theorem) = ident.Proof |> Subst 
         
-    /// Duality: A behaves equivalently in a formula if we substitute it with its dual.
-    let Dual =
-        let _not e = call <@ not @> (e::[])
-        let subst = EquationalLogic._dual >> _not
-        Rule.Dual("Substitute (expression) with its dual", subst)
-
     /// Rule of modus ponens: Substitute the consequent of a proven theorem p ==> q with true in a proof where p is one of the conjuncts of the antecedent.
     let Subst' (p:Proof) =
         let rec subst (p:Proof)  = 

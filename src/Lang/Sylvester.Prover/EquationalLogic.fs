@@ -332,18 +332,18 @@ module EquationalLogic =
 
     let rec _dual = 
         function
-        | Bool true -> <@@ false @@>
-        | Bool false -> <@@ true @@>
-        | Equals(p, q) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) <> (%%_q:bool) @@>
-        | Not(Equals(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) = (%%_q:bool) @@>
+        | Bool true -> <@@ not false @@>
+        | Bool false -> <@@ not true @@>
+        | Equals(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) <> (%%_q:bool)) @@>
+        | Not(NotEquals(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) = (%%_q:bool) @@>
         | Implies(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) <== (%%_q:bool)) @@>
         | Not(Conseq(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) ==> (%%_q:bool) @@>
         | Conseq(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) ==> (%%_q:bool)) @@>
         | Not(Implies(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) <== (%%_q:bool) @@>
-        | And(p, q) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) ||| (%%_q:bool) @@>
-        | Or(p, q) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) |&| (%%_q:bool) @@>
-        | ForAll(_, bound, range, body) -> let v = vars_to_tuple bound in call <@ exists @> (v::range::(<@@ not (%%body:bool) @@>)::[])
-        | Exists(_, bound, range, body) -> let v = vars_to_tuple bound in call <@ forall @> (v::range::(<@@ not (%%body:bool) @@>)::[]) 
+        | And(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not (not(%%_p:bool) ||| (not(%%_q:bool))) @@>
+        | Or(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not (not(%%_p:bool) |&| not (%%_q:bool)) @@>
+        | ForAll(_, bound, range, body) -> let v = vars_to_tuple bound in let q = call <@ exists @> (v::range::(<@@ not (%%body:bool) @@>)::[]) in call <@ not @> (q::[])
+        | Exists(_, bound, range, body) -> let v = vars_to_tuple bound in let q = call <@ forall @> (v::range::(<@@ not (%%body:bool) @@>)::[]) in call <@ not @> (q::[]) 
         | expr -> traverse expr _dual
 
     let _distrib_implies =

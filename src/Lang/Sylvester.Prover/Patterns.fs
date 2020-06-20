@@ -145,7 +145,6 @@ module Patterns =
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
     
-
     let bound_vars =
         function
         | Quantifier(_,bound, _, _) -> bound 
