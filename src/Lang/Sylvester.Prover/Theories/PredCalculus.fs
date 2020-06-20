@@ -13,10 +13,10 @@ module PredCalculus =
     let _trade_body = EquationalLogic._trade_body
 
     let _distrib_or_forall = EquationalLogic._distrib_or_forall
-
+    
     let failIfOccursFree x q = 
         do if occurs (x |> get_vars) q then failwithf "The variable(s) in expression %s occur free in the quantifier %s." (src x) (src q)
-    
+
     (* Admissible rules *)
     
     let empty_range = Theory.S.Rules.[21] 
@@ -34,9 +34,16 @@ module PredCalculus =
     let split_range_exists = Theory.S.Rules.[27]
 
     (* Instantiation *)
-    let inst x P = Instantiate pred_calculus <@ forall' %x %P @> P [ident_conseq_true P |> Commute |> R; def_true P |> R]
-    
+
+    let inst' x P = Instantiate pred_calculus <@ forall' %x %P @> P [ident_conseq_true P |> Commute |> R; def_true P |> R]
+
     (* Theorems *)
+
+    /// forall x N P = (N ==> P)
+    let inst x N P = ident pred_calculus <@ forall %x %N %P = (%N ==> %P)@> [
+        trade_body |> L
+        inst' x <@ %N ==> %P @> |> LR
+    ]
 
     /// forall x N P = (forall x true (N ==> P))
     let trade_forall_implies x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true (%N ==> %P)) @>
@@ -128,7 +135,7 @@ module PredCalculus =
 
     /// forall' x P ==> P
     let forall_implies_inst' x P = theorem pred_calculus <@ forall' %x %P ==> %P @> [
-        inst x P |> L
+        inst' x P |> L
     ]
 
     /// P ==> forall' %x %P
@@ -140,7 +147,7 @@ module PredCalculus =
     /// forall x N P ==> (N ==> P)
     let forall_implies_inst x N P = theorem pred_calculus <@ forall %x %N %P ==> (%N ==> %P) @> [
         trade_body |> L
-        inst x <@ %N ==> %P @> |> L
+        inst' x <@ %N ==> %P @> |> L
         trade_forall_implies x N P |> Commute |> L
     ]
 
@@ -149,6 +156,14 @@ module PredCalculus =
         trade_body |> R
         forall_conseq_inst' x <@ %N ==> %P @> |> Lemma
         trade_forall_implies x N P |> Commute |> R
+    ]
+
+    /// forall x N P = (N ==> P)
+    let ident_forall_inst x N P = ident pred_calculus <@ forall %x %N %P = (%N ==> %P) @> [
+        mutual_implication |> LR
+        forall_conseq_inst x N P |> Taut |> R
+        forall_implies_inst x N P |> Taut |> L
+        idemp_and <@ true @> |> Truth |> LR
     ]
 
     /// exists x N P = not (forall x N (not P))
@@ -246,4 +261,13 @@ module PredCalculus =
     let weaken_exists_body x N P Q = theorem pred_calculus <@ exists %x %N %P ==> (exists %x %N (%P ||| %Q)) @> [
         distrib_exists_or' x N P Q |> R 
         weaken_or <@ exists %x %N %P @> <@ exists %x %N %Q @> |> Lemma
+    ]
+
+    /// exists' x (forall' y P) ==> (forall' y (exists' x P))
+    let exists_forall_interchange' x y P= theorem pred_calculus <@ exists' %x (forall' %y %P) ==> (forall' %y (exists' %x %P)) @> [        
+        def_implies |> LR
+        distrib_or_forall |> L
+        collect_exists_or' x <@ true @> <@ forall' %y %P @> P |> QB |> L'
+        inst' y P |> L |> QB' |> QB' |> L'
+        idemp |> QB |> QB' |> L'
     ]

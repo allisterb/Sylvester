@@ -37,11 +37,11 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let rshunt = Admit("Reverse shunt implication in (expression)", EquationalLogic._rshunt)
 
-        let mutual_implication = Admit("The (expression) contains a mutual implication.", EquationalLogic._mutual_implication)
+        let mutual_implication = Admit("The (expression) contains a mutual implication", EquationalLogic._mutual_implication)
         
-        let subst_and = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_and)
+        let subst_and = Admit("Substitute an equivalent subexpression in (expression)", EquationalLogic._subst_and)
 
-        let subst_implies = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_implies)
+        let subst_implies = Admit("Substitute an equivalent subexpression in (expression)", EquationalLogic._subst_implies)
 
         let subst_and_implies = Admit("Substitute an equivalent subexpression in (expression). ", EquationalLogic._subst_and_implies)
 
@@ -49,7 +49,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let subst_false = Admit("Substitute an equivalent subexpression in (expression) with the constant false. ", EquationalLogic._subst_false)
 
-        let subst_or_and = Admit("Use the Shannon substitution in (expression). ", EquationalLogic._subst_or_and)
+        let subst_or_and = Admit("Use the Shannon substitution in (expression)", EquationalLogic._subst_or_and)
 
         let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
@@ -519,7 +519,7 @@ module LogicalRules =
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
     /// Instantiate a quantifier at a single point or value e.g forall' x P [x = e] = P [x = e].
-    let Instantiate (theory:Theory) (_quantifier:Expr) (_value:Expr) (steps: RuleApplication list)=
+    let Instantiate (theory:Theory) (_quantifier:Expr) (_value:Expr) (steps: RuleApplication list) =
         let print_formula = theory.PrintFormula
         let quantifier, op, bound, body = 
             match (expand _quantifier) with 

@@ -97,6 +97,10 @@ let ``9.16a``= proof pred_calculus <@ P ==> forall' x P @> [
     ident_forall_true' x' |> R
 ]
 
+let ``9.16b`` = theorem pred_calculus <@ forall' x P ==> P @> [
+    inst' x' P' |> L
+]
+
 let ``9.18a``= theorem pred_calculus <@ not (exists x N (not P)) = forall x N P @> [
   ident_exists_not_forall x' N' <@ not P @> |> L 
   double_negation P' |> L 
@@ -167,4 +171,17 @@ let ``9.25`` = theorem pred_calculus <@ exists x N P ==> (exists x (Q ||| N) P) 
 let ``9.26`` = theorem pred_calculus <@ exists x N P ==> (exists x N (P ||| Q)) @> [
     distrib_exists_or' x' N' P' Q' |> R 
     weaken_or <@ exists x N P @> <@ exists x N Q @> |> Lemma
+]
+
+let ``9.29`` = theorem pred_calculus <@ exists' x (forall' y P) ==> (forall' y (exists' x P)) @> [
+    def_implies |> LR
+    distrib_or_forall |> L
+    collect_exists_or' x' <@ true @> <@ forall y true P @> P' |> QB |> L'
+    inst' y' P' |> L |> QB' |> QB' |> L'
+    idemp |> QB |> QB' |> L'
+    let lemma1 = ident pred_calculus <@ forall' y P ||| P = P @> [
+        def_implies'<@ (forall' y P) @> P' |> Commute |> LR
+        forall_implies_inst' y' P' |> Lemma
+    ]
+    lemma1 |> QB |> QB' |> L' 
 ]

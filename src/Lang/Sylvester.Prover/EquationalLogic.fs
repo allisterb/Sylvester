@@ -260,7 +260,7 @@ module EquationalLogic =
 
     let _mutual_implication = 
         function
-        | And(Implies(p1, q1), Implies(q2, p2)) when sequal2 p1 q1 p2 q2-> <@@ (%%p1:bool) = (%%q1:bool) @@>
+        | Equals(p, q) -> <@@ (%%p:bool) ==> (%%q:bool) |&| ((%%q:bool) ==> (%%p:bool)) @@>
         | expr -> expr
 
     let _subst_and =
@@ -381,7 +381,7 @@ module EquationalLogic =
 
     let _distrib_or_forall =
         function
-        | Or(P, ForAll(_, x, R, P')) when not_occurs_free x P -> let v = vars_to_tuple x in call <@ forall @> (v::R::(<@@ %%P ||| %%P' @@>)::[])
+        | Or(P, ForAll(_, x, N, Q)) when not_occurs_free x P -> let v = vars_to_tuple x in call <@ forall @> (v::N::(<@@ %%P ||| %%Q @@>)::[])
         | expr -> expr
 
     let _split_range_forall = 

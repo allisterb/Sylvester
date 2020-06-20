@@ -163,8 +163,6 @@ module Patterns =
         | expr -> occurs vars expr
         
     let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr)
-
-    let failIfOccursFree v e = if occurs_free (v |> get_vars) e then failwithf "One of the variables %A occurs free in the expression %s." v (src e)
     
     let get_quantifiers expr =
         let rec rget_quantifiers prev =

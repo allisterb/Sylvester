@@ -13,11 +13,16 @@ let i, n, m = var3<int>
 let P,Q, N, A= var4<bool>
 let P',Q', N' = <@ P @>, <@ Q @>, <@ N @>
 
-//let ii = Instantiate pred_calculus <@ forall' x P @> x' <@ P @>
+let ``9.16b`` = theorem pred_calculus <@ forall' x P ==> P @> [
+    inst x' P' |> L
+]
 
-//axiom pred_calculus <@ forall' x P = P @>
-proof pred_calculus <@ forall' x P ==> P @> [
-    Instantiate pred_calculus <@ forall' x P @> <@ P @> [def_true P' |> R] |> L
+let ``9.16a``= proof pred_calculus <@ P ==> forall' x P @> [
+    axiom pred_calculus <@ P ==> P @> |> Deduce
+    ident_forall_true' x' |> R
+]
+proof pred_calculus <@ (forall x N P) ==> (N ==> P) @> [
+    forall_implies_inst x' N' P' |> Lemma
     
     //axiom pred_calculus <@ P ==> P @> |> Deduce
     //ident_forall_true' x' |> R

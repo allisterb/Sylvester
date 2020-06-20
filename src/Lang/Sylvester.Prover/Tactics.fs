@@ -4,7 +4,7 @@ open FSharp.Quotations
 open Patterns
 
 module Tactics = 
-    /// A = true is a theorem
+    /// The constant true is a theorem.
     let Truth commute rule = 
         let proof = match rule with | Derive(_,p,_) -> p | _ ->  failwith "This rule is not a derived rule."
         let l = 
