@@ -83,7 +83,7 @@ module PredCalculus =
         ]
         distrib_forall_and' x N P Q |> R
         trade_forall_or_not x N P |> R
-        deduce' lemma1
+        deduce' lemma1 |> R
         ident_or P |> R
         def_true <@ %P |&| forall %x %N %Q @> |> Commute |> R
     ]
@@ -140,7 +140,7 @@ module PredCalculus =
 
     /// P ==> forall' %x %P
     let forall_conseq_inst' x P = theorem pred_calculus <@ %P ==> forall' %x %P @> [
-        axiom pred_calculus <@ %P ==> %P @> |> Deduce
+        axiom pred_calculus <@ %P ==> %P @> |> Deduce |> R
         ident_forall_true' x |> R
     ]
 
@@ -181,6 +181,9 @@ module PredCalculus =
         ident_exists_not_forall x N P |> L 
         double_negation <@ forall %x %N (not %P) @> |> L 
     ]
+
+    /// not (exists' x P) = forall' x (not P)
+    let ident_not_exists_forall_not' x P = ident_not_exists_forall_not x <@ true @> P
 
     /// exists x N (not P) = not (forall x N P)
     let ident_exists_not_forall_not x N P = ident pred_calculus <@ exists %x %N (not %P) = not (forall %x %N %P) @> [
@@ -238,8 +241,8 @@ module PredCalculus =
         distrib_and_exists x N <@ %P ||| %Q @> |> L |> R'
         distrib_and_or <@ exists' %x %N @> P Q |> CommuteL |> L |> R'
         distrib_and_exists x N Q |> Commute |> CommuteL |> L |> R'
-        axiom prop_calculus <@ exists' %x %N ==> exists' %x %N @> |> Deduce
-        ident_and P |> CommuteL |> LR
+        axiom prop_calculus <@ exists' %x %N ==> exists' %x %N @> |> Deduce |> L |> R'
+        ident_and P |> CommuteL |> L |> R'
         def_true <@ %P ||| (exists %x %N %Q) @> |> Commute |> R
     ]
 
@@ -270,4 +273,13 @@ module PredCalculus =
         collect_exists_or' x <@ true @> <@ forall' %y %P @> P |> QB |> L'
         inst' y P |> L |> QB' |> QB' |> L'
         idemp |> QB |> QB' |> L'
+    ]
+
+    /// exists x N P ==> Q = (N |&| P ==> Q)
+    let ident_exists_implies x N P Q = ident pred_calculus <@ exists %x %N %P ==> %Q = (%N |&| %P ==> %Q) @> [
+        trade_body |> L |> L'
+        ident_implies_not_or <@ (exists' %x (%N |&| %P)) @> Q |> L
+        ident_not_exists_forall_not' x <@ %N |&| %P@> |> L |> L'
+        inst' x <@ not (%N |&| %P)@> |> L |> L'
+        ident_implies_not_or <@ %N |&| %P@> Q |> Commute |> L   
     ]

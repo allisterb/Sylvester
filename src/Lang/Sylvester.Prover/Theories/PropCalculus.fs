@@ -341,6 +341,7 @@ module PropCalculus =
         commute_eq q p |> R 
     ]
 
+    /// p |&| q |&| r = (p = q = r = (p ||| q) = (q ||| r) = (r ||| p) = (p ||| q ||| r))
     let ident_and_eq_all p q r = ident prop_calculus <@ (%p |&| %q |&| %r) = (%p = %q = %r = (%p ||| %q) = (%q ||| %r) = (%r ||| %p) = (%p ||| %q ||| %r)) @> [
         golden_rule' p q |> L
         golden_rule' <@ (%p = %q) = (%p ||| %q) @> r |> L 

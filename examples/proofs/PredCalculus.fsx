@@ -55,7 +55,7 @@ let ``9.7`` = theorem pred_calculus <@ not (forall' x (not N)) ==> (forall x N (
     ]
     distrib_forall_and' x' N' P' Q' |> R
     trade_forall_or_not x' N' P' |> R
-    deduce' lemma1
+    deduce' lemma1 |> R
     ident_or P' |> R
     def_true <@ P |&| forall x N Q @> |> Commute |> R
 ] 
@@ -93,7 +93,7 @@ let ``9.12`` = theorem pred_calculus <@ forall x N (Q ==> P) ==> ((forall x N Q)
 ]
 
 let ``9.16a``= proof pred_calculus <@ P ==> forall' x P @> [
-    axiom pred_calculus <@ P ==> P @> |> Deduce
+    axiom pred_calculus <@ P ==> P @> |> Deduce |> R
     ident_forall_true' x' |> R
 ]
 
@@ -118,11 +118,11 @@ let ``9.18c`` = theorem pred_calculus <@ exists x N (not P) = not (forall x N P)
 ]
 
 let ``9.19``= theorem pred_calculus <@ exists x N P = (exists' x (N |&| P)) @> [
-    Dual |> L
-    Dual |> R
+    dual |> L
+    dual |> R
     trade_body |> LR |> LR' |> L'
     distrib_not_and N' P' |> R
-    ident_implies_not_or N' <@ not P@> |> LR |> LR' |> L'
+    ident_implies_not_or N' <@ not P@> |> L
 ]
 
 let ``9.20``= theorem pred_calculus <@ exists x (Q |&| N) P = (exists x Q (N |&| P)) @> [
@@ -132,11 +132,11 @@ let ``9.20``= theorem pred_calculus <@ exists x (Q |&| N) P = (exists x Q (N |&|
 ]
 
 let ``9.21`` = theorem pred_calculus <@ P |&| exists x N Q = (exists x N (P |&| Q))@> [
-    Dual |> R |> L'
+    dual |> R |> L'
     double_negation P' |> Commute |> L |> L'
     collect_not_or <@ not P @> <@ forall x N (not Q) @> |> L
     distrib_or_forall' x' N' <@ not P @> <@ not Q @> |> LR |> LR' |> L'
-    Dual |> R
+    dual |> R
     distrib_not_and P' Q' |> LR |> LR' |> R' 
 ]
 
@@ -151,8 +151,8 @@ let ``9.23`` = theorem pred_calculus <@ exists' x N ==> ((exists x N (P ||| Q)) 
     distrib_and_exists x' N' <@ P ||| Q @> |> L |> R'
     distrib_and_or <@ exists' x N @> P' Q' |> CommuteL |> L |> R'
     distrib_and_exists x' N' Q' |> Commute |> CommuteL |> L |> R'
-    axiom prop_calculus <@ exists' x N ==> exists' x N @> |> Deduce
-    ident_and <@ P @> |> CommuteL |> LR
+    axiom prop_calculus <@ exists' x N ==> exists' x N @> |> Deduce |> L |> R'
+    ident_and <@ P @> |> CommuteL |> L |> R'
     def_true <@ P ||| (exists x N Q) @> |> Commute |> R
 ]
 
@@ -185,3 +185,18 @@ let ``9.29`` = theorem pred_calculus <@ exists' x (forall' y P) ==> (forall' y (
     ]
     lemma1 |> QB |> QB' |> L' 
 ]
+
+(*
+let lemma1 = proof pred_calculus <@ Q ==> exists x' N (Q ==> P) = (Q ==> exists x' N P)@> [
+    axiom pred_calculus <@Q ==> P = {@> |> Deduce
+]
+proof pred_calculus <@ exists x N (forall y Q P) ==> (forall y Q (exists x N P)) @> [ 
+    def_implies |> LR
+    distrib_or_forall |> L
+    collect_exists_or' x' N' <@ forall y Q P @> P' |> QB |> L'
+    ident_forall_inst y' Q' P' |> L
+    ident_or_conseq P' Q'  |> CommuteL |> L
+    ident_forall_inst y' Q' <@exists x N (Q ==> P)@> |> L
+    ident_forall_inst y' Q' <@exists x N P@> |> R
+]       
+*)

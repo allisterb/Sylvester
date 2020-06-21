@@ -216,9 +216,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 if conjs |> List.forall(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
                     failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
                         (conjs |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
-                match step with
-                | R _ -> ()
-                | _ -> failwith "A deduction rule can only be applied to the consequent of a logical implication."
+                if not step.ApplyRight then failwith "A deduction rule can only be applied to the consequent of a logical implication."
                 
         let _a = step.Apply _state
 
@@ -228,17 +226,17 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 if not ((sequal _a _state)) then
                     sprintf "%i. %s: %s \u2192 %s." (stepId) (stepName.Replace("(expression)", step.Pos)) (print_formula _state) (print_formula _a) 
                 else
-                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression")) 
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", step.Pos)) 
             | Derive(_,_,_) ->
                 if not ((sequal _a _state))  then
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
-                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", step.Pos))
             | Deduce(_,_,_) ->
                 if not ((sequal _a _state))  then
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
                 else
-                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", "expression"))
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", step.Pos))
         do prooflog msg
         _state <- _a
         state <- state @ [(_state, msg)]
@@ -309,7 +307,6 @@ and RuleApplication =
     | LR' of RuleApplication
     | QR' of RuleApplication
     | QB' of RuleApplication
-    
 with
     member x.Rule = 
         match x with
@@ -324,45 +321,46 @@ with
         | QR' ra
         | QB' ra -> ra.Rule
     member x.RuleName = x.Rule.Name
-    member x.Apply(expr:Expr) =       
+    member x.Apply(expr:Expr) =
+        let print_formula = Proof.Logic.PrintFormula
         match x with
         | LR rule -> rule.Apply expr
         | L rule -> 
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r)
-            | _ -> failwith "Expression is not a binary operation."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | R rule -> 
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply r in binary_call(o, m, l, s)
-            | _ -> failwith "Expression is not a binary operation."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | QR rule ->
             match expr with
             | Quantifier(op, x, range, body) -> let s = rule.Apply range in let v = vars_to_tuple x in call op (v::s::body::[])
-            | _ -> failwith "Expression is not a quantifier."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | QB rule ->
             match expr with
             | Quantifier(op, x, range, body) -> let s = rule.Apply body in let v = vars_to_tuple x in call op (v::range::s::[])
-            | _ -> failwith "Expression is not a quantifier."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | L' ra ->
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = ra.Apply l in binary_call(o, m, s, r)
-            | _ -> failwith "Expression is not a binary operation."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | R' ra ->
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = ra.Apply r in binary_call(o, m, l, s)
-            | _ -> failwith "Expression is not a binary operation."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | LR' ra ->
             match expr with
             | Patterns.Call(o, m, l::[]) -> let s = ra.Apply l in unary_call(o, m, s)
-            | _ -> failwith "Expression is not a binary operation."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | QR' ra ->
             match expr with
             | Quantifier(op, x, range, body) -> let s = ra.Apply range in let v = vars_to_tuple x in call op (v::s::body::[])
-            | _ -> failwith "Expression is not a quantifier."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
         | QB' ra ->
             match expr with
             | Quantifier(op, x, range, body) -> let s = ra.Apply body in let v = vars_to_tuple x in call op (v::range::s::[])
-            | _ -> failwith "Expression is not a quantifier."
+            | _ -> failwithf "%s is not a binary operation." (print_formula expr)
     member x.Pos =
         match x with
         | LR _ -> "expression"
@@ -370,13 +368,18 @@ with
         | R _ -> "right of expression"
         | QR _ -> "quantifier range"
         | QB _ -> "quantifier body"
-        | L' ra -> sprintf "left-%s of expression" (ra.Pos.Replace(" of expression", ""))
-        | R' ra -> sprintf "right-%s of expression" (ra.Pos.Replace(" of expression", ""))
-        | LR' ra -> sprintf "left-right-%s of expression" (ra.Pos.Replace(" of expression", ""))
-        | QR' ra -> sprintf "quantifier-range-%s of expression" (ra.Pos.Replace(" of expression", ""))
-        | QB' ra -> sprintf "quantifier-body-%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | L' ra -> sprintf "left>%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | R' ra -> sprintf "right>%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | LR' ra -> sprintf "left-right>%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | QR' ra -> sprintf "quantifier-range>%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | QB' ra -> sprintf "quantifier-body>%s of expression" (ra.Pos.Replace(" of expression", ""))
 
-        
+    member x.ApplyLeft = 
+        x.Pos = "left of expression" || System.Text.RegularExpressions.Regex.IsMatch(x.Pos, "left>(\\S)+\\s+of expression")
+    
+    member x.ApplyRight =
+        x.Pos = "right of expression" || System.Text.RegularExpressions.Regex.IsMatch(x.Pos, "right>(\\S)+\\s+of expression")
+
 and Theorem (expr: Expr, proof:Proof) = 
     let print_formula = proof.Theory.PrintFormula
     do 
@@ -442,7 +445,7 @@ module LogicalRules =
             match p.Stmt with 
             | Argument(a, c, _) -> a, c
             | _ -> failwithf "The theorem %s is not a logical implication." (p.Stmt |> p.Theory.PrintFormula)
-        Rule.Deduce(sprintf "Deduce %s from %s and substitute with true in (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant), p, fun proof e -> subst proof e) |> R
+        Rule.Deduce(sprintf "Deduce %s from %s and substitute with true into (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant), p, fun proof e -> subst proof e)
 
     /// Substitute the consequent of a proven theorem p ==> q with true in a proof where p is one of the conjuncts of the antecedent.
     let Deduce(t:Theorem) = t.Proof |> Subst'
@@ -473,7 +476,7 @@ module LogicalRules =
             | Equals(l, r) -> l, r
             | _ -> failwithf "The theorem %s is not an identity." (con |> p.Theory.PrintFormula)
     
-        Rule.Deduce(sprintf "Deduce %s from %s and substitute %s with %s in (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant) (p.Theory.PrintFormula lcon) (p.Theory.PrintFormula rcon), p, fun proof e -> subst proof e) |> R
+        Rule.Deduce(sprintf "Deduce %s from %s and substitute %s with %s into (expression)" (p.Theory.PrintFormula con) (p.Theory.PrintFormula ant) (p.Theory.PrintFormula lcon) (p.Theory.PrintFormula rcon), p, fun proof e -> subst proof e)
 
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
