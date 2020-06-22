@@ -19,5 +19,5 @@ module WitTests =
 
     [<Fact>]
     let ``Can parse``() =
-        let a = ExprParser.parse "p + q"
+        let a = ExprParser.parse "p and q and (q or p)"
         Assert.NotNull a
