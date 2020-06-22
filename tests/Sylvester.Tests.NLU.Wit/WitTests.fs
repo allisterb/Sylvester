@@ -1,5 +1,6 @@
 namespace Sylvester.Tests.NLU
 
+open Sylvester
 open Sylvester.NLU.Wit
 
 module WitTests =
@@ -13,5 +14,10 @@ module WitTests =
         Assert.NotNull t
         let c = new WitClient(t)
         Assert.NotNull c
-        let e = c.GetMeaning("p and q = q and p");
+        let e = c.GetMeaning("Prove that p or q = q or p");
         Assert.NotNull e
+
+    [<Fact>]
+    let ``Can parse``() =
+        let a = ExprParser.parse "p + q"
+        Assert.NotNull a

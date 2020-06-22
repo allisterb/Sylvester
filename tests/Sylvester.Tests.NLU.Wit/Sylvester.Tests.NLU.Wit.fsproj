@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
     <ProjectReference Include="..\..\src\Lang\Sylvester.NLU.Wit\Sylvester.NLU.Wit.csproj" />
   </ItemGroup>
 

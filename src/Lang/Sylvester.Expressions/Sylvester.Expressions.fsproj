@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="FsExpr.fs" />
+    <Compile Include="FsExprParser.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />
   </ItemGroup>
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
+    <PackageReference Include="FParsec" Version="1.0.3" />
   </ItemGroup>
 
 </Project>
