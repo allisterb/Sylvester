@@ -31,3 +31,6 @@
 [submodule "ext/FunScript"]
 	path = ext/FunScript
 	url = https://github.com/allisterb/FunScript.git
+[submodule "ext/Wit.ai.net"]
+	path = ext/Wit.ai.net
+	url = https://github.com/allisterb/Wit.ai.net.git
