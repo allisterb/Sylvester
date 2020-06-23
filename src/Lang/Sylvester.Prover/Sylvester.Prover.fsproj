@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Sylph</PackageId>
     <Version>0.2.6</Version>
@@ -28,11 +28,13 @@
     <Compile Include="EquationalLogic.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Tactics.fs" />
+    <Compile Include="NLU.fs" />
     <Compile Include="Theories\PropCalculus.fs" />
     <Compile Include="Theories\PredCalculus.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NLU\Sylvester.NLU.Wit\Sylvester.NLU.Wit.csproj" />
     <ProjectReference Include="..\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
   </ItemGroup>
 

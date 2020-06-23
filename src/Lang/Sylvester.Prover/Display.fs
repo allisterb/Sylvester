@@ -30,10 +30,7 @@ module Display =
 
     let rec print_formula = 
         function
-        | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (print_formula body)
-        | ForAll(_, VariableDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (print_formula range) (print_formula body)
-        | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203 %s | %s)" v (print_formula body)
-        | Exists(_, VariableDisplay v, range, body) -> sprintf "(\u2203 %s | %s : %s)" v (print_formula range) (print_formula body)
+        | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
         | UnaryFormula(SymbolDisplay symbol , r) -> 
             match r with
             | Var _ 
@@ -50,5 +47,8 @@ module Display =
             | Var _, _ -> sprintf "%s %s (%s)" (print_formula l) (symbol) (print_formula r)
             | _, Var _ -> sprintf "(%s) %s %s" (print_formula l) (symbol) (print_formula r)
             | _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
-        | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
+        | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (print_formula body)
+        | ForAll(_, VariableDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (print_formula range) (print_formula body)
+        | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203 %s | %s)" v (print_formula body)
+        | Exists(_, VariableDisplay v, range, body) -> sprintf "(\u2203 %s | %s : %s)" v (print_formula range) (print_formula body)
         | expr -> src expr

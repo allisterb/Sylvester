@@ -52,7 +52,7 @@ module ExprParser =
             | id -> Expr.Var(Var(id, typeof<bool>))
 
     let integerIdentifier : Expr parser =
-        many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<bool>)))
+        many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<int>)))
 
     let expression : Expr parser =
         let opp = OperatorPrecedenceParser<Expr,unit,unit>()
@@ -62,16 +62,18 @@ module ExprParser =
 
         let term = parensTerm <|> number <|> boolIdentifier <|> integerIdentifier
 
-        let _not l =  call <@ Ops.(|&|) @> (l::[])
         let _equal l r =  call <@ (=) @> (l::r::[])
+        let _implies l r = call <@ Ops.(==>) @> (l::r::[])
+        let _not l =  call <@ Ops.(|&|) @> (l::[])  
         let _and l r =  call <@ Ops.(|&|) @> (l::r::[])
         let _or l r = call <@ Ops.(|||) @> (l::r::[])
-        
+      
         opp.TermParser <- term
-        opp.AddOperator(PrefixOperator("not", ws, 1, true, _not))
-        opp.AddOperator(InfixOperator("=", ws, 10, Associativity.Left, _equal))
-        opp.AddOperator(InfixOperator("and", ws, 1, Associativity.Left, _and))
-        opp.AddOperator(InfixOperator("or", ws, 1, Associativity.Left, _or))
+        opp.AddOperator(InfixOperator("=", ws, 1, Associativity.Left, _equal))
+        opp.AddOperator(PrefixOperator("implies", ws, 3, true, _not))
+        opp.AddOperator(PrefixOperator("not", ws, 3, true, _not))
+        opp.AddOperator(InfixOperator("and", ws, 2, Associativity.Left, _and))
+        opp.AddOperator(InfixOperator("or", ws, 2, Associativity.Left, _or))
         expr
 
     let parser : Expr parser = ws >>. expression .>> eof
@@ -80,7 +82,3 @@ module ExprParser =
         match run parser text with
         | ParserResult.Success (result,_,_) -> result
         | ParserResult.Failure (error,_,_) -> failwithf "Failed to parse the expression %A as an F# expression." error
-
-    
-
-

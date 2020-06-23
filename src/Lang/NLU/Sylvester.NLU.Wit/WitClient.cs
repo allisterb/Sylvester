@@ -8,8 +8,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
-using Sylvester.NLU.Wit.Models;
-
 namespace Sylvester.NLU.Wit
 {
     public class WitClient : Runtime
@@ -23,6 +21,8 @@ namespace Sylvester.NLU.Wit
         {
             authValue = "Bearer " + token;
         }
+        
+        public WitClient() : this(Environment.GetEnvironmentVariable("WIT")) {}
         #endregion
 
         #region Methods

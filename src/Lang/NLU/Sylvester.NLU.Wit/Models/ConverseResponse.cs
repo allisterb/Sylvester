@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-namespace Sylvester.NLU.Wit.Models
+namespace Sylvester.NLU.Wit
 {
     public class ConverseResponse
     {
