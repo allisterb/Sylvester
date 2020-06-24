@@ -14,7 +14,7 @@ open FParsec
 
 open FsExpr
     
-module ExprParser =
+module ExprParser2 =
     
     type ParseResult =
         | ParsedExpression of Expr
@@ -45,10 +45,38 @@ module ExprParser =
 
         let opp = OperatorPrecedenceParser<Expr,unit,unit>()
         let expr = opp.ExpressionParser
-
         let parensTerm = parens expr
-
         let term = parensTerm <|> boolIdentifier
+
+        let _equal l r =  call <@ (=) @> (l::r::[])
+        let _implies l r = call <@ Ops.(==>) @> (l::r::[])
+        let _conseq l r = call <@ Ops.(<==) @> (l::r::[])
+        let _not l =  call <@ Ops.(|&|) @> (l::[])  
+        let _and l r =  call <@ Ops.(|&|) @> (l::r::[])
+        let _or l r = call <@ Ops.(|||) @> (l::r::[])
+      
+        opp.TermParser <- term
+        opp.AddOperator(InfixOperator("=", ws, 1, Associativity.Left, _equal))
+        opp.AddOperator(PrefixOperator("not", ws, 3, true, _not))
+        opp.AddOperator(InfixOperator("implies", ws, 3, Associativity.Left, _implies))
+        opp.AddOperator(InfixOperator("and", ws, 2, Associativity.Left, _and))
+        opp.AddOperator(InfixOperator("or", ws, 2, Associativity.Left, _or))
+        ws >>. expr .>> eof
+
+    let intExprParser : Expr parser =
+        let number = 
+            let options =
+                NumberLiteralOptions.AllowFraction
+                ||| NumberLiteralOptions.AllowFractionWOIntegerPart
+                ||| NumberLiteralOptions.AllowInfinity
+                ||| NumberLiteralOptions.AllowExponent
+            numberLiteral options "number" .>> ws|>> fun num -> Expr.Value(float num.String)
+
+        let integerIdentifier : Expr parser = many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<int>)))
+        let opp = OperatorPrecedenceParser<Expr,unit,unit>()
+        let expr = opp.ExpressionParser
+        let parensTerm = parens expr
+        let term = parensTerm <|> number <|> integerIdentifier
 
         let _equal l r =  call <@ (=) @> (l::r::[])
         let _implies l r = call <@ Ops.(==>) @> (l::r::[])
@@ -64,20 +92,6 @@ module ExprParser =
         opp.AddOperator(InfixOperator("or", ws, 2, Associativity.Left, _or))
         ws >>. expr .>> eof
 
-    (*
-    let number : Expr parser =
-        let options =
-            NumberLiteralOptions.AllowFraction
-            ||| NumberLiteralOptions.AllowFractionWOIntegerPart
-            ||| NumberLiteralOptions.AllowInfinity
-            ||| NumberLiteralOptions.AllowExponent
-
-        numberLiteral options "number" .>> ws|>> fun num -> Expr.Value(float num.String)
-
-    let integerIdentifier : Expr parser =
-        many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<int>)))
-        let term = parensTerm <|> number <|> boolIdentifier <|> integerIdentifier
-    *)
     let parse<'t> text =
         let parser = 
             match typeof<'t>.Name with

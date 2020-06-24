@@ -42,7 +42,7 @@ module NLU =
             let entities =
                 m.Entities.Values
                 |> Seq.concat
-                |> Seq.choose(fun e -> match e with | WitMathExpression e -> Some e | _ -> None) 
+                |> Seq.choose(fun e -> match e with | WitMathExpression expr -> Some expr | _ -> None) 
                 |> List.ofSeq
             match intent.Name with
             | "theorem" -> Theorem(intent.Confidence, entities) |> Success
