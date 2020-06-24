@@ -3,5 +3,6 @@
 open Sylvester
 open Sylvester.Nymph
 
-let m = Parser.parse<bool> "p = q = (q = p)"
+
+let m = Parser.parse<int64> "p = q = (q = p)"
 

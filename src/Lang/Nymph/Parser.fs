@@ -14,7 +14,6 @@ open FParsec
 
 open Sylvester.FsExpr
     
-
 module Parser =
     type RuntimeResult<'s, 'f> = Sylvester.FsRuntime.Result<'s, 'f>
     type ParseResult =
@@ -28,20 +27,23 @@ module Parser =
     let isMathChar = function | '\u03C0' | '\u221E' | '\u29DD' -> true | _ -> false
     let isIdentifierFirstChar c = isLetter c || isMathChar c
     let isIdentifierChar c = isLetter c || isDigit c || isMathChar c || c = '_'
+    let identifier = many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier"
 
-    let boolExprParser : Expr parser =
-        let boolIdentifier : Expr parser =
-            many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws 
+    let boolExpr : Expr parser =
+        let variable : Expr parser =
+            identifier .>> ws 
             |>> 
             function 
             | "true" -> Expr.Value true
             | "false" -> Expr.Value false
             | id -> Expr.Var(Var(id, typeof<bool>))
-
+        let predicate : Expr parser = 
+            pipe2 identifier (str_ws "(" >>. identifier .>> str_ws ")") 
+                                            (fun p v -> let v' = Var(v, typeof<bool>) in Expr.Application(<@@ Sylvester.Formula.pred<bool> @@>, Expr.Var v'))
         let opp = OperatorPrecedenceParser<Expr,unit,unit>()
         let expr = opp.ExpressionParser
         let parensTerm = parens expr
-        let term = parensTerm <|> boolIdentifier
+        let term = parensTerm <|> variable 
 
         let _equal l r =  call <@ (=) @> (l::r::[])
         let _not l =  call <@ Sylvester.Formula.(|&|) @> (l::[])
@@ -49,6 +51,8 @@ module Parser =
         let _conseq l r = call <@ Sylvester.Formula.(<==) @> (l::r::[])
         let _and l r =  call <@ Sylvester.Formula.(|&|) @> (l::r::[])
         let _or l r = call <@ Sylvester.Formula.(|||) @> (l::r::[])
+        let _forall bound range body = call <@ Sylvester.Formula.forall @> (bound::range::body)
+        let _exists bound range body = call <@ Sylvester.Formula.exists @> (bound::range::body)
       
         opp.TermParser <- term
         opp.AddOperator(InfixOperator("=", ws, 1, Associativity.Left, _equal))
@@ -91,7 +95,7 @@ module Parser =
     let parse<'t> text =
         let parser = 
             match typeof<'t>.Name with
-            | "Boolean" -> boolExprParser |> RuntimeResult.Success
+            | "Boolean" -> boolExpr |> RuntimeResult.Success
             | t -> sprintf "Cannot parse expression of type %s." t |> exn |> RuntimeResult.Failure
         match parser with
         | RuntimeResult.Success p ->
