@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <RootNamespace>Sylph_N</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="NLU.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NLU\Sylvester.NLU.Wit\Sylvester.NLU.Wit.csproj" />
+    <ProjectReference Include="..\Sylvester.Prover\Sylvester.Prover.fsproj" />
+  </ItemGroup>
+
+</Project>
