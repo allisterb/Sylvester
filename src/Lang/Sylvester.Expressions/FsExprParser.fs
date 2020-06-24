@@ -35,32 +35,20 @@ module ExprParser =
     let isIdentifierFirstChar c = isLetter c || isMathChar c
     let isIdentifierChar c = isLetter c || isDigit c || isMathChar c || c = '_'
 
-    let number : Expr parser =
-        let options =
-            NumberLiteralOptions.AllowFraction
-            ||| NumberLiteralOptions.AllowFractionWOIntegerPart
-            ||| NumberLiteralOptions.AllowInfinity
-            ||| NumberLiteralOptions.AllowExponent
+    let boolExprParser : Expr parser =
+        let boolIdentifier : Expr parser =
+            many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
+            |>> function 
+                | "true" -> Expr.Value true
+                | "false" -> Expr.Value false
+                | id -> Expr.Var(Var(id, typeof<bool>))
 
-        numberLiteral options "number" .>> ws|>> fun num -> Expr.Value(float num.String)
-
-    let boolIdentifier : Expr parser =
-        many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
-        |>> function 
-            | "true" -> Expr.Value true
-            | "false" -> Expr.Value false
-            | id -> Expr.Var(Var(id, typeof<bool>))
-
-    let integerIdentifier : Expr parser =
-        many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<int>)))
-
-    let expression : Expr parser =
         let opp = OperatorPrecedenceParser<Expr,unit,unit>()
         let expr = opp.ExpressionParser
 
         let parensTerm = parens expr
 
-        let term = parensTerm <|> number <|> boolIdentifier <|> integerIdentifier
+        let term = parensTerm <|> boolIdentifier
 
         let _equal l r =  call <@ (=) @> (l::r::[])
         let _implies l r = call <@ Ops.(==>) @> (l::r::[])
@@ -74,11 +62,28 @@ module ExprParser =
         opp.AddOperator(PrefixOperator("not", ws, 3, true, _not))
         opp.AddOperator(InfixOperator("and", ws, 2, Associativity.Left, _and))
         opp.AddOperator(InfixOperator("or", ws, 2, Associativity.Left, _or))
-        expr
+        ws >>. expr .>> eof
 
-    let parser : Expr parser = ws >>. expression .>> eof
+    (*
+    let number : Expr parser =
+        let options =
+            NumberLiteralOptions.AllowFraction
+            ||| NumberLiteralOptions.AllowFractionWOIntegerPart
+            ||| NumberLiteralOptions.AllowInfinity
+            ||| NumberLiteralOptions.AllowExponent
 
-    let parse text =
+        numberLiteral options "number" .>> ws|>> fun num -> Expr.Value(float num.String)
+
+    let integerIdentifier : Expr parser =
+        many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<int>)))
+        let term = parensTerm <|> number <|> boolIdentifier <|> integerIdentifier
+    *)
+    let parse<'t> text =
+        let parser = 
+            match typeof<'t>.Name with
+            | "Boolean" -> boolExprParser
+            | t -> failwithf "Cannot parse expression of type %s." t
+        
         match run parser text with
         | ParserResult.Success (result,_,_) -> result
         | ParserResult.Failure (error,_,_) -> failwithf "Failed to parse the expression %A as an F# expression." error

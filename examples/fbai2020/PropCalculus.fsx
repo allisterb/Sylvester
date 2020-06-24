@@ -1,6 +1,7 @@
 #load "Include.fsx"
 
 open Sylvester
-open Nymph
+open Sylvester.Nymph
 
-let m = getIntent "Prove p = q = (q = p)"
+let m = Parser.parse<bool> "p = q = (q = p)"
+

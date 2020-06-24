@@ -10,6 +10,6 @@ module NymphTests =
 
     [<Fact>]
     let ``My test`` () =
-        let i = getIntent "Prove the formula p = q = not ( p = q)"
+        let i = en "Prove the formula p = q = not ( p = q)"
         let I =  i.Res.Entities
         Assert.NotEmpty I

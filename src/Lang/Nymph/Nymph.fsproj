@@ -6,11 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Parser.fs" />
     <Compile Include="NLU.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NLU\Sylvester.NLU.Wit\Sylvester.NLU.Wit.csproj" />
+    <ProjectReference Include="..\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
     <ProjectReference Include="..\Sylvester.Prover\Sylvester.Prover.fsproj" />
   </ItemGroup>
 

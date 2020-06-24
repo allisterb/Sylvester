@@ -42,6 +42,8 @@ module FsRuntime =
 
     let tryCatchAsync' f x = tryCatch' Async.RunSynchronously << f <| x
     
+    let exn' (e:Exception) msg = new Exception(msg, e)
+
     let bind f = 
         function
         | Success value -> tryCatch f value
