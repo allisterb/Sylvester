@@ -1,9 +1,13 @@
 #load "Include.fsx"
 
 open Sylvester
-open Sylvester.NLU.Wit
+open Sylvester.NLU
 
-let wc = new WitClient()
+#r ".\\..\\..\\src\\Lang\\Sylvester.Prover\\bin\\Debug\\netstandard2.0\\Sylvester.Runtime.dll"
+#r ".\\..\\..\\src\\Lang\\Sylvester.Prover\\bin\\Debug\\netstandard2.0\\Sylvester.NLU.Wit.dll"
 
-wc.GetMeaning("p or not p")
+let wc = getIntent "DD"
 
+//<@ p ||| (q |&| r) = r @> |> src
+src (ExprParser.parse "(p or (q and r)) = r")
+sequal (ExprParser.parse "(p or (q and r)) = r") (expand <@ (p ||| (q |&| r)) = r @>)
