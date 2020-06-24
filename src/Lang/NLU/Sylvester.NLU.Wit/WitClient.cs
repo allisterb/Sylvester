@@ -19,7 +19,15 @@ namespace Sylvester.NLU.Wit
         /// <param name="token">Your app token, which can be found under Settings in the Wit console</param>
         public WitClient(string token) : base()
         {
-            authValue = "Bearer " + token;
+            if (string.IsNullOrEmpty(token))
+            {
+                Initialized = false;
+            }
+            else
+            {
+                authValue = "Bearer " + token;
+                Initialized = true;
+            }
         }
         
         public WitClient() : this(Environment.GetEnvironmentVariable("WIT")) {}

@@ -3,6 +3,7 @@
 open Sylvester
 open Sylvester.NLU.Wit
 
-let c = new WitClient()
+let wc = new WitClient()
 
-c.
+wc.GetMeaning("p or not p")
+

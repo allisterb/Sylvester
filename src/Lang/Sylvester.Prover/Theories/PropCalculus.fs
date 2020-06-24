@@ -672,7 +672,7 @@ module PropCalculus =
     ]
 
     /// p ||| (p ==> q)
-    let ident_or_implies p q = ident prop_calculus <@ (%p ||| (%p ==> %q)) = true @> [
+    let or_implies p q = theorem prop_calculus <@ (%p ||| (%p ==> %q)) = true @> [
         def_implies |> R |> L'
         distrib |> L
         left_assoc |> L |> L'

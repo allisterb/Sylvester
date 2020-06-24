@@ -191,7 +191,7 @@ let ``4.1`` = theorem prop_calculus <@ (p ==> q) ==> ((p ||| r) ==> (q ||| r)) @
     def_implies' p' q' |> Commute |> R
     weaken_or <@ p ==> q @> r' |> Lemma
 ]
-
+(*
 let ``4.4a`` = theorem prop_calculus <@ p |&| q ==> (p = q) @> [
     let lemma1 = lemma prop_calculus <@ p |&| q ==> p @> [
         strengthen_and p' q' |> Lemma
@@ -200,10 +200,10 @@ let ``4.4a`` = theorem prop_calculus <@ p |&| q ==> (p = q) @> [
         commute |> L
         strengthen_and q' p' |> Lemma
     ]
-    Deduce lemma1
-    Deduce lemma2
-    def_true <@ true @> |> Commute |> R
-    implies_true <@ p |&| q @> |> Lemma
+    Deduce lemma1 |> R
+    Deduce lemma2 |> R
+    //def_true <@ true @> |> Commute |> R
+    //implies_true <@ p |&| q @> |> Lemma
 ]
 
 let ``4.4b`` = theorem prop_calculus <@ (p ==> r) ==> ((q ==> s) ==> (p |&| q ==> (r |&| s))) @> [
@@ -218,8 +218,8 @@ let ``4.4b`` = theorem prop_calculus <@ (p ==> r) ==> ((q ==> s) ==> (p |&| q ==
         ident_implies_eq_and_eq q' s' |> L
         reflex_implies <@ q |&| s = q @> |> Lemma
     ]
-    Deduce' lemma1
-    Deduce' lemma2
+    Deduce' lemma1 |> R
+    Deduce' lemma2 |> R
     right_assoc_and p' r' <@ q |&| s @> |> R
     left_assoc_and r' q' s'|>  R
     commute_and r' q' |> R
@@ -228,3 +228,4 @@ let ``4.4b`` = theorem prop_calculus <@ (p ==> r) ==> ((q ==> s) ==> (p |&| q ==
     commute |> L |> R'
     strengthen_and <@ r |&| s @> <@p |&| q @> |> Taut |> R
 ]
+*)

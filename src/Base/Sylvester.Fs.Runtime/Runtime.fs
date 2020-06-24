@@ -13,34 +13,34 @@ module FsRuntime =
         | Failure of 'TFailure
         with member x.Res with get() = match x with | Success s -> s | Failure f -> failwith "This operation failed."
 
-    let inline info mt args = Runtime.Info(mt, List.toArray args)
+    let info mt args = Runtime.Info(mt, List.toArray args)
 
-    let inline debug mt args = Runtime.Debug(mt, List.toArray args)
+    let debug mt args = Runtime.Debug(mt, List.toArray args)
 
-    let inline err mt args = Runtime.Error(mt, List.toArray args)
+    let err mt args = Runtime.Error(mt, List.toArray args)
 
-    let inline errex mt args = Runtime.Error(mt, List.toArray args)
+    let errex mt args = Runtime.Error(mt, List.toArray args)
 
     let (|Default|) defaultValue input =    
         defaultArg input defaultValue
     
-    let inline tryCatch f x =
+    let tryCatch f x =
         try
             f x |> Success
         with
         | ex -> 
-            err "The Runtime operation failed." []
+            err "The runtime operation failed." [ex]
             Failure ex
 
-    let inline tryCatch' f x =
+    let tryCatch' f x =
         try
             f x 
         with
         | ex -> 
-            err "jj" []
+            err "The runtime operation failed." [ex]
             Failure ex
 
-    let inline tryCatchAsync' f x = tryCatch' Async.RunSynchronously << f <| x
+    let tryCatchAsync' f x = tryCatch' Async.RunSynchronously << f <| x
     
     let bind f = 
         function
@@ -85,29 +85,29 @@ module FsRuntime =
 
     let try'' f x = tryCatchAsync' f x
 
-    let inline (!>) f = tryCatch f
+    let (!>) f = tryCatch f
 
-    let inline (!>>) f = tryCatch' f   
+    let (!>>) f = tryCatch' f   
     
-    let inline (!>>>) f = tryCatchAsync' f
+    let (!>>>) f = tryCatchAsync' f
     
-    let inline (|>>) res f = switch' res f
+    let (|>>) res f = switch' res f
 
-    let inline (|>>>) res f = switchAsync' res f
+    let (|>>>) res f = switchAsync' res f
 
-    let inline (>>|) r f = r |> init' |> switch' <| f
+    let (>>|) r f = r |> init' |> switch' <| f
     
-    let inline (>>>|) r f = r |> init' |> switchAsync' <| f
+    let (>>>|) r f = r |> init' |> switchAsync' <| f
 
-    let inline (>>=) f1 f2  = bind f2 f1 
+    let (>>=) f1 f2  = bind f2 f1 
 
-    let inline (>>>=) f1 f2  = bind' f2 f1
+    let (>>>=) f1 f2  = bind' f2 f1
     
-    let inline (>>@=) f1 f2  = bind'' f2 f1
+    let (>>@=) f1 f2  = bind'' f2 f1
 
-    let inline (<<@=) f1 f2  = bind'' f1 f2
+    let (<<@=) f1 f2  = bind'' f1 f2
 
-    let inline (>=>) f1 f2 = tryCatch' f1 >> (bind' f2)
+    let (>=>) f1 f2 = tryCatch' f1 >> (bind' f2)
 
     type NullCoalesce =  
         static member Coalesce(a: 'a option, b: 'a Lazy) = match a with Some a -> a | _ -> b.Value

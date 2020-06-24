@@ -18,7 +18,7 @@ module WitTests =
     
     [<Fact>]
     let ``Can parse pred calculus``() =
-        let m = witClient.GetMeaning "Socrates is a man and all men are mortal then Socrates is mortal"
+        let m = witClient.GetMeaning "Prove the theorem not false = true"
        
         do if not (String.IsNullOrEmpty m.Error) then failwithf "The Wit server reported an error: %s." m.Error
         
@@ -32,5 +32,5 @@ module WitTests =
 
     [<Fact>]
     let ``Can parse``() =
-        let a = ExprParser.parse "p and q and (q or p)"
+        let a = ExprParser.parse "For "
         Assert.NotNull a
