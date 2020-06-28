@@ -30,10 +30,12 @@ module Parser =
             | id -> Expr.Var(Var(id, typeof<bool>))
         let predicate : Expr parser = 
             pipe2 (identifier .>> ws) (str_ws "(" >>. identifier .>> str_ws ")") (fun p v -> 
-                let v' = Var(v, typeof<bool>) in 
-                let p' = Var(p, typeof<bool>) in
-                
-                Expr.Let(p', Expr.Lambda(v', Expr.Call(getFuncInfo <@ Sylvester.Formula.pred @>, [ Expr. Var v'])), Expr.Application(Expr.Call(getFuncInfo <@ Sylvester.Formula.pred @>, [ Expr. Var v']), Expr.Var v')))//, Expr.Application(<@@ Sylvester.Formula.pred<bool> @@>, Expr.Var v'))
+                let p' = Var(p, typeof<bool->bool>) |> Expr.Var
+                let v' = Var(v, typeof<bool>) |> Expr.Var
+                Expr.Application(p', v'))
+                //Expr.Let(p', Expr.Lambda(v', Expr.Call(getFuncInfo <@ pred @>, [ Expr. Var v'])), 
+                //    Expr.Application(Expr.ValueWithName(pred<bool>, "P"), Expr.Var v')))
+                    
         let opp = OperatorPrecedenceParser<Expr,unit,unit>()
         let expr = opp.ExpressionParser
         let parensTerm = parens expr
