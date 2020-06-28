@@ -153,13 +153,17 @@ module Patterns =
     let rec occurs_free (vars:Var list) = 
         function
         | Quantifier(_, bound, _, Quantifier(_, _, _, body)) -> 
-            //occurs_free vars body
             let all_vars = body |> get_vars
             vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
         | Quantifier(_,bound, _, body) -> 
             let all_vars = body |> get_vars
             vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (bound |> List.exists (fun bv -> vequal bv v)))
-        | expr -> occurs vars expr
+        | Quantifier(_,_,_,Application(_, _)) -> false 
+        | ShapeVar _ -> false
+        | ShapeLambda (bound, body) -> 
+            let all_vars = body |> get_vars
+            vars |> List.exists (fun v -> (all_vars |> List.exists (fun av -> vequal av v)) && not (vequal bound v))
+        | ShapeCombination (_, exprs) -> List.map (occurs_free vars) exprs |> List.contains(true)
         
     let not_occurs_free (vars:Var list) expr  = not (occurs_free vars expr)
     

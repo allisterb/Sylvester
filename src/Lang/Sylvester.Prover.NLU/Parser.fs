@@ -1,25 +1,16 @@
-﻿namespace Sylvester.Nymph
-
-open System.IO
-open System.Reflection
-open System.Text
+﻿namespace Sylvester
 
 open FSharp.Quotations
-open FSharp.Quotations.Patterns
-open FSharp.Quotations.DerivedPatterns
-open FSharp.Quotations.ExprShape
-open FSharp.Reflection
 
 open FParsec
 
-open Sylvester.FsExpr
-    
 module Parser =
     type RuntimeResult<'s, 'f> = Sylvester.FsRuntime.Result<'s, 'f>
     type ParseResult =
         | ParsedExpression of Expr
         | ParseFailure of string
     type 'a parser = Parser<'a, unit>
+    let (||||) = Microsoft.FSharp.Core.Operators.(|||)
  
     let ws = spaces
     let str_ws s = pstring s .>> ws
@@ -38,13 +29,19 @@ module Parser =
             | "false" -> Expr.Value false
             | id -> Expr.Var(Var(id, typeof<bool>))
         let predicate : Expr parser = 
-            pipe2 identifier (str_ws "(" >>. identifier .>> str_ws ")") 
-                                            (fun p v -> let v' = Var(v, typeof<bool>) in Expr.Application(<@@ Sylvester.Formula.pred<bool> @@>, Expr.Var v'))
+            pipe2 (identifier .>> ws) (str_ws "(" >>. identifier .>> str_ws ")") (fun p v -> 
+                let v' = Var(v, typeof<bool>) in 
+                let p' = Var(p, typeof<bool>) in
+                
+                Expr.Let(p', Expr.Lambda(v', Expr.Call(getFuncInfo <@ Sylvester.Formula.pred @>, [ Expr. Var v'])), Expr.Application(Expr.Call(getFuncInfo <@ Sylvester.Formula.pred @>, [ Expr. Var v']), Expr.Var v')))//, Expr.Application(<@@ Sylvester.Formula.pred<bool> @@>, Expr.Var v'))
         let opp = OperatorPrecedenceParser<Expr,unit,unit>()
         let expr = opp.ExpressionParser
         let parensTerm = parens expr
-        let term = parensTerm <|> variable 
-
+        let term = choice [ 
+            attempt parensTerm 
+            attempt predicate
+            attempt variable
+        ]    
         let _equal l r =  call <@ (=) @> (l::r::[])
         let _not l =  call <@ Sylvester.Formula.(|&|) @> (l::[])
         let _implies l r = call <@ Sylvester.Formula.(==>) @> (l::r::[])
@@ -67,9 +64,9 @@ module Parser =
         let number = 
             let options =
                 NumberLiteralOptions.AllowFraction
-                ||| NumberLiteralOptions.AllowFractionWOIntegerPart
-                ||| NumberLiteralOptions.AllowInfinity
-                ||| NumberLiteralOptions.AllowExponent
+                |||| NumberLiteralOptions.AllowFractionWOIntegerPart
+                |||| NumberLiteralOptions.AllowInfinity
+                |||| NumberLiteralOptions.AllowExponent
             numberLiteral options "number" .>> ws|>> fun num -> Expr.Value(float num.String)
 
         let integerIdentifier : Expr parser = many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<int>)))

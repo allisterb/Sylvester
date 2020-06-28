@@ -1,7 +1,4 @@
-﻿namespace Sylvester.Nymph
-
-open System
-open System.Collections.Generic
+﻿namespace Sylvester.Prover
 
 open Sylvester
 open Sylvester.NLU

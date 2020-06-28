@@ -78,7 +78,12 @@ module FsExpr =
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
 
     let subst_var_value (var:Var) (value: Expr) (expr:Expr)  =
-        expr.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some value else None)
+        match expr with
+        | ShapeLambda(bound, body) -> Expr.Lambda(bound, body.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some value else None))
+        | Application(a, x) -> 
+            let a' = a.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some value else None) in
+                Expr.Application(a', x)
+        | expr -> expr.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some value else None)
 
     let subst_var_value' (lvar:Var list) (lval:Expr list) (expr:Expr)  =
         do if not (lvar.Length = lval.Length) then failwithf "The lengths of the variable/expression lists lists are not the same for replacement operation in %s." (src expr)

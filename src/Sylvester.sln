@@ -242,9 +242,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.NLU.Wit", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NLU", "NLU", "{DDDDA3BB-5DAF-46FB-9DB4-EAF7DED2C602}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Nymph", "Lang\Nymph\Nymph.fsproj", "{1CC8DA60-94CE-4530-9B75-A7BD5E29DDA7}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Prover.NLU", "Lang\Sylvester.Prover.NLU\Sylvester.Prover.NLU.fsproj", "{1CC8DA60-94CE-4530-9B75-A7BD5E29DDA7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Tests.Nymph", "..\tests\Sylvester.Tests.Nymph\Sylvester.Tests.Nymph.fsproj", "{F48B0154-A1E4-456C-8041-8D4798491F4D}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Nymph", "..\tests\Sylvester.Tests.Nymph\Sylvester.Tests.Nymph.fsproj", "{F48B0154-A1E4-456C-8041-8D4798491F4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
