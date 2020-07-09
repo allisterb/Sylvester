@@ -19,7 +19,7 @@ namespace Sylvester
     public class ConsoleProcess : Runtime, IDisposable
     {
         #region Constructors
-        public ConsoleProcess(string cmd, string[] args, bool relativeToAssemblyDir = true, OnExit onExit = null, OnOutput onOutput = null,  OnError onError = null)
+        public ConsoleProcess(string cmd, string[] args, bool asyncIO = true, bool relativeToAssemblyDir = true, OnExit onExit = null, OnOutput onOutput = null,  OnError onError = null)
         {
             if (!File.Exists(cmd))
             {
@@ -30,6 +30,7 @@ namespace Sylvester
             Process = new Process();
             Cmd = relativeToAssemblyDir ? Path.Combine(AssemblyDirectory.FullName, cmd) : cmd;
             Args = args;
+            AsyncIO = asyncIO;
             OnExit = onExit;
             OnOutput = onOutput;
             OnError = onError;
@@ -98,6 +99,8 @@ namespace Sylvester
 
         public string[] Args { get; }
 
+        public bool AsyncIO { get; }
+
         public bool IsStarted { get; protected set; }
 
         public bool? HasExited => Process?.HasExited;
@@ -124,8 +127,11 @@ namespace Sylvester
                 throw new InvalidOperationException($"The process {Process.StartInfo.FileName} is already started");
             }
             Process.Start();
-            Process.BeginErrorReadLine();
-            Process.BeginOutputReadLine();
+            if (AsyncIO)
+            {
+                Process.BeginErrorReadLine();
+                Process.BeginOutputReadLine();
+            }
             IsStarted = true;
             Debug("Process {0} started.", Cmd);
         }

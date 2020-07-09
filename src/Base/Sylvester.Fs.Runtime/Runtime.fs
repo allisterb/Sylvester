@@ -19,6 +19,8 @@ module FsRuntime =
 
     let err mt args = Runtime.Error(mt, List.toArray args)
 
+    let err' mt = err mt []
+
     let errex mt args = Runtime.Error(mt, List.toArray args)
 
     let (|Default|) defaultValue input =    
@@ -102,6 +104,8 @@ module FsRuntime =
     let (>>>|) r f = r |> init' |> switchAsync' <| f
 
     let (>>=) f1 f2  = bind f2 f1 
+
+    let (>>|=) f1 f2  = bind (fun() -> f2) f1
 
     let (>>>=) f1 f2  = bind' f2 f1
     
