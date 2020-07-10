@@ -1,9 +1,10 @@
 ﻿namespace Sylvester
 
-open System.Collections.Concurrent
-open System.Linq
-
+open System
+open System.Text
+open System.Text.RegularExpressions
 open ExpectNet
+open Expect
 
 type Maxima(?maximaCmd:string) =
     inherit Runtime()
@@ -11,17 +12,17 @@ type Maxima(?maximaCmd:string) =
     let p = new ConsoleProcess(cmd, Array.empty, false)
     let output, session = 
         if p.Initialized then
-            let _s = new ProcessSpawnable(p.Process, new System.Text.StringBuilder())
-            _s.Output, !> (p.Start) () >>|= Expect.Spawn(_s, System.Environment.NewLine, base.CancellationToken)
+            let _s = new ProcessSpawnable(p.Process, new StringBuilder())
+            _s.Output, !> p.Start () >>|> Expect.Spawn(_s, Environment.NewLine, base.CancellationToken)
         else 
             null, exn "Console process did not initialize." |> Failure
     let initialized = 
         match session with
         | Success s -> 
-            if s.Expect.Contains("(%i1)", new System.Nullable<int>(2000)).IsMatch then
+            if s.Expect.Contains("(%i1)", Nullable(2000)).IsMatch then
                 true
             else
-                err' "Did not receive expected response from Maxima process."
+                err' "Did not receive expected response from Maxima console process."
                 false
         | Failure f -> 
             err "Could not initialize Maxima." [f]
@@ -36,18 +37,28 @@ type Maxima(?maximaCmd:string) =
     member x.ConsoleSession = failIfNotInitialized session.Res
 
     member x.Output = failIfNotInitialized output
-   
+
+    member val ProcessTimeOut = 2000 with get, set
+  
 module Maxima =
     
+    let private outputRegex = new Regex("""\(%o(\d)+\)\s+(\S+)\s\(%i(\d)+\)\s+""", RegexOptions.Compiled ||| RegexOptions.Multiline)
+
+    let extract_output (res:Result<string, exn>) =
+        match res with
+        | Success text -> 
+            let m = outputRegex.Match text
+            if m.Success then m.Groups.Item 1 |> Success else sprintf "Could not extract Maxima output from process response %s." text |> exn |> Failure
+        | Failure f -> Failure f
+
     let start path = new Maxima(path)
     
-    let console_process (m:Maxima) = m.ConsoleProcess 
-    
-    let session (m:Maxima) = m.ConsoleSession
+    let stop (m:Maxima) = m.ConsoleProcess.Stop()
     
     let send (m:Maxima) (input:string) = 
-        do m.ConsoleSession.Send.Line input
-        let e = m.ConsoleSession.Expect.StartsWith("\n(%o") 
-        match e.IsMatch with
-        | true -> e.Text |> Success
-        | false -> e.Text |> Failure
+        !> m.ConsoleSession.Send.Line input 
+        >>|> m.ConsoleSession.Expect.StartsWith("\n(%o", Nullable(m.ProcessTimeOut)) 
+        |> unwrap_result
+        |> extract_output
+
+    let set_display2d m (value:bool) = send m "dispay2d:true" 

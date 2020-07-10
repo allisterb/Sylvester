@@ -133,7 +133,7 @@ namespace Sylvester
                 Process.BeginOutputReadLine();
             }
             IsStarted = true;
-            Debug("Process {0} started.", Cmd);
+            Debug("Process {0} started with pid {1}.", Process.ProcessName, Process.Id);
         }
 
         public void Stop()

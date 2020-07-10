@@ -46,6 +46,8 @@ module FsRuntime =
     
     let exn' (e:Exception) msg = new Exception(msg, e)
 
+    //let exnf<'T> (msg:Printf.StringFormat<'T>) = Printf.sprintf msg 
+
     let bind f = 
         function
         | Success value -> tryCatch f value
@@ -101,11 +103,11 @@ module FsRuntime =
 
     let (>>|) r f = r |> init' |> switch' <| f
     
+    let (>>|>) f1 f2  = bind (fun() -> f2) f1
+
     let (>>>|) r f = r |> init' |> switchAsync' <| f
 
     let (>>=) f1 f2  = bind f2 f1 
-
-    let (>>|=) f1 f2  = bind (fun() -> f2) f1
 
     let (>>>=) f1 f2  = bind' f2 f1
     
