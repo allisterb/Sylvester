@@ -39,26 +39,28 @@ type Maxima(?maximaCmd:string) =
     member x.Output = failIfNotInitialized output
 
     member val ProcessTimeOut = 2000 with get, set
+
+    member val CurrentInputLine = 1 with get, set
   
 module Maxima =
     
     let private outputRegex = new Regex("""\(%o(\d)+\)\s+(\S+)\s\(%i(\d)+\)\s+""", RegexOptions.Compiled ||| RegexOptions.Multiline)
 
-    let extract_output (res:Result<string, exn>) =
-        match res with
-        | Success text -> 
-            let m = outputRegex.Match text
-            if m.Success then m.Groups.Item 1 |> Success else sprintf "Could not extract Maxima output from process response %s." text |> exn |> Failure
-        | Failure f -> Failure f
-
+    let extract_output text =
+        let m = outputRegex.Match text 
+        if m.Success then ((m.Groups.Item 1).Value, (m.Groups.Item 2).Value, (m.Groups.Item 3).Value) |> Success else sprintf "Could not extract Maxima output from process response %s." text |> exn |> Failure
+        
     let start path = new Maxima(path)
     
     let stop (m:Maxima) = m.ConsoleProcess.Stop()
     
     let send (m:Maxima) (input:string) = 
-        !> m.ConsoleSession.Send.Line input 
-        >>|> m.ConsoleSession.Expect.StartsWith("\n(%o", Nullable(m.ProcessTimeOut)) 
-        |> unwrap_result
-        |> extract_output
-
-    let set_display2d m (value:bool) = send m "dispay2d:true" 
+            !> m.ConsoleSession.Send.Line input 
+            >>|> (m.ConsoleSession.Expect.StartsWith("\n(%o", Nullable(m.ProcessTimeOut)))
+            |> wrap_result'
+            >>>= extract_output
+            >>= fun (o, r, n) -> 
+                do m.ProcessTimeOut <- Int32.Parse n
+                r
+           
+    let set_display2d m (value:bool) = send m "disp;ay2d:true" 
