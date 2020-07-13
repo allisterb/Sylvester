@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Definitions\SetBuilder.fs" />
+    <Compile Include="Definitions\SetComprehension.fs" />
     <Compile Include="Definitions\Set.fs" />
     <Compile Include="Definitions\Relation.fs" />
     <Compile Include="Definitions\Operation.fs" />

@@ -16,14 +16,14 @@ type Set<'t when 't: equality> =
 /// A set defined by the distinct elements of a sequence i.e. a set that has a function from N -> t.
 | Seq of seq<'t>
 /// A set of elements defined by a set builder statement.
-| Set of SetBuilder<'t>
+| Set of SetComprehension<'t>
 with 
     interface IEnumerable<'t> with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
-            |Set _ -> failwith "Cannot enumerate a set defined by a set builder statement. Use a sequence instead."
+            |Set _ -> failwith "Cannot enumerate a set defined by a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -35,12 +35,12 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Generator g1, Generator g2 -> g1.ToString() = g2.ToString()
+            |Generator g1, Generator g2 -> (g1.Range.ToString() = g2.Range.ToString()) && (g1.Body.ToString() = g2.Body.ToString())
             |Set expr1, Set expr2 ->  expr1 = expr2
             |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && 
                               b |> Seq.forall (fun x -> a.HasElement x)
             
-            |_,_ -> failwith "Cannot test a sequence and a set defined using a set builder statement for equality. Use 2 finite sequences or 2 set builders."
+            |_,_ -> failwith "Cannot test a sequence and a set defined using a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
     
     override a.Equals (_b:obj) = 
             match _b with 
@@ -50,17 +50,17 @@ with
     override a.GetHashCode() = 
         match a with
         | Empty -> 0
-        | Generator g -> g.ToString().GetHashCode()
+        | Generator g -> let h = g.Range.ToString() + g.Body.ToString() in h.GetHashCode()
         | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
     /// Create a subset of the set using a predicate.
-    member x.Subset(f: Test<'t>) = 
+    member x.Subset(f: 't->bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
         |Generator g -> Seq(SetGenerator((fun x -> g.Test(x) && f(x)), x |> Seq.filter f))
         |Seq _ -> Seq(x |> Seq.filter f) 
-        |Set s -> SetBuilder(fun x -> s.Test(x) && f(x)) |> Set
+        |Set s -> SetComprehension((fun x -> s.Test(x) && f x), s.Body) |> Set
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
@@ -104,7 +104,7 @@ with
         | Empty -> Empty
         | Generator g -> SetGenerator((fun x -> g.Test(x) && not(x = b)), a |> Seq.except [b]) |> Set.ofGen
         | Seq _ -> Seq(a |> Seq.except [b])
-        | Set builder -> SetBuilder(fun x -> builder.Test(x) && not(x = b)) |> Set
+        | Set builder -> SetComprehension((fun x -> builder.Test(x) && not(x = b)), builder.Body) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
     
@@ -142,7 +142,7 @@ with
         match x with
         |Empty -> Empty
         |Seq s -> Seq(Gen((fun (a,b) -> x.HasElement a && x.HasElement b), cart s))
-        |Set _ -> SetBuilder(fun (a,b) -> x.HasElement a && x.HasElement b) |> Set
+        |Set builder -> let t1 = builder.Body in SetComprehension((fun (a, b) -> x.HasElement a && x.HasElement b),  <@ %t1, %t1 @>) |> Set
     
     static member fromSeq(s: seq<'t>) = Seq s
     
@@ -164,7 +164,7 @@ with
         |(x, Empty) -> x
         
         |(Seq _, Seq _) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[l; r]) |> Set.ofGen
-        |(_, _) -> SetBuilder(fun x -> l.HasElement x || r.HasElement x) |> Set
+        |(Set lb, Set rb) -> SetComprehension((fun x -> l.HasElement x || r.HasElement x), lb.Body) |> Set
         
     /// Set intersection operator.
     static member (|*|) (l, r) = 
@@ -183,7 +183,7 @@ with
                     |> Seq.take (a.Count())) 
                     |> Set.ofGen
         |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), a.Intersect b) |> Set.ofGen
-        |(_, _) -> SetBuilder(fun x -> l.HasElement x && r.HasElement x) |> Set
+        |(_, _) -> SetComprehension((fun x -> l.HasElement x && r.HasElement x), <@ l.First() @>) |> Set
 
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
@@ -198,10 +198,10 @@ with
     static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
 
     /// Set create subset operator.
-    static member (|>|) (l:Set<'t>, r:Test<'t>) = l.Subset r
+    static member (|>|) (l:Set<'t>, r:'t->bool) = l.Subset r
 
     /// Set filter subsets operator.
-    static member (|>>|) (l:Set<'t>, r:Test<Set<'t>>) = l.Powerset.Subset r
+    static member (|>>|) (l:Set<'t>, r:Set<'t> -> bool) = l.Powerset.Subset r
 
     /// Set difference operator
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
@@ -216,7 +216,7 @@ with
         |(Empty, _) -> Empty
 
         |(Seq a, Seq b) -> Seq(Gen((fun (x,y) -> l.HasElement x && r.HasElement y), cart2 a b))
-        |(_,_) -> SetBuilder(fun (x,y) -> l.HasElement x && r.HasElement y) |> Set
+        |(_,_) -> SetComprehension((fun (x,y) -> l.HasElement x && r.HasElement y), <@ (l.First(), r.First())@>) |> Set
     
     interface ISet<'t> with member x.Set = x
 
@@ -253,10 +253,10 @@ module Set =
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
 
     /// Set create subset
-    let (|>|) (l:ISet<'t>) (r:Test<'t>) = l.Set |>| r
+    let (|>|) (l:ISet<'t>) (r:'t -> bool) = l.Set |>| r
     
     /// Set filter subset
-    let (|>>|) (l:ISet<'t>) (r:Test<Set<'t>>) = l.Set.Powerset |>| r
+    let (|>>|) (l:ISet<'t>) (r:Set<'t> -> bool) = l.Set.Powerset |>| r
     
     /// Set difference operator.
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
@@ -285,4 +285,4 @@ module Set =
     let Zero = FiniteSet<N<1>, int>([|0|])
 
     /// The universal set
-    let U<'t when 't : equality> = SetBuilder (fun (_:'t) -> true) |> Set
+    let U<'t when 't : equality> = SetComprehension ((fun (_:'t) -> false), <@ Unchecked.defaultof<'t> @>) |> Set

@@ -49,7 +49,7 @@ type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: U
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
-    member x.Subgroup(p:Test<'t>) = 
+    member x.Subgroup(p:'t -> bool) = 
         { 
             new ISubGroup<'t> with 
                 member a.Parent = x :> IGroup<'t>
@@ -63,7 +63,7 @@ type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: U
                  member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
  
         } 
-    static member (|>|) (l:Group<'t> , r:Test<'t> when 't : equality) = l.Subgroup r
+    static member (|>|) (l:Group<'t> , r:'t -> bool when 't : equality) = l.Subgroup r
  
 type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, id, inv)

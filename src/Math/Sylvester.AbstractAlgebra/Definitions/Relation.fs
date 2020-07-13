@@ -21,14 +21,11 @@ type IEquivalenceRelation =
     inherit ISymmetricRelation
     inherit ITransitiveRelation
 
-type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>] test:Expr<Test<'t * 't>>) =
+type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>] test:Expr<('t * 't) -> bool>) =
     let v = match test with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
     member val ParentSet = set
-    member val Pred = v :?> Test<'t *'t>
+    member val Pred = v :?> ('t *'t) -> bool
     member val Expr = test
-    interface ISetBuilder<'t * 't> with
-        member val Test = v :?> Test<'t * 't>
-        member val Expr = test
     member x.Set = set.Product.Subset(x.Pred)
     interface ISet<'t * 't> with 
         member x.Set = x.Set
@@ -38,7 +35,7 @@ type Relation<'t when 't : equality>(set: Set<'t>, [<ReflectedDefinition(true)>]
             let s = x.Set :> Generic.IEnumerable<'t *'t> in s.GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x.Set :> Generic.IEnumerable<'t * 't>).GetEnumerator () :> IEnumerator
     
-[<AutoOpen>]
-module Relation = 
-    type Set<'t when 't : equality> with
-        member x.Relation(f: Test<'t * 't>) = Relation(x, f)
+//[<AutoOpen>]
+//module Relation = 
+ //   type Set<'t when 't : equality> with
+ //       member x.Relation(f: ('t * 't) -> bool) = Relation(x, f)

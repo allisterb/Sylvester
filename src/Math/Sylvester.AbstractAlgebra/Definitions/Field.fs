@@ -19,7 +19,7 @@ type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicati
     interface IField<'t> with
         member val AddGroup = additiveGroup
         member val MulGroup = multiplicativeGroup
-
+(*
 [<AutoOpen>]
 module Field =
     let float32s = SetBuilder(fun (_:float32) -> true) |> Set
@@ -37,3 +37,4 @@ module Field =
     
     let axisF step = lineF 0.0F step
     let axis step = line 0.0 step
+    *)

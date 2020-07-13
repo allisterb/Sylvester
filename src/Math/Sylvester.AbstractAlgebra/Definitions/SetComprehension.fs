@@ -7,49 +7,49 @@ open System.Linq
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-type Test<'t> = 't -> bool
+/// A statement that can define a set using a range and a body.
+type ISetComprehension<'t when 't: equality> = 
+    abstract Test:('t -> bool)
+    abstract Range:Expr<'t -> bool>
+    abstract Body: Expr<'t >
 
-/// A logical statement that can define a set using a predicate for set membership.
-type ISetBuilder<'t when 't: equality> = 
-    abstract Test:Test<'t>
-    abstract Expr:Expr<'t -> bool>
-
-/// A logical statement that can define a set using a predicate for set membership.
-type SetBuilder<'t when 't: equality>([<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
-    let v = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+/// A statement that can define a set using a range and a body.
+type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<'t -> bool>, body: Expr<'t>) = 
+    let v = match range with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
     member val Test = v :?> ('t -> bool)
-    member val Expr = predicate
-    override x.ToString() = x.Expr |> src
-    interface ISetBuilder<'t> with
+    member val Range = range
+    member val Body = body
+    override x.ToString() = x.Body |> src
+    interface ISetComprehension<'t> with
         member val Test = v :?> ('t -> bool)
-        member val Expr = predicate
-    interface IEquatable<SetBuilder<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
+        member val Range = range
+        member val Body = body
+    interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
             match _b with 
-            | :? SetBuilder<'t> as b -> (a :> IEquatable<SetBuilder<'t>>).Equals b
+            | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
             | _ -> false
     override a.GetHashCode() = (a.ToString()).GetHashCode() 
 
-/// A generator defines a sequence together with a logical predicate that tests for set membership. 
-type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>, s:seq<'t>) = 
-    let pv = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    member val Test = pv :?> ('t -> bool)
-    member val Expr = predicate
+/// A generator defines a set that is a sequence together with a range and a body.
+type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<'t -> bool>, [<ReflectedDefinition(true)>] body:Expr<seq<'t>>) = 
+    let rv = match range with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    let bv = match body with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    member val Test = rv :?> ('t -> bool)
+    member val Range = range
+    member val Seq = bv :?> (seq<'t>)
+    member val Body = bv :?> seq<'t>
     member x.HasElement elem = x.Test elem
     interface IEnumerable<'t> with
-        member x.GetEnumerator () = s.GetEnumerator() 
+        member x.GetEnumerator () = x.Seq.GetEnumerator() 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
-    interface ISetBuilder<'t> with
-        member val Test = pv :?> ('t -> bool)
-        member val Expr = predicate
-     
 
 /// A generator defines a sequence together with a logical predicate that tests for set membership.
 type Gen<'t when 't: equality> = SetGenerator<'t>
 
 [<AutoOpen>]
-module SetBuilder =
+module SetComprehension =
     let (|Generator|_|) x =
         match x:IEnumerable<'t> with
         | :? SetGenerator<'t> -> Some (x :?> SetGenerator<'t>)
@@ -74,6 +74,8 @@ module SetBuilder =
         match s:IEnumerable<'t> with
         | Finite _ -> FiniteSeq
         | _ -> NonFiniteSeq
+
+    let internal ExprUnion<'t>([<ParamArray>] p:Expr<'t> array) = p.[0]
 
     let cart (source: seq<'a>) =
         seq { 
