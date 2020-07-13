@@ -8,6 +8,12 @@ open System.Runtime.CompilerServices
 
 open Sylvester
 open Sylvester.Arithmetic
+
+let c = SetBuilder(fun n -> n = 1) |> Set
+
+
+//let d = Pr(fun x -> x = 0) |> Set 
+
 //Z5.Set
 // Define an infinte seq
 //let c = infiniteSeq ((+) 65 >> Char.ConvertFromUtf32) 
@@ -53,8 +59,6 @@ let f x =
 
 let a = Seq [|0;6;9|]
 let b = Seq [|0;9;6|]
-let c = Pred(fun x -> x = 0) |> Set 
-let d = Pred(fun x -> x = 0) |> Set 
 a.Equals b
 a.Powerset |> Seq.toArray
 let fs = FSharp.Collections.Set.ofSeq [0;5;7]

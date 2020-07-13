@@ -9,38 +9,32 @@ open FSharp.Quotations.Patterns
 
 type Test<'t> = 't -> bool
 
-/// A logical predicate tests if an expression or condition is true or false.
-type ILogicalPredicate<'t when 't: equality> = 
+/// A logical statement that can define a set using a predicate for set membership.
+type ISetBuilder<'t when 't: equality> = 
     abstract Test:Test<'t>
     abstract Expr:Expr<'t -> bool>
 
-/// A logical predicate tests if an expression or condition is true or false.
-type LogicalPredicate<'t when 't: equality>([<ReflectedDefinition(true)>] test:Expr<'t -> bool>) = 
-    let v = match test with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+/// A logical statement that can define a set using a predicate for set membership.
+type SetBuilder<'t when 't: equality>([<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
+    let v = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
     member val Test = v :?> ('t -> bool)
-    member val Expr = test
+    member val Expr = predicate
     override x.ToString() = x.Expr |> src
-    interface ILogicalPredicate<'t> with
+    interface ISetBuilder<'t> with
         member val Test = v :?> ('t -> bool)
-        member val Expr = test
-    interface IEquatable<LogicalPredicate<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
+        member val Expr = predicate
+    interface IEquatable<SetBuilder<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
             match _b with 
-            | :? LogicalPredicate<'t> as b -> (a :> IEquatable<LogicalPredicate<'t>>).Equals b
+            | :? SetBuilder<'t> as b -> (a :> IEquatable<SetBuilder<'t>>).Equals b
             | _ -> false
     override a.GetHashCode() = (a.ToString()).GetHashCode() 
 
-/// A logical statement that can define a set using a predicate for set membership.
-type ISetBuilder<'t when 't: equality> = ILogicalPredicate<'t>
- 
-/// A statement that defines a set using a predicate for set membership.
-type SetBuilder<'t when 't : equality> = LogicalPredicate<'t>
-
 /// A generator defines a sequence together with a logical predicate that tests for set membership. 
-type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] test:Expr<'t -> bool>, s:seq<'t>) = 
-    let pv = match test with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>, s:seq<'t>) = 
+    let pv = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
     member val Test = pv :?> ('t -> bool)
-    member val Expr = test
+    member val Expr = predicate
     member x.HasElement elem = x.Test elem
     interface IEnumerable<'t> with
         member x.GetEnumerator () = s.GetEnumerator() 
@@ -48,13 +42,8 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] test:Expr<
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
     interface ISetBuilder<'t> with
         member val Test = pv :?> ('t -> bool)
-        member val Expr = test
+        member val Expr = predicate
      
-/// A sequence generating function.
-and GeneratingFunction<'t when 't: equality> = int -> 't
-
-/// A logical predicate expression.
-type Pred<'t when 't: equality> = LogicalPredicate<'t>    
 
 /// A generator defines a sequence together with a logical predicate that tests for set membership.
 type Gen<'t when 't: equality> = SetGenerator<'t>
@@ -95,8 +84,7 @@ module SetBuilder =
                 let i = ref e.Current
                 prev.Add i
                 yield! seq {for p in prev do yield (!i, !p)}
-                yield! seq {for p in prev do yield (!p, !i)}
-                 
+                yield! seq {for p in prev do yield (!p, !i)}                 
         }
 
     let cart2 (source1: seq<'a>) (source2:seq<'b>) =
@@ -113,8 +101,7 @@ module SetBuilder =
                 yield! seq {for p in prev do yield (!(fst p), !j)} 
         }
 
-
-    // n-wise functions based on http://fssnip.net/50 by ptan
+    (* n-wise functions based on http://fssnip.net/50 by ptan *)
 
     let triplewise (source: seq<_>) =
         seq { 

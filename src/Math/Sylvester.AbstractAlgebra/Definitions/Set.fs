@@ -269,7 +269,7 @@ module Set =
     /// Cartesian product operator.
     let (|**|) (l:ISet<'t>) (r:ISet<'t>) = l.Set * r.Set
     
-    let infiniteSeq f g = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
+    let infiniteSeq (f:int->bool) g = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
 
     let infiniteSeq2 f g = Gen(f, g |> Seq.initInfinite |> Seq.pairwise) |> Set.ofGen
 
