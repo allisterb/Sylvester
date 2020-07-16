@@ -4,41 +4,35 @@ open System
 open System.Collections
 open System.Collections.Generic
 open System.Linq
+
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-/// A statement that can define a set using a range and a body.
-type ISetComprehension<'t when 't: equality> = 
-    abstract Test:('t -> bool)
-    abstract Range:Expr<'t -> bool>
-    abstract Body: Expr<'t >
-
-/// A statement that can define a set using a range and a body.
-type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<'t -> bool>, body: Expr<'t>) = 
-    let v = match range with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    member val Test = v :?> ('t -> bool)
+/// A statement that can define a set using a range, body and predicate for testing set.
+type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<'t -> bool>, body: Expr<'t>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
+    let r = match range with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    let p = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    member val Test = p :?> ('t -> bool)
+    member val RangeTest = r :?> ('t -> bool)
     member val Range = range
     member val Body = body
     override x.ToString() = x.Body |> src
-    interface ISetComprehension<'t> with
-        member val Test = v :?> ('t -> bool)
-        member val Range = range
-        member val Body = body
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
             match _b with 
             | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
             | _ -> false
     override a.GetHashCode() = (a.ToString()).GetHashCode() 
+    new(body: Expr<'t>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = SetComprehension((fun _ -> true), body, match predicate with | WithValue(v, _, _) -> v :?> ('t -> bool) | _ -> failwith "Unexpected expression.")
 
-/// A generator defines a set that is a sequence together with a range and a body.
-type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<'t -> bool>, [<ReflectedDefinition(true)>] body:Expr<seq<'t>>) = 
-    let rv = match range with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    let bv = match body with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    member val Test = rv :?> ('t -> bool)
-    member val Range = range
-    member val Seq = bv :?> (seq<'t>)
-    member val Body = bv :?> seq<'t>
+/// A generator defines a set that is a sequence together with a predicate for testing set membership.
+type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] s:Expr<seq<'t>>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
+    let sv = match s with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    let pv = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
+    member val Test = pv :?> ('t -> bool)
+    member val Predicate = predicate
+    member val Seq = sv :?> (seq<'t>)
+    override x.ToString() = x.Seq.ToString()
     member x.HasElement elem = x.Test elem
     interface IEnumerable<'t> with
         member x.GetEnumerator () = x.Seq.GetEnumerator() 
@@ -52,7 +46,7 @@ type Gen<'t when 't: equality> = SetGenerator<'t>
 module SetComprehension =
     let (|Generator|_|) x =
         match x:IEnumerable<'t> with
-        | :? SetGenerator<'t> -> Some (x :?> SetGenerator<'t>)
+        | :? SetGenerator<'t> as s -> Some s
         | _ -> None
 
     let (|ArraySeq|ListSeq|SetSeq|GeneratorSeq|OtherSeq|) s =

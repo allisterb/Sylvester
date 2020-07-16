@@ -9,8 +9,11 @@ open System.Runtime.CompilerServices
 open Sylvester
 open Sylvester.Arithmetic
 
-let c = SetBuilder(fun n -> n = 1) |> Set
-
+let hh = 5
+//let j =  infiniteSeq (fun n -> n * n)
+//j.Take(5).ToArray()
+let c = SetComprehension(<@ let n , ) |> Set 
+c.Test 5
 
 //let d = Pr(fun x -> x = 0) |> Set 
 

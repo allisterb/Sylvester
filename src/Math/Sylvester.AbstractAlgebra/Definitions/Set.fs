@@ -15,7 +15,7 @@ type Set<'t when 't: equality> =
 | Empty
 /// A set defined by the distinct elements of a sequence i.e. a set that has a function from N -> t.
 | Seq of seq<'t>
-/// A set of elements defined by a set builder statement.
+/// A set of elements defined by a set comprehension.
 | Set of SetComprehension<'t>
 with 
     interface IEnumerable<'t> with
@@ -35,7 +35,7 @@ with
             | _, Empty -> false
             |Empty, _ -> false
 
-            |Generator g1, Generator g2 -> (g1.Range.ToString() = g2.Range.ToString()) && (g1.Body.ToString() = g2.Body.ToString())
+            |Generator g1, Generator g2 -> (g1.Seq.ToString() = g2.Seq.ToString()) 
             |Set expr1, Set expr2 ->  expr1 = expr2
             |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && 
                               b |> Seq.forall (fun x -> a.HasElement x)
@@ -50,7 +50,7 @@ with
     override a.GetHashCode() = 
         match a with
         | Empty -> 0
-        | Generator g -> let h = g.Range.ToString() + g.Body.ToString() in h.GetHashCode()
+        | Generator g -> let h = g.Seq.ToString() + g.Seq.ToString() in h.GetHashCode()
         | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
@@ -58,9 +58,9 @@ with
     member x.Subset(f: 't->bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Generator g -> Seq(SetGenerator((fun x -> g.Test(x) && f(x)), x |> Seq.filter f))
+        |Generator g -> Seq(SetGenerator(x |> Seq.filter f, (fun x -> g.Test(x) && f(x))))
         |Seq _ -> Seq(x |> Seq.filter f) 
-        |Set s -> SetComprehension((fun x -> s.Test(x) && f x), s.Body) |> Set
+        |Set s -> SetComprehension(s.RangeTest, s.Body, (fun x -> s.Test(x) && f x)) |> Set
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
@@ -81,8 +81,8 @@ with
      
         | _, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
         
-        |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by a set builder statement as a subset. Use 2 finite sequences or a set builder with a finite sequence."
-        |Set _, Set _ ->  failwith "Cannot test two sets defined by set builder statements for the subset relation. Use 2 finite sequences or a set builder with a finite sequence."
+        |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by a set comprehension as a subset. Use 2 finite sequences or a set builder with a finite sequence."
+        |Set _, Set _ ->  failwith "Cannot test two sets defined by a set comprehension for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
 
     interface IComparable<Set<'t>> with
         member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else 0
@@ -102,9 +102,9 @@ with
     member a.Difference b =
         match a with
         | Empty -> Empty
-        | Generator g -> SetGenerator((fun x -> g.Test(x) && not(x = b)), a |> Seq.except [b]) |> Set.ofGen
+        | Generator g -> SetGenerator(a |> Seq.except [b], (fun x -> g.Test(x) && not(x = b))) |> Set.ofGen
         | Seq _ -> Seq(a |> Seq.except [b])
-        | Set builder -> SetComprehension((fun x -> builder.Test(x) && not(x = b)), builder.Body) |> Set
+        | Set builder -> SetComprehension(builder.RangeTest, builder.Body, (fun x -> builder.Test(x) && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
     
@@ -113,7 +113,7 @@ with
        match x with
        | Empty -> 0
        | Seq _ -> x |> Seq.length
-       | _ -> failwith "Cannot get length of a set defined by a set builder statement. Use a finite sequence instead."
+       | _ -> failwith "Cannot get length of a set defined by a set comprehension. Use a finite sequence instead."
 
     /// Set of all subsets.
     member a.Powerset =
@@ -133,7 +133,7 @@ with
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i a}
                         seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
                 
-                Seq (Gen((fun x -> a.HasSubset x), subsets))   
+                Seq (Gen(subsets, (fun x -> a.HasSubset x)))   
         | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a sequence instead."
 
     member x.ToSubsets f = x.Powerset.Subset f
@@ -141,8 +141,8 @@ with
     member x.Product = 
         match x with
         |Empty -> Empty
-        |Seq s -> Seq(Gen((fun (a,b) -> x.HasElement a && x.HasElement b), cart s))
-        |Set builder -> let t1 = builder.Body in SetComprehension((fun (a, b) -> x.HasElement a && x.HasElement b),  <@ %t1, %t1 @>) |> Set
+        |Seq s -> Seq(Gen(cart s, (fun (a,b) -> x.HasElement a && x.HasElement b)))
+        |Set builder -> let t1 = builder.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
     
     static member fromSeq(s: seq<'t>) = Seq s
     
@@ -163,8 +163,10 @@ with
         |(Empty, x) -> x
         |(x, Empty) -> x
         
-        |(Seq _, Seq _) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat[l; r]) |> Set.ofGen
-        |(Set lb, Set rb) -> SetComprehension((fun x -> l.HasElement x || r.HasElement x), lb.Body) |> Set
+        |(Seq _, Seq _) -> SetGenerator(Seq.concat[l; r], (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
+        |_, _ -> 
+            let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t>
+            SetComprehension(<@ set_union(l, r) @>, (fun x -> l.HasElement x || r.HasElement x)) |> Set
         
     /// Set intersection operator.
     static member (|*|) (l, r) = 
@@ -173,17 +175,21 @@ with
         |(_, Empty) -> Empty
         
         |(Seq a, Finite b) -> 
-                    SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat [a;b] 
+                let s = 
+                    Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
-                    |> Seq.take (b.Count())) 
-                    |> Set.ofGen
+                    |> Seq.take (b.Count()) 
+                Gen(s, (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
         |(Finite a, Seq b) -> 
-                    SetGenerator((fun x -> l.HasElement x || r.HasElement x), Seq.concat [a;b] 
+                let s = 
+                    Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
-                    |> Seq.take (a.Count())) 
-                    |> Set.ofGen
-        |(Seq a, Seq b) -> SetGenerator((fun x -> l.HasElement x || r.HasElement x), a.Intersect b) |> Set.ofGen
-        |(_, _) -> SetComprehension((fun x -> l.HasElement x && r.HasElement x), <@ l.First() @>) |> Set
+                    |> Seq.take (a.Count()) 
+                Gen(s, (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
+        |(Seq a, Seq b) -> SetGenerator(a.Intersect b, (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
+        |(_, _) -> 
+            let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t>
+            SetComprehension(<@ set_intersect(l,r) @>, (fun x -> l.HasElement x && r.HasElement x)) |> Set
 
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
@@ -215,8 +221,8 @@ with
         |(_, Empty) -> Empty
         |(Empty, _) -> Empty
 
-        |(Seq a, Seq b) -> Seq(Gen((fun (x,y) -> l.HasElement x && r.HasElement y), cart2 a b))
-        |(_,_) -> SetComprehension((fun (x,y) -> l.HasElement x && r.HasElement y), <@ (l.First(), r.First())@>) |> Set
+        |(Seq a, Seq b) -> Seq(Gen(cart2 a b, (fun (x,y) -> l.HasElement x && r.HasElement y)))
+        |(_,_) -> SetComprehension(<@ (l.First(), r.First())@>, (fun (x,y) -> l.HasElement x && r.HasElement y)) |> Set
     
     interface ISet<'t> with member x.Set = x
 
@@ -269,15 +275,15 @@ module Set =
     /// Cartesian product operator.
     let (|**|) (l:ISet<'t>) (r:ISet<'t>) = l.Set * r.Set
     
-    let infiniteSeq (f:int->bool) g = Gen(f, g |> Seq.initInfinite) |> Set.ofGen  
+    let infiniteSeq g = g |> Seq.initInfinite |> Set.ofSeq  
 
-    let infiniteSeq2 f g = Gen(f, g |> Seq.initInfinite |> Seq.pairwise) |> Set.ofGen
+    let infiniteSeq2 g = g |> Seq.initInfinite |> Seq.pairwise |> Set.ofSeq
 
-    let infiniteSeq3 f g = Gen(f, g |> Seq.initInfinite |> triplewise) |> Set.ofGen
+    let infiniteSeq3 g = g |> Seq.initInfinite |> triplewise |> Set.ofSeq
 
-    let infiniteSeq4 f g = Gen(f, g |> Seq.initInfinite |> quadwise) |> Set.ofGen
+    let infiniteSeq4 g = g |> Seq.initInfinite |> quadwise |> Set.ofSeq
 
-    let infiniteSeq5 f g = Gen(f, g |> Seq.initInfinite |> quintwise) |> Set.ofGen
+    let infiniteSeq5 g = g |> Seq.initInfinite |> quintwise |> Set.ofSeq
 
     let ofType<'t when 't: equality> = fun (_:'t) -> true
     
@@ -285,4 +291,4 @@ module Set =
     let Zero = FiniteSet<N<1>, int>([|0|])
 
     /// The universal set
-    let U<'t when 't : equality> = SetComprehension ((fun (_:'t) -> false), <@ Unchecked.defaultof<'t> @>) |> Set
+    let U<'t when 't : equality> = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun (_:'t) -> true)) |> Set
