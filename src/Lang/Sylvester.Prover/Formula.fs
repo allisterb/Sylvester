@@ -29,11 +29,11 @@ module Formula =
 
     (* Quantifiers *)
 
-    [<Symbol"\u2200">]
+    [<Symbol "\u2200">]
     let forall<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
     [<ReflectedDefinition>]
     let forall'<'u> (bound:'u) (body:bool) = forall bound true body
-    [<Symbol"\u2203">]
+    [<Symbol "\u2203">]
     let exists<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
     [<ReflectedDefinition>]
     let exists'<'u> (bound:'u) (body:bool) = exists bound true body

@@ -7,6 +7,9 @@ module SetAlgebra =
 
     [<Formula; Symbol"\u22c3">]
     let union<'t when 't : equality> (bound:int) (range:bool) (body:Family<'t>) = sum Set.(|+|) "\u22c3" bound range body.Head 
+
+    [<Formula; Symbol"\u22c3">]
+    let intersect<'t when 't : equality> (bound:int) (range:bool) (body:Family<'t>) = product Set.(|*|) "\u22c3" bound range body.Head
  
     
     /// Print set algebra operator symbols
@@ -16,6 +19,7 @@ module SetAlgebra =
          .Replace("Empty", "\u2205")
          .Replace("U", "\uD835")
 
+    
     //let |Union|_|
     let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ id @>)
 

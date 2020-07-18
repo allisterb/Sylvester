@@ -158,6 +158,7 @@ with
     static member toProduct(s:Set<'t>) = s.Product
  
     /// Set union operator.
+    [<Symbol "\u222A">]
     static member (|+|) (l, r) = 
         match (l, r) with
         |(Empty, x) -> x
@@ -169,6 +170,7 @@ with
             SetComprehension(<@ set_union(l, r) @>, (fun x -> l.HasElement x || r.HasElement x)) |> Set
         
     /// Set intersection operator.
+    [<Symbol "\u2229">]
     static member (|*|) (l, r) = 
         match (l, r) with
         |(Empty, _) -> Empty
@@ -249,9 +251,11 @@ and Family<'t when 't : equality> = Set<'t> list
 [<AutoOpen>]
 module Set =
     /// Set union operator.
+    [<Symbol "\u222A">]
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
     
     /// Set intersection operator.
+    [<Symbol "\u2229">]
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
 
     /// Set element of operator
@@ -292,5 +296,7 @@ module Set =
     /// A singleton set containing 0. 
     let Zero = FiniteSet<N<1>, int>([|0|])
 
+    [<Symbol "\u2205">]
+    let EmptySet = Empty
     /// The universal set
     let U<'t when 't : equality> = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun (_:'t) -> true)) |> Set

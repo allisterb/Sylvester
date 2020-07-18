@@ -134,12 +134,12 @@ module Patterns =
 
     let (|Sum|_|) =
         function
-        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "sum" && t = typeof<string> -> Some(op, bound, range, body)
+        | Call(None, mi, op::Value(_, t)::BoundVars(bound)::range::body::[]) when mi.Name = "sum" && t = typeof<string> -> Some(op, bound, range, body)
         | _ -> None
 
     let (|Product|_|) =
         function
-        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, bound, range, body)
+        | Call(None, mi, op::Value(_, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, bound, range, body)
         | _ -> None
 
     let (|Quantifier|_|) =
@@ -195,12 +195,12 @@ module Patterns =
 
     let (|SumFormula|_|) =
         function
-        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "sum" && t = typeof<string> -> Some(op, symbol, bound, range, body)
+        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "sum" && t = typeof<string> -> Some(op, symbol :?> string, bound, range, body)
         | _ -> None
 
     let (|ProductFormula|_|) =
         function
-        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, symbol, bound, range, body)
+        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, symbol :?> string, bound, range, body)
         | _ -> None
 
     let (|BoolVar|_|) =

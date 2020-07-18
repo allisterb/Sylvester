@@ -30,6 +30,7 @@ module Display =
 
     let rec print_formula = 
         function
+        (* Unary and binary operators *)
         | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
         | UnaryFormula(SymbolDisplay symbol , r) -> 
             match r with
@@ -47,8 +48,12 @@ module Display =
             | Var _, _ -> sprintf "%s %s (%s)" (print_formula l) (symbol) (print_formula r)
             | _, Var _ -> sprintf "(%s) %s %s" (print_formula l) (symbol) (print_formula r)
             | _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
+        (* Logical quantifiers *)
         | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (print_formula body)
         | ForAll(_, VariableDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (print_formula range) (print_formula body)
         | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203 %s | %s)" v (print_formula body)
         | Exists(_, VariableDisplay v, range, body) -> sprintf "(\u2203 %s | %s : %s)" v (print_formula range) (print_formula body)
+        (* Quantifiers*)
+        | SumFormula(_, SymbolDisplay symbol, VariableDisplay bound, range, body) -> sprintf "%s %s %s" symbol (bound) (print_formula body)
+        (* Anything else*)
         | expr -> src expr
