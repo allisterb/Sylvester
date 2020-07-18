@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <UserSecretsId>319d1de7-61b8-4062-9ca2-995dd9eda8af</UserSecretsId>
     <Version>0.2.5</Version>
     <Authors>Allister Beharry</Authors>
@@ -40,7 +40,6 @@
     <Compile Include="Definitions\BooleanAlgebra.fs" />
     <Compile Include="Definitions\SetAlgebra.fs" />
     <Compile Include="Definitions\Combination.fs" />
-    <Compile Include="Theories\IntegerAlgebra.fs" />
     <Compile Include="Theories\BooleanAlgebra.fs" />
     <Compile Include="Theories\SetAlgebra.fs" />
   </ItemGroup>
@@ -48,7 +47,6 @@
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.0.0" />
     <PackageReference Include="Sylvester.Collections" Version="0.2.3" />
-    <PackageReference Include="Sylph" Version="0.2.5.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +59,11 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
+    <ProjectReference Include="..\..\Lang\Sylvester.Prover\Sylvester.Prover.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,14 @@
 ﻿namespace Sylvester
 
+open Sylvester.Arithmetic
+
 module SetAlgebra =
     open BooleanAlgebra    
 
+    [<Formula; Symbol"\u22c3">]
+    let union<'t when 't : equality> (bound:int) (range:bool) (body:Family<'t>) = sum Set.(|+|) "\u22c3" bound range body.Head 
+ 
+    
     /// Print set algebra operator symbols
     let print_set_algebra_operators (s:string) = 
         s.Replace("|+|", "\u222A")
@@ -10,7 +16,8 @@ module SetAlgebra =
          .Replace("Empty", "\u2205")
          .Replace("U", "\uD835")
 
-    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ id @>, print_set_algebra_operators)
+    //let |Union|_|
+    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ id @>)
 
     (* Admissible Rules *)
     let LeftAssoc = set_algebra.Rules.[0]
@@ -26,8 +33,3 @@ module SetAlgebra =
     let ReduceComp = set_algebra.Rules.[5]
 
     let Distrib = set_algebra.Rules.[6]
-
-    (* proof step shortcuts*)
-     
-    let set_id_ax expr = id_ax set_algebra expr     
-    let set_id expr = ident set_algebra expr

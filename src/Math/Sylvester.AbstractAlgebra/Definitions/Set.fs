@@ -244,6 +244,8 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
 
 and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
 
+and Family<'t when 't : equality> = Set<'t> list 
+
 [<AutoOpen>]
 module Set =
     /// Set union operator.

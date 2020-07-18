@@ -24,8 +24,8 @@ module Formula =
 
     (* Propositions and predicates *)
 
-    let prop (sentence:string) = Unchecked.defaultof<bool>
-    let pred<'t> = fun (x:'t) -> Unchecked.defaultof<bool>
+    let prop (_:string) = Unchecked.defaultof<bool>
+    let pred<'t> = fun (_:'t) -> Unchecked.defaultof<bool>
 
     (* Quantifiers *)
 
@@ -37,9 +37,9 @@ module Formula =
     let exists<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
     [<ReflectedDefinition>]
     let exists'<'u> (bound:'u) (body:bool) = exists bound true body
-    
-    [<Symbol"\u2211">]
-    let sum<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
-    let product<'t,'u> (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
 
+    /// Generic quantifier with sum semantics.
+    let sum<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
     
+    /// Generic quantifier with product semantics.
+    let product<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>

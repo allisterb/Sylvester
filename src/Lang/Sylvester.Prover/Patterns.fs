@@ -55,6 +55,31 @@ module Patterns =
         | Implies(a, c) -> (a, c, get_conjuncts a) |> Some
         | _ -> None
 
+    let (|Binary|_|) (op:Expr<'t->'t->'u>) =
+        function
+        | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
+        | _ -> None
+
+    let (|Unary|_|) (op:Expr<'t->'u>) =
+        function
+        | SpecificCall op (None,_,r::[]) when r.Type = typeof<'t> -> Some r
+        | _ -> None
+
+    let (|BinaryCall|_|) =
+        function
+        | Call(_,_,l::r::[]) when l.Type = r.Type -> Some (l,r)
+        | _ -> None
+
+    let (|UnaryCall|_|)  =
+        function
+        | Call(_,_,r::[]) -> Some r
+        | _ -> None
+
+    let (|Val|_|) (v:'t) =
+        function
+        | Value(z, t) when (t = typeof<'t>) && ((z :?> 't) = v) -> Some (Expr.Value(v))
+        | _ -> None
+
     let (|Add|_|) =
         function
         | SpecificCall <@@ (+) @@> (None,_,l::r::[]) -> Some(l, r)
@@ -85,26 +110,6 @@ module Patterns =
         | Call(None, method, Range(l, r)::[]) when method.Name = "CreateSequence" -> Some (l, r)
         | _ -> None
 
-    let (|Binary|_|) (op:Expr<'t->'t->'u>) =
-        function
-        | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
-        | _ -> None
-
-    let (|Unary|_|) (op:Expr<'t->'u>) =
-        function
-        | SpecificCall op (None,_,r::[]) when r.Type = typeof<'t> -> Some r
-        | _ -> None
-
-    let (|BinaryCall|_|) =
-        function
-        | Call(_,_,l::r::[]) when l.Type = r.Type -> Some (l,r)
-        | _ -> None
-
-    let (|UnaryCall|_|)  =
-        function
-        | Call(_,_,r::[]) -> Some r
-        | _ -> None
-
     let (|Proposition|_|) =
         function
         | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
@@ -129,12 +134,12 @@ module Patterns =
 
     let (|Sum|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "sum" -> Some(<@@ sum @@>, bound, range, body)
+        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "sum" && t = typeof<string> -> Some(op, bound, range, body)
         | _ -> None
 
     let (|Product|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "product" -> Some(<@@ product @@>, bound, range, body)
+        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, bound, range, body)
         | _ -> None
 
     let (|Quantifier|_|) =
@@ -186,6 +191,16 @@ module Patterns =
     let (|BinaryFormula|_|) =
         function
         | Call(_, mi,l::r::[]) when l.Type = r.Type -> Some (mi, l, r)
+        | _ -> None
+
+    let (|SumFormula|_|) =
+        function
+        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "sum" && t = typeof<string> -> Some(op, symbol, bound, range, body)
+        | _ -> None
+
+    let (|ProductFormula|_|) =
+        function
+        | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, symbol, bound, range, body)
         | _ -> None
 
     let (|BoolVar|_|) =

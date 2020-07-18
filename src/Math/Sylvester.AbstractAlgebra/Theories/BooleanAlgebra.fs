@@ -11,7 +11,7 @@ open Descriptions
 /// Theory of Boolean algebra on a set closed under 2 binary operations that are associative, commutative, and idempotent,
 /// with identity elements 0 and 1, and a unary inverse or complement operation.
 module BooleanAlgebra =
-    let desc = axiom_desc "Boolean Algebra" id
+    let desc = axiom_desc "Boolean Algebra" 
     
     (* Axioms *)
 
@@ -64,8 +64,8 @@ module BooleanAlgebra =
 
     let rec reduce_ident (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>)  (one: Expr<'t>) (comp:Expr<'t -> 't>) =
          function
-         | Binary join (a1, Value zero _) -> <@@ %%a1 @@>
-         | Binary meet (a1, Value one _) -> <@@ %%a1 @@>
+         | Binary join (a1, Val zero _) -> <@@ %%a1 @@>
+         | Binary meet (a1, Val one _) -> <@@ %%a1 @@>
          | expr -> traverse expr (reduce_ident join meet zero one comp)
 
     let rec reduce_comp (join: Expr<'t->'t->'t>) (meet: Expr<'t->'t->'t>) (zero: Expr<'t>) (one: Expr<'t>) (comp:Expr<'t -> 't>) =
@@ -103,7 +103,7 @@ module BooleanAlgebra =
     /// Expression is commutative.
     let Distrib join meet = Admit("(expression) is distributive", distrib join meet)
 
-    type BooleanAlgebraTheory<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>, ?formulaPrinter:string->string) = 
+    type BooleanAlgebraTheory<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>) = 
         inherit Theory(boolean_algebra_axioms theoryName join meet zero one comp, [
             LeftAssoc join meet
             RightAssoc join meet
@@ -112,4 +112,4 @@ module BooleanAlgebra =
             ReduceIdent join meet zero one comp
             ReduceComp join meet zero one comp
             Distrib join meet
-        ], defaultArg formulaPrinter id)
+        ])

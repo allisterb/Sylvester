@@ -98,11 +98,6 @@ module PropCalculus =
     let distrib_implies = Theory.S.Rules.[19]
 
     let dual = Theory.S.Rules.[20]
-
-    (* proof step shortcuts *)
-    
-    let ppc_id steps expr = ident prop_calculus steps expr
-    let ppc_id_ax expr = id_ax prop_calculus expr
      
     (* Tactics for rules *)
 
