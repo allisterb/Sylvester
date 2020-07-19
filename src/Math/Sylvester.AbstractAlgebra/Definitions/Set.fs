@@ -246,7 +246,7 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
 
 and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
 
-and Family<'t when 't : equality> = Set<'t> list 
+and Family<'t when 't : equality> = Set<'t> list
 
 [<AutoOpen>]
 module Set =
@@ -296,7 +296,5 @@ module Set =
     /// A singleton set containing 0. 
     let Zero = FiniteSet<N<1>, int>([|0|])
 
-    [<Symbol "\u2205">]
-    let EmptySet = Empty
     /// The universal set
     let U<'t when 't : equality> = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun (_:'t) -> true)) |> Set

@@ -8,8 +8,14 @@ module Set =
     open Xunit
 
     open Sylvester
-    open SetAlgebraTheory
+    open SetAlgebra
 
+    [<Fact>]
+    let ``Can display set symbols``() =
+        let A = var<Set<int>>
+        let s = Display.print_formula (<@ A = Set.Empty @> |> expand)
+        Assert.NotNull s
+    (*
     [<Fact>]
     let ``Can equate predicates`` () =
         let c = Pred(fun x -> x = 0) 
@@ -43,4 +49,4 @@ module Set =
     let ``ff``() = 
         let x,y = var2<Set<obj>>
         Assert.True(set_algebra |- <@ (x |*| y) = (y |*| x) @>)
-      
+      *)
