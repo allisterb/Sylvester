@@ -1,19 +1,29 @@
 #load "Include.fsx"
 
-open System 
-open System.Linq
-
-open Microsoft.FSharp.Quotations
-open System.Runtime.CompilerServices
-
 open Sylvester
 open Sylvester.Arithmetic
+open SetAlgebra
 
+let A = var<Family<int>>
+let B,C = var2<Set<int>>
+let i = var<int>
+
+//<@ A @> |> expand
+//<@ U<int> @> |> expand
+proof set_algebra <@ union i (i > 5) A.[i] = (Empty |+| Empty)@> []
+
+//(<@ union i (i > 5) A @> |> expand)
+Display.print_formula (<@ union i (i > 5) A.[i] @> |> expand)
+Display.print_formula <@ B |+| C@> 
+//((<@ (B |+| C |+| EmptySet) @>)) |> expand
+//let i = var<int>
+//Display.print_formula 
+//<@ EmptySet<int>@>
 let hh = 5
 //let j =  infiniteSeq (fun n -> n * n)
 //j.Take(5).ToArray()
-let c = SetComprehension(<@ let n , ) |> Set 
-c.Test 5
+//let c = SetComprehension(<@ let n , ) |> Set 
+//c.Test 5
 
 //let d = Pr(fun x -> x = 0) |> Set 
 

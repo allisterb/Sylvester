@@ -1,9 +1,12 @@
 ﻿namespace Sylvester
 
+open System
 open System.Reflection
+
 open FSharp.Quotations
 open FSharp.Quotations.DerivedPatterns
 open FSharp.Reflection
+
 open Patterns
     
 module Display = 
@@ -17,7 +20,7 @@ module Display =
             let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
         | :? PropertyInfo as info when Symbols.BulitIn.ContainsKey info.Name -> Symbols.BulitIn.[info.Name] |> Some
         | :? UnionCaseInfo as info when Symbols.BulitIn.ContainsKey info.Name -> Symbols.BulitIn.[info.Name] |> Some
-        | :? System.Type as t ->
+        | :? Type as t ->
             let a = t.GetCustomAttributes(typeof<SymbolAttribute>, true) in
             if a = null || a.Length = 0 then None else let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
         //| :? Expr as expr when Symbols.BulitIn.ContainsKey (expr |> expand |> src) -> Symbols.BulitIn.[(expr |> expand |> src)] |> Some

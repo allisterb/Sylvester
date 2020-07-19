@@ -78,9 +78,7 @@ with
         match a, b with
         | Empty, _ -> false
         | _, Empty -> true
-     
         | _, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
-        
         |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by a set comprehension as a subset. Use 2 finite sequences or a set builder with a finite sequence."
         |Set _, Set _ ->  failwith "Cannot test two sets defined by a set comprehension for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
 
@@ -134,7 +132,7 @@ with
                         seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
                 
                 Seq (Gen(subsets, (fun x -> a.HasSubset x)))   
-        | _ -> failwith "Cannot get subsets of a set defined by a set builder statement. Use a sequence instead."
+        | _ -> failwith "Cannot enumerate the power set of a set defined by a set comprehension. Use a sequence instead."
 
     member x.ToSubsets f = x.Powerset.Subset f
 
