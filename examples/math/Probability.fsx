@@ -3,9 +3,8 @@
 open Sylvester
 
 let dice = Seq [1..6]
-let S = ProbabilitySpace(dice.Product)
+let S = ProbabilitySpace(dice * dice)
+let P = S.Measure
+let comp = S.Set.Difference  
 let A = Seq [for i in 1..6 -> (1, i)] 
-
-let P = S.Prob
-P(A)
-
+P(A) + P(comp A)

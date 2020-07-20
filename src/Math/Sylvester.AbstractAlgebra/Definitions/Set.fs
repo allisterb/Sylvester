@@ -197,6 +197,11 @@ with
     /// Set relative complement operator: A |/| B = B \ A.
     static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
 
+    /// Set absolute complement operator. -A = U \ A
+    static member (~-) (l:Set<'t>) = 
+        let u = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun (_:'t) -> true)) |> Set
+        u.Difference l
+
     /// Set create subset operator.
     static member (|>|) (l:Set<'t>, r:'t->bool) = l.Subset r
 

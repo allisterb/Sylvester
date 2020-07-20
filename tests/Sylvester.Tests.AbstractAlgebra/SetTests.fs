@@ -22,6 +22,12 @@ module Set =
         let S' = SigmaAlgebra(dice * dice)
         let A = [for i in 1..6 -> (1, i)] 
         Assert.True (S'.Set.HasElement (Seq(A)))
+    
+    [<Fact>]
+    let ``Can prove union commutative``() =
+        let A,B = var2<Set<obj>>
+        let p = proof set_algebra <@ A |+| B = (A |+| B)@> []
+        Assert.True p.Complete
     (*
     [<Fact>]
     let ``Can equate predicates`` () =

@@ -8,6 +8,8 @@ let A = var<Family<int>>
 let B,C = var2<Set<int>>
 let i = var<int>
 
+let gg = infiniteSeq (fun n -> n + 4)
+gg |> Seq.take 10 |> Seq.toArray
 //<@ A @> |> expand
 //<@ U<int> @> |> expand
 proof set_algebra <@ union i (i > 5) A.[i] = (Empty |+| Empty)@> []
