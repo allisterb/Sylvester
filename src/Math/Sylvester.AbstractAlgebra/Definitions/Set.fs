@@ -272,20 +272,21 @@ module Set =
     /// Set difference operator.
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
 
-    /// Set- element difference operator.
+    /// Set-element difference operator.
     let (|^|) (l:ISet<'t>) (r:'t) = l.Set.Difference r
 
+    /// Set complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let infiniteSeq g = g |> Seq.initInfinite |> Set.ofSeq  
+    let infiniteSeq g = g |> Seq.initInfinite |> Set.fromSeq
 
-    let infiniteSeq2 g = g |> Seq.initInfinite |> Seq.pairwise |> Set.ofSeq
+    let infiniteSeq2 g = g |> Seq.initInfinite |> Seq.pairwise |> Set.fromSeq
 
-    let infiniteSeq3 g = g |> Seq.initInfinite |> triplewise |> Set.ofSeq
+    let infiniteSeq3 g = g |> Seq.initInfinite |> triplewise |> Set.fromSeq
 
-    let infiniteSeq4 g = g |> Seq.initInfinite |> quadwise |> Set.ofSeq
+    let infiniteSeq4 g = g |> Seq.initInfinite |> quadwise |> Set.fromSeq
 
-    let infiniteSeq5 g = g |> Seq.initInfinite |> quintwise |> Set.ofSeq
+    let infiniteSeq5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
 
     let ofType<'t when 't: equality> = fun (_:'t) -> true
     
