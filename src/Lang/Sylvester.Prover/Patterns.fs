@@ -183,32 +183,46 @@ module Patterns =
 
     (* Formula display patterns *)
 
-    let (|UnaryFormula|_|)  =
+    let (|UnaryTerm|_|)  =
         function
         | Call(_, mi, l::[]) -> Some (mi, l)
         | _ -> None
 
-    let (|BinaryFormula|_|) =
+    let (|BinaryTerm|_|) =
         function
         | Call(_, mi,l::r::[]) when l.Type = r.Type -> Some (mi, l, r)
         | _ -> None
 
-    let (|SumFormula|_|) =
+    let (|SumTerm|_|) =
         function
         | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "sum" && t = typeof<string> -> Some(op, symbol :?> string, bound, range, body)
         | _ -> None
 
-    let (|ProductFormula|_|) =
+    let (|ProductTerm|_|) =
         function
         | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, symbol :?> string, bound, range, body)
         | _ -> None
 
-    let (|BoolVar|_|) =
+    let (|ConstTerm|_|) =
+        function
+        | ValueWithName(_, _, x) -> box x |> Some
+        | NewUnionCase(x, _) -> box x |> Some
+        | Call(None, x, []) -> box x |> Some
+        | PropertyGet(None, x, []) -> box x |> Some
+        | _ -> None
+
+    let (|PrimitiveTerm|_|) = 
+        function
+        | Var _
+        | ConstTerm _ -> Some PrimitiveTerm
+        | _ -> None
+
+    let (|BoolVarTerm|_|) =
         function
         | Var v when v.Type = typeof<bool> -> v.Name |> Some
         | _ -> None
 
-    let (|NatVar|_|) =
+    let (|NatVarTerm|_|) =
         function
         | Var v when v.Type = typeof<uint32> -> v.Name |> Some
         | _ -> None
@@ -252,9 +266,9 @@ module Patterns =
         | _ -> None
 
     /// x + 0 = x
-    let (|Identity|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
+    let (|Identity|_|) (eq:Expr<'t->'t->bool>) (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
         function
-        | Binary eq (Binary op (a1, z), a2) when sequal a1 a2 && sequal zero z -> pattern_desc (sprintf "Identity of %s" (src op)) <@ fun (x:'t) -> (%eq) ((%op) x (%zero)) (%zero) @> |> Some
+        | Binary eq (Binary op (a1, z), a2) when sequal a1 a2 && sequal zero z -> pattern_desc "Identity" <@ fun (x:'t) -> (%eq) ((%op) x (%zero)) (%zero) @> |> Some
         | _ -> None
 
     /// x * (y + z) = x * y + x * z

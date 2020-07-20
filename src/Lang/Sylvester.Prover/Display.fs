@@ -23,12 +23,11 @@ module Display =
         | :? Type as t ->
             let a = t.GetCustomAttributes(typeof<SymbolAttribute>, true) in
             if a = null || a.Length = 0 then None else let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
-        //| :? Expr as expr when Symbols.BulitIn.ContainsKey (expr |> expand |> src) -> Symbols.BulitIn.[(expr |> expand |> src)] |> Some
         | :? string as s when Symbols.Greek.ContainsKey s && transliterateGreekSymbols -> Symbols.Greek.[s] |> Some
         | :? string as s -> s |> Some
         | _ -> None
 
-    let (|VariableDisplay|_|):obj -> string option =
+    let (|VarDisplay|_|):obj -> string option =
         function
         | :? Var as v -> v.Name |> Some
         | :? (Var list) as vars -> vars.Tail |> List.fold (fun s v -> sprintf "%s,%s" s v.Name) vars.Head.Name |> Some
@@ -36,39 +35,36 @@ module Display =
 
     let rec print_formula = 
         function
-        (* Binary and unary operators *)
+        (* Binary and unary terms *)
         | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
-        | BinaryFormula(SymbolDisplay symbol, l, r) -> 
+        | BinaryTerm(SymbolDisplay symbol, l, r) -> 
             match l, r with
-            | Var _, Var _ 
-            | Quantifier _, Var _
-            | Var _, Quantifier _ 
+            | PrimitiveTerm _, PrimitiveTerm _ 
+            | Quantifier _, PrimitiveTerm _
+            | PrimitiveTerm _, Quantifier _ 
             | Quantifier _, Quantifier _
             | _, Not _ 
             | Not _, _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
             | Var _, _ -> sprintf "%s %s (%s)" (print_formula l) (symbol) (print_formula r)
-            | _, Var _ -> sprintf "(%s) %s %s" (print_formula l) (symbol) (print_formula r)
+            | _, PrimitiveTerm _ -> sprintf "(%s) %s %s" (print_formula l) (symbol) (print_formula r)
             | _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
-        | UnaryFormula(SymbolDisplay symbol , r) -> 
+        | UnaryTerm(SymbolDisplay symbol , r) -> 
             match r with
             | Var _ 
             | Quantifier _ -> sprintf "%s%s" (symbol) (print_formula r)
             | _ -> sprintf "%s(%s)" (symbol) (print_formula r)
 
-        (* Logical quantifiers *)
-        | ForAll(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (print_formula body)
-        | ForAll(_, VariableDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (print_formula range) (print_formula body)
-        | Exists(_, VariableDisplay v, Bool true, body) -> sprintf "(\u2203 %s | %s)" v (print_formula body)
-        | Exists(_, VariableDisplay v, range, body) -> sprintf "(\u2203 %s | %s : %s)" v (print_formula range) (print_formula body)
+        (* Primitive terms *)
+        | ConstTerm(SymbolDisplay symbol) -> symbol
+        | VarDisplay v -> v 
         
-        (* Quantifiers*)
-        | SumFormula(_, SymbolDisplay symbol, VariableDisplay bound, range, body) -> sprintf "%s %s %s" symbol (bound) (print_formula body)
+        (* Quantifier terms *)
+        | ForAll(_, VarDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (print_formula body)
+        | ForAll(_, VarDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (print_formula range) (print_formula body)
+        | Exists(_, VarDisplay v, Bool true, body) -> sprintf "(\u2203 %s | %s)" v (print_formula body)
+        | Exists(_, VarDisplay v, range, body) -> sprintf "(\u2203 %s | %s : %s)" v (print_formula range) (print_formula body)
+        | SumTerm(_, SymbolDisplay symbol, VarDisplay bound, range, body) 
+        | ProductTerm(_, SymbolDisplay symbol, VarDisplay bound, range, body) -> sprintf "%s %s %s" symbol (bound) (print_formula body)
         
-        (* Values and properties*)
-        | ValueWithName(_, _, SymbolDisplay symbol) -> symbol
-        | NewUnionCase(SymbolDisplay symbol, _) -> symbol
-        | Call(None, SymbolDisplay symbol, []) -> symbol
-        | PropertyGet(None, SymbolDisplay symbol, []) -> symbol
-
-        (* F# expression source for anything else *)
+        (* Any other term *)
         | expr -> src expr

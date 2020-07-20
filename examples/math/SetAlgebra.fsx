@@ -4,4 +4,9 @@ open Sylvester
 open SetAlgebra
 
 let A,B = var2<Set<obj>>
-proof set_algebra <@ (A |+| B) = (A |+| B)@> []
+let p =proof set_algebra <@ (A |+| Empty) = A@> [
+    ident_set |> LR    
+]
+//p.LastState |> expand_right
+
+//<@ Empty @> |> expand

@@ -1,12 +1,15 @@
 ﻿namespace Sylvester
 
-module SetAlgebra =
-    open BooleanAlgebra    
+open FSharp.Quotations
 
+open BooleanAlgebra
+
+module SetAlgebra =
+        
     (* Symbols *)
     do 
-        Symbols.BulitIn.Add("Empty", "\u2205")
-        Symbols.BulitIn.Add("U", "\u1D54C")
+        Symbols.BulitIn.Add(src <@ Empty@>, "\u2205")
+        Symbols.BulitIn.Add(src <@ U @>, "\U0001D54C")
     
     (* Formulas *)
 
@@ -20,20 +23,20 @@ module SetAlgebra =
     
     (* Theory *)
 
-    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U<'t> @>, <@ Set.(~-) @>)
+    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>)
 
     (* Admissible Rules *)
     
-    let LeftAssoc = set_algebra.Rules.[0]
+    let left_assoc = set_algebra.Rules.[0]
 
-    let RightAssoc = set_algebra.Rules.[1]
+    let right_assoc = set_algebra.Rules.[1]
 
-    let Commute = set_algebra.Rules.[2]
+    let commute = set_algebra.Rules.[2]
 
-    let ReduceIdemp = set_algebra.Rules.[3]
+    let idemp = set_algebra.Rules.[3]
 
-    let ReduceIdent = set_algebra.Rules.[4]
+    let ident_set = set_algebra.Rules.[4]
 
-    let ReduceComp = set_algebra.Rules.[5]
+    let comp = set_algebra.Rules.[5]
 
-    let Distrib = set_algebra.Rules.[6]
+    let distrib = set_algebra.Rules.[6]
