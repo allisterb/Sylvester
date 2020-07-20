@@ -4,11 +4,12 @@ open FSharp.Quotations
 
 open BooleanAlgebra
 
+/// Theory of sets and set algebra.
 module SetAlgebra =
         
     (* Symbols *)
     do 
-        Symbols.BulitIn.Add(src <@ Empty@>, "\u2205")
+        Symbols.BulitIn.Add(src <@ Empty @>, "\u2205")
         Symbols.BulitIn.Add(src <@ U @>, "\U0001D54C")
     
     (* Formulas *)
@@ -21,6 +22,10 @@ module SetAlgebra =
     [<Formula>]
     let intersect<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = product Set.(|*|) "\u22c3" bound range body
     
+    
+    (* Axioms *)
+
+
     (* Theory *)
 
     let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>)

@@ -35,7 +35,18 @@ module Display =
 
     let rec print_formula = 
         function
-        (* Binary and unary terms *)
+        (* Primitive terms *)
+        | Const(SymbolDisplay symbol) -> symbol
+        | Var(VarDisplay v) -> v 
+
+        (* Unary terms *)
+        | UnaryTerm(SymbolDisplay symbol , r) -> 
+            match r with
+            | Var _ 
+            | Quantifier _ -> sprintf "%s%s" (symbol) (print_formula r)
+            | _ -> sprintf "%s(%s)" (symbol) (print_formula r)
+
+        (* Binary terms *)
         | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
         | BinaryTerm(SymbolDisplay symbol, l, r) -> 
             match l, r with
@@ -48,16 +59,7 @@ module Display =
             | Var _, _ -> sprintf "%s %s (%s)" (print_formula l) (symbol) (print_formula r)
             | _, PrimitiveTerm _ -> sprintf "(%s) %s %s" (print_formula l) (symbol) (print_formula r)
             | _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
-        | UnaryTerm(SymbolDisplay symbol , r) -> 
-            match r with
-            | Var _ 
-            | Quantifier _ -> sprintf "%s%s" (symbol) (print_formula r)
-            | _ -> sprintf "%s(%s)" (symbol) (print_formula r)
 
-        (* Primitive terms *)
-        | ConstTerm(SymbolDisplay symbol) -> symbol
-        | VarDisplay v -> v 
-        
         (* Quantifier terms *)
         | ForAll(_, VarDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (print_formula body)
         | ForAll(_, VarDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (print_formula range) (print_formula body)

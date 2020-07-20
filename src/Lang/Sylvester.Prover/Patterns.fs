@@ -183,6 +183,14 @@ module Patterns =
 
     (* Formula display patterns *)
 
+    let (|Const|_|) =
+        function
+        | ValueWithName(_, _, x) -> box x |> Some
+        | NewUnionCase(x, _) -> box x |> Some
+        | Call(None, x, []) -> box x |> Some
+        | PropertyGet(None, x, []) -> box x |> Some
+        | _ -> None
+
     let (|UnaryTerm|_|)  =
         function
         | Call(_, mi, l::[]) -> Some (mi, l)
@@ -203,18 +211,10 @@ module Patterns =
         | Call(None, mi, op::Value(symbol, t)::BoundVars(bound)::range::body::[]) when mi.Name = "product" && t = typeof<string> -> Some(op, symbol :?> string, bound, range, body)
         | _ -> None
 
-    let (|ConstTerm|_|) =
-        function
-        | ValueWithName(_, _, x) -> box x |> Some
-        | NewUnionCase(x, _) -> box x |> Some
-        | Call(None, x, []) -> box x |> Some
-        | PropertyGet(None, x, []) -> box x |> Some
-        | _ -> None
-
     let (|PrimitiveTerm|_|) = 
         function
         | Var _
-        | ConstTerm _ -> Some PrimitiveTerm
+        | Const _ -> Some PrimitiveTerm
         | _ -> None
 
     let (|BoolVarTerm|_|) =
