@@ -60,7 +60,7 @@ module Ring =
 
     /// Ring of positive integers.
     let Zpos =
-        let set = Gen(Seq.initInfinite id, (fun x -> x >= 0)) |> Set.ofGen in
+        let set = Gen(Seq.initInfinite id, (fun x -> x >= 0)) |> Set.fromGen in
         let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
@@ -82,7 +82,7 @@ module Ring =
 
     /// Ring of negative integers.
     let Zneg =
-        let set = Gen(Seq.initInfinite (fun n -> -n), (fun x -> x <= 0)) |> Set.ofGen
+        let set = Gen(Seq.initInfinite (fun n -> -n), (fun x -> x <= 0)) |> Set.fromGen
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 

@@ -56,8 +56,8 @@ with
     member x.Subset(f: 't->bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Generator g -> Seq(SetGenerator(x |> Seq.filter f, (fun x -> g.Test(x) && f(x))))
-        |Seq _ -> Seq(x |> Seq.filter f) 
+        |Generator g -> SetGenerator(x |> Seq.filter f, (fun x -> g.Test(x) && f(x))) |> Set.fromGen
+        |Seq _ -> x |> Seq.filter f |> Set.fromSeq 
         |Set s -> SetComprehension(s.RangeTest, s.Body, (fun x -> s.Test(x) && f x)) |> Set
 
     /// Determine if the set contains an element.
@@ -95,10 +95,10 @@ with
         | Empty, _ -> Empty
         | _,_ -> a.Subset(fun x -> b.HasElement x |> not)
         
-    member a.Difference b =
+    member a.ElementDifference b =
         match a with
         | Empty -> Empty
-        | Generator g -> SetGenerator(a |> Seq.except [b], (fun x -> g.Test(x) && not(x = b))) |> Set.ofGen
+        | Generator g -> SetGenerator(a |> Seq.except [b], (fun x -> g.Test(x) && not(x = b))) |> Set.fromGen
         | Seq _ -> Seq(a |> Seq.except [b])
         | Set builder -> SetComprehension(builder.RangeTest, builder.Body, (fun x -> builder.Test(x) && not(x = b))) |> Set
         
@@ -136,7 +136,7 @@ with
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
-        | Set _ -> failwith "Cannot enumerate all subsets of a set defined by a set comprehension."
+        | Set _ -> failwith "Cannot enumerate all subsets of a set defined by a set comprehension. Use a sequence instead."
 
     member x.Product = 
         match x with
@@ -146,14 +146,7 @@ with
     
     static member fromSeq(s: seq<'t>) = Seq s
     
-    static member ofGen(gen:Gen<'t>) = Seq gen
-
-    static member ofSubsets(s:seq<'t>) =
-        let set = 
-            match s with
-            | FiniteSeq -> Seq(s |> Seq.distinct |> Seq.toArray)
-            | NonFiniteSeq -> Seq(s |> Seq.distinct |> Seq.toArray)
-        set.Powerset
+    static member fromGen(gen:Gen<'t>) = Seq gen
 
     static member toProduct(s:Set<'t>) = s.Product
  
@@ -163,9 +156,9 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
-        |(Seq _, Seq _) -> SetGenerator(Seq.concat[l; r], (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
+        |(Seq _, Seq _) -> SetGenerator(Seq.concat[l; r], (fun x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |_, _ -> 
-            let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t>
+            let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
             SetComprehension(<@ set_union(l, r) @>, (fun x -> l.HasElement x || r.HasElement x)) |> Set
         
     /// Set intersection operator.
@@ -180,16 +173,16 @@ with
                     Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
                     |> Seq.take (b.Count()) 
-                Gen(s, (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
+                Gen(s, (fun x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(Finite a, Seq b) -> 
                 let s = 
                     Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
                     |> Seq.take (a.Count()) 
-                Gen(s, (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
-        |(Seq a, Seq b) -> SetGenerator(a.Intersect b, (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
+                Gen(s, (fun x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
+        |(Seq a, Seq b) -> SetGenerator(a.Intersect b, (fun x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(_, _) -> 
-            let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t>
+            let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
             SetComprehension(<@ set_intersect(l,r) @>, (fun x -> l.HasElement x && r.HasElement x)) |> Set
 
     ///Set 'is element of' operator
@@ -198,8 +191,8 @@ with
     /// Set 'is subset of' operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
 
-    /// Set relative difference operator: A |^| B = A \ B.
-    static member (|^|) (l:Set<'t>, r:Set<'t>) = l.Difference r
+    /// Set element difference operator.
+    static member (|^|) (l:Set<'t>, r:'t) = l.ElementDifference r
 
     /// Set relative complement operator: A |/| B = B \ A.
     static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
@@ -212,9 +205,6 @@ with
 
     /// Set difference operator
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
-
-    /// Set element-wise difference operator
-    static member (|-|) (l:Set<'t>, r:'t) = l.Difference r
 
     /// Set Cartesian product.
     static member (*) (l, r) = 
@@ -257,7 +247,7 @@ module Set =
     [<Symbol "\u2229">]
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
 
-    /// Set element of operator
+    /// Set element of operator.
     let (|?|) (e:'t) (l:ISet<'t>) = l.Set.HasElement e
 
     /// Set subset relation.
@@ -273,9 +263,9 @@ module Set =
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
 
     /// Set-element difference operator.
-    let (|^|) (l:ISet<'t>) (r:'t) = l.Set.Difference r
+    let (|^|) (l:ISet<'t>) (r:'t) = l.Set.ElementDifference r
 
-    /// Set complement operator.
+    /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
     let infiniteSeq g = g |> Seq.initInfinite |> Set.fromSeq
