@@ -44,13 +44,8 @@ type Gen<'t when 't: equality> = SetGenerator<'t>
 
 [<AutoOpen>]
 module SetComprehension =
-    let (|Generator|_|) x =
-        match x:IEnumerable<'t> with
-        | :? SetGenerator<'t> as s -> Some s
-        | _ -> None
-
-    let (|ArraySeq|ListSeq|SetSeq|GeneratorSeq|OtherSeq|) s =
-        match s:IEnumerable<'t> with
+    let (|ArraySeq|ListSeq|SetSeq|GeneratorSeq|OtherSeq|) (s:IEnumerable<'t>) =
+        match s with
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
         | _ when s.GetType().Name.StartsWith("FSharpSet") -> SetSeq
@@ -69,7 +64,10 @@ module SetComprehension =
         | Finite _ -> FiniteSeq
         | _ -> NonFiniteSeq
 
-    let internal ExprUnion<'t>([<ParamArray>] p:Expr<'t> array) = p.[0]
+    let (|Generator|_|) x =
+        match x:IEnumerable<'t> with
+        | :? SetGenerator<'t> as s -> Some s
+        | _ -> None
 
     let cart (source: seq<'a>) =
         seq { 

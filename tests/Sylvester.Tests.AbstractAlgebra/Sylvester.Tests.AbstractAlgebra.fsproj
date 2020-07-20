@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Math\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
+    <ProjectReference Include="..\..\src\Math\Sylvester.Probability\Sylvester.Probability.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -34,11 +34,9 @@ with
             | Empty, Empty -> true
             | _, Empty -> false
             |Empty, _ -> false
-
             |Generator g1, Generator g2 -> (g1.Seq.ToString() = g2.Seq.ToString()) 
             |Set expr1, Set expr2 ->  expr1 = expr2
-            |Seq _, Seq _ ->  a |> Seq.forall (fun x -> b.HasElement x) && 
-                              b |> Seq.forall (fun x -> a.HasElement x)
+            |Seq s1, Seq s2 ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
             
             |_,_ -> failwith "Cannot test a sequence and a set defined using a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
     
@@ -49,7 +47,7 @@ with
     
     override a.GetHashCode() = 
         match a with
-        | Empty -> 0
+        | Empty -> "Empty".GetHashCode()
         | Generator g -> let h = g.Seq.ToString() + g.Seq.ToString() in h.GetHashCode()
         | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
@@ -64,11 +62,11 @@ with
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
-        match x with
-        |Empty -> false
-        |Generator g -> g.HasElement elem
-        |Seq s -> s.Contains elem // May fail if sequence is infinite
-        |Set s -> s.Test elem
+        match x, elem with
+        |Empty, _ -> false
+        |Generator g, e -> g.HasElement e
+        |Seq set, e -> set.Contains e 
+        |Set s, e -> s.Test e
     
     /// Indicator function for an element.
     member x.Indicate elem = if x.HasElement elem then 1 else 0
@@ -134,7 +132,11 @@ with
                 Seq (Gen(subsets, (fun x -> a.HasSubset x)))   
         | _ -> failwith "Cannot enumerate the power set of a set defined by a set comprehension. Use a sequence instead."
 
-    member x.ToSubsets f = x.Powerset.Subset f
+    member x.ToSubsets() =
+        match x with
+        | Empty -> failwith "The empty set has no subsets."
+        | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
+        | Set _ -> failwith "Cannot enumerate all subsets of a set defined by a set comprehension."
 
     member x.Product = 
         match x with
@@ -161,7 +163,6 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
-        
         |(Seq _, Seq _) -> SetGenerator(Seq.concat[l; r], (fun x -> l.HasElement x || r.HasElement x)) |> Set.ofGen
         |_, _ -> 
             let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t>
@@ -257,7 +258,7 @@ module Set =
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
 
     /// Set element of operator
-    let (|?|) (l:ISet<'t>) (e:'t) = l.Set.HasElement e
+    let (|?|) (e:'t) (l:ISet<'t>) = l.Set.HasElement e
 
     /// Set subset relation.
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
@@ -276,9 +277,6 @@ module Set =
 
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    /// Cartesian product operator.
-    let (|**|) (l:ISet<'t>) (r:ISet<'t>) = l.Set * r.Set
-    
     let infiniteSeq g = g |> Seq.initInfinite |> Set.ofSeq  
 
     let infiniteSeq2 g = g |> Seq.initInfinite |> Seq.pairwise |> Set.ofSeq
@@ -294,5 +292,5 @@ module Set =
     /// A singleton set containing 0. 
     let Zero = FiniteSet<N<1>, int>([|0|])
 
-    /// The universal set
+    /// The universal set.
     let U<'t when 't : equality> = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun (_:'t) -> true)) |> Set

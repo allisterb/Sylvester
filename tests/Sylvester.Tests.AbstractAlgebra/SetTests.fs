@@ -15,6 +15,13 @@ module Set =
         let A = var<Set<int>>
         let s = Display.print_formula (<@ A = Set.Empty @> |> expand)
         Assert.NotNull s
+    
+    [<Fact>]
+    let ``Algebra has element``() =
+        let dice = Seq [1..6]
+        let S' = SigmaAlgebra(dice * dice)
+        let A = [for i in 1..6 -> (1, i)] 
+        Assert.True (S'.Set.HasElement (Seq(A)))
     (*
     [<Fact>]
     let ``Can equate predicates`` () =
