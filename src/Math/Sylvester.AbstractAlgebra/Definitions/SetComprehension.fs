@@ -32,6 +32,7 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] s:Expr<seq
     member val Test = pv :?> ('t -> bool)
     member val Predicate = predicate
     member val Seq = sv :?> (seq<'t>)
+    member val Body = s
     override x.ToString() = x.Seq.ToString()
     member x.HasElement elem = x.Test elem
     interface IEnumerable<'t> with

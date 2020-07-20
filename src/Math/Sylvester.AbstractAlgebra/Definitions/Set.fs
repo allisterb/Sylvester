@@ -52,6 +52,20 @@ with
         | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
+    member x.Range =
+        match x with
+        | Empty -> <@@ false @@>
+        | Generator _ -> <@@ fun n -> n >= 0 @@>
+        | Seq _ -> <@@ fun n -> n >= 0 @@>
+        | Set set -> set.Range.Raw
+      
+    member x.Body =
+        match x with
+        | Empty -> <@@ Empty @@> |> expand
+        | Generator g -> g.Body.Raw
+        | Seq s -> <@@ s @@> |> expand
+        | Set set -> set.Body.Raw
+    
     /// Create a subset of the set using a predicate.
     member x.Subset(f: 't->bool) = 
         match x with
