@@ -3,10 +3,12 @@
 open Sylvester
 open SetAlgebra
 
+let n = var<int>
 let A,B = var2<Set<obj>>
-let p =proof set_algebra <@ (A |+| Empty) = A@> [
-    ident_set |> LR    
-]
-//p.LastState |> expand_right
 
-//<@ Empty @> |> expand
+let X = Seq [1;2;3]
+
+//set_algebra |- <@ (A |+| Empty) = A @>
+let range (Z:Set<'t>) = Z.Range
+
+let jj = <@ forall n (%X.Range(n)) ((n) = %X) @> |> expand

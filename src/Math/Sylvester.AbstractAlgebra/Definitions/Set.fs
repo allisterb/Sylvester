@@ -52,19 +52,20 @@ with
         | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
-    member x.Range =
+    
+    member x.Range (r:'t) =
         match x with
-        | Empty -> <@@ false @@>
-        | Generator _ -> <@@ fun n -> n >= 0 @@>
-        | Seq _ -> <@@ fun n -> n >= 0 @@>
-        | Set set -> set.Range.Raw
+        | Empty -> <@ false @> 
+        | Generator _ -> <@ (box r :?> int) >= 0 @> 
+        | Seq _ -> <@ (box r :?> int) >= 0 @>
+        | Set set -> <@ r |> box |> set.RangeTest @> 
       
     member x.Body =
         match x with
-        | Empty -> <@@ Empty @@> |> expand
-        | Generator g -> g.Body.Raw
-        | Seq s -> <@@ s @@> |> expand
-        | Set set -> set.Body.Raw
+        | Empty -> <@ Unchecked.defaultof<'t> @>
+        | Generator g -> <@ Seq.item 0 g @>
+        | Seq s -> <@ Seq.item 0 s@> 
+        | Set set -> set.Body
     
     /// Create a subset of the set using a predicate.
     member x.Subset(f: 't->bool) = 
@@ -156,7 +157,8 @@ with
         match x with
         |Empty -> Empty
         |Seq s -> Seq(Gen(cart s, (fun (a,b) -> x.HasElement a && x.HasElement b)))
-        |Set builder -> let t1 = builder.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
+        | _ -> failwith "dd"
+        //|Set builder -> let t1 = builder.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
     
     static member fromSeq(s: seq<'t>) = Seq s
     

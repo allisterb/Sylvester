@@ -3,6 +3,8 @@
 open Sylvester
 
 let dice = Seq [1..6]
+dice.Range
+
 let S = ProbabilitySpace(dice * dice)
 let P = S.Measure
 let comp = S.Set.Difference  

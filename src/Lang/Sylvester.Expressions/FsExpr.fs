@@ -137,7 +137,7 @@ module FsExpr =
           let expanded = 
             match expr with
             | WithValue(_, _, e) -> rexpand vars e
-            | Coerce(e, _) -> rexpand vars e
+            //| Coerce(e, _) -> rexpand vars e
             | ValueWithName(o, t, n) -> rexpand vars (Expr.Value(o, t))
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth

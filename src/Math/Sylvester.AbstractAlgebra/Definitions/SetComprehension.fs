@@ -9,11 +9,11 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
 /// A statement that can define a set using a range, body and predicate for testing set.
-type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<'t -> bool>, body: Expr<'t>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
+type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<obj -> bool>, body: Expr<'t>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
     let r = match range with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
     let p = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
     member val Test = p :?> ('t -> bool)
-    member val RangeTest = r :?> ('t -> bool)
+    member val RangeTest = r :?> (obj -> bool)
     member val Range = range
     member val Body = body
     override x.ToString() = x.Body |> src
