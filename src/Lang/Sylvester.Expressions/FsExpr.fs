@@ -11,8 +11,10 @@ open FSharp.Quotations.ExprShape
                 
 [<AutoOpen>] 
 module FsExpr =
+    let src expr = Swensen.Unquote.Operators.decompile expr
+    
     let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
-     
+   
     let getFieldInfo = function
     | FieldGet (_, fieldInfo) -> fieldInfo
     | _ -> failwith "Expression is not a field."
@@ -39,6 +41,12 @@ module FsExpr =
     | FieldGet (_, info) -> info.Name
     | _ -> failwith "Expression does not have information to retrieve name."
 
+    let getExprFromReflectedDefinition<'t> =
+        function
+        | WithValue(v, t, _) when t = typeof<'t> -> v :?> 't
+        | ValueWithName(v, t, _) when t = typeof<'t> -> v :?> 't
+        | expr -> failwithf "%s is not a reflected definition of type %s." (src expr) (typeof<'t>.Name)
+        
     let call expr p = 
         let mi = getFuncInfo expr
         Expr.Call(mi, p)
@@ -62,8 +70,6 @@ module FsExpr =
 
     let vequal' (lv1:Var list) (lv2:Var list) = lv1.Length = lv2.Length && List.fold2(fun s v1 v2 -> s && vequal v1 v2) true lv1 lv2
 
-    let src expr = Swensen.Unquote.Operators.decompile expr
-        
     let rec body = 
         function
         | Lambda(_, Lambda(v2, b)) -> body (Expr.Lambda(v2, b))

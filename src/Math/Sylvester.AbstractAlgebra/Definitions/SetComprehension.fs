@@ -8,14 +8,16 @@ open System.Linq
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-/// A statement that can define a set using a range, body and predicate for testing set.
-type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<obj -> bool>, body: Expr<'t>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
-    let r = match range with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    let p = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    member val Test = p :?> ('t -> bool)
-    member val RangeTest = r :?> (obj -> bool)
+/// A statement that formally defines a set using a range, body, and an F# function for testing set membership.
+type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<obj -> bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, [<ReflectedDefinition(true)>] test:Expr<'t -> bool>) = 
+    let r = getExprFromReflectedDefinition<obj -> bool> range
+    let b = getExprFromReflectedDefinition<'t> body
+    let t = getExprFromReflectedDefinition<'t -> bool> test
     member val Range = range
     member val Body = body
+    member val Body' = b
+    member val Test = t
+    member val RangeTest = r 
     override x.ToString() = x.Body |> src
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
@@ -23,7 +25,7 @@ type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:
             | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
             | _ -> false
     override a.GetHashCode() = (a.ToString()).GetHashCode() 
-    new(body: Expr<'t>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = SetComprehension((fun _ -> true), body, match predicate with | WithValue(v, _, _) -> v :?> ('t -> bool) | _ -> failwith "Unexpected expression.")
+    new(body: 't, test: 't -> bool) = SetComprehension((fun _ -> true), body, test) 
 
 /// A generator defines a set that is a sequence together with a predicate for testing set membership.
 type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] s:Expr<seq<'t>>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
@@ -40,11 +42,14 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] s:Expr<seq
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
-/// A generator defines a sequence together with a logical predicate that tests for set membership.
+/// A generator defines a set that is a sequence together with a predicate for testing set membership.
 type Gen<'t when 't: equality> = SetGenerator<'t>
 
 [<AutoOpen>]
 module SetComprehension =
+    let set_range<'a> (r:'a) = false 
+    let set_body<'a, 't> (r:'a) = Unchecked.defaultof<'t>
+
     let (|ArraySeq|ListSeq|SetSeq|GeneratorSeq|OtherSeq|) (s:IEnumerable<'t>) =
         match s with
         | :? array<'t> -> ArraySeq
