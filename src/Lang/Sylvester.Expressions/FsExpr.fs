@@ -47,6 +47,12 @@ module FsExpr =
         | ValueWithName(v, t, _) when t = typeof<'t> -> v :?> 't
         | expr -> failwithf "%s is not a reflected definition of type %s." (src expr) (typeof<'t>.Name)
         
+    let getExprFromReflectedDefinition'<'t> =
+        function
+        | WithValue(v, t, _) when t = typeof<'t> -> "", v :?> 't
+        | ValueWithName(v, t, n) when t = typeof<'t> -> n, v :?> 't
+        | expr -> failwithf "%s is not a reflected definition of type %s." (src expr) (typeof<'t>.Name)
+
     let call expr p = 
         let mi = getFuncInfo expr
         Expr.Call(mi, p)

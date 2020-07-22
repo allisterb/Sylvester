@@ -3,22 +3,23 @@
 open System
 open System.Collections
 open System.Collections.Generic
-open System.Linq
 
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-/// A statement that formally defines a set using a range, body, and an F# function for testing set membership.
-type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, 
-     test:SetComprehension<'t> ->'t -> bool) = 
+/// A statement that formally defines a set using a range, body, and an F# function for computing set membership.
+type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, test:SetComprehension<'t> ->'t -> bool) = 
     let r = getExprFromReflectedDefinition<bool> range
     let b = getExprFromReflectedDefinition<'t> body
     member val Range = range
     member val Body = body
     member val Body' = b
-    member val Test = test
-    member val RangeTest = r 
-    override x.ToString() = x.Body |> src
+    member val RangeTest = r
+    member val Test = test 
+    override x.ToString() = 
+        let vars = body |> expand |> get_vars
+        let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "| "
+        sprintf "{%s%s:%s}" v (range |> expand |> src) (body |> expand |> src)
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
             match _b with 
@@ -46,9 +47,8 @@ type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] s:Expr<seq
 type Gen<'t when 't: equality> = SetGenerator<'t>
 
 [<AutoOpen>]
-module SetComprehension =
-    let set_range<'a> (r:'a) = false 
-    let set_body<'a, 't> (r:'a) = Unchecked.defaultof<'t>
+module SetComprehension = 
+    let seq_body<'a, 't> (r:'a) = Unchecked.defaultof<'t>
 
     let (|ArraySeq|ListSeq|SetSeq|GeneratorSeq|OtherSeq|) (s:IEnumerable<'t>) =
         match s with

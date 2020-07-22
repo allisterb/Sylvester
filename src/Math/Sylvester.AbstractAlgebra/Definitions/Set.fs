@@ -52,23 +52,25 @@ with
         | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
-    member x.Range (r:Expr<'t>) =
-        //let v = r |> expand |> get_vars |> Seq.item 0
-        
-        let n = 0
+    member x.Range ([<ReflectedDefinition(true)>] r:Expr<'t>) =
+        let vars = r |> expand |> get_vars 
+        let var = if Seq.length vars > 0 then Seq.item 0 vars else failwithf "The expression %s does not contain any variables." (r |> expand |> src)
+        let v = Expr.Var(var)
         match x with
-        | Empty -> <@ false @> |> expand
+        | Empty -> <@@ false @@>
         | Generator _  
-        | Seq _ -> <@ n >= 0 @>  |> expand
-        | Set set -> set.Range.Substitute((fun v -> Some (r.Raw)))
+        | Seq _ -> 
+            do if v.Type <> typeof<int> then failwithf "The variable %s does not have type integer." (src v)
+            <@ %%v >= 0  @> |> expand
+        | Set set -> set.Range.Substitute((fun _ -> Some v)) |> expand
       
-    member x.Body =
+    member x.Body ([<ReflectedDefinition>] b:Expr<'t>) =
         match x with
-        | Empty -> <@ Unchecked.defaultof<'t> @>
-        | Generator g -> set_body g.Body
-        | Seq s -> <@ set_body s@> 
-        | Set set -> set.Body
-    
+        | Empty -> <@@ Unchecked.defaultof<'t> @@>
+        | Generator g -> let e = g.Body |> expand in seq_body (e.Substitute((fun _ -> Some (expand b)))) 
+        | Seq s -> let e = <@ seq_body s @> |> expand in e.Substitute((fun _ -> Some (expand b))) 
+        | Set set -> let e = set.Body |> expand in e.Substitute((fun _ -> Some (expand b)))
+
     /// Create a subset of the set using a predicate.
     member x.Subset(f: 't->bool) = 
         match x with
