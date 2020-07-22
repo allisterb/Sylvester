@@ -7,7 +7,7 @@ open System.Collections.Generic
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-/// A statement that formally defines a set using a range, body, and an F# function for computing set membership.
+/// A statement that defines a set using a range, body, and an F# function for computing set membership.
 type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, test:SetComprehension<'t> ->'t -> bool) = 
     let r = getExprFromReflectedDefinition<bool> range
     let b = getExprFromReflectedDefinition<'t> body
@@ -28,20 +28,21 @@ type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:
     override a.GetHashCode() = (a.ToString()).GetHashCode() 
     new(body: 't, test: SetComprehension<'t> -> 't -> bool) = SetComprehension(true, body, test) 
 
-/// A generator defines a set that is a sequence together with a predicate for testing set membership.
-type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] s:Expr<seq<'t>>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
-    let sv = match s with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    let pv = match predicate with | WithValue(v, _, _) -> v | _ -> failwith "Unexpected expression."
-    member val Test = pv :?> ('t -> bool)
-    member val Predicate = predicate
-    member val Seq = sv :?> (seq<'t>)
-    member val Body = s
-    override x.ToString() = x.Seq.ToString()
-    member x.HasElement elem = x.Test elem
+/// A statement that defines a set that is a sequence using a range, sequence body, and an F# function for computing set membership.
+type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body:Expr<seq<'t>>, test:SetGenerator<'t>->'t -> bool) = 
+    let r = getExprFromReflectedDefinition<bool> range
+    let b = getExprFromReflectedDefinition<seq<'t>> body
+    member val Range = range
+    member val Body = body
+    member val Body' = b
+    member val Test = test
+    member val RangeTest = r
+    override x.ToString() = x.Body.ToString()
     interface IEnumerable<'t> with
-        member x.GetEnumerator () = x.Seq.GetEnumerator() 
+        member x.GetEnumerator () = x.Body'.GetEnumerator() 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
+    new(body: seq<'t>, test: SetGenerator<'t> -> 't -> bool) = SetGenerator(true, body, test) 
 
 /// A generator defines a set that is a sequence together with a predicate for testing set membership.
 type Gen<'t when 't: equality> = SetGenerator<'t>
