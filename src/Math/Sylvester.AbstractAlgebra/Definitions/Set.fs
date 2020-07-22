@@ -4,7 +4,7 @@ open System
 open System.Collections
 open System.Collections.Generic
 open System.Linq
-   
+open FSharp.Quotations
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
@@ -52,12 +52,15 @@ with
         | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
-    member x.Range ([<ReflectedDefinition>] r:'t) =
+    member x.Range (r:Expr<'t>) =
+        //let v = r |> expand |> get_vars |> Seq.item 0
+        
+        let n = 0
         match x with
-        | Empty -> <@ false @> 
+        | Empty -> <@ false @> |> expand
         | Generator _  
-        | Seq _ -> <@ (box r :?> int) >= 0 @>  
-        | Set set -> <@ set.RangeTest(box r) @>  
+        | Seq _ -> <@ n >= 0 @>  |> expand
+        | Set set -> set.Range.Substitute((fun v -> Some (r.Raw)))
       
     member x.Body =
         match x with
@@ -72,7 +75,7 @@ with
         |Empty -> failwith "The empty set has no subsets."
         |Generator g -> SetGenerator(x |> Seq.filter f, (fun x -> g.Test(x) && f(x))) |> Set.fromGen
         |Seq _ -> x |> Seq.filter f |> Set.fromSeq 
-        |Set s -> SetComprehension(s.RangeTest, s.Body', (fun x -> s.Test(x) && f x)) |> Set
+        |Set s -> SetComprehension(s.RangeTest, s.Body', (fun sc x -> s.Test s x && f x)) |> Set
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
@@ -80,7 +83,7 @@ with
         |Empty, _ -> false
         |Generator g, e -> g.HasElement e
         |Seq set, e -> set.Contains e 
-        |Set s, e -> s.Test e
+        |Set s, e -> s.Test s e
     
     /// Indicator function for an element.
     member x.Indicate elem = if x.HasElement elem then 1 else 0
@@ -114,7 +117,7 @@ with
         | Empty -> Empty
         | Generator g -> SetGenerator(a |> Seq.except [b], (fun x -> g.Test(x) && not(x = b))) |> Set.fromGen
         | Seq _ -> Seq(a |> Seq.except [b])
-        | Set builder -> SetComprehension(builder.RangeTest, builder.Body', (fun x -> builder.Test(x) && not(x = b))) |> Set
+        | Set builder -> SetComprehension(builder.RangeTest, builder.Body', (fun sc x -> builder.Test builder x && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
     
@@ -174,7 +177,7 @@ with
         |(Seq _, Seq _) -> SetGenerator(Seq.concat[l; r], (fun x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |_, _ -> 
             let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
-            SetComprehension(set_union(l, r), (fun x -> l.HasElement x || r.HasElement x)) |> Set
+            SetComprehension(set_union(l, r), (fun sc x -> l.HasElement x || r.HasElement x)) |> Set
         
     /// Set intersection operator.
     [<Symbol "\u2229">]
@@ -198,7 +201,7 @@ with
         |(Seq a, Seq b) -> SetGenerator(a.Intersect b, (fun x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(_, _) -> 
             let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
-            SetComprehension(set_intersect(l,r), (fun x -> l.HasElement x && r.HasElement x)) |> Set
+            SetComprehension(set_intersect(l,r), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
 
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
@@ -214,7 +217,7 @@ with
 
     /// Set absolute complement operator. -A = U \ A
     static member (~-) (l:Set<'t>) = 
-        let u = SetComprehension (Unchecked.defaultof<'t>, (fun (_:'t) -> true)) |> Set
+        let u = SetComprehension (Unchecked.defaultof<'t>, (fun _ _ -> true)) |> Set
         u.Difference l
 
     /// Set create subset operator.
@@ -233,7 +236,7 @@ with
         |(Empty, _) -> Empty
 
         |(Seq a, Seq b) -> Seq(Gen(cart2 a b, (fun (x,y) -> l.HasElement x && r.HasElement y)))
-        |(_,_) -> SetComprehension((l.First(), r.First()), (fun (x,y) -> l.HasElement x && r.HasElement y)) |> Set
+        |(_,_) -> SetComprehension((l.First(), r.First()), (fun sc (x,y) -> l.HasElement x && r.HasElement y)) |> Set
     
     interface ISet<'t> with member x.Set = x
 
@@ -304,4 +307,4 @@ module Set =
     let Zero = FiniteSet<N<1>, int>([|0|])
 
     /// The universal set.
-    let U<'t when 't : equality> = SetComprehension (Unchecked.defaultof<'t>, (fun (_:'t) -> true)) |> Set
+    let U<'t when 't : equality> = SetComprehension (Unchecked.defaultof<'t>, (fun _ _ -> true)) |> Set

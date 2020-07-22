@@ -9,14 +9,14 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
 /// A statement that formally defines a set using a range, body, and an F# function for testing set membership.
-type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<obj -> bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, [<ReflectedDefinition(true)>] test:Expr<'t -> bool>) = 
-    let r = getExprFromReflectedDefinition<obj -> bool> range
+type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, 
+     test:SetComprehension<'t> ->'t -> bool) = 
+    let r = getExprFromReflectedDefinition<bool> range
     let b = getExprFromReflectedDefinition<'t> body
-    let t = getExprFromReflectedDefinition<'t -> bool> test
     member val Range = range
     member val Body = body
     member val Body' = b
-    member val Test = t
+    member val Test = test
     member val RangeTest = r 
     override x.ToString() = x.Body |> src
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
@@ -25,7 +25,7 @@ type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:
             | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
             | _ -> false
     override a.GetHashCode() = (a.ToString()).GetHashCode() 
-    new(body: 't, test: 't -> bool) = SetComprehension((fun _ -> true), body, test) 
+    new(body: 't, test: SetComprehension<'t> -> 't -> bool) = SetComprehension(true, body, test) 
 
 /// A generator defines a set that is a sequence together with a predicate for testing set membership.
 type SetGenerator<'t when 't: equality>([<ReflectedDefinition(true)>] s:Expr<seq<'t>>, [<ReflectedDefinition(true)>] predicate:Expr<'t -> bool>) = 
