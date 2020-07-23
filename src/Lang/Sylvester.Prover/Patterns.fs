@@ -110,6 +110,11 @@ module Patterns =
         | Call(None, method, Range(l, r)::[]) when method.Name = "CreateSequence" -> Some (l, r)
         | _ -> None
 
+    let (|InfiniteSeq|_|) =
+        function
+        | Call(None, method, l::[]) when method.Name = "InitializeSequence" -> Some l
+        | _ -> None
+
     let (|Proposition|_|) =
         function
         | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text

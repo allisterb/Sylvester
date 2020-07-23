@@ -5,8 +5,10 @@ open System.Collections
 open System.Collections.Generic
 open System.Linq
 open FSharp.Quotations
+
 open Sylvester.Arithmetic
 open Sylvester.Collections
+open Sylvester.Patterns
 
 /// A set of elements each with type or class denoted by t.
 [<CustomEquality; CustomComparison>]
@@ -23,7 +25,7 @@ with
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
-            |Set _ -> failwith "Cannot enumerate a set defined by a set comprehension. Use a sequence instead."
+            |Set s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -33,10 +35,9 @@ with
             match a, b with
             | Empty, Empty -> true
             | _, Empty -> false
-            |Empty, _ -> false
-            |Generator g1, Generator g2 -> (g1.Body.ToString() = g2.Body.ToString()) 
-            |Set expr1, Set expr2 ->  expr1 = expr2
-            |Seq s1, Seq s2 ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
+            | Empty, _ -> false
+            | Set expr1, Set expr2 ->  expr1 = expr2
+            | Seq s1, Seq s2 ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
             
             |_,_ -> failwith "Cannot test a sequence and a set defined using a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
     
@@ -48,14 +49,12 @@ with
     override a.GetHashCode() = 
         match a with
         | Empty -> "Empty".GetHashCode()
-        | Generator g -> g.Body.GetHashCode() 
-        | Seq s -> s.GetHashCode()
+        | Seq s -> s.ToString().GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
     override x.ToString() =
         match x with
         | Empty -> "Empty"
-        | Generator g -> g.ToString()
         | Seq s -> s.ToString()
         | Set s -> s.ToString()
         
@@ -65,7 +64,6 @@ with
         let v = Expr.Var(var)
         match x with
         | Empty -> <@@ false @@>
-        | Generator _  
         | Seq _ -> 
             do if v.Type <> typeof<int> then failwithf "The variable %s does not have type integer." (src v)
             <@ %%v >= 0  @> |> expand
@@ -74,7 +72,6 @@ with
     member x.Body ([<ReflectedDefinition>] b:Expr<'t>) =
         match x with
         | Empty -> <@@ Unchecked.defaultof<'t> @@>
-        | Generator g -> let e = g.Body |> expand in seq_body (e.Substitute((fun _ -> Some (expand b)))) 
         | Seq s -> let e = <@ s @>  |> expand in e.Substitute((fun _ -> Some (expand b))) 
         | Set set -> let e = set.Body |> expand in e.Substitute((fun _ -> Some (expand b)))
 
@@ -82,15 +79,13 @@ with
     member x.Subset(f: 't->bool) = 
         match x with
         |Empty -> failwith "The empty set has no subsets."
-        |Generator g -> SetGenerator(x |> Seq.filter f, (fun sg x -> g.Test g x && f(x))) |> Set.fromGen
         |Seq _ -> x |> Seq.filter f |> Set.fromSeq 
-        |Set s -> SetComprehension(s.RangeTest, s.Body', (fun sc x -> s.Test s x && f x)) |> Set
+        |Set s -> SetComprehension(s.RangeTest, s.Body', (fun _ x -> s.Test s x && f x)) |> Set
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
         match x, elem with
         |Empty, _ -> false
-        |Generator g, e -> g.Test g e
         |Seq set, e -> set.Contains e 
         |Set s, e -> s.Test s e
     
@@ -124,7 +119,6 @@ with
     member a.ElementDifference b =
         match a with
         | Empty -> Empty
-        | Generator g -> SetGenerator(a |> Seq.except [b], (fun sg x -> g.Test sg x && not(x = b))) |> Set.fromGen
         | Seq _ -> Seq(a |> Seq.except [b])
         | Set builder -> SetComprehension(builder.RangeTest, builder.Body', (fun sc x -> builder.Test sc x && not(x = b))) |> Set
         
@@ -155,7 +149,7 @@ with
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i a}
                         seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
                 
-                Seq (Gen(subsets, (fun _ x -> a.HasSubset x)))   
+                Seq subsets   
         | _ -> failwith "Cannot enumerate the power set of a set defined by a set comprehension. Use a sequence instead."
 
     member x.ToSubsets() =
@@ -167,13 +161,12 @@ with
     member x.Product = 
         match x with
         |Empty -> Empty
-        |Seq s -> Seq(Gen(cart s, (fun _ (a,b) -> x.HasElement a && x.HasElement b)))
+        |Seq s -> Seq (cart s)//(Gen(cart s, (fun _ (a,b) -> x.HasElement a && x.HasElement b)))
         | _ -> failwith "dd"
         //|Set builder -> let t1 = builder.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
     
     static member fromSeq(s: seq<'t>) = Seq s
     
-    static member fromGen(gen:Gen<'t>) = Seq gen
 
     static member toProduct(s:Set<'t>) = s.Product
  
@@ -183,7 +176,7 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
-        |(Seq _, Seq _) -> SetGenerator(Seq.concat[l; r], (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
+        |(Seq _, Seq _) -> Seq.concat[l; r] |> Set.fromSeq //SetGenerator(Seq.concat[l; r], (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |_, _ -> 
             let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
             SetComprehension(set_union(l, r), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
@@ -200,14 +193,16 @@ with
                     Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
                     |> Seq.take (b.Count()) 
-                Gen(s, (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
+                Seq s
+                //Gen(s, (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(Finite a, Seq b) -> 
                 let s = 
                     Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
                     |> Seq.take (a.Count()) 
-                Gen(s, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
-        |(Seq a, Seq b) -> SetGenerator(a.Intersect b, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
+                Seq s
+                //Gen(s, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
+        |(Seq a, Seq b) -> Seq(a.Intersect b) //, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(_, _) -> 
             let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
             SetComprehension(set_intersect(l,r), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
@@ -244,7 +239,7 @@ with
         |(_, Empty) -> Empty
         |(Empty, _) -> Empty
 
-        |(Seq a, Seq b) -> Seq(Gen(cart2 a b, (fun _ (x,y) -> l.HasElement x && r.HasElement y)))
+        |(Seq a, Seq b) -> Seq (cart2 a b)//Seq(Gen(cart2 a b, (fun _ (x,y) -> l.HasElement x && r.HasElement y)))
         |(_,_) -> SetComprehension((l.First(), r.First()), (fun sc (x,y) -> l.HasElement x && r.HasElement y)) |> Set
     
     interface ISet<'t> with member x.Set = x

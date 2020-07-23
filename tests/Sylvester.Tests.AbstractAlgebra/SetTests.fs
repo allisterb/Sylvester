@@ -28,6 +28,14 @@ module Set =
         let A,B = var2<Set<obj>>
         let p = proof set_algebra <@ A |+| B = (A |+| B)@> []
         Assert.True p.Complete
+    
+    [<Fact>]
+    let ``Can get set bodt``() =
+        let n = var<int>
+        let se = var<seq<int>>
+        let SS = Gen((Seq.initInfinite (fun x -> x + 5)), fun _ _ -> true) |> Set.fromGen
+        Assert.NotNull (SS.Body n)
+        
     (*
     [<Fact>]
     let ``Can equate predicates`` () =
