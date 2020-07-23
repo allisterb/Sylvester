@@ -25,7 +25,7 @@ with
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
-            |Set s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
+            |Set _ -> failwithf "Cannot enumerate a set defined by a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -60,14 +60,23 @@ with
         
     member x.Range ([<ReflectedDefinition(true)>] r:Expr<'t>) =
         let vars = r |> expand |> get_vars 
-        let var = if Seq.length vars > 0 then Seq.item 0 vars else failwithf "The expression %s does not contain any variables." (r |> expand |> src)
+        let var = 
+            if Seq.length vars > 0 then 
+                Seq.item 0 vars 
+            else 
+                match expand r with
+                | Patterns.ValueWithName(_, t, n) -> Var(n, t)
+                | Patterns.WithValue(_, _, Patterns.ValueWithName(_, t, n))  -> Var(n, t)
+                | _ -> failwithf "The expression %s does not contain any variables." (r |> expand |> src)
         let v = Expr.Var(var)
         match x with
         | Empty -> <@@ false @@>
         | Seq _ -> 
             do if v.Type <> typeof<int> then failwithf "The variable %s does not have type integer." (src v)
             <@ %%v >= 0  @> |> expand
-        | Set set -> set.Range.Substitute((fun _ -> Some v)) |> expand
+        | Set set -> 
+            let e = expand set.Range in
+            e.Substitute((fun _ -> Some v)) |> expand
       
     member x.Body ([<ReflectedDefinition>] b:Expr<'t>) =
         match x with
@@ -312,3 +321,6 @@ module Set =
 
     /// The universal set.
     let U<'t when 't : equality> = SetComprehension (Unchecked.defaultof<'t>, (fun _ _ -> true)) |> Set
+
+    [<ReflectedDefinition>]
+    let set range body test= SetComprehension(range, body, test) |> Set

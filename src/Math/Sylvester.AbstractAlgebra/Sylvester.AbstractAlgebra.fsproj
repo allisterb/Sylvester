@@ -35,7 +35,6 @@
     <Compile Include="Definitions\Arithmetic.fs" />
     <Compile Include="Definitions\Group.fs" />
     <Compile Include="Definitions\Ring.fs" />
-    <Compile Include="Definitions\Ideal.fs" />
     <Compile Include="Definitions\Field.fs" />
     <Compile Include="Definitions\BooleanAlgebra.fs" />
     <Compile Include="Definitions\SetAlgebra.fs" />

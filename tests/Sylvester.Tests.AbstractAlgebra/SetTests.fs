@@ -12,9 +12,16 @@ module Set =
 
     [<Fact>]
     let ``Can display set symbols``() =
-        let A = var<Set<int>>
-        let s = Display.print_formula (<@ A = Set.Empty @> |> expand)
-        Assert.NotNull s
+        let n,t = var2<int>
+        let A,B = var2<Set<obj>>
+        let se = var<seq<int>>
+
+        //Z |> Seq.take 4 |> Seq.toArray
+
+        let Y = SetComprehension(t > 5, t * 3, set_no_test) |> Set
+        //let pp = proof set_algebra <@ forall n (%%Y.Range n) (n = (%%Y.Body n)) @> []
+
+        Assert.NotNull (Display.print_formula <@ forall n (%%Y.Range n) (n = (%%Y.Body n)) @>)
     
     [<Fact>]
     let ``Algebra has element``() =
@@ -33,8 +40,9 @@ module Set =
     let ``Can get set bodt``() =
         let n = var<int>
         let se = var<seq<int>>
-        let SS = Gen((Seq.initInfinite (fun x -> x + 5)), fun _ _ -> true) |> Set.fromGen
-        Assert.NotNull (SS.Body n)
+        ()
+        //let SS = Gen((Seq.initInfinite (fun x -> x + 5)), fun _ _ -> true) |> Set.fromGen
+        //Assert.NotNull (SS.Body n)
         
     (*
     [<Fact>]

@@ -50,6 +50,10 @@ type OrderedRing<'t when 't: equality and 't : comparison>(group: IAbelianGroup<
 
 type IIntegralDomain = interface end
 
+type IIdeal<'t when 't : equality> =
+    inherit IGroup<'t>
+    abstract Op:BinaryOp<'t>
+
 [<AutoOpen>]
 module Ring =
     /// Zero ring.
