@@ -6,9 +6,9 @@
 
   <ItemGroup>
     <Compile Include="Dimension.fs" />
+    <Compile Include="LinearAlgebraOps.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Matrix.fs" />
-    <Compile Include="LinearAlgebra.fs" />
   </ItemGroup>
 
   <ItemGroup>
