@@ -9,15 +9,15 @@ open FSharp.Quotations.Patterns
 
 open Patterns
 
-/// A statement that defines a set using a range, body, and an F# function for computing set membership.
-type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, ?test:SetComprehension<'t> ->'t -> bool) = 
+/// A statement that formally defines a set using a range, body, and an optional F# function for computing set membership .
+type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     let r = getExprFromReflectedDefinition<bool> range
     let b = getExprFromReflectedDefinition<'t> body
     member val Range = range
     member val Body = body
     member val Body' = b
     member val RangeTest = r
-    member val Test = defaultArg test (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No test is implemented for the set comprehension %A." sc)
+    member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is implemented for the set comprehension %A." sc)
     override x.ToString() = 
         let vars = body |> expand |> get_vars
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "| "
@@ -34,8 +34,6 @@ type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:
     
 [<AutoOpen>]
 module SetComprehension = 
-    let set_no_test (sc:SetComprehension<'t>) (_:'t)= failwithf "No test is implemented for the set comprehension %A." sc
-    
     let (|ArraySeq|ListSeq|SetSeq|OtherSeq|) (s:IEnumerable<'t>) =
         match s with
         | :? array<'t> -> ArraySeq
@@ -43,17 +41,12 @@ module SetComprehension =
         | _ when s.GetType().Name.StartsWith("FSharpSet") -> SetSeq
         | _ -> OtherSeq
 
-    let (|Finite|_|) x =
+    let (|FiniteSeq|_|) x =
         match x:IEnumerable<'t> with
         | ArraySeq
         | ListSeq
         | SetSeq -> Some x
         | _ -> None
-
-    let (|FiniteSeq|NonFiniteSeq|) s =
-        match s:IEnumerable<'t> with
-        | Finite _ -> FiniteSeq
-        | _ -> NonFiniteSeq
 
     let cart (source: seq<'a>) =
         seq { 

@@ -16,7 +16,7 @@ type Set<'t when 't: equality> =
 | Empty
 /// A set defined by the distinct elements of a sequence i.e. a set that has a function from N -> t.
 | Seq of seq<'t>
-/// A set of elements defined by a set comprehension.
+/// A set of elements formally defined by a range and a body expression. 
 | Set of SetComprehension<'t>
 with 
     interface IEnumerable<'t> with
@@ -24,7 +24,7 @@ with
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
-            |Set s -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
+            |Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -38,8 +38,17 @@ with
             | Set expr1, Set expr2 ->  expr1 = expr2
             | Seq s1, Seq s2 ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
             
-            |_,_ -> failwith "Cannot test a sequence and a set defined by a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
+            |_,_ -> failwith "Cannot test a sequence and a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
     
+    interface IComparable<Set<'t>> with
+        member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else 0
+
+    interface IComparable with
+        member a.CompareTo b = 
+            match b with
+            | :? Set<'t> as set -> (a :> IComparable<Set<'t>>).CompareTo set
+            | _ -> failwith "This object is not a set."
+
     override a.Equals (_b:obj) = 
             match _b with 
             | :? Set<'t> as b -> (a :> IEquatable<Set<'t>>).Equals b
@@ -86,16 +95,16 @@ with
     /// Create a subset of the set using a predicate.
     member x.Subset(f: 't->bool) = 
         match x with
-        |Empty -> failwith "The empty set has no subsets."
-        |Seq _ -> x |> Seq.filter f |> Set.fromSeq 
-        |Set s -> SetComprehension(s.RangeTest, s.Body', (fun _ x -> s.Test s x && f x)) |> Set
+        | Empty -> failwith "The empty set has no subsets."
+        | Seq _ -> x |> Seq.filter f |> Set.fromSeq 
+        | Set s -> SetComprehension(s.RangeTest, s.Body', (fun _ x -> (s.HasElement s x) && (f x))) |> Set
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
         match x, elem with
-        |Empty, _ -> false
-        |Seq set, e -> set.Contains e 
-        |Set s, e -> s.Test s e
+        | Empty, _ -> false
+        | Seq set, e -> set.Contains e 
+        | Set s, e -> s.HasElement s e
     
     /// Indicator function for an element.
     member x.Indicate elem = if x.HasElement elem then 1 else 0
@@ -106,17 +115,8 @@ with
         | Empty, _ -> false
         | _, Empty -> true
         | _, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
-        |Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set defined by a set comprehension as a subset. Use 2 finite sequences or a set builder with a finite sequence."
-        |Set _, Set _ ->  failwith "Cannot test two sets defined by a set comprehension for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
-
-    interface IComparable<Set<'t>> with
-        member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else 0
-
-    interface IComparable with
-        member a.CompareTo b = 
-            match b with
-            | :? Set<'t> as set -> (a :> IComparable<Set<'t>>).CompareTo set
-            | _ -> failwith "This object is not a set."
+        | Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set comprehension as a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
+        | Set _, Set _ ->  failwith "Cannot test two sets defined by set comprehensions for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
 
     member a.Difference b =
         match a, b with
@@ -128,7 +128,7 @@ with
         match a with
         | Empty -> Empty
         | Seq _ -> Seq(a |> Seq.except [b])
-        | Set builder -> SetComprehension(builder.RangeTest, builder.Body', (fun sc x -> builder.Test sc x && not(x = b))) |> Set
+        | Set s -> SetComprehension(s.RangeTest, s.Body', (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
     
@@ -136,8 +136,8 @@ with
     member x.Length =
        match x with
        | Empty -> 0
-       | Seq _ -> x |> Seq.length
-       | _ -> failwith "Cannot get length of a set defined by a set comprehension. Use a finite sequence instead."
+       | Seq s -> x |> Seq.length
+       | _ -> failwith "Cannot get the length of a set comprehension. Use a finite sequence instead."
 
     /// Set of all subsets.
     member a.Powerset =
@@ -158,24 +158,25 @@ with
                         seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
                 
                 Seq subsets   
-        | _ -> failwith "Cannot enumerate the power set of a set defined by a set comprehension. Use a sequence instead."
+        | _ -> failwith "Cannot enumerate the power set of a set comprehension. Use a sequence instead."
 
     member x.ToSubsets() =
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
-        | Set _ -> failwith "Cannot enumerate all subsets of a set defined by a set comprehension. Use a sequence instead."
+        | Set _ -> failwith "Cannot enumerate all subsets of a set comprehension. Use a sequence instead."
 
     member x.Product = 
         match x with
-        |Empty -> Empty
-        |Seq s -> Seq (cart s)//(Gen(cart s, (fun _ (a,b) -> x.HasElement a && x.HasElement b)))
-        | _ -> failwith "dd"
-        //|Set builder -> let t1 = builder.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
+        | Empty -> Empty
+        | Seq s -> Seq (cart s)
+        | Set s -> 
+            //let a,b = var2<'t> in
+            //SetComprehension(((s.RangeTest(a)) && s.RangeTest), (s.Body', S.Body')) |> Set 
+            failwith "This function is not implmented yet for a set comprehension." //let t1der.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
     
     static member fromSeq(s: seq<'t>) = Seq s
     
-
     static member toProduct(s:Set<'t>) = s.Product
  
     /// Set union operator.
@@ -196,20 +197,18 @@ with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty
         
-        |(Seq a, Finite b) -> 
+        |(Seq a, FiniteSeq b) -> 
                 let s = 
                     Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
                     |> Seq.take (b.Count()) 
                 Seq s
-                //Gen(s, (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
-        |(Finite a, Seq b) -> 
+        |(FiniteSeq a, Seq b) -> 
                 let s = 
                     Seq.concat [a;b] 
                     |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
                     |> Seq.take (a.Count()) 
                 Seq s
-                //Gen(s, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(Seq a, Seq b) -> Seq(a.Intersect b) //, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(_, _) -> 
             let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
