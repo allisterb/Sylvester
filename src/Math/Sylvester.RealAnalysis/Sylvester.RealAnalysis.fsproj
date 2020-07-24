@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="R.fs" />
     <Compile Include="Measure.fs" />
   </ItemGroup>
 

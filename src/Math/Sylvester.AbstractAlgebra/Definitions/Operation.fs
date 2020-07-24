@@ -35,7 +35,6 @@ type Op<'t when 't: equality> =
 | Order of Order<'t>
 with 
     (* tbd *)
-
     member x.DestructureNullary = match x with | Nullary op -> op | _ -> failwith "This operation is not a nullary op."
     member x.DestructureUnary = match x with | Unary op -> op | _ -> failwith "This operation is not a unary op."
     member x.DestructureBinary = match x with | Binary op -> op | _ -> failwith "This operation is not a binary op." 

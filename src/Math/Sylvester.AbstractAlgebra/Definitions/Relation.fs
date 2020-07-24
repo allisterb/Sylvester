@@ -1,13 +1,5 @@
 ﻿namespace Sylvester
 
-open System
-open System.Collections
-
-open FSharp.Quotations
-open FSharp.Quotations.Patterns
-open Sylvester.Arithmetic
-open Sylvester.Collections
-
 type IReflexiveRelation = interface end
 
 type ISymmetricRelation = interface end
