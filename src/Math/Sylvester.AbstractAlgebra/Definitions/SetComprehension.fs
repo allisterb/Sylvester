@@ -22,14 +22,6 @@ type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:
         let vars = body |> expand |> get_vars
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "| "
         sprintf "{%s%s:%s}" v (range |> expand |> src) (body |> expand |> src)
-    interface IEnumerable<'t> with
-        member x.GetEnumerator () = 
-            match box x.Body' with
-            | :? seq<'t> as e -> e.GetEnumerator()
-            | _ -> failwith "Cannot enumerate a set comprehension that is not a sequence."
-    interface IEnumerable with
-        member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
-
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
             match _b with 

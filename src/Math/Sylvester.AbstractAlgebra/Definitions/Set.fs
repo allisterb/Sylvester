@@ -8,7 +8,6 @@ open FSharp.Quotations
 
 open Sylvester.Arithmetic
 open Sylvester.Collections
-open Sylvester.Patterns
 
 /// A set of elements each with type or class denoted by t.
 [<CustomEquality; CustomComparison>]
@@ -25,7 +24,7 @@ with
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
-            |Set _ -> failwithf "Cannot enumerate a set defined by a set comprehension. Use a sequence instead."
+            |Set s -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
@@ -39,7 +38,7 @@ with
             | Set expr1, Set expr2 ->  expr1 = expr2
             | Seq s1, Seq s2 ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
             
-            |_,_ -> failwith "Cannot test a sequence and a set defined using a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
+            |_,_ -> failwith "Cannot test a sequence and a set defined by a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
     
     override a.Equals (_b:obj) = 
             match _b with 
