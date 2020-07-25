@@ -31,7 +31,7 @@ type R3 = R * R * R
 type R4 = R * R * R * R
 
 [<AutoOpen>]
-module R =
+module Real =
     let reals = let x = var<Real> in SetComprehension<Real>(x, (fun _ _ -> true)) |> Set 
     let R = Field(AdditiveGroup(reals), MultiplicativeGroup(reals))
     let openInterval left right = R.Set.Subset(fun x -> x > left && x < right)

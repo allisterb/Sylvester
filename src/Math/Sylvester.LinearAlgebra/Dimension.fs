@@ -110,7 +110,5 @@ type IVector<'n> =
     inherit IFullShape<rank.one>
     abstract Dim0: 'n
 
-type IMatrix = 
+type IMatrix<'r, 'c when 'r :> Number and 'c :> Number> = 
     inherit IFullShape<rank.two>
-    abstract Dim0:Number
-    abstract Dim1:Number

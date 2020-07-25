@@ -6,6 +6,8 @@ open MathNet.Numerics.LinearAlgebra
 
 type MNVector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Vector<'t>
 
+type MNMatrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'t>
+
 type IVectorOps =
     abstract VecAdd:Vector<'t> -> Vector<'t> -> Vector<'t>
     abstract VecSubtract:Vector<'t> -> Vector<'t> -> Vector<'t>
