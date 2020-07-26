@@ -19,6 +19,9 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
         member val Dims = [| Convert.ToInt64(matrix.RowCount); Convert.ToInt64(matrix.ColumnCount) |] |> Some with get,set
     
     static member Ops = defaultLinearAlgebraOps
+    static member (+)(l : Matrix<'t>, r : Matrix<'t>) = Matrix<'t>.Ops.MatAdd l._Matrix r._Matrix 
+    static member (-)(l : Matrix<'t>, r : Matrix<'t>) = Matrix<'t>.Ops.MatSubtract l._Matrix r._Matrix
+    static member (*)(l : Matrix<'t>, r : Matrix<'t>) = Matrix<'t>.Ops.MatMultiply l._Matrix r._Matrix 
 
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IComparable and 't :> IFormattable>
@@ -37,9 +40,9 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> V
     
     static member create([<ParamArray>] data: 't array array) = Matrix<'dim0,'dim1,'t>(data)
     static member fromMNMatrix(m: LinearAlgebra.Matrix<'t>) = Matrix<'dim0, 'dim1, 't>.create(let a = m.AsRowArrays() in if isNull a then m.ToRowArrays() else a) 
-    static member (+)(l : Matrix<'n, 'm, 't>, r : Matrix<'n, 'm, 't>) = Matrix<'t>.Ops.MatAdd l._Matrix r._Matrix |> Matrix<'n, 'm, 't>.fromMNMatrix
-    static member (-)(l : Matrix<'n, 'm, 't>, r : Matrix<'n, 'm, 't>) = Matrix<'t>.Ops.MatSubtract l._Matrix r._Matrix |> Matrix<'n, 'm, 't>.fromMNMatrix
-    static member (*)(l : Matrix<'n, 'm, 't>, r : Matrix<'m, 'p, 't>) = Matrix<'t>.Ops.MatMultiply l._Matrix r._Matrix |> Matrix<'n, 'p, 't>.fromMNMatrix
+    static member (+)(l : Matrix<'n, 'm, 't>, r : Matrix<'n, 'm, 't>) = l._Matrix + r._Matrix |> Matrix<'n, 'm, 't>.fromMNMatrix
+    static member (-)(l : Matrix<'n, 'm, 't>, r : Matrix<'n, 'm, 't>) = l._Matrix - r._Matrix |> Matrix<'n, 'm, 't>.fromMNMatrix
+    static member (*)(l : Matrix<'n, 'm, 't>, r : Matrix<'m, 'p, 't>) =  l._Matrix * r._Matrix |> Matrix<'n, 'p, 't>.fromMNMatrix
 
 type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Matrix<'dim0, 'dim1, 't>

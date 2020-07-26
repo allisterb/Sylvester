@@ -19,6 +19,9 @@ type Vector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     static member Ops = defaultLinearAlgebraOps
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
     static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'t>.create(v.AsArray()) 
+    static member (+)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.Ops.VecAdd l._Vector r._Vector 
+    static member (-)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.Ops.VecSubtract l._Vector r._Vector
+    static member (*)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.Ops.VecDotProduct l._Vector r._Vector
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
@@ -32,10 +35,10 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct an
     
     static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't>(data)
     static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'dim0, 't>.create(let c = v.AsArray() in if isNull(c) then v.ToArray() else c) 
-    static member (+)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't> when 'dim0 :> Number) = Vector<'t>.Ops.VecAdd l._Vector r._Vector |> Vector<'dim0, 't>.fromMNVector
-    static member (-)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't> when 'dim0 :> Number) = Vector<'t>.Ops.VecSubtract l._Vector r._Vector |> Vector<'dim0, 't>.fromMNVector
-    static member (*)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't> when 'dim0 :> Number) = Vector<'t>.Ops.VecDotProduct l._Vector r._Vector
+    static member (+)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = l._Vector + r._Vector |> Vector<'dim0, 't>.fromMNVector
+    static member (-)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = l._Vector - r._Vector |> Vector<'dim0, 't>.fromMNVector
     
 type Vec<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Vector<'dim0, 't>
 type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, R>
+type VecF<'dim0 when 'dim0 :> Number> = Vec<'dim0, float32>
