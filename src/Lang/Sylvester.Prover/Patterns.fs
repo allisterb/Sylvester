@@ -157,23 +157,6 @@ module Patterns =
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
     
-    let rec (|List|_|) =
-        let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
-        function
-        | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])//e.g. _::_::...::[]
-        | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
-        //        Some 1
-        //        //sprintf "[%s]" (sprintLiteralConstructionArgs expr)
-        //    else 
-        //        //would like to optimize somehow so isLiteralConstruction is not called with every recursive 
-        //        //decompile of non literal constructions.
-        //        match args with
-        //        | lhs::rhs::[] -> ()//applyParens OP.Cons (sprintf "%s::%s" (decompile (OP.Cons,OP.Left) lhs) (decompile (OP.Cons,OP.Right) rhs))
-        //        | _ -> failwithf "unexpected list union case: %A" expr
-        //        Some 1
-        //    Some 1  
-        | _ -> None
-        
     let bound_vars =
         function
         | Quantifier(_,bound, _, _) -> bound 
@@ -205,6 +188,14 @@ module Patterns =
             | ShapeCombination (_, exprs) ->  List.map (rget_quantifiers prev) exprs |> List.collect id
         rget_quantifiers [] expr
 
+    let rec (|List|_|) =
+        let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
+        function
+        | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
+        | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
+        | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
+        | _ -> None
+        
     (* Formula display patterns *)
 
     let (|Const|_|) =

@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <AssemblyName>MathNet.Symbolics</AssemblyName>
+    <RootNamespace>MathNet.Symbolics</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Symbols.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Approximation.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Value.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Expression.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Numbers.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Structure.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Algebraic.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Calculus.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Polynomial.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Rational.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Exponential.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Trigonometric.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Approximate.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Visual\VisualExpression.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Visual\Infix.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Visual\LaTeX.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Visual\MathML.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Typed\Quotations.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Typed\Linq.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Compile.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Evaluate.fs" />
+    <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\SymbolicExpression.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FParsec" Version="1.0.3" />
+    <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
+  </ItemGroup>
+
+</Project>
