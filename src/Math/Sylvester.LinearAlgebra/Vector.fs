@@ -30,14 +30,12 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct an
     member val Display = sprintf "Vector<%i>\n%s" dim0.IntVal (base._Vector.ToVectorString())
     interface IVector<'dim0> with member val Dim0 = dim0
     
-    static member create([<ParamArray>] data: 't array) = Vector<'n, 't>(data)
-    static member fromArray (data: 't array) = Vector<'dim0, 't>(data)
-    static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'dim0, 't>.fromArray(v.AsArray()) 
-    static member (+)(l : Vector<'n, 't>, r : Vector<'n, 't> when 'n :> Number) : Vector<'n, 't> = Vector<'n, 't>.fromMNVector(Vector<'t>.Ops.VecAdd l._Vector r._Vector)
-    static member (-)(l : Vector<'n, 't>, r : Vector<'n, 't> when 'n :> Number) : Vector<'n, 't> = Vector<'n, 't>.fromMNVector(Vector<'t>.Ops.VecSubtract l._Vector r._Vector)
-    static member (*)(l : Vector<'n, 't>, r : Vector<'n, 't> when 'n :> Number) : 't = Vector<'n, 't>.Ops.VecDotProduct l._Vector r._Vector
-
+    static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't>(data)
+    static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'dim0, 't>.create(let c = v.AsArray() in if isNull(c) then v.ToArray() else c) 
+    static member (+)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't> when 'dim0 :> Number) = Vector<'t>.Ops.VecAdd l._Vector r._Vector |> Vector<'dim0, 't>.fromMNVector
+    static member (-)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't> when 'dim0 :> Number) = Vector<'t>.Ops.VecSubtract l._Vector r._Vector |> Vector<'dim0, 't>.fromMNVector
+    static member (*)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't> when 'dim0 :> Number) = Vector<'t>.Ops.VecDotProduct l._Vector r._Vector
+    
 type Vec<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Vector<'dim0, 't>
-
 type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, R>

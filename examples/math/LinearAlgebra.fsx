@@ -11,7 +11,5 @@ let e = v1 + v2
 
 let f = v1 * v2
 
-let m1 = Matrix<two, five, float>([1.;2.;3.;4.;5.], [1.;2.;3.;4.;5.])
-//let m2 = Matrix<one, five, float>([[1.;2.;3.;4.;5.]])
-
-//m1._Matrix
+let m1 = Mat<two, two>([1.;2.], [1.;2.])
+let m2 = Mat<two, one>([1.], [1.])
