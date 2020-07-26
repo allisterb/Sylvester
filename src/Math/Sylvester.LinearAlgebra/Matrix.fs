@@ -3,7 +3,6 @@
 open System
 
 open Sylvester.Arithmetic
-open Sylvester.Collections
 
 open MathNet.Numerics
 
@@ -26,7 +25,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> V
     ([<ParamArray>] data: 't array array) =
     inherit Matrix<'t>(data)
     let d0, d1 = number<'dim0>.IntVal, number<'dim1>.IntVal
-    do if base._Array.Length <> d0  || base._Array |> Array.forall (fun a -> a.Length <> d1) then failwithf "The initializing array does not have the dimensions %ix%i."d0 d1
+    do if base._Array.Length <> d0  || (base._Array |> Array.forall (fun a -> a.Length = d1) |> not) then failwithf "The initializing array does not have the dimensions %ix%i."d0 d1
     member val Dim0:'dim0 = number<'dim0>
     member val Dim1:'dim1 = number<'dim1>
     member val Display = 
