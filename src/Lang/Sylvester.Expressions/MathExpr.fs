@@ -10,7 +10,6 @@ open MathNet.Numerics
 open MathNet.Symbolics
 
 
-[<AutoOpen>]
 module MathExpr =
     let rec toQuotation (expr: Expression) (vars: Var list) (valueType: Type) =
         let value = function
@@ -33,8 +32,7 @@ module MathExpr =
                         | Some(v) -> Some v
                         | _ -> None
                     ) None vars
-        let mathCall1 (name : string) (a : Expr) = Expr.Call(mathType.GetMethod(name, [|valueType|]), [a]) 
-        let mathCall2 (name : string) (a : Expr) (b : Expr) = Expr.Call(mathType.GetMethod(name, [|valueType; valueType|]), [a; b]) 
+        
         let add a b = <@@ (%%a:float) + (%%b:float) @@>
                 
         let rec convertExpr : Expression -> Expr option = 
@@ -47,5 +45,6 @@ module MathExpr =
                 List.fold (Option.map2 add) (value Value.zero) summands
             | _ -> None
 
+        let a = 4N / 5N;
         convertExpr expr
         
