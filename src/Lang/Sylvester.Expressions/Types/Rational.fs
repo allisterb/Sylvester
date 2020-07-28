@@ -1,4 +1,4 @@
-﻿namespace Sylvster
+﻿namespace Sylvester
 
 open System
 open System.Numerics
@@ -9,6 +9,7 @@ type Rational =
         val Numerator: BigInteger
         val Denominator: BigInteger
         new(p:BigInteger, q:BigInteger) = {Numerator = p; Denominator = q}
+        new(p:BigInteger) = {Numerator = p; Denominator = BigInteger.One}
         new(p:int, q:int) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:int64, q:int64) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:float, q:float) = {Numerator = BigInteger p; Denominator = BigInteger q}
@@ -41,8 +42,12 @@ type Rational =
             | _ -> failwithf "The object %A does not have a comparable type." y
     interface IFormattable with 
         member x.ToString(f, p) = 
-            if x.Denominator = BigInteger.One then x.Numerator.ToString(f, p) else sprintf "%s/%s" (x.Numerator.ToString(f, p)) (x.Denominator.ToString(f, p))
-
+            if x.Denominator = BigInteger.One then x.Numerator.ToString(f, p) else sprintf "%s\u2044%s" (x.Numerator.ToString(f, p)) (x.Denominator.ToString(f, p))
+    
+    static member Zero = Rational(BigInteger.Zero)
+    
+    static member One = Rational(BigInteger.One)
+    
     static member Parse (s : string) =
         let len = if s.Length = 0 then failwith "This string is empty." else s.Length
         let j = s.IndexOf '/'
@@ -84,3 +89,12 @@ type Rational =
     static member op_Explicit(r: Rational): float32 = (float32) r.Numerator / (float32) r.Denominator
     static member op_Equality (l:Rational, r:Rational) = l.Equals r
     static member op_Inequality (l:Rational, r:Rational) = not <| l.Equals r
+
+type Q = Rational
+
+[<RequireQualifiedAccess>]
+ module NumericLiteralZ = 
+   let FromZero () = Rational.Zero
+   let FromOne  () = Rational.One 
+   let FromInt32 (i:int) = Rational(i, 1)
+   let FromInt64 (i:int64) = Rational(i, 1L)
