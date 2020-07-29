@@ -11,10 +11,8 @@ open FSharp.Quotations.ExprShape
 open FSharp.Reflection
 
 open FParsec
-
-open FsExpr
-    
-module ExprParser2 =
+   
+module Parsers =
     
     type ParseResult =
         | ParsedExpression of Expr
@@ -28,6 +26,7 @@ module ExprParser2 =
         let (==>) l r = not l || r
         let (<==) l r = r ==> l
 
+    
     let ws = spaces
     let str_ws s = pstring s .>> ws
     let parens p = between (str_ws "(") (str_ws ")") p

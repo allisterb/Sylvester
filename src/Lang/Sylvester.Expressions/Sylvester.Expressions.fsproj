@@ -6,11 +6,11 @@
 
   <ItemGroup>
     <Compile Include="FsExpr.fs" />
-    <Compile Include="FsExprParser.fs" />
+    <Compile Include="Numbers.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />
-    <Compile Include="Types\Rational.fs" />
-    <Compile Include="MathExpr.fs" />
+    <Compile Include="Parsers.fs" />
+    <Compile Include="MathNetExpr.fs" />
     <None Include="Script1.fsx" />
   </ItemGroup>
 

@@ -20,16 +20,6 @@ type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicati
         member val AddGroup = additiveGroup
         member val MulGroup = multiplicativeGroup
 
-type Real = float
-
-type R = Real
-
-type R2 = R * R
-
-type R3 = R * R * R
-
-type R4 = R * R * R * R
-
 [<AutoOpen>]
 module Real =
     let reals = let x = var<Real> in SetComprehension<Real>(x, (fun _ _ -> true)) |> Set 

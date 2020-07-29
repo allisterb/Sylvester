@@ -53,10 +53,6 @@ module FsExpr =
         | ValueWithName(v, t, n) when t = typeof<'t> -> n, v :?> 't
         | expr -> failwithf "%s is not a reflected definition of type %s." (src expr) (typeof<'t>.Name)
 
-    let call expr p = 
-        let mi = getFuncInfo expr
-        Expr.Call(mi, p)
-
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 
         || l.ToString() = sprintf "(%s)" (r.ToString())
@@ -187,12 +183,10 @@ module FsExpr =
         | WithValue(v, t, e) -> (v, t, expand e)
         | _ -> failwith "Expression is not a reflected definition parameter."
 
-    (*
-    let expand_list =
-        let rec rexpand_list (e:Expr list) =
-            function
-            | NewUnionCase(uc, Var v) -> e @ [v]
-      *)      
+    let call expr p = 
+        let mi = getFuncInfo expr
+        Expr.Call(mi, p)
+
     let binary_call (so, m, l, r) =
         match so with
         | None -> Expr.Call(m, l::r::[])
@@ -202,3 +196,10 @@ module FsExpr =
         match so with
         | None -> Expr.Call(m, [l])
         | Some o -> Expr.Call(o, m, [l])
+
+    (*
+    let expand_list =
+        let rec rexpand_list (e:Expr list) =
+            function
+            | NewUnionCase(uc, Var v) -> e @ [v]
+      *)      

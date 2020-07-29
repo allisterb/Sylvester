@@ -9,7 +9,7 @@ open Microsoft.FSharp.Quotations.DerivedPatterns
 open MathNet.Numerics
 open MathNet.Symbolics
 
-module MathExpr =
+module MathNetExpr =
     
     let rec fromQuotation (q:Expr) : Expression =
         match q with
