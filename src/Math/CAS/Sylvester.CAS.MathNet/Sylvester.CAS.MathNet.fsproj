@@ -29,7 +29,10 @@
     <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Compile.fs" />
     <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\Evaluate.fs" />
     <Compile Include="..\..\..\..\ext\mathnet-symbolics\src\Symbolics\SymbolicExpression.fs" />
+    <None Include="README.md" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="FParsec" Version="1.0.3" />

@@ -9,9 +9,32 @@ open Microsoft.FSharp.Quotations.DerivedPatterns
 open MathNet.Numerics
 open MathNet.Symbolics
 
-
 module MathExpr =
-    let rec toQuotation (expr: Expression) (vars: Var list) (valueType: Type) =
+    
+    let rec fromQuotation (q:Expr) : Expression =
+        match q with
+        | SpecificCall <@@ ( + ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) + (fromQuotation yt)
+        | SpecificCall <@@ ( - ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) - (fromQuotation yt)
+        | SpecificCall <@@ ( ~- ) @@> (_, _, [xt]) -> -(fromQuotation xt)
+        | SpecificCall <@@ ( ~+ ) @@> (_, _, [xt]) -> +(fromQuotation xt)
+        | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) * (fromQuotation yt)
+        | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) / (fromQuotation yt)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) ** (fromQuotation yt)
+        | Int16 k -> Expression.FromInt32 (int k)
+        | Int32 k -> Expression.FromInt32 k
+        | Int64 k -> Expression.FromInt64 k
+        | UInt16 k -> Expression.FromInt32 (int k)
+        | UInt32 k -> Expression.FromInt64 (int64 k)
+        | UInt64 k -> Expression.FromInteger (BigInteger k)
+        | DerivedPatterns.Double d -> Expression.Real d
+        | DerivedPatterns.Single d -> Expression.Real (float d)
+        | Var x -> Identifier (Symbol x.Name)
+        | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
+        | Let (_, _, t) -> fromQuotation t
+        | Lambda (_, t) -> fromQuotation t
+        | _ -> failwith "not supported"
+
+    let toQuotation (expr: Expression) (vars: Var list) (valueType: Type) =
         let value = function
             | Value.Approximation a -> Expr.Value a.RealValue |> Some
             | Value.NegativeInfinity -> Expr.Value Double.NegativeInfinity |> Some

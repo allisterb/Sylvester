@@ -3,8 +3,9 @@
 open System
 open System.Numerics
 
+open FSS
 [<CustomEquality; CustomComparison>]
-type Rational =
+type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob/master/src/FSharp/BigRational.fs
     struct 
         val Numerator: BigInteger
         val Denominator: BigInteger
@@ -92,9 +93,27 @@ type Rational =
 
 type Q = Rational
 
+module Rational =
+    let (|Rational|_|) = 
+        function
+        | 
 [<RequireQualifiedAccess>]
- module NumericLiteralZ = 
-   let FromZero () = Rational.Zero
-   let FromOne  () = Rational.One 
+ module NumericLiteralQ = 
+   let zero = Rational.Zero 
+   let one = Rational.One
+   let FromZero () = zero
+   let FromOne  () = one 
    let FromInt32 (i:int) = Rational(i, 1)
    let FromInt64 (i:int64) = Rational(i, 1L)
+
+type Z = BigInteger
+
+[<RequireQualifiedAccess>]
+module NumericLiteralZ = 
+    let zero = BigInteger.Zero
+    let one = BigInteger.One
+    let FromZero () = zero
+    let FromOne  () = one 
+    let FromInt32 (i:int) = BigInteger i
+    let FromInt64 (i:int64) = BigInteger i
+    let FromString(s:string) = BigInteger.Parse s

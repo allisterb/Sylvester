@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Types\Rational.fs" />
     <Compile Include="FsExpr.fs" />
     <Compile Include="FsExprParser.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />
+    <Compile Include="Types\Rational.fs" />
     <Compile Include="MathExpr.fs" />
     <None Include="Script1.fsx" />
   </ItemGroup>
