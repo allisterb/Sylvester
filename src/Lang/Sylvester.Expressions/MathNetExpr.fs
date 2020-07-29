@@ -1,6 +1,7 @@
 ﻿namespace Sylvester
 
 open System
+open System.Numerics
 open System.Reflection
 
 open Microsoft.FSharp.Quotations
@@ -29,13 +30,14 @@ module MathNetExpr =
         | UInt16 k -> Expression.FromInt32 (int k)
         | UInt32 k -> Expression.FromInt64 (int64 k)
         | UInt64 k -> Expression.FromInteger (BigInteger k)
-        | DerivedPatterns.Double d -> Expression.Real d
-        | DerivedPatterns.Single d -> Expression.Real (float d)
+        | Double d -> Expression.Real d
+        | Single d -> Expression.Real (float d)
+        | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
         | Let (_, _, t) -> fromQuotation t
         | Lambda (_, t) -> fromQuotation t
-        | _ -> failwith "not supported"
+        | _ -> failwithf "Operation %s is not supported." <| src q
 
     let rec toQuotation<'t> (expr: Expression) (vars: Var list) =    
         let rec numerator = function
@@ -48,7 +50,10 @@ module MathNetExpr =
             | _ -> one
 
         let value = function
-            | Value.Approximation a -> Expr.Value a.RealValue |> Some
+            | Value.Approximation a -> 
+                match a with
+                | Real r -> r |> Expr.Value |> Some
+                | Complex c -> c |> Expr.Value |> Some   
             | Value.NegativeInfinity -> Expr.Value Double.NegativeInfinity |> Some
             | Value.PositiveInfinity -> Expr.Value System.Double.PositiveInfinity |> Some
             | Value.Number n -> n |> float |> Expr.Value |> Some
@@ -80,6 +85,8 @@ module MathNetExpr =
             | "Single" -> <@@ (%%a:float32) + (%%b:float32) @@>
             | "BigRational" -> <@@ (%%a:BigRational) + (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) + (%%b:BigInteger) @@>
+            | "Complex" -> <@@ (%%a:Complex) + (%%b:Complex) @@>
+            | "Complex32" -> <@@ (%%a:Complex32) + (%%b:Complex32) @@>
             | n -> failwithf "Addition operation for type %A not supported." a.Type 
     
         let mul (a:Expr) (b:Expr) = 
@@ -91,6 +98,8 @@ module MathNetExpr =
             | "Single" -> <@@ (%%a:float32) * (%%b:float32) @@>
             | "BigRational" -> <@@ (%%a:BigRational) * (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) * (%%b:BigInteger) @@>
+            | "Complex" -> <@@ (%%a:Complex) * (%%b:Complex) @@>
+            | "Complex32" -> <@@ (%%a:Complex32) * (%%b:Complex32) @@>
             | n -> failwithf "Multiplication operation for type %A not supported." a.Type
     
         let sub (a:Expr) (b:Expr) = 
@@ -102,7 +111,9 @@ module MathNetExpr =
             | "Single" -> <@@ (%%a:float32) - (%%b:float32) @@>
             | "BigRational" -> <@@ (%%a:BigRational) - (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) - (%%b:BigInteger) @@>
-            | n -> failwithf "Subtraction operation for type %A not supported." a.Type
+            | "Complex" -> <@@ (%%a:Complex) - (%%b:Complex) @@>
+            | "Complex32" -> <@@ (%%a:Complex32) - (%%b:Complex32) @@>
+            | _ -> failwithf "Subtraction operation for type %A not supported." a.Type
     
         let div (a:Expr) (b:Expr) = 
             do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
@@ -113,7 +124,9 @@ module MathNetExpr =
             | "Single" -> <@@ (%%a:float32) / (%%b:float32) @@>
             | "BigRational" -> <@@ (%%a:BigRational) / (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) / (%%b:BigInteger) @@>
-            | n -> failwithf "Addition operation for type %A not supported." a.Type
+            | "Complex" -> <@@ (%%a:Complex) / (%%b:Complex) @@>
+            | "Complex32" -> <@@ (%%a:Complex32) / (%%b:Complex32) @@>
+            | _ -> failwithf "Division operation for type %A not supported." a.Type
 
         let rec convertExpr : Expression -> Expr option = 
             function

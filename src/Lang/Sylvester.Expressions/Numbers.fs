@@ -207,6 +207,8 @@ type R3 = R * R * R
 
 type R4 = R * R * R * R
 
+type C = Complex
+
 [<RequireQualifiedAccess>]
  module NumericLiteralQ = 
    let zero = Rational.Zero 
