@@ -12,7 +12,6 @@ open MathNet.Symbolics
 open MathNet.Symbolics.ExpressionPatterns
 open MathNet.Symbolics.Operators
 
-
 module MathNetExpr =
     
     let rec fromQuotation (q:Expr) : Expression =
@@ -123,7 +122,7 @@ module MathNetExpr =
             | Constant c -> constant c
             | Sum(xs) ->
                 let summands = List.map convertExpr xs
-                List.fold (Option.map2 add) (value Value.zero) summands
+                summands.Tail |> List.fold (Option.map2 add) summands.Head 
             | Product(_) as p ->
                 let n = numerator p
                 let d = denominator p
@@ -206,8 +205,8 @@ module MathNetExpr =
         and compileFraction = 
             function
             | Product(xs) ->
-                let prods = List.map convertExpr xs
-                List.fold (Option.map2 mul) (value Value.one) prods
+                let prods = List.map convertExpr xs in
+                prods.Tail |> List.fold (Option.map2 mul) prods.Head
             | x -> convertExpr x
 
         convertExpr expr

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Tests.fs" />
+    <Compile Include="MathNetExprTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
