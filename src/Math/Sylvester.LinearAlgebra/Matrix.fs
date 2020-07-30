@@ -2,6 +2,8 @@
 
 open System
 
+open FSharp.Quotations
+
 open Sylvester.Arithmetic
 
 open MathNet.Numerics

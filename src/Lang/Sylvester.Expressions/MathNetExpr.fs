@@ -13,6 +13,8 @@ open MathNet.Symbolics
 open MathNet.Symbolics.ExpressionPatterns
 open MathNet.Symbolics.Operators
 
+type MathNetExpr = Expression
+
 module MathNetExpr =
     
     let rec fromQuotation (q:Expr) : Expression =
@@ -223,4 +225,3 @@ module MathNetExpr =
             | x -> convertExpr x
 
         convertExpr expr
-        

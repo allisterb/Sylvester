@@ -12,15 +12,16 @@ open Sylvester
 
 module MathNet = 
     let x, y, z = symbol "x", symbol "y", symbol "z"
+    let var<'t> = Unchecked.defaultof<'t>
 
     [<Fact>]
-    let ``Can transform basic real polynomial expression to quotation`` () =
+    let ``Can transform basic real polynomial expression`` () =
         let v = [Var("x", typeof<float>); Var("y", typeof<float>)]
         let res = MathNetExpr.toQuotation (((x **2) * 5 ) / y + 2) v 
         Assert.NotNull res
 
     [<Fact>]
-    let ``Can transform basic complex expression to quotation`` () =
+    let ``Can transform basic complex expression`` () =
         let v = [Var("x", typeof<C>); Var("y", typeof<C>)]
         let res = MathNetExpr.toQuotation ((x * new Complex(5., 4.)) / ((y**3) + new Complex(2., 1.))) v 
         Assert.NotNull res

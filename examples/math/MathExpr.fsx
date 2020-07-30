@@ -9,7 +9,8 @@ open Microsoft.FSharp.Quotations.DerivedPatterns
 
 open MathNet.Numerics
 open MathNet.Symbolics
-
+open ExpressionPatterns
+open MathNet.Symbolics.Operators
 open Sylvester
 
 let rec toQuotation<'t> (expr: Expression) (vars: Var list) =
@@ -78,7 +79,7 @@ let rec toQuotation<'t> (expr: Expression) (vars: Var list) =
         | "Int64" -> <@@ (%%a:int64) / (%%b:int64) @@>
         | "Double" -> <@@ (%%a:float) / (%%b:float) @@>
         | "Single" -> <@@ (%%a:float32) / (%%b:float32) @@>
-        | "Rational" -> <@@ (%%a:Rational) / (%%b:Rational) @@>
+        | "BigRational" -> <@@ (%%a:BigRational) / (%%b:BigRational) @@>
         | "BigInteger" -> <@@ (%%a:BigInteger) / (%%b:BigInteger) @@>
         | n -> failwithf "Addition operation for type %A not supported." a.Type
 
@@ -128,6 +129,37 @@ let rec toQuotation<'t> (expr: Expression) (vars: Var list) =
             let f = convertFunc func
             let e = convertExpr par
             Option.map2 (fun x y -> Expr.Call(x, [y])) f e
+        | PosIntPower(x, Number(y)) ->
+            let basis = convertExpr x
+            let rec exponentiate (power : BigRational) exp  =
+                if  power.Numerator.IsEven then
+                    let newBasis = mul exp exp
+                    exponentiate (power / (BigRational.FromInt(2))) newBasis
+                elif power = 1N then
+                    exp
+                else
+                    let newBasis = exponentiate (power - BigRational.One) exp
+                    mul exp newBasis
+            Option.map (exponentiate y) basis
+        | Power(x, minusOne) when minusOne = Expression.MinusOne ->
+            let a = convertExpr x
+            Option.map2 div (value Value.one) a
+        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
+            let a = convertExpr x
+            let b = convertExpr (Power(n, minusOne))
+            if n = Operators.two then
+                Option.map (fun x -> Expr.Call(getMethodInfo <@ Math.Sqrt @>, [x])) a
+            else
+                let a = convertExpr x
+                let b = convertExpr (Power(n, minusOne))
+                Option.map2 (fun x y -> Expr.Call (getMethodInfo <@ Math.Pow @>, x::y::[])) a b
+        | Power(Constant E, y) ->
+            let exponent = convertExpr y
+            Option.map (fun x -> Expr.Call(getMethodInfo <@ Math.Exp @>, [x])) exponent
+        | Power(x, y) ->
+            let baseE = convertExpr x
+            let exponE = convertExpr y
+            Option.map2 (fun x y -> Expr.Call(getMethodInfo <@ Math.Sqrt @>, x::y::[])) baseE exponE
         | _ -> None
     and compileFraction = function
         | Product(xs) ->
@@ -138,10 +170,10 @@ let rec toQuotation<'t> (expr: Expression) (vars: Var list) =
     convertExpr expr
 
 let x = var<BigRational>
-let j = BigRational(2) + x
+let j = BigRational.FromInt(2) + x
 
 let q = <@ x @>
 let v = [Var("x", typeof<BigInteger>)]
-let e = Expression.Sum((Value.Number(BigRational(1)))::(Expression.Value j)::[] )
+
 toQuotation  
  

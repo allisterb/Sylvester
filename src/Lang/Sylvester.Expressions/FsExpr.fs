@@ -53,6 +53,8 @@ module FsExpr =
         | ValueWithName(v, t, n) when t = typeof<'t> -> n, v :?> 't
         | expr -> failwithf "%s is not a reflected definition of type %s." (src expr) (typeof<'t>.Name)
 
+    let hasCase<'t> case = FSharpType.GetUnionCases(typeof<'t>) |> Array.tryFind(fun c -> c.Name = case)
+    
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 
         || l.ToString() = sprintf "(%s)" (r.ToString())
@@ -196,7 +198,6 @@ module FsExpr =
         match so with
         | None -> Expr.Call(m, [l])
         | Some o -> Expr.Call(o, m, [l])
-
     (*
     let expand_list =
         let rec rexpand_list (e:Expr list) =
