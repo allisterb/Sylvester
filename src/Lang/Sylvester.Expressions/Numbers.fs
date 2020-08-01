@@ -14,6 +14,20 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         new(p:int64, q:int64) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:float, q:float) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:float32, q:float32) = {Numerator = BigInteger p; Denominator = BigInteger q}
+        new(x: float) =
+            let wholePart = int x     // whole part of x
+            let decimalPt = x % 1.0   // decimal part of x
+            let rec cF(Z : float, i : int, Dm : float, Do : float) =
+                match Z % 1.0 > 1e-6, i < 1 with
+                //  First case terminates after 14 iterations
+                | _    , true  -> (wholePart, (int64 (System.Math.Round(decimalPt * Do)), int64 Do))
+                //  Second case executes next cF (continuing fraction)
+                | true , false -> cF(1.0/(Z % 1.0), i - 1 , Do, Do * System.Math.Round(1.0/(Z % 1.0)-0.5) + Dm )
+                //  Final case terminates if the remainder of Z > 10^-6
+                | false, _  -> (wholePart, (int64 (System.Math.Round(decimalPt * Do)), int64 Do))
+            let w, (n, d) = decimalPt |> fun x -> cF(x, 14, 0.0, 1.0)
+            let n' = ((w |> int64) * d) + n
+            { Numerator = n' |> BigInteger; Denominator = d |> BigInteger }
     end 
     member x.Tuple: ValueTuple<BigInteger, BigInteger> = x.Numerator, x.Denominator
     member x.Equals(y: Rational) = x.Tuple.Equals y.Tuple
@@ -80,6 +94,7 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
             Rational.Normalize (BigInteger.Pow (num.Denominator, -n), BigInteger.Pow (num.Numerator, -n))
         else 
             Rational (BigInteger.Pow (num.Numerator, n), BigInteger.Pow (num.Denominator, n))
+        
 
     static member (~+) (r : Rational) = r
 
@@ -179,6 +194,7 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member op_Explicit(r: Rational): float = (float) r.Numerator / (float) r.Denominator
     static member op_Explicit(r: Rational): float32 = (float32) r.Numerator / (float32) r.Denominator
+    static member op_Explicit(r: Rational): decimal = (decimal) r.Numerator / (decimal) r.Denominator
     static member op_Explicit(r: Rational): BigInteger = 
         // have p = d.q + r, |r| < |q|
         let d, r = BigInteger.DivRem (r.Numerator, r.Denominator)

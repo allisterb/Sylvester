@@ -6,16 +6,7 @@
 #r "bin\\Debug\\netstandard2.0\\Unquote.dll"
 #r "bin\\Debug\\netstandard2.0\\Sylvester.Expressions.dll"
 
-open MathNet.Symbolics
 
 open Sylvester
 
-let j = Infix.parse "A + B"
-
-let x = 0
-let q = <@ x + 1 @>
-let v = get_vars q
-let e = Quotations.parse q
-
-
-//MathExpr.toQuotation (Quotations.parse <@ x @>) v typeof<float>
+0.3 |> Rational 
