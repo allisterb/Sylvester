@@ -16,7 +16,6 @@ open MathNet.Symbolics.Operators
 type MathNetExpr = Expression
 
 module MathNetExpr =
-    
     let rec fromQuotation (q:Expr) : Expression =
         match q with
         | SpecificCall <@@ ( + ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) + (fromQuotation yt)
@@ -228,3 +227,17 @@ module MathNetExpr =
         convertExpr expr
 
     let toIdentifier(v:Expr) = v |> get_vars |> Seq.exactlyOne |> get_var_name |> Symbol |> Identifier
+
+    let callUnary (op:Expression -> Expression) (x:Expr) = 
+        x |> expand 
+        |> fromQuotation 
+        |> op 
+        |> toQuotation (x |> expand |> get_vars)
+        |> Option.get
+
+    let callBinary (op:Expression -> Expression -> Expression) (p:Expression) (x:Expr) = 
+        x |> expand 
+        |> fromQuotation 
+        |> op p
+        |> toQuotation (x |> expand |> get_vars)
+        |> Option.get

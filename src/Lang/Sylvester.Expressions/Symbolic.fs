@@ -28,15 +28,13 @@ module SymbolicOps =
 module Symbolic =
     let (+.) (l:Expr<'t>) (r:Expr<'t>) = SymbolicOps.Add<'t> l r
     
-    let algeb_expand x = 
-        x |> expand 
-        |> MathNetExpr.fromQuotation 
-        |> Algebraic.expand
-        |> (toQuotation (x |> expand |> get_vars))
-        |> Option.get
-
+    let algeb_simplify x = callUnary id x
+        
+    let algeb_expand x = callUnary Algebraic.expand x
+        
     let polyn_coeffs e x = 
         x |> expand 
         |> MathNetExpr.fromQuotation 
         |> Polynomial.coefficients (e |> expand |> fromQuotation) 
         |> Array.map (toQuotation (x |> expand |> get_vars))
+        |> Array.map(Option.get)
