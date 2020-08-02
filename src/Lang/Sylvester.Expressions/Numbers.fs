@@ -14,7 +14,7 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         new(p:int64, q:int64) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:float, q:float) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:float32, q:float32) = {Numerator = BigInteger p; Denominator = BigInteger q}
-        new(x: float) =
+        new(x: float) = // From: http://www.fssnip.net/kV/title/Convert-a-Float-to-a-Mixed-Number
             let wholePart = int x     // whole part of x
             let decimalPt = x % 1.0   // decimal part of x
             let rec cF(Z : float, i : int, Dm : float, Do : float) =
@@ -204,8 +204,10 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         else
             // p = d.q + r
             d
+    static member op_Explicit(r: Rational): MathNet.Numerics.BigRational = 
+        MathNet.Numerics.BigRational.FromBigIntFraction(r.Numerator, r.Denominator)
     static member op_Explicit(r: BigInteger): Rational = Rational(r)
-    static member op_Explicit(r: int): Rational = Rational(r, 1)    
+    static member op_Explicit(r: int): Rational = Rational(r, 1)   
     static member op_Equality (l:Rational, r:Rational) = l.Equals r
     static member op_Inequality (l:Rational, r:Rational) = not <| l.Equals r
 

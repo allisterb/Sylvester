@@ -128,8 +128,12 @@ module FsExpr =
             
         rget_vars [] expr |> List.distinctBy (fun v -> v.Name)
 
+    let get_var expr = get_vars expr |> Seq.singleton
+
     let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
     
+    let get_var_name(v:Var) = v.Name
+
     let occurs (var:Var list) (expr:Expr) = 
         expr |> get_vars |> List.exists(fun v -> var |> List.exists(fun vv -> vequal v vv))
 
@@ -147,8 +151,6 @@ module FsExpr =
           let expanded = 
             match expr with
             | WithValue(_, _, e) -> rexpand vars e
-            //| Coerce(e, _) -> rexpand vars e
-            | ValueWithName(o, t, n) -> rexpand vars (Expr.Value(o, t))
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])

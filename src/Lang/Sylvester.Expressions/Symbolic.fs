@@ -4,6 +4,9 @@ open System.Collections.Generic
 
 open FSharp.Quotations
 
+open MathNet.Symbolics
+open MathNetExpr
+
 [<RequireQualifiedAccess>]
 module SymbolicOps =    
     let AlgebraicBinaryOps = new Dictionary<string, Dictionary<string, Expr -> Expr -> Expr>>()
@@ -23,4 +26,17 @@ module SymbolicOps =
 
 [<AutoOpen>]
 module Symbolic =
-    let (+.) (l:Expr<'t>) (r:Expr<'t>) = SymbolicOps.Add<'t> l r 
+    let (+.) (l:Expr<'t>) (r:Expr<'t>) = SymbolicOps.Add<'t> l r
+    
+    let algeb_expand x = 
+        x |> expand 
+        |> MathNetExpr.fromQuotation 
+        |> Algebraic.expand
+        |> (toQuotation (x |> expand |> get_vars))
+        |> Option.get
+
+    let polyn_coeffs e x = 
+        x |> expand 
+        |> MathNetExpr.fromQuotation 
+        |> Polynomial.coefficients (e |> expand |> fromQuotation) 
+        |> Array.map (toQuotation (x |> expand |> get_vars))

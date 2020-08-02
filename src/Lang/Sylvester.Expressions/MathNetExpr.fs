@@ -4,9 +4,9 @@ open System
 open System.Numerics
 open System.Reflection
 
-open Microsoft.FSharp.Quotations
-open Microsoft.FSharp.Quotations.Patterns
-open Microsoft.FSharp.Quotations.DerivedPatterns
+open FSharp.Quotations
+open FSharp.Quotations.Patterns
+open FSharp.Quotations.DerivedPatterns
 
 open MathNet.Numerics
 open MathNet.Symbolics
@@ -26,6 +26,10 @@ module MathNetExpr =
         | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) * (fromQuotation yt)
         | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) / (fromQuotation yt)
         | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) ** (fromQuotation yt)
+        | SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow( fromQuotation xt, fromQuotation yt)
+        | ValueWithName(_, _, n) -> Identifier (Symbol n) 
+        | Var x -> Identifier (Symbol x.Name)
+        | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
         | Int16 k -> Expression.FromInt32 (int k)
         | Int32 k -> Expression.FromInt32 k
         | Int64 k -> Expression.FromInt64 k
@@ -35,13 +39,11 @@ module MathNetExpr =
         | Double d -> Expression.Real d
         | Single d -> Expression.Real (float d)
         | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
-        | Var x -> Identifier (Symbol x.Name)
-        | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
         | Let (_, _, t) -> fromQuotation t
         | Lambda (_, t) -> fromQuotation t
         | _ -> failwithf "Operation %s is not supported." <| src q
 
-    let rec toQuotation<'t> (expr: Expression) (vars: Var list) =    
+    let rec toQuotation<'t> (vars: Var list) (expr: Expression)  =    
         let rec numerator = function
             | NegPower _ -> one
             | Product ax -> product <| List.map numerator ax
@@ -73,10 +75,9 @@ module MathNetExpr =
                         | Some(v) -> Some v
                         | _ -> None
                     ) None vars
-        let rec getMethodInfo = function
-            | Call(None, methodInfo, _) -> methodInfo
-            | Lambda(_, expr) -> getMethodInfo expr
-            | _ -> failwith "Expression is not a function."
+        let getMethodInfo = expand >> getFuncInfo
+        let call1 expr x = Expr.Call(expr |> getMethodInfo, [x])
+        let call2 expr x y = Expr.Call(expr getMethodInfo, x::y::[])
 
         let add (a:Expr) (b:Expr) = 
             do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
@@ -204,19 +205,19 @@ module MathNetExpr =
                 let a = convertExpr x
                 let b = convertExpr (Power(n, minusOne))
                 if n = Operators.two then
-                    Option.map (fun x -> Expr.Call(getMethodInfo <@ Math.Sqrt @>, [x])) a
+                    Option.map (fun x -> Expr.Call((getMethodInfo <@ Math.Sqrt @>), [x])) a
                 else
                     let a = convertExpr x
                     let b = convertExpr (Power(n, minusOne))
-                    Option.map2 (fun x y -> Expr.Call (getMethodInfo <@ Math.Pow @>, x::y::[])) a b
+                    Option.map2 (fun x y -> Expr.Call ((<@ Math.Pow @> |> expand |> getFuncInfo ), x::y::[])) a b
             | Power(Constant E, y) ->
                 let exponent = convertExpr y
-                Option.map (fun x -> Expr.Call(getMethodInfo <@ Math.Exp @>, [x])) exponent
+                Option.map (fun x -> Expr.Call((getMethodInfo <@ Math.Exp @>), [x])) exponent
             | Power(x, y) ->
                 let baseE = convertExpr x
                 let exponE = convertExpr y
-                Option.map2 (fun x y -> Expr.Call(getMethodInfo <@ Math.Sqrt @>, x::y::[])) baseE exponE
-            | _ -> None
+                Option.map2 (fun x y -> Expr.Call(<@ Math.Pow @> |> expand |> getFuncInfo, x::y::[])) baseE exponE
+            | expr -> failwithf "Did not convert %A." expr
         and compileFraction = 
             function
             | Product(xs) ->
@@ -225,3 +226,5 @@ module MathNetExpr =
             | x -> convertExpr x
 
         convertExpr expr
+
+    let toIdentifier(v:Expr) = v |> get_vars |> Seq.exactlyOne |> get_var_name |> Symbol |> Identifier

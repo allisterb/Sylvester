@@ -9,4 +9,12 @@
 
 open Sylvester
 
-0.3 |> Rational 
+let var<'t> = Unchecked.defaultof<'t>
+
+let x = var<float>
+
+get_vars <@ x @>
+
+let v = <@ x @> |> expand |> get_vars
+
+<@ 4. * (x ** 2.) + x * (x + 6.) @> |> algeb_expand |> polyn_coeffs <@ x ** 2. @>  
