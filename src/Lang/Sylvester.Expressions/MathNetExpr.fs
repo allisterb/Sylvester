@@ -42,6 +42,11 @@ module MathNetExpr =
         | Lambda (_, t) -> fromQuotation t
         | _ -> failwithf "Operation %s is not supported." <| src q
 
+    let fromEqualityQuotation = 
+        function
+        | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> fromQuotation l, fromQuotation r
+        | expr -> failwithf "The expression %s is not an equality." <| src expr
+
     let rec toQuotation<'t> (vars: Var list) (expr: Expression)  =    
         let rec numerator = function
             | NegPower _ -> one
@@ -180,7 +185,7 @@ module MathNetExpr =
                     | Ln   -> getMethodInfo <@ Math.Log @> |> Some
                     | Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
-                    //| Abs  -> getMethodInfo <@ Math.Abs @> |> Some
+                    | Abs  -> getMethodInfo <@ Math.Abs @> |> Some
                     | _    -> None
                 let f = convertFunc func
                 let e = convertExpr par
@@ -226,17 +231,23 @@ module MathNetExpr =
 
         convertExpr expr
 
-    let toIdentifier(v:Expr) = v |> get_vars |> Seq.exactlyOne |> get_var_name |> Symbol |> Identifier
+    let toIdentifier(v:Expr) = 
+        v 
+        |> expand 
+        |> get_var 
+        |> get_var_name 
+        |> Symbol 
+        |> Identifier
 
     let callUnary (op:Expression -> Expression) (x:Expr) = 
-        x |> expand 
+        x
         |> fromQuotation 
         |> op 
         |> toQuotation (x |> expand |> get_vars)
         |> Option.get
 
     let callBinary (op:Expression -> Expression -> Expression) (p:Expression) (x:Expr) = 
-        x |> expand 
+        x 
         |> fromQuotation 
         |> op p
         |> toQuotation (x |> expand |> get_vars)

@@ -50,3 +50,15 @@ type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> Valu
     Matrix<'dim0, 'dim1, 't>
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, R>
 type MatF<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, float32>
+
+[<AutoOpen>]
+module Matrix =
+    let eqn_matrices (x:Expr<bool>) =
+        let g =  
+            x 
+            |> expand_list 
+            |> List.map expand_equality
+            |> List.map MathNetExpr.fromQuotation
+
+        //let cm, v, vm = get_all_eqn_coeffs x
+        cm

@@ -1,4 +1,5 @@
-﻿namespace Sylvester
+﻿#nowarn "40"
+namespace Sylvester
 
 open System
 open System.Reflection
@@ -128,7 +129,7 @@ module FsExpr =
             
         rget_vars [] expr |> List.distinctBy (fun v -> v.Name)
 
-    let get_var expr = get_vars expr |> Seq.singleton
+    let get_var expr = get_vars expr |> Seq.exactlyOne
 
     let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
     
@@ -200,9 +201,20 @@ module FsExpr =
         match so with
         | None -> Expr.Call(m, [l])
         | Some o -> Expr.Call(o, m, [l])
-    (*
-    let expand_list =
-        let rec rexpand_list (e:Expr list) =
+
+    let expand_list (expr:Expr): Expr list =
+        let rec (|List|_|) =
+            let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
             function
-            | NewUnionCase(uc, Var v) -> e @ [v]
-      *)      
+            | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
+            | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
+            | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
+            | _ -> None
+        match expand expr with
+        | List l -> l 
+        | _ -> failwithf "The expression %s is not a list expression." <| src expr
+
+    let expand_equality =
+        function
+        | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
+        | expr -> failwithf "The expression %s is not a equality expression." <| src expr 
