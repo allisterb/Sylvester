@@ -60,7 +60,7 @@ module Symbolic =
         x'  
         |> get_vars 
         |> List.sortBy(fun v -> v.Name) 
-        |> List.map (fun v -> polyn_coeff (Expr.Var v) x')
+        |> List.map (fun v -> v, polyn_coeff (Expr.Var v) x')
 
     let polyn_all_coeffs_val x = 
         let x' = x |> expand  in
@@ -68,12 +68,6 @@ module Symbolic =
         |> get_vars 
         |> List.sortBy(fun v -> v.Name) 
         |> List.map (fun v -> v, polyn_coeff_val (Expr.Var v) x)
-
-    let polyn_eqn_all_coeffs (x:Expr<bool list>) =
-        let am = expand_list x |> List.map expand_equality
-        let cm = am |> List.map (fst >> polyn_all_coeffs)
-        let vm = am |> List.map snd
-        cm //(x |> expand |> get_vars), vm
     
     let polyn_degree (x:Expr) = 
         let x' = expand x in 
@@ -85,6 +79,12 @@ module Symbolic =
         |> List.max
         |> int
     
+    let polyn_eqn_all_coeffs (x:Expr<bool list>) =
+        let am = expand_list x |> List.map expand_equality
+        let cm = am |> List.map (fst >> polyn_all_coeffs)
+        let vm = am |> List.map snd
+        cm, vm
+
     let polyn_eqn_is_linear x = 
         let l, r = expand_equality x in 
         polyn_degree l = 1 && polyn_degree r = 0   

@@ -1,34 +1,33 @@
 #load "Include.fsx"
 
+open System
 open Sylvester
-open Sylvester.Arithmetic
+open Patterns
+open FSharp.Quotations
 
-let x,y = var2<int>
-let v1 = Vec<dim<4>>(4.0, 3.0, 3.0, 1.0)
-let v2 = Vec<dim<4>>(3.0, 2.0, 1.0, 5.0)
+//getMethodInfo <@ Math.Sqrt @>
+let x,y,z = var3<float>
 
-let e = v1 + v2
 
-let dd x = 
-    match expand x with
-    | Patterns.List r -> r
-    | _ -> failwith "None"
+let Ar = <@[ [4; 5; 6]; [7;8;9] ]@>
+expand_values<int> Ar
+//Ar |> expand_list |> List.map (fun l -> match l with | List ea -> if ea |>List.forall (fun )   | _ -> failwith "foo")
+//match Ar with
+//| List (e) -> e
+//| _ -> failwith "Not a list"
 
-//let zz = v1 + v2
 
-//let m1 = Mat<two, two>([2.;5.], [1.;2.])
-//let m2 = Mat<two, one>([1.], [1.])
+//let ent = <@ 3. * x + 2. * y + 6. * x + z @> 
 
-//let r = m1 + m1
 
-let g = <@[
-    3 * x + 5 = 0
-    4 * x - 5 = 0
-    9 * x + 1 = 0
+
+
+//|> algebra_simplify |> polyn_coeffs <@ x @>
+(*
+let ggg = <@[
+    3 * x + 5 = 0Q
+    4 * x - 5 = 0Q
+    9 * x + 1 = 0Q
 ]@>
+*)
 
-g |> expand |> get_vars 
-
-//let h = <@ [3 * x + 5 = 0; 4 * x - 5 = 0;9 * x + 1 = 0] @>
-
-//dd h

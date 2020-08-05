@@ -61,6 +61,14 @@ module FsExpr =
 
     let hasCase<'t> case = FSharpType.GetUnionCases(typeof<'t>) |> Array.tryFind(fun c -> c.Name = case)
     
+    let rec (|List|_|) =
+        let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
+        function
+        | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
+        | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
+        | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
+        | _ -> None
+
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 
         || l.ToString() = sprintf "(%s)" (r.ToString())
@@ -208,17 +216,16 @@ module FsExpr =
         | Some o -> Expr.Call(o, m, [l])
 
     let expand_list (expr:Expr): Expr list =
-        let rec (|List|_|) =
-            let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
-            function
-            | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
-            | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
-            | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
-            | _ -> None
         match expand expr with
         | List l -> l 
         | _ -> failwithf "The expression %s is not a list expression." <| src expr
 
+    let expand_list_values<'t> expr = 
+        expr 
+        |> expand_list 
+        |> List.map (fun el -> match el with 
+                                        | List l -> l |> List.map getVal<'t> 
+                                        | _ -> failwithf "The expression %s is not a list." <| src el)
     let expand_equality =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
