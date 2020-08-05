@@ -20,32 +20,5 @@ let eqns = <@[
     z - y = 6.
  ]@>
 
-eqns |> expand_list |> List.item 0 |> expand_equality |> fst |> polyn_degree
-
-let polyn_degree (x:Expr) = 
-    let x' = expand x in 
-    get_vars x'
-    |> List.map (fun v -> x' |> MathNetExpr.fromQuotation |> (MathNet.Symbolics.Polynomial.degree (v |> Expr.Var |> MathNetExpr.toIdentifier)))
-    |> List.map (MathNetExpr.toQuotation [])
-    |> List.map (Option.get)
-    |> List.map (fun e -> match e with | Value(v, t) -> v :?> float | _ -> failwith "Unexpected expression in degree.")
-    |> List.max
-    |> int
-
-polyn_degree <@ 3. * x + 2. * y + 6. * x * x + z@> 
-
-eqns 
-|> expand_list 
-|> List.map expand_equality 
-|> List.map fst 
-|> List.map MathNetExpr.fromQuotation
-|> List.map (MathNet.Symbolics.Polynomial.degree (MathNetExpr.toIdentifier <@ x @>))
-|> List.map (MathNetExpr.toQuotation(eqns |> expand |> get_vars))
-|> List.map Option.get
-|> List.map (fun e -> match e with | Value(v, t) -> v :?> float | _ -> failwith "Unexpected expression in degree.")
-
-
-//|> List.map MathNet.Symbolics.Polynomial.degree  
-//let eqns_are_linear (x:Expr<bool list>) =
-//    let l = x |> ex 
-//get_all_eqn_coeffs eqns
+eqns |> polyn_eqn_all_coeffs
+//eqns |> expand_list |> List.item 0 |> expand_equality |> fst |> polyn_all_coeffs

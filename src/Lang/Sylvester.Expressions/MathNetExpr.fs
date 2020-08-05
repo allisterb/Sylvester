@@ -231,11 +231,8 @@ module MathNetExpr =
 
         convertExpr expr
 
-    let toIdentifier(v:Expr) = 
-        v 
-        |> expand 
-        |> get_var 
-        |> get_var_name 
+    let toIdentifier(v:Var) = 
+        v.Name  
         |> Symbol 
         |> Identifier
 
