@@ -22,6 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj" />
     <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
   </ItemGroup>
 

@@ -10,7 +10,12 @@ open Sylvester
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
-let var<'t> = Unchecked.defaultof<'t>
+let d = [| [|4;5;6|]; [|7;8;9|] |]
+let dA =  d :> System.Array
+let vv = dA.GetValue(1) :?> int array 
+let dAA = box dA :?> (int array array)
+dAA.[0]
+//let var<'t> = Unchecked.defaultof<'t>
 
 let x,y,z = var<float>, var<float>, var<float>
 

@@ -18,7 +18,7 @@ module Set =
 
         //Z |> Seq.take 4 |> Seq.toArray
 
-        let Y = SetComprehension(t > 5, t * 3, set_no_test) |> Set
+        let Y = SetComprehension(t > 5, t * 3) |> Set
         //let pp = proof set_algebra <@ forall n (%%Y.Range n) (n = (%%Y.Body n)) @> []
 
         Assert.NotNull (Display.print_formula <@ forall n (%%Y.Range n) (n = (%%Y.Body n)) @>)

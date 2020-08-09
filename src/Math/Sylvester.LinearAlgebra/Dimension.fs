@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open System
+
 open Sylvester.Arithmetic
 
 [<AutoOpen>]
@@ -97,6 +99,7 @@ module rank =
 type IUnknownShape =
     abstract Rank:Option<int> with get,set
     abstract Dims:Option<int64[]> with get,set
+    abstract Data: Array with get,set
 
 /// A linear algebra object whose rank is known at compile time
 type IPartialShape<'n when 'n :> Number> = 

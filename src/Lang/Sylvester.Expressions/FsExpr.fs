@@ -9,7 +9,9 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
-                
+    
+type Delayed<'t> = Lazy<'t>
+
 [<AutoOpen>] 
 module FsExpr =
     let src expr = Swensen.Unquote.Operators.decompile expr

@@ -10,16 +10,15 @@ open Sylvester.Arithmetic
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    ([<ParamArray; ReflectedDefinition>] data: Expr<'t array>) =
-    let _data = getExprFromReflectedDefinition<'t array> data
-    do if _data.Length = 0 then failwith "The length of a vector must one or greater."
+    (data: 't array) =
+    do if data.Length = 0 then failwith "The length of a vector must one or greater."
     member val Expr = data
-    member val _Array = _data
-    member val _Vector = LinearAlgebra.DenseVector.raw _data
+    member val _Array = data
+    member val _Vector = LinearAlgebra.DenseVector.raw data
     interface IPartialShape<one> with
         member val Rank = Some 1 with get,set
-        member val Dims = [| Convert.ToInt64(_data.Length) |] |> Some with get,set
-
+        member val Dims = [| Convert.ToInt64(data.Length) |] |> Some with get,set
+        member val Data = data :> Array with get, set
     static member Ops = defaultLinearAlgebraOps
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
     static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'t>.create(v.AsArray()) 

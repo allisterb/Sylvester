@@ -14,10 +14,10 @@ module Display =
 
     let (|SymbolDisplay|_|):obj -> string option = 
         function
-        | :? MethodInfo as info when Symbols.BulitIn.ContainsKey info.Name -> Symbols.BulitIn.[info.Name] |> Some
         | :? MethodInfo as info when info.GetCustomAttributes(typeof<SymbolAttribute>, true) <> null && (Seq.length (info.GetCustomAttributes(typeof<SymbolAttribute>, true))) > 0 ->
             let a =  info.GetCustomAttributes(typeof<SymbolAttribute>, true) in
             let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
+        | :? MethodInfo as info when Symbols.BulitIn.ContainsKey info.Name -> Symbols.BulitIn.[info.Name] |> Some
         | :? PropertyInfo as info when Symbols.BulitIn.ContainsKey info.Name -> Symbols.BulitIn.[info.Name] |> Some
         | :? UnionCaseInfo as info when Symbols.BulitIn.ContainsKey info.Name -> Symbols.BulitIn.[info.Name] |> Some
         | :? Type as t ->
@@ -68,5 +68,5 @@ module Display =
         | SumTerm(_, SymbolDisplay symbol, VarDisplay bound, range, body) 
         | ProductTerm(_, SymbolDisplay symbol, VarDisplay bound, range, body) -> sprintf "%s %s %s" symbol (bound) (print_formula body)
         
-        (* Any other term *)
+        (* All other terms *)
         | expr -> src expr
