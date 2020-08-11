@@ -32,10 +32,10 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
             | WithoutVariables(MathNetLinearAlgebraSupportedType _) -> x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
             | _ -> Array.empty
         Matrix<'t>(values, x)
-    member x.toDouble'() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix
-    member x.toInt32'() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix
-    member x.toInt64'() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix
-    member x.toRational'() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix
+    member x.toDouble() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix
+    member x.toInt32() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix
+    member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix
+    member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix
     static member Ops = defaultLinearAlgebraOps
     static member create(x: Array) = Matrix(x :?> 't [] [])
     static member create(x:_Matrix<'t>) = Matrix<'t>(let a = x.AsColumnArrays() in if not(isNull (a)) then a else x.ToColumnArrays()) 
@@ -46,9 +46,9 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     static member (+)(l : Matrix<'t>, r : Matrix<'t>) :Matrix<'t>= 
         match typeof<'t> with
         | MathNetLinearAlgebraSupportedType _ -> let res = Matrix<'t>.Ops.MatAdd l._Matrix.Value r._Matrix.Value in res |> Matrix.create
-        | Int32Type _ -> let res = l.toDouble'() + r.toDouble'() in res |> Matrix.toInt32  
-        | Int64Type _ -> let res = l.toDouble'() + r.toDouble'() in res |> Matrix.toInt64
-        | RationalType _ -> let res = l.toDouble'() + r.toDouble'() in res |> Matrix.toRational
+        | Int32Type _ -> let res = l.toDouble() + r.toDouble() in res |> Matrix.toInt32  
+        | Int64Type _ -> let res = l.toDouble() + r.toDouble() in res |> Matrix.toInt64
+        | RationalType _ -> let res = l.toDouble() + r.toDouble() in res |> Matrix.toRational
         | t -> failwithf "Matrix addition for type %s is not supported." t.Name
         
 [<StructuredFormatDisplay("{Display}")>]
