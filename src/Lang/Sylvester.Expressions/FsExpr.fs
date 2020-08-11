@@ -63,14 +63,6 @@ module FsExpr =
 
     let hasCase<'t> case = FSharpType.GetUnionCases(typeof<'t>) |> Array.tryFind(fun c -> c.Name = case)
     
-    let rec (|List|_|) =
-        let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
-        function
-        | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
-        | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
-        | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
-        | _ -> None
-
     let sequal (l:Expr) (r:Expr) = 
         (l.ToString() = r.ToString()) 
         || l.ToString() = sprintf "(%s)" (r.ToString())
@@ -160,6 +152,19 @@ module FsExpr =
         | v::[] -> Expr.Var v
         | _ -> vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
     
+    let rec (|List|_|) =
+        let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
+        function
+        | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
+        | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
+        | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
+        | _ -> None
+
+    let (|WithoutVariables|_|):Expr->Type option =
+        function
+        | e when (get_vars e) = List.empty -> Some e.Type
+        | _ -> None
+
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
     /// Expand variables and calls to methods and propery getters.
     let expand expr =
@@ -225,9 +230,11 @@ module FsExpr =
     let expand_list_values<'t> expr = 
         expr 
         |> expand_list 
-        |> List.map (fun el -> match el with 
-                                        | List l -> l |> List.map getVal<'t> 
-                                        | _ -> failwithf "The expression %s is not a list." <| src el)
+        |> List.map (fun el -> 
+            match el with 
+            | List l -> l |> List.map getVal<'t> 
+            | _ -> failwithf "The expression %s is not a list." <| src el)
+
     let expand_equality =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r

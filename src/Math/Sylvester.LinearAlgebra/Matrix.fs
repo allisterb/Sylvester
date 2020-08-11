@@ -10,7 +10,7 @@ open MathNet.Numerics
 
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    ([<ParamArray>] data: 't array array, ?expr: Expr<'t list list>) =
+    (data: 't array array, ?expr: Expr<'t list list>) =
     do if data |> Array.forall (fun a -> a.Length = data.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let matrix = lazy LinearAlgebra.DenseMatrix.ofColumnArrays data
     member val _Array = data
@@ -20,18 +20,22 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
         match typeof<'t> with
         | MathNetLinearAlgebraSupportedType _ -> matrix.Value.ToString()  
         | _ -> data.ToString()     
-
     interface IPartialShape<two> with
         member val Rank = Some 2 with get,set
         member val Dims = [| data.[0].LongLength; data.LongLength |] |> Some with get,set
         member val Data = data :> Array with get, set
+    new([<ParamArray>] data: 't list array) =
+        Matrix<'t>(data |> Array.map (fun a -> a |> List.toArray)) 
     new(x: Expr<'t list list>) = 
         let values = 
             match expand x with
-            | WithNoVariables(MathNetLinearAlgebraSupportedType _) -> x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
+            | WithoutVariables(MathNetLinearAlgebraSupportedType _) -> x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
             | _ -> Array.empty
         Matrix<'t>(values, x)
-
+    member x.toDouble() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix
+    member x.toInt32() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix
+    member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix
+    member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix
     static member Ops = defaultLinearAlgebraOps
     static member create(x: Array) = Matrix(x :?> 't [] [])
     static member create(x:_Matrix<'t>) = Matrix<'t>(let a = x.AsColumnArrays() in if not(isNull (a)) then a else x.ToColumnArrays()) 
@@ -39,38 +43,39 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     static member toInt32(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix.create
     static member toInt64(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix.create
     static member toRational(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix.create
-    static member op_Explicit (x:Matrix<'t>) = x._Array
-    static member op_Explicit (x:Matrix<'t>) = x._Matrix
     static member (+)(l : Matrix<'t>, r : Matrix<'t>) :Matrix<'t>= 
         match typeof<'t> with
-        | MathNetLinearAlgebraSupportedType _ -> let res = Matrix<'t>.Ops.MatAdd l._Matrix.Value r._Matrix.Value in res |> Matrix.create  
-        | Int32Type _ -> let res = (+) (Matrix<'t>.toDouble l) (Matrix<'t>.toDouble r) in res |> Matrix.toInt32  
-        | Int64Type _ -> let res = (+) (l |> Matrix<'t>.toDouble) (r |> Matrix<'t>.toDouble) in res |> Matrix.toInt64
-        | RationalType _ -> let res = (+) (l |> Matrix<'t>.toDouble) (r |> Matrix<'t>.toDouble) in res |> Matrix.toRational
+        | MathNetLinearAlgebraSupportedType _ -> let res = Matrix<'t>.Ops.MatAdd l._Matrix.Value r._Matrix.Value in res |> Matrix.create
+        | Int32Type _ -> let res = l.toDouble() + r.toDouble() in res |> Matrix.toInt32  
+        | Int64Type _ -> let res = l.toDouble() + r.toDouble() in res |> Matrix.toInt64
+        | RationalType _ -> let res = l.toDouble() + r.toDouble() in res |> Matrix.toRational
         | t -> failwithf "Matrix addition for type %s is not supported." t.Name
         
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IComparable and 't :> IFormattable>
-    ([<ParamArray>] data: 't array array, ?expr: Expr<'t list list>) =
+    (data: 't array array, ?expr: Expr<'t list list>) =
     inherit Matrix<'t>(data, ?expr = expr) 
     let d0, d1 = number<'dim0>.IntVal, number<'dim1>.IntVal
-    do if base._Array.Length <> d0  || (base._Array |> Array.forall (fun a -> a.Length = d1) |> not) then failwithf "The initializing array does not have the dimensions %ix%i."d0 d1
+    do if base._Array.Length <> d1  || (base._Array |> Array.forall (fun a -> a.Length = d0) |> not) then failwithf "The initializing array does not have the dimensions %ix%i." d1 d0
     member val Dim0:'dim0 = number<'dim0>
     member val Dim1:'dim1 = number<'dim1>
-    member val Display = ""
-        //sprintf "Matrix<%i,%i>\n%s" base._Matrix.RowCount base._Matrix.ColumnCount (base._Matrix.ToMatrixString())
     interface IMatrix<'dim0, 'dim1>
-    new ([<ParamArray>] data: 't list array) = 
-        let array = data |> Array.map (fun a -> Array.ofList a) in
-        Matrix<'dim0, 'dim1, 't>(array)
+    new([<ParamArray>] data: 't list array) =
+        Matrix<'dim0, 'dim1, 't>(data |> Array.map (fun a -> a |> List.toArray)) 
     new(x: Expr<'t list list>) = 
         let values = x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
         Matrix<'dim0,'dim1, 't>(values, x)
-    static member create([<ParamArray>] data: 't array array) = Matrix<'dim0,'dim1,'t>(data)
-    static member fromMNMatrix(m: LinearAlgebra.Matrix<'t>) = Matrix<'dim0, 'dim1, 't>.create(let a = m.AsRowArrays() in if isNull a then m.ToRowArrays() else a) 
-    //static member (+)(l : Matrix<'n, 'm, 't>, r : Matrix<'n, 'm, 't>) = l._Matrix + r._Matrix |> Matrix<'n, 'm, 't>.fromMNMatrix
-    //static member (-)(l : Matrix<'n, 'm, 't>, r : Matrix<'n, 'm, 't>) = l._Matrix - r._Matrix |> Matrix<'n, 'm, 't>.fromMNMatrix
-    //static member (*)(l : Matrix<'n, 'm, 't>, r : Matrix<'m, 'p, 't>) =  l._Matrix * r._Matrix |> Matrix<'n, 'p, 't>.fromMNMatrix
+    member x.toDouble() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix<'dim0, 'dim1, 't>.create
+    member x.toInt32() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix<'dim0, 'dim1, 't>.create
+    member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix<'dim0, 'dim1, 't>.create
+    member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix<'dim0, 'dim1, 't>.create
+    static member create(data: Array) = Matrix<'dim0,'dim1,'t>(data :?> 't [] [])
+    static member create(m: _Matrix<'t>) = Matrix<'dim0, 'dim1, 't>.create(let a = m.AsRowArrays() in if isNull a then m.ToRowArrays() else a) 
+    static member toDouble(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix<'dim0, 'dim1, 't>.create
+    static member toInt32(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix<'dim0, 'dim1, 't>.create
+    static member toInt64(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix<'dim0, 'dim1, 't>.create
+    static member toRational(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble a))) |> Matrix<'dim0, 'dim1, 't>.create
+    static member (+)(l : Matrix<'dim0, 'dim1, 't>, r : Matrix<'dim0, 'dim1, 't>) = let res = (l :> Matrix<'t>) + (r :> Matrix<'t>) in Matrix<'dim0, 'dim1, 't>.create res._Array  
 
 type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Matrix<'dim0, 'dim1, 't>
