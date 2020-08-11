@@ -8,7 +8,7 @@ open Sylvester.Arithmetic
 
 open MathNet.Numerics
 
-//[<StructuredFormatDisplay("{Display}")>]
+[<StructuredFormatDisplay("{Display}")>]
 type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
     ([<ParamArray>] data: 't array array, ?expr: Expr<'t list list>) =
     do if data |> Array.forall (fun a -> a.Length = data.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
@@ -16,33 +16,39 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     member val _Array = data
     member val _Matrix = matrix
     member val Expr = expr
-    member val Display = sprintf "%A" matrix
+    member val Display = 
+        match typeof<'t> with
+        | MathNetLinearAlgebraSupportedType _ -> matrix.Value.ToString()  
+        | _ -> data.ToString()     
+
     interface IPartialShape<two> with
         member val Rank = Some 2 with get,set
         member val Dims = [| data.[0].LongLength; data.LongLength |] |> Some with get,set
         member val Data = data :> Array with get, set
     new(x: Expr<'t list list>) = 
-        let values = x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
+        let values = 
+            match expand x with
+            | WithNoVariables(MathNetLinearAlgebraSupportedType _) -> x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
+            | _ -> Array.empty
         Matrix<'t>(values, x)
 
     static member Ops = defaultLinearAlgebraOps
-    static member op_Explicit (x:Matrix<'t>) = x._Array
-    static member op_Explicit (x:Matrix<'t>) = x._Matrix
     static member create(x: Array) = Matrix(x :?> 't [] [])
     static member create(x:_Matrix<'t>) = Matrix<'t>(let a = x.AsColumnArrays() in if not(isNull (a)) then a else x.ToColumnArrays()) 
-    static member ToFloat(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix
-    static member ToInt(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix.create
-    static member ToIntL(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix
-    static member ToRational(m:Matrix<float>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational a)) |> Matrix
-    static member (+)(l : Matrix<'t>, r : Matrix<'t>) = 
+    static member toDouble(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix.create
+    static member toInt32(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix.create
+    static member toInt64(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix.create
+    static member toRational(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix.create
+    static member op_Explicit (x:Matrix<'t>) = x._Array
+    static member op_Explicit (x:Matrix<'t>) = x._Matrix
+    static member (+)(l : Matrix<'t>, r : Matrix<'t>) :Matrix<'t>= 
         match typeof<'t> with
         | MathNetLinearAlgebraSupportedType _ -> let res = Matrix<'t>.Ops.MatAdd l._Matrix.Value r._Matrix.Value in res |> Matrix.create  
-        | t when t.Name = "Int32" -> let res = (+) (l |> Matrix<'t>.ToFloat) (r |> Matrix<'t>.ToFloat) in res |> Matrix.ToInt  
-        | _ -> failwith "not supported yet"
+        | Int32Type _ -> let res = (+) (Matrix<'t>.toDouble l) (Matrix<'t>.toDouble r) in res |> Matrix.toInt32  
+        | Int64Type _ -> let res = (+) (l |> Matrix<'t>.toDouble) (r |> Matrix<'t>.toDouble) in res |> Matrix.toInt64
+        | RationalType _ -> let res = (+) (l |> Matrix<'t>.toDouble) (r |> Matrix<'t>.toDouble) in res |> Matrix.toRational
+        | t -> failwithf "Matrix addition for type %s is not supported." t.Name
         
-    //static member (-)(l : Matrix<'t>, r : Matrix<'t>) = Matrix<'t>.Ops.MatSubtract l._Matrix r._Matrix
-    //static member (*)(l : Matrix<'t>, r : Matrix<'t>) = Matrix<'t>.Ops.MatMultiply l._Matrix r._Matrix 
-
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IComparable and 't :> IFormattable>
     ([<ParamArray>] data: 't array array, ?expr: Expr<'t list list>) =

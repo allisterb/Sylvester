@@ -59,7 +59,7 @@ module FsExpr =
     let getVal<'t> =
         function
         | Value(v, t) when t = typeof<'t> -> v :?> 't
-        | expr -> failwithf "The expression %s is not a value of type %s." (src expr) (typeof<'t>.Name)
+        | expr -> failwithf "The expression %A has type %s and is not a value of type %s." (expr) (expr.Type.Name) (typeof<'t>.Name)
 
     let hasCase<'t> case = FSharpType.GetUnionCases(typeof<'t>) |> Array.tryFind(fun c -> c.Name = case)
     

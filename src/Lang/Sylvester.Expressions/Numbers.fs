@@ -95,7 +95,6 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         else 
             Rational (BigInteger.Pow (num.Numerator, n), BigInteger.Pow (num.Denominator, n))
         
-
     static member (~+) (r : Rational) = r
 
     static member (~-) (num : Rational) = Rational(-num.Numerator, num.Denominator)
@@ -235,3 +234,26 @@ type C = Complex
    let FromOne  () = one 
    let FromInt32 (i:int) = Rational(i, 1)
    let FromInt64 (i:int64) = Rational(i, 1L)
+
+[<AutoOpen>]
+module Numbers =
+    let (|Int32Type|_|): Type -> Type option =
+        function
+        | t when t.Name = "Int32" -> Some t
+        | _ -> None
+    let (|Int64Type|_|): Type -> Type option =
+        function
+        | t when t.Name = "Int64" -> Some t
+        | _ -> None
+    let (|BigRationalTyp|_|): Type -> Type option =
+        function
+        | t when t.Name = "BigRational" -> Some t
+        | _ -> None
+    let (|BigIntegerType|_|): Type -> Type option =
+        function
+        | t when t.Name = "BigInteger" -> Some t
+        | _ -> None
+    let (|RationalType|_|): Type -> Type option =
+        function
+        | t when t.Name = "Rational" -> Some t
+        | _ -> None

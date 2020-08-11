@@ -1,6 +1,8 @@
 ﻿namespace Sylvester
 
 open System
+open FSharp.Quotations
+
 
 open MathNet.Numerics.LinearAlgebra
 
@@ -34,9 +36,15 @@ type MathNetLinearAlgebra() =
 
 [<AutoOpen>]
 module LinearAlgbra =
-    let mutable defaultLinearAlgebraOps = new MathNetLinearAlgebra() :> ILinearAlgebraOps
-
     let (|MathNetLinearAlgebraSupportedType|_|):Type->Type option =
         function
         | t when t.Name = "Single" || t.Name = "Double" || t.Name = "Complex" || t.Name = "Complex32" -> Some t
         | _ -> None
+    
+    let (|WithNoVariables|_|):Expr->Type option =
+        function
+        | e when (get_vars e) = List.empty -> Some e.Type
+        | _ -> None
+    
+    let mutable defaultLinearAlgebraOps = new MathNetLinearAlgebra() :> ILinearAlgebraOps
+
