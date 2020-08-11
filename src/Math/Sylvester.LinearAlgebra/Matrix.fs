@@ -22,7 +22,7 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
         | _ -> data.ToString()     
     interface IPartialShape<two> with
         member val Rank = Some 2 with get,set
-        member val Dims = [| data.[0].LongLength; data.LongLength |] |> Some with get,set
+        member val Dims = if data.Length <> 0 then [| data.[0].LongLength; data.LongLength |] |> Some else None with get,set
         member val Data = data :> Array with get, set
     new([<ParamArray>] data: 't list array) =
         Matrix<'t>(data |> Array.map (fun a -> a |> List.toArray)) 
@@ -39,10 +39,11 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     static member Ops = defaultLinearAlgebraOps
     static member create(x: Array) = Matrix(x :?> 't [] [])
     static member create(x:_Matrix<'t>) = Matrix<'t>(let a = x.AsColumnArrays() in if not(isNull (a)) then a else x.ToColumnArrays()) 
-    static member toDouble(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix.create
-    static member toInt32(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix.create
-    static member toInt64(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix.create
-    static member toRational(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix.create
+    static member internal toDouble(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix.create
+    static member internal toInt32(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix.create
+    static member internal toInt64(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix.create
+    static member internal toRational(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix.create
+    static member op_Explicit(m:Matrix<'t>) = m.toDouble()
     static member (+)(l : Matrix<'t>, r : Matrix<'t>) :Matrix<'t>= 
         match typeof<'t> with
         | MathNetLinearAlgebraSupportedType _ -> let res = Matrix<'t>.Ops.MatAdd l._Matrix.Value r._Matrix.Value in res |> Matrix.create
@@ -59,25 +60,23 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> V
     do if base._Array.Length <> d1  || (base._Array |> Array.forall (fun a -> a.Length = d0) |> not) then failwithf "The initializing array does not have the dimensions %ix%i." d1 d0
     member val Dim0:'dim0 = number<'dim0>
     member val Dim1:'dim1 = number<'dim1>
+    member x.toDouble() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix<_,_,_>
+    member x.toInt32() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix<_,_,_>
+    member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix<_,_,_>
+    member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix<_,_,_>
     interface IMatrix<'dim0, 'dim1>
+    new (m:Matrix<'t>) = Matrix<'dim0, 'dim1, 't>(m._Array)
     new([<ParamArray>] data: 't list array) =
         Matrix<'dim0, 'dim1, 't>(data |> Array.map (fun a -> a |> List.toArray)) 
     new(x: Expr<'t list list>) = 
         let values = x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
         Matrix<'dim0,'dim1, 't>(values, x)
-    member x.toDouble() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix<'dim0, 'dim1, 't>.create
-    member x.toInt32() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix<'dim0, 'dim1, 't>.create
-    member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix<'dim0, 'dim1, 't>.create
-    member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix<'dim0, 'dim1, 't>.create
     static member create(data: Array) = Matrix<'dim0,'dim1,'t>(data :?> 't [] [])
-    static member create(m: _Matrix<'t>) = Matrix<'dim0, 'dim1, 't>.create(let a = m.AsRowArrays() in if isNull a then m.ToRowArrays() else a) 
-    static member toDouble(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix<'dim0, 'dim1, 't>.create
-    static member toInt32(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix<'dim0, 'dim1, 't>.create
-    static member toInt64(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix<'dim0, 'dim1, 't>.create
-    static member toRational(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble a))) |> Matrix<'dim0, 'dim1, 't>.create
-    static member (+)(l : Matrix<'dim0, 'dim1, 't>, r : Matrix<'dim0, 'dim1, 't>) = let res = (l :> Matrix<'t>) + (r :> Matrix<'t>) in Matrix<'dim0, 'dim1, 't>.create res._Array  
+    static member create(m: _Matrix<'t>) = Matrix<'dim0, 'dim1, 't>.create(let a = m.AsRowArrays() in if isNull a then m.ToColumnArrays() else a) 
+    static member create(m:Matrix<'t>) = Matrix<'dim0, 'dim1, 't>(m._Array)  
+    static member (+)(l : Matrix<'dim0, 'dim1, 't>, r : Matrix<'dim0, 'dim1, 't>) = let res = (l:>Matrix<'t>) + (r :> Matrix<'t>) in Matrix<'dim0, 'dim1, 't>.create res._Array  
 
 type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Matrix<'dim0, 'dim1, 't>
-type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, R>
-type MatF<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, float32>
+type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, real>
+type MatF<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, real32>

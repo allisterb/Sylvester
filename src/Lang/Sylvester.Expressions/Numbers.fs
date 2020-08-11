@@ -214,9 +214,11 @@ type Z = int
 
 type Q = Rational
 
-type Real = float
+type real = float
 
-type R = Real
+type real32 = float
+
+type R = real
 
 type R2 = R * R
 
