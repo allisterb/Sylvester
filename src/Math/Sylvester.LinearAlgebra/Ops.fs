@@ -3,7 +3,6 @@
 open System
 open FSharp.Quotations
 
-
 open MathNet.Numerics.LinearAlgebra
 
 type _Vector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Vector<'t>
@@ -36,7 +35,7 @@ type MathNetLinearAlgebra() =
 
 [<AutoOpen>]
 module LinearAlgbra =
-    let (|MathNetLinearAlgebraSupportedType|_|):Type->Type option =
+    let (|LinearAlgebraNumericOpType|_|):Type->Type option =
         function
         | t when t.Name = "Single" || t.Name = "Double" || t.Name = "Complex" || t.Name = "Complex32" -> Some t
         | _ -> None

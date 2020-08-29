@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Dimension.fs" />
-    <Compile Include="LinearAlgebraOps.fs" />
+    <Compile Include="Shapes.fs" />
+    <Compile Include="Ops.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Matrix.fs" />
   </ItemGroup>

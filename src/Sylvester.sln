@@ -252,7 +252,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CAS", "CAS", "{397C41E3-584
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Symbolics", "..\ext\mathnet-symbolics\src\Symbolics\Symbolics.fsproj", "{F49EC333-2591-4274-9DC8-CA077EDF98FD}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Tests.CAS.MathNet", "..\tests\Sylvester.Tests.CAS.MathNet\Sylvester.Tests.CAS.MathNet.fsproj", "{06C2E199-1776-4D1C-98AF-605F1BC10017}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.CAS.MathNet", "..\tests\Sylvester.Tests.CAS.MathNet\Sylvester.Tests.CAS.MathNet.fsproj", "{06C2E199-1776-4D1C-98AF-605F1BC10017}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{B2BFCEEF-F923-4472-9028-5695AC142459}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Web.Prover", "Web\Sylvester.Web.Prover\Sylvester.Web.Prover.csproj", "{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1563,6 +1567,24 @@ Global
 		{06C2E199-1776-4D1C-98AF-605F1BC10017}.Release|x64.Build.0 = Release|Any CPU
 		{06C2E199-1776-4D1C-98AF-605F1BC10017}.Release|x86.ActiveCfg = Release|Any CPU
 		{06C2E199-1776-4D1C-98AF-605F1BC10017}.Release|x86.Build.0 = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Debug|x64.Build.0 = Debug|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Debug|x86.Build.0 = Debug|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Nuget|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Nuget|Any CPU.Build.0 = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Nuget|x64.ActiveCfg = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Nuget|x64.Build.0 = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Nuget|x86.ActiveCfg = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Nuget|x86.Build.0 = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Release|x64.ActiveCfg = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Release|x64.Build.0 = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Release|x86.ActiveCfg = Release|Any CPU
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1663,6 +1685,7 @@ Global
 		{397C41E3-584F-45E6-9126-3BF2BE34EA76} = {6AF10FA0-9CAD-4048-BA33-E60D8D4C5653}
 		{F49EC333-2591-4274-9DC8-CA077EDF98FD} = {09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}
 		{06C2E199-1776-4D1C-98AF-605F1BC10017} = {921C2A48-62E1-4433-9CD4-BDBAAD7DA19D}
+		{EEB3A73C-6501-48F2-9A0E-8A0FE8747303} = {B2BFCEEF-F923-4472-9028-5695AC142459}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

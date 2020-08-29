@@ -61,6 +61,13 @@ module FsExpr =
         | Value(v, t) when t = typeof<'t> -> v :?> 't
         | expr -> failwithf "The expression %A has type %s and is not a value of type %s." (expr) (expr.Type.Name) (typeof<'t>.Name)
 
+    let getVal'<'t> =
+        function
+        | Value(v, t) when t = typeof<'t> -> v :?> 't
+        | ValueWithName(v, t, _) when t = typeof<'t> -> v :?> 't
+        | WithValue(v, t, _ ) when t = typeof<'t> -> v :?> 't
+        | expr -> failwithf "The expression %A has type %s and is not like a value of type %s." (expr) (expr.Type.Name) (typeof<'t>.Name)
+
     let hasCase<'t> case = FSharpType.GetUnionCases(typeof<'t>) |> Array.tryFind(fun c -> c.Name = case)
     
     let sequal (l:Expr) (r:Expr) = 
@@ -116,6 +123,11 @@ module FsExpr =
         do if not (lvar.Length = lexpr.Length) then failwithf "The lengths of the variable/expression lists lists are not the same for replacement operation in %s." (src expr)
         List.fold2 (fun e v r -> replace_var_expr v r e) expr lvar lexpr
 
+    let rec replace_var_type<'t> =
+        function
+        | ShapeVar v when v.Type <> typeof<'t> -> Expr.Var(Var(v.Name, typeof<'t>))
+        | expr -> traverse expr replace_var_type<'t>
+
     let rec replace_var_var (var1:Var) (var2:Var) (expr:Expr)  =
         match expr with
         | ShapeVar v  when vequal v var1-> Expr.Var var2
@@ -160,9 +172,9 @@ module FsExpr =
         | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
         | _ -> None
 
-    let (|WithoutVariables|_|):Expr->Type option =
+    let (|WithoutVariables|_|):Expr->Expr option =
         function
-        | e when (get_vars e) = List.empty -> Some e.Type
+        | e when (get_vars e) = List.empty -> Some e
         | _ -> None
 
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
@@ -227,12 +239,22 @@ module FsExpr =
         | List l -> l 
         | _ -> failwithf "The expression %s is not a list expression." <| src expr
 
+    let expand_lists (expr: Expr<'t list list>) = expr |> expand_list |> List.map expand_list
+
     let expand_list_values<'t> expr = 
         expr 
         |> expand_list 
         |> List.map (fun el -> 
             match el with 
             | List l -> l |> List.map getVal<'t> 
+            | _ -> failwithf "The expression %s is not a list." <| src el)
+
+    let expand_list_values'<'t> expr = 
+        expr 
+        |> expand_list 
+        |> List.map (fun el -> 
+            match el with 
+            | List l -> l |> List.map getVal'<'t> 
             | _ -> failwithf "The expression %s is not a list." <| src el)
 
     let expand_equality =
