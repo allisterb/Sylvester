@@ -35,7 +35,7 @@ namespace Sylvester.NLU.Wit
         #endregion
 
         #region Methods
-        public Meaning GetMeaning(string q, string msg_id = null, string thread_id = null)
+        public async Task<Meaning> GetMeaning(string q, string msg_id = null, string thread_id = null)
         {
             var client = new RestClient("https://api.wit.ai");
             var request = new RestRequest("message", Method.GET);
@@ -45,7 +45,7 @@ namespace Sylvester.NLU.Wit
             if (thread_id != null)
                 request.AddQueryParameter("thread_id", thread_id);
             request.AddHeader("Authorization", authValue);
-            IRestResponse response = client.Execute(request);
+            IRestResponse response = await client.ExecuteAsync(request);
             if (response.ErrorException != null) throw response.ErrorException;
             return JsonConvert.DeserializeObject<Meaning>(response.Content);
         }

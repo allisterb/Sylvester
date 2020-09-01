@@ -9,9 +9,9 @@
     <Compile Include="Numbers.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />
-    <Compile Include="Parsers.fs" />
     <Compile Include="MathNetExpr.fs" />
     <Compile Include="Symbolic.fs" />
+    <Compile Include="Parsers.fs" />
     <None Include="Script1.fsx" />
   </ItemGroup>
 

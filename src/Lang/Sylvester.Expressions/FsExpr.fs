@@ -260,4 +260,4 @@ module FsExpr =
     let expand_equality =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
-        | expr -> failwithf "The expression %s is not a equality expression." <| src expr 
+        | expr -> failwithf "The expression %s is not a equality expression." <| src expr
