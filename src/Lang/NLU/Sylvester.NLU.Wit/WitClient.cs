@@ -22,7 +22,7 @@ namespace Sylvester.NLU.Wit
         {
             if (string.IsNullOrEmpty(token))
             {
-                Initialized = false;
+                throw new ArgumentException("Could not get the WIT token argument.");
             }
             else
             {
