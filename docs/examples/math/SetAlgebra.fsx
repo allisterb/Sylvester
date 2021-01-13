@@ -2,20 +2,26 @@
 
 open Sylvester
 open SetAlgebra
-open FSharp.Quotations
+
 let n,t = var2<int>
 let A,B = var2<Set<obj>>
 let se = var<seq<int>>
 
+Z
 Z |> Seq.take 4 |> Seq.toArray
 
 
-[<Formula>]
-let Y = SetComprehension(t >= 0, t * 3) |> Set
+let Y = Set (compr <@ (t >= 0) @> <@ (t * 3) @>)
+let Z = Seq [0.; 1.; 2.]
+Z.[1]
+//Y.Body.Substitute(fun _ -> Some (FSharp.Quotations.Expr.Value(4, typeof<int>)))
+Y.[4] 
+let Zz = Y.Subset(<@ t < 0 @>) 
 
-let Zz = Y.Subset(fun a -> a > 0) 
+let YY = Set.Of(<@ t >= 0 @>, <@ t * 3 @>)
 
-Zz.Body n
+YY.[4]
+Zz.Body 
 //Display.print_formula <@ forall n (%%Y.Range n) (n = (%%Y.Body n)) @>
 proof set_algebra <@ forall n (%%Y.Range n) (n = (%%Y.Body n)) @> []
 

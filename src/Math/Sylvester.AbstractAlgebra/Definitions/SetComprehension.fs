@@ -9,18 +9,16 @@ open FSharp.Quotations.Patterns
 
 open Patterns
 
-/// A statement that formally defines a set using a range, body, and an optional F# function for computing set membership .
-type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:Expr<bool>, [<ReflectedDefinition(true)>] body: Expr<'t>, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
-    let r = getExprFromReflectedDefinition<bool> range
-    let b = getExprFromReflectedDefinition<'t> body
-    member val Range = range
-    member val Body = body
-    member val Body' = b
-    member val RangeTest = r
+/// A statement that formally defines a set using a range, body, and an optional F# function for computing set membership.
+type SetComprehension<'t when 't: equality>(range:Expr<bool>, body: Expr<'t>, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
+    member val Range = expand range
+    member val internal Range' = range
+    member val Body = expand body
+    member val internal Body' = body
     member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is implemented for the set comprehension %A." sc)
     override x.ToString() = 
         let vars = body |> expand |> get_vars
-        let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "| "
+        let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
         sprintf "{%s%s:%s}" v (range |> expand |> src) (body |> expand |> src)
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
     override a.Equals (_b:obj) = 
@@ -28,9 +26,9 @@ type SetComprehension<'t when 't: equality>([<ReflectedDefinition(true)>] range:
             | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
             | _ -> false
     override a.GetHashCode() = (a.ToString()).GetHashCode() 
-    new([<ReflectedDefinition(true)>] body: Expr<'t>, test: SetComprehension<'t> -> 't -> bool) = 
+    new(body: Expr<'t>, test: SetComprehension<'t> -> 't -> bool) = 
         let b = getExprFromReflectedDefinition<'t> body in 
-        SetComprehension(true, b, test) 
+        SetComprehension(<@ true @>, body, test) 
     
 [<AutoOpen>]
 module SetComprehension = 

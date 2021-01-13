@@ -86,18 +86,50 @@ with
             let e = expand set.Range in
             e.Substitute((fun _ -> Some v)) |> expand
       
-    member x.Body ([<ReflectedDefinition>] b:Expr<'t>) =
+    member x.Body = 
         match x with
-        | Empty -> <@@ Unchecked.defaultof<'t> @@>
-        | Seq s -> let e = <@ s @>  |> expand in e.Substitute((fun _ -> Some (expand b))) 
-        | Set set -> let e = set.Body |> expand in e.Substitute((fun _ -> Some (expand b)))
+        | Empty -> failwith "The empty set does not have a body."
+        | Seq _ -> failwith "A sequence does not have a body expression. Use a set comprehension instead."  
+        | Set s -> s.Body 
+    
+    member x.Item([<ReflectedDefinition(true)>] e: Expr<'t>) : Expr =
+        match x with
+        | Empty -> failwith "The empty set has no elements."
+        | Seq _ -> failwith "A sequence does not have a body expression. Use a set comprehension instead."  
+        | Set s -> expand (s.Body.Substitute(fun _ -> Some (e.Raw)))
+    
+    member x.Item(e: obj) : 't =
+        match x with
+        | Empty -> failwith "The empty set has no elements."
+        | Seq s -> 
+            match e with
+            | :? int as i -> Seq.item i s
+            | :? string as str ->
+                match Int32.TryParse str with
+                | true, i -> Seq.item i s
+                | _ -> failwith "A sequence must be indexed by an integer expression."
+            | :? char as c ->
+                match Int32.TryParse (String([|c|])) with
+                | true, i -> Seq.item i s
+                | _ -> failwith "A sequence must be indexed by an integer expression."
+            | _ -> failwith "A sequence must be indexed by an integer expression."
+        | Set _ -> failwith "Cannot enumerate a set defined by a set comprehension. Use a sequence instead."
 
-    /// Create a subset of the set using a predicate.
-    member x.Subset(f: 't->bool) = 
+    /// Create a subset of a sequence using a predicate.
+    member x.Subset(f:'t -> bool) = 
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq _ -> x |> Seq.filter f |> Set.fromSeq 
-        | Set s -> SetComprehension(s.RangeTest, s.Body', (fun _ x -> (s.HasElement s x) && (f x))) |> Set
+        | Set s -> failwith "Cannot use sa filter function on a set comprehension. Use a boolean expression (Expr<boo) instead."
+
+    /// Create a subset of a sequence using a predicate.
+    member x.Subset(f:Expr<bool>) = 
+        match x with
+        | Empty -> failwith "The empty set has no subsets."
+        | Seq _ -> failwith "Cannot create a subset of a sequence using an expression. Use a filter function instead."
+        | Set s -> 
+            let r = s.Range';
+            Set(SetComprehension(<@ %r |&| %f @>, s.Body'))
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
@@ -128,7 +160,7 @@ with
         match a with
         | Empty -> Empty
         | Seq _ -> Seq(a |> Seq.except [b])
-        | Set s -> SetComprehension(s.RangeTest, s.Body', (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
+        | Set s -> SetComprehension(s.Range', s.Body', (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
     
@@ -175,6 +207,8 @@ with
             //SetComprehension(((s.RangeTest(a)) && s.RangeTest), (s.Body', S.Body')) |> Set 
             failwith "This function is not implmented yet for a set comprehension." //let t1der.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
     
+    static member Of(range:Expr<bool>, body:Expr<'t>) = SetComprehension(range, body) |> Set
+
     static member fromSeq(s: seq<'t>) = Seq s
     
     static member toProduct(s:Set<'t>) = s.Product
@@ -188,7 +222,7 @@ with
         |(Seq _, Seq _) -> Seq.concat[l; r] |> Set.fromSeq //SetGenerator(Seq.concat[l; r], (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |_, _ -> 
             let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
-            SetComprehension(set_union(l, r), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
+            SetComprehension(<@ set_union(l, r) @>, (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
         
     /// Set intersection operator.
     [<Symbol "\u2229">]
@@ -212,7 +246,7 @@ with
         |(Seq a, Seq b) -> Seq(a.Intersect b) //, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |(_, _) -> 
             let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
-            SetComprehension(set_intersect(l,r), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
+            SetComprehension(<@ set_intersect(l,r) @>, (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
 
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
@@ -228,7 +262,7 @@ with
 
     /// Set absolute complement operator. -A = U \ A
     static member (~-) (l:Set<'t>) = 
-        let u = SetComprehension (Unchecked.defaultof<'t>, (fun _ _ -> true)) |> Set
+        let u = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun _ _ -> true)) |> Set
         u.Difference l
 
     /// Set create subset operator.
@@ -247,7 +281,7 @@ with
         |(Empty, _) -> Empty
 
         |(Seq a, Seq b) -> Seq (cart2 a b)//Seq(Gen(cart2 a b, (fun _ (x,y) -> l.HasElement x && r.HasElement y)))
-        |(_,_) -> SetComprehension((l.First(), r.First()), (fun sc (x,y) -> l.HasElement x && r.HasElement y)) |> Set
+        |(_,_) -> SetComprehension(<@ (l.First(), r.First()) @>, (fun sc (x,y) -> l.HasElement x && r.HasElement y)) |> Set
     
     interface ISet<'t> with member x.Set = x
 
@@ -315,10 +349,11 @@ module Set =
     let ofType<'t when 't: equality> = fun (_:'t) -> true
     
     /// A singleton set containing 0. 
-    let Zero = FiniteSet<N<1>, int>([|0|])
+    let Zero = Singleton<Z>(0)
 
     /// The universal set.
-    let U<'t when 't : equality> = SetComprehension (Unchecked.defaultof<'t>, (fun _ _ -> true)) |> Set
+    let U<'t when 't : equality> = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun _ _ -> true)) |> Set
 
-    [<ReflectedDefinition>]
-    let set range body test= SetComprehension(range, body, test) |> Set
+    let compr (range:Expr<bool>) (body:Expr<'t>) = SetComprehension(range, body)
+
+    let set (range:Expr<bool>) (body:Expr<'t>) = Set.Of(range, body)
