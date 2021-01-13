@@ -24,7 +24,7 @@ type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicati
 module Real =
     let reals = let x = var<real> in SetComprehension<real>(<@ x @>, (fun _ _ -> true)) |> Set 
     let R = Field(AdditiveGroup(reals), MultiplicativeGroup(reals))
-    let openInterval left right = R.Set.Subset(fun x -> x > left && x < right)
-    let closedinterval left right = R.Set.Subset(fun x -> x >= left && x <= right)
-    let line (origin:R) (step:R) = infiniteSeq (fun n -> origin + (((float) n) * step))
+    let open_interval left right = R.Set.Subset(fun x -> x > left && x < right)
+    let closed_interval left right = R.Set.Subset(fun x -> x >= left && x <= right)
+    let line (origin:R) (step:R) = infinite_seq (fun n -> origin + (((float) n) * step))
     let axis step = line 0.0 step

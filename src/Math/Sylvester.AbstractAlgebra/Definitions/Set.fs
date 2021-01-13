@@ -207,8 +207,6 @@ with
             //SetComprehension(((s.RangeTest(a)) && s.RangeTest), (s.Body', S.Body')) |> Set 
             failwith "This function is not implmented yet for a set comprehension." //let t1der.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
     
-    static member Of(range:Expr<bool>, body:Expr<'t>) = SetComprehension(range, body) |> Set
-
     static member fromSeq(s: seq<'t>) = Seq s
     
     static member toProduct(s:Set<'t>) = s.Product
@@ -336,15 +334,23 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let infiniteSeq g = g |> Seq.initInfinite |> Set.fromSeq
+    let set (range:Expr<bool>) (body:Expr<'t>) = SetComprehension(range, body) |> Set
 
-    let infiniteSeq2 g = g |> Seq.initInfinite |> Seq.pairwise |> Set.fromSeq
+    let sequence (s: seq<'t>) = Seq s
 
-    let infiniteSeq3 g = g |> Seq.initInfinite |> triplewise |> Set.fromSeq
+    let subset(set: Set<'t>) (sub:Expr<bool>) = set.Subset sub
 
-    let infiniteSeq4 g = g |> Seq.initInfinite |> quadwise |> Set.fromSeq
+    let subseq(set: Set<'t>) (f:'t -> bool) = set.Subset f
 
-    let infiniteSeq5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
+    let infinite_seq g = g |> Seq.initInfinite |> Set.fromSeq
+
+    let infinite_seq2 g = g |> Seq.initInfinite |> Seq.pairwise |> Set.fromSeq
+
+    let infinite_seq3 g = g |> Seq.initInfinite |> triplewise |> Set.fromSeq
+
+    let infinite_seq4 g = g |> Seq.initInfinite |> quadwise |> Set.fromSeq
+
+    let infinite_seq5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
 
     let ofType<'t when 't: equality> = fun (_:'t) -> true
     
@@ -354,6 +360,3 @@ module Set =
     /// The universal set.
     let U<'t when 't : equality> = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun _ _ -> true)) |> Set
 
-    let compr (range:Expr<bool>) (body:Expr<'t>) = SetComprehension(range, body)
-
-    let set (range:Expr<bool>) (body:Expr<'t>) = Set.Of(range, body)
