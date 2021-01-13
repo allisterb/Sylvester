@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Base\Sylvester.Data\Sylvester.Data.csproj" />
-    <ProjectReference Include="..\..\src\Data\Sylvester.DataFrame.Dynamic\Sylvester.DataFrame.Dynamic.csproj" />
+    <ProjectReference Include="..\..\src\Data\Sylvester.DataFrame\Sylvester.DataFrame.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NLU\Sylvester.NLU.Wit\Sylvester.NLU.Wit.csproj" />
-    <ProjectReference Include="..\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
-    <ProjectReference Include="..\Sylvester.Prover\Sylvester.Prover.fsproj" />
+    <ProjectReference Include="..\Sylvester.NLU.Wit\Sylvester.NLU.Wit.csproj" />
+    <ProjectReference Include="..\..\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
+    <ProjectReference Include="..\..\Sylvester.Prover\Sylvester.Prover.fsproj" />
   </ItemGroup>
 
 </Project>

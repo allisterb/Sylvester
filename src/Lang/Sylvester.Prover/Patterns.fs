@@ -293,7 +293,7 @@ module Patterns =
                 pattern_desc "Distributivity" <@ let x, y, z = var3<'t> in (%eq) ((%op1) x ((%op2) y z)) ((%op2) ((%op1) x y) ((%op1) x z)) @> |> Some
         | _ -> None
 
-    ///  -(y + z) = -x  * - z
+    ///  -(y + z) = -y  * - z
     let (|UnaryDistrib|_|) (eq:Expr<'t->'t->bool>)  (op1: Expr<'t->'t>) (op2: Expr<'t->'t->'t>)  = 
         function
         | Binary eq (Unary op1 (Binary op2 (a1, a2)), Binary op2 (Unary op1 a3, Unary op1 a4)) when sequal a1 a3 && sequal a2 a4 -> 

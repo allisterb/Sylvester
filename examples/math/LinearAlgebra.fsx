@@ -2,9 +2,23 @@
 
 open System
 open Sylvester
+open Sylvester.Arithmetic
 open Patterns
 open FSharp.Quotations
 
+let fff<'a, 'b when 'a :> Number and 'b :> Number>  = <@ Mat<'a, 'b>() @>
+[<Literal>]
+let intvar = 0
+
+[<Literal>]
+let a = intvar
+
+[<Literal>]
+let b = 4
+
+let DD = <@ Mat<dim<a>, dim<b>>() @>
+
+expand DD
 //getMethodInfo <@ Math.Sqrt @>
 let x,y,z = var3<real>
 let a = 2.

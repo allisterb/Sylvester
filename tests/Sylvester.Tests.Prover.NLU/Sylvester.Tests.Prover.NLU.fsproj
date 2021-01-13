@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Lang\Sylvester.Prover.NLU\Sylvester.Prover.NLU.fsproj" />
+    <ProjectReference Include="..\..\src\Lang\NLU\Sylvester.Prover.NLU\Sylvester.Prover.NLU.fsproj" />
   </ItemGroup>
 
 </Project>
