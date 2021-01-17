@@ -67,7 +67,7 @@ type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: U
  
 type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, id, inv)
-    do failIfNotCommutative op
+    do fail_if_not_commutative op
     interface IAbelianGroup<'t>
 
 type FiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
@@ -77,7 +77,7 @@ type FiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSe
 
 type FiniteAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit FiniteGroup<'order, 't>(set, op, ident, inv)
-    do failIfNotCommutative op
+    do fail_if_not_commutative op
     interface IAbelianGroup<'t>
 
 /// Category of groups with n structure-preserving morphisms.

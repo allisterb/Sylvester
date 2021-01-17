@@ -13,7 +13,7 @@ type IField<'t when 't: equality> =
 /// Set of elements closed under a left-associative commutative invertible operation and a 2nd left-associative commutative invertible operation whcih distributes over the first.
 type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicativeGroup: IMultiplicativeGroup<'t>) =
     inherit Struct<'t, card.six>(additiveGroup.Set, arrayOf6 (Binary(additiveGroup.Op)) (Nullary(additiveGroup.Identity)) (Unary(additiveGroup.Inverse)) (Binary(additiveGroup.Op)) (Nullary(additiveGroup.Identity)) (Unary(additiveGroup.Inverse)))
-    do multiplicativeGroup.Op |> failIfNotDistributiveOver additiveGroup.Op
+    do multiplicativeGroup.Op |> fail_if_not_distributive_over additiveGroup.Op
     member val AddGroup = additiveGroup
     member val MulGroup = multiplicativeGroup
     interface IField<'t> with

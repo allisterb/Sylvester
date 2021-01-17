@@ -53,11 +53,11 @@ type Ops<'n, 't when 'n :> Number and 't: equality> = Array<'n, Op<'t>>
 
 [<AutoOpen>]
 module Op =
-    let isCommutative (op:BinaryOp<'t>) = Op<'t>.IsCommutative op
-    let failIfNotCommutative (op:BinaryOp<'t>) = Op<'t>.FailIfNotCommutative op
-    let iisLeftAssociative (op:BinaryOp<'t>) = Op<'t>.IsLeftAssociative (op.ToString())
-    let failIfNotLeftAssociative (op:BinaryOp<'t>) = Op<'t>.FailIfNotLeftAssociative op
-    let distributesOver (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.DistributesOver (op1.ToString()) (op2.ToString())
-    let failIfNotDistributiveOver (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.FailIfNotDistributiveOver op1 op2
-    let isIdempotent (op:BinaryOp<'t>) = Op<'t>.IsIdempotent op
-    let failIfNotIdempotent(op:BinaryOp<'t>) = Op<'t>.FailIfNotIdempotent op
+    let is_commutative (op:BinaryOp<'t>) = Op<'t>.IsCommutative op
+    let fail_if_not_commutative (op:BinaryOp<'t>) = Op<'t>.FailIfNotCommutative op
+    let is_left_associative (op:BinaryOp<'t>) = Op<'t>.IsLeftAssociative (op.ToString())
+    let fail_if_not_left_associative (op:BinaryOp<'t>) = Op<'t>.FailIfNotLeftAssociative op
+    let distributes_over (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.DistributesOver (op1.ToString()) (op2.ToString())
+    let fail_if_not_distributive_over (op1:BinaryOp<'t>) (op2:BinaryOp<'t>) = Op<'t>.FailIfNotDistributiveOver op1 op2
+    let is_idempotent (op:BinaryOp<'t>) = Op<'t>.IsIdempotent op
+    let fail_if_not_idempotent(op:BinaryOp<'t>) = Op<'t>.FailIfNotIdempotent op

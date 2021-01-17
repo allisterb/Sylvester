@@ -3,16 +3,10 @@
 open Sylvester
 open SetAlgebra
 
+expand <@ U<int> @>
 let n,t = var2<int>
-let A,B = var2<Set<obj>>
-let se = var<seq<int>>
 
-Z
-Z |> Seq.take 4 |> Seq.toArray
-
-
-let Y = Set (compr <@ (t >= 0) @> <@ (t * 3) @>)
-let Z = Seq [0.; 1.; 2.]
+let Z = sequence [0.; 1.; 2.]
 Z.[1]
 //Y.Body.Substitute(fun _ -> Some (FSharp.Quotations.Expr.Value(4, typeof<int>)))
 Y.[4] 

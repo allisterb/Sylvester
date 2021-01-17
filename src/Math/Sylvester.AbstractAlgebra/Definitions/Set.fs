@@ -14,7 +14,7 @@ open Sylvester.Collections
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
-/// A set defined by the distinct elements of a sequence i.e. a set that has a function from N -> t.
+/// A set defined by the distinct elements of a sequence i.e. a set that is the co-domain of a function from N -> 't.
 | Seq of seq<'t>
 /// A set of elements formally defined by a range and a body expression. 
 | Set of SetComprehension<'t>
@@ -66,25 +66,11 @@ with
         | Seq s -> s.ToString()
         | Set s -> s.ToString()
         
-    member x.Range ([<ReflectedDefinition(true)>] r:Expr<'t>) =
-        let vars = r |> expand |> get_vars 
-        let var = 
-            if Seq.length vars > 0 then 
-                Seq.item 0 vars 
-            else 
-                match expand r with
-                | Patterns.ValueWithName(_, t, n) -> Var(n, t)
-                | Patterns.WithValue(_, _, Patterns.ValueWithName(_, t, n))  -> Var(n, t)
-                | _ -> failwithf "The expression %s does not contain any variables." (r |> expand |> src)
-        let v = Expr.Var(var)
+    member x.Range =
         match x with
         | Empty -> <@@ false @@>
-        | Seq _ -> 
-            do if v.Type <> typeof<int> then failwithf "The variable %s does not have type integer." (src v)
-            <@ %%v >= 0  @> |> expand
-        | Set set -> 
-            let e = expand set.Range in
-            e.Substitute((fun _ -> Some v)) |> expand
+        | Seq _ -> <@ let i = var<int> in i >= 0 @> |> expand
+        | Set set -> set.Range
       
     member x.Body = 
         match x with
@@ -336,11 +322,9 @@ module Set =
     
     let set (range:Expr<bool>) (body:Expr<'t>) = SetComprehension(range, body) |> Set
 
-    let sequence (s: seq<'t>) = Seq s
-
     let subset(set: Set<'t>) (sub:Expr<bool>) = set.Subset sub
 
-    let subseq(set: Set<'t>) (f:'t -> bool) = set.Subset f
+    let sequence (s: seq<'t>) = Seq s
 
     let infinite_seq g = g |> Seq.initInfinite |> Set.fromSeq
 
@@ -352,11 +336,12 @@ module Set =
 
     let infinite_seq5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
 
-    let ofType<'t when 't: equality> = fun (_:'t) -> true
+    let subseq(set: Set<'t>) (f:'t -> bool) = set.Subset f
+
+    let of_type<'t when 't: equality> = fun (_:'t) -> true
     
     /// A singleton set containing 0. 
     let Zero = Singleton<Z>(0)
 
     /// The universal set.
-    let U<'t when 't : equality> = SetComprehension (<@ Unchecked.defaultof<'t> @>, (fun _ _ -> true)) |> Set
-
+    let U<'t when 't : equality> = set <@ true @> <@ Unchecked.defaultof<'t> @>  

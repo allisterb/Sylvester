@@ -1,13 +1,9 @@
 ﻿namespace Sylvester
 
 open System
-open System.Collections
 open System.Collections.Generic
 
 open FSharp.Quotations
-open FSharp.Quotations.Patterns
-
-open Patterns
 
 /// A statement that formally defines a set using a range, body, and an optional F# function for computing set membership.
 type SetComprehension<'t when 't: equality>(range:Expr<bool>, body: Expr<'t>, ?hasElement:SetComprehension<'t> ->'t -> bool) = 

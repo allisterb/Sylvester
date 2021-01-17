@@ -14,7 +14,7 @@ type IRing<'t when 't: equality> =
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit Struct<'t, card.four>(group.Set, arrayOf4 (Binary(group.Op)) (Nullary(group.Identity)) (Unary(group.Inverse)) (Binary(op2)))
-    do op2 |> failIfNotDistributiveOver group.Op
+    do op2 |> fail_if_not_distributive_over group.Op
     member val Op = group.Op
     member val Op2 = op2
     member val Group = group
@@ -32,7 +32,7 @@ type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
 /// Ring where the 2nd operation is commutative.
 type CommutativeRing<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit Ring<'t>(group, op2)
-    do failIfNotCommutative op2
+    do fail_if_not_commutative op2
     new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
         CommutativeRing(AbelianGroup(set, op, zero, inv), op2)
 
