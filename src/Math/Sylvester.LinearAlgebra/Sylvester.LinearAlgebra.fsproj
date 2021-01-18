@@ -16,8 +16,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.11.0" />
-    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.15.0" />
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.5.1" />
     <PackageReference Include="Sylvester.Collections" Version="0.2.3" />
   </ItemGroup>
   

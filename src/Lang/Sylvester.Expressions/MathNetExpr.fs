@@ -29,12 +29,12 @@ module MathNetExpr =
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
-        | Int16 k -> Expression.FromInt32 (int k)
-        | Int32 k -> Expression.FromInt32 k
-        | Int64 k -> Expression.FromInt64 k
-        | UInt16 k -> Expression.FromInt32 (int k)
-        | UInt32 k -> Expression.FromInt64 (int64 k)
-        | UInt64 k -> Expression.FromInteger (BigInteger k)
+        | Int16 k -> fromInt32 (int k)
+        | Int32 k -> fromInt32 k
+        | Int64 k -> fromInt64 k
+        | UInt16 k -> fromInt32 (int k)
+        | UInt32 k -> fromInt64 (int64 k)
+        | UInt64 k -> fromInteger (BigInteger k)
         | Double d -> Expression.Real d
         | Single d -> Expression.Real (float d)
         | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
@@ -183,7 +183,7 @@ module MathNetExpr =
                     //| AiryBi -> Some (mathCall1 "AiryBi")
                     //| AiryBiPrime -> Some (mathCall1 "AiryBiPrime")
                     | Ln   -> getMethodInfo <@ Math.Log @> |> Some
-                    | Log   -> getMethodInfo <@ Math.Log10 @> |> Some
+                    //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
                     | Abs  -> getMethodInfo <@ Math.Abs @> |> Some
                     | _    -> None

@@ -273,13 +273,18 @@ and ISet<'t when 't: equality> =
     inherit IEquatable<Set<'t>>
     abstract member Set:Set<'t>
 
+and IFiniteSet<'n, 't when 'n :> Number and 't : equality> = 
+    inherit ISet<'t>
+    abstract Length: 'n
+
 and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Length = number<'n>
     member val Items = Array<'n, 't>(items)
     member val Set = Seq items
-    interface ISet<'t> with
+    interface IFiniteSet<'n, 't> with
         member x.Set = x.Set
         member x.Equals y = x.Set.Equals y
+        member x.Length = x.Length
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
@@ -291,6 +296,8 @@ and Family<'t when 't : equality> = Set<'t> list
 
 [<AutoOpen>]
 module Set =
+    //let j = {new Set<int> [|0|] with x.Foo() = "f"}
+
     /// Set union operator.
     [<Symbol "\u222A">]
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
