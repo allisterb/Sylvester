@@ -178,7 +178,7 @@ module FsExpr =
         | _ -> None
 
     /// Based on: http://www.fssnip.net/bx/title/Expanding-quotations by Tomas Petricek.
-    /// Expand variables and calls to methods and propery getters.
+    /// Expand variables and calls to methods and property getters.
     let expand expr =
         let rec rexpand vars expr = 
           let expanded = 

@@ -5,34 +5,53 @@ open System.Collections.Generic
 
 open FSharp.Quotations
 
+[<CustomEquality; CustomComparison>]
+type EExpr = EExpr of Expr with
+    member x.Expr = let (EExpr e) = x in e
+    interface IEquatable<EExpr> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
+    interface IComparable<EExpr> with
+        member a.CompareTo b = if a.Expr = b.Expr then 0 else if b.Expr.ToString().Length > a.Expr.ToString().Length then -1 else 1
+    interface IComparable with
+        member a.CompareTo b = 
+            match b with
+            | :? EExpr as e -> (a :> IComparable<EExpr>).CompareTo e
+            | _ -> failwith "This object is not an EExpr."
+    override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
+    override a.Equals (_b:obj) = 
+            match _b with 
+            | :? EExpr as e -> (a :> IEquatable<EExpr>).Equals e
+            | _ -> false
+    override x.ToString() = src (x.Expr)
+
 /// A statement that formally defines a set using a range, body, and an optional F# function for computing set membership.
 type SetComprehension<'t when 't: equality>(range:Expr<bool>, body: Expr<'t>, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     member val Range = expand range
     member val internal Range' = range
     member val Body = expand body
     member val internal Body' = body
-    member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is implemented for the set comprehension %A." sc)
+    member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is defined for the set comprehension %A." sc)
     override x.ToString() = 
-        let vars = body |> expand |> get_vars
+        let vars = body |> get_vars
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
-        sprintf "{%s%s:%s}" v (range |> expand |> src) (body |> expand |> src)
+        sprintf "{%s%s:%s}" v (src range) (src body)
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
+    override a.GetHashCode() = (a.ToString()).GetHashCode()
     override a.Equals (_b:obj) = 
             match _b with 
             | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
             | _ -> false
-    override a.GetHashCode() = (a.ToString()).GetHashCode() 
     new(body: Expr<'t>, test: SetComprehension<'t> -> 't -> bool) = 
         let b = getExprFromReflectedDefinition<'t> body in 
         SetComprehension(<@ true @>, body, test) 
     
 [<AutoOpen>]
 module SetComprehension = 
-    let (|ArraySeq|ListSeq|SetSeq|OtherSeq|) (s:IEnumerable<'t>) =
+    let (|ArraySeq|ListSeq|SetSeq|GenSeq|OtherSeq|) (s:IEnumerable<'t>) =
         match s with
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
         | _ when s.GetType().Name.StartsWith("FSharpSet") -> SetSeq
+        | :? seq<EExpr> -> GenSeq
         | _ -> OtherSeq
 
     let (|FiniteSeq|_|) x =

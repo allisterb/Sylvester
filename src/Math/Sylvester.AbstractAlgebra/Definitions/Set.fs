@@ -343,6 +343,12 @@ module Set =
 
     let infinite_seq5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
 
+    let infinite_seq_gen (f: Expr<int ->'t ->'t>) =
+        let r = Expr.Var(Var("n", typeof<int>))
+        let range = <@@ %%r >= 0 @@>
+        let body = body f
+        Seq.initInfinite(fun i -> EExpr(body.Substitute(fun v -> if v.Name = "n" then Some(Expr.Value i) else None))) |> Set.fromSeq
+
     let subseq(set: Set<'t>) (f:'t -> bool) = set.Subset f
 
     let of_type<'t when 't: equality> = fun (_:'t) -> true
