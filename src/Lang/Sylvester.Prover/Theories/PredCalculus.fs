@@ -18,7 +18,7 @@ module PredCalculus =
     let _distrib_or_forall = EquationalLogic._distrib_or_forall
     
     let fail_if_occurs_free x q = 
-        do if Patterns.occurs_free (x |> get_vars) q then failwithf "The variable(s) in expression %s occur free in the quantifier %s." (src x) (src q)
+        do if Patterns.occurs_free (x |> get_vars) q then failwithf "One of the variables in %s occurs free in the quantifier %s." (src x) (src q)
 
     (* Admissible rules *)
     

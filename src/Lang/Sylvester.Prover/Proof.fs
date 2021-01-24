@@ -481,7 +481,7 @@ module LogicalRules =
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
-    /// Instantiate a quantifier at a single point or value e.g forall' x P [x = e] = P [x = e].
+    /// Instantiate a quantifier at a single point or value e.g forall' x P[x := e] = P[x := e].
     let Instantiate (theory:Theory) (_quantifier:Expr) (_value:Expr) (steps: RuleApplication list) =
         let print_formula = theory.PrintFormula
         let quantifier, op, bound, body = 
