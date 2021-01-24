@@ -6,22 +6,24 @@ open System.Collections.Generic
 open FSharp.Quotations
 
 [<CustomEquality; CustomComparison>]
-type EExpr = EExpr of Expr with
-    member x.Expr = let (EExpr e) = x in e
-    interface IEquatable<EExpr> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
-    interface IComparable<EExpr> with
-        member a.CompareTo b = if a.Expr = b.Expr then 0 else if b.Expr.ToString().Length > a.Expr.ToString().Length then -1 else 1
-    interface IComparable with
-        member a.CompareTo b = 
-            match b with
-            | :? EExpr as e -> (a :> IComparable<EExpr>).CompareTo e
-            | _ -> failwith "This object is not an EExpr."
-    override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
-    override a.Equals (_b:obj) = 
-            match _b with 
-            | :? EExpr as e -> (a :> IEquatable<EExpr>).Equals e
-            | _ -> false
-    override x.ToString() = src (x.Expr)
+type SymExpr<'t> = SymExpr of Expr<'t> with
+     member x.Expr = let (SymExpr e) = x in e
+     interface IEquatable<SymExpr<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
+     interface IComparable<SymExpr<'t>> with
+         member a.CompareTo b = if a.Expr = b.Expr then 0 else if b.Expr.ToString().Length > a.Expr.ToString().Length then -1 else 1
+     interface IComparable with
+         member a.CompareTo b = 
+             match b with
+             | :? SymExpr<'t> as e -> (a :> IComparable<SymExpr<'t>>).CompareTo e
+             | _ -> failwith "This object is not an EExpr."
+     override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
+     override a.Equals (_b:obj) = 
+             match _b with 
+             | :? SymExpr<'t> as e -> (a :> IEquatable<SymExpr<'t>>).Equals e
+             | _ -> false
+     override x.ToString() = src (x.Expr)
+
+type any = SymExpr<obj>
 
 /// A statement that formally defines a set using a range, body, and an optional F# function for computing set membership.
 type SetComprehension<'t when 't: equality>(range:Expr<bool>, body: Expr<'t>, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
@@ -46,12 +48,12 @@ type SetComprehension<'t when 't: equality>(range:Expr<bool>, body: Expr<'t>, ?h
     
 [<AutoOpen>]
 module SetComprehension = 
-    let (|ArraySeq|ListSeq|SetSeq|GenSeq|OtherSeq|) (s:IEnumerable<'t>) =
+    let (|ArraySeq|ListSeq|SetSeq|SymExprSeq|OtherSeq|) (s:IEnumerable<'t>) =
         match s with
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
         | _ when s.GetType().Name.StartsWith("FSharpSet") -> SetSeq
-        | :? seq<EExpr> -> GenSeq
+        | :? seq<SymExpr<'t>> -> SymExprSeq
         | _ -> OtherSeq
 
     let (|FiniteSeq|_|) x =

@@ -17,6 +17,8 @@ module FsExpr =
     let src expr = Swensen.Unquote.Operators.decompile expr
     
     let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
+
+    let is_prop p = range_type p = typeof<bool>
    
     let getFieldInfo = function
     | FieldGet (_, fieldInfo) -> fieldInfo

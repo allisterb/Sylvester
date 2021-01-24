@@ -2,7 +2,7 @@
 
 open Sylvester
 open SetAlgebra
-let A,B,C = var3<Set<obj>>
+let A,B,C = var3<Set<any>>
 
 
 let p1 = proof set_algebra <@ A |+| A = A @> [

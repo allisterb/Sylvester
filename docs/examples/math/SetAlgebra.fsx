@@ -13,8 +13,9 @@ let n,t = var2<int>
 let Z = sequence [0.; 1.; 2.]
 Z.[1]
 
-let d = generator <@ fun n x -> x + n @> 
+let d = infinite_seq_gen <@ fun n (x:float) -> x + 1.0 @>  
 
-d.[3] |> src
-d.Function |> src
-d.Range |> src
+d.[0].Expr |> src 
+//d.[3] |> src
+//d.Function |> src
+//d.Range |> src
