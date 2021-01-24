@@ -1,6 +1,9 @@
 ﻿namespace Sylvester
 
+open FSharp.Quotations
 open PropCalculus
+
+//type NotOccursFree (vars) (expr:Expr)
 
 /// Predicate calculus using the axioms and rules of S.
 module PredCalculus =
@@ -14,8 +17,8 @@ module PredCalculus =
 
     let _distrib_or_forall = EquationalLogic._distrib_or_forall
     
-    let failIfOccursFree x q = 
-        do if occurs (x |> get_vars) q then failwithf "The variable(s) in expression %s occur free in the quantifier %s." (src x) (src q)
+    let fail_if_occurs_free x q = 
+        do if Patterns.occurs_free (x |> get_vars) q then failwithf "The variable(s) in expression %s occur free in the quantifier %s." (src x) (src q)
 
     (* Admissible rules *)
     
@@ -218,7 +221,7 @@ module PredCalculus =
 
     /// P |&| exists x N Q = (exists x N (P |&| Q)) 
     let distrib_and_exists_and x N P Q = ident pred_calculus <@ %P |&| exists %x %N %Q = (exists %x %N (%P |&| %Q)) @> [
-        do failIfOccursFree x P  
+        do fail_if_occurs_free x P  
         dual |> R |> L'
         double_negation P |> Commute |> L |> L'
         collect_not_or <@ not %P @> <@ forall %x %N (not %Q) @> |> L
@@ -229,7 +232,7 @@ module PredCalculus =
 
     /// exists x N P = (P |&| (exists x true N))
     let distrib_and_exists x N P = ident pred_calculus <@ exists %x %N %P = (%P |&| (exists' %x %N)) @> [
-        do failIfOccursFree x P
+        do fail_if_occurs_free x P
         distrib_and_exists_and x <@ true @> P N |> R
         trade_exists_and x N P |> L
         commute_and N P |> LR |> L'
@@ -237,7 +240,7 @@ module PredCalculus =
 
     /// exists x true N ==> ((exists x N (P ||| Q)) = (P ||| exists x N Q))
     let trade_exists_or x N P Q = theorem pred_calculus <@ exists' %x %N ==> ((exists %x %N (%P ||| %Q)) = (%P ||| exists %x %N %Q)) @> [
-        do failIfOccursFree x P
+        do fail_if_occurs_free x P
         distrib_and_exists x N <@ %P ||| %Q @> |> L |> R'
         distrib_and_or <@ exists' %x %N @> P Q |> CommuteL |> L |> R'
         distrib_and_exists x N Q |> Commute |> CommuteL |> L |> R'

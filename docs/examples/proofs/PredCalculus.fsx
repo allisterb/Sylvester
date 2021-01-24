@@ -141,7 +141,7 @@ let ``9.21`` = theorem pred_calculus <@ P |&| exists x N Q = (exists x N (P |&| 
 ]
 
 let ``9.22`` = theorem pred_calculus <@ exists x N P = (P |&| (exists' x N)) @> [
-    do failIfOccursFree x' P'
+    do fail_if_occurs_free x' P'
     distrib_and_exists_and x' <@ true @> P' N' |> R
     trade_exists_and x' N' P' |> L
     commute_and N' P' |> LR |> L'
