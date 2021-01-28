@@ -58,10 +58,9 @@ module Maxima =
     let stop (m:Maxima) = m.ConsoleProcess.Stop()
     
     let send (m:Maxima) (input:string) = 
-            !> m.ConsoleSession.Send.Line input 
-            >>|> (m.ConsoleSession.Expect.StartsWith("\n(%o", Nullable(m.ProcessTimeOut)))
-            |> wrap_result'
-            >>>= extract_output
-            >>= fun (_, r, n) -> 
-                do m.CurrentInputLine <- Int32.Parse n
-                r 
+        !> m.ConsoleSession.Send.Line input 
+        >>|> (m.ConsoleSession.Expect.StartsWith("\n(%o", Nullable(m.ProcessTimeOut))) |> wrap_result'
+        >>>= extract_output
+        >>= fun (_, r, n) -> 
+            do m.CurrentInputLine <- Int32.Parse n
+            r 

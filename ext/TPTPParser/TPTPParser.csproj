@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Antlr4.Runtime.Standard">
+      <HintPath>..\..\lib\netstandard2.0\Antlr4.Runtime.Standard.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
