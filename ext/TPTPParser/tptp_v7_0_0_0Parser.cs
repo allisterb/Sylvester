@@ -250,6 +250,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTptp_file(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTptp_file(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -306,6 +311,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTptp_input(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTptp_input(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -384,6 +394,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAnnotated_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAnnotated_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -478,6 +493,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTpi_annotated(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTpi_annotated(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -534,6 +554,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTpi_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTpi_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -582,6 +607,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_annotated(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_annotated(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -648,6 +678,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTfx_annotated(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTfx_annotated(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -712,6 +747,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_annotated(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_annotated(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -778,6 +818,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTcf_annotated(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTcf_annotated(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -842,6 +887,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_annotated(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_annotated(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -908,6 +958,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitCnf_annotated(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCnf_annotated(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -967,6 +1022,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAnnotations(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAnnotations(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1016,6 +1076,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFormula_role(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFormula_role(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1058,6 +1123,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1119,6 +1189,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_logic_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_logic_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1190,6 +1265,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_binary_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_binary_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1254,6 +1334,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_binary_pair(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_binary_pair(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1301,6 +1386,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_binary_tuple(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_binary_tuple(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1366,6 +1456,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_or_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_or_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1451,6 +1546,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_and_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_and_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1534,6 +1634,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_apply_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_apply_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1630,6 +1735,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_unitary_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_unitary_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1717,6 +1827,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_quantified_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_quantified_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1763,6 +1878,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_quantification(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_quantification(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1826,6 +1946,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_variable(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_variable(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1881,6 +2006,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_typed_variable(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_typed_variable(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1925,6 +2055,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_unary_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_unary_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1977,6 +2112,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_atom(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_atom(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2078,6 +2218,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_function(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_function(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2157,6 +2302,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_conn_term(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_conn_term(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2234,6 +2384,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_conditional(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_conditional(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2283,6 +2438,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_let(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_let(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2327,6 +2487,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_arguments(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_arguments(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2369,6 +2534,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_type_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_type_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2414,6 +2584,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_typeable_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_typeable_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2500,6 +2675,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_subtype(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_subtype(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2547,6 +2727,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_top_level_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_top_level_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2606,6 +2791,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_unitary_type(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_unitary_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2645,6 +2835,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_apply_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_apply_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2691,6 +2886,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_binary_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_binary_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2757,6 +2957,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_mapping_type(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_mapping_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2819,6 +3024,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_xprod_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_xprod_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2904,6 +3114,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_union_type(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_union_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2988,6 +3203,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_sequent(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_sequent(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3048,6 +3268,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_tuple(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_tuple(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -3122,6 +3347,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_formula_list(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_formula_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3180,6 +3410,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTfx_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTfx_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3232,6 +3467,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTfx_logic_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTfx_logic_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3277,6 +3517,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -3342,6 +3587,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_logic_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_logic_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3403,6 +3653,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_binary_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_binary_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3461,6 +3716,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_binary_nonassoc(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_binary_nonassoc(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3505,6 +3765,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_binary_assoc(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_binary_assoc(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -3564,6 +3829,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_or_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_or_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -3648,6 +3918,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_and_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_and_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -3741,6 +4016,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_unitary_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_unitary_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3825,6 +4105,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_quantified_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_quantified_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3872,6 +4157,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_variable_list(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_variable_list(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -3931,6 +4221,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_variable(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_variable(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -3986,6 +4281,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_typed_variable(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_typed_variable(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4033,6 +4333,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_unary_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_unary_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -4102,6 +4407,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_atomic_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_atomic_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4144,6 +4454,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_conditional(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_conditional(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -4196,6 +4511,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -4262,6 +4582,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_term_defns(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_term_defns(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4324,6 +4649,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_term_list(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_term_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4385,6 +4715,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_term_defn(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_term_defn(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -4454,6 +4789,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_term_binding(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_term_binding(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4515,6 +4855,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_formula_defns(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_formula_defns(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -4578,6 +4923,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_formula_list(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_formula_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4639,6 +4989,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_formula_defn(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_formula_defn(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -4708,6 +5063,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_formula_binding(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_formula_binding(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4774,6 +5134,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_sequent(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_sequent(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4833,6 +5198,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_formula_tuple(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_formula_tuple(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -4891,6 +5261,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_formula_tuple_list(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_formula_tuple_list(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -4952,6 +5327,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_typed_atom(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_typed_atom(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5017,6 +5397,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_subtype(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_subtype(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5067,6 +5452,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_top_level_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_top_level_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5137,6 +5527,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTf1_quantified_type(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTf1_quantified_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5184,6 +5579,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_monotype(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_monotype(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5246,6 +5646,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_unitary_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_unitary_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5318,6 +5723,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_atomic_type(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_atomic_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5388,6 +5798,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_type_arguments(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_type_arguments(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5447,6 +5862,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_mapping_type(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_mapping_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5495,6 +5915,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_xprod_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_xprod_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5576,6 +6001,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTcf_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTcf_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5630,6 +6060,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTcf_logic_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTcf_logic_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5704,6 +6139,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTcf_quantified_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTcf_quantified_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5751,6 +6191,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5807,6 +6252,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_logic_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_logic_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5861,6 +6311,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_binary_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_binary_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -5920,6 +6375,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_binary_nonassoc(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_binary_nonassoc(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -5964,6 +6424,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_binary_assoc(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_binary_assoc(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6023,6 +6488,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_or_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_or_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6107,6 +6577,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_and_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_and_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6194,6 +6669,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_unitary_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_unitary_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6266,6 +6746,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_quantified_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_quantified_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6313,6 +6798,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_variable_list(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_variable_list(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6374,6 +6864,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_unary_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_unary_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6447,6 +6942,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_infix_unary(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_infix_unary(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6494,6 +6994,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_atomic_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_atomic_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6553,6 +7058,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_plain_atomic_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_plain_atomic_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6595,6 +7105,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_defined_atomic_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_defined_atomic_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6648,6 +7163,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_defined_plain_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_defined_plain_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6694,6 +7214,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_defined_infix_formula(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_defined_infix_formula(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6735,6 +7260,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_system_atomic_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_system_atomic_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6781,6 +7311,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_plain_term(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_plain_term(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -6840,6 +7375,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_defined_term(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_defined_term(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6897,6 +7437,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_defined_atomic_term(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_defined_atomic_term(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -6942,6 +7487,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_defined_plain_term(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_defined_plain_term(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7004,6 +7554,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_system_term(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_system_term(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7061,6 +7616,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_arguments(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_arguments(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7128,6 +7688,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_term(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_term(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7216,6 +7781,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_function_term(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_function_term(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7287,6 +7857,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_conditional_term(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_conditional_term(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7338,6 +7913,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_let_term(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_let_term(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7400,6 +7980,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_tuple_term(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_tuple_term(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7464,6 +8049,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_sequent(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_sequent(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7522,6 +8112,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_formula_tuple(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_formula_tuple(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7582,6 +8177,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_formula_tuple_list(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_formula_tuple_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7636,6 +8236,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitCnf_formula(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCnf_formula(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7710,6 +8315,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitCnf_disjunction(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCnf_disjunction(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -7790,6 +8400,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitCnf_literal(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCnf_literal(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7855,6 +8470,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_quantifier(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_quantifier(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7919,6 +8539,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTh0_quantifier(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTh0_quantifier(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -7966,6 +8591,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTh1_quantifier(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTh1_quantifier(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8018,6 +8648,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_pair_connective(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_pair_connective(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8093,6 +8728,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitThf_unary_connective(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitThf_unary_connective(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8153,6 +8793,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTh1_unary_connective(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTh1_unary_connective(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8202,6 +8847,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTff_pair_connective(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTff_pair_connective(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8261,6 +8911,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFof_quantifier(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFof_quantifier(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8313,6 +8968,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitBinary_connective(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBinary_connective(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8361,6 +9021,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAssoc_connective(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAssoc_connective(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8408,6 +9073,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitUnary_connective(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUnary_connective(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8447,6 +9117,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitType_constant(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitType_constant(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8488,6 +9163,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitType_functor(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitType_functor(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8525,6 +9205,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDefined_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefined_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8565,6 +9250,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitSystem_type(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSystem_type(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8608,6 +9298,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAtom(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAtom(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8668,6 +9363,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitUntyped_atom(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUntyped_atom(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8721,6 +9421,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDefined_proposition(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefined_proposition(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8758,6 +9463,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDefined_predicate(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefined_predicate(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8797,6 +9507,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDefined_infix_pred(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefined_infix_pred(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8847,6 +9562,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitConstant(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitConstant(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8886,6 +9606,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFunctor(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFunctor(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -8927,6 +9652,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitSystem_constant(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSystem_constant(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -8966,6 +9696,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitSystem_functor(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSystem_functor(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9007,6 +9742,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDefined_constant(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefined_constant(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9046,6 +9786,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDefined_functor(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefined_functor(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9087,6 +9832,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDefined_term(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefined_term(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9142,6 +9892,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitVariable(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitVariable(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9191,6 +9946,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitSource(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSource(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9267,6 +10027,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitSources(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSources(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9324,6 +10089,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDag_source(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDag_source(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9387,6 +10157,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInference_record(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInference_record(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9433,6 +10208,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInference_rule(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInference_rule(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9472,6 +10252,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInference_parents(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInference_parents(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9532,6 +10317,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitParent_list(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParent_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9590,6 +10380,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitParent_info(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParent_info(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9640,6 +10435,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitParent_details(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParent_details(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9683,6 +10483,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInternal_source(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInternal_source(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9734,6 +10539,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitIntro_type(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIntro_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9779,6 +10589,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitExternal_source(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExternal_source(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9843,6 +10658,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFile_source(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFile_source(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9895,6 +10715,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFile_info(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFile_info(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -9938,6 +10763,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTheory(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTheory(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -9989,6 +10819,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitTheory_name(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTheory_name(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10031,6 +10866,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitCreator_source(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCreator_source(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10084,6 +10924,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitCreator_name(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCreator_name(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10123,6 +10968,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitOptional_info(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOptional_info(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10167,6 +11017,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitUseful_info(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUseful_info(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10231,6 +11086,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInfo_items(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInfo_items(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10291,6 +11151,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInfo_item(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInfo_item(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10353,6 +11218,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFormula_item(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFormula_item(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10407,6 +11277,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitDescription_item(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDescription_item(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10448,6 +11323,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitIquote_item(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIquote_item(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10499,6 +11379,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInference_item(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInference_item(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10571,6 +11456,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInference_status(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInference_status(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10626,6 +11516,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitStatus_value(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitStatus_value(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10672,6 +11567,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInference_info(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInference_info(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10717,6 +11617,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAssumptions_record(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAssumptions_record(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10760,6 +11665,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitRefutation(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitRefutation(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10805,6 +11715,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitNew_symbol_record(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNew_symbol_record(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10854,6 +11769,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitNew_symbol_list(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNew_symbol_list(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -10913,6 +11833,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitPrincipal_symbol(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPrincipal_symbol(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -10971,6 +11896,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitInclude(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInclude(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11023,6 +11953,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFormula_selection(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFormula_selection(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11068,6 +12003,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitName_list(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitName_list(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -11129,6 +12069,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitGeneral_term(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGeneral_term(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -11202,6 +12147,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitGeneral_data(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGeneral_data(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -11282,6 +12232,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitGeneral_function(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGeneral_function(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11336,6 +12291,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFormula_data(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFormula_data(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -11419,6 +12379,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitGeneral_list(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGeneral_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11478,6 +12443,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitGeneral_terms(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGeneral_terms(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11534,6 +12504,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitName(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitName(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11588,6 +12563,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAtomic_word(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAtomic_word(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11635,6 +12615,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAtomic_defined_word(this);
 		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAtomic_defined_word(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -11672,6 +12657,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitAtomic_system_word(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAtomic_system_word(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -11712,6 +12702,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitNumber(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNumber(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -11759,6 +12754,11 @@ public partial class tptp_v7_0_0_0Parser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			Itptp_v7_0_0_0Listener typedListener = listener as Itptp_v7_0_0_0Listener;
 			if (typedListener != null) typedListener.ExitFile_name(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Itptp_v7_0_0_0Visitor<TResult> typedVisitor = visitor as Itptp_v7_0_0_0Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFile_name(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 

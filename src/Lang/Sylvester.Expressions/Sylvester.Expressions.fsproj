@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="FsExpr.fs" />
+    <Compile Include="TPTP.fs" />
     <Compile Include="Numbers.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />
@@ -17,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\ext\mathnet-symbolics\src\Symbolics\Symbolics.fsproj" />
+    <ProjectReference Include="..\..\..\ext\TPTPParser\TPTPParser.csproj" />
     <ProjectReference Include="..\..\..\ext\unquote\Unquote.NetStandard\Unquote.NetStandard.fsproj" />
   </ItemGroup>
 
@@ -25,6 +27,12 @@
     <PackageReference Include="FParsec" Version="1.0.3" />
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
     <PackageReference Include="MathNet.Numerics.FSharp" Version="4.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Antlr4.Runtime.Standard">
+      <HintPath>..\..\..\lib\netstandard2.0\Antlr4.Runtime.Standard.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="TPTP\BOO006-2.p">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="ETests.fs" />
     <Compile Include="PropCalculusTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -22,5 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lang\Sylvester.Prover\Sylvester.Prover.fsproj" />
   </ItemGroup>
+
+  <ItemGroup />
 
 </Project>

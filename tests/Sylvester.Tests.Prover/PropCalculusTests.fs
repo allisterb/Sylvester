@@ -15,6 +15,7 @@ module PropCalculusTests =
 
     
     open Vars
+    (*
     [<Fact>]
     let ``operator works``() =
         
@@ -24,6 +25,7 @@ module PropCalculusTests =
             //ident_forall_true' x' |> R
         ]
         Assert.NotNull pp
+    *)
         (*
 
         let pp = proof pred_calculus <@ exists x N (forall y Q P) ==> (forall y Q (exists x N P)) @> [
