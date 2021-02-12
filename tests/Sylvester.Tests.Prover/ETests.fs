@@ -12,7 +12,7 @@ module ETests =
         let x,y = var2<bool>
 
     [<Fact>]
-    let ``operator works``() =
-        let xx = TPTP.parse_file "TPTP\\BOO006-2.p"
-        ()
+    let ``Can parse propositional logic``() =
+        let xx = TPTP.parse_file "TPTP\\Prop1.p"
+        Assert.NotNull xx
         //Assert.NotNull(TPTP.parse_file "C:\\cygwin64\\home\\Allister\\eprover\\EXAMPLE_PROBLEMS\\TPTP\\BOO006-1.p")

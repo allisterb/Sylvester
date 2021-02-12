@@ -11,7 +11,7 @@ open TPTPParser
 module TPTP =
     type Parser(text:string) = 
         inherit tptp_v7_0_0_0Parser(new CommonTokenStream(new tptp_v7_0_0_0Lexer(new AntlrInputStream(text), new StringWriter(new StringBuilder()), new StringWriter(new StringBuilder()))))
-        member x.GetOutput() = let sw = (x.Output :?> StringWriter) in sw.GetStringBuilder().ToString()
+        member x.GetOutput() = let sw = x.Output :?> StringWriter in sw.GetStringBuilder().ToString()
         member x.GetErrorOutput() = let sw = (x.ErrorOutput :?> StringWriter) in sw.GetStringBuilder().ToString()
         member x.FileContext = x.tptp_file()
     

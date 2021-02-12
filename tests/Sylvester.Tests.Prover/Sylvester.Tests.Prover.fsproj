@@ -8,6 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="TPTP\Prop1.p">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TPTP\BOO006-2.p">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
