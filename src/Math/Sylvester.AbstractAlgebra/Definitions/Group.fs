@@ -121,4 +121,4 @@ module Group =
                     member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         } 
 
-    let Zero = FiniteAbelianGroup<N<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
+    let Zero = FiniteAbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)

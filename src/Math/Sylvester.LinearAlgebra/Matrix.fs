@@ -10,12 +10,14 @@ open MathNet.Numerics
 
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    (data: 't array array, ?expr: Expr<'t list list>) =
-    do if data |> Array.forall (fun a -> a.Length = data.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
+    internal (data: 't array array, ?expr: Expr<'t list list>) =
+    do if expr.IsNone && data |> Array.forall (fun a -> a.Length = data.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let matrix = lazy LinearAlgebra.DenseMatrix.ofColumnArrays data
+    
     member val _Array = data
     member val _Matrix = matrix
     member val Expr = expr
+    member val IsSymbolic = expr.IsSome
     member val Display = "foo" 
         //match typeof<'t> with
         //| LinearAlgebraNumericOpType _ -> matrix.Value.ToString()  
@@ -30,12 +32,14 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
         let values = 
             match expand x with
             | WithoutVariables _ -> x |> expand_list_values<'t> |> List.map List.toArray |> List.toArray
-            | _ -> [||]
+            | _ -> x |> expand_list_values''<'t> |> List.map List.toArray |> List.toArray
         Matrix<'t>(values, x)
+
     member x.toDouble() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix
     member x.toInt32() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix
     member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix
     member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix
+    
     static member Ops = defaultLinearAlgebraOps
     static member create(x: Array) = Matrix(x :?> 't [] [])
     static member create(x:_Matrix<'t>) = Matrix<'t>(let a = x.AsColumnArrays() in if not(isNull (a)) then a else x.ToColumnArrays()) 
@@ -43,6 +47,7 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     static member internal toInt32(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix.create
     static member internal toInt64(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix.create
     static member internal toRational(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix.create
+    
     static member (+)(l : Matrix<'t>, r : Matrix<'t>) :Matrix<'t>= 
         match typeof<'t> with
         | LinearAlgebraNumericOpType _ -> let res = Matrix<'t>.Ops.MatAdd l._Matrix.Value r._Matrix.Value in res |> Matrix.create

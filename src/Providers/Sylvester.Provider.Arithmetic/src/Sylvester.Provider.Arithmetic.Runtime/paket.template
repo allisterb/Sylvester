@@ -18,7 +18,7 @@ requireLicenseAcceptance
     false
 iconUrl https://github.com/allisterb/Compute.NET/raw/master/numanalysis.png
 
-copyright Copyright(c) 2019 2020 by Allister Beharry
+copyright Copyright(c) 2019 2020 2021 by Allister Beharry
 
 tags
     F# fsharp math arithmetic type-level

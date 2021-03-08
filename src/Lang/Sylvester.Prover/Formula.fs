@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open FSharp.Quotations
+
 // Make Formula an alias for the reflected definition attribute.
 type Formula = ReflectedDefinitionAttribute
 
@@ -22,11 +24,18 @@ module Formula =
     let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
     let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
 
+    let var'<'t> v = Unchecked.defaultof<'t>, Expr.Var(Var(v, typeof<'t>))
+    let var2'<'t> v1 v2 = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @> , <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>
+    let var3'<'t> v1 v2 v3 = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>
+    let var4'<'t> v1 v2 v3 v4 = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v4, typeof<'t>))):'t @>
+    
     (* Propositions and predicates *)
 
-    let prop (_:string) = Unchecked.defaultof<bool>
-    let pred<'t> = fun (_:'t) -> Unchecked.defaultof<bool>
-
+    let prop p1 = var'<bool> p1
+    let prop2 p1 p2 = var2'<bool> p1 p2
+    let pred<'t> p = (fun (_:'t) -> Unchecked.defaultof<bool>), <@ %%(Expr.Var(Var(p, typeof<'t>))):'t @>
+    let pred2<'t> p1 p2 = (fun (_:'t) -> Unchecked.defaultof<bool>), (fun (_:'t) -> Unchecked.defaultof<bool>), <@ %%(Expr.Var(Var(p1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(p2, typeof<'t>))):'t @>
+    
     (* Quantifiers *)
 
     [<Symbol "\u2200">]

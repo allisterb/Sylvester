@@ -8,7 +8,7 @@
     <FileVersion>0.2.2.0</FileVersion>
     <Authors>Allister Beharry</Authors>
     <Copyright>Copyright © 2019, 2020 Allister Beharry</Copyright>
-    <Version>0.2.2</Version>
+    <Version>0.2.7</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">

@@ -3,6 +3,7 @@ namespace Sylvester.Collections
 open System
 open System.Collections.Generic
 
+open Sylvester
 open Sylvester.Arithmetic
 
 /// An array of n objects.

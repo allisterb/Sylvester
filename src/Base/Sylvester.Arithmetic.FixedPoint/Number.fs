@@ -3,9 +3,9 @@
 open System
 
 type Number = 
-  abstract IntVal:int
   abstract Val:int64
-  abstract UVal:uint64
+  abstract IntVal:int
+  abstract UIntVal:uint64
 
 [<AutoOpen>]
 module Number = 

@@ -70,6 +70,14 @@ module FsExpr =
         | WithValue(v, t, _ ) when t = typeof<'t> -> v :?> 't
         | expr -> failwithf "The expression %A has type %s and is not like a value of type %s." (expr) (expr.Type.Name) (typeof<'t>.Name)
 
+    let getVal''<'t> =
+        function
+        | Value(v, t) when t = typeof<'t> -> v :?> 't
+        | ValueWithName(v, t, _) when t = typeof<'t> -> v :?> 't
+        | WithValue(v, t, _ ) when t = typeof<'t> -> v :?> 't
+        | e when e.Type = typeof<'t> -> Unchecked.defaultof<'t>
+        | expr -> failwithf "The expression %A has type %s and is not a value or expression of type %s." (expr) (expr.Type.Name) (typeof<'t>.Name)
+
     let hasCase<'t> case = FSharpType.GetUnionCases(typeof<'t>) |> Array.tryFind(fun c -> c.Name = case)
     
     let sequal (l:Expr) (r:Expr) = 
@@ -259,7 +267,19 @@ module FsExpr =
             | List l -> l |> List.map getVal'<'t> 
             | _ -> failwithf "The expression %s is not a list." <| src el)
 
+    let expand_list_values''<'t> expr = 
+        expr 
+        |> expand_list 
+        |> List.map (fun el -> 
+            match el with 
+            | List l -> l |> List.map getVal''<'t> 
+            | _ -> failwithf "The expression %s is not a list." <| src el)
+
     let expand_equality =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
         | expr -> failwithf "The expression %s is not a equality expression." <| src expr
+
+    let sprint_list_values list =
+        let l = expand_list list
+        l

@@ -290,7 +290,7 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
     new (items:seq<'t>) = FiniteSet(items |> Seq.toArray)
 
-and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<N<1>, 't>([|e|])
+and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<Nat<1>, 't>([|e|])
 
 and Family<'t when 't : equality> = Set<'t> list
 
@@ -331,7 +331,7 @@ module Set =
 
     let subset(set: Set<'t>) (sub:Expr<bool>) = set.Subset sub
 
-    let sequence (s: seq<'t>) = Seq s
+    let seq (s: seq<'t>) = Seq s
 
     let infinite_seq g = g |> Seq.initInfinite |> Set.fromSeq
 
@@ -353,7 +353,7 @@ module Set =
     let of_type<'t when 't: equality> = fun (_:'t) -> true
     
     /// A singleton set containing 0. 
-    let Zero = Singleton<Z>(0)
+    let Zero = Singleton<int>(0)
 
     /// The universal set.
     let U<'t when 't : equality> = set <@ true @> <@ Unchecked.defaultof<'t> @>  

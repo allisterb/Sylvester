@@ -2,6 +2,7 @@ namespace Sylvester.Collections
  
 open System
 
+open Sylvester
 open Sylvester.Arithmetic
 
 [<AbstractClass>]

@@ -84,5 +84,3 @@ module card =
     let nine = new nine()
 
     let ten = new ten()
-
-    

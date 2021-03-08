@@ -13,41 +13,43 @@ module N10 =
 
     let inline isNotZero (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10)  = !! (isZero (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10))
 
-    [<StructuredFormatDisplay("N<{Val}>")>]
+    [<StructuredFormatDisplay("Nat<{UIntVal}>")>]
     type N10<'d10, 'd9, 'd8, 'd7, 'd6, 'd5, 'd4, 'd3, 'd2, 'd1 when 'd10 :> Base10Digit and 'd9 :> Base10Digit and 'd8 :> Base10Digit and 'd7 :> Base10Digit and 'd6 :> Base10Digit
         and 'd5 :> Base10Digit and 'd4 :> Base10Digit and 'd3 :> Base10Digit and 'd2 :> Base10Digit and 'd1 :> Base10Digit> 
         (n10: 'd10, n9:'d9, n8:'d8, n7:'d7, n6:'d6, n5:'d5, n4:'d4, n3:'d3, n2:'d2, n1:'d1)  = 
 
         interface Number with 
-            member val UVal = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL) with get
+            member val UIntVal = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL) with get
             member val Val = Convert.ToInt64(n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)) with get            
             member val IntVal = Checked.int(n1.Val * 1 + n2.Val * 10 + n3.Val * 100 + n4.Val * 1000 + n5.Val * 10000 + n6.Val * 100000 + n7.Val * (1000000) + n8.Val * (10000000) + n9.Val * (100000000) + n10.Val * (1000000000)) with get
 
-        member x.Number = x :> Number
+        member x.Nat = x :> Number
 
-        member x.Val = Convert.ToInt64(n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL))
+        member val Val = Convert.ToInt64(n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL))
 
-        member x.Digits = (n10, n9, n8, n7, n6, n5, n4, n3, n2, n1)
+        member val UIntVal = n1.Val_ * 1UL + n2.Val_ * 10UL + n3.Val_ * 100UL + n4.Val_ * 1000UL + n5.Val_ * 10000UL + n6.Val_ * 100000UL + n7.Val_ * (1000000UL) + n8.Val_ * (10000000UL) + n9.Val_ * (100000000UL) + n10.Val_ * (1000000000UL)
+        
+        member val Digits = (n10, n9, n8, n7, n6, n5, n4, n3, n2, n1)
 
-        member x.Digit1 = n1
+        member val Digit1 = n1
 
-        member x.Digit2 = n2
+        member val Digit2 = n2
 
-        member x.Digit3 = n3
+        member val Digit3 = n3
 
-        member x.Digit4 = n4
+        member val Digit4 = n4
 
-        member x.Digit5 = n5
+        member val Digit5 = n5
 
-        member x.Digit6 = n6
+        member val Digit6 = n6
 
-        member x.Digit7 = n7
+        member val Digit7 = n7
 
-        member x.Digit8 = n8
+        member val Digit8 = n8
 
-        member x.Digit9 = n9
+        member val Digit9 = n9
 
-        member x.Digit10 = n10
+        member val Digit10 = n10
 
         new() = N10(digit<'d10>(), digit<'d9>(), digit<'d8>(), digit<'d7>(), digit<'d6>(), digit<'d5>(), digit<'d4>(), digit<'d3>(), digit<'d2>(), digit<'d1>())
 
@@ -170,7 +172,7 @@ module N10 =
 
         static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : uint32 = Checked.uint32(let n = l :> Number in n.IntVal)
 
-        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : uint64 = let n = l :> Number in n.UVal
+        static member inline op_Explicit (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>) : uint64 = let n = l :> Number in n.UIntVal
         
         static member inline (+) (l: N10<'ld10, 'ld9, 'ld8, 'ld7, 'ld6, 'ld5, 'ld4, 'ld3, 'ld2, 'ld1>, r:int) = Checked.int((int) l +  r)
 

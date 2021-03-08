@@ -51,27 +51,27 @@ module Dimension =
     let ten = new ten()
 
 module rank = 
-    type zero = N<0>
+    type zero = Nat<0>
 
-    type one = N<1>
+    type one = Nat<1>
 
-    type two = N<2>
+    type two = Nat<2>
 
-    type three = N<3>
+    type three = Nat<3>
 
-    type four = N<4>
+    type four = Nat<4>
 
-    type five = N<5>
+    type five = Nat<5>
 
-    type six = N<6>
+    type six = Nat<6>
 
-    type seven = N<7>
+    type seven = Nat<7>
 
-    type eight = N<8>
+    type eight = Nat<8>
 
-    type nine = N<9>
+    type nine = Nat<9>
 
-    type ten = N<10>
+    type ten = Nat<10>
 
     let zero = new zero()
 

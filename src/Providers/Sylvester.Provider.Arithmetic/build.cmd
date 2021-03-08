@@ -1,2 +1,5 @@
 @echo off
-dotnet build -c release
+echo Building project in Release mode...
+dotnet build -c Release
+echo Building project in Debug mode...
+dotnet build -c Debug

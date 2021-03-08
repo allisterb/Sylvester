@@ -210,23 +210,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     static member op_Equality (l:Rational, r:Rational) = l.Equals r
     static member op_Inequality (l:Rational, r:Rational) = not <| l.Equals r
 
-type Z = int
-
-type Q = Rational
-
 type real = float
 
-type real32 = float
-
-type R = real
-
-type R2 = R * R
-
-type R3 = R * R * R
-
-type R4 = R * R * R * R
-
-type C = Complex
+type complex = Complex
 
 [<RequireQualifiedAccess>]
  module NumericLiteralQ = 

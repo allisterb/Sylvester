@@ -2,19 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <AssemblyVersion>0.2.3.0</AssemblyVersion>
-    <FileVersion>0.2.3.0</FileVersion>
-    <Version>0.2.3</Version>
+    <AssemblyVersion>0.2.7.0</AssemblyVersion>
+    <FileVersion>0.2.7.0</FileVersion>
+    <Version>0.2.7</Version>
     <Authors>Allister Beharry</Authors>
     <Product>Sylvester</Product>
-    <Copyright>Copyright © 2019, 2020 Allister Beharry</Copyright>
+    <Copyright>Copyright © 2019, 2020 2021 Allister Beharry</Copyright>
     <Description>Sylvester number-parameterized collection types. These collection types can perform static verification of lengths and indices as long as some information about these values is available at compile time.</Description>
     <PackageProjectUrl>https://github.com/allisterb/Sylvester/tree/master/Base/Sylvester.Collections</PackageProjectUrl>
     <RepositoryUrl>https://github.com/allisterb/Sylvester.git</RepositoryUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageTags>type-level</PackageTags>
+    <PackageTags>fsharp type-level</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Add ICollection interface</PackageReleaseNotes>
+    <PackageReleaseNotes>Sync with 0.2.7 version of Sylvester.Arithmetic</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.7" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,8 +17,6 @@
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
-    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.4" />
-    <PackageReference Include="Sylvester.Collections" Version="0.2.3" />
 
   </ItemGroup>
 

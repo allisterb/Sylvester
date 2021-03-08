@@ -14,4 +14,8 @@
     <ProjectReference Include="..\..\..\Base\Sylvester.Runtime\Sylvester.Runtime.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
+  </ItemGroup>
+
 </Project>

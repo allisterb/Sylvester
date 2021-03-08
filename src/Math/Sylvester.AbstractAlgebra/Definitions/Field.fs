@@ -1,8 +1,5 @@
 ﻿namespace Sylvester
 
-open System.Collections
-
-open Sylvester.Arithmetic
 open Sylvester.Collections
 
 /// Set of elements closed under a left-associative commutative invertible operation and a 2nd left-associative commutative invertible operation whcih distributes over the first.
@@ -21,10 +18,11 @@ type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicati
         member val MulGroup = multiplicativeGroup
 
 [<AutoOpen>]
-module Real =
-    let reals = let x = var<real> in SetComprehension<real>(<@ x @>, (fun _ _ -> true)) |> Set 
-    let R = Field(AdditiveGroup(reals), MultiplicativeGroup(reals))
+module Field = 
+    let R = 
+        let reals = let x = var<real> in SetComprehension<real>(<@ x @>, (fun _ _ -> true)) |> Set in
+        Field(AdditiveGroup(reals), MultiplicativeGroup(reals))
     let open_interval left right = R.Set.Subset(fun x -> x > left && x < right)
     let closed_interval left right = R.Set.Subset(fun x -> x >= left && x <= right)
-    let line (origin:R) (step:R) = infinite_seq (fun n -> origin + (((float) n) * step))
+    let line (origin:real) (step:real) = infinite_seq (fun n -> origin + (((float) n) * step))
     let axis step = line 0.0 step

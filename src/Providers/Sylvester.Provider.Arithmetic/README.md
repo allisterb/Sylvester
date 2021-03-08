@@ -9,7 +9,7 @@ open Sylvester.Arithmetic
 open Sylvester.Arithmetic.N10
 
 ///Create typed representations of some natural numbers
-let a,b,c = new N<400>(), new N<231111>(), new N<6577700>()
+let a,b,c = new Nat<400>(), new Nat<231111>(), new Nat<6577700>()
 
 a + b + c
 ```
@@ -17,7 +17,7 @@ a + b + c
 
 
 
-    N<6809211UL>
+    Nat<6809211UL>
 
 
 
@@ -124,6 +124,6 @@ myop seven zero eight ten  ///Program compiles once the parameters to myop satis
 
 
 
-    N<25UL>
+    Nat<25UL>
 
 
