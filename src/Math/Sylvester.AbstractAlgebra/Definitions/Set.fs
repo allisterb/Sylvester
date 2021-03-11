@@ -78,11 +78,17 @@ with
         | Seq _ -> failwith "A sequence does not have a body expression. Use a set comprehension instead."  
         | Set s -> s.Body 
     
+
     member x.Item([<ReflectedDefinition(true)>] e: Expr<'t>) : Expr =
         match x with
         | Empty -> failwith "The empty set has no elements."
-        | Seq _ -> failwith "A sequence does not have a body expression. Use a set comprehension instead."  
-        | Set s -> expand (s.Body.Substitute(fun _ -> Some (e.Raw)))
+        | Seq se -> 
+            if typeof<'t> = typeof<int> then 
+                let i = box((getExprFromReflectedDefinition<'t> e)) :?> int
+                let v = Seq.item i se in Expr.Value v
+            else
+                failwith "A sequence does not have a body expression. Use a set comprehension instead."  
+        | Set sc -> expand (sc.Body.Substitute(fun _ -> Some (e.Raw)))
     
     member x.Item(e: obj) : 't =
         match x with
@@ -90,6 +96,7 @@ with
         | Seq s -> 
             match e with
             | :? int as i -> Seq.item i s
+            | :? uint32 as i -> Seq.item ((int) i) s
             | :? string as str ->
                 match Int32.TryParse str with
                 | true, i -> Seq.item i s
@@ -331,7 +338,7 @@ module Set =
 
     let subset(set: Set<'t>) (sub:Expr<bool>) = set.Subset sub
 
-    let seq (s: seq<'t>) = Seq s
+    let sseq (s: seq<'t>) = Seq s
 
     let infinite_seq g = g |> Seq.initInfinite |> Set.fromSeq
 

@@ -212,8 +212,6 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
 
 type real = float
 
-type complex = Complex
-
 [<RequireQualifiedAccess>]
  module NumericLiteralQ = 
    let zero = Rational.Zero 
@@ -233,7 +231,7 @@ module Numbers =
         function
         | t when t.Name = "Int64" -> Some t
         | _ -> None
-    let (|BigRationalTyp|_|): Type -> Type option =
+    let (|BigRationalType|_|): Type -> Type option =
         function
         | t when t.Name = "BigRational" -> Some t
         | _ -> None
