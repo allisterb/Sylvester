@@ -14,7 +14,7 @@ open Sylvester.Collections
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
-/// A set defined by the distinct elements of a sequence i.e. a set that is the co-domain of a function from N -> 't.
+/// A set defined by the distinct values of a sequence i.e. a set that is the co-domain of a function from N -> 't.
 | Seq of seq<'t>
 /// A set of elements formally defined by a range and a body expression. 
 | Set of SetComprehension<'t>
@@ -23,7 +23,10 @@ with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
+            |Seq s -> 
+                match s with
+                | :? HugeSeq<'t> as hs -> (hs :> IEnumerable<'t>).GetEnumerator()
+                | _ -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
             |Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
@@ -108,7 +111,7 @@ with
             | _ -> failwith "A sequence must be indexed by an integer expression."
         | Set _ -> failwith "Cannot enumerate a set defined by a set comprehension. Use a sequence instead."
 
-    /// Create a subset of a sequence using a predicate.
+    /// Create a subset of a sequence using a filyer.
     member x.Subset(f:'t -> bool) = 
         match x with
         | Empty -> failwith "The empty set has no subsets."
@@ -165,10 +168,10 @@ with
        | _ -> failwith "Cannot get the length of a set comprehension. Use a finite sequence instead."
 
     /// Set of all subsets.
-    member a.Powerset =
+    member a.Powerset : Set<Set<'t>>=
         match a with
         | Empty -> Empty
-        | Seq _ ->
+        | Seq s ->
                 // From http://www.fssnip.net/ff/title/Sequence-of-all-Subsets-of-a-set by Isaiah Permulla
                 // using bit pattern to generate subsets
                 let max_bits x = 
@@ -180,16 +183,19 @@ with
                         let len = a.Length
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i a}
-                        seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
+                        lazy seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
+                if a.Length <= 18 then 
+                    Seq (subsets.Force()) 
+                 else
+                    let ss = HugeSeq(subsets) :> IEnumerable<Set<'t>> in Seq ss
                 
-                Seq subsets   
         | _ -> failwith "Cannot enumerate the power set of a set comprehension. Use a sequence instead."
 
-    member x.ToSubsets() =
+    member x.AsSingletons() =
         match x with
-        | Empty -> failwith "The empty set has no subsets."
+        | Empty -> failwith "The empty set has no elements."
         | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
-        | Set _ -> failwith "Cannot enumerate all subsets of a set comprehension. Use a sequence instead."
+        | Set _ -> failwith "Cannot enumerate elements of a set comprehension. Use a sequence instead."
 
     member x.Product = 
         match x with
@@ -276,6 +282,12 @@ with
     
     interface ISet<'t> with member x.Set = x
 
+    /// The universal set.
+    static member U = let x = var<'t> in Set(SetComprehension(<@  x @>, fun _ _ -> true )) 
+    
+    /// A singleton set containing 0. 
+    static member Zero = Singleton<int>(0)
+
 and ISet<'t when 't: equality> = 
     inherit IEquatable<Set<'t>>
     abstract member Set:Set<'t>
@@ -284,6 +296,26 @@ and IFiniteSet<'n, 't when 'n :> Number and 't : equality> =
     inherit ISet<'t>
     abstract Length: 'n
 
+and HugeSeq<'t when 't: equality> = HugeSeq of (DelayedEval<seq<'t>>) with
+    member x.Seq = let (HugeSeq s) = x in s 
+    interface IEnumerable<'t> with
+        member x.GetEnumerator():Generic.IEnumerator<'t> = 
+            let distinct source =      
+                seq { 
+                    let mutable i = 0
+                    let hashSet = HashSet<'T>(HashIdentity.Structural<'T>)
+                    for v in source do
+                        if i > 1000 then failwith ""
+                        if hashSet.Add v then 
+                            i <- i + 1
+                            yield v 
+                    }
+            let s = distinct(x.Seq.Force())
+            s.GetEnumerator()
+            
+    interface IEnumerable with
+        member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
+    
 and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Length = number<'n>
     member val Items = Array<'n, 't>(items)
@@ -303,8 +335,6 @@ and Family<'t when 't : equality> = Set<'t> list
 
 [<AutoOpen>]
 module Set =
-    //let j = {new Set<int> [|0|] with x.Foo() = "f"}
-
     /// Set union operator.
     [<Symbol "\u222A">]
     let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
@@ -338,29 +368,32 @@ module Set =
 
     let subset(set: Set<'t>) (sub:Expr<bool>) = set.Subset sub
 
+    let seq_length = Seq.length
+
     let sseq (s: seq<'t>) = Seq s
 
+    let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq
+
+    let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq
+    
     let infinite_seq g = g |> Seq.initInfinite |> Set.fromSeq
 
-    let infinite_seq2 g = g |> Seq.initInfinite |> Seq.pairwise |> Set.fromSeq
+    let infinite_seq2 g = g |> Seq.initInfinite |> cart |> Set.fromSeq
 
-    let infinite_seq3 g = g |> Seq.initInfinite |> triplewise |> Set.fromSeq
+    let infinite_seqp2 g = g |> Seq.initInfinite |> pairwise |> Set.fromSeq
 
-    let infinite_seq4 g = g |> Seq.initInfinite |> quadwise |> Set.fromSeq
+    let infinite_seqp3 g = g |> Seq.initInfinite |> triplewise |> Set.fromSeq
 
-    let infinite_seq5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
+    let infinite_seqp4 g = g |> Seq.initInfinite |> quadwise |> Set.fromSeq
 
-    let infinite_seq_gen (f: Expr<int ->'t ->'t>) =
+    let infinite_seqp5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
+
+    let infinite_seq' (f: Expr<int ->'t ->'t>) =
         Seq.initInfinite(fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = "n" then Some(Expr.Value i) else None)
-                    SymExpr(<@ (%%b:'t) @>)) |> Set.fromSeq
+                    SymExpr(<@ (%%b:'t) @>)) 
+                    |> Set.fromSeq
 
     let subseq(set: Set<'t>) (f:'t -> bool) = set.Subset f
 
-    let of_type<'t when 't: equality> = fun (_:'t) -> true
-    
-    /// A singleton set containing 0. 
-    let Zero = Singleton<int>(0)
-
-    /// The universal set.
-    let U<'t when 't : equality> = set <@ true @> <@ Unchecked.defaultof<'t> @>  
+    let enum_as_subsets (set:Set<'t>) = set.AsSingletons()

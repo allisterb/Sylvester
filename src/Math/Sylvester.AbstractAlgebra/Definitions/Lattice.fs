@@ -72,8 +72,9 @@ type IComplementedLattice<'t when 't : equality and 't: comparison> =
     abstract Complement:UnaryOp<'t>
 
 type ComplementedLattice<'t when 't: equality and 't: comparison>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, least:'t, greatest:'t, complement:UnaryOp<'t>) =
-    inherit BoundedLattice<'t>(set, join, meet, least, greatest)
+    inherit BoundedLattice<'t>(set, join, meet, least, greatest)        
         member val Complement = complement
+    interface IComplementedLattice<'t> with member val Complement = complement
 
 type DistributedComplementedLattice<'t when 't: equality and 't: comparison>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, least:'t, greatest:'t, complement:UnaryOp<'t>) =
     inherit ComplementedLattice<'t>(set, join, meet, least, greatest, complement)

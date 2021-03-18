@@ -1,6 +1,6 @@
 ﻿namespace Sylvester
 
-type SetAlgebra<'t when 't: equality>(set:Set<'t>, subsets: Set<Set<'t>>) =
+type SetAlgebra<'t when 't: equality>(set:Set<'t>, subsets: Set<Set<'t>>, ?lazyEval: bool) =
     inherit BooleanAlgebra<Set<'t>>(OrderedSet(subsets, Set.(|<|)), Set.(|+|), Set.(|*|), Seq.min subsets, Seq.max subsets, set.Complement)
     member val Subsets = OrderedSet(subsets, Set.(|<|))       
     interface ITotalOrder<Set<'t>>

@@ -20,6 +20,7 @@ type Fn<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<
         member val Domain = domain
         member val CoDomain = codomain
         member val Map = map
+    new (map:Map<'t, 'u>) = Fn(Set.U, Set.U,map)
 
 type Injection<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Map<'t, 'u>) =
     inherit Fn<'t, 'u>(domain, codomain, map)

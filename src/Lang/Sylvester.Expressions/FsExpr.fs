@@ -11,6 +11,7 @@ open FSharp.Quotations.DerivedPatterns
 open FSharp.Quotations.ExprShape
     
 type Delayed<'t> = Lazy<'t>
+type DelayedEval<'t> = Lazy<'t>
 
 [<AutoOpen>] 
 module FsExpr =

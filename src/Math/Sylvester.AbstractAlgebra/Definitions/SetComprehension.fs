@@ -89,6 +89,8 @@ module SetComprehension =
                 yield! seq {for p in prev do yield (!(fst p), !j)} 
         }
 
+    let pairwise = Seq.pairwise
+
     (* n-wise functions based on http://fssnip.net/50 by ptan *)
 
     let triplewise (source: seq<_>) =

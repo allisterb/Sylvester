@@ -10,7 +10,7 @@ module SetAlgebra =
     (* Symbols *)
     do 
         Symbols.BulitIn.Add(src <@ Empty @>, "\u2205")
-        Symbols.BulitIn.Add(src <@ U @>, "\U0001D54C")
+        Symbols.BulitIn.Add(src <@ Set.U @>, "\U0001D54C")
     
     (* Formulas *)
 
