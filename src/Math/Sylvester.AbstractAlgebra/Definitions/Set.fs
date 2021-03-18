@@ -24,9 +24,18 @@ with
             match x with
             |Empty -> Seq.empty.GetEnumerator()
             |Seq s -> 
-                match s with
-                | :? HugeSeq<'t> as hs -> (hs :> IEnumerable<'t>).GetEnumerator()
-                | _ -> let distinct = s |> Seq.distinct in distinct.GetEnumerator()
+                let distinct source =      
+                    seq { 
+                        let mutable i = 0
+                        let hashSet = HashSet<'T>(HashIdentity.Structural<'T>)
+                        for v in source do
+                            if i = 100000 then failwith "Cannot enumerate more than 100,000 elements of a set."
+                            if hashSet.Add v then 
+                                i <- i + 1
+                                yield v 
+                        }
+                let ds = distinct(s)
+                ds.GetEnumerator()
             |Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
@@ -183,11 +192,8 @@ with
                         let len = a.Length
                         let as_set x =  seq {for i in 0 .. (max_bits x) do 
                                                 if (bit_setAt i x) && (i < len) then yield Seq.item i a}
-                        lazy seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
-                if a.Length <= 18 then 
-                    Seq (subsets.Force()) 
-                 else
-                    let ss = HugeSeq(subsets) :> IEnumerable<Set<'t>> in Seq ss
+                        seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
+                Seq subsets
                 
         | _ -> failwith "Cannot enumerate the power set of a set comprehension. Use a sequence instead."
 
@@ -295,26 +301,6 @@ and ISet<'t when 't: equality> =
 and IFiniteSet<'n, 't when 'n :> Number and 't : equality> = 
     inherit ISet<'t>
     abstract Length: 'n
-
-and HugeSeq<'t when 't: equality> = HugeSeq of (DelayedEval<seq<'t>>) with
-    member x.Seq = let (HugeSeq s) = x in s 
-    interface IEnumerable<'t> with
-        member x.GetEnumerator():Generic.IEnumerator<'t> = 
-            let distinct source =      
-                seq { 
-                    let mutable i = 0
-                    let hashSet = HashSet<'T>(HashIdentity.Structural<'T>)
-                    for v in source do
-                        if i > 1000 then failwith ""
-                        if hashSet.Add v then 
-                            i <- i + 1
-                            yield v 
-                    }
-            let s = distinct(x.Seq.Force())
-            s.GetEnumerator()
-            
-    interface IEnumerable with
-        member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
     
 and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
     member val Length = number<'n>
