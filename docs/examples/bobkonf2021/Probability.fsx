@@ -1,21 +1,39 @@
 #load "IncludeMath.fsx"
 
 open Sylvester
-[<Formula>]
-let dice = Seq [1..6]
+let subsets xs = List.foldBack (fun x rest -> rest @ List.map (fun ys -> x::ys) rest) xs [[]]
+let subsets' (xs:seq<'t> when 't : equality) = 
+                Seq.foldBack (fun x rest -> Seq.append rest (Seq.map (fun ys -> (Seq.append (seq {yield x}) ys)) rest)) xs (seq {yield Seq.empty})
+                |> Seq.map(fun s -> if Seq.isEmpty s then Empty else Seq(s))
+                |> Set.fromSeq
 
-let urn = sseq2 [1..5]
-urn.[0]
-seq_length urn
-let j = urn |>| (fun x -> fst x = 1)
+let j = Seq [1;2;3;4;5;6]
+let zz = subsets' (j * j)
 
-seq_length j
+zz.[560] |> Seq.toList
 
-let p = prob_space urn
+let zzz = subsets' j 
 
-let P = p.Measure
 
-P j
+//seq {for i in 0 .. 31 do yield let s = Seq.item i zzz in if Seq.isEmpty s then Empty else Seq(s)} |> Set.ofSeq
+//(Seq.item 0 rrr) |> Seq.item 
+
+
+dice.Length
+let S = prob_space (dice * dice)
+let P = S.Measure
+//let comp = S.Set.Difference
+//let A = sseq2 [1..3]
+
+
+A.Length
+P(A)
+
+
+let dd = dice * dice
+
+let S = ProbabilitySpace (dd)
+
 //Seq.length <| { for i in 1 .. 10 -> i * i }
 //dice.[2u]
 

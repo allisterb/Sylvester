@@ -180,21 +180,14 @@ with
     member a.Powerset : Set<Set<'t>>=
         match a with
         | Empty -> Empty
-        | Seq s ->
-                // From http://www.fssnip.net/ff/title/Sequence-of-all-Subsets-of-a-set by Isaiah Permulla
-                // using bit pattern to generate subsets
-                let max_bits x = 
-                    let rec loop acc = if (1 <<< acc ) > x then acc else loop (acc + 1)
-                    loop 0
-            
-                let bit_setAt i x = ((1 <<< i) &&& x) <> 0
-                let subsets = 
-                        let len = a.Length
-                        let as_set x =  seq {for i in 0 .. (max_bits x) do 
-                                                if (bit_setAt i x) && (i < len) then yield Seq.item i a}
-                        seq {for i in 0 .. (1 <<< len)-1 do yield let s = as_set i in if Seq.isEmpty s then Empty else Seq(s)}
-                Seq subsets
-                
+        | Seq _s ->
+            let subsets = 
+                let singleton e = Seq.singleton e
+                let append e se = Seq.append (singleton e) se
+                Seq.foldBack (fun x rest -> Seq.append rest (Seq.map (fun ys -> (append x ys)) rest)) _s (singleton Seq.empty)
+                |> Seq.map(fun s -> if Seq.isEmpty s then Empty else Seq(s))
+            Seq subsets
+
         | _ -> failwith "Cannot enumerate the power set of a set comprehension. Use a sequence instead."
 
     member x.AsSingletons() =
