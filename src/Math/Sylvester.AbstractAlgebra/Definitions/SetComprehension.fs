@@ -63,31 +63,26 @@ module SetComprehension =
         | SetSeq -> Some x
         | _ -> None
 
-    let cart (source: seq<'a>) =
-        seq { 
-            use e = source.GetEnumerator() 
-            let prev = new System.Collections.Generic.List<'a ref>()
-           
-            while e.MoveNext() do
-                let i = ref e.Current
-                prev.Add i
-                yield! seq {for p in prev do yield (!i, !p)}
-                yield! seq {for p in prev do yield (!p, !i)}                 
-        }
+    let cart_seq xs ys = 
+        xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y))
+    
+    let rec cart_seq' ss =
+        match ss with
+        | h::[] ->
+            Seq.fold (fun acc elem -> [elem]::acc) [] h
+        | h::t ->
+            Seq.fold (fun cacc celem ->
+                (Seq.fold (fun acc elem -> (elem::celem)::acc) [] h) @ cacc
+                ) [] (cart_seq' t)
+        | _ -> []
 
-    let cart2 (source1: seq<'a>) (source2:seq<'b>) =
-        seq { 
-            use e1 = source1.GetEnumerator()
-            use e2 = source2.GetEnumerator()
-            let prev = new System.Collections.Generic.List<'a ref *'b ref>()
-           
-            while (e1.MoveNext() && e2.MoveNext()) do
-                let i = ref e1.Current
-                let j = ref e2.Current
-                prev.Add ((i, j))
-                yield! seq {for p in prev do yield (!i, !(snd p))}
-                yield! seq {for p in prev do yield (!(fst p), !j)} 
-        }
+    let cart s = cart_seq s s
+
+    let cart2 a b = cart_seq a b
+
+    let cart3 a b c = cart_seq' [a; b; c]
+
+    let cartn ss = cart_seq' ss
 
     let pairwise = Seq.pairwise
 
