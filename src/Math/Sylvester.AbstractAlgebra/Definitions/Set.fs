@@ -23,19 +23,7 @@ with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> 
-                let distinct source =      
-                    seq { 
-                        let mutable i = 0
-                        let hashSet = HashSet<'T>(HashIdentity.Structural<'T>)
-                        for v in source do
-                            if i = 100000 then failwith "Cannot enumerate more than 100,000 elements of a set."
-                            if hashSet.Add v then 
-                                i <- i + 1
-                                yield v 
-                        }
-                let ds = distinct(s)
-                ds.GetEnumerator()
+            |Seq s -> let ds = Seq.distinct s in ds.GetEnumerator()
             |Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
@@ -170,11 +158,11 @@ with
     member a.Complement (b:Set<'t>) = b.Difference a
     
     /// Number of elements in the set. 
-    member x.Length =
+    member x.Size =
        match x with
        | Empty -> 0
        | Seq s -> x |> Seq.length
-       | _ -> failwith "Cannot get the length of a set comprehension. Use a finite sequence instead."
+       | _ -> failwith "Cannot get the size of a set comprehension. Use a finite sequence instead."
 
     /// Set of all subsets.
     member a.Powerset : Set<Set<'t>>=
