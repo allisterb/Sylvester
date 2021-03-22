@@ -57,6 +57,7 @@ type IIdeal<'t when 't : equality> =
 [<AutoOpen>]
 module Ring =
     /// Zero ring.
+    [<Formula>]
     let Zero = CommutativeRing(Group.Zero, (+))
     /// Additive ring.
     let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op2) =

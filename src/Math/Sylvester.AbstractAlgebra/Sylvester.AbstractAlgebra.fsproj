@@ -21,7 +21,10 @@
 
   <ItemGroup>
     <Compile Include="Definitions\SetComprehension.fs" />
+    <Compile Include="Definitions\SetSequence.fs" />
     <Compile Include="Definitions\Set.fs" />
+    <Compile Include="Definitions\Cardinality.fs" />
+    <Compile Include="Definitions\MultiSet.fs" />
     <Compile Include="Definitions\Relation.fs" />
     <Compile Include="Definitions\Operation.fs" />
     <Compile Include="Definitions\Function.fs" />

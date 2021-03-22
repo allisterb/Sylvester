@@ -249,7 +249,15 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Solver.Z3", "Lang
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TPTPParser", "..\ext\TPTPParser\TPTPParser.csproj", "{4C18C913-C05D-4A22-A4A3-2BF17D62FF2E}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "KaosCombinatorics", "..\ext\KaosCombinatorics\Source\KaosCombinatorics\KaosCombinatorics.shproj", "{70047566-8A60-46F6-950F-079930F569B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Combinatorics", "..\ext\KaosCombinatorics\Combinatorics\Combinatorics.csproj", "{6852278F-1508-43AC-8B6F-3A3F83324940}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\ext\KaosCombinatorics\Source\KaosCombinatorics\KaosCombinatorics.projitems*{6852278f-1508-43ac-8b6f-3a3f83324940}*SharedItemsImports = 5
+		..\ext\KaosCombinatorics\Source\KaosCombinatorics\KaosCombinatorics.projitems*{70047566-8a60-46f6-950f-079930f569b7}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -1540,6 +1548,24 @@ Global
 		{4C18C913-C05D-4A22-A4A3-2BF17D62FF2E}.Release|x64.Build.0 = Release|Any CPU
 		{4C18C913-C05D-4A22-A4A3-2BF17D62FF2E}.Release|x86.ActiveCfg = Release|Any CPU
 		{4C18C913-C05D-4A22-A4A3-2BF17D62FF2E}.Release|x86.Build.0 = Release|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Debug|x64.Build.0 = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Debug|x86.Build.0 = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Nuget|Any CPU.ActiveCfg = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Nuget|Any CPU.Build.0 = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Nuget|x64.ActiveCfg = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Nuget|x64.Build.0 = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Nuget|x86.ActiveCfg = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Nuget|x86.Build.0 = Debug|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Release|x64.ActiveCfg = Release|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Release|x64.Build.0 = Release|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Release|x86.ActiveCfg = Release|Any CPU
+		{6852278F-1508-43AC-8B6F-3A3F83324940}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1639,6 +1665,8 @@ Global
 		{6543A35E-8BFD-4A3F-813B-2DC3DC6417E2} = {E0E37582-2ECB-4B62-9ACA-B797A22A6704}
 		{D0D827F0-C1EB-48C8-B6F6-F3F4524B0199} = {6543A35E-8BFD-4A3F-813B-2DC3DC6417E2}
 		{4C18C913-C05D-4A22-A4A3-2BF17D62FF2E} = {09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}
+		{70047566-8A60-46F6-950F-079930F569B7} = {09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}
+		{6852278F-1508-43AC-8B6F-3A3F83324940} = {09FAC507-B6C0-4A57-BBA5-7D5B4F180F6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

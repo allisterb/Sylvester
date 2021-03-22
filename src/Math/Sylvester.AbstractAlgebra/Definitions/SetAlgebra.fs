@@ -1,11 +1,11 @@
 ﻿namespace Sylvester
 
-type SetAlgebra<'t when 't: equality>(set:Set<'t>, subsets: Set<Set<'t>>, least:Set<'t>, greatest:Set<'t>) =
-    inherit BooleanAlgebra<Set<'t>>(OrderedSet(subsets, Set.(|<|)), Set.(|+|), Set.(|*|), least, greatest, set.Complement)
+type SetAlgebra<'t when 't: equality>(set:ISet<'t>, subsets: ISet<Set<'t>>, least:Set<'t>, greatest:Set<'t>) =
+    inherit BooleanAlgebra<Set<'t>>(OrderedSet(subsets, Set.(|<|)), Set.(|+|), Set.(|*|), least, greatest, set.Set.Complement)
     member val Subsets = OrderedSet(subsets, Set.(|<|))       
     interface ITotalOrder<Set<'t>>
-    new(set: Set<'t>) = SetAlgebra(set, set.Powerset, Empty, set) 
+    new(set: ISet<'t>) = SetAlgebra(set.Set, set.Set.Powerset, Empty, set.Set) 
 
-type SigmaAlgebra<'t when 't: equality>(set: Set<'t>, subsets: Set<Set<'t>>, least:Set<'t>, greatest:Set<'t>) =
+type SigmaAlgebra<'t when 't: equality>(set: ISet<'t>, subsets: ISet<Set<'t>>, least:Set<'t>, greatest:Set<'t>) =
     inherit SetAlgebra<'t>(set, subsets, least, greatest)
-    new(set: Set<'t>) = SigmaAlgebra(set, set.Powerset, Empty, set)
+    new(set: ISet<'t>) = SigmaAlgebra(set, set.Set.Powerset, Empty, set.Set)

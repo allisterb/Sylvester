@@ -23,7 +23,19 @@ with
         member x.GetEnumerator () = 
             match x with
             |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> let ds = Seq.distinct s in ds.GetEnumerator()
+            |Seq s -> 
+                let distinct source =      
+                    seq { 
+                        let mutable i = 0
+                        let hashSet = HashSet<'T>(HashIdentity.Structural<'T>)
+                        for v in source do
+                            if i = 100000 then failwith "Cannot enumerate more than 100,000 elements of a set."
+                            if hashSet.Add v then 
+                                i <- i + 1
+                                yield v 
+                        }
+                let ds = distinct(s)
+                ds.GetEnumerator() 
             |Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
                 
     interface IEnumerable with
@@ -156,14 +168,7 @@ with
         | Set s -> SetComprehension(s.Range', s.Body', (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
-    
-    /// Number of elements in the set. 
-    member x.Size =
-       match x with
-       | Empty -> 0
-       | Seq s -> x |> Seq.length
-       | _ -> failwith "Cannot get the size of a set comprehension. Use a finite sequence instead."
-
+           
     /// Set of all subsets.
     member a.Powerset : Set<Set<'t>>=
         match a with
@@ -257,15 +262,6 @@ with
 
     /// Set difference operator
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
-
-    /// Set Cartesian product.
-    static member (*) (l, r) = 
-        match (l, r) with
-        |(_, Empty) -> Empty
-        |(Empty, _) -> Empty
-
-        |(Seq a, Seq b) -> Seq (cart2 a b)//Seq(Gen(cart2 a b, (fun _ (x,y) -> l.HasElement x && r.HasElement y)))
-        |(_,_) -> SetComprehension(<@ (l.First(), r.First()) @>, (fun sc (x,y) -> l.HasElement x && r.HasElement y)) |> Set
     
     interface ISet<'t> with member x.Set = x
 
@@ -281,16 +277,16 @@ and ISet<'t when 't: equality> =
 
 and IFiniteSet<'n, 't when 'n :> Number and 't : equality> = 
     inherit ISet<'t>
-    abstract Length: 'n
+    abstract Size: 'n
     
-and FiniteSet<'n, 't when 'n :> Number and 't : equality>(items: 't[]) =
-    member val Length = number<'n>
+and FiniteSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
+    member val Size = number<'n>
     member val Items = Array<'n, 't>(items)
     member val Set = Seq items
     interface IFiniteSet<'n, 't> with
         member x.Set = x.Set
         member x.Equals y = x.Set.Equals y
-        member x.Length = x.Length
+        member x.Size = x.Size
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
@@ -331,22 +327,16 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
+    let sseq (s: seq<'t>) = Set.fromSeq s
+
     let set (range:Expr<bool>) (body:Expr<'t>) = SetComprehension(range, body) |> Set
 
-    let subset(set: Set<'t>) (sub:Expr<bool>) = set.Subset sub
-
-    let seq_length = Seq.length
-
-    let sseq (s: seq<'t>) = Seq s
-
+    let subset(set: ISet<'t>) (sub:Expr<bool>) = set.Set.Subset sub
+    
     let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq
 
     let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq
     
-    let infinite_seq g = g |> Seq.initInfinite |> Set.fromSeq
-
-    let infinite_seq2 g = g |> Seq.initInfinite |> cart |> Set.fromSeq
-
     let infinite_seqp2 g = g |> Seq.initInfinite |> pairwise |> Set.fromSeq
 
     let infinite_seqp3 g = g |> Seq.initInfinite |> triplewise |> Set.fromSeq
