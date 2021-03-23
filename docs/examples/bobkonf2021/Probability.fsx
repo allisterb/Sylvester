@@ -2,33 +2,11 @@
 
 open Sylvester
 
-let dice = sseq2 [1..6]
-let S = prob_space (dice)
+let urn = sseq [1..5] <*> sseq [1..4]
+
+let S = prob_space urn
 let P = prob_measure S
-let A = sseq2 [1..3]
-P(A)
-
-
-
-let dd = dice * dice
-
-let S = ProbabilitySpace (dd)
-
-//Seq.length <| { for i in 1 .. 10 -> i * i }
-//dice.[2u]
-
-let S = ProbabilitySpace (dice * dice)
-let P = S.Measure
-let comp = S.Set.Difference
-let A = sseq2 [5..6]
-P(A)
-
-A |+| (dice *  dice) |> seq_length
-
-open FSharp.Quotations
-type TS =
-| Foo of Expr<int>
-
-let 
-let p = set 
-p
+let E1 = urn |>| (fun s -> fst s = 5)
+let E2 = urn |>| (fun s -> snd s < 4)
+let E3 = urn |>| (fun s -> fst s + snd s >= 8)
+P(E1)

@@ -183,7 +183,7 @@ with
 
         | _ -> failwith "Cannot enumerate the power set of a set comprehension. Use a sequence instead."
 
-    member x.AsSingletons() =
+    member x.EnumAsSubsets() =
         match x with
         | Empty -> failwith "The empty set has no elements."
         | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
@@ -314,10 +314,7 @@ module Set =
 
     /// Set create subset
     let (|>|) (l:ISet<'t>) (r:'t -> bool) = l.Set |>| r
-    
-    /// Set filter subset
-    let (|>>|) (l:ISet<'t>) (r:Set<'t> -> bool) = l.Set.Powerset |>| r
-    
+      
     /// Set difference operator.
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
 
@@ -327,30 +324,14 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let sseq (s: seq<'t>) = Set.fromSeq s
-
     let set (range:Expr<bool>) (body:Expr<'t>) = SetComprehension(range, body) |> Set
 
     let subset(set: ISet<'t>) (sub:Expr<bool>) = set.Set.Subset sub
-    
+
+    let sseq (s: seq<'t>) = Set.fromSeq s
+
     let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq
 
     let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq
     
-    let infinite_seqp2 g = g |> Seq.initInfinite |> pairwise |> Set.fromSeq
-
-    let infinite_seqp3 g = g |> Seq.initInfinite |> triplewise |> Set.fromSeq
-
-    let infinite_seqp4 g = g |> Seq.initInfinite |> quadwise |> Set.fromSeq
-
-    let infinite_seqp5 g = g |> Seq.initInfinite |> quintwise |> Set.fromSeq
-
-    let infinite_seq' (f: Expr<int ->'t ->'t>) =
-        Seq.initInfinite(fun i -> 
-                    let b = (body f).Substitute(fun v -> if v.Name = "n" then Some(Expr.Value i) else None)
-                    SymExpr(<@ (%%b:'t) @>)) 
-                    |> Set.fromSeq
-
-    let subseq(set: Set<'t>) (f:'t -> bool) = set.Subset f
-
-    let enum_as_subsets (set:Set<'t>) = set.AsSingletons()
+    let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()

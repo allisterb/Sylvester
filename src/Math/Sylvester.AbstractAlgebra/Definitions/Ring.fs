@@ -65,13 +65,15 @@ module Ring =
 
     /// Ring of positive integers.
     let Zpos =
-        let set = Seq.initInfinite id |> Seq 
+        let set = infinite_seq id
         let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
+                interface ICardinality with 
+                    member x.Cardinality = Aleph0
                 interface ITotalOrder<int> 
                 interface IPartialOrder<int> with
-                    member x.Set = set
+                    member x.Set = set.Set
                     member x.Order = order
                 interface IHasLeast<int> with 
                     member x.Least = 0
@@ -80,20 +82,22 @@ module Ring =
                 interface IWellOrder<int> with
                     member x.Least(subset:Set<int>) = subset |> Seq.sortWith (fun a b -> (if order a b then -1 else 1)) |> Seq.item 0
                 interface Generic.IEnumerable<int> with
-                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
+                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set.Set :> Generic.IEnumerable<int>).GetEnumerator()
                 interface IEnumerable with
-                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (set.Set :> IEnumerable).GetEnumerator()
         }
 
     /// Ring of negative integers.
     let Zneg =
-        let set = Seq.initInfinite (fun n -> -n) |> Seq
+        let set = infinite_seq (fun n -> -n)
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
+                interface ICardinality with 
+                    member x.Cardinality = Aleph0
                 interface ITotalOrder<int> 
                 interface IPartialOrder<int> with
-                    member x.Set = set
+                    member x.Set = set.Set
                     member x.Order = order
                 interface IHasGreatest<int> with 
                     member x.Greatest = 0
@@ -102,9 +106,9 @@ module Ring =
                 interface IWellOrder<int> with
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface Generic.IEnumerable<int> with
-                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
+                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set.Set :> Generic.IEnumerable<int>).GetEnumerator()
                 interface IEnumerable with
-                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (set.Set :> IEnumerable).GetEnumerator()
         }
 
     /// Ring of integers.
@@ -113,6 +117,8 @@ module Ring =
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
+                interface ICardinality with 
+                    member x.Cardinality = Aleph0
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -131,20 +137,22 @@ module Ring =
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
+                interface ICardinality with 
+                    member x.Cardinality = Aleph0
                 interface IWellOrder<int> with
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
-            interface ITotalOrder<int>
-            interface IPartialOrder<int> with
-                member x.Set = set
-                member x.Order = order
-            interface IHasLeast<int> with 
-                member x.Least = 0
-                member x.Minimal = 0
-                member x.LowerBound = 0
-            interface Generic.IEnumerable<int> with
-                member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
-            interface IEnumerable with
-                member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
+                interface ITotalOrder<int>
+                interface IPartialOrder<int> with
+                    member x.Set = set
+                    member x.Order = order
+                interface IHasLeast<int> with 
+                    member x.Least = 0
+                    member x.Minimal = 0
+                    member x.LowerBound = 0
+                interface Generic.IEnumerable<int> with
+                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
+                interface IEnumerable with
+                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
         }
 
     /// Ring of natural numbers with zero.

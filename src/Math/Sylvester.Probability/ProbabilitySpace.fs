@@ -1,6 +1,6 @@
 ﻿namespace Sylvester
 
-type ProbabilityMeasure<'t when 't: equality> = Map<ISet<'t>, float>
+type ProbabilityMeasure<'t when 't: equality> = Map<ISet<'t>, real>
 
 type ProbabilitySpace<'t when 't : equality>(set:ISet<'t>, algebra:SigmaAlgebra<'t>, measure: ProbabilityMeasure<'t>) =
     member val Set = set.Set
