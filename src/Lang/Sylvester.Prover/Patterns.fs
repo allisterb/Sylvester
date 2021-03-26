@@ -11,8 +11,8 @@ open Descriptions
 
 /// Patterns used in formulas and axioms
 module Patterns =   
-    (* Formula patterns *)
-
+    (* Formula patterns *)  
+    
     let (|Equals|_|) = 
          function
          | SpecificCall <@@ (=) @@> (None,_,l::r::[]) when l.Type = r.Type -> Some(l, r)
@@ -127,8 +127,14 @@ module Patterns =
         | NewTuple(bound) -> bound |> List.map get_vars |> List.concat |> Some
         | ExprShape.ShapeVar bound -> [bound] |> Some
         | ValueWithName(v,t,n) -> let bound = Var(n, t) in [bound] |> Some 
+        | Coerce(ValueWithName(v,t,n), ct) when ct = typeof<obj> -> let bound = Var(n, t) in [bound] |> Some
         | _ -> None
-     
+
+    let (|Index|_|) =
+        function
+        | Call(Some h, mi,  BoundVars(bound)::[]) when mi.Name = "Item" -> Some(h, bound)
+        | _ -> None
+
     let (|ForAll|_|) =
         function
         | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "forall" -> Some(<@@ forall @@>, bound, range, body)

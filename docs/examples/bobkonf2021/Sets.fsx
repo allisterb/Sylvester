@@ -2,7 +2,12 @@
 
 open Sylvester
 open Sylvester.Arithmetic
+open SetAlgebra
+let A = var<SetFamily<int>>
+let i, n = var2<int>
+let dd = proof set_algebra <@ (intersect i (i < n) A.[i]) = Empty@> []
 
+//Display.print_formula (<@ (intersect i (i < n) A.[i]) @>)
 let P = new Nat<12>()
 
 let x = var<int>

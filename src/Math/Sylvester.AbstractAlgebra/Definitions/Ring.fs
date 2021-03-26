@@ -70,7 +70,7 @@ module Ring =
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ICardinality with 
-                    member x.Cardinality = Aleph0
+                    member x.Cardinality = aleph0
                 interface ITotalOrder<int> 
                 interface IPartialOrder<int> with
                     member x.Set = set.Set
@@ -90,11 +90,11 @@ module Ring =
     /// Ring of negative integers.
     let Zneg =
         let set = infinite_seq (fun n -> -n)
-        let order = (<=)
+        let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ICardinality with 
-                    member x.Cardinality = Aleph0
+                    member x.Cardinality = aleph0
                 interface ITotalOrder<int> 
                 interface IPartialOrder<int> with
                     member x.Set = set.Set
@@ -118,7 +118,7 @@ module Ring =
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ICardinality with 
-                    member x.Cardinality = Aleph0
+                    member x.Cardinality = aleph0
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -130,15 +130,17 @@ module Ring =
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
         }
 
-
+    /// Ring of natural numbers with zero.
+    let N = Zpos
+    
     /// Ring of natural numbers without zero.
-    let N =
+    let Nz =
         let set = Zpos |^| 0
         let order = (<=)
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ICardinality with 
-                    member x.Cardinality = Aleph0
+                    member x.Cardinality = aleph0
                 interface IWellOrder<int> with
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface ITotalOrder<int>
@@ -154,9 +156,6 @@ module Ring =
                 interface IEnumerable with
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
         }
-
-    /// Ring of natural numbers with zero.
-    let Nz = Zpos
     
     let Z1 = CommutativeRing(Z, Mod.(+) 1, Mod.(*) 1, 0, 1, (~-))
     let Z2 = CommutativeRing(Z, Mod.(+) 2, Mod.(*) 2, 0, 1, (~-))

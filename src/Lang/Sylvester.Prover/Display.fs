@@ -39,6 +39,8 @@ module Display =
         | Const(SymbolDisplay symbol) -> symbol
         | Var(VarDisplay v) -> v 
 
+        | Index(l, r) -> sprintf "here"
+        
         (* Unary terms *)
         | UnaryTerm(SymbolDisplay symbol , r) -> 
             match r with
@@ -59,7 +61,8 @@ module Display =
             | Var _, _ -> sprintf "%s %s (%s)" (print_formula l) (symbol) (print_formula r)
             | _, PrimitiveTerm _ -> sprintf "(%s) %s %s" (print_formula l) (symbol) (print_formula r)
             | _ -> sprintf "%s %s %s" (print_formula l) (symbol) (print_formula r)
-
+        (* Index *)
+        
         (* Quantifier terms *)
         | ForAll(_, VarDisplay v, Bool true, body) -> sprintf "(\u2200 %s |: %s)" v (print_formula body)
         | ForAll(_, VarDisplay v, range, body) -> sprintf "(\u2200 %s | %s : %s)" v (print_formula range) (print_formula body)

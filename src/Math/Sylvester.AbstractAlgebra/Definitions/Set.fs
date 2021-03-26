@@ -218,23 +218,10 @@ with
     static member (|*|) (l, r) = 
         match (l, r) with
         |(Empty, _) -> Empty
-        |(_, Empty) -> Empty
-        
-        |(Seq a, FiniteSeq b) -> 
-                let s = 
-                    Seq.concat [a;b] 
-                    |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
-                    |> Seq.take (b.Count()) 
-                Seq s
-        |(FiniteSeq a, Seq b) -> 
-                let s = 
-                    Seq.concat [a;b] 
-                    |> Seq.filter (fun x -> l.HasElement x && r.HasElement x) 
-                    |> Seq.take (a.Count()) 
-                Seq s
-        |(Seq a, Seq b) -> Seq(a.Intersect b) //, (fun _ x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
+        |(_, Empty) -> Empty        
+        |(Seq a, Seq b) -> Seq(a.Intersect b) 
         |(_, _) -> 
-            let set_intersect(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
+            let set_intersect(l:Set<'t>, r: Set<'t>) = formula<'t> in
             SetComprehension(<@ set_intersect(l,r) @>, (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
 
     ///Set 'is element of' operator
@@ -294,7 +281,7 @@ and FiniteSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 
 
 and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<Nat<1>, 't>([|e|])
 
-and Family<'t when 't : equality> = Set<'t> list
+and SetFamily<'t when 't : equality> = Set<Set<'t>> 
 
 [<AutoOpen>]
 module Set =

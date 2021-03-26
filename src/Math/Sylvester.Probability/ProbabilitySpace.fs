@@ -19,4 +19,4 @@ module ProbabilitySpace =
     let prob_space_m s m = ProbabilitySpace(s, m)
     let prob_space_a_m s a m = ProbabilitySpace(s, a, m)
     
-    let prob_measure (p:ProbabilitySpace<'t>) :(ISet<'t>->real) = p.Measure
+    let prob_measure (p:ProbabilitySpace<'t>) :(ISet<'t>->real)= p.Measure

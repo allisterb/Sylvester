@@ -8,7 +8,7 @@ module SetSequence =
         match s with
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
-        | _ when s.GetType().Name.StartsWith("FSharpSet") -> SetSeq
+        | :? FSharp.Collections.Set<'t> -> SetSeq
         | :? seq<SymExpr<'t>> -> SymExprSeq
         | _ -> OtherSeq
 
@@ -93,4 +93,3 @@ module SetSequence =
                                 k := !l
                                 l :=  m
         }
-

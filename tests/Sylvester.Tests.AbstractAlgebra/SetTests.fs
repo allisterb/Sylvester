@@ -10,6 +10,7 @@ module Set =
     open Sylvester
     open SetAlgebra
 
+    (*
     [<Fact>]
     let ``Can display set symbols``() =
         let n,t = var2<int>
@@ -29,7 +30,7 @@ module Set =
         let S' = SigmaAlgebra(dice * dice)
         let A = [for i in 1..6 -> (1, i)] 
         Assert.True (S'.Set.HasElement (Seq(A)))
-    
+    *)
     [<Fact>]
     let ``Can prove union commutative``() =
         let A,B = var2<Set<obj>>
@@ -44,6 +45,15 @@ module Set =
         //let SS = Gen((Seq.initInfinite (fun x -> x + 5)), fun _ _ -> true) |> Set.fromGen
         //Assert.NotNull (SS.Body n)
         
+    [<Fact>]
+    let ``set algebra``() =
+        let A = var<SetFamily<int>>
+        let i, n = var2<int>
+        
+        let dd = proof set_algebra <@ (intersect i (i < n) A.[i]) = Empty@> []
+        
+        let ddd = Display.print_formula (expand <@ (intersect i (i < n) A.[i]) @>)
+        Assert.NotNull ddd
     (*
     [<Fact>]
     let ``Can equate predicates`` () =

@@ -16,11 +16,11 @@ module SetAlgebra =
 
     /// n-ary union of sets
     [<Formula>]
-    let union<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = sum Set.(|+|) "\u22c3" bound range body
+    let union<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = formula<Set<'t>>
 
     /// n-ary intersection of sets
     [<Formula>]
-    let intersect<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = product Set.(|*|) "\u22c3" bound range body
+    let intersect<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = product Set.(|*|) "\u22c2" bound range body
     
     
     (* Axioms *)

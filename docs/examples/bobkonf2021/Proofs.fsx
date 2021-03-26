@@ -3,6 +3,7 @@
 open Sylvester
 open PropCalculus
 
+
 let p,q,r,s = var4<bool>
 let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
 let P,N,A,S = var4<bool>

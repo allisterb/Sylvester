@@ -18,8 +18,9 @@ module Formula =
     let (<==) l r = r ==> l
 
     (* Introduce variable names for formulas *)
+    let formula<'t> = Unchecked.defaultof<'t>
     
-    let var<'t> = Unchecked.defaultof<'t>
+    let var<'t> = formula<'t>
     let var2<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
     let var3<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
     let var4<'t> = Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>, Unchecked.defaultof<'t>
@@ -38,6 +39,9 @@ module Formula =
     
     (* Quantifiers *)
 
+    /// Generic quantifier for binary op that is symmetric, associative and has an identity.
+    let quantifier<'t,'u> (op:'t -> 't -> 't) (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
+
     [<Symbol "\u2200">]
     let forall<'u> (bound:'u) (range:bool) (body:bool) = Unchecked.defaultof<bool>
     [<ReflectedDefinition>]
@@ -48,7 +52,6 @@ module Formula =
     let exists'<'u> (bound:'u) (body:bool) = exists bound true body
 
     /// Generic quantifier with sum semantics.
-    let sum<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
-    
+    let sum<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = formula<'t>
     /// Generic quantifier with product semantics.
-    let product<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = Unchecked.defaultof<'t>
+    let product<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = formula<'t>
