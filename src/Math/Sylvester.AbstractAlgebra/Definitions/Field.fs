@@ -20,7 +20,7 @@ type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicati
 [<AutoOpen>]
 module Field = 
     let R = 
-        let reals = let x = var<real> in SetComprehension<real>(<@ x @>, (fun _ _ -> true)) |> Set in
+        let reals = let x = var<real> in SetComprehension<real>(<@ x @>, (Aleph 1), (fun _ _ -> true)) |> Set in
         Field(AdditiveGroup(reals), MultiplicativeGroup(reals))
     let open_interval left right = R.Set.Subset(fun x -> x > left && x < right)
     let closed_interval left right = R.Set.Subset(fun x -> x >= left && x <= right)
