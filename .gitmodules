@@ -37,3 +37,6 @@
 [submodule "ext/KaosCombinatorics"]
 	path = ext/KaosCombinatorics
 	url = https://github.com/allisterb/KaosCombinatorics.git
+[submodule "ext/FSharp.Quotations.Evaluator"]
+	path = ext/FSharp.Quotations.Evaluator
+	url = https://github.com/fsprojects/FSharp.Quotations.Evaluator.git
