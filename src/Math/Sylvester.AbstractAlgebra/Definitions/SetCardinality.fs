@@ -38,13 +38,17 @@ type ICardinality =
 
 [<AutoOpen>]
 module SetCardinality =
-    let finite_card f = Finite f
-
-    let countable_infinite_card = Aleph 0
     
-    let infinite_card n = Aleph n
-
     let default_card<'t> =
         match typeof<'t>.Name with
-        | "Int32" -> Aleph 0
-        | _ -> failwithf "Unable to automatically determine cardinality of type %s" typeof<'t>.Name
+        | "Int8"
+        | "UInt8"
+        | "Int16" 
+        | "UInt16"
+        | "Int32"
+        | "UInt32"
+        | "Int64"
+        | "UInt64" -> Aleph 0
+        | "Single"
+        | "Double" -> Aleph 1
+        | _ -> failwithf "Unable to automatically determine cardinality of type %s." typeof<'t>.Name

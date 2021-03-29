@@ -17,13 +17,13 @@ module Formula =
     let (==>) l r = not l || r
     let (<==) l r = r ==> l
 
-    (* Introduce a symbolic formulas *)
+    (* Introduce a symbolic formula *)
     let formula<'t> = Unchecked.defaultof<'t>
 
     (* Introduce variable names for formulas *)
     let symbolic_var<'t> = Unchecked.defaultof<'t>
     
-    (* Result of truth-functional operations *)
+    (* Result of symbolic truth-functional operation *)
     let truth_value = Unchecked.defaultof<bool>
 
     let var<'t> = symbolic_var<'t>
