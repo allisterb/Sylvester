@@ -142,7 +142,7 @@ with
 
     /// Create a finite subset of a sequence using a filter.
     member x.Subset([<ReflectedDefinition>] f':Expr<'t -> bool>) = 
-        let f = getExprFromReflectedDefinition<'t -> bool> f'
+        let f = evaluate f'
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq s -> 

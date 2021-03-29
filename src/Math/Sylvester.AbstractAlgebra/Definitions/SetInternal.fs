@@ -20,8 +20,10 @@ type any = obj
 
 /// A statement that formally defines a set using a predicate, body, cardinality, and an optional F# function for computing set membership.
 type SetComprehension<'t when 't: equality> internal (range:Expr<'t->bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
+    let r =  evaluate range
     member val Range = expand range
     member val Range' = range
+    member val RangeFn = r 
     member val Body = expand body
     member val Body' = body
     member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is defined for the set comprehension %A." sc)
