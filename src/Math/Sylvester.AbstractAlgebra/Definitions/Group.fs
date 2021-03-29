@@ -71,13 +71,13 @@ type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, i
     do fail_if_not_commutative op
     interface IAbelianGroup<'t>
 
-type FiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+type KnownFiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownFiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, ident, inv)
     member x.El0<'n when 'n :> card.one>() = (x, GroupElement<'order>(0))
     member x.El1<'n when 'n :> card.two>() = (x, GroupElement<'order>(0), GroupElement<'order>(1))
 
-type FiniteAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
-    inherit FiniteGroup<'order, 't>(set, op, ident, inv)
+type KnownFiniteAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownFiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+    inherit KnownFiniteGroup<'order, 't>(set, op, ident, inv)
     do fail_if_not_commutative op
     interface IAbelianGroup<'t>
 
@@ -93,15 +93,15 @@ module Group =
         let zero = LanguagePrimitives.GenericZero<'t>
         let op = Binary(+).DestructureBinary
         { 
-                new IAdditiveGroup<'t> with
-                    member x.Set = set.Set
-                    member x.Equals y = x.Set.Equals y
-                    member x.Op = op
-                    member x.Identity = zero
-                    member x.Inverse = (~-)
-                    member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
-                        (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
-                    member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
+            new IAdditiveGroup<'t> with
+                member x.Set = set.Set
+                member x.Equals y = x.Set.Equals y
+                member x.Op = op
+                member x.Identity = zero
+                member x.Inverse = (~-)
+                member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = 
+                    (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
+                member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         }
 
     /// Define a group over a set which has a multiplicative operator and one and division.
@@ -122,4 +122,4 @@ module Group =
                     member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         } 
 
-    let Zero = FiniteAbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
+    let Zero = KnownFiniteAbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)

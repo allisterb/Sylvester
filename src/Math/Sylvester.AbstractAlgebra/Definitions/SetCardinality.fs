@@ -48,7 +48,10 @@ module SetCardinality =
         | "Int32"
         | "UInt32"
         | "Int64"
-        | "UInt64" -> Aleph 0
+        | "UInt64"
+        | "Rational"
+        | "String" -> Aleph 0
         | "Single"
-        | "Double" -> Aleph 1
+        | "Double" 
+        | "Complex" -> Aleph 1
         | _ -> failwithf "Unable to automatically determine cardinality of type %s." typeof<'t>.Name

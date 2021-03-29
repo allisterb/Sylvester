@@ -257,36 +257,36 @@ with
 
     /// The universal set.
     static member U = 
-        let x = var<'t> in Set(SetComprehension(<@ x @>, default_card<'t>)) 
+        let x = var<'t> in Set(SetComprehension(<@ x @>, default_card<'t>, fun _ _ -> true)) 
     
     /// A singleton set containing 0. 
     static member Zero = Singleton<int>(0)
 
-and ISet<'t when 't: equality> = 
-    inherit IEquatable<Set<'t>>
-    abstract member Set:Set<'t>
+and SetFamily<'t when 't : equality> = Set<Set<'t>> 
 
-and IFiniteSet<'n, 't when 'n :> Number and 't : equality> = 
-    inherit ISet<'t>
-    abstract Size: 'n
-    
-and FiniteSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
+and KnownFiniteSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
     member val Size = number<'n>
     member val Items = Array<'n, 't>(items)
     member val Set = Seq items
-    interface IFiniteSet<'n, 't> with
+    interface IKnownFiniteSet<'n, 't> with
         member x.Set = x.Set
         member x.Equals y = x.Set.Equals y
         member x.Size = x.Size
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
-    new (items:seq<'t>) = FiniteSet(items |> Seq.toArray)
+    new (items:seq<'t>) = KnownFiniteSet(items |> Seq.toArray)
 
-and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<Nat<1>, 't>([|e|])
+and Singleton<'t when 't: equality>(e:'t) = inherit KnownFiniteSet<Nat<1>, 't>([|e|])
 
-and SetFamily<'t when 't : equality> = Set<Set<'t>> 
+and ISet<'t when 't: equality> = 
+    inherit IEquatable<Set<'t>>
+    abstract member Set:Set<'t>
 
+and IKnownFiniteSet<'n, 't when 'n :> Number and 't : equality> = 
+    inherit ISet<'t>
+    abstract Size: 'n
+    
 [<AutoOpen>]
 module Set =
     /// Set union operator.

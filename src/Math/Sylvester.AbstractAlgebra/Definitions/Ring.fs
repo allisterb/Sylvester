@@ -45,7 +45,6 @@ type OrderedRing<'t when 't: equality and 't : comparison>(group: IAbelianGroup<
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator(): Generic.IEnumerator<'t> = 
             (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then -1 else 1))).GetEnumerator()
-    interface IEnumerable with
         member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then -1 else 1)).GetEnumerator() :> IEnumerator
 
 type IIntegralDomain = interface end
@@ -80,8 +79,7 @@ module Ring =
                     member x.Least(subset:Set<int>) = subset |> Seq.sortWith (fun a b -> (if order a b then -1 else 1)) |> Seq.item 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
-                interface IEnumerable with
-                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()    
         }
 
     /// Ring of negative integers.
@@ -102,7 +100,6 @@ module Ring =
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
-                interface IEnumerable with
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
         }
 
@@ -119,8 +116,7 @@ module Ring =
                     member x.Least(subset:Set<int>) = subset |> Seq.sort |> Seq.item 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
-                interface IEnumerable with
-                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()     
         }
 
     /// Ring of natural numbers with zero.
@@ -143,8 +139,7 @@ module Ring =
                     member x.LowerBound = 0
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
-                interface IEnumerable with
-                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()     
         }
     
     let Z1 = CommutativeRing(Z, Mod.(+) 1, Mod.(*) 1, 0, 1, (~-))
