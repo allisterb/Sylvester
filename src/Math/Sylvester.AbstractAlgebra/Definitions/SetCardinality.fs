@@ -43,3 +43,8 @@ module SetCardinality =
     let countable_infinite_card = Aleph 0
     
     let infinite_card n = Aleph n
+
+    let default_card<'t> =
+        match typeof<'t>.Name with
+        | "Int32" -> Aleph 0
+        | _ -> failwithf "Unable to automatically determine cardinality of type %s" typeof<'t>.Name

@@ -39,6 +39,12 @@ type IBoundedLattice<'t when 't : equality and 't: comparison> =
     inherit IHasGreatest<'t>
     inherit IHasLeast<'t>
 
+type IComplementedLattice<'t when 't : equality and 't: comparison> =
+    inherit IBoundedLattice<'t>
+    abstract Complement:UnaryOp<'t>
+
+type IDistributedComplementedLattice<'t when 't : equality and 't: comparison> = inherit IComplementedLattice<'t>
+
 /// Set of elements closed under 2 operations that are associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that each operation on every pair of elements results in the supremum and infimum respectively of the pair.
 type Lattice<'t when 't: equality and 't: comparison>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>) =
@@ -66,10 +72,6 @@ type BoundedLattice<'t when 't: equality and 't: comparison>(set: ISet<'t>, join
 
     new (set: ISet<'t>, join: IBoundedJoinSemiLattice<'t>, meet: IBoundedMeetSemiLattice<'t>) = 
         BoundedLattice(set, join.Op, meet.Op, join.Least, meet.Greatest)
-
-type IComplementedLattice<'t when 't : equality and 't: comparison> =
-    inherit IBoundedLattice<'t>
-    abstract Complement:UnaryOp<'t>
 
 type ComplementedLattice<'t when 't: equality and 't: comparison>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>, least:'t, greatest:'t, complement:UnaryOp<'t>) =
     inherit BoundedLattice<'t>(set, join, meet, least, greatest)        

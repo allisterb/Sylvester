@@ -36,6 +36,7 @@ type ISubGroup<'t when 't: equality> =
     abstract Parent:IGroup<'t> 
 
 type ISubGroup<'order, 't when 'order :> Number and 't : equality> = inherit ISubGroup<'t>
+
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Struct<'t, card.three>(set, arrayOf3 (Binary(op)) (Nullary(ident)) (Unary(inv)))    

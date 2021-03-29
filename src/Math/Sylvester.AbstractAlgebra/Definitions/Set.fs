@@ -141,7 +141,8 @@ with
         | Set _, Set _ ->  failwith "Cannot test two sets defined by set comprehensions for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
 
     /// Create a finite subset of a sequence using a filter.
-    member x.Subset([<ReflectedDefinition>] f:'t -> bool) = 
+    member x.Subset([<ReflectedDefinition>] f':Expr<'t -> bool>) = 
+        let f = getExprFromReflectedDefinition<'t -> bool> f'
         match x with
         | Empty -> failwith "The empty set has no subsets."
         | Seq s -> 
@@ -149,16 +150,9 @@ with
             | FiniteSeq _ -> x |> Seq.filter f |> finite_seq_gen |> Set.fromSeq
             | InfiniteSeq _ -> x |> Seq.filter f |> infinite_seq_gen |> Set.fromSeq
             | _ -> failwithf "Cannot determine the cardinality of this sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
-        | Set _ -> failwith "Cannot use a filter function on a set comprehension. Use a predicte (Expr<'t->bool>) instead."
-
-    /// Create a subset of a sequence using a predicate.
-    member x.Subset(f:Expr<'t->bool>, ?c:CardinalNumber) = 
-        match x with
-        | Empty -> failwith "The empty set has no subsets."
-        | Seq _ -> failwith "Cannot create a subset of a sequence using an expression. Use a filter function instead."
         | Set s -> 
             let r = s.Range';
-            Set(SetComprehension(<@fun x -> (%r:'t->bool) x |&| (%f:'t->bool) x @>, s.Body', defaultArg c s.Cardinality))
+            Set(SetComprehension(<@fun x -> (%r:'t->bool) x |&| (%f':'t->bool) x @>, s.Body', s.Cardinality))
 
     member a.Difference b =
         match a, b with
@@ -193,20 +187,9 @@ with
         | Empty -> failwith "The empty set has no elements."
         | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
         | Set _ -> failwith "Cannot enumerate elements of a set comprehension. Use a sequence instead."
-
-    member x.Product = 
-        match x with
-        | Empty -> Empty
-        | Seq s -> Seq (cart s)
-        | Set s -> 
-            //let a,b = var2<'t> in
-            //SetComprehension(((s.RangeTest(a)) && s.RangeTest), (s.Body', S.Body')) |> Set 
-            failwith "This function is not implmented yet for a set comprehension." //let t1der.Body in SetComprehension((fun(a, b) -> builder.RangeTest a && builder.RangeTest b), <@ %t1, %t1 @>, (fun (a, b) -> x.HasElement a && x.HasElement b)) |> Set 
-    
     static member fromSeq(s: seq<'t>) = Seq s
     
-    static member toProduct(s:Set<'t>) = s.Product
- 
+    
     /// Set union operator.
     [<Symbol "\u222A">]
     static member (|+|) (l, r) = 
@@ -274,11 +257,7 @@ with
 
     /// The universal set.
     static member U = 
-        //let card = match typeof<'t>.Name with
-        //| "byte"
-        //| "sbyte _
-
-        let x = var<'t> in Set(SetComprehension(<@  x @>, Aleph 0, fun _ _ -> true )) 
+        let x = var<'t> in Set(SetComprehension(<@ x @>, default_card<'t>)) 
     
     /// A singleton set containing 0. 
     static member Zero = Singleton<int>(0)
@@ -336,9 +315,13 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let set (range:Expr<'t->bool>) (body:Expr<'t>) card = SetComprehension(range, body, card) |> Set
+    let set (range:Expr<'t->bool>) (body:Expr<'t>) = SetComprehension(range, body, default_card<'t>) |> Set
 
-    let subset(set: ISet<'t>) (sub:Expr<'t->bool>) = set.Set.Subset sub
+    let finite_set (range:Expr<'t->bool>) (body:Expr<'t>) (size:int) = SetComprehension(range, body, Finite(lazy(size))) |> Set
+ 
+    let infinite_countable_set (range:Expr<'t->bool>) (body:Expr<'t>) = SetComprehension(range, body, Aleph 0) |> Set  
+
+    let subset(set: ISet<'t>) (sub:'t->bool) = set.Set.Subset sub
 
     let sseq (s: seq<'t>) = Set.fromSeq s
 
@@ -355,9 +338,9 @@ module Set =
     let finite_seq s = 
         function
         | FiniteSeq _ -> sseq s
-        | _ -> failwith "This expression is not a finite sequence."
+        | _ -> failwith "This expression is not a finite sequence. Use a list or array expression."
 
-    let infinite_seq<'t when 't:equality> (g:Expr<int->'t>) = g |> InfiniteSequenceGenerator |> Set.fromSeq
+    let infinite_seq<'t when 't:equality> g = SequenceGenerator<'t>(Seq.initInfinite g, true) |> Set.fromSeq
         
     let infinite_seq2 g = g |> infinite_seq_gen |> cart |> Set.fromSeq
         
@@ -376,8 +359,4 @@ module Set =
                     Sym(<@ (%%b:'t) @>))) 
                     |> Set.fromSeq
         |> Set.fromSeq
-
-    let finite_set (range:Expr<'t->bool>) (body:Expr<'t>) (size:int) = set range body (Finite(lazy(size))) 
- 
-    let infinite_countable_set (range:Expr<'t->bool>) (body:Expr<'t>) = set range body (Aleph 0) 
 

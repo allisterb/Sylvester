@@ -16,9 +16,10 @@ type Sym<'t> = Sym of Expr<'t> with
              | _ -> false
      override x.ToString() = src (x.Expr)
 
+type any = obj
 
 /// A statement that formally defines a set using a predicate, body, cardinality, and an optional F# function for computing set membership.
-type SetComprehension<'t when 't: equality>(range:Expr<'t->bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
+type SetComprehension<'t when 't: equality> internal (range:Expr<'t->bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     member val Range = expand range
     member val Range' = range
     member val Body = expand body
@@ -36,12 +37,12 @@ type SetComprehension<'t when 't: equality>(range:Expr<'t->bool>, body: Expr<'t>
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
         sprintf "{%s%s:%s}" v (src range) (src body)
 
-    new(range: Expr<'t->bool>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
+    internal new (range: Expr<'t->bool>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
         match hasElement with
         | Some e -> SetComprehension(range, <@ let x = var<'t> in x @>, card, e)
         | None -> SetComprehension(range, <@ let x = var<'t> in x @>, card)
 
-    new(body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
+    internal new(body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
         match hasElement with
         | Some e -> SetComprehension(<@ fun _ -> true @>, body, card, e)
         | None -> SetComprehension(<@ fun _ -> true @>, body, card)
@@ -65,7 +66,7 @@ type internal InfiniteSequenceGenerator<'t when 't: equality> (s:Expr<int->'t>) 
         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
   
 [<AutoOpen>]
-module SetBase =
+module internal SetInternal =
     let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<Sym<'t>>) =
         match s with
             | :? array<Sym<'t>> -> ArraySymSeq
@@ -108,9 +109,9 @@ module SetBase =
         | InfiniteGenSeq -> Some x
         | _ -> None
 
-    let internal infinite_seq_gen s = SequenceGenerator(s, true)
+    let infinite_seq_gen s = SequenceGenerator(s, true)
     
-    let internal finite_seq_gen s = SequenceGenerator(s, false)
+    let finite_seq_gen s = SequenceGenerator(s, false)
 
     let cart_seq (xs:seq<'t>) (ys:seq<'t>) = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y))
         
@@ -123,7 +124,7 @@ module SetBase =
                 (Seq.fold (fun acc elem -> (elem::celem)::acc) [] h) @ cacc) [] (cart_seq' t)
         | _ -> []
 
-    (*
+    (* todo
     let rec cart_seq'' ss =
         match Seq.length ss with
         | 1 ->
