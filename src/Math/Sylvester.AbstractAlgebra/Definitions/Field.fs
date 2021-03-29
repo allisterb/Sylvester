@@ -24,5 +24,5 @@ module Field =
         Field(AdditiveGroup(reals), MultiplicativeGroup(reals))
     let open_interval left right = R.Set.Subset(fun x -> x > left && x < right)
     let closed_interval left right = R.Set.Subset(fun x -> x >= left && x <= right)
-    let line (origin:real) (step:real) = infinite_seq (fun n -> origin + ((float n) * step))
+    let line (origin:real) (step:real) = infinite_seq <@ (fun n -> origin + ((float n) * step)) @>
     let axis step = line 0.0 step

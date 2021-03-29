@@ -16,14 +16,13 @@ type Sym<'t> = Sym of Expr<'t> with
              | _ -> false
      override x.ToString() = src (x.Expr)
 
-type any = Sym<obj>
 
-/// A statement that formally defines a set using a range, body, cardinality, and an optional F# function for computing set membership.
-type SetComprehension<'t when 't: equality>(range:Expr<bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
+/// A statement that formally defines a set using a predicate, body, cardinality, and an optional F# function for computing set membership.
+type SetComprehension<'t when 't: equality>(range:Expr<'t->bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     member val Range = expand range
-    member val internal Range' = range
+    member val Range' = range
     member val Body = expand body
-    member val internal Body' = body
+    member val Body' = body
     member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is defined for the set comprehension %A." sc)
     member val Cardinality = card
     interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
@@ -37,44 +36,55 @@ type SetComprehension<'t when 't: equality>(range:Expr<bool>, body: Expr<'t>, ca
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
         sprintf "{%s%s:%s}" v (src range) (src body)
 
-    new(body: Expr<'t>, card:CardinalNumber, hasElement: SetComprehension<'t> -> 't -> bool) = 
-        let b = getExprFromReflectedDefinition<'t> body in 
-        SetComprehension(<@ true @>, body, card, hasElement)
+    new(range: Expr<'t->bool>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
+        match hasElement with
+        | Some e -> SetComprehension(range, <@ let x = var<'t> in x @>, card, e)
+        | None -> SetComprehension(range, <@ let x = var<'t> in x @>, card)
 
-type InfiniteSequenceGen<'t when 't: equality> (fn: int -> 't) = 
-    member x.Function = fn
-    member x.Sequence = Seq.initInfinite x.Function
+    new(body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
+        match hasElement with
+        | Some e -> SetComprehension(<@ fun _ -> true @>, body, card, e)
+        | None -> SetComprehension(<@ fun _ -> true @>, body, card)
+
+type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
+    member val Sequence = s
+    member val IsInfinite = isInfinite
     interface Generic.IEnumerable<'t> with
-        member x.GetEnumerator():Generic.IEnumerator<'t> = let s = Seq.distinct x.Sequence in s.GetEnumerator()
+        member x.GetEnumerator():Generic.IEnumerator<'t> = x.Sequence.GetEnumerator()
     interface IEnumerable with
         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
-type FiniteSequenceGen<'t when 't: equality> (s:seq<'t>) = 
-    member x.Sequence = s
+type internal InfiniteSequenceGenerator<'t when 't: equality> (s:Expr<int->'t>) = 
+    member val Expr = expand s
+    member val Expr' = s
+    member val Function = evaluate s
+    member val Sequence = s |> evaluate |> Seq.initInfinite 
     interface Generic.IEnumerable<'t> with
-        member x.GetEnumerator():Generic.IEnumerator<'t> = let s = Seq.distinct x.Sequence in s.GetEnumerator()
+        member x.GetEnumerator():Generic.IEnumerator<'t> = x.Sequence.GetEnumerator()
     interface IEnumerable with
         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
-        
+  
 [<AutoOpen>]
-module SetSequence =
+module SetBase =
     let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<Sym<'t>>) =
         match s with
-         | :? array<Sym<'t>> -> ArraySymSeq
-         | :? list<Sym<'t>> ->  ListSymSeq
-         | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" && 
-            o.GetType().GenericTypeArguments.[0].Name.StartsWith("Sylvester.Sym") -> SetSymSeq
-         | :? InfiniteSequenceGen<Sym<'t>> -> InfiniteGenSymSeq
-         | :? FiniteSequenceGen<Sym<'t>> -> FiniteGenSymSeq
-         | _ -> OtherSymSeq
+            | :? array<Sym<'t>> -> ArraySymSeq
+            | :? list<Sym<'t>> ->  ListSymSeq
+            | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" && o.GetType().GenericTypeArguments.[0].Name.StartsWith("Sylvester.Sym") -> SetSymSeq
+            | :? SequenceGenerator<Sym<'t>> as g when not g.IsInfinite -> FiniteGenSymSeq
+            | :? SequenceGenerator<Sym<'t>> as g when g.IsInfinite -> InfiniteGenSymSeq
+            | :? InfiniteSequenceGenerator<Sym<'t>> -> InfiniteGenSymSeq
+            | _ -> OtherSymSeq
          
     let (|ArraySeq|ListSeq|SetSeq|InfiniteGenSeq|FiniteGenSeq|OtherSeq|) (s:seq<'t>) =
         match s with
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
         | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" -> SetSeq
-        | :? InfiniteSequenceGen<'t> -> InfiniteGenSeq
-        | :? FiniteSequenceGen<'t> -> FiniteGenSeq
+        | :? SequenceGenerator<'t> as g when not g.IsInfinite -> FiniteGenSeq
+        | :? SequenceGenerator<'t> as g when g.IsInfinite -> InfiniteGenSeq
+        | :? InfiniteSequenceGenerator<'t> -> InfiniteGenSeq
+        
         | :? seq<Sym<'t>> as se -> 
             match se with
             | ArraySymSeq -> ArraySeq
@@ -98,8 +108,10 @@ module SetSequence =
         | InfiniteGenSeq -> Some x
         | _ -> None
 
-    let seq_gen f = InfiniteSequenceGen f
+    let internal infinite_seq_gen s = SequenceGenerator(s, true)
     
+    let internal finite_seq_gen s = SequenceGenerator(s, false)
+
     let cart_seq (xs:seq<'t>) (ys:seq<'t>) = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y))
         
     let rec cart_seq' ss =
@@ -111,6 +123,19 @@ module SetSequence =
                 (Seq.fold (fun acc elem -> (elem::celem)::acc) [] h) @ cacc) [] (cart_seq' t)
         | _ -> []
 
+    (*
+    let rec cart_seq'' ss =
+        match Seq.length ss with
+        | 1 ->
+            let h = Seq.item 0 ss
+            Seq.fold (fun acc elem -> Seq.append [elem] acc) Seq.empty h
+        | _ ->
+            let h = Seq.item 0 ss
+            let t = Seq.skip 0 ss
+            Seq.fold (fun cacc celem -> failwith "Not implemented yet"
+                //(Seq.fold (fun acc elem -> Seq.append(Seq.append([elem], celem), acc)) sSeq.empty h) @ cacc) Seq.empty (cart_seq'' t)
+        | 0 -> Seq.empty
+    *)
     let cart s = cart_seq s s
 
     let cart2 a b = cart_seq a b

@@ -6,17 +6,18 @@
 
   <ItemGroup>
     <Compile Include="FsExpr.fs" />
-    <Compile Include="TPTP.fs" />
     <Compile Include="Numbers.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />
     <Compile Include="MathNetExpr.fs" />
     <Compile Include="Symbolic.fs" />
     <Compile Include="Parsers.fs" />
+    <Compile Include="TPTP.fs" />
     <None Include="Script1.fsx" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ext\FSharp.Quotations.Evaluator\src\FSharp.Quotations.Evaluator\FSharp.Quotations.Evaluator.fsproj" />
     <ProjectReference Include="..\..\..\ext\mathnet-symbolics\src\Symbolics\Symbolics.fsproj" />
     <ProjectReference Include="..\..\..\ext\TPTPParser\TPTPParser.csproj" />
     <ProjectReference Include="..\..\..\ext\unquote\Unquote.NetStandard\Unquote.NetStandard.fsproj" />

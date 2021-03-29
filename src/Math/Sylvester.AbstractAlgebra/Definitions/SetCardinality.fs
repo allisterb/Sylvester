@@ -4,7 +4,7 @@ type CardinalNumber =
 | Finite of DelayedEval<int>
 | Aleph of int
 with    
-    member x.Measure() = 
+    member x.Measure() :real = 
         match x with
         | Finite m -> float(m.Force())
         | _ -> failwith "This set does not have finite cardinality."
@@ -23,9 +23,15 @@ with
     static member (*) (l:CardinalNumber, r:CardinalNumber) =
         match l, r with
         | Finite a, Finite b -> lazy(System.Math.Max(a.Force(), a.Force())) |> Finite
-        | Finite a, Aleph _ -> Finite a
-        | Aleph _, Finite a -> Finite a
+        | Finite _, Aleph n -> Aleph n
+        | Aleph m, Finite _ -> Aleph m
         | Aleph m, Aleph n -> System.Math.Max(m, n) |> Aleph
+    static member (/) (l:CardinalNumber, r:CardinalNumber) =
+        match l, r with
+        | Finite a, Finite b -> lazy(System.Math.Min(a.Force(), a.Force())) |> Finite
+        | Finite m, Aleph _ -> Finite m
+        | Aleph _, Finite n -> Finite n
+        | Aleph m, Aleph n -> System.Math.Min(m, n) |> Aleph
 
 type ICardinality =  
     abstract member Cardinality:CardinalNumber

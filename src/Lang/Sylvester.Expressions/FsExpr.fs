@@ -284,3 +284,5 @@ module FsExpr =
     let sprint_list_values list =
         let l = expand_list list
         l
+
+    let evaluate q = FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
