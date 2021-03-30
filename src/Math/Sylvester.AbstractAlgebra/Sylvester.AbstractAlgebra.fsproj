@@ -41,6 +41,7 @@
     <Compile Include="Definitions\BooleanAlgebra.fs" />
     <Compile Include="Definitions\SetAlgebra.fs" />
     <Compile Include="Definitions\Combination.fs" />
+    <Compile Include="Theories\SetTheory.fs" />
     <Compile Include="Theories\BooleanAlgebra.fs" />
     <Compile Include="Theories\SetAlgebra.fs" />
   </ItemGroup>

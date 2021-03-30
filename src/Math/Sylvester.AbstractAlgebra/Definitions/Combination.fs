@@ -3,7 +3,7 @@
 open Sylvester.Arithmetic
 
 type KnownCombination<'k, 't when 'k :> Number and 't : equality>(parent:Set<'t>, items:seq<'t>) =
-    inherit KnownFiniteSet<'k, 't>(items)
+    inherit KnownSet<'k, 't>(items)
     member val Parent = parent
     member val Items = Seq.toList items
 

@@ -40,8 +40,9 @@ module Formula =
 
     let prop p1 = var'<bool> p1
     let prop2 p1 p2 = var2'<bool> p1 p2
-    let pred<'t> p = (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p, typeof<'t>))):'t @>
-    let pred2<'t> p1 p2 = (fun (_:'t) -> truth_value), (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(p2, typeof<'t>))):'t @>
+    let pred<'t> = (fun (_:'t) -> truth_value)
+    let pred'<'t> p = (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p, typeof<'t>))):'t @>
+    let pred2'<'t> p1 p2 = (fun (_:'t) -> truth_value), (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(p2, typeof<'t>))):'t @>
     
     (* Quantifiers *)
 

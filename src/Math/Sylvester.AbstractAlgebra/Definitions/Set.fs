@@ -264,26 +264,26 @@ with
 
 and SetFamily<'t when 't : equality> = Set<Set<'t>> 
 
-and KnownFiniteSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
+and KnownSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
     member val Size = number<'n>
     member val Items = Array<'n, 't>(items)
     member val Set = Seq items
-    interface IKnownFiniteSet<'n, 't> with
+    interface IKnownSet<'n, 't> with
         member x.Set = x.Set
         member x.Equals y = x.Set.Equals y
         member x.Size = x.Size
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
-    new (items:seq<'t>) = KnownFiniteSet(items |> Seq.toArray)
+    new (items:seq<'t>) = KnownSet(items |> Seq.toArray)
 
-and Singleton<'t when 't: equality>(e:'t) = inherit KnownFiniteSet<Nat<1>, 't>([|e|])
+and Singleton<'t when 't: equality>(e:'t) = inherit KnownSet<Nat<1>, 't>([|e|])
 
 and ISet<'t when 't: equality> = 
     inherit IEquatable<Set<'t>>
     abstract member Set:Set<'t>
 
-and IKnownFiniteSet<'n, 't when 'n :> Number and 't : equality> = 
+and IKnownSet<'n, 't when 'n :> Number and 't : equality> = 
     inherit ISet<'t>
     abstract Size: 'n
     
@@ -315,13 +315,21 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let set (range:Expr<'t->bool>) (body:Expr<'t>) = SetComprehension(range, body, default_card<'t>) |> Set
+    let card (s:ISet<'t>) = s.Set.Cardinality
+    
+    let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
-    let finite_set (range:Expr<'t->bool>) (body:Expr<'t>) (size:int) = SetComprehension(range, body, Finite(lazy(size))) |> Set
- 
+    let set<'t when 't: equality> range body = SetComprehension<'t>(<@ range @>, <@ body @>, default_card<'t>) |> Set
+
+    let finite_set range body n = SetComprehension(range, body, (lazy n) |> Finite) |> Set
+    
+    let infinite_set range body n = SetComprehension(range, body, Aleph n) |> Set
+    
+    let pred_set(p:'t->bool) = let x = var<'t> in set p x
+
     let infinite_countable_set (range:Expr<'t->bool>) (body:Expr<'t>) = SetComprehension(range, body, Aleph 0) |> Set  
 
-    let subset(set: ISet<'t>) (sub:'t->bool) = set.Set.Subset sub
+    let subset (sub:'t->bool) (set: ISet<'t>) = set.Set.Subset sub
 
     let sseq (s: seq<'t>) = Set.fromSeq s
 
@@ -331,14 +339,10 @@ module Set =
     
     let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()
 
-    let card (s:ISet<'t>) = s.Set.Cardinality
-    
-    let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
-
     let finite_seq s = 
-        function
-        | FiniteSeq _ -> sseq s
-        | _ -> failwith "This expression is not a finite sequence. Use a list or array expression."
+        match s with
+        | FiniteSeq f -> Seq f
+        | _ -> failwithf "This is not a finite sequence expression."
 
     let infinite_seq<'t when 't:equality> g = SequenceGenerator<'t>(Seq.initInfinite g, true) |> Set.fromSeq
         

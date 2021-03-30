@@ -48,7 +48,7 @@ type SetComprehension<'t when 't: equality> internal (range:Expr<'t->bool>, body
         match hasElement with
         | Some e -> SetComprehension(<@ fun _ -> true @>, body, card, e)
         | None -> SetComprehension(<@ fun _ -> true @>, body, card)
-
+    new(range:'t->bool, body:'t) = SetComprehension(<@ range @>, <@ body @>, default_card<'t>)
 type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
     member val Sequence = s
     member val IsInfinite = isInfinite

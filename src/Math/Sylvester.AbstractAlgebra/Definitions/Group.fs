@@ -71,13 +71,13 @@ type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, i
     do fail_if_not_commutative op
     interface IAbelianGroup<'t>
 
-type KnownFiniteGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownFiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+type KnownGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, ident, inv)
     member x.El0<'n when 'n :> card.one>() = (x, GroupElement<'order>(0))
     member x.El1<'n when 'n :> card.two>() = (x, GroupElement<'order>(0), GroupElement<'order>(1))
 
-type KnownFiniteAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownFiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
-    inherit KnownFiniteGroup<'order, 't>(set, op, ident, inv)
+type KnownAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+    inherit KnownGroup<'order, 't>(set, op, ident, inv)
     do fail_if_not_commutative op
     interface IAbelianGroup<'t>
 
@@ -122,4 +122,4 @@ module Group =
                     member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         } 
 
-    let Zero = KnownFiniteAbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
+    let Zero = KnownAbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
