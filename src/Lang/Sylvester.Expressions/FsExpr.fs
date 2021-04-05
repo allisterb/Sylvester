@@ -174,6 +174,8 @@ module FsExpr =
         match vars with
         | v::[] -> Expr.Var v
         | _ -> vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
+
+    let get_vars_to_tuple x = x |> (get_vars >> vars_to_tuple) 
     
     let rec (|List|_|) =
         let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
@@ -215,6 +217,10 @@ module FsExpr =
           | _ -> expanded
 
         rexpand Map.empty expr
+
+    let expand'<'a, 'b> (expr:Expr<'b>) =
+        let e = expand expr
+        <@ %%e:'a @>
 
     let expand_left = 
         function

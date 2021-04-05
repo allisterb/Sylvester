@@ -140,7 +140,7 @@ with
         | Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set comprehension as a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
         | Set _, Set _ ->  failwith "Cannot test two sets defined by set comprehensions for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
 
-    /// Create a finite subset of a sequence using a filter.
+    /// Create a subset of a set using a filter predicate.
     member x.Subset([<ReflectedDefinition>] f':Expr<'t -> bool>) = 
         let f = evaluate f'
         match x with
@@ -149,22 +149,24 @@ with
             match s with
             | FiniteSeq _ -> x |> Seq.filter f |> finite_seq_gen |> Set.fromSeq
             | InfiniteSeq _ -> x |> Seq.filter f |> infinite_seq_gen |> Set.fromSeq
-            | _ -> failwithf "Cannot determine the cardinality of this sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
+            | _ -> failwithf "Cannot determine the cardinality of the sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
         | Set s -> 
             let r = s.Range';
-            Set(SetComprehension(<@fun x -> (%r:'t->bool) x |&| (%f':'t->bool) x @>, s.Body', s.Cardinality))
+            let nr = expand f'
+            Set(SetComprehension(s.Bound, <@ %r |&| (%%nr:bool) @>, s.Body', s.Cardinality))
 
     member a.Difference b =
         match a, b with
         | _, Empty -> a
         | Empty, _ -> Empty
+        | Seq a, Seq b -> (Seq.except b a) |> Set.fromSeq
         | _,_ -> a.Subset(fun x -> b.HasElement x |> not)
         
     member a.ElementDifference b =
         match a with
         | Empty -> Empty
         | Seq _ -> Seq(a |> Seq.except [b])
-        | Set s -> SetComprehension(s.Range', s.Body', (a.Cardinality - (Finite (lazy 1))), (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
+        | Set s -> SetComprehension(s.Bound, s.Range', s.Body', (a.Cardinality - (Finite (lazy 1))), (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
            
@@ -197,9 +199,12 @@ with
         |(Empty, x) -> x
         |(x, Empty) -> x
         |(Seq _, Seq _) -> Seq.concat[l; r] |> Set.fromSeq //SetGenerator(Seq.concat[l; r], (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
-        |_, _ -> 
-            let set_union(l:Set<'t>, r: Set<'t>) = Unchecked.defaultof<'t> in
-            SetComprehension(<@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
+        |Set a, _ -> 
+            let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in
+            SetComprehension(a.Bound, <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
+        |_, Set b -> 
+            let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in
+            SetComprehension(b.Bound, <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
         
     /// Set intersection operator.
     [<Symbol "\u2229">]
@@ -208,9 +213,12 @@ with
         |(Empty, _) -> Empty
         |(_, Empty) -> Empty        
         |(Seq a, Seq b) -> Seq(a.Intersect b) 
-        |(_, _) -> 
+        |(Set a, _) -> 
             let set_intersect(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(<@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
+            SetComprehension(a.Bound, <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
+        |(_, Set b) -> 
+            let set_intersect(l:Set<'t>, r: Set<'t>) = formula<'t> in
+            SetComprehension(b.Bound, <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
 
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
@@ -225,9 +233,7 @@ with
     static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
 
     /// Set absolute complement operator. -A = U \ A
-    static member (~-) (l:Set<'t>) = 
-        let u = SetComprehension (<@ Unchecked.defaultof<'t> @>, Aleph 1, (fun _ _ -> true)) |> Set
-        u.Difference l
+    static member (~-) (l:Set<'t>) = l.Complement Set.U
 
     /// Set create subset operator.
     static member (|>|) (l:Set<'t>, r:'t->bool) = l.Subset r
@@ -251,13 +257,13 @@ with
                 | _, Finite _-> (finite_seq_gen a) |> Set.fromSeq
                 | Aleph _, Aleph _ -> infinite_seq_gen(Seq.initInfinite (fun n -> Seq.item n a) ) |> Set.fromSeq
             c
-        |(_,_) -> SetComprehension<'t* 't>(<@ let a, b = var2<'t> in (a, b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
+        |(_,_) -> SetComprehension<'t * 't>(<@ let a, b = var2<'t> in (a, b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
 
     interface ISet<'t> with member x.Set = x
 
     /// The universal set.
     static member U = 
-        let x = var<'t> in Set(SetComprehension(<@ x @>, default_card<'t>, fun _ _ -> true)) 
+        let x = var<'t> in Set(SetComprehension(<@ x @>, <@ true @>, <@ x @>, default_card<'t>, fun _ _ -> true)) 
     
     /// A singleton set containing 0. 
     static member Zero = Singleton<int>(0)
@@ -315,19 +321,25 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
+    let elem<'t> n = 
+        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> SetElement
+
     let card (s:ISet<'t>) = s.Set.Cardinality
     
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
-    let set<'t when 't: equality> range body = SetComprehension<'t>(<@ range @>, <@ body @>, default_card<'t>) |> Set
+    let set<'t when 't: equality> (bound:'t) range body card = SetComprehension(bound, range, body, card) |> Set
 
-    let finite_set range body n = SetComprehension(range, body, (lazy n) |> Finite) |> Set
-    
-    let infinite_set range body n = SetComprehension(range, body, Aleph n) |> Set
-    
-    let pred_set(p:'t->bool) = let x = var<'t> in set p x
+    let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, true, body, default_card<'t>) |> Set
 
-    let infinite_countable_set (range:Expr<'t->bool>) (body:Expr<'t>) = SetComprehension(range, body, Aleph 0) |> Set  
+    let finite_set (bound:'t) range body n = SetComprehension(bound, range, body, (lazy n) |> Finite) |> Set
+    
+    let infinite_set (bound:'t) range body n = SetComprehension(bound, range, body, Aleph n) |> Set
+    
+    let infinite_countable_set bound (range:'t->bool) (body:'t) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, Aleph 0) |> Set  
+
+    let set_pred(p:'t->bool) = let x = var<'t> in SetComprehension(<@ x @>, <@ p @>, <@ x @>, default_card<'t>) |> Set
+
 
     let subset (sub:'t->bool) (set: ISet<'t>) = set.Set.Subset sub
 
@@ -344,7 +356,7 @@ module Set =
         | FiniteSeq f -> Seq f
         | _ -> failwithf "This is not a finite sequence expression."
 
-    let infinite_seq<'t when 't:equality> g = SequenceGenerator<'t>(Seq.initInfinite g, true) |> Set.fromSeq
+    let infinite_seq<'t when 't:equality> g = Sequence<'t>(Seq.initInfinite g, true) |> Set.fromSeq
         
     let infinite_seq2 g = g |> infinite_seq_gen |> cart |> Set.fromSeq
         
@@ -360,7 +372,6 @@ module Set =
         let vf = get_vars f |> List.head
         infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
-                    Sym(<@ (%%b:'t) @>))) 
-                    |> Set.fromSeq
+                    SetElement(<@ (%%b:'t) @>))) 
         |> Set.fromSeq
 

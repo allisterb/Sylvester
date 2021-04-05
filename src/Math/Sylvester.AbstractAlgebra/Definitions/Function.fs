@@ -26,4 +26,11 @@ type Fn<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<
 
 type Injection<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Expr<Map<'t, 'u>>) =
     inherit Fn<'t, 'u>(domain, codomain, map)
-    interface IInjection<'t, 'u>    
+    interface IInjection<'t, 'u>
+    
+type Surjection<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Expr<Map<'t, 'u>>) =
+    inherit Fn<'t, 'u>(domain, codomain, map)
+    interface ISurjection<'t, 'u>
+
+type Family<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Expr<Map<'t, 'u>>) = 
+    inherit Surjection<'t, 'u>(domain, codomain, map)

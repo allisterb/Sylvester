@@ -168,6 +168,11 @@ module Patterns =
         | Quantifier(_,bound, _, _) -> bound 
         | expr -> failwithf "The expression %s is not a valid quantifier expression." (src expr)
 
+    let fail_if_not_bound_vars =
+        function
+        | BoundVars _ -> ()
+        | n -> failwithf "The expression %s is not a bound variables expression." (src n)
+
     let rec occurs_free (vars:Var list) = 
         function
         | Quantifier(_, bound, _, Quantifier(_, _, _, body)) -> 

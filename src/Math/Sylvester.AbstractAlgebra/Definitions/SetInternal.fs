@@ -5,25 +5,49 @@ open System.Collections
 
 open FSharp.Quotations
 
-[<CustomEquality; NoComparison>]
-type Sym<'t> = Sym of Expr<'t> with
-     member x.Expr = let (Sym e) = x in e
-     interface IEquatable<Sym<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
+[<CustomEquality; CustomComparison>]
+type SetElement<'t> = SetElement of Expr<'t> with
+     member x.Expr = let (SetElement e) = x in e
+     member x.Item(i:int) = x
      override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
      override a.Equals (_b:obj) = 
              match _b with 
-             | :? Sym<'t> as e -> (a :> IEquatable<Sym<'t>>).Equals e
+             | :? SetElement<'t> as e -> (a :> IEquatable<SetElement<'t>>).Equals e
              | _ -> false
      override x.ToString() = src (x.Expr)
+     interface IComparable<SetElement<'t>> with member a.CompareTo b = a.ToString().CompareTo(b.ToString())
+     interface IComparable with
+        member a.CompareTo b = 
+            match b with
+            | :? SetElement<'t> as SetElement -> (a :> IComparable<SetElement<'t>>).CompareTo SetElement
+            | _ -> failwith "This object is not a SetElementbol."
+
+     interface IEquatable<SetElement<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
+     static member (+)(l:SetElement<'t>, r:SetElement<'t>) = formula<SetElement<'t>>
+     static member (+)(l:'t, r:SetElement<'t>) = formula<SetElement<'t>>
+     static member (+)(l:SetElement<'t>, r:'t) = formula<SetElement<'t>>
+     static member (*)(l:SetElement<'t>, r:SetElement<'t>) = formula<SetElement<'t>>
+     static member (*)(l:'t, r:SetElement<'t>) = formula<SetElement<'t>>
+     static member (*)(l:SetElement<'t>, r:'t) = formula<SetElement<'t>>
+     static member (+..+)(l:SetElement<'t>, r:SetElement<'t>) = formula<seq<SetElement<'t>>>
+     static member (+..+)(l:'t, r:SetElement<'t>) = formula<seq<SetElement<'t>>>
+     static member (+..+)(l:SetElement<'t>, r:'t) = formula<seq<SetElement<'t>>>
+     static member Zero = formula<SetElement<'t>>
+     static member One = formula<SetElement<'t>>
+
 
 type any = obj
 
-/// A statement that formally defines a set using a predicate, body, cardinality, and an optional F# function for computing set membership.
-type SetComprehension<'t when 't: equality> internal (range:Expr<'t->bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
-    let r =  evaluate range
+type Elem<'t> = SetElement<'t>
+
+/// A statement that formally defines a set using bound variables, range predicate, body, cardinality, and an optional F# function for computing set membership.
+type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr<bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
+    member val Bound = 
+        match bound with
+        | Patterns.BoundVars v -> bound
+        | _ -> failwithf "The expression %s is not recognized as a bound variable(s) expression." (src bound)
     member val Range = expand range
     member val Range' = range
-    member val RangeFn = r 
     member val Body = expand body
     member val Body' = body
     member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is defined for the set comprehension %A." sc)
@@ -38,30 +62,45 @@ type SetComprehension<'t when 't: equality> internal (range:Expr<'t->bool>, body
         let vars = body |> get_vars
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
         sprintf "{%s%s:%s}" v (src range) (src body)
-
-    internal new (range: Expr<'t->bool>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
+    
+    internal new (bound:Expr<'t>, range:Expr<'t->bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
+        let r = expand'<bool, 't->bool> range
         match hasElement with
-        | Some e -> SetComprehension(range, <@ let x = var<'t> in x @>, card, e)
-        | None -> SetComprehension(range, <@ let x = var<'t> in x @>, card)
-
-    internal new(body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
+        | Some h -> SetComprehension(bound, r, body, card, h)
+        | None -> SetComprehension(bound, r, body, card)
+    
+    internal new(bound:Expr<'t>, body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
         match hasElement with
-        | Some e -> SetComprehension(<@ fun _ -> true @>, body, card, e)
-        | None -> SetComprehension(<@ fun _ -> true @>, body, card)
-    new(range:'t->bool, body:'t) = SetComprehension(<@ range @>, <@ body @>, default_card<'t>)
-type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
+        | Some e -> SetComprehension(bound, <@ true @>, body, card, e)
+        | None -> SetComprehension(bound, <@ true @>, body, card)
+
+    internal new (range:Expr<bool>, body:Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =
+        let b = get_vars_to_tuple range
+        match hasElement with
+        | Some h -> SetComprehension(<@ %%b:'t @>, range, body, card, h)
+        | None -> SetComprehension(<@ %%b:'t @>, range, body, card)
+
+    internal new (body:Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =
+        let b = get_vars_to_tuple body
+        match hasElement with
+        | Some h -> SetComprehension(<@ %%b:'t @>, <@ true @>, body, card, h)
+        | None -> SetComprehension(<@ %%b:'t @>, <@ true @>, body, card)
+
+    internal new (range:Expr<bool>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =
+        let b = get_vars_to_tuple range
+        match hasElement with
+        | Some h -> SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card, h)
+        | None -> SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card)
+        
+    (* ---------------------------------------------------------------------------------------------------------------------------*)
+
+    internal new(bound:'t, range:bool, body:'t, card:CardinalNumber) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, card)
+
+    internal new(range:bool, body:'t, card:CardinalNumber) = SetComprehension(<@ range @>, <@ body @>, card)
+
+type internal Sequence<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
     member val Sequence = s
     member val IsInfinite = isInfinite
-    interface Generic.IEnumerable<'t> with
-        member x.GetEnumerator():Generic.IEnumerator<'t> = x.Sequence.GetEnumerator()
-    interface IEnumerable with
-        member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
-
-type internal InfiniteSequenceGenerator<'t when 't: equality> (s:Expr<int->'t>) = 
-    member val Expr = expand s
-    member val Expr' = s
-    member val Function = evaluate s
-    member val Sequence = s |> evaluate |> Seq.initInfinite 
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = x.Sequence.GetEnumerator()
     interface IEnumerable with
@@ -69,14 +108,13 @@ type internal InfiniteSequenceGenerator<'t when 't: equality> (s:Expr<int->'t>) 
   
 [<AutoOpen>]
 module internal SetInternal =
-    let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<Sym<'t>>) =
+    let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<SetElement<'t>>) =
         match s with
-            | :? array<Sym<'t>> -> ArraySymSeq
-            | :? list<Sym<'t>> ->  ListSymSeq
+            | :? array<SetElement<'t>> -> ArraySymSeq
+            | :? list<SetElement<'t>> ->  ListSymSeq
             | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" && o.GetType().GenericTypeArguments.[0].Name.StartsWith("Sylvester.Sym") -> SetSymSeq
-            | :? SequenceGenerator<Sym<'t>> as g when not g.IsInfinite -> FiniteGenSymSeq
-            | :? SequenceGenerator<Sym<'t>> as g when g.IsInfinite -> InfiniteGenSymSeq
-            | :? InfiniteSequenceGenerator<Sym<'t>> -> InfiniteGenSymSeq
+            | :? Sequence<SetElement<'t>> as g when not g.IsInfinite -> FiniteGenSymSeq
+            | :? Sequence<SetElement<'t>> as g when g.IsInfinite -> InfiniteGenSymSeq
             | _ -> OtherSymSeq
          
     let (|ArraySeq|ListSeq|SetSeq|InfiniteGenSeq|FiniteGenSeq|OtherSeq|) (s:seq<'t>) =
@@ -84,11 +122,10 @@ module internal SetInternal =
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
         | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" -> SetSeq
-        | :? SequenceGenerator<'t> as g when not g.IsInfinite -> FiniteGenSeq
-        | :? SequenceGenerator<'t> as g when g.IsInfinite -> InfiniteGenSeq
-        | :? InfiniteSequenceGenerator<'t> -> InfiniteGenSeq
+        | :? Sequence<'t> as g when not g.IsInfinite -> FiniteGenSeq
+        | :? Sequence<'t> as g when g.IsInfinite -> InfiniteGenSeq
         
-        | :? seq<Sym<'t>> as se -> 
+        | :? seq<SetElement<'t>> as se -> 
             match se with
             | ArraySymSeq -> ArraySeq
             | ListSymSeq -> ListSeq
@@ -110,10 +147,10 @@ module internal SetInternal =
         match x with
         | InfiniteGenSeq -> Some x
         | _ -> None
-
-    let infinite_seq_gen s = SequenceGenerator(s, true)
     
-    let finite_seq_gen s = SequenceGenerator(s, false)
+    let infinite_seq_gen s = Sequence(s, true)
+    
+    let finite_seq_gen s = Sequence(s, false)
 
     let cart_seq (xs:seq<'t>) (ys:seq<'t>) = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y))
         
