@@ -5,41 +5,6 @@ open System.Collections
 
 open FSharp.Quotations
 
-[<CustomEquality; CustomComparison>]
-type SetElement<'t> = SetElement of Expr<'t> with
-     member x.Expr = let (SetElement e) = x in e
-     member x.Item(i:int) = x
-     override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
-     override a.Equals (_b:obj) = 
-             match _b with 
-             | :? SetElement<'t> as e -> (a :> IEquatable<SetElement<'t>>).Equals e
-             | _ -> false
-     override x.ToString() = src (x.Expr)
-     interface IComparable<SetElement<'t>> with member a.CompareTo b = a.ToString().CompareTo(b.ToString())
-     interface IComparable with
-        member a.CompareTo b = 
-            match b with
-            | :? SetElement<'t> as SetElement -> (a :> IComparable<SetElement<'t>>).CompareTo SetElement
-            | _ -> failwith "This object is not a SetElementbol."
-
-     interface IEquatable<SetElement<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
-     static member (+)(l:SetElement<'t>, r:SetElement<'t>) = formula<SetElement<'t>>
-     static member (+)(l:'t, r:SetElement<'t>) = formula<SetElement<'t>>
-     static member (+)(l:SetElement<'t>, r:'t) = formula<SetElement<'t>>
-     static member (*)(l:SetElement<'t>, r:SetElement<'t>) = formula<SetElement<'t>>
-     static member (*)(l:'t, r:SetElement<'t>) = formula<SetElement<'t>>
-     static member (*)(l:SetElement<'t>, r:'t) = formula<SetElement<'t>>
-     static member (+..+)(l:SetElement<'t>, r:SetElement<'t>) = formula<seq<SetElement<'t>>>
-     static member (+..+)(l:'t, r:SetElement<'t>) = formula<seq<SetElement<'t>>>
-     static member (+..+)(l:SetElement<'t>, r:'t) = formula<seq<SetElement<'t>>>
-     static member Zero = formula<SetElement<'t>>
-     static member One = formula<SetElement<'t>>
-
-
-type any = obj
-
-type Elem<'t> = SetElement<'t>
-
 /// A statement that formally defines a set using bound variables, range predicate, body, cardinality, and an optional F# function for computing set membership.
 type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr<bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     member val Bound = 
@@ -92,11 +57,47 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
         | Some h -> SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card, h)
         | None -> SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card)
         
-    (* ---------------------------------------------------------------------------------------------------------------------------*)
+    (* --------------------------------------------------------------------------------------------------------------------------- *)
 
     internal new(bound:'t, range:bool, body:'t, card:CardinalNumber) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, card)
 
     internal new(range:bool, body:'t, card:CardinalNumber) = SetComprehension(<@ range @>, <@ body @>, card)
+
+    internal new(range:bool, card:CardinalNumber) = SetComprehension(<@ range @>, card)
+
+[<CustomEquality; CustomComparison>]
+type Term<'t when 't: equality> = Term of Expr<'t> with
+     member x.Expr = let (Term e) = x in e
+     member x.Item(i:int) = x
+     override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
+     override a.Equals (_b:obj) = 
+             match _b with 
+             | :? Term<'t> as e -> (a :> IEquatable<Term<'t>>).Equals e
+             | _ -> false
+     override x.ToString() = src (x.Expr)
+     interface IComparable<Term<'t>> with member a.CompareTo b = a.ToString().CompareTo(b.ToString())
+     interface IComparable with
+        member a.CompareTo b = 
+            match b with
+            | :? Term<'t> as Term -> (a :> IComparable<Term<'t>>).CompareTo Term
+            | _ -> failwith "This object is not a Termbol."
+     interface IEquatable<Term<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
+     interface Generic.IEnumerable<'t> with
+         member x.GetEnumerator () :Generic.IEnumerator<'t>= Seq.empty.GetEnumerator()
+         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
+     static member (+)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
+     static member (+)(l:'t, r:Term<'t>) = formula<Term<'t>>
+     static member (+)(l:Term<'t>, r:'t) = formula<Term<'t>>
+     static member (*)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
+     static member (*)(l:'t, r:Term<'t>) = formula<Term<'t>>
+     static member (*)(l:Term<'t>, r:'t) = formula<Term<'t>>
+     static member (+..+)(l:Term<'t>, r:Term<'t>) = formula<seq<Term<'t>>>
+     static member (+..+)(l:'t, r:Term<'t>) = formula<seq<Term<'t>>>
+     static member (+..+)(l:Term<'t>, r:'t) = formula<seq<Term<'t>>>
+     static member Zero = formula<Term<'t>>
+     static member One = formula<Term<'t>>
+
+type any = obj
 
 type internal Sequence<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
     member val Sequence = s
@@ -108,13 +109,13 @@ type internal Sequence<'t when 't: equality> (s:seq<'t>, isInfinite:bool) =
   
 [<AutoOpen>]
 module internal SetInternal =
-    let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<SetElement<'t>>) =
+    let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<Term<'t>>) =
         match s with
-            | :? array<SetElement<'t>> -> ArraySymSeq
-            | :? list<SetElement<'t>> ->  ListSymSeq
+            | :? array<Term<'t>> -> ArraySymSeq
+            | :? list<Term<'t>> ->  ListSymSeq
             | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" && o.GetType().GenericTypeArguments.[0].Name.StartsWith("Sylvester.Sym") -> SetSymSeq
-            | :? Sequence<SetElement<'t>> as g when not g.IsInfinite -> FiniteGenSymSeq
-            | :? Sequence<SetElement<'t>> as g when g.IsInfinite -> InfiniteGenSymSeq
+            | :? Sequence<Term<'t>> as g when not g.IsInfinite -> FiniteGenSymSeq
+            | :? Sequence<Term<'t>> as g when g.IsInfinite -> InfiniteGenSymSeq
             | _ -> OtherSymSeq
          
     let (|ArraySeq|ListSeq|SetSeq|InfiniteGenSeq|FiniteGenSeq|OtherSeq|) (s:seq<'t>) =
@@ -125,7 +126,7 @@ module internal SetInternal =
         | :? Sequence<'t> as g when not g.IsInfinite -> FiniteGenSeq
         | :? Sequence<'t> as g when g.IsInfinite -> InfiniteGenSeq
         
-        | :? seq<SetElement<'t>> as se -> 
+        | :? seq<Term<'t>> as se -> 
             match se with
             | ArraySymSeq -> ArraySeq
             | ListSymSeq -> ListSeq

@@ -1,10 +1,12 @@
 ﻿namespace Sylvester
 
+open System
 open FSharp.Quotations
 
 // Make Formula an alias for the reflected definition attribute.
 type Formula = ReflectedDefinitionAttribute
 
+type any = obj
 [<AutoOpen>]
 module Formula =    
     (* Logical operators for formulas *)

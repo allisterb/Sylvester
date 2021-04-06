@@ -6,35 +6,28 @@ open System
 open Sylvester
 open PropCalculus
 
-[<CustomEquality; NoComparison>]
-type Sym<'t> = Sym of Expr<'t> with
-     member x.Expr = let (Sym e) = x in e
-     member x.Item(i:int) = x
-     interface IEquatable<Sym<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
-     override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
-     override a.Equals (_b:obj) = 
-             match _b with 
-             | :? Sym<'t> as e -> (a :> IEquatable<Sym<'t>>).Equals e
-             | _ -> false
-     override x.ToString() = src (x.Expr)
-     static member (+)(l:Sym<'t>, r:Sym<'t>) = formula<Sym<'t>>
-     static member (*)(l:Sym<'t>, r:Sym<'t>) = formula<Sym<'t>>
-     static member (..)(l:Sym<'t>, r:Sym<'t>) = formula<Sym<'t>>
-     static member (..+)(l:Sym<'t>, r:Sym<'t>) = formula<Sym<'t>>
-     static member (..*)(l:Sym<'t>, r:Sym<'t>) = formula<Sym<'t>>
+let p =elem<bool> "p"
+let q = elem<bool> "q"
 
-let elem<'t> n = 
-    let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Sym
+
+match p with
+| Term(Patterns.Var(_)) -> true
+| _ -> false
 let a = elem<int> "a"
 let i = var<int>
-a.[i]
+let inf<'t> = formula<'t>
 
-a.[0]*a.[1]..*a
+seq(a.[0])
 
+let yy =  {a.[0]..a.[inf]}
+[ 2 * a]
+//let x = {a*0..i*a} 
+//let rrr = expand x
+//<@ %%rrr:SetElement<int> @>
 let ff = 4::[]
 let x = var<int>
 let rr = pred<int>
-let zz = proof prop_calculus <@ x |?| set rr x = forall x (x > 0) (rr x = rr x)@> []
+//let zz = proof prop_calculus <@ x |?| set rr x = forall x (x > 0) (rr x = rr x)@> []
 
 [<Formula>]
 let rec f =

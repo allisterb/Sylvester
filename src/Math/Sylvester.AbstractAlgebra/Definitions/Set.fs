@@ -321,8 +321,14 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let elem<'t> n = 
-        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> SetElement
+    let elem<'t when 't: equality> n = 
+        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
+
+    let term<'t when 't: equality> (e:Expr<'t>) = Term e
+
+    let term_expr (t:Term<'t>) = t.Expr
+
+    let term_src(t:Term<'t>) = t |> (term_expr >> src) 
 
     let card (s:ISet<'t>) = s.Set.Cardinality
     
@@ -338,8 +344,7 @@ module Set =
     
     let infinite_countable_set bound (range:'t->bool) (body:'t) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, Aleph 0) |> Set  
 
-    let set_pred(p:'t->bool) = let x = var<'t> in SetComprehension(<@ x @>, <@ p @>, <@ x @>, default_card<'t>) |> Set
-
+    let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
     let subset (sub:'t->bool) (set: ISet<'t>) = set.Set.Subset sub
 
@@ -356,7 +361,14 @@ module Set =
         | FiniteSeq f -> Seq f
         | _ -> failwithf "This is not a finite sequence expression."
 
-    let infinite_seq<'t when 't:equality> g = Sequence<'t>(Seq.initInfinite g, true) |> Set.fromSeq
+    let infinite_seq<'t when 't:equality> g = Sequence<'t>(Seq.initInfinite g, true) |> sseq
+    
+    let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
+        let vf = get_vars f |> List.head
+        infinite_seq_gen(Seq.initInfinite (fun i -> 
+                    let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
+                    Term(<@ (%%b:'t) @>))) 
+        |> sseq
         
     let infinite_seq2 g = g |> infinite_seq_gen |> cart |> Set.fromSeq
         
@@ -368,10 +380,5 @@ module Set =
 
     let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise |> Set.fromSeq 
 
-    let infinite_seq' (f: Expr<int ->'t ->'t>) =
-        let vf = get_vars f |> List.head
-        infinite_seq_gen(Seq.initInfinite (fun i -> 
-                    let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
-                    SetElement(<@ (%%b:'t) @>))) 
-        |> Set.fromSeq
-
+    let infinite_seq_gen'<'t when 't:equality> g = Sequence<'t>(Seq.initInfinite g, true) :> seq<'t>
+    
