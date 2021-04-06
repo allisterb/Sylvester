@@ -87,8 +87,7 @@ module Ring =
         let set = infinite_seq (fun n -> -n) 
         let order = (<=) in
         {
-            new OrderedRing<int>(AdditiveGroup(set), (*), order) 
-            
+            new OrderedRing<int>(AdditiveGroup(set), (*), order)
                 interface ITotalOrder<int> with
                     member x.Set = set
                     member x.Order = order
@@ -106,7 +105,7 @@ module Ring =
     /// Ring of integers.
     let Z =
         let set = Zpos |+| Zneg
-        let order = (<=)
+        let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface ITotalOrder<int> with
@@ -125,7 +124,7 @@ module Ring =
     /// Ring of natural numbers without zero.
     let Nz =
         let set = Zpos |^| 0
-        let order = (<=)
+        let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
                 interface IWellOrder<int> with

@@ -378,7 +378,4 @@ module Set =
 
     let infinite_seqp4 g = g |> infinite_seq_gen |> quadwise |> Set.fromSeq 
 
-    let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise |> Set.fromSeq 
-
-    let infinite_seq_gen'<'t when 't:equality> g = Sequence<'t>(Seq.initInfinite g, true) :> seq<'t>
-    
+    let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise |> Set.fromSeq

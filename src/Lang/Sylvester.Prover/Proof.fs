@@ -106,17 +106,20 @@ and Rule =
     | Admit of string * (Expr -> Expr) 
     | Derive of string * Proof * (Proof -> Expr -> Expr)
     | Deduce of string * Proof * (Proof -> Expr -> Expr) 
+    | Define of string * (Expr -> Expr)
 with
     member x.Name = 
         match x with 
         | Admit(n, _) -> n
         | Derive(n, _, _) -> n
         | Deduce(n,_,_) -> n
+        | Define(n, _) -> n
     member x.Apply = 
         match x with
         | Admit(_, r) -> r
         | Derive(_, p, r) -> r p
         | Deduce(_, p, r) -> r p
+        | Define(_, r) -> r
         
 and Rules = Rule list 
 
@@ -217,7 +220,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                     failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
                         (conjs |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
                 if not step.ApplyRight then failwith "A deduction rule can only be applied to the consequent of a logical implication."
-                
+            | _ -> ()
         let _a = step.Apply _state
 
         let msg =
@@ -235,6 +238,11 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
             | Deduce(_,_,_) ->
                 if not ((sequal _a _state))  then
                     sprintf "%i. %s." (stepId) (stepName.Replace("(expression)", step.Pos)) 
+                else
+                    sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", step.Pos))
+            | Define(_, _) -> 
+                if not ((sequal _a _state)) then
+                    sprintf "%i. %s: %s \u2192 %s." (stepId) (stepName.Replace("(expression)", step.Pos)) (print_formula _state) (print_formula _a) 
                 else
                     sprintf "%i. %s: No change." (stepId) (stepName.Replace("(expression)", step.Pos))
         do prooflog msg

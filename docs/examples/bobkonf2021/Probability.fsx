@@ -1,25 +1,31 @@
 #load "IncludeMath.fsx"
 
-open FSharp.Quotations
-open System
-
 open Sylvester
 open PropCalculus
 
-let p =elem<bool> "p"
+let p = elem<bool> "p"
 let q = elem<bool> "q"
 
 
-match p with
-| Term(Patterns.Var(_)) -> true
-| _ -> false
+1 |?| N
 let a = elem<int> "a"
 let i = var<int>
+let zz  = a * 5
+let A = seq {a.[i]}
+
+let n = var<int>
+let rr = infinite_seq (fun n -> a.[n+1]) 
+let rrr = infinite_seq' <@ fun n a -> a + 1@>
+
+rr.[5]
+<@ infinite_seq (fun n -> a.[n])@> |> expand
 let inf<'t> = formula<'t>
+let ffff = seq a.[0]
+<@ sseq a.[0] = sseq [4]  @> |> expand
 
-seq(a.[0])
+//seq(a.[0])
 
-let yy =  {a.[0]..a.[inf]}
+let yy =  {a.[0]..a.[i]}
 [ 2 * a]
 //let x = {a*0..i*a} 
 //let rrr = expand x
