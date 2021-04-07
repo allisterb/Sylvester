@@ -65,10 +65,10 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
 
     internal new(range:bool, card:CardinalNumber) = SetComprehension(<@ range @>, card)
 
-[<CustomEquality; CustomComparison>]
-type Term<'t when 't: equality> = Term of Expr<'t> with
-     member x.Expr = let (Term e) = x in e
-     member x.Item(i:int) = x
+type Term<'t>(expr:Expr<'t>) =
+     member x.Expr = expr
+     member x.Item(i:int) = formula<'t>
+     member x.Item(i: Index) = formula<Term<'t>>
      override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
      override a.Equals (_b:obj) = 
              match _b with 
@@ -91,11 +91,21 @@ type Term<'t when 't: equality> = Term of Expr<'t> with
      static member (*)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
      static member (*)(l:'t, r:Term<'t>) = formula<Term<'t>>
      static member (*)(l:Term<'t>, r:'t) = formula<Term<'t>>
+     static member (-)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
+     static member (-)(l:'t, r:Term<'t>) = formula<Term<'t>>
+     static member (-)(l:Term<'t>, r:'t) = formula<Term<'t>>
      static member (+..+)(l:Term<'t>, r:Term<'t>) = formula<seq<Term<'t>>>
      static member (+..+)(l:'t, r:Term<'t>) = formula<seq<Term<'t>>>
      static member (+..+)(l:Term<'t>, r:'t) = formula<seq<Term<'t>>>
      static member Zero = formula<Term<'t>>
      static member One = formula<Term<'t>>
+
+and Index = Index of int 
+
+type Element<'t> = Element of seq<'t> with
+    member x.Sequence = let (Element s) = x in s
+    member x.Item(i:int) = Seq.item 0 x.Sequence
+    member x.Item(i:Index) = formula<Term<'t>>
 
 type any = obj
 

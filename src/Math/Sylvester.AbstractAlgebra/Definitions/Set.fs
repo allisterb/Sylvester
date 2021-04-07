@@ -321,8 +321,7 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let elem<'t when 't: equality> n = 
-        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
+    let elem<'t when 't: equality> (s:seq<'t>) = Element s 
 
     let term<'t when 't: equality> (e:Expr<'t>) = Term e
 

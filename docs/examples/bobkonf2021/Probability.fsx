@@ -2,16 +2,25 @@
 
 open Sylvester
 open PropCalculus
+open PredCalculus
 
+[<Formula>]
+let bounded = 
+        let x = elem<real> "x" 
+        let epsilon, Ln = var2<real>
+        let n,N = var2<int> 
+        <@ forall epsilon (epsilon > 0.) (exists N  (n > N)  ((Ln - x.[n]) < epsilon)) @>
+
+<@ bounded @> |> expand
 let p = elem<bool> "p"
 let q = elem<bool> "q"
-
 
 1 |?| N
 let a = elem<int> "a"
 let i = var<int>
 let zz  = a * 5
 let A = seq {a.[i]}
+
 
 let n = var<int>
 let rr = infinite_seq (fun n -> a.[n+1]) 
