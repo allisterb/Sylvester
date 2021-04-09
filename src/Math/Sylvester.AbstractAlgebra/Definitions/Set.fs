@@ -323,7 +323,8 @@ module Set =
     
     let elem<'t when 't: equality> (s:seq<'t>) = Element s 
 
-    let term<'t when 't: equality> (e:Expr<'t>) = Term e
+    let term<'t> n = 
+        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
 
     let term_expr (t:Term<'t>) = t.Expr
 

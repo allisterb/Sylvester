@@ -506,6 +506,15 @@ module LogicalRules =
         let stmt = call <@ (=) @> (qop::inst_value::[])
         let p = Proof(stmt, theory, steps, true) in p |> Theorem |> Ident
 
+    let Define (theory:Theory) (expr:Expr) = 
+        let rec subst (lhs:Expr, rhs:Expr) = 
+            function
+            | l when sequal l lhs -> rhs
+            | expr -> traverse expr (subst(lhs, rhs))
+        match expr with
+        | Equals(l, r) -> Rule.Define(sprintf "Substitute definition of %s \u2261 %s into (expression)" (theory.PrintFormula l) (theory.PrintFormula r), subst(l, r))
+        | _ -> failwithf "The formula %A is not an identity." (theory.PrintFormula expr)
+
 [<AutoOpen>]
 module Proof = 
     let proof (theory:Theory) (e:Expr<'t>) steps =         
@@ -528,11 +537,19 @@ module Proof =
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         match f with
         | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
-        | _ -> failwithf "The expression %s is not an identity" (theory.PrintFormula f)
+        | _ -> failwithf "The expression %s is not an identity." (theory.PrintFormula f)
     let ident' steps e = ident Proof.Logic e steps
     let id_ax theory e = ident theory e []
     let id_ax' e = id_ax Proof.Logic e
-
+    
     (* Deductions *)
     let deduce p = Theorem(p) |> Deduce
     let deduce' p = Theorem(p) |> Deduce'
+
+    (* Definitions *)
+    let def (theory:Theory) (e:Expr<bool>) = 
+        let f = e |> expand |> body
+        match f with
+        | Equals(_, _) -> Define theory f
+        | _ -> failwithf "The expression %s is not an identity." (theory.PrintFormula f)
+        

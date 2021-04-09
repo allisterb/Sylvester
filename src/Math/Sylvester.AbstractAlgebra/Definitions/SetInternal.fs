@@ -104,7 +104,7 @@ and Index = Index of int
 
 type Element<'t> = Element of seq<'t> with
     member x.Sequence = let (Element s) = x in s
-    member x.Item(i:int) = Seq.item 0 x.Sequence
+    member x.Item(i:int) = formula<'t>
     member x.Item(i:Index) = formula<Term<'t>>
 
 type any = obj
