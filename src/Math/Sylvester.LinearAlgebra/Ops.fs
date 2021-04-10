@@ -9,22 +9,27 @@ type _Vector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) an
 
 type _Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'t>
 
-type IVectorOps =
+type IVectorNumericOps =
     abstract VecAdd:_Vector<'t> -> _Vector<'t> -> _Vector<'t>
     abstract VecSubtract:_Vector<'t> -> _Vector<'t> -> _Vector<'t>
     abstract VecDotProduct:_Vector<'t> -> _Vector<'t> -> 't
 
-type IMatrixOps = 
+type IVectorSymbolicOps =
+    abstract VecAdd:Expr<'t> list -> Expr<'t> list -> Expr<'t> list
+    abstract VecSubtract:Expr<'t> list -> Expr<'t> list -> Expr<'t> list
+    abstract VecDotProduct:Expr<'t> list -> Expr<'t> list -> Expr<'t>
+    
+type IMatrixNumericOps = 
     abstract MatAdd:_Matrix<'t> -> _Matrix<'t> -> _Matrix<'t>
     abstract MatSubtract:_Matrix<'t> -> _Matrix<'t> -> _Matrix<'t>
     abstract MatMultiply:_Matrix<'t> -> _Matrix<'t> -> _Matrix<'t>
 
-type ILinearAlgebraOps =
-    inherit IVectorOps
-    inherit IMatrixOps
+type ILinearAlgebraNumericOps =
+    inherit IVectorNumericOps
+    inherit IMatrixNumericOps
 
-type MathNetLinearAlgebra() =
-    interface ILinearAlgebraOps with
+type MathNetLinearAlgebraNumeric() =
+    interface ILinearAlgebraNumericOps with
         member x.VecAdd l r =  l.Add r
         member x.VecSubtract l r = l.Subtract r
         member x.VecDotProduct l r = l.DotProduct r
@@ -40,4 +45,4 @@ module LinearAlgbra =
         | t when t.Name = "Single" || t.Name = "Double" || t.Name = "Complex" || t.Name = "Complex32" -> Some t
         | _ -> None
     
-    let mutable defaultLinearAlgebraOps = new MathNetLinearAlgebra() :> ILinearAlgebraOps
+    let mutable defaultLinearAlgebraNumericOps = new MathNetLinearAlgebraNumeric() :> ILinearAlgebraNumericOps

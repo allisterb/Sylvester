@@ -7,7 +7,6 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
-
 module SetTheory =
     let desc = axiom_desc "Set Theory"
     
@@ -29,4 +28,4 @@ module SetTheory =
         function
         | Equals(ElementOf(F, Set(_, bound, range, body)), Exists(_, bound', range', body')) -> Some ()
         //| Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> pattern_desc "Definition of true" <@fun x -> x = x = true @> |> Some
-        | _ -> None
+        | _ -> None    

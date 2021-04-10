@@ -223,6 +223,12 @@ type real = float
 
 [<AutoOpen>]
 module Numbers =
+    let pos_inf<'t> = Unchecked.defaultof<'t>
+
+    let neg_inf<'t> = Unchecked.defaultof<'t>
+    
+    let lim<'x, 't> (_:'x->'t) = Unchecked.defaultof<'t>
+
     let (|Int32Type|_|): Type -> Type option =
         function
         | t when t.Name = "Int32" -> Some t

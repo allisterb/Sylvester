@@ -109,7 +109,7 @@ type Element<'t> = Element of seq<'t> with
 
 type any = obj
 
-type internal Sequence<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
+type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
     member val Sequence = s
     member val IsInfinite = isInfinite
     interface Generic.IEnumerable<'t> with
@@ -119,13 +119,17 @@ type internal Sequence<'t when 't: equality> (s:seq<'t>, isInfinite:bool) =
   
 [<AutoOpen>]
 module internal SetInternal =
+    let term_expr (t:Term<'t>) = t.Expr
+
+    let term_src(t:Term<'t>) = t |> (term_expr >> src) 
+
     let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<Term<'t>>) =
         match s with
             | :? array<Term<'t>> -> ArraySymSeq
             | :? list<Term<'t>> ->  ListSymSeq
             | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" && o.GetType().GenericTypeArguments.[0].Name.StartsWith("Sylvester.Sym") -> SetSymSeq
-            | :? Sequence<Term<'t>> as g when not g.IsInfinite -> FiniteGenSymSeq
-            | :? Sequence<Term<'t>> as g when g.IsInfinite -> InfiniteGenSymSeq
+            | :? SequenceGenerator<Term<'t>> as g when not g.IsInfinite -> FiniteGenSymSeq
+            | :? SequenceGenerator<Term<'t>> as g when g.IsInfinite -> InfiniteGenSymSeq
             | _ -> OtherSymSeq
          
     let (|ArraySeq|ListSeq|SetSeq|InfiniteGenSeq|FiniteGenSeq|OtherSeq|) (s:seq<'t>) =
@@ -133,8 +137,8 @@ module internal SetInternal =
         | :? array<'t> -> ArraySeq
         | :? list<'t> ->  ListSeq
         | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" -> SetSeq
-        | :? Sequence<'t> as g when not g.IsInfinite -> FiniteGenSeq
-        | :? Sequence<'t> as g when g.IsInfinite -> InfiniteGenSeq
+        | :? SequenceGenerator<'t> as g when not g.IsInfinite -> FiniteGenSeq
+        | :? SequenceGenerator<'t> as g when g.IsInfinite -> InfiniteGenSeq
         
         | :? seq<Term<'t>> as se -> 
             match se with
@@ -159,10 +163,10 @@ module internal SetInternal =
         | InfiniteGenSeq -> Some x
         | _ -> None
     
-    let infinite_seq_gen s = Sequence(s, true)
-    
-    let finite_seq_gen s = Sequence(s, false)
+    let finite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, false)
 
+    let infinite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, true)
+    
     let cart_seq (xs:seq<'t>) (ys:seq<'t>) = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y))
         
     let rec cart_seq' ss =

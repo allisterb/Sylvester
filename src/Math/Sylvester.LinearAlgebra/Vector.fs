@@ -1,7 +1,6 @@
 ﻿namespace Sylvester
 
 open System
-
 open FSharp.Quotations
 
 open MathNet.Numerics
@@ -10,26 +9,29 @@ open Sylvester.Arithmetic
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    (data: 't array, ?expr: Expr<'t list>) =
-    do if expr.IsNone && data.Length = 0 then failwith "The length of a vector must one or greater."
-    let vector = lazy LinearAlgebra.DenseVector.raw data
-
+    internal (e: Expr<'t list>, isSymbolic:bool) =
+    let data = e |> evaluate |> List.toArray
+    do if data.Length = 0 then failwith "The length of a vector must one or greater."
+    let expr = expand_list e
+    let vector = lazy LinearAlgebra.DenseVector.raw data  
+    member val Expr = expr
+    member val Expr' = e
+    member val IsSymbolic = isSymbolic  
     member val _Array = data
     member val _Vector = vector
-    member val Expr = expr
-    member val IsSymbolic = expr.IsSome  
- 
     interface IPartialShape<one> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(data.Length) |] |> Some with get,set
         member val Data = data :> Array with get, set
-    
-    static member Ops = defaultLinearAlgebraOps
+    new(e:Expr<'t list>) = Vector(e, true)
+    new(d:'t list) = Vector(<@ d @>, false)
+    new(d:'t array) = let _d = Array.toList d in Vector(_d)
+    static member NumericOps = defaultLinearAlgebraNumericOps
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
     static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'t>.create(v.AsArray()) 
-    static member (+)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.Ops.VecAdd l._Vector.Value r._Vector.Value 
-    static member (-)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.Ops.VecSubtract l._Vector.Value r._Vector.Value
-    static member (*)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.Ops.VecDotProduct l._Vector.Value r._Vector.Value
+    static member (+)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.NumericOps.VecAdd l._Vector.Value r._Vector.Value 
+    static member (-)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.NumericOps.VecSubtract l._Vector.Value r._Vector.Value
+    static member (*)(l: Vector<'t>, r: Vector<'t>) = Vector<'t>.NumericOps.VecDotProduct l._Vector.Value r._Vector.Value
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
@@ -48,5 +50,5 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct an
     
 type Vec<'dim0, 't when 'dim0 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Vector<'dim0, 't>
-type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, R>
+type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, real>
 type VecF<'dim0 when 'dim0 :> Number> = Vec<'dim0, float32>
