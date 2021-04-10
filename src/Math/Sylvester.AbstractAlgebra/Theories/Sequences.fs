@@ -13,6 +13,8 @@ module Sequences =
     (* Definitions *)
     let converges = pred<seq<_>>
     
+    let lim (r:int) (s:seq<'t>) = formula<'t>
+
     let def_converges (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (d:Expr<seq<_>>) =      
             def PropCalculus.prop_calculus <@ converges %d = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  ((%Li - elem(%d).[%n]) < %epsilon)) @>
 

@@ -65,50 +65,6 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
 
     internal new(range:bool, card:CardinalNumber) = SetComprehension(<@ range @>, card)
 
-type Term<'t>(expr:Expr<'t>) =
-     member x.Expr = expr
-     member x.Item(i:int) = formula<'t>
-     member x.Item(i: Index) = formula<Term<'t>>
-     override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
-     override a.Equals (_b:obj) = 
-             match _b with 
-             | :? Term<'t> as e -> (a :> IEquatable<Term<'t>>).Equals e
-             | _ -> false
-     override x.ToString() = src (x.Expr)
-     interface IComparable<Term<'t>> with member a.CompareTo b = a.ToString().CompareTo(b.ToString())
-     interface IComparable with
-        member a.CompareTo b = 
-            match b with
-            | :? Term<'t> as Term -> (a :> IComparable<Term<'t>>).CompareTo Term
-            | _ -> failwith "This object is not a Termbol."
-     interface IEquatable<Term<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
-     interface Generic.IEnumerable<'t> with
-         member x.GetEnumerator () :Generic.IEnumerator<'t>= Seq.empty.GetEnumerator()
-         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
-     static member (+)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
-     static member (+)(l:'t, r:Term<'t>) = formula<Term<'t>>
-     static member (+)(l:Term<'t>, r:'t) = formula<Term<'t>>
-     static member (*)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
-     static member (*)(l:'t, r:Term<'t>) = formula<Term<'t>>
-     static member (*)(l:Term<'t>, r:'t) = formula<Term<'t>>
-     static member (-)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
-     static member (-)(l:'t, r:Term<'t>) = formula<Term<'t>>
-     static member (-)(l:Term<'t>, r:'t) = formula<Term<'t>>
-     static member (+..+)(l:Term<'t>, r:Term<'t>) = formula<seq<Term<'t>>>
-     static member (+..+)(l:'t, r:Term<'t>) = formula<seq<Term<'t>>>
-     static member (+..+)(l:Term<'t>, r:'t) = formula<seq<Term<'t>>>
-     static member Zero = formula<Term<'t>>
-     static member One = formula<Term<'t>>
-
-and Index = Index of int 
-
-type Element<'t> = Element of seq<'t> with
-    member x.Sequence = let (Element s) = x in s
-    member x.Item(i:int) = formula<'t>
-    member x.Item(i:Index) = formula<Term<'t>>
-
-type any = obj
-
 type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
     member val Sequence = s
     member val IsInfinite = isInfinite
@@ -116,6 +72,56 @@ type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:boo
         member x.GetEnumerator():Generic.IEnumerator<'t> = x.Sequence.GetEnumerator()
     interface IEnumerable with
         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
+
+type Term<'t>(expr:Expr<'t>) =
+    member x.Expr = expr
+    member x.Item(i:int) = formula<'t>
+    member x.Item(i: Index) = formula<Term<'t>>
+    override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
+    override a.Equals (_b:obj) = 
+            match _b with 
+            | :? Term<'t> as e -> (a :> IEquatable<Term<'t>>).Equals e
+            | _ -> false
+    override x.ToString() = src (x.Expr)
+    interface IComparable<Term<'t>> with member a.CompareTo b = a.ToString().CompareTo(b.ToString())
+    interface IComparable with
+       member a.CompareTo b = 
+           match b with
+           | :? Term<'t> as Term -> (a :> IComparable<Term<'t>>).CompareTo Term
+           | _ -> failwith "This object is not a Termbol."
+    interface IEquatable<Term<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
+    interface Generic.IEnumerable<'t> with
+        member x.GetEnumerator () :Generic.IEnumerator<'t>= Seq.empty.GetEnumerator()
+        member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
+    static member (+)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
+    static member (+)(l:'t, r:Term<'t>) = formula<Term<'t>>
+    static member (+)(l:Term<'t>, r:'t) = formula<Term<'t>>
+    static member (*)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
+    static member (*)(l:'t, r:Term<'t>) = formula<Term<'t>>
+    static member (*)(l:Term<'t>, r:'t) = formula<Term<'t>>
+    static member (-)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
+    static member (-)(l:'t, r:Term<'t>) = formula<Term<'t>>
+    static member (-)(l:Term<'t>, r:'t) = formula<Term<'t>>
+    static member (^^)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
+    static member (^^)(l:'t, r:Term<'t>) = formula<Term<'t>>
+    static member (^^)(l:Term<'t>, r:'t) = formula<Term<'t>>
+    static member (^^)(l:'t, r:Term<int>) = formula<Term<'t>>
+    static member (^^)(l:Term<'t>, r:int) = formula<Term<'t>>
+    static member (+..+)(l:Term<'t>, r:Term<'t>) = formula<seq<Term<'t>>>
+    static member (+..+)(l:'t, r:Term<'t>) = formula<seq<Term<'t>>>
+    static member (+..+)(l:Term<'t>, r:'t) = formula<seq<Term<'t>>>
+    static member(!)(l:Term<'t>) = formula<'t>
+    static member Zero = formula<Term<'t>>
+    static member One = formula<Term<'t>>
+
+and Index = Index of int 
+
+type Element<'t> = Element of seq<'t> with
+   member x.Sequence = let (Element s) = x in s
+   member x.Item(i:int) = formula<'t>
+   member x.Item(i:Index) = formula<Term<'t>>
+
+type any = obj
   
 [<AutoOpen>]
 module internal SetInternal =

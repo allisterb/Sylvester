@@ -23,10 +23,10 @@ module Formula =
     let formula<'t> = Unchecked.defaultof<'t>
 
     (* Introduce variable names for formulas *)
-    let symbolic_var<'t> = Unchecked.defaultof<'t>
+    let symbolic_var<'t> = formula<'t>
     
     (* Result of symbolic truth-functional operation *)
-    let truth_value = Unchecked.defaultof<bool>
+    let truth_value = formula<bool>
 
     let var<'t> = symbolic_var<'t>
     let var2<'t> = symbolic_var<'t>, symbolic_var<'t>

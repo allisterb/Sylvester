@@ -321,6 +321,9 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
+    let term<'t> n = 
+        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
+
     let card (s:ISet<'t>) = s.Set.Cardinality
     
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
@@ -352,7 +355,7 @@ module Set =
         | FiniteSeq f -> Seq f
         | _ -> failwithf "This is not a finite sequence expression."
 
-    let infinite_seq<'t when 't:equality> g = infinite_seq_gen<'t>(Seq.initInfinite g) |> sseq
+    let infinite_seq<'t when 't:equality> g = (Seq.initInfinite >> infinite_seq_gen<'t> >> sseq) g
     
     let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
@@ -371,7 +374,4 @@ module Set =
 
     let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise |> Set.fromSeq
 
-    let elem<'t when 't: equality> (s:seq<'t>) = Element s 
-
-    let term<'t> n = 
-        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
+    let elem<'t when 't: equality> (s:seq<'t>) = Element s
