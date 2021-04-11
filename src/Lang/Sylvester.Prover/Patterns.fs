@@ -109,12 +109,10 @@ module Patterns =
 
     let (|Sequence|_|) =
         function
-        | Call(None, method, Range(l, r)::[]) when method.Name = "CreateSequence" -> Some (l, r)
-        | _ -> None
-
-    let (|InfiniteSeq|_|) =
-        function
-        | Call(None, method, l::[]) when method.Name = "InitializeSequence" -> Some l
+        | Call(None, mi0, Call(None, mi1, Lambda(_, Call(None, mi2, v))::[])::[]) when mi0.Name = "CreateSequence" && mi1.Name = "Delay" && mi2.Name = "Singleton" -> Some v
+        | Call (None, mi, e) when mi.Name = "InitializeInfinite" -> Some e
+        | List l -> Some l
+        | NewArray(_, a) -> Some a
         | _ -> None
 
     let (|Proposition|_|) =

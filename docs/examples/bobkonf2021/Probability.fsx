@@ -1,19 +1,63 @@
 #load "IncludeMath.fsx"
 
+open FSharp.Quotations
+
+// bounded<float> (seq (Seq.delay (fun () -> Seq.singleton (a.Item(i)))))
 open Sylvester
 open PropCalculus
 open PredCalculus
+open Sequences
+
+let a = term<int> "a"
+let b = var<real>
+let i,n = var2<int>
+<@ seq{(5 ^^ a) / i} @>
+let rr = seq{(5 ^^ a) / i} 
 
 [<Formula>]
-let bounded = 
-        let x = elem<real> "x" 
-        let epsilon, Ln = var2<real>
-        let n,N = var2<int> 
-        <@ forall epsilon (epsilon > 0.) (exists N  (n > N)  ((Ln - x.[n]) < epsilon)) @>
+let bbb = Seq.initInfinite(fun pp -> pp)
 
-<@ bounded @> |> expand
-let p = elem<bool> "p"
-let q = elem<bool> "q"
+<@ seq{(5 ^^ a) / i} @>
+
+let ggg = <@ Seq.delay<int> (fun () -> Seq.empty) @>
+let (|SeqDelay|_|) =
+    function
+    | Patterns.Call(None, mi0, Patterns.Call(None, mi1, Patterns.Lambda(_, Patterns.Call(None, mi2, v::[]))::[])::[]) when mi0.Name = "CreateSequence" && mi1.Name = "Delay" && mi2.Name = "Singleton" -> Some v
+    | _ -> None
+
+match <@ seq{(5 ^^ a) / i} @> with
+| SeqDelay v -> Some v
+| _ -> None
+
+
+let cc = seq {b**b}
+<@ lim pos_inf (seq {1 + 1 / i}) = 1  @> 
+
+src <@ a @>
+let A = seq {a.[i]}
+//a.[i]
+//seq {1..}
+//let oo = <@[4.;7.; b; 1.]@>
+//expand_list oo
+
+let converges = pred<seq<_>>
+
+let def_converges (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (d:Expr<seq<_>>) =      
+        def prop_calculus <@ converges %d = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  ((%Li - elem(%d).[%n]) < %epsilon)) @>
+
+let epsilon = var<real>
+let L = var<real> 
+let n,N,n',N'= var2'<int> "n" "N"
+
+proof prop_calculus <@ lim pos_inf (seq {1 + 1 / i})  = 1@> [
+    //def_converges <@ epsilon @> <@ N @> <@ n @> <@ L@> <@ seq {1. + 1. / L} @> |> LR
+]
+
+
+expand (bounded_def <@ seq {1.0..2.0} @>)
+
+//let p = elem<bool> "p"
+//let q = elem<bool> "q"
 
 1 |?| N
 let a = elem<int> "a"

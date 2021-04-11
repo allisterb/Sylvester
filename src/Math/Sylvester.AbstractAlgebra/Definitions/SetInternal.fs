@@ -105,7 +105,6 @@ type Term<'t>(expr:Expr<'t>) =
     static member (^^)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
     static member (^^)(l:'t, r:Term<'t>) = formula<'t>
     static member (^^)(l:Term<'t>, r:'t) = formula<'t>
-    static member (^^)(l:'t, r:Term<int>) = formula<'t>
     static member (^^)(l:Term<'t>, r:int) = formula<'t>
     static member (+..+)(l:Term<'t>, r:Term<'t>) = formula<seq<Term<'t>>>
     static member (+..+)(l:'t, r:Term<'t>) = formula<seq<Term<'t>>>
