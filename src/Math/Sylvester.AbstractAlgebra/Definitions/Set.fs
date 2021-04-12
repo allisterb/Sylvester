@@ -333,6 +333,8 @@ module Set =
     
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
+    let set<'t when 't: equality> (bound:'t) range body card = SetComprehension(bound, range, body, card) |> Set :> ISet<'t>
+
     let finite_set (bound:'t) range body n = SetComprehension(bound, range, body, (lazy n) |> Finite) |> Set 
     
     let infinite_set bound (range:'t->bool) (body:'t) (n:int) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, Aleph n) |> Set  
@@ -342,8 +344,6 @@ module Set =
     let infinite_set_1 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 1) |> Set
     
     let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
-
-    let set<'t when 't: equality> (bound:'t) range body card = SetComprehension(bound, range, body, card) |> Set :> ISet<'t>
 
     let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, true, body, default_card<'t>) |> Set :> ISet<'t>
 

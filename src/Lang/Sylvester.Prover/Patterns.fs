@@ -157,29 +157,6 @@ module Patterns =
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
     
-    let (|SetEmpty|_|) =
-        function
-        | NewUnionCase(uc, e) when uc.Name = "Empty" -> e |> List.map expand |> Some
-        | _ -> None
-
-    let (|SetSeq|_|) =
-        function
-        | NewUnionCase(uc, Sequence e::[]) when uc.Name = "Seq" -> Some e
-        | Call(None, mi, l) when mi.Name = "infinite_seq" || mi.Name = "finite_seq" || mi.Name = "sseq" -> l |> List.map expand |> Some
-        | _ -> None
-
-    let (|SetComp|_|) =
-        function
-        | Call(None, mi, s) when mi.Name = "finite_set" || mi.Name = "infinite_set_0" || mi.Name = "infinite_set_1" || mi.Name = "set" || mi.Name = "set'" -> s |> List.map expand |> Some 
-        | _ -> None
-
-    let (|Set|_|) =
-        function
-        | SetEmpty e
-        | SetSeq e
-        | SetComp e -> Some e
-        | _ -> None
-
     let bound_vars =
         function
         | Quantifier(_,bound, _, _) -> bound 

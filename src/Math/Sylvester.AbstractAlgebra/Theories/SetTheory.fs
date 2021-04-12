@@ -11,21 +11,40 @@ module SetTheory =
     let desc = axiom_desc "Set Theory"
     
     (* Patterns *)
+    
+    let (|SetEmpty|_|) =
+        function
+        | NewUnionCase(uc, e) when uc.Name = "Empty" -> e |> List.map expand |> Some
+        | _ -> None
+
+    let (|SetSeq|_|) =
+        function
+        | NewUnionCase(uc, Sequence e::[]) when uc.Name = "Seq" -> Some e
+        | Call(None, mi, l) when mi.Name = "infinite_seq" || mi.Name = "finite_seq" || mi.Name = "sseq" -> l |> List.map expand |> Some
+        | _ -> None
+
+    let (|SetComp|_|) =
+        function
+        | Call(None, mi, (BoundVars(bound)::s as c)) when mi.Name = "finite_set" || mi.Name = "infinite_set_0" || mi.Name = "infinite_set_1" || mi.Name = "set" || mi.Name = "set'" -> c |> List.map expand |> Some 
+        | _ -> None
+
     let (|Set|_|) =
         function
-        | Call(None, mi, BoundVars(bound)::range::body::[]) when mi.Name = "set" -> Some(<@@ set @@>, bound, range, body)
+        | SetEmpty e
+        | SetSeq e
+        | SetComp e -> Some e
         | _ -> None
+
 
     let (|ElementOf|_|) =
         function
-        | SpecificCall <@@ (|?|) @@> (None,_,l::r::[]) -> Some(l, r)
+        | SpecificCall <@@ (|?|) @@> (None,_,l::Set r::[]) -> Some(l, r)
         | _ -> None
 
     (* Axioms *)
 
-    /// true = p = p
-    let (|True|_|) =
+    /// e |?| set x (x > 1) (x ^^ 2) = exists x (x > 1) (e = x ^^ 2)
+    let (|SetMember|_|) =
         function
-        | Equals(ElementOf(F, Set(_, bound, range, body)), Exists(_, bound', range', body')) -> Some ()
-        //| Equals(Bool true, Equals(a1, a2)) when sequal a1 a2 -> pattern_desc "Definition of true" <@fun x -> x = x = true @> |> Some
+        | Equals(ElementOf(F, BoundVars(bound)::range::body::_), Exists(_, bound', range', Equals(F', body'))) when vequal' bound bound' && sequal3 F range body F' range' body' -> Some ()
         | _ -> None    

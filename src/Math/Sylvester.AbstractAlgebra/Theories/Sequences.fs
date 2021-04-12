@@ -24,3 +24,6 @@ module Sequences =
 
     let def_bounded (d:Expr<seq<_>>) =
             def PropCalculus.prop_calculus <@ %d :? IBounded<_> = sseq %d :? IBounded<_> @>
+
+    (* Theorems *)
+    let conv_implies_bound (s:Expr<seq<_>>) = proof PropCalculus.prop_calculus <@ %s :? IConvergent<_> ==> %s :? IConvergent<_> @> [] 
