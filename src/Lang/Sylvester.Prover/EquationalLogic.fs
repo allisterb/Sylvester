@@ -12,7 +12,7 @@ open Descriptions
 ///             http://www.cs.cornell.edu/home/gries/Logic/Equational.html
 /// The number after each axiom corresponds to the number of the axiom in the textbook A Logical Approach to Discrete Math by Gries et.al.
 module EquationalLogic =
-    let desc = axiom_desc "Equational Logic"
+    let private desc = axiom_desc "Equational Logic"
     
     (* Axioms *)
 

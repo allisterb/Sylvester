@@ -11,7 +11,7 @@ open Descriptions
 /// Theory of Boolean algebra on a set closed under 2 binary operations that are associative, commutative, and idempotent,
 /// with identity elements zero and one, and a unary inverse or complement operation.
 module BooleanAlgebra =
-    let desc = axiom_desc "Boolean Algebra" 
+    let private desc = axiom_desc "Boolean Algebra" 
     
     (* Axioms *)
 
@@ -105,7 +105,7 @@ module BooleanAlgebra =
     /// (expression) is distributive
     let distrib join meet = Admit("(expression) is distributive", _distrib join meet)
 
-    type BooleanAlgebraTheory<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>, 
+    type BooleanAlgebra<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>, 
         ?axioms:Axioms, ?additionalRules:Rules) = 
         inherit Theory(boolean_algebra_axioms theoryName join meet zero one comp, [
             left_assoc join meet

@@ -4,7 +4,7 @@ open FSharp.Quotations
 
 open BooleanAlgebra
 
-/// Theory of sets and set algebra.
+/// Theory of set algebra based on a generic Boolean algebra.
 module SetAlgebra =
         
     (* Symbols *)
@@ -22,13 +22,11 @@ module SetAlgebra =
     [<Formula>]
     let intersect<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = product Set.(|*|) "\u22c2" bound range body
     
-    
-    (* Axioms *)
-
-
     (* Theory *)
 
-    let set_algebra<'t when 't: equality> = BooleanAlgebraTheory("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>)
+    type SetAlgebra<'t when 't: equality>() = inherit BooleanAlgebra<Set<'t>>("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>)
+    
+    let set_algebra<'t when 't: equality> = SetAlgebra()
 
     (* Admissible Rules *)
     

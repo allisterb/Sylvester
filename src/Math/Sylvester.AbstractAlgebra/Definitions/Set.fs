@@ -29,8 +29,6 @@ with
                 | InfiniteSeq _ -> let ds = Seq.distinct s in ds.GetEnumerator()
                 | _ -> failwithf "Cannot determine the cardinality of this sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
             | Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
-                
-    interface IEnumerable with
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
     interface IEquatable<Set<'t>> with
@@ -42,7 +40,7 @@ with
             | Set expr1, Set expr2 ->  expr1 = expr2
             | Seq (FiniteSeq _), Seq (InfiniteSeq _)
             | Seq (InfiniteSeq _), Seq (FiniteSeq _)-> false
-            | Seq (FiniteSeq s1), Seq (FiniteSeq s2) ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
+            | Seq (FiniteSeq s1), Seq (FiniteSeq s2) ->  System.Linq.Enumerable.SequenceEqual(s1, s2)            
             | Seq (InfiniteSeq s1), Seq (InfiniteSeq s2) -> s1.Equals s2 
             |_,_ -> failwith "Cannot test a sequence and a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
     
@@ -343,7 +341,8 @@ module Set =
 
     let infinite_set_1 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 1) |> Set
     
-    let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
+    [<Formula>]
+    let pred_set<'t when 't: equality>(p:bool) = SetComprehension(p, default_card<'t>) |> Set
 
     let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, true, body, default_card<'t>) |> Set :> ISet<'t>
 

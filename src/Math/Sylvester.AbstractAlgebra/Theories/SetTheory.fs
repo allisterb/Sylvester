@@ -7,8 +7,11 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
+open SetAlgebra
+
+/// Theory of sets and set algebra.
 module SetTheory =
-    let desc = axiom_desc "Set Theory"
+    let desc = Some << axiom_desc' "Set Theory"
     
     (* Patterns *)
     
@@ -25,7 +28,7 @@ module SetTheory =
 
     let (|SetComp|_|) =
         function
-        | Call(None, mi, (BoundVars(bound)::s as c)) when mi.Name = "finite_set" || mi.Name = "infinite_set_0" || mi.Name = "infinite_set_1" || mi.Name = "set" || mi.Name = "set'" -> c |> List.map expand |> Some 
+        | Call(None, mi, (BoundVars(_)::s as c)) when mi.Name = "finite_set" || mi.Name = "infinite_set_0" || mi.Name = "infinite_set_1" || mi.Name = "set" || mi.Name = "set'" -> c |> List.map expand |> Some 
         | _ -> None
 
     let (|Set|_|) =
@@ -35,7 +38,6 @@ module SetTheory =
         | SetComp e -> Some e
         | _ -> None
 
-
     let (|ElementOf|_|) =
         function
         | SpecificCall <@@ (|?|) @@> (None,_,l::Set r::[]) -> Some(l, r)
@@ -44,7 +46,19 @@ module SetTheory =
     (* Axioms *)
 
     /// e |?| set x (x > 1) (x ^^ 2) = exists x (x > 1) (e = x ^^ 2)
-    let (|SetMember|_|) =
+    let (|Membership|_|) =
         function
-        | Equals(ElementOf(F, BoundVars(bound)::range::body::_), Exists(_, bound', range', Equals(F', body'))) when vequal' bound bound' && sequal3 F range body F' range' body' -> Some ()
+        | Equals(ElementOf(F, BoundVars(bound)::range::body::_), Exists(_, bound', range', Equals(F', body'))) when vequal' bound bound' && sequal3 F range body F' range' body' -> desc "Set Membership"
         | _ -> None    
+
+    /// 
+    let (|Extensionality|_|) =
+        function
+        |Equals(Equals(Set(BoundVars(sbound)::srange::sbody::_), Set(BoundVars(tbound)::trange::tbody::_)), ForAll(_, stbound, srrange, Equals(ElementOf(x, s), ElementOf(x', t)))) -> desc "Set Extensionality"
+        | _ -> None
+
+
+    (* Theory *)
+
+    type SetTheory<'t when 't : equality>() = inherit SetAlgebra<'t>()
+
