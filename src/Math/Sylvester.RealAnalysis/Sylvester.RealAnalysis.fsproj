@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Theories\Topology.fs" />
     <Compile Include="Measure.fs" />
   </ItemGroup>
 
@@ -14,10 +15,6 @@
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Theories\" />
   </ItemGroup>
 
 </Project>

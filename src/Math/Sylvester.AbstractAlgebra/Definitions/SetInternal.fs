@@ -88,11 +88,8 @@ type Term<'t>(expr:Expr<'t>) =
        member a.CompareTo b = 
            match b with
            | :? Term<'t> as Term -> (a :> IComparable<Term<'t>>).CompareTo Term
-           | _ -> failwith "This object is not a Termbol."
+           | _ -> failwith "This object is not a Term."
     interface IEquatable<Term<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
-    interface Generic.IEnumerable<'t> with
-        member x.GetEnumerator () :Generic.IEnumerator<'t>= Seq.empty.GetEnumerator()
-        member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
     static member (+)(l:Term<'t>, r:Term<'t>) = formula<Term<'t>>
     static member (+)(l:'t, r:Term<'t>) = formula<'t>
     static member (+)(l:Term<'t>, r:'t) = formula<'t>
@@ -114,11 +111,6 @@ type Term<'t>(expr:Expr<'t>) =
     static member One = formula<Term<'t>>
 
 and Index = Index of int 
-
-type Element<'t> = Element of seq<'t> with
-   member x.Sequence = let (Element s) = x in s
-   member x.Item(i:int) = formula<'t>
-   member x.Item(i:Index) = formula<Term<'t>>
 
 type any = obj
   

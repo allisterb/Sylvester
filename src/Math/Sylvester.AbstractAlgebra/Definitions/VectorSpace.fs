@@ -14,6 +14,7 @@ type IVectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType a
     abstract member Op2:BinaryOp<IVector<'n, 't>>
 and IVector<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     abstract Dim0:'n
+    abstract Item:int->'t
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
@@ -28,3 +29,5 @@ type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType an
         member val Dim0 = number<'n>
         member val Op = op
         member val Op2 = op2
+
+type R<'n when 'n :> Number> = IVector<'n, real>

@@ -191,6 +191,7 @@ with
         | Empty -> failwith "The empty set has no elements."
         | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
         | Set _ -> failwith "Cannot enumerate elements of a set comprehension. Use a sequence instead."
+    
     static member fromSeq(s: seq<'t>) = Seq s
     
     
@@ -325,6 +326,8 @@ module Set =
     
     let term<'t> n = 
         let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
+    
+    let elem<'t when 't: equality> (s:seq<'t>) = formula<Term<'t>>
 
     let card (s:ISet<'t>) = s.Set.Cardinality
     
@@ -348,9 +351,9 @@ module Set =
 
     let sseq(s:seq<'t>) = (Seq s) :> ISet<'t>
 
-    let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq
+    let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq :> ISet<'t * 't>
 
-    let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq
+    let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq :> ISet<'t * 't>
     
     let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()
 
@@ -377,5 +380,3 @@ module Set =
     let infinite_seqp4 g = g |> infinite_seq_gen |> quadwise |> Set.fromSeq 
 
     let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise |> Set.fromSeq
-
-    let elem<'t when 't: equality> (s:seq<'t>) = Element s
