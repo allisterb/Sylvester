@@ -40,8 +40,10 @@ with
             | _, Empty -> false
             | Empty, _ -> false
             | Set expr1, Set expr2 ->  expr1 = expr2
-            | Seq s1, Seq s2 ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
-            
+            | Seq (FiniteSeq _), Seq (InfiniteSeq _)
+            | Seq (InfiniteSeq _), Seq (FiniteSeq _)-> false
+            | Seq (FiniteSeq s1), Seq (FiniteSeq s2) ->  (Seq.length s1 = Seq.length s2) && s1 |> Seq.forall (fun x -> s2.Contains x) && s2 |> Seq.forall (fun x -> s1.Contains x)
+            | Seq (InfiniteSeq s1), Seq (InfiniteSeq s2) -> s1.Equals s2 
             |_,_ -> failwith "Cannot test a sequence and a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
     
     interface IComparable<Set<'t>> with
@@ -328,21 +330,23 @@ module Set =
     
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
-    let set<'t when 't: equality> (bound:'t) range body card = SetComprehension(bound, range, body, card) |> Set
-
-    let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, true, body, default_card<'t>) |> Set
-
-    let finite_set (bound:'t) range body n = SetComprehension(bound, range, body, (lazy n) |> Finite) |> Set
+    let finite_set (bound:'t) range body n = SetComprehension(bound, range, body, (lazy n) |> Finite) |> Set 
     
-    let infinite_set (bound:'t) range body n = SetComprehension(bound, range, body, Aleph n) |> Set
-    
-    let infinite_countable_set bound (range:'t->bool) (body:'t) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, Aleph 0) |> Set  
+    let infinite_set bound (range:'t->bool) (body:'t) (n:int) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, Aleph n) |> Set  
 
+    let infinite_set_0 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 0) |> Set
+
+    let infinite_set_1 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 1) |> Set
+    
     let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
+
+    let set<'t when 't: equality> (bound:'t) range body card = SetComprehension(bound, range, body, card) |> Set :> ISet<'t>
+
+    let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, true, body, default_card<'t>) |> Set :> ISet<'t>
 
     let subset (sub:'t->bool) (set: ISet<'t>) = set.Set.Subset sub
 
-    let sseq (s: seq<'t>) = Set.fromSeq s
+    let sseq(s:seq<'t>) = (Seq s) :> ISet<'t>
 
     let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq
 
@@ -355,14 +359,14 @@ module Set =
         | FiniteSeq f -> Seq f
         | _ -> failwithf "This is not a finite sequence expression."
 
-    let infinite_seq<'t when 't:equality> g = (Seq.initInfinite >> infinite_seq_gen<'t> >> sseq) g
+    let infinite_seq<'t when 't:equality> g = let s = (Seq.initInfinite >> infinite_seq_gen<'t>) g in Seq s
     
     let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
-        infinite_seq_gen(Seq.initInfinite (fun i -> 
+        let s = infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
                     Term(<@ (%%b:'t) @>))) 
-        |> sseq
+        in Seq s
         
     let infinite_seq2 g = g |> infinite_seq_gen |> cart |> Set.fromSeq
         

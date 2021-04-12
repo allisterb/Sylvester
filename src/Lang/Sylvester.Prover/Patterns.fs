@@ -109,15 +109,11 @@ module Patterns =
 
     let (|Sequence|_|) =
         function
-        | Call(None, mi0, Call(None, mi1, Lambda(_, Call(None, mi2, v))::[])::[]) when mi0.Name = "CreateSequence" && mi1.Name = "Delay" && mi2.Name = "Singleton" -> Some v
-        | Call (None, mi, e) when mi.Name = "InitializeInfinite" -> Some e
-        | List l -> Some l
-        | NewArray(_, a) -> Some a
-        | _ -> None
-
-    let (|Proposition|_|) =
-        function
-        | Call(None, mi, text::[]) when mi.Name = "prop" -> Some text
+        | Call(None, mi0, Call(None, mi1, Lambda(_, Call(None, mi2, v))::[])::[]) when mi0.Name = "CreateSequence" && mi1.Name = "Delay" && mi2.Name = "Singleton" 
+            ->  v |> List.map expand |> Some
+        | Call (None, mi, e) when mi.Name = "InitializeInfinite" -> e |> List.map expand |> Some
+        | List l -> l |> List.map expand |> Some
+        | NewArray(_, a) -> a |> List.map expand |> Some
         | _ -> None
 
     let (|BoundVars|_|) =
@@ -161,6 +157,29 @@ module Patterns =
         | Exists x -> let (op, bound, range, body) = x in Some (op, bound, range, body)
         | _ -> None
     
+    let (|SetEmpty|_|) =
+        function
+        | NewUnionCase(uc, e) when uc.Name = "Empty" -> e |> List.map expand |> Some
+        | _ -> None
+
+    let (|SetSeq|_|) =
+        function
+        | NewUnionCase(uc, Sequence e::[]) when uc.Name = "Seq" -> Some e
+        | Call(None, mi, l) when mi.Name = "infinite_seq" || mi.Name = "finite_seq" || mi.Name = "sseq" -> l |> List.map expand |> Some
+        | _ -> None
+
+    let (|SetComp|_|) =
+        function
+        | Call(None, mi, s) when mi.Name = "finite_set" || mi.Name = "infinite_set_0" || mi.Name = "infinite_set_1" || mi.Name = "set" || mi.Name = "set'" -> s |> List.map expand |> Some 
+        | _ -> None
+
+    let (|Set|_|) =
+        function
+        | SetEmpty e
+        | SetSeq e
+        | SetComp e -> Some e
+        | _ -> None
+
     let bound_vars =
         function
         | Quantifier(_,bound, _, _) -> bound 
@@ -196,14 +215,6 @@ module Patterns =
             | ShapeLambda (_, body) -> rget_quantifiers prev body
             | ShapeCombination (_, exprs) ->  List.map (rget_quantifiers prev) exprs |> List.collect id
         rget_quantifiers [] expr
-
-    let rec (|List|_|) =
-        let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
-        function
-        | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
-        | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
-        | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
-        | _ -> None
         
     (* Formula display patterns *)
 
