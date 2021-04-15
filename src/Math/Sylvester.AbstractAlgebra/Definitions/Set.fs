@@ -365,6 +365,13 @@ module Set =
     
     let infinite_seq'<'t when 't: equality> g = infinite_seq<'t> g |> Set.fromSeq  
         
+    let infinite_seq''<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
+        let vf = get_vars f |> List.head
+        let s = infinite_seq_gen(Seq.initInfinite (fun i -> 
+                    let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
+                    Term(<@ (%%b:'t) @>))) 
+                    
+        s :> seq<Term<'t>>
     let infinite_seq2 g = g |> infinite_seq_gen |> cart
         
     let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Series.fs" />
     <Compile Include="Theories\Topology.fs" />
     <Compile Include="Measure.fs" />
   </ItemGroup>

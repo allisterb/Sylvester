@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="FsExpr.fs" />
     <Compile Include="Numbers.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />
+    <Compile Include="FsExpr.fs" />
     <Compile Include="MathNetExpr.fs" />
     <Compile Include="Symbolic.fs" />
     <Compile Include="Parsers.fs" />
