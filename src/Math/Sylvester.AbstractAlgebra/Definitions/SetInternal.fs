@@ -73,7 +73,7 @@ type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:boo
     interface IEnumerable with
         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
-type Term<'t>(expr:Expr<'t>) =
+type Term<'t> internal (expr:Expr<'t>) =
     member x.Expr = expr
     member x.Item(i:int) = formula<'t>
     member x.Item(i: Index) = formula<Term<'t>>
@@ -106,7 +106,6 @@ type Term<'t>(expr:Expr<'t>) =
     static member (+..+)(l:Term<'t>, r:Term<'t>) = formula<seq<Term<'t>>>
     static member (+..+)(l:'t, r:Term<'t>) = formula<seq<Term<'t>>>
     static member (+..+)(l:Term<'t>, r:'t) = formula<seq<Term<'t>>>
-    
     static member Zero = formula<Term<'t>>
     static member One = formula<Term<'t>>
 

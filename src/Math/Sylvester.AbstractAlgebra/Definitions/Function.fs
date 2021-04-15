@@ -1,38 +1,50 @@
 ﻿namespace Sylvester
 
-open FSharp.Quotations
+type IRelation<'a, 'b when 'a : equality and 'b : equality> = 
+    inherit ISet<'a * 'b>
 
-type IFunction<'t, 'u when 't : equality and 'u : equality> = 
-    abstract Domain: Set<'t>
-    abstract CoDomain: Set<'u>
-    abstract Map: Expr<Map<'t, 'u>>
+type IReflexiveRelation<'a, 'b when 'a : equality and 'b : equality>  = 
+    inherit IRelation<'a, 'b>
 
-type IInjection<'t, 'u when 't: equality and 'u: equality> =
-    inherit IFunction<'t, 'u>
+type ISymmetricRelation<'a, 'b when 'a : equality and 'b : equality>  = 
+    inherit IRelation<'a, 'b>
 
-type ISurjection<'t, 'u when 't: equality and 'u: equality> =
-    inherit IFunction<'t, 'u>
+type IAntiSymmetricRelation<'a, 'b when 'a : equality and 'b : equality>  = 
+    inherit IRelation<'a, 'b>
 
-type IBijection<'t, 'u when 't: equality and 'u: equality> =
-    inherit IInjection<'t, 'u>
-    inherit ISurjection<'t, 'u>
+type ITransitiveRelation<'a, 'b when 'a : equality and 'b : equality>  = 
+    inherit IRelation<'a, 'b>
 
-type Function<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Expr<Map<'t, 'u>>) = 
-    interface IFunction<'t, 'u> with
-        member val Domain = domain
-        member val CoDomain = codomain
-        member val Map = map
-    new (map:Expr<Map<'t, 'u>>) = Function(Set.U, Set.U, map)
+type IEquivalenceRelation<'a, 'b when 'a : equality and 'b : equality> =
+    inherit IReflexiveRelation<'a, 'b>
+    inherit ISymmetricRelation<'a, 'b>
+    inherit ITransitiveRelation<'a, 'b>
 
-type Fn<'t, 'u when 't: equality and 'u: equality> = Function<'t, 'u>
+type fn<'d, 'r> = Fn of ('d->'r)
+with 
+    member x.Apply = let (Fn f) = x in f 
+    member x.Item(i:'d) = x.Apply i
 
-type Injection<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Expr<Map<'t, 'u>>) =
-    inherit Function<'t, 'u>(domain, codomain, map)
-    interface IInjection<'t, 'u>
-    
-type Surjection<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Expr<Map<'t, 'u>>) =
-    inherit Function<'t, 'u>(domain, codomain, map)
-    interface ISurjection<'t, 'u>
+[<AutoOpen>]
+module Function =
+    let fn a = Fn a
 
-type Family<'t, 'u when 't: equality and 'u: equality>(domain:Set<'t>, codomain:Set<'u>, map:Expr<Map<'t, 'u>>) = 
-    inherit Surjection<'t, 'u>(domain, codomain, map)
+    let dom (f:Map<'d, 'r>) = formula<Set<'d>>
+
+    let range (f:Map<'d, 'r>) = formula<Set<'d>>
+
+    let injection = pred<Map<'d, 'r>>
+
+    let surjection = pred<Map<'d, 'r>>
+
+    let bijection = pred<Map<'d, 'r>>
+
+    let increasing = pred<Map<'d, 'r>>
+
+    let increasing' = pred<Map<'d, 'r>>
+
+    let decreasing = pred<Map<'d, 'r>>
+
+    let decreasing' = pred<Map<'d, 'r>>
+
+   

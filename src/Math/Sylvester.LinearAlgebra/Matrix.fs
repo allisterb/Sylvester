@@ -64,21 +64,21 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> V
     member x.toInt32() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix<'dim0,'dim1,_>
     member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix<'dim0,'dim1,_>
     member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix<'dim0,'dim1,_>
-    interface IMatrix<'dim0, 'dim1>
-    new (m:Matrix<'t>) = Matrix<'dim0, 'dim1, 't>(m._Array)
-    new([<ParamArray>] data: 't list array) =
-        Matrix<'dim0, 'dim1, 't>(data |> Array.map (fun a -> a |> List.toArray)) 
+    //interface IMatrix<'dim0, 'dim1>
+    //new (m:Matrix<'t>) = Matrix<'dim0, 'dim1, 't>(m._Array)
+    //new([<ParamArray>] data: 't list array) =
+     //   Matrix<'dim0, 'dim1, 't>(data |> Array.map (fun a -> a |> List.toArray)) 
     new(x: Expr<'t list list>) = 
-        let m = Matrix<'t>(x) in Matrix<'dim0, 'dim1, 't>(m)
+        let m = Matrix<'t>(x) in Matrix<'dim0, 'dim1, 't>(m,)
         // let values = x |> expand_list_values'<'t> |> List.map List.toArray |> List.toArray in
         // Matrix<'dim0,'dim1, 't>(values, x)
-    static member create(data: Array) = Matrix<'dim0,'dim1,'t>(data :?> 't [] [])
+    //static member create(data: Array) = Matrix<'dim0,'dim1,'t>(data :?> 't [] [])
     static member create(m: _Matrix<'t>) = Matrix<'dim0, 'dim1, 't>.create(let a = m.AsRowArrays() in if isNull a then m.ToColumnArrays() else a) 
-    static member create(m:Matrix<'t>) = Matrix<'dim0, 'dim1, 't>(m._Array)  
+    //static member create(m:Matrix<'t>) = Matrix<'dim0, 'dim1, 't>(m._Array)  
     static member op_Explicit(m:Matrix<'dim0, 'dim1, 't>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix<_,_,_>
     static member (+)(l : Matrix<'dim0, 'dim1, 't>, r : Matrix<'dim0, 'dim1, 't>) = let res = (l:>Matrix<'t>) + (r :> Matrix<'t>) in Matrix<'dim0, 'dim1, 't>.create res._Array  
 
 type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Matrix<'dim0, 'dim1, 't>
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, real>
-type MatF<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, real32>
+//type MatF<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, real32>

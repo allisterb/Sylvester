@@ -54,7 +54,8 @@ module SetTheory =
     /// 
     let (|Extensionality|_|) =
         function
-        |Equals(Equals(Set(BoundVars(sbound)::srange::sbody::_), Set(BoundVars(tbound)::trange::tbody::_)), ForAll(_, stbound, srrange, Equals(ElementOf(x, s), ElementOf(x', t)))) -> desc "Set Extensionality"
+        |Equals(Equals((Set(BoundVars(sbound)::srange::sbody::_) as S), (Set(BoundVars(tbound)::trange::tbody::_) as T)), ForAll(_, stbound, strange, Equals(ElementOf(x, S'), ElementOf(x', T')))) 
+            when sequal S T && vequal' sbound stbound && sequal srange strange -> desc "Set Extensionality"
         | _ -> None
 
 
@@ -62,3 +63,4 @@ module SetTheory =
 
     type SetTheory<'t when 't : equality>() = inherit SetAlgebra<'t>()
 
+    let set_theory<'t when 't: equality> = SetTheory<'t>()

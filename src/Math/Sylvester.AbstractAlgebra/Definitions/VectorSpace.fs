@@ -29,5 +29,3 @@ type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType an
         member val Dim0 = number<'n>
         member val Op = op
         member val Op2 = op2
-
-type R<'n when 'n :> Number> = IVector<'n, real>

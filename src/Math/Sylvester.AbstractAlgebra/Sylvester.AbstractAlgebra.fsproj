@@ -24,7 +24,6 @@
     <Compile Include="Definitions\SetInternal.fs" />
     <Compile Include="Definitions\Set.fs" />
     <Compile Include="Definitions\MultiSet.fs" />
-    <Compile Include="Definitions\Relation.fs" />
     <Compile Include="Definitions\Operation.fs" />
     <Compile Include="Definitions\Function.fs" />
     <Compile Include="Definitions\Structure.fs" />
@@ -42,10 +41,10 @@
     <Compile Include="Definitions\BooleanAlgebra.fs" />
     <Compile Include="Definitions\SetAlgebra.fs" />
     <Compile Include="Definitions\Combination.fs" />
-    <Compile Include="Theories\Sequences.fs" />
     <Compile Include="Theories\BooleanAlgebra.fs" />
     <Compile Include="Theories\SetAlgebra.fs" />
     <Compile Include="Theories\SetTheory.fs" />
+    <Compile Include="Theories\Sequences.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -42,10 +42,6 @@ type OrderedRing<'t when 't: equality and 't : comparison>(group: IAbelianGroup<
     interface ITotalOrder<'t> with
         member val Set = group.Set
         member val Order = order
-    interface Generic.IEnumerable<'t> with
-        member x.GetEnumerator(): Generic.IEnumerator<'t> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> (if order a b then -1 else 1))).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if order a b then -1 else 1)).GetEnumerator() :> IEnumerator
 
 type IIntegralDomain = interface end
 

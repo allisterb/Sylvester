@@ -5,10 +5,6 @@ open System.Collections
 /// A set of elements with a partial order relation i.e. an operation that is reflexive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
     inherit ISet<'t>
-    inherit IReflexiveRelation
-    inherit IAntiSymmetricRelation
-    inherit ITransitiveRelation
-    inherit Generic.IEnumerable<'t>
     abstract Order: Order<'t>
     
 /// A set of elements with a total order.
@@ -69,14 +65,10 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
     member val Set = set.Set
     member val Order = order
     member x.Item(l:'t, r:'t) = x.Order l r
-    member x.ToArray n = x |> Seq.take n |> Seq.toArray
     interface IPartialOrder<'t> with
         member val Set = set.Set
         member val Order = order
         member x.Equals y = x.Set.Equals y
-        member x.GetEnumerator(): Generic.IEnumerator<'t> = 
-            (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.sortWith (fun a b -> if (order a b) then -1 else 1)).GetEnumerator()
-        member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
 /// A set of elements with a total order relation.
 type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>, order: Order<'t>) =

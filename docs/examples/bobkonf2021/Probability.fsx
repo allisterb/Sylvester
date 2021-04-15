@@ -4,16 +4,54 @@ open FSharp.Quotations
 
 // bounded<float> (seq (Seq.delay (fun () -> Seq.singleton (a.Item(i)))))
 open Sylvester
+open Sylvester.Arithmetic
 open PropCalculus
 open PredCalculus
 open Sequences
 
+Field.R.ToString()
+N = Zpos
+
+type R3 = R<dim<4>>
+
+let ff = var<Set<int>>
+
 let a = term<int> "a"
 let b = var<real>
-let i,n = var2<int>
-<@ seq{(5 ^^ a) / i} @>
-let rr = seq{(5 ^^ a) / i} 
+let i = var<int>
+expand <@ seq {2 ^^ a} @>
+let zzz = expand <@ set b true (b * b) (Aleph 1) @>
+seq {a.[i]..a.[2]}
 
+let ss = expand <@ (4. |?| set b true (b * b) (Aleph 1)) = exists b true (4. = (b *b ))  @>
+
+match ss with
+| SetTheory.SetMember -> true
+| _ -> false
+
+
+let ff = proof prop_calculus <@ seq {a.[i]} :? IConvergent<int> ==>  seq {a.[i]} :? IBounded<int> @> []
+
+let converges = pred<seq<_>>
+
+let def_converges (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (d:Expr<seq<_>>) =      
+        def prop_calculus <@ converges %d = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  ((%Li - elem(%d).[%n]) < %epsilon)) @>
+
+let epsilon = var<real>
+let L = var<real> 
+let n,N,n',N'= var2'<int> "n" "N"
+
+proof prop_calculus <@ converges (seq {1. + 1. / epsilon})  @> [
+    def_converges <@ epsilon @> <@ N @> <@ n @> <@ L@> <@ seq {1. + 1. / epsilon} @> |> LR
+]
+
+<@ infinite_seq (fun a -> a * 5 / 4) @>
+let rr = seq{(5 ^^ a) / i} 
+<@Seq [4;5;6]@>
+<@ set b (b > 0.) (b * b) (Aleph 0) @> 
+
+
+expand <@ FSharp.Collections.Set. ]@>
 [<Formula>]
 let bbb = Seq.initInfinite(fun pp -> pp)
 
@@ -25,8 +63,8 @@ let (|SeqDelay|_|) =
     | Patterns.Call(None, mi0, Patterns.Call(None, mi1, Patterns.Lambda(_, Patterns.Call(None, mi2, v::[]))::[])::[]) when mi0.Name = "CreateSequence" && mi1.Name = "Delay" && mi2.Name = "Singleton" -> Some v
     | _ -> None
 
-match <@ seq{(5 ^^ a) / i} @> with
-| SeqDelay v -> Some v
+match <@ seq{4} @> with
+| SeqDelay v -> Some (expand v)
 | _ -> None
 
 
