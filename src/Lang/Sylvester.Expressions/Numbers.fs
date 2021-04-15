@@ -223,10 +223,22 @@ type real = float
 
 [<AutoOpen>]
 module Numbers =
+    let real n :real = float n
+
     let pos_inf<'t> = Unchecked.defaultof<'t>
 
     let neg_inf<'t> = Unchecked.defaultof<'t>
     
+    let inline (..+) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (+) l r
+
+    let inline (..-) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (-) l r
+
+    let inline (../) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (/) l r
+
+    let inline (..*) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (*) l r
+
+    let take n s = s |> (Seq.take n >> Seq.toList)
+
     let (|Int32Type|_|): Type -> Type option =
         function
         | t when t.Name = "Int32" -> Some t

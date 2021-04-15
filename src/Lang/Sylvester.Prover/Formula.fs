@@ -19,25 +19,34 @@ module Formula =
     let (==>) l r = not l || r
     let (<==) l r = r ==> l
 
-    (* Introduce a symbolic formula *)
+    /// Introduce a symbolic formula.
     let formula<'t> = Unchecked.defaultof<'t>
 
-    (* Introduce variable names for formulas *)
+    (* Define variable names for formulas *)
+    
     let symbolic_var<'t> = formula<'t>
     
-    (* Result of symbolic truth-functional operation *)
+    let symbolic_var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
+
+    /// Result of symbolic truth-functional operation.
     let truth_value = formula<bool>
+
+    (* Introduce variable names for formulas *)
 
     let var<'t> = symbolic_var<'t>
     let var2<'t> = symbolic_var<'t>, symbolic_var<'t>
     let var3<'t> = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>
     let var4<'t> = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>
 
-    let var'<'t> v = symbolic_var<'t>, Expr.Var(Var(v, typeof<'t>))
+    let var'<'t> v = symbolic_var' v
     let var2'<'t> v1 v2 = symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @> , <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>
     let var3'<'t> v1 v2 v3 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>
     let var4'<'t> v1 v2 v3 v4 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v4, typeof<'t>))):'t @>
     
+    let var''<'t> v = symbolic_var v, symbolic_var' v
+    let var2''<'t> v1 v2 = symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @> , <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>
+    let var3''<'t> v1 v2 v3 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>
+    let var4''<'t> v1 v2 v3 v4 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v4, typeof<'t>))):'t @>
     (* Propositions and predicates *)
 
     let prop p1 = var'<bool> p1

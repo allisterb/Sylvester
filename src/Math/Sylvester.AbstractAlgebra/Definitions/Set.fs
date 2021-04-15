@@ -361,21 +361,22 @@ module Set =
         | FiniteSeq f -> Seq f
         | _ -> failwithf "This is not a finite sequence expression."
 
-    let infinite_seq<'t when 't:equality> g = let s = (Seq.initInfinite >> infinite_seq_gen<'t>) g in Seq s
+    let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g |> Seq.skip 1
     
-    let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
-        let vf = get_vars f |> List.head
-        let s = infinite_seq_gen(Seq.initInfinite (fun i -> 
-                    let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
-                    Term(<@ (%%b:'t) @>))) 
-        in Seq s
+    let infinite_seq'<'t when 't: equality> g = infinite_seq<'t> g |> Set.fromSeq  
         
-    let infinite_seq2 g = g |> infinite_seq_gen |> cart |> Set.fromSeq
+    let infinite_seq2 g = g |> infinite_seq_gen |> cart
         
-    let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise |> Set.fromSeq 
+    let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise
 
-    let infinite_seqp3 g = g |> infinite_seq_gen |> triplewise |> Set.fromSeq 
+    let infinite_seqp3 g = g |> infinite_seq_gen |> triplewise  
 
-    let infinite_seqp4 g = g |> infinite_seq_gen |> quadwise |> Set.fromSeq 
+    let infinite_seqp4 g = g |> infinite_seq_gen |> quadwise 
 
-    let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise |> Set.fromSeq
+    let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise 
+
+    let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1
+
+    let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
+
+    let inline infinite_series g = g |> (infinite_seq >> series) 

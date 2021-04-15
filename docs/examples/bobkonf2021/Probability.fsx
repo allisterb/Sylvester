@@ -9,6 +9,32 @@ open PropCalculus
 open PredCalculus
 open Sequences
 
+let epsilon = var<real> 
+
+let n,N = var2<real>
+
+
+[<Formula>]
+let ff j = -1.0 ** (float j)
+
+
+seq { ff n} ..+ seq { ff n} 
+
+let p = proof sequences <@ lim pos_inf (seq {ff n}) = 3. @> [
+    let e' = <@ epsilon @>
+    let N' = <@ N @>
+    let n' = <@ n @>
+    let L' = <@ 3. @>
+    def_limit e' N' n' L' <@ ff @> |> LR
+] 
+
+
+//let (!) a = Fn a
+
+let seq_fn f = seq {Fn f}
+<@ seq {Fn(fun n -> n + 5).[5]} @> 
+ff.[5]
+//ss.[5]
 Field.R.ToString()
 N = Zpos
 

@@ -20,31 +20,24 @@ type IEquivalenceRelation<'a, 'b when 'a : equality and 'b : equality> =
     inherit ISymmetricRelation<'a, 'b>
     inherit ITransitiveRelation<'a, 'b>
 
-type fn<'d, 'r> = Fn of ('d->'r)
-with 
-    member x.Apply = let (Fn f) = x in f 
-    member x.Item(i:'d) = x.Apply i
-
 [<AutoOpen>]
 module Function =
-    let fn a = Fn a
+    let dom (f:'d->'r) = formula<Set<'d>>
 
-    let dom (f:Map<'d, 'r>) = formula<Set<'d>>
+    let range (f:'d->'r) = formula<Set<'d>>
 
-    let range (f:Map<'d, 'r>) = formula<Set<'d>>
+    let injection = pred<'d->'r>
 
-    let injection = pred<Map<'d, 'r>>
+    let surjection = pred<'d->'r>
 
-    let surjection = pred<Map<'d, 'r>>
+    let bijection = pred<'d->'r>
 
-    let bijection = pred<Map<'d, 'r>>
+    let increasing = pred<'d->'r>
 
-    let increasing = pred<Map<'d, 'r>>
+    let increasing' = pred<'d->'r>
 
-    let increasing' = pred<Map<'d, 'r>>
+    let decreasing = pred<'d->'r>
 
-    let decreasing = pred<Map<'d, 'r>>
-
-    let decreasing' = pred<Map<'d, 'r>>
+    let decreasing' = pred<'d->'r>
 
    

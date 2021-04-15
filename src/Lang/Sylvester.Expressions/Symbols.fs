@@ -20,3 +20,8 @@ module Symbols =
         "epsilon", "fo"
     ] 
     
+[<RequireQualifiedAccess>]
+module GreekVars =
+    let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
+    
+    let epsilon<'t> = var'<'t> "\u03f5"

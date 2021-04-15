@@ -60,7 +60,7 @@ module Ring =
 
     /// Ring of positive integers.
     let Zpos =
-        let set = infinite_seq id 
+        let set = infinite_seq' id 
         let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order) 
@@ -80,7 +80,7 @@ module Ring =
 
     /// Ring of negative integers.
     let Zneg =
-        let set = infinite_seq (fun n -> -n) 
+        let set = infinite_seq' (fun n -> -n) 
         let order = (<=) in
         {
             new OrderedRing<int>(AdditiveGroup(set), (*), order)
