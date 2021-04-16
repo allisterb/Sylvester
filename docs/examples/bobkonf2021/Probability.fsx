@@ -9,17 +9,21 @@ open PropCalculus
 open PredCalculus
 open Sequences
 
+infinite_seq'' <@ fun n r -> 1. / r ** (real n - 1.) @> |> take 5
+
+//Series.harmonic_series |> take 4
 let inline infinite_series'' g = g |> (infinite_seq'' >> series)
 
 [<Formula>]
 let gg (a:real) n r  = a * r ** real(n - 1)
 
+i
 
 //let geometric_series (a:int) (r:real) = infinite_series (gg a r)
 
 let geometric_series' a  = infinite_series''<@ gg %a @>
 
-geometric_series' |> take 5
+geometric_series' <@ 4. @> |> take 5
 
 let n,N = var2<int>
 

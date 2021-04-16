@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Term.fs" />
     <Compile Include="Numbers.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Display.fs" />

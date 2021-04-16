@@ -363,10 +363,11 @@ module Set =
         let vf = get_vars f |> List.head
         let s = infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
-                    Term(<@ (%%b:'t) @>))) 
-                    
-        s :> seq<Term<'t>> |> Seq.skip 1
-
+                    <@ (%%b:'t) @>)) 
+        s :> seq<Expr<'t>> 
+        |> Seq.map Term
+        |> Seq.skip 1
+        
     let infinite_seq2 g = g |> infinite_seq_gen |> cart
         
     let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise
@@ -379,7 +380,7 @@ module Set =
 
     let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1
 
-    let inline series' (s:seq<Term<'t>>) = Seq.scan (+) Term<'t>.Zero s |> Seq.skip 1
+    let inline series' (s:seq<Term<'t>>) = Seq.scan (Term.add) (Term.zero()) s |> Seq.skip 1
 
     let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
 
