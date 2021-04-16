@@ -5,9 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Series.fs" />
+    <Compile Include="Definitions\Series.fs" />
+    <Compile Include="Theories\Sequences.fs" />
     <Compile Include="Theories\Topology.fs" />
     <Compile Include="Measure.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.15.0" />
   </ItemGroup>
 
   <ItemGroup>

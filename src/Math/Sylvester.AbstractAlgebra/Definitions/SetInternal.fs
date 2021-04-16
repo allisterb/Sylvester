@@ -89,7 +89,7 @@ type Term<'t> (expr:Expr<'t>) =
             | :? Term<'t> as Term -> (a :> IComparable<Term<'t>>).CompareTo Term
             | _ -> failwith "This object is not a Term."
     interface IEquatable<Term<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
-
+    
 [<RequireQualifiedAccess>]
 module internal Term =
     let inline add (l:Term<'t>) (r:Term<'t>) = 
@@ -98,7 +98,7 @@ module internal Term =
         Term e
 
     let inline zero() = 
-        let z = LanguagePrimitives.GenericZero
+        let z = LanguagePrimitives.GenericZero  
         Term <@ z @>
 
 [<AutoOpen>]

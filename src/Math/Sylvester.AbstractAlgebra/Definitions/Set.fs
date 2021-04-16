@@ -14,9 +14,9 @@ open Sylvester.Collections
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
-/// A set defined by the distinct values of a sequence i.e. a set that is the co-domain of a function from N -> 't.
+/// A set defined by the distinct unordered values of a sequence.
 | Seq of seq<'t>
-/// A set of elements formally defined by a range and a body expression. 
+/// A set formally defined by a bound variable, range and body expression. 
 | Set of SetComprehension<'t>
 with          
     interface IEnumerable<'t> with
@@ -42,7 +42,7 @@ with
             | Seq (InfiniteSeq _), Seq (FiniteSeq _)-> false
             | Seq (FiniteSeq s1), Seq (FiniteSeq s2) ->  System.Linq.Enumerable.SequenceEqual(s1, s2)            
             | Seq (InfiniteSeq s1), Seq (InfiniteSeq s2) -> s1.Equals s2 
-            |_,_ -> failwith "Cannot test a sequence and a set comprehension for equality. Use 2 finite sequences or 2 set comprehensions."
+            |_,_ -> failwith "Cannot test a sequence and a set comprehension for equality. Use 2 sequences or 2 set comprehensions."
     
     interface IComparable<Set<'t>> with
         member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else 0
@@ -61,7 +61,7 @@ with
     override a.GetHashCode() = 
         match a with
         | Empty -> "Empty".GetHashCode()
-        | Seq s -> s.ToString().GetHashCode()
+        | Seq s -> s.GetHashCode()
         | Set p -> p.ToString().GetHashCode()
 
     override x.ToString() =
@@ -304,7 +304,7 @@ module Set =
     [<Symbol "\u2229">]
     let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
 
-    /// Set element of operator.
+    /// Set element-of operator.
     let (|?|) (e:'t) (l:ISet<'t>) = l.Set.HasElement e
 
     /// Set subset relation.
@@ -357,9 +357,9 @@ module Set =
 
     let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g |> Seq.skip 1
     
-    let infinite_seq'<'t when 't: equality> g = infinite_seq<'t> g |> Set.fromSeq  
+    //let infinite_seq'<'t when 't: equality> g = infinite_seq<'t> g |> Set.fromSeq  
         
-    let infinite_seq''<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
+    let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
         let s = infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
@@ -384,4 +384,8 @@ module Set =
 
     let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
 
-    let inline infinite_series g = g |> (infinite_seq >> series) 
+    let inline partial_sum' (n:int) s = s |> (series' >> Seq.item n)
+
+    let inline infinite_series g = g |> (infinite_seq >> series)
+    
+    let inline infinite_series' g = g |> (infinite_seq' >> series')

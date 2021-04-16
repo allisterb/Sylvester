@@ -2,14 +2,16 @@
 
 open FSharp.Quotations
 
-// bounded<float> (seq (Seq.delay (fun () -> Seq.singleton (a.Item(i)))))
 open Sylvester
 open Sylvester.Arithmetic
 open PropCalculus
 open PredCalculus
-open Sequences
 
-infinite_seq'' <@ fun n r -> 1. / r ** (real n - 1.) @> |> take 5
+//open System.Ma
+infinite_seq (fun n -> 1Q / n) |> take 4
+
+
+Series.harmonic_series |> take 5
 
 //Series.harmonic_series |> take 4
 let inline infinite_series'' g = g |> (infinite_seq'' >> series)
@@ -17,7 +19,6 @@ let inline infinite_series'' g = g |> (infinite_seq'' >> series)
 [<Formula>]
 let gg (a:real) n r  = a * r ** real(n - 1)
 
-i
 
 //let geometric_series (a:int) (r:real) = infinite_series (gg a r)
 

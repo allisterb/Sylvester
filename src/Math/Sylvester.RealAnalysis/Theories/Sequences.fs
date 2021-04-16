@@ -3,6 +3,7 @@
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
+open System
 
 open Patterns
 open Descriptions
@@ -17,7 +18,7 @@ module Sequences =
     
     let sequences<'t when 't: equality> = Sequences<'t>()
 
-    (* Definitions *)
+    (* Predicates *)
     
     let lim (r:int) (s:seq<'t>) = formula<'t>
 
@@ -36,6 +37,8 @@ module Sequences =
     let decreasing = pred<seq<_>>
 
     let monotonic = pred<seq<_>>
+
+    (* Definitions *)
 
     let def_seq_n (f:Expr<int->real>) (n:Expr<int>) =
         def sequences <@ infinite_seq %f = seq {(%f) %n} @>
@@ -74,8 +77,24 @@ module Sequences =
     let subseq_limit (s:Expr<seq<_>>) (ss:Expr<seq<_>>) (n:Expr<int>) (Li:Expr<real>) =
         proof sequences <@ lim %n %s = %Li |&| subsequence %s %ss ==> (lim %n %ss = %Li) @>
         
-    //let lim_algebra_const_eq (a:Expr<Term<real>>) (n:Expr<int>) (Li:Expr<real>) (C:Expr<real>) = proof sequences <@ lim pos_inf (seq {(%a).[%n]}) = %Li ==> (lim pos_inf (seq {%C * (%a).[%n]}) = %C * %Li) @> []
+    let lim_algebra_const_eq (a:Expr<int->real>) (n:Expr<int>) (C:Expr<real>) = 
+        proof sequences <@ lim pos_inf (seq {%C * (%a) %n}) = %C * lim pos_inf (seq {(%a) %n}) @> []
+
+    let lim_algebra_abs_eq (a:Expr<int->real>) (n:Expr<int>) = 
+        proof sequences <@ lim pos_inf (seq {Math.Abs((%a) %n)}) = Math.Abs(lim pos_inf (seq {(%a) %n})) @> []
+
+    let lim_algebra_add_eq (a:Expr<int->real>) (b:Expr<int->real>) (n:Expr<int>)  = 
+        proof sequences <@ lim pos_inf (seq {(%a) %n + (%b) %n}) = lim pos_inf (seq {(%a) %n}) + lim pos_inf (seq {(%b) %n}) @> []
+
+    let lim_algebra_mul_eq (a:Expr<int->real>) (b:Expr<int->real>) (n:Expr<int>)  = 
+        proof sequences <@ lim pos_inf (seq {(%a) %n * (%b) %n}) = lim pos_inf (seq {(%a) %n}) * lim pos_inf (seq {(%b) %n}) @> []
+    
+    let lim_algebra_div_eq (a:Expr<int->real>) (n:Expr<int>) (Li:Expr<real>) = 
+        proof sequences <@ forall' %n ((%a) %n <> 0.) && %Li <> 0. ==> (lim pos_inf (seq {1./(%a) %n}) = 1. / %Li) @> []
 
     let series_conv_implies_limit_zero (a:Expr<int->real>) (n:Expr<int>) (Li:Expr<real>) =
         proof sequences <@ converges (seq { partial_sum %n (seq {(%a) %n}) }) ==> (lim pos_inf (seq {(%a) %n}) = %Li) @>
-    //let seq_monotonic_subseq
+
+    let lim_algebra_pow_eq (a:Expr<int->real>) (n:Expr<int>) (k:Expr<real>) = 
+        proof sequences <@ lim pos_inf (seq {(%a) %n ** %k}) = lim pos_inf (seq {(%a) %n}) ** %k @> []
+   
