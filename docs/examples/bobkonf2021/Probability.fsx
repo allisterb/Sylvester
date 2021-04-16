@@ -9,23 +9,34 @@ open PropCalculus
 open PredCalculus
 open Sequences
 
-let epsilon = var<real> 
+let inline infinite_series'' g = g |> (infinite_seq'' >> series)
 
-let n,N = var2<real>
+[<Formula>]
+let gg (a:real) n r  = a * r ** real(n - 1)
+
+
+//let geometric_series (a:int) (r:real) = infinite_series (gg a r)
+
+let geometric_series' a  = infinite_series''<@ gg %a @>
+
+geometric_series' |> take 5
+
+let n,N = var2<int>
 
 
 [<Formula>]
-let ff j = -1.0 ** (float j)
+let ff (j:int) = -1.0 ** float j
 
 
-seq { ff n} ..+ seq { ff n} 
 
+seq { ff n} |> take 2
+//let epsilon = <@ var<real> @> 
 let p = proof sequences <@ lim pos_inf (seq {ff n}) = 3. @> [
-    let e' = <@ epsilon @>
-    let N' = <@ N @>
+    let eps = GreekVars.epsilon
+    let N' = Engl
     let n' = <@ n @>
     let L' = <@ 3. @>
-    def_limit e' N' n' L' <@ ff @> |> LR
+    def_limit eps N' n' L' <@ ff @> |> LR
 ] 
 
 

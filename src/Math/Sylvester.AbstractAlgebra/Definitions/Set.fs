@@ -322,11 +322,6 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
-    let term<'t> n = 
-        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
-    
-    let elem<'t when 't: equality> (s:seq<'t>) = formula<Term<'t>>
-
     let card (s:ISet<'t>) = s.Set.Cardinality
     
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
@@ -341,8 +336,7 @@ module Set =
 
     let infinite_set_1 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 1) |> Set
     
-    [<Formula>]
-    let pred_set<'t when 't: equality>(p:bool) = SetComprehension(p, default_card<'t>) |> Set
+    let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
     let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, true, body, default_card<'t>) |> Set :> ISet<'t>
 
@@ -371,7 +365,8 @@ module Set =
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
                     Term(<@ (%%b:'t) @>))) 
                     
-        s :> seq<Term<'t>>
+        s :> seq<Term<'t>> |> Seq.skip 1
+
     let infinite_seq2 g = g |> infinite_seq_gen |> cart
         
     let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise
@@ -383,6 +378,8 @@ module Set =
     let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise 
 
     let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1
+
+    let inline series' (s:seq<Term<'t>>) = Seq.scan (+) Term<'t>.Zero s |> Seq.skip 1
 
     let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
 
