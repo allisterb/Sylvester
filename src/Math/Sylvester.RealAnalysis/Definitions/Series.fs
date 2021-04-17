@@ -1,6 +1,11 @@
 ﻿namespace Sylvester
 
+open System
+
 module Series =
+    [<Formula>]
+    let abs (r:real) :real= Math.Abs r
+
     [<Formula>]
     let geometric_series a r = infinite_series (fun n -> a * r ** (real n - 1.))
     

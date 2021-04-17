@@ -32,7 +32,7 @@ module GreekVars =
     let epsilon<'t> = var'<'t> GreekSymbols.epsilon
 
 [<RequireQualifiedAccess>]
-module EnglishVars =
+module LatinVars =
     let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
     let A<'t> = var'<'t> "A"
     let a<'t> = var'<'t> "a"

@@ -8,6 +8,7 @@ open System
 open Patterns
 open Descriptions
 open SetTheory
+open Series
 
 module Sequences =
     let desc = axiom_desc "Sequences"
@@ -18,13 +19,17 @@ module Sequences =
     
     let sequences<'t when 't: equality> = Sequences<'t>()
 
+    (* Functions *)
+
+    let lim (r:int) (s:seq<'t>) = formula<'t>
+    
     (* Predicates *)
     
-    let lim (r:int) (s:seq<'t>) = formula<'t>
-
     let subsequence (s:seq<'t>) = pred<seq<_>>
 
     let converges = pred<seq<_>>
+
+    let diverges = pred<seq<_>>
 
     let bounded_above = pred<seq<_>>
     
@@ -52,8 +57,8 @@ module Sequences =
     let def_subsequence (n:Expr<int>) (a:Expr<int->real>) (f:Expr<int->int>) =
         def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Function.increasing %f @>
 
-    let def_converges (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (a:Expr<int->real>) =      
-            def sequences <@ converges (seq {(%a) %n})  = exists' %Li (lim pos_inf (seq {(%a) %n}) = %Li) @> 
+    let def_converges (a:Expr<int->real>) (Li:Expr<real>)  =      
+            def sequences <@ converges (infinite_seq %a)  = (lim pos_inf (infinite_seq %a) = %Li) @> 
     
     let def_bounded_above (d:Expr<seq<_>>) =
             def sequences <@ bounded %d = sseq %d :? IBoundedAbove<_> @>
@@ -74,7 +79,9 @@ module Sequences =
 
     let seq_conv_implies_bound (s:Expr<seq<_>>) = proof sequences <@ converges %s  ==> bounded %s  @> [] 
 
-    let subseq_limit (s:Expr<seq<_>>) (ss:Expr<seq<_>>) (n:Expr<int>) (Li:Expr<real>) =
+    let seq_divg_implies_notbound (s:Expr<seq<_>>) = proof sequences <@ diverges %s  ==> not (bounded %s)  @> []
+
+    let limit_subseq (s:Expr<seq<_>>) (ss:Expr<seq<_>>) (n:Expr<int>) (Li:Expr<real>) =
         proof sequences <@ lim %n %s = %Li |&| subsequence %s %ss ==> (lim %n %ss = %Li) @>
         
     let lim_algebra_const_eq (a:Expr<int->real>) (n:Expr<int>) (C:Expr<real>) = 
@@ -92,9 +99,20 @@ module Sequences =
     let lim_algebra_div_eq (a:Expr<int->real>) (n:Expr<int>) (Li:Expr<real>) = 
         proof sequences <@ forall' %n ((%a) %n <> 0.) && %Li <> 0. ==> (lim pos_inf (seq {1./(%a) %n}) = 1. / %Li) @> []
 
-    let series_conv_implies_limit_zero (a:Expr<int->real>) (n:Expr<int>) (Li:Expr<real>) =
-        proof sequences <@ converges (seq { partial_sum %n (seq {(%a) %n}) }) ==> (lim pos_inf (seq {(%a) %n}) = %Li) @>
-
     let lim_algebra_pow_eq (a:Expr<int->real>) (n:Expr<int>) (k:Expr<real>) = 
-        proof sequences <@ lim pos_inf (seq {(%a) %n ** %k}) = lim pos_inf (seq {(%a) %n}) ** %k @> []
+        proof sequences <@ lim pos_inf (seq {((%a) %n) ** %k}) = lim pos_inf (seq {(%a) %n}) ** %k @> []
+
+    let lim_algebra_gt0_eq (a:Expr<int->real>) (n:Expr<int>) = 
+        proof sequences <@ forall' %n ((%a) %n > 0.) ==> (lim pos_inf (seq {(%a) %n}) > 0.) @> []
+
+    let lim_geom_series (a:Expr<real>) (r:Expr<real>)  = 
+        proof sequences <@ lim pos_inf (geometric_series %a %r)  = (%a / real 1 - %r) @> []
+
+    let series_conv_implies_limit_zero (a:Expr<int->real>)  =
+        proof sequences <@ converges (infinite_series %a) ==> (lim pos_inf (infinite_seq %a) = 0.) @>
+
+
+
+
+
    

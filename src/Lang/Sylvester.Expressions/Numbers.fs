@@ -190,7 +190,6 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member (/) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in Rational.Normalize ((x'.Numerator * y.Denominator) / (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
     
-    
     static member op_Explicit(r: Rational): float = (float) r.Numerator / (float) r.Denominator
     static member op_Explicit(r: Rational): float32 = (float32) r.Numerator / (float32) r.Denominator
     static member op_Explicit(r: Rational): decimal = (decimal) r.Numerator / (decimal) r.Denominator
@@ -216,14 +215,16 @@ type real = float
  module NumericLiteralQ = 
    let zero = Rational.Zero 
    let one = Rational.One
-   let FromZero () = zero
-   let FromOne  () = one 
+   let FromZero() = zero
+   let FromOne() = one 
    let FromInt32 (i:int) = Rational(i, 1)
    let FromInt64 (i:int64) = Rational(i, 1L)
 
 [<AutoOpen>]
 module Numbers =
     let real n :real = float n
+
+    let rat (n:real) = Rational(n, 1.)
 
     let pos_inf<'t> = Unchecked.defaultof<'t>
 

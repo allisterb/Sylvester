@@ -355,10 +355,8 @@ module Set =
         | FiniteSeq f -> Seq f
         | _ -> failwithf "This is not a finite sequence expression."
 
-    let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g |> Seq.skip 1
+    let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t> :> seq<'t>
     
-    //let infinite_seq'<'t when 't: equality> g = infinite_seq<'t> g |> Set.fromSeq  
-        
     let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
         let s = infinite_seq_gen(Seq.initInfinite (fun i -> 
@@ -367,6 +365,8 @@ module Set =
         s :> seq<Expr<'t>> 
         |> Seq.map Term
         |> Seq.skip 1
+        |> infinite_seq_gen<Term<'t>> 
+        :> seq<Term<'t>>
         
     let infinite_seq2 g = g |> infinite_seq_gen |> cart
         

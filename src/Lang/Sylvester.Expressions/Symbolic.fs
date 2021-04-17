@@ -28,8 +28,6 @@ module SymbolicOps =
 
 [<AutoOpen>]
 module Symbolic =
-    let (+.) (l:Expr<'t>) (r:Expr<'t>) = SymbolicOps.Add<'t> l r
-    
     let alg_simplify x = x |> expand |> callUnary id 
         
     let alg_expand x = x |> expand |> callUnary Algebraic.expand 
