@@ -25,7 +25,9 @@ module MathNetExpr =
         | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) * (fromQuotation yt)
         | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) / (fromQuotation yt)
         | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) ** (fromQuotation yt)
-        | SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow( fromQuotation xt, fromQuotation yt)
+        | SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow(fromQuotation xt, fromQuotation yt)
+        | SpecificCall <@@ Numbers.real @@> (_, _, Int32 n::[]) -> Expression.Real (float n)
+        | SpecificCall <@@ Numbers.real @@> (_, _, e::[]) -> fromQuotation e
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)

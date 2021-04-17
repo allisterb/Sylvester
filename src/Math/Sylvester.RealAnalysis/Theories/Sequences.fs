@@ -88,7 +88,7 @@ module Sequences =
         proof sequences <@ lim pos_inf (seq {%C * (%a) %n}) = %C * lim pos_inf (seq {(%a) %n}) @> []
 
     let lim_algebra_abs_eq (a:Expr<int->real>) (n:Expr<int>) = 
-        proof sequences <@ lim pos_inf (seq {Math.Abs((%a) %n)}) = Math.Abs(lim pos_inf (seq {(%a) %n})) @> []
+        proof sequences <@ lim pos_inf (seq {abs((%a) %n)}) = abs(lim pos_inf (seq {(%a) %n})) @> []
 
     let lim_algebra_add_eq (a:Expr<int->real>) (b:Expr<int->real>) (n:Expr<int>)  = 
         proof sequences <@ lim pos_inf (seq {(%a) %n + (%b) %n}) = lim pos_inf (seq {(%a) %n}) + lim pos_inf (seq {(%b) %n}) @> []

@@ -7,3 +7,4 @@
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
 #r @"C:\Users\Allister\.nuget\packages\mathnet.numerics\4.15.0\lib\netstandard2.0\MathNet.Numerics.dll"
 #r @"C:\Users\Allister\.nuget\packages\mathnet.numerics.fsharp\4.15.0\lib\netstandard2.0\MathNet.Numerics.FSharp.dll"
+#r @"C:\Projects\Sylvester.git\ext\mathnet-symbolics\src\Symbolics\bin\Debug\netstandard2.0\MathNet.Symbolics.dll"
