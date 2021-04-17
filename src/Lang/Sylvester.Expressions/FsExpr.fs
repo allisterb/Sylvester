@@ -252,9 +252,10 @@ module FsExpr =
         | Some o -> Expr.Call(o, m, [l])
 
     let expand_list (expr:Expr): Expr list =
-        match expand expr with
+        let expr' = expand expr
+        match expr' with
         | List l -> l 
-        | _ -> failwithf "The expression %s is not a list expression." <| src expr
+        | _ -> failwithf "The expression %A is not a list expression." expr'
 
     let expand_lists (expr: Expr<'t list list>) = expr |> expand_list |> List.map expand_list
 

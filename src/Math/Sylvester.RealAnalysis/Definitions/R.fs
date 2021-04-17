@@ -10,3 +10,5 @@ type R<'n when 'n :>Number>() =
 [<AutoOpen>]
 module R =
     let R<'n when 'n :> Number> = R<'n>()
+
+    let euclid_dist (l:Vec<'n>) (r:Vec<'n>) = () 

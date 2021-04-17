@@ -9,24 +9,22 @@ open Sylvester.Arithmetic
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    internal (e: Expr<'t list>, isSymbolic:bool) =
-    let data = e |> evaluate |> List.toArray
+    internal (e: Expr<'t array>, isSymbolic:bool) =
+    let expr = expand e
+    let data = e |> evaluate 
     do if data.Length = 0 then failwith "The length of a vector must one or greater."
-    let expr = expand_list e
     let vector = lazy LinearAlgebra.DenseVector.raw data  
     member val Expr = expr
-    member val Expr' = e
     member val IsSymbolic = isSymbolic  
     member val _Array = data
     member val _Vector = vector
-    member val Display = src e
+    member val Display = src expr
     interface IPartialShape<one> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(data.Length) |] |> Some with get,set
         member val Data = data :> Array with get, set
-    new(e:Expr<'t list>) = Vector(e, true)
-    new(d:'t list) = Vector(<@ d @>, false)
-    new([<ParamArray>] d:'t array) = let _d = Array.toList d in Vector(_d)
+    new(d: Expr<'t list>) = Vector(<@ List.toArray %d @>, true)
+    new([<ParamArray>] d:'t array) = Vector(<@ d @>, false)
     static member NumericOps = defaultLinearAlgebraNumericOps
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
     static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'t>.create(v.AsArray()) 
@@ -36,8 +34,8 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    ([<ParamArray>] data: 't array) =
-    inherit Vector<'t>(data)
+    (e: Expr<'t array>) =
+    inherit Vector<'t>(e, true)
     let dim0 = number<'dim0>
     do if data.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of  %i." data.Length dim0.IntVal
     member val Dim0:'dim0 = dim0
