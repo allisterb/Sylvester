@@ -34,13 +34,15 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    (e: Expr<'t array>) =
-    inherit Vector<'t>(e, true)
+    (e: Expr<'t array>, isSymbolic:bool) =
+    inherit Vector<'t>(e, isSymbolic)
     let dim0 = number<'dim0>
-    do if data.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of  %i." data.Length dim0.IntVal
+    do if base._Array.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of  %i." base._Array.Length dim0.IntVal
     member val Dim0:'dim0 = dim0
-    member val Display = sprintf "Vector<%i>\n%s" dim0.IntVal (base._Vector.Value.ToVectorString())
+    member val Display = base.Display
     interface IVector<'dim0> with member val Dim0 = dim0
+    new(d: Expr<'t list>) = Vector<'dim0, 't>(<@ List.toArray %d @>, true)
+    new([<ParamArray>] d: 't array) = Vector<'dim0, 't>(<@ d @>, false)
     static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't>(data)
     static member fromMNVector(v: LinearAlgebra.Vector<'t>) = Vector<'dim0, 't>.create(let c = v.AsArray() in if isNull(c) then v.ToArray() else c) 
     static member (+)(l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = l//._Vector + r._Vector.Value |> Vector<'dim0, 't>.fromMNVector

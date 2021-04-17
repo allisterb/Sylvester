@@ -197,6 +197,7 @@ module FsExpr =
           let expanded = 
             match expr with
             | WithValue(_, _, e) -> rexpand vars e
+            | SpecificCall <@@ List.toArray @@> (None, t, e::[]) -> rexpand vars e
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])
