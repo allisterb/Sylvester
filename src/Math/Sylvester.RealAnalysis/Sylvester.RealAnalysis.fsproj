@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Definitions\Measure.fs" />
     <Compile Include="Definitions\Series.fs" />
     <Compile Include="Theories\Sequences.fs" />
     <Compile Include="Theories\Topology.fs" />
-    <Compile Include="Measure.fs" />
   </ItemGroup>
 
   <ItemGroup>

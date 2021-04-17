@@ -12,6 +12,6 @@ module Series =
     let geometric_series' = infinite_series' <@ fun n r -> r ** (real n - 1.) @>
 
     [<Formula>]
-    let harmonic_series = infinite_series (fun n -> 1Q / n)
+    let harmonic_series = infinite_series (fun n -> 1Q / rat n)
 
-    let harmonic_series' = infinite_series' <@ fun n r -> Rational.One / r ** (n - 1) @>
+    let harmonic_series' = infinite_series' <@ fun n _ -> Rational.One / rat n @>
