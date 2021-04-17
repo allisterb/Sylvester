@@ -72,35 +72,7 @@ type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:boo
         member x.GetEnumerator():Generic.IEnumerator<'t> = x.Sequence.GetEnumerator()
     interface IEnumerable with
         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
-      
-type Term<'t> (expr:Expr<'t>) =
-    member x.Expr = expr
-    member x.Item(i:int) = formula<'t>
-    override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
-    override a.Equals (_b:obj) = 
-            match _b with 
-            | :? Term<'t> as e -> (a :> IEquatable<Term<'t>>).Equals e
-            | _ -> false
-    override x.ToString() = src (x.Expr)
-    interface IComparable<Term<'t>> with member a.CompareTo b = a.ToString().CompareTo(b.ToString())
-    interface IComparable with
-        member a.CompareTo b = 
-            match b with
-            | :? Term<'t> as Term -> (a :> IComparable<Term<'t>>).CompareTo Term
-            | _ -> failwith "This object is not a Term."
-    interface IEquatable<Term<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
-    
-[<RequireQualifiedAccess>]
-module internal Term =
-    let inline add (l:Term<'t>) (r:Term<'t>) = 
-        let ll, rr = l.Expr, r.Expr
-        let e = <@ %ll + %rr @>
-        Term e
-
-    let inline zero() = 
-        let z = LanguagePrimitives.GenericZero  
-        Term <@ z @>
-
+          
 [<AutoOpen>]
 module internal SetInternal =
     let (|ArraySymSeq|ListSymSeq|SetSymSeq|InfiniteGenSymSeq|FiniteGenSymSeq|OtherSymSeq|) (s:Generic.IEnumerable<Term<'t>>) =
@@ -233,10 +205,3 @@ module internal SetInternal =
                                 k := !l
                                 l :=  m
         }
-
-    let term_var<'t> n = 
-        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
-
-    let term_expr (t:Term<'t>) = t.Expr
-
-    let term_src(t:Term<'t>) = t |> (term_expr >> src) 
