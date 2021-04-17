@@ -2,6 +2,7 @@
 
 open System
 open System.Numerics
+open FSharp.Quotations
 
 [<CustomEquality; CustomComparison>]
 type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob/master/src/FSharp/BigRational.fs
@@ -224,7 +225,14 @@ type real = float
 module Numbers =
     let real n :real = float n
 
-    let rat (n:real) = Rational(n, 1.)
+    let rat<'a when 'a: struct>(n:'a)  = 
+        match box n with
+        | :? int as i -> Rational(i, 1)
+        | :? int64 as i -> Rational(i, 1L)
+        | :? bigint as i -> Rational(i, bigint.One)
+        | :? float as f -> Rational(f, 1.)
+        | :? single as f -> Rational(f, 1.0f)
+        | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'a>.Name
 
     let pos_inf<'t> = Unchecked.defaultof<'t>
 
@@ -240,14 +248,6 @@ module Numbers =
 
     let take n s = s |> (Seq.take n >> Seq.toList)
 
-    let (|Int32Type|_|): Type -> Type option =
-        function
-        | t when t.Name = "Int32" -> Some t
-        | _ -> None
-    let (|Int64Type|_|): Type -> Type option =
-        function
-        | t when t.Name = "Int64" -> Some t
-        | _ -> None
     let (|BigRationalType|_|): Type -> Type option =
         function
         | t when t.Name = "BigRational" -> Some t
@@ -259,4 +259,14 @@ module Numbers =
     let (|RationalType|_|): Type -> Type option =
         function
         | t when t.Name = "Rational" -> Some t
+        | _ -> None
+
+    let (|ComplexType|_|): Type -> Type option =
+        function
+        | t when t = typeof<Complex> -> Some t
+        | _ -> None
+
+    let (|Rational|_|) =
+        function
+        | Patterns.Value(v, RationalType _) -> Some (v :?> Rational)
         | _ -> None

@@ -28,11 +28,10 @@ module SymbolicOps =
 
 [<AutoOpen>]
 module Symbolic =
-    let alg_simplify x = x |> expand |> callUnary id 
+    let simplify x = x |> callUnary id
         
-    let alg_expand x = x |> expand |> callUnary Algebraic.expand 
+    let algebraic_expand x = x |> callUnary Algebraic.expand 
         
-    //let term_simplify (t:Term<_>) = Term()
     let polyn_coeffs e x = 
         let x' = x |> expand in
         x'

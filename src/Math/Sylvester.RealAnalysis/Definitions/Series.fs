@@ -14,4 +14,4 @@ module Series =
     [<Formula>]
     let harmonic_series = infinite_series (fun n -> 1Q / n)
 
-    let harmonic_series' = infinite_series' <@ fun n r -> 1. / r ** (real n - 1.) @>
+    let harmonic_series' = infinite_series' <@ fun n r -> Rational.One / r ** (n - 1) @>

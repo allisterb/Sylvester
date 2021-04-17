@@ -39,10 +39,11 @@ module MathNetExpr =
         | UInt64 k -> fromInteger (BigInteger k)
         | Double d -> Expression.Real d
         | Single d -> Expression.Real (float d)
+        | Rational r -> Number (BigRational.FromBigIntFraction(r.Numerator, r.Denominator))
         | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
         | Let (_, _, t) -> fromQuotation t
         | Lambda (_, t) -> fromQuotation t
-        | _ -> failwithf "Operation %s is not supported." <| src q
+        | _ -> failwithf "Expression %A is not currently supported." <| q
 
     let fromEqualityQuotation = 
         function
@@ -92,6 +93,7 @@ module MathNetExpr =
             | "Int64" -> <@@ (%%a:int64) + (%%b:int64) @@>
             | "Double" -> <@@ (%%a:float) + (%%b:float) @@>
             | "Single" -> <@@ (%%a:float32) + (%%b:float32) @@>
+            | "Rational" -> <@@ (%%a:Rational) + (%%b:Rational) @@>
             | "BigRational" -> <@@ (%%a:BigRational) + (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) + (%%b:BigInteger) @@>
             | "Complex" -> <@@ (%%a:Complex) + (%%b:Complex) @@>
@@ -105,6 +107,7 @@ module MathNetExpr =
             | "Int64" -> <@@ (%%a:int64) * (%%b:int64) @@>
             | "Double" -> <@@ (%%a:float) * (%%b:float) @@>
             | "Single" -> <@@ (%%a:float32) * (%%b:float32) @@>
+            | "Rational" -> <@@ (%%a:Rational) * (%%b:Rational) @@> 
             | "BigRational" -> <@@ (%%a:BigRational) * (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) * (%%b:BigInteger) @@>
             | "Complex" -> <@@ (%%a:Complex) * (%%b:Complex) @@>
@@ -118,6 +121,7 @@ module MathNetExpr =
             | "Int64" -> <@@ (%%a:int64) - (%%b:int64) @@>
             | "Double" -> <@@ (%%a:float) - (%%b:float) @@>
             | "Single" -> <@@ (%%a:float32) - (%%b:float32) @@>
+            | "Rational" -> <@@ (%%a:Rational) - (%%b:Rational) @@>
             | "BigRational" -> <@@ (%%a:BigRational) - (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) - (%%b:BigInteger) @@>
             | "Complex" -> <@@ (%%a:Complex) - (%%b:Complex) @@>
@@ -131,6 +135,7 @@ module MathNetExpr =
             | "Int64" -> <@@ (%%a:int64) / (%%b:int64) @@>
             | "Double" -> <@@ (%%a:float) / (%%b:float) @@>
             | "Single" -> <@@ (%%a:float32) / (%%b:float32) @@>
+            | "Rational" -> <@@ (%%a:Rational) / (%%b:Rational) @@>
             | "BigRational" -> <@@ (%%a:BigRational) / (%%b:BigRational) @@>
             | "BigInteger" -> <@@ (%%a:BigInteger) / (%%b:BigInteger) @@>
             | "Complex" -> <@@ (%%a:Complex) / (%%b:Complex) @@>
@@ -139,6 +144,7 @@ module MathNetExpr =
 
         let rec convertExpr : Expression -> Expr option = 
             function 
+            | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
             | Identifier(sym) -> (getParam sym) |> Option.map (fun x -> Expr.Var(x))
             | Values.Value v -> value v
             | Constant c -> constant c
@@ -242,12 +248,12 @@ module MathNetExpr =
         x
         |> fromQuotation 
         |> op 
-        |> toQuotation (x |> expand |> get_vars)
+        |> toQuotation (x |> get_vars)
         |> Option.get
 
     let callBinary (op:Expression -> Expression -> Expression) (p:Expression) (x:Expr) = 
         x 
         |> fromQuotation 
         |> op p
-        |> toQuotation (x |> expand |> get_vars)
+        |> toQuotation (x |> get_vars)
         |> Option.get

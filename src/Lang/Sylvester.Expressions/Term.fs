@@ -25,7 +25,6 @@ module Term =
     let inline add (l:Term<'t>) (r:Term<'t>) = 
         let ll, rr = l.Expr, r.Expr
         match ll with
-        | Patterns.Var v when v.Name = "__zero" -> Term rr
         | Patterns.ValueWithName(_,_,n) when n = "__zero" -> Term rr
         | _ -> Term <@ %ll + %rr @>
    
