@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Definitions\R.fs" />
     <Compile Include="Definitions\Measure.fs" />
     <Compile Include="Definitions\Series.fs" />
     <Compile Include="Theories\Sequences.fs" />
@@ -18,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
+    <ProjectReference Include="..\Sylvester.LinearAlgebra\Sylvester.LinearAlgebra.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

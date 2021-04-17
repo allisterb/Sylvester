@@ -43,7 +43,7 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     static member internal toInt32(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt32 a)) |> Matrix.create
     static member internal toInt64(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix.create
     static member internal toRational(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix.create
-    
+(*
     static member (+)(l : Matrix<'t>, r : Matrix<'t>) :Matrix<'t>= 
         match typeof<'t> with
         | LinearAlgebraNumericOpType _ -> let res = Matrix<'t>.NumericOps.MatAdd l._Matrix.Value r._Matrix.Value in res |> Matrix.create
@@ -82,3 +82,4 @@ type Mat<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't:> Valu
     Matrix<'dim0, 'dim1, 't>
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, real>
 //type MatF<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number> = Matrix<'dim0, 'dim1, real32>
+*)
