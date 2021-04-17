@@ -67,19 +67,19 @@ module MathNetExpr =
             | Value.NegativeInfinity -> Expr.Value Double.NegativeInfinity |> Some
             | Value.PositiveInfinity -> Expr.Value System.Double.PositiveInfinity |> Some
             | Value.Number n -> n |> float |> Expr.Value |> Some
-            | _ -> None
+            | v -> failwithf "Could not convert the value %A to an Expr." v
         let constant = function
             | E -> Expr.Value Constants.E  |> Some 
             | Pi -> Expr.Value Constants.Pi |> Some
-            | _ -> None
+            | c -> failwithf "Could not convert the constant %A to an Expr." c
         let argName = function |Symbol(n) -> n
         let getParam p =
             List.fold(
                     fun x (y : Var) ->
                         match x with
                         | None when y.Name = (argName p) -> Some y
-                        | Some(v) -> Some v
-                        | _ -> None
+                        | Some v -> Some v
+                        | None -> failwithf "Did not find a matching var for %A." p
                     ) None vars
         let getMethodInfo = expand >> getFuncInfo
         let call1 expr x = Expr.Call(expr |> getMethodInfo, [x])
@@ -138,7 +138,7 @@ module MathNetExpr =
             | _ -> failwithf "Division operation for type %A not supported." a.Type
 
         let rec convertExpr : Expression -> Expr option = 
-            function
+            function 
             | Identifier(sym) -> (getParam sym) |> Option.map (fun x -> Expr.Var(x))
             | Values.Value v -> value v
             | Constant c -> constant c
@@ -188,7 +188,7 @@ module MathNetExpr =
                     //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
                     | Abs  -> getMethodInfo <@ Math.Abs @> |> Some
-                    | _    -> None
+                    | e    -> failwithf "Could not convert function %A to quotation." e
                 let f = convertFunc func
                 let e = convertExpr par
                 Option.map2 (fun x y -> Expr.Call(x, [y])) f e

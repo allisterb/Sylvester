@@ -24,12 +24,14 @@ type Term<'t> (expr:Expr<'t>) =
 module Term =
     let inline add (l:Term<'t>) (r:Term<'t>) = 
         let ll, rr = l.Expr, r.Expr
-        let e = <@ %ll + %rr @>
-        Term e
-
+        match ll with
+        | Patterns.Var v when v.Name = "__zero" -> Term rr
+        | Patterns.ValueWithName(_,_,n) when n = "__zero" -> Term rr
+        | _ -> Term <@ %ll + %rr @>
+   
     let inline zero() = 
-        let z = LanguagePrimitives.GenericZero  
-        Term <@ z @>
+        let __zero = LanguagePrimitives.GenericZero  
+        Term <@ __zero @>
 
     let var<'t> n = 
         let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term

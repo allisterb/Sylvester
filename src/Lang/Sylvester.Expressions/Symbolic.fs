@@ -32,6 +32,7 @@ module Symbolic =
         
     let alg_expand x = x |> expand |> callUnary Algebraic.expand 
         
+    //let term_simplify (t:Term<_>) = Term()
     let polyn_coeffs e x = 
         let x' = x |> expand in
         x'

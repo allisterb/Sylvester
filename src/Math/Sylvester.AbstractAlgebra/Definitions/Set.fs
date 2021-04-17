@@ -355,20 +355,18 @@ module Set =
         | FiniteSeq f -> Seq f
         | _ -> failwithf "This is not a finite sequence expression."
 
-    let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t> :> seq<'t>
+    let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t>
     
     let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
-        let s = infinite_seq_gen(Seq.initInfinite (fun i -> 
+        infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
                     <@ (%%b:'t) @>)) 
-        s :> seq<Expr<'t>> 
         |> Seq.map Term
         |> Seq.skip 1
         |> infinite_seq_gen<Term<'t>> 
-        :> seq<Term<'t>>
-        
-    let infinite_seq2 g = g |> infinite_seq_gen |> cart
+       
+    let infinite_seq2 g = g |> cart
         
     let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise
 
@@ -378,9 +376,9 @@ module Set =
 
     let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise 
 
-    let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1
+    let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1 
 
-    let inline series' (s:seq<Term<'t>>) = Seq.scan (Term.add) (Term.zero()) s |> Seq.skip 1
+    let inline series' s = Seq.scan (Term.add) (Term.zero()) s |> Seq.skip 1
 
     let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
 

@@ -115,16 +115,16 @@ module internal SetInternal =
         | InfiniteGenSeq -> Some x
         | _ -> None
     
-    let finite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, false)
+    let finite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, false) :> seq<'t>
 
-    let infinite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, true)
+    let infinite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, true) :> seq<'t>
     
-    let cart_seq (xs:seq<'t>) (ys:seq<'t>) = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y))
+    let cart_seq (xs:seq<'t>) (ys:seq<'t>) = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y)) |> infinite_seq_gen<'t * 't>
         
     let rec cart_seq' ss =
         match ss with
         | h::[] ->
-            Seq.fold (fun acc elem -> [elem]::acc) [] h
+            Seq.fold (fun acc elem -> [elem]::acc) [] h 
         | h::t ->
             Seq.fold (fun cacc celem ->
                 (Seq.fold (fun acc elem -> (elem::celem)::acc) [] h) @ cacc) [] (cart_seq' t)
