@@ -3,18 +3,16 @@
 open FSharp.Quotations
 
 open Sylvester
-open Sylvester.Arithmetic
 open PropCalculus
 open PredCalculus
 
-//open System.Ma
-infinite_seq (fun n -> 1Q / n) |> take 4
+let a = var<real>
+let rr = Vec<four> <@ [9.; a; 3.; a] @>
+rr.IsSymbolic
+//Series.geometric_series 1. (0.5) |> take 3
 
-
-Series.harmonic_series |> take 5
-
-//Series.harmonic_series |> take 4
-let inline infinite_series'' g = g |> (infinite_seq'' >> series)
+Series.harmonic_series' |> take 4
+//let inline infinite_series'' g = g |> (infinite_seq'' >> series)
 
 [<Formula>]
 let gg (a:real) n r  = a * r ** real(n - 1)

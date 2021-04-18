@@ -180,9 +180,9 @@ module FsExpr =
     let rec (|List|_|) =
         let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
         function
+        | NewUnionCase(uci, []) when isListType uci -> Some []
         | NewUnionCase(uci, lhs::(NewUnionCase(_, []))::[]) when isListType uci  -> Some (lhs::[])
         | NewUnionCase(uci, lhs::List(rhs)::[]) when isListType uci  -> Some (lhs::rhs)
-        | NewUnionCase(uci, lhs::rhs::[]) when isListType uci -> Some(lhs::rhs::[])
         | _ -> None
 
     let (|WithoutVariables|_|):Expr->Expr option =
@@ -197,7 +197,13 @@ module FsExpr =
           let expanded = 
             match expr with
             | WithValue(_, _, e) -> rexpand vars e
-            | SpecificCall <@@ List.toArray @@> (None, t, e::[]) -> rexpand vars e
+            | ValueWithName(o,t,_) -> Expr.Value(o, t)
+            | SpecificCall <@@ List.toArray @@>(None,t::[], l::[]) -> 
+                match l with
+                | List el -> rexpand vars (Expr.NewArray(t, el))
+                | WithValue(_, _, List el) -> rexpand vars (Expr.NewArray(t, el))
+                | ValueWithName(o, t, _) -> Expr.Value(o, t)
+                | e -> failwithf "Unknown expression trying to expand List.toArray: %A." e
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])
