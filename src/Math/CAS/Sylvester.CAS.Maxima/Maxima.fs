@@ -20,7 +20,12 @@ type Maxima(?maximaCmd:string) =
         match session with
         | Success s -> 
             if s.Expect.Contains("(%i1)", Nullable(2000)).IsMatch then
-                true
+                s.Send.Line "display2d: false;"
+                if s.Expect.Contains("(%o1) false", Nullable(2000)).IsMatch then
+                    true
+                else
+                    err' "Did not set Maxima display2d to false."
+                    false
             else
                 err' "Did not receive expected response from Maxima console process."
                 false
@@ -63,4 +68,4 @@ module Maxima =
         >>>= extract_output
         >>= fun (_, r, n) -> 
             do m.CurrentInputLine <- Int32.Parse n
-            r 
+            r

@@ -9,10 +9,10 @@ module MaximaTests =
 
     [<Fact>]
     let ``Can start maxima process`` () =
-        let m = Maxima.start "C:\\maxima-5.43.2\\bin\\maxima.bat"
+        let m = Maxima.start "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
         Assert.True m.Initialized
         let g = 
-            match Maxima.send m "2 + 2;" with
+            match Maxima.send m "partfrac ( 1/(x^2*(x^2 + 1)), x);" with
             | Success r -> true
             | Failure _ -> false
         Assert.True g
