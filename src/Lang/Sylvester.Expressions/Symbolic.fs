@@ -85,4 +85,4 @@ module Symbolic =
 
     let polyn_eqn_is_linear x = 
         let l, r = expand_equality x in 
-        polyn_degree l = 1 && polyn_degree r = 0   
+        polyn_degree l = 1 && polyn_degree r = 0

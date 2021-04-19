@@ -264,6 +264,13 @@ module FsExpr =
         | List l -> l 
         | _ -> failwithf "The expression %A is not a list expression." expr'
 
+    let expand_list'(expr: Expr<'t list>) =
+        let expr' = expand expr
+        match expr' with
+        | Patterns.Value(o, _) -> let l = o :?> 't list in l |> List.map(fun ee -> <@ ee @>) 
+        | List l -> l |> List.map expand |> List.map(fun ee -> <@ %%ee:'t @>)
+        | ue -> failwithf "Unknown list expression %A." ue
+
     let expand_lists (expr: Expr<'t list list>) = expr |> expand_list |> List.map expand_list
 
     let expand_list_values<'t> expr = 

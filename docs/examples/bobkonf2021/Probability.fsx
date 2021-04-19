@@ -6,11 +6,18 @@ open Sylvester
 open PropCalculus
 open PredCalculus
 
-let a = var<real>
-let rr = Vec<four> <@ [9.; a; 3.; a] @>
-rr.IsSymbolic
-//Series.geometric_series 1. (0.5) |> take 3
 
+let a = var<real>
+let bb = <@ [9.; a; 3.; a] @>
+let rr = Vec<four> <@ [4.;a;6.;8.] @>  
+rr.Expr
+List.map2 (+) rr.Expr' rr.Expr' 
+|> List.map ((MathNetExpr.toQuotation rr.ExprVars) >> Option.get)
+|> List.map (fun e -> <@ %%e:real @>)
+|> List.fold (fun l e -> (<@ %e::%l @>)) <@ [] @>
+|> Vec<four>
+
+rr.Expr' <- rr.Expr'
 Series.harmonic_series' |> take 4
 //let inline infinite_series'' g = g |> (infinite_seq'' >> series)
 
