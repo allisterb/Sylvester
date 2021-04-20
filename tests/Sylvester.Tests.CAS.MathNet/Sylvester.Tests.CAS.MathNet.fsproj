@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
-    <ProjectReference Include="..\..\src\Math\CAS\Sylvester.CAS.MathNet\Sylvester.CAS.MathNet.fsproj" />
   </ItemGroup>
 
 </Project>

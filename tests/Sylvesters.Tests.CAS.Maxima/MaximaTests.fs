@@ -6,7 +6,10 @@ module MaximaTests =
     open Xunit
 
     open Sylvester
+    open Sylvester.CAS
 
+    Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+    
     [<Fact>]
     let ``Can start maxima process`` () =
         let m = Maxima.start "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
@@ -16,3 +19,9 @@ module MaximaTests =
             | Success r -> true
             | Failure _ -> false
         Assert.True g
+
+    [<Fact>]
+    let ``Can get part frac``() =
+        let a = LatinVars.a<int>
+        let f = Algebra.partfrac <@ (2 * %a)/ (%a + 3) @> a
+        Assert.NotNull f

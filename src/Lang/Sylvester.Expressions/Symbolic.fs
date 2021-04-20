@@ -28,6 +28,8 @@ module SymbolicOps =
 
 [<AutoOpen>]
 module Symbolic =
+    let print_formula expr = expr |> MathNetExpr.fromQuotation |> Infix.format
+
     let simplify x = x |> callUnary id
         
     let algebraic_expand x = x |> callUnary Algebraic.expand 

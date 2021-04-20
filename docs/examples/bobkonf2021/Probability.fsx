@@ -10,14 +10,13 @@ open PredCalculus
 let a = var<real>
 let bb = <@ [9.; a; 3.; a] @>
 let rr = Vec<four> <@ [4.;a;6.;8.] @>  
-rr.Expr
-List.map2 (+) rr.Expr' rr.Expr' 
-|> List.map ((MathNetExpr.toQuotation rr.ExprVars) >> Option.get)
-|> List.map (fun e -> <@ %%e:real @>)
-|> List.fold (fun l e -> (<@ %e::%l @>)) <@ [] @>
-|> Vec<four>
+let rrr = rr + rr
 
-rr.Expr' <- rr.Expr'
+
+MathNet.Symbolics.Infix.parse "(x+1)/3)"
+
+
+src (rr <.> rr)
 Series.harmonic_series' |> take 4
 //let inline infinite_series'' g = g |> (infinite_seq'' >> series)
 

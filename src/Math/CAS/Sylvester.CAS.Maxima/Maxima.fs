@@ -1,8 +1,11 @@
-﻿namespace Sylvester
+﻿namespace Sylvester.CAS
 
 open System
 open System.Text
 open System.Text.RegularExpressions
+open FSharp.Quotations
+
+open Sylvester
 open ExpectNet
 open Expect
 
@@ -69,3 +72,11 @@ module Maxima =
         >>= fun (_, r, n) -> 
             do m.CurrentInputLine <- Int32.Parse n
             r
+
+    let mutable defaultInt:Maxima option = None
+
+    let init (s:string) =
+        let m = start s
+        match m.Initialized with
+        | true -> defaultInt <- Some m
+        | _ -> failwithf "Failed to initialize the default Maxima interpreter at %s." s

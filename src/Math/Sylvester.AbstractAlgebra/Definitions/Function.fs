@@ -26,6 +26,8 @@ module Function =
 
     let range (f:'d->'r) = formula<Set<'d>>
 
+    let relation (f:'d->'r) = formula<IRelation<'d, 'r>>
+
     let injection = pred<'d->'r>
 
     let surjection = pred<'d->'r>
@@ -40,4 +42,5 @@ module Function =
 
     let decreasing' = pred<'d->'r>
 
+    let order = pred<'d->'r>
    

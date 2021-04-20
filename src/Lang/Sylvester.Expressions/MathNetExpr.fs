@@ -63,11 +63,19 @@ module MathNetExpr =
         let value = function
             | Value.Approximation a -> 
                 match a with
-                | Real r -> r |> Expr.Value |> Some
-                | Complex c -> c |> Expr.Value |> Some   
+                | Real r -> 
+                    let v = r |> Expr.Value
+                    if typeof<'t> = typeof<float> then Some v else Some(Expr.Value(Convert.ChangeType(v, typeof<'t>) :?> 't))
+                | Complex c -> 
+                    let v = c |> Expr.Value
+                    if typeof<'t> = typeof<complex> then Some v else Some(Expr.Value(Convert.ChangeType(v, typeof<'t>) :?> 't))   
             | Value.NegativeInfinity -> Expr.Value Double.NegativeInfinity |> Some
             | Value.PositiveInfinity -> Expr.Value System.Double.PositiveInfinity |> Some
-            | Value.Number n -> n |> float |> Expr.Value |> Some
+            | Value.Number n -> 
+                if typeof<'t> = typeof<int> && n.IsInteger then 
+                    Expr.Value(int n.Numerator) |> Some
+                else
+                    Expr.Value(Convert.ChangeType(n, typeof<'t>) :?> 't) |> Some
             | v -> failwithf "Could not convert the value %A to an Expr." v
         let constant = function
             | E -> Expr.Value Constants.E  |> Some 
@@ -87,6 +95,9 @@ module MathNetExpr =
         let call2 expr x y = Expr.Call(expr getMethodInfo, x::y::[])
 
         let add (a:Expr) (b:Expr) = 
+    
+            <@@ %%a + %% b@@>
+            (*
             do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
             match a.Type.Name with
             | "Int32" -> <@@ (%%a:int) + (%%b:int) @@>
@@ -99,6 +110,7 @@ module MathNetExpr =
             | "Complex" -> <@@ (%%a:Complex) + (%%b:Complex) @@>
             | "Complex32" -> <@@ (%%a:Complex32) + (%%b:Complex32) @@>
             | n -> failwithf "Addition operation for type %A not supported." a.Type 
+            *)
     
         let mul (a:Expr) (b:Expr) = 
             do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
@@ -238,6 +250,11 @@ module MathNetExpr =
             | x -> convertExpr x
 
         convertExpr expr
+
+    let toQuotation'<'t> (vars: Var list) (expr: Expression) =
+        match toQuotation<'t> vars expr with
+        | Some e -> e
+        | None -> failwithf "Failed to convert expression %s to quotation" (Infix.format expr)
 
     let toIdentifier(v:Var) = 
         v.Name  
