@@ -44,3 +44,5 @@ module LatinVars =
     let d<'t> = var'<'t> "d"
     let N<'t> = var'<'t> "N"
     let n<'t> = var'<'t> "n"
+    let X<'t> = var'<'t> "X"
+    let x<'t> = var'<'t> "x"

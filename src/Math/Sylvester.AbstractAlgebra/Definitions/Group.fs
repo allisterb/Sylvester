@@ -88,7 +88,7 @@ type Groups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>
 [<AutoOpen>]
 module Group =
     /// Define a group over a set which has an additive operator and zero and negation. 
-    let inline AdditiveGroup<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
+    let inline additive_group<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
         (set: ISet<'t>) =
         let zero = LanguagePrimitives.GenericZero<'t>
         let op = Binary(+).DestructureBinary
@@ -105,7 +105,7 @@ module Group =
         }
 
     /// Define a group over a set which has a multiplicative operator and one and division.
-    let inline MultiplicativeGroup<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't) and 't: (static member (/) :'t -> 't -> 't)>
+    let inline multiplicative_group<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't) and 't: (static member (/) :'t -> 't -> 't)>
         (set: ISet<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>
         let inv = FSharpPlus.Math.Generic.(/) one

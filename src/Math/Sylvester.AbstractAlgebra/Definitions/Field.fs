@@ -19,11 +19,16 @@ type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicati
         member val AddGroup = additiveGroup
         member val MulGroup = multiplicativeGroup
 
+type OrderedField<'t when 't: equality and 't : comparison>(additiveGroup: IAdditiveGroup<'t>, multiplicativeGroup: IMultiplicativeGroup<'t>) =
+    inherit Field<'t>(additiveGroup, multiplicativeGroup)
+    interface ITotalOrder<'t> with
+        member val Order = (<)
+
 module Field = 
     let R = 
-        let reals = let x = var<real> in SetComprehension<real>(<@ x @>, <@ x @>, Aleph 1 ) |> Set in
-        Field(AdditiveGroup(reals), MultiplicativeGroup(reals))
-    let open_interval left right = R.Set.Subset(fun x -> x > left && x < right)
-    let closed_interval left right = R.Set.Subset(fun x -> x >= left && x <= right)
+        let reals = let x = var<real> in set' x x 
+        OrderedField(additive_group(reals), multiplicative_group(reals))
+    let open_interval left right = R |>| (fun x -> x > left && x < right)
+    let closed_interval left right = R |>| (fun x -> x >= left && x <= right)
     let line (origin:real) (step:real) = infinite_seq (fun n -> origin + ((float n) * step)) 
     let axis step = line 0.0 step

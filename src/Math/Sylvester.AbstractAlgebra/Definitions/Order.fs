@@ -4,7 +4,9 @@ open System.Collections
 
 /// A set of elements with a partial order relation i.e. an operation that is reflexive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
+    inherit IReflexiveRelation<'t>
     inherit IAntiSymmetricRelation<'t>
+    inherit ITransitiveRelation<'t>
     abstract Order: Order<'t>
     
 /// A set of elements with a total order.
@@ -36,29 +38,29 @@ type IGreatestLowerBound<'t when 't : equality> =
     abstract Infimum: 't
 
 /// A set that contains at least one of its upper bounds. 
-type IHasMaximal<'t when 't : equality> =
+type IMaximal<'t when 't : equality> =
     inherit IBoundedAbove<'t>
     abstract Maximal:'t
 
 /// A set that contains at least one of its lower bounds. 
-type IHasMinimal<'t when 't : equality> =
+type IMinimal<'t when 't : equality> =
     inherit IBoundedBelow<'t>
     abstract Minimal:'t
 
 /// A set that contains a maximal element greater than or equal to all other maximals.
-type IHasGreatest<'t when 't : equality> =
-    inherit IHasMaximal<'t>
+type IGreatest<'t when 't : equality> =
+    inherit IMaximal<'t>
     abstract Greatest:'t
 
 /// A set that contains a minimal element lesser than or equal to all other minimals.
-type IHasLeast<'t when 't : equality> =
-    inherit IHasMinimal<'t>
+type ILeast<'t when 't : equality> =
+    inherit IMinimal<'t>
     abstract Least:'t
 
 /// A totally ordered set where every subset that is bounded below has a least element.
 type IWellOrder<'t when 't : equality and 't: comparison> =
     inherit ITotalOrder<'t>
-    abstract Least:Set<'t>->'t
+    abstract Least:ISet<'t>->'t
 
 /// A set of elements with a partial order relation.
 type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) = 
@@ -71,6 +73,6 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
         member x.Equals (y:Set<'t>) = x.Set.Equals y
    
 /// A set of elements with a total order relation.
-type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>, order: Order<'t>) =
-    inherit Poset<'t>(set, order)
+type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
+    inherit Poset<'t>(set, (<))
     interface ITotalOrder<'t>

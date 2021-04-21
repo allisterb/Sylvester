@@ -1,7 +1,11 @@
 ﻿namespace Sylvester
 
 open Sylvester.Arithmetic
-open Sylvester.Sequences
+open Sequences
 
 module Topology =
+    
+    (* Predicates *)
+    let sup = pred<OrderedSet<'t>>
+    let inf = pred<OrderedSet<'t>>
     let fo = ()    

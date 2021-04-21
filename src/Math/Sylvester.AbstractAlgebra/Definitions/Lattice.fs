@@ -20,11 +20,11 @@ type SemiLattice<'t when 't: equality>(set: ISet<'t>, op: BinaryOp<'t>) =
             
 type IBoundedJoinSemiLattice<'t when 't : equality> =
     inherit ISemiLattice<'t>
-    inherit IHasLeast<'t>
+    inherit ILeast<'t>
 
 type IBoundedMeetSemiLattice<'t when 't : equality> =
     inherit ISemiLattice<'t>
-    inherit IHasGreatest<'t>
+    inherit IGreatest<'t>
 
 /// Set of elements closed under 2 operations that are associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that each operation on every pair of elements results in the supremum and infimum respectively of the pair.
@@ -36,8 +36,8 @@ type ILattice<'t when 't: equality and 't: comparison> =
 
 type IBoundedLattice<'t when 't : equality and 't: comparison> =
     inherit ILattice<'t>
-    inherit IHasGreatest<'t>
-    inherit IHasLeast<'t>
+    inherit IGreatest<'t>
+    inherit ILeast<'t>
 
 type IComplementedLattice<'t when 't : equality and 't: comparison> =
     inherit IBoundedLattice<'t>
@@ -48,7 +48,7 @@ type IDistributedComplementedLattice<'t when 't : equality and 't: comparison> =
 /// Set of elements closed under 2 operations that are associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that each operation on every pair of elements results in the supremum and infimum respectively of the pair.
 type Lattice<'t when 't: equality and 't: comparison>(set: ISet<'t>, join: BinaryOp<'t>, meet: BinaryOp<'t>) =
-    inherit OrderedSet<'t>(set, (fun a b -> (if (join a b) = a then false else true)))
+    inherit OrderedSet<'t>(set)
     do 
         fail_if_not_left_associative join
         fail_if_not_commutative join

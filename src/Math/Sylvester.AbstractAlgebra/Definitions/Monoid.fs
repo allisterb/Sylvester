@@ -38,7 +38,7 @@ type Monoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number
 [<AutoOpen>]
 module Monoid =
     /// Define a monoid over a set which has an additive operator and zero. 
-    let inline AdditiveMonoid<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't)> 
+    let inline additive_monoid<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't)> 
         (set: ISet<'t>) =
         let id = LanguagePrimitives.GenericZero<'t>
         let op = Binary(+).DestructureBinary
@@ -53,7 +53,7 @@ module Monoid =
 
         }
     /// Define a monoid over a set which has a multiplicative operator and one. 
-    let inline MultiplicativeMonoid<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't)> 
+    let inline multiplicative_monoid<'t when 't : equality and 't : (static member One:'t) and 't: (static member (*) :'t -> 't -> 't)> 
         (set: ISet<'t>) =
         let one = LanguagePrimitives.GenericOne<'t>
         let op = FSharpPlus.Math.Generic.(*)
