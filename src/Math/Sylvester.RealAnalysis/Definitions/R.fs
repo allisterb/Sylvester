@@ -2,13 +2,11 @@
 
 open Sylvester.Arithmetic
 
-type R<'n when 'n :>Number>() = 
-    inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.add, Vector.add)
-    static member val Space = R<'n>()
-    
+type R<'n when 'n :>Number>() = inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.add, Vector.add)
+ 
 [<AutoOpen>]
 module R =
-    let R<'n when 'n :> Number> = R<'n>.Space
+    let R<'n when 'n :> Number> =  R<'n>()
     let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
     let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
     let line (origin:real) (step:real) = infinite_seq (fun n -> origin + ((real n) * step)) 

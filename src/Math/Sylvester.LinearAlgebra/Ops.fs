@@ -38,6 +38,10 @@ module private Ops =
 
     let exprs (a:Expr<_> array list) = a |> List.map Array.toList |> List.concat |> List.map MathNetExpr.fromQuotation
     
+    let fromQ e = Array.map MathNetExpr.fromQuotation e
+
+    let toQ<'t> v e = MathNetExpr.toQuotation'<'t> v e
+
 type MathNetLinearAlgebraNumeric() =
     interface ILinearAlgebraNumericOps with
         member x.Add l r =  l.Add r
@@ -51,27 +55,27 @@ type MathNetLinearAlgebraNumeric() =
 type MathNetLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with
         member x.Add l r = 
-            let vars = List.concat[l |> Array.toList |> List.map (get_vars) |> List.concat; r |> Array.toList |> List.map (get_vars) |> List.concat]
-            let l',r' = Array.map MathNetExpr.fromQuotation l, Array.map MathNetExpr.fromQuotation r             
+            let vars = Ops.vars [l;r]
+            let l',r' = Ops.fromQ l, Ops.fromQ r             
             Array.map2 (+) l' r' 
-            |> Array.map (MathNetExpr.toQuotation(vars) >> Option.get)
+            |> Array.map (Ops.toQ<'t> vars)
             |> Array.map (fun e -> <@ %%e:'t @>)
-
+        
         member x.Subtract l r = 
-            let vars = List.concat[l |> Array.toList |> List.map (get_vars) |> List.concat; r |> Array.toList |> List.map (get_vars) |> List.concat]
-            let l',r' = Array.map MathNetExpr.fromQuotation l, Array.map MathNetExpr.fromQuotation r             
+            let vars = Ops.vars [l;r]
+            let l',r' = Ops.fromQ l, Ops.fromQ r             
             Array.map2 (-) l' r' 
-            |> Array.map (MathNetExpr.toQuotation(vars) >> Option.get)
+            |> Array.map (Ops.toQ<'t> vars)
             |> Array.map (fun e -> <@ %%e:'t @>)
 
         member x.InnerProduct l r = 
             let r = 
                 let vars = Ops.vars [l;r]
-                let l', r' = Array.map MathNetExpr.fromQuotation l, Array.map MathNetExpr.fromQuotation r             
+                let l', r' = Ops.fromQ l, Ops.fromQ r             
                 Array.zip l' r' 
                 |> Array.map(fun(a, b) -> a * b)
                 |> Array.reduce (+)
-                |> (MathNetExpr.toQuotation(vars) >> Option.get)
+                |> Ops.toQ<'t> vars
             <@ %%r:'t @>
 
 [<AutoOpen>]
