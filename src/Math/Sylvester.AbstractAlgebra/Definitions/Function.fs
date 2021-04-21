@@ -1,5 +1,20 @@
 ﻿namespace Sylvester
 
+type IRelation<'t when 't: equality> = 
+    inherit ISet<'t>
+
+type IReflexiveRelation<'t when 't : equality> =
+    inherit IRelation<'t>
+
+type ISymmetricRelation<'t when 't : equality> =
+    inherit IRelation<'t>
+    
+type IAntiSymmetricRelation<'t when 't : equality> =
+    inherit IRelation<'t>
+
+type ITransitiveRelation<'t when 't : equality> =
+    inherit IRelation<'t>
+
 type IRelation<'a, 'b when 'a : equality and 'b : equality> = 
     inherit ISet<'a * 'b>
 
@@ -24,7 +39,7 @@ type IEquivalenceRelation<'a, 'b when 'a : equality and 'b : equality> =
 module Function =
     let dom (f:'d->'r) = formula<Set<'d>>
 
-    let range (f:'d->'r) = formula<Set<'d>>
+    let range (f:'d->'r) = formula<Set<'r>>
 
     let relation (f:'d->'r) = formula<IRelation<'d, 'r>>
 

@@ -55,6 +55,7 @@ module MathNetExpr =
             | NegPower _ -> one
             | Product ax -> product <| List.map numerator ax
             | z -> z
+        
         let rec denominator = function
             | NegPower (r, p) -> r ** -p
             | Product ax -> product <| List.map denominator ax
@@ -75,13 +76,14 @@ module MathNetExpr =
                 if typeof<'t> = typeof<int> && n.IsInteger then 
                     Expr.Value(int n.Numerator) |> Some
                 else
-                    Expr.Value(Convert.ChangeType(n, typeof<'t>) :?> 't) |> Some
+                    Expr.Value(Convert.ChangeType(float n, typeof<'t>) :?> 't) |> Some
             | v -> failwithf "Could not convert the value %A to an Expr." v
         let constant = function
             | E -> Expr.Value Constants.E  |> Some 
             | Pi -> Expr.Value Constants.Pi |> Some
             | c -> failwithf "Could not convert the constant %A to an Expr." c
         let argName = function |Symbol(n) -> n
+        
         let getParam p =
             List.fold(
                     fun x (y : Var) ->
@@ -90,70 +92,17 @@ module MathNetExpr =
                         | Some v -> Some v
                         | None -> failwithf "Did not find a matching var for %A." p
                     ) None vars
+        
         let getMethodInfo = expand >> getFuncInfo
-        let call1 expr x = Expr.Call(expr |> getMethodInfo, [x])
-        let call2 expr x y = Expr.Call(expr getMethodInfo, x::y::[])
-
-        let add (a:Expr) (b:Expr) = 
+        
+        let add (a:Expr) (b:Expr) = let op = addOp.[a.Type.Name] in Expr.Call(op, a::b::[])
     
-            <@@ %%a + %% b@@>
-            (*
-            do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
-            match a.Type.Name with
-            | "Int32" -> <@@ (%%a:int) + (%%b:int) @@>
-            | "Int64" -> <@@ (%%a:int64) + (%%b:int64) @@>
-            | "Double" -> <@@ (%%a:float) + (%%b:float) @@>
-            | "Single" -> <@@ (%%a:float32) + (%%b:float32) @@>
-            | "Rational" -> <@@ (%%a:Rational) + (%%b:Rational) @@>
-            | "BigRational" -> <@@ (%%a:BigRational) + (%%b:BigRational) @@>
-            | "BigInteger" -> <@@ (%%a:BigInteger) + (%%b:BigInteger) @@>
-            | "Complex" -> <@@ (%%a:Complex) + (%%b:Complex) @@>
-            | "Complex32" -> <@@ (%%a:Complex32) + (%%b:Complex32) @@>
-            | n -> failwithf "Addition operation for type %A not supported." a.Type 
-            *)
-    
-        let mul (a:Expr) (b:Expr) = 
-            do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
-            match a.Type.Name with
-            | "Int32" -> <@@ (%%a:int) * (%%b:int) @@>
-            | "Int64" -> <@@ (%%a:int64) * (%%b:int64) @@>
-            | "Double" -> <@@ (%%a:float) * (%%b:float) @@>
-            | "Single" -> <@@ (%%a:float32) * (%%b:float32) @@>
-            | "Rational" -> <@@ (%%a:Rational) * (%%b:Rational) @@> 
-            | "BigRational" -> <@@ (%%a:BigRational) * (%%b:BigRational) @@>
-            | "BigInteger" -> <@@ (%%a:BigInteger) * (%%b:BigInteger) @@>
-            | "Complex" -> <@@ (%%a:Complex) * (%%b:Complex) @@>
-            | "Complex32" -> <@@ (%%a:Complex32) * (%%b:Complex32) @@>
-            | n -> failwithf "Multiplication operation for type %A not supported." a.Type
-    
-        let sub (a:Expr) (b:Expr) = 
-            do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
-            match a.Type.Name with
-            | "Int32" -> <@@ (%%a:int) - (%%b:int) @@>
-            | "Int64" -> <@@ (%%a:int64) - (%%b:int64) @@>
-            | "Double" -> <@@ (%%a:float) - (%%b:float) @@>
-            | "Single" -> <@@ (%%a:float32) - (%%b:float32) @@>
-            | "Rational" -> <@@ (%%a:Rational) - (%%b:Rational) @@>
-            | "BigRational" -> <@@ (%%a:BigRational) - (%%b:BigRational) @@>
-            | "BigInteger" -> <@@ (%%a:BigInteger) - (%%b:BigInteger) @@>
-            | "Complex" -> <@@ (%%a:Complex) - (%%b:Complex) @@>
-            | "Complex32" -> <@@ (%%a:Complex32) - (%%b:Complex32) @@>
-            | _ -> failwithf "Subtraction operation for type %A not supported." a.Type
-    
-        let div (a:Expr) (b:Expr) = 
-            do if a.Type <> b.Type then failwithf "The type of the LHS:%A is not the type of the RHS: %A " a.Type b.Type
-            match a.Type.Name with
-            | "Int32" -> <@@ (%%a:int) / (%%b:int) @@>
-            | "Int64" -> <@@ (%%a:int64) / (%%b:int64) @@>
-            | "Double" -> <@@ (%%a:float) / (%%b:float) @@>
-            | "Single" -> <@@ (%%a:float32) / (%%b:float32) @@>
-            | "Rational" -> <@@ (%%a:Rational) / (%%b:Rational) @@>
-            | "BigRational" -> <@@ (%%a:BigRational) / (%%b:BigRational) @@>
-            | "BigInteger" -> <@@ (%%a:BigInteger) / (%%b:BigInteger) @@>
-            | "Complex" -> <@@ (%%a:Complex) / (%%b:Complex) @@>
-            | "Complex32" -> <@@ (%%a:Complex32) / (%%b:Complex32) @@>
-            | _ -> failwithf "Division operation for type %A not supported." a.Type
-
+        let mul (a:Expr) (b:Expr) = let op = mulOp.[a.Type.Name] in Expr.Call(op, a::b::[])
+                
+        let sub (a:Expr) (b:Expr) = let op = subOp.[a.Type.Name] in Expr.Call(op, a::b::[])
+        
+        let div (a:Expr) (b:Expr) = let op = divOp.[a.Type.Name] in Expr.Call(op, a::b::[])
+            
         let rec convertExpr : Expression -> Expr option = 
             function 
             | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
@@ -205,7 +154,9 @@ module MathNetExpr =
                     | Ln   -> getMethodInfo <@ Math.Log @> |> Some
                     //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
-                    | Abs  -> getMethodInfo <@ Math.Abs @> |> Some
+                    | Abs  -> getMethodInfo <@ Math.Abs @> |> Some 
+                    //    let a = Math.Abs
+                    //    let b = a.GetType
                     | e    -> failwithf "Could not convert function %A to quotation." e
                 let f = convertFunc func
                 let e = convertExpr par

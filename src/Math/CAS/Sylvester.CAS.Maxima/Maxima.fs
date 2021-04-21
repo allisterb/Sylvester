@@ -23,8 +23,10 @@ type Maxima(?maximaCmd:string) =
         match session with
         | Success s -> 
             if s.Expect.Contains("(%i1)", Nullable(2000)).IsMatch then
+                s.Send.Line "ratprint:false;"
                 s.Send.Line "display2d: false;"
-                if s.Expect.Contains("(%o1) false", Nullable(2000)).IsMatch then
+                if s.Expect.Contains("(%i3)", Nullable(2000)).IsMatch then
+                    
                     true
                 else
                     err' "Did not set Maxima display2d to false."
@@ -59,7 +61,7 @@ module Maxima =
         if m.Success then 
             ((m.Groups.Item 1).Value, (m.Groups.Item 2).Value, (m.Groups.Item 3).Value) |> Success 
         else 
-            sprintf "Could not extract Maxima output from process response %s." text |> exn |> Failure
+            sprintf "Could not extract Maxima output from process response %s" text |> exn |> Failure
         
     let start path = new Maxima(path)
     
@@ -67,7 +69,7 @@ module Maxima =
     
     let send (m:Maxima) (input:string) = 
         !> m.ConsoleSession.Send.Line input 
-        >>|> (m.ConsoleSession.Expect.StartsWith("\n(%o", Nullable(m.ProcessTimeOut))) |> wrap_result'
+        >>|> (m.ConsoleSession.Expect.Contains("\n(%o", Nullable(m.ProcessTimeOut))) |> wrap_result'
         >>>= extract_output
         >>= fun (_, r, n) -> 
             do m.CurrentInputLine <- Int32.Parse n

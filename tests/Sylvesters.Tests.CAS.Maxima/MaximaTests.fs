@@ -23,5 +23,11 @@ module MaximaTests =
     [<Fact>]
     let ``Can get part frac``() =
         let a = LatinVars.a<int>
+        let b = LatinVars.b<int>
         let f = Algebra.partfrac <@ (2 * %a)/ (%a + 3) @> a
         Assert.NotNull f
+        let f' = Algebra.partfrac <@ (1 + 2)/ %b @> b
+        Assert.NotNull f'
+        let c = LatinVars.c<real>
+        let f'' = Algebra.partfrac <@ (2.5 + 1.) / %c @> c
+        Assert.NotNull f''

@@ -40,6 +40,43 @@ module FsExpr =
     | Call (_, info, _) -> info.DeclaringType
     | _ -> failwith "Expression does not have information to retrieve module type."
 
+    let addOp = 
+        Map.empty
+            .Add("UInt32", <@ (+) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int32", <@ (+) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
+            .Add("UInt64", <@ (+) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int64", <@ (+) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Single", <@ (+) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Double", <@ (+) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+
+    let subOp = 
+        Map.empty
+            .Add("UInt32", <@ (-) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int32", <@ (-) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
+            .Add("UInt64", <@ (-) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int64", <@ (-) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Single", <@ (-) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Double", <@ (-) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+
+    let mulOp = 
+        Map.empty
+            .Add("UInt32", <@ (*) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int32", <@ (*) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
+            .Add("UInt64", <@ (*) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int64", <@ (*) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Single", <@ (*) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Double", <@ (*) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+
+    let divOp = 
+        Map.empty
+            .Add("UInt32", <@ (/) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int32", <@ (/) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
+            .Add("UInt64", <@ (/) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Int64", <@ (/) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Single", <@ (/) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Double", <@ (/) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+ 
+    
     let rec getExprName = function
     | Call(None, info, _) -> info.Name
     | Lambda(_, expr) -> getExprName expr

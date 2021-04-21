@@ -19,7 +19,6 @@ type CommutativeSemigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     /// A lattice can also be viewed as consisting of two commutative semigroups on the same set.
     //static member toLattice (set: ISet<'t>, join: CommutativeSemigroup<'t>, meet: CommutativeSemigroup<'t>) = Lattice(set, join.Op, meet.Op)
 
-
 /// Category of semigroups with an n structure-preserving morphism.
 type Semigroups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Semigroup<'ut>, r:Semigroup<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
     inherit Category<'ut, 'vt, card.one, card.one, 'n>(l, r, maps)

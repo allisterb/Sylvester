@@ -21,4 +21,4 @@ module Algebra =
         |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars frac) e)
         |> function
         | Ok s -> expand'<'t, 't> <@ %%s:'t @>
-        | Error e -> failwithf "Error executing Maxima command: %s." e
+        | Error e -> failwithf "Error executing Maxima command: %s" e

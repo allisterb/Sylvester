@@ -4,7 +4,7 @@ open System.Collections
 
 /// A set of elements with a partial order relation i.e. an operation that is reflexive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
-    inherit ISet<'t>
+    inherit IAntiSymmetricRelation<'t>
     abstract Order: Order<'t>
     
 /// A set of elements with a total order.
@@ -68,8 +68,8 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
     interface IPartialOrder<'t> with
         member val Set = set.Set
         member val Order = order
-        member x.Equals y = x.Set.Equals y
-
+        member x.Equals (y:Set<'t>) = x.Set.Equals y
+   
 /// A set of elements with a total order relation.
 type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>, order: Order<'t>) =
     inherit Poset<'t>(set, order)

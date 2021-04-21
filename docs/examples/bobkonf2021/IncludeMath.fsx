@@ -8,6 +8,8 @@
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
 #r ".\\..\\..\\..\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.CAS.Maxima.dll"
 #r ".\\..\\..\\..\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.Runtime.dll"
+#r ".\\..\\..\\..\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Expect.NETStandard.dll"
+
 #r @"C:\Users\Allister\.nuget\packages\fparsec\1.0.3\lib\netstandard1.6\FParsecCS.dll"
 #r @"C:\Users\Allister\.nuget\packages\fparsec\1.0.3\lib\netstandard1.6\FParsec.dll"
 #r @"C:\Users\Allister\.nuget\packages\mathnet.numerics\4.15.0\lib\netstandard2.0\MathNet.Numerics.dll"
