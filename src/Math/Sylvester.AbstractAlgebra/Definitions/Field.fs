@@ -28,7 +28,3 @@ module Field =
     let R = 
         let reals = let x = var<real> in set' x x 
         OrderedField(additive_group(reals), multiplicative_group(reals))
-    let open_interval left right = R |>| (fun x -> x > left && x < right)
-    let closed_interval left right = R |>| (fun x -> x >= left && x <= right)
-    let line (origin:real) (step:real) = infinite_seq (fun n -> origin + ((float n) * step)) 
-    let axis step = line 0.0 step
