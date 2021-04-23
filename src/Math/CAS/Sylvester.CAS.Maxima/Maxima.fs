@@ -18,18 +18,17 @@ type Maxima(?maximaCmd:string) =
             let _s = new ProcessSpawnable(p.Process, new StringBuilder())
             _s.Output, !> p.Start () >>|> Expect.Spawn(_s, Environment.NewLine, base.CancellationToken)
         else 
-            null, exn "Console process did not initialize." |> Failure
+            null, exn "Maxima console process did not initialize." |> Failure
     let initialized = 
         match session with
         | Success s -> 
             if s.Expect.Contains("(%i1)", Nullable(2000)).IsMatch then
                 s.Send.Line "ratprint:false;"
-                s.Send.Line "display2d: false;"
+                s.Send.Line "display2d:false;"
                 if s.Expect.Contains("(%i3)", Nullable(2000)).IsMatch then
-                    
                     true
                 else
-                    err' "Did not set Maxima display2d to false."
+                    err' "Could not set Maxima default options."
                     false
             else
                 err' "Did not receive expected response from Maxima console process."
@@ -82,3 +81,13 @@ module Maxima =
         match m.Initialized with
         | true -> defaultInt <- Some m
         | _ -> failwithf "Failed to initialize the default Maxima interpreter at %s." s
+
+    let send' s = 
+        match defaultInt with
+        | Some m ->
+            match send (defaultInt.Value) s with
+            | Success o -> Ok o
+            | Failure e -> Error e
+        | None -> failwith "The default Maxima interpreter is not set."
+
+

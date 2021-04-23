@@ -8,11 +8,8 @@ open Maxima
 open MathNet.Symbolics
 
 module Algebra =
-    let private send s = 
-        match send (Maxima.defaultInt.Value) s with
-        | Success o -> Ok o
-        | Failure e -> Error e
-
+    let private send s = Maxima.send' s
+    
     let partfrac (expr:Expr<'t>) (frac:Expr<'t>)=
         sprintf "partfrac(%s, %s);" (print_formula expr) (print_formula frac) 
         |> send 
@@ -22,3 +19,5 @@ module Algebra =
         |> function
         | Ok s -> expand'<'t, 't> <@ %%s:'t @>
         | Error e -> failwithf "Error executing Maxima command: %s" e
+
+

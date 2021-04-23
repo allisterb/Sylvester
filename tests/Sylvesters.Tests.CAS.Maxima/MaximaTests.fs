@@ -20,6 +20,9 @@ module MaximaTests =
             | Failure _ -> false
         Assert.True g
 
+    [<ReflectedDefinition>]
+    let fo x = x ** 2. + 2. * x
+
     [<Fact>]
     let ``Can get part frac``() =
         let a = LatinVars.a<int>
@@ -31,3 +34,9 @@ module MaximaTests =
         let c = LatinVars.c<real>
         let f'' = Algebra.partfrac <@ (2.5 + 1.) / %c @> c
         Assert.NotNull f''
+
+        let x = LatinVars.x<real>
+        let a = LatinVars.a<real>
+        
+        let f''' = Analysis.limit <@ (fo(%x + %a) - fo %x) / %a @> a <@ 0. @>
+        Assert.NotNull f'''

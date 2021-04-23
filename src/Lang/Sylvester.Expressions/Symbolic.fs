@@ -28,7 +28,7 @@ module SymbolicOps =
 
 [<AutoOpen>]
 module Symbolic =
-    let print_formula expr = expr |> MathNetExpr.fromQuotation |> Infix.format
+    let print_formula expr = expr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let simplify x = x |> callUnary id
         

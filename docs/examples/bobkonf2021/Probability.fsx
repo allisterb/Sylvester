@@ -3,18 +3,65 @@
 open FSharp.Quotations
 
 open Sylvester
+open Sylvester.CAS
 open PropCalculus
 open PredCalculus
 
+[<Formula>]
+let f x = x ** 3. + 2. * x
 
+Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+
+let x = LatinVars.x<real>
+let a = LatinVars.a<real>
+
+//<@ (f(%x + %a) - f %x) / %a @> |> expand |> MathNetExpr.fromQuotation
+
+Analysis.limit <@ (f(%x + %a) - f %x) / %a @> a <@ 0. @>
+
+MathNetExprParser.parse "(a + x) ^ 2"
+
+[<Formula>]
+let g a =
+    expand a 
+
+MathNetExpr.fromQuotation (expand <@ f @>) 
+
+src <| expand <@ f @>
+g <@ f @
+MathNet.Symbolics.Infix.parse "[3, 4,3]"
+let (|..|) l r = formula<bool>
+
+let a, b = var2<int>
+a <..> b
+
+sum ()
+Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+
+let c = LatinVars.c<int>
+let f'' = Algebra.partfrac <@ (2 + (1 * %c)) / %c @> c
+let a = 3.
+a.GetType().Name
+
+let r = 
+    System.AppDomain.CurrentDomain.GetAssemblies() 
+    |> Seq.filter(fun f -> f.GetName().Name.StartsWith "FSharp.Core")
+    |> Seq.item 0
+//r.GetType("Int32").GetMethods()
+//let core = System.Reflection.Assembly.Load("FSharp.Core.dll").GetModule("FSharp.Core.dll")
+
+
+
+
+let a  = Microsoft.FSharp.Core.Operators.(/)
 let a = var<real>
+let b = var<int>
 let bb = <@ [9.; a; 3.; a] @>
 let rr = Vec<four> <@ [4.;a;6.;8.] @>  
-let rrr = rr + rr
+let rrr = rr - rr
 
 
-MathNet.Symbolics.Infix.parse "(x+1)/3)"
-
+Algebra.partfrac <@ (1 - 2)/b @> <@ b @>
 
 src (rr <.> rr)
 Series.harmonic_series' |> take 4
@@ -52,7 +99,7 @@ let p = proof sequences <@ lim pos_inf (seq {ff n}) = 3. @> [
 //let (!) a = Fn a
 
 let seq_fn f = seq {Fn f}
-<@ seq {Fn(fun n -> n + 5).[5]} @> 
+<@ seq {Fn(fun n -> n - 5).[5]} @> 
 ff.[5]
 //ss.[5]
 Field.R.ToString()
@@ -87,8 +134,8 @@ let epsilon = var<real>
 let L = var<real> 
 let n,N,n',N'= var2'<int> "n" "N"
 
-proof prop_calculus <@ converges (seq {1. + 1. / epsilon})  @> [
-    def_converges <@ epsilon @> <@ N @> <@ n @> <@ L@> <@ seq {1. + 1. / epsilon} @> |> LR
+proof prop_calculus <@ converges (seq {1. - 1. / epsilon})  @> [
+    def_converges <@ epsilon @> <@ N @> <@ n @> <@ L@> <@ seq {1. - 1. / epsilon} @> |> LR
 ]
 
 <@ infinite_seq (fun a -> a * 5 / 4) @>
@@ -115,7 +162,7 @@ match <@ seq{4} @> with
 
 
 let cc = seq {b**b}
-<@ lim pos_inf (seq {1 + 1 / i}) = 1  @> 
+<@ lim pos_inf (seq {1 - 1 / i}) = 1  @> 
 
 src <@ a @>
 let A = seq {a.[i]}
@@ -133,8 +180,8 @@ let epsilon = var<real>
 let L = var<real> 
 let n,N,n',N'= var2'<int> "n" "N"
 
-proof prop_calculus <@ lim pos_inf (seq {1 + 1 / i})  = 1@> [
-    //def_converges <@ epsilon @> <@ N @> <@ n @> <@ L@> <@ seq {1. + 1. / L} @> |> LR
+proof prop_calculus <@ lim pos_inf (seq {1 - 1 / i})  = 1@> [
+    //def_converges <@ epsilon @> <@ N @> <@ n @> <@ L@> <@ seq {1. - 1. / L} @> |> LR
 ]
 
 
@@ -151,8 +198,8 @@ let A = seq {a.[i]}
 
 
 let n = var<int>
-let rr = infinite_seq (fun n -> a.[n+1]) 
-let rrr = infinite_seq' <@ fun n a -> a + 1@>
+let rr = infinite_seq (fun n -> a.[n-1]) 
+let rrr = infinite_seq' <@ fun n a -> a - 1@>
 
 rr.[5]
 <@ infinite_seq (fun n -> a.[n])@> |> expand
@@ -175,7 +222,7 @@ let rr = pred<int>
 [<Formula>]
 let rec f =
     function
-    | n when n < 6 -> n + 3
+    | n when n < 6 -> n - 3
     | n -> f(n - 1)
 
 //let iff = infinite_seq f
@@ -192,10 +239,10 @@ let P = prob_measure S
 let E1 = urn |>| (fun s -> fst s = 5)
 
 let E2 = urn |>| (fun s -> snd s < 4)
-let E3 = urn |>| (fun s -> fst s + snd s >= 8)
+let E3 = urn |>| (fun s -> fst s - snd s >= 8)
 
 
-P(E1 |/| S ) + P(E1)
+P(E1 |/| S ) - P(E1)
 
 let ee = var<bool>
 

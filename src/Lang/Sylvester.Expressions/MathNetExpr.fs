@@ -90,7 +90,7 @@ module MathNetExpr =
                         match x with
                         | None when y.Name = (argName p) -> Some y
                         | Some v -> Some v
-                        | None -> failwithf "Did not find a matching var for %A." p
+                        | None -> None //failwithf "Did not find a matching var for %A." p
                     ) None vars
         
         let getMethodInfo = expand >> getFuncInfo

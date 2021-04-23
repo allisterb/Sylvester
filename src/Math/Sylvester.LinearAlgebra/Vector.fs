@@ -43,7 +43,6 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr, (v |> evaluate |> List.toArray), true)
     new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
     static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't>(data)
-    static member create(v: Vector<'t>) = Vector<'dim0, 't>(v.Expr, v.Array, v.IsSymbolic) 
     
     static member (+) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
         let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr 
