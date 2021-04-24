@@ -15,9 +15,7 @@ module Algebra =
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars frac) e)
+        |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars expr) e)
         |> function
         | Ok s -> expand'<'t, 't> <@ %%s:'t @>
-        | Error e -> failwithf "Error executing Maxima command: %s" e
-
-
+        | Error e -> failwithf "Error executing Maxima partfrac command: %s" e

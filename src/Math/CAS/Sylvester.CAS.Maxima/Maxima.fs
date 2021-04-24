@@ -25,7 +25,8 @@ type Maxima(?maximaCmd:string) =
             if s.Expect.Contains("(%i1)", Nullable(2000)).IsMatch then
                 s.Send.Line "ratprint:false;"
                 s.Send.Line "display2d:false;"
-                if s.Expect.Contains("(%i3)", Nullable(2000)).IsMatch then
+                s.Send.Line "linel:500;"
+                if s.Expect.Contains("(%i4)", Nullable(2000)).IsMatch then
                     true
                 else
                     err' "Could not set Maxima default options."
