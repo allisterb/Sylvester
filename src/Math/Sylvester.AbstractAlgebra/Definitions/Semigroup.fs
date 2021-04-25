@@ -9,13 +9,14 @@ type ISemigroup<'t when 't: equality> =
 
 type Semigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     inherit Groupoid<'t>(set, op)
-    do fail_if_not_left_associative op
+    do op |> fail_if_not_left_associative
     interface ISemigroup<'t>
     
 /// Set of elements closed under some left-associative commutative operation.
 type CommutativeSemigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     inherit Semigroup<'t>(set, op)
-    do fail_if_not_commutative op
+    do op |> fail_if_not_commutative
+
     /// A lattice can also be viewed as consisting of two commutative semigroups on the same set.
     //static member toLattice (set: ISet<'t>, join: CommutativeSemigroup<'t>, meet: CommutativeSemigroup<'t>) = Lattice(set, join.Op, meet.Op)
 

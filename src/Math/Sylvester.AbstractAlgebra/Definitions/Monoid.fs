@@ -29,7 +29,7 @@ type Monoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id: NullaryOp<'
 /// Monoid with commutative operators.
 type CommutativeMonoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'t) =
     inherit Monoid<'t>(set, op, id)
-    do fail_if_not_commutative op
+    do op |> fail_if_not_commutative
 
 /// Category of monoids with n structure-preserving morphisms.
 type Monoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Monoid<'ut>, r:Monoid<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 

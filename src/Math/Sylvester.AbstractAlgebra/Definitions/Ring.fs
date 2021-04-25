@@ -9,7 +9,7 @@ open Sylvester.Collections
 /// and a 2nd left-associative operation which distributes over the first operation.
 type IRing<'t when 't: equality> =  
     inherit IAbelianGroup<'t>
-    abstract member Op2:BinaryOp<'t>
+    abstract Op2:BinaryOp<'t>
 
 type ICommutativeRing<'t when 't: equality> =
     inherit IRing<'t>
@@ -17,7 +17,7 @@ type ICommutativeRing<'t when 't: equality> =
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit Struct<'t, card.four>(group.Set, arrayOf4 (Binary(group.Op)) (Nullary(group.Identity)) (Unary(group.Inverse)) (Binary(op2)))
-    do fail_if_not_distributive_over op2 group.Op
+    do group.Op |> fail_if_not_distributive_over op2 
     member val Op = group.Op
     member val Op2 = op2
     member val Group = group
@@ -30,14 +30,14 @@ type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
         member x.GetEnumerator(): Generic.IEnumerator<'t * 't * 't> = (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (group.Op) a b))).GetEnumerator()
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
     new (set:ISet<'t>, op: BinaryOp<'t>, ident:'t, inv:UnaryOp<'t>, op2: BinaryOp<'t>) =
-        Ring(AbelianGroup(set, op, ident, inv), op2)
+        Ring(AbelianGroup<'t>(set, op, ident, inv), op2)
 
 /// Ring where the 2nd operation is commutative.
 type CommutativeRing<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit Ring<'t>(group, op2)
     do op2 |> fail_if_not_commutative
     new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
-        CommutativeRing(AbelianGroup(set, op, zero, inv), op2)
+        CommutativeRing(AbelianGroup<'t>(set, op, zero, inv), op2)
     interface ICommutativeRing<'t>
 
 /// Commutative ring with a total order relation.
@@ -46,7 +46,7 @@ type OrderedRing<'t when 't: equality and 't : comparison>(group: IAbelianGroup<
     interface ITotalOrder<'t> with
         member val Order = (<)
     new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
-        OrderedRing(AbelianGroup(set, op, zero, inv), op2)
+        OrderedRing(AbelianGroup<'t>(set, op, zero, inv), op2)
 
 type IIntegralDomain<'t when 't: equality> = 
     inherit ICommutativeRing<'t>
@@ -64,7 +64,7 @@ module Ring =
     
     /// Additive ring.
     let inline additive_ring<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op2) =
-        Ring(AbelianGroup(set, Binary(+).DestructureBinary, LanguagePrimitives.GenericZero, (~-)), op2)
+        Ring(AbelianGroup<'t>(set, Binary(+).DestructureBinary, LanguagePrimitives.GenericZero, (~-)), op2)
 
     /// Ring of positive integers.
     let Zpos =

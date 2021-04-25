@@ -341,14 +341,20 @@ module Patterns =
 
     let (|LeftCancel|_|) (op:Expr<'t->'t->'t>)  =
         function
-        | Equals (Equals(Binary op (a1, b), Binary op (a2, c)), Equals(b1, c1)) when sequal a1 a1 && sequal b b1 && sequal c c1 
+        | Equals (Equals(Binary op (a1, b), Binary op (a2, c)), Equals(b1, c1)) when sequal a1 a2 && sequal b b1 && sequal c c1 
             -> pattern_desc "Left Cancellation" <@ fun a b c -> (((%op) a b = (%op) a c)) = ((b = c)) @> |> Some
         | _ -> None
 
     let (|RightCancel|_|) (op:Expr<'t->'t->'t>)  =
         function
-        | Equals (Equals (Binary op (b, a1), Binary op (c, a2)), Equals (b1, c1)) when sequal a1 a1 && sequal b b1 && sequal c c1 
+        | Equals (Equals (Binary op (b, a1), Binary op (c, a2)), Equals (b1, c1)) when sequal a1 a2 && sequal b b1 && sequal c c1 
             -> pattern_desc "Right Cancellation" <@ fun a b c -> ((%op) b a = (%op) c a) = (b = c) @> |> Some
+        | _ -> None
+
+    let (|LeftCancelNonZero|_|) (op:Expr<'t->'t->'t>) (zero:Expr<'t>)  =
+        function
+        | Implies(NotEquals(a, z), Equals (Equals(Binary op (a1, b), Binary op (a2, c)), Equals(b1, c1))) when sequal z zero && sequal a a1 && sequal a1 a2 && sequal b b1 && sequal c c1 
+            -> pattern_desc "Left Cancellation" <@ fun a b c -> (a <> %zero) ==> (((%op) a b = (%op) a c)) = ((b = c)) @> |> Some
         | _ -> None
 
     let (|OnePoint|_|) =

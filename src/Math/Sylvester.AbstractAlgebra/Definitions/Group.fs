@@ -27,6 +27,10 @@ type IGroup<'t when 't: equality> =
 
 type IAbelianGroup<'t when 't: equality> = inherit IGroup<'t> 
 
+type IAbelianGroup<'n, 't when 'n :> Number and 't : equality> =
+    inherit IAbelianGroup<'t>
+    abstract Order: 'n
+
 type IAdditiveGroup<'t when 't: equality> = inherit IAbelianGroup<'t>
 
 type IMultiplicativeGroup<'t when 't: equality> = inherit IAbelianGroup<'t>
@@ -68,17 +72,19 @@ type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: U
  
 type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, id, inv)
-    do fail_if_not_commutative op
+    do op |> fail_if_not_commutative
     interface IAbelianGroup<'t>
 
-type KnownGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+/// Finite group of known order.
+type Group<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, ident, inv)
     member x.El0<'n when 'n :> card.one>() = (x, GroupElement<'order>(0))
     member x.El1<'n when 'n :> card.two>() = (x, GroupElement<'order>(0), GroupElement<'order>(1))
 
-type KnownAbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
-    inherit KnownGroup<'order, 't>(set, op, ident, inv)
-    do fail_if_not_commutative op
+/// Finite abelian group of known order.
+type AbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+    inherit Group<'order, 't>(set, op, ident, inv)
+    do op |> fail_if_not_commutative
     interface IAbelianGroup<'t>
 
 /// Category of groups with n structure-preserving morphisms.
@@ -122,4 +128,4 @@ module Group =
                     member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         } 
 
-    let Zero = KnownAbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
+    let Zero = AbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
