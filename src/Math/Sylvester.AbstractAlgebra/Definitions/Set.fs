@@ -340,6 +340,8 @@ module Set =
     
     let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
+    let singleton<'t when 't: equality> (e:'t) = Singleton e
+
     let subset (sub:'t->bool) (set: ISet<'t>) = set.Set.Subset sub
 
     let sseq(s:seq<'t>) = (Seq s) :> ISet<'t>
