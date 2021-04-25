@@ -11,6 +11,9 @@ type IRing<'t when 't: equality> =
     inherit IAbelianGroup<'t>
     abstract member Op2:BinaryOp<'t>
 
+type ICommutativeRing<'t when 't: equality> =
+    inherit IRing<'t>
+
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit Struct<'t, card.four>(group.Set, arrayOf4 (Binary(group.Op)) (Nullary(group.Identity)) (Unary(group.Inverse)) (Binary(op2)))
@@ -35,14 +38,18 @@ type CommutativeRing<'t when 't: equality>(group: IAbelianGroup<'t>, op2: Binary
     do fail_if_not_commutative op2
     new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
         CommutativeRing(AbelianGroup(set, op, zero, inv), op2)
+    interface ICommutativeRing<'t>
 
 /// Commutative ring with a total order relation.
 type OrderedRing<'t when 't: equality and 't : comparison>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit CommutativeRing<'t>(group, op2)
     interface ITotalOrder<'t> with
         member val Order = (<)
+    new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
+        OrderedRing(AbelianGroup(set, op, zero, inv), op2)
 
-type IIntegralDomain = interface end
+type IIntegralDomain<'t when 't: equality> = 
+    inherit ICommutativeRing<'t>
 
 type IIdeal<'t when 't : equality> =
     inherit IGroup<'t>
@@ -53,45 +60,44 @@ module Ring =
     /// Zero ring.
     [<Formula>]
     let Zero = CommutativeRing(Group.Zero, (+))
+    
     /// Additive ring.
-    let inline AdditiveRing<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op2) =
+    let inline additive_ring<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op2) =
         Ring(AbelianGroup(set, Binary(+).DestructureBinary, LanguagePrimitives.GenericZero, (~-)), op2)
 
     /// Ring of positive integers.
     let Zpos =
-        let set = id |> (infinite_seq >> Set.fromSeq) 
-        let order = (<=) in
+        let set = id |> (infinite_seq >> Set.fromSeq) in
         {
             new OrderedRing<int>(additive_group(set), (*)) 
-                interface ITotalOrder<int> with
-                    member x.Set = set
-                    member x.Order = order
-                interface ILeast<int> with 
+                interface IIntegralDomain<int>
+                interface IWellOrder<int> with
+                    member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
+                interface ILeast<int> with
                     member x.Least = 0
                     member x.Minimal = 0
                     member x.LowerBound = 0
-                interface IWellOrder<int> with
-                    member x.Least(subset:ISet<int>) = subset.Set |> Seq.sortWith (fun a b -> (if order a b then -1 else 1)) |> Seq.item 0
+                interface IPartialOrder<int>with
+                    member x.Order = (<=)
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
-                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()    
+                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
         }
 
     /// Ring of negative integers.
     let Zneg =
-        let set = Set.fromSeq(infinite_seq (fun n -> -n)) 
-        let order = (<=) in
+        let set = Set.fromSeq(infinite_seq (fun n -> -n))
         {
-            new OrderedRing<int>(additive_group(set), (*))
-                interface ITotalOrder<int> with
-                    member x.Set = set
-                    member x.Order = order
-                interface IGreatest<int> with 
+            new OrderedRing<int>(additive_group(set), (*)) 
+                interface IIntegralDomain<int>
+                interface IWellOrder<int> with
+                    member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
+                interface IGreatest<int> with
                     member x.Greatest = 0
                     member x.Maximal = 0
                     member x.UpperBound = 0
-                interface IWellOrder<int> with
-                    member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
+                interface IPartialOrder<int>with
+                    member x.Order = (<=)
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
@@ -100,12 +106,9 @@ module Ring =
     /// Ring of integers.
     let Z =
         let set = Zpos |+| Zneg
-        let order = (<=) in
         {
             new OrderedRing<int>(additive_group(set), (*)) 
-                interface ITotalOrder<int> with
-                    member x.Set = set
-                    member x.Order = order
+                interface IIntegralDomain<int>
                 interface IWellOrder<int> with
                     member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
                 interface Generic.IEnumerable<int> with
@@ -119,14 +122,11 @@ module Ring =
     /// Ring of natural numbers without zero.
     let Nz =
         let set = Zpos |^| 0
-        let order = (<=) in
         {
             new OrderedRing<int>(additive_group(set), (*)) 
+                interface IIntegralDomain<int>
                 interface IWellOrder<int> with
                     member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
-                interface ITotalOrder<int> with
-                    member x.Set = set
-                    member x.Order = order
                 interface ILeast<int> with 
                     member x.Least = 0
                     member x.Minimal = 0
@@ -136,6 +136,17 @@ module Ring =
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()     
         }
     
+    let integral_domain (set:ISet<int> ) =
+        {
+            new OrderedRing<int>(additive_group(set), (*)) 
+                interface IIntegralDomain<int>
+                interface IWellOrder<int> with
+                    member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
+                interface Generic.IEnumerable<int> with
+                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set.Set :> Generic.IEnumerable<int>).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (set.Set :> IEnumerable).GetEnumerator()
+        }
+
     let Z1 = CommutativeRing(Z, Mod.(+) 1, Mod.(*) 1, 0, 1, (~-))
     let Z2 = CommutativeRing(Z, Mod.(+) 2, Mod.(*) 2, 0, 1, (~-))
     let Z3 = CommutativeRing(Z, Mod.(+) 3, Mod.(*) 3, 0, 1, (~-))

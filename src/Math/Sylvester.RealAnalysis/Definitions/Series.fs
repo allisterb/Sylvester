@@ -13,6 +13,6 @@ module Series =
     let geometric_series' (a:Expr<real>) = infinite_series' <@ fun n r -> %a * r ** (real n - 1.) @>
 
     [<Formula>]
-    let harmonic_series = infinite_series (fun n -> 1Q / rat n)
+    let harmonic_series = infinite_series (fun n -> 1Q / n)
 
-    let harmonic_series' = infinite_series' <@ fun n _ -> Rational.One / rat n @>
+    let harmonic_series' = infinite_series' <@ fun n _ -> 1 / n @>

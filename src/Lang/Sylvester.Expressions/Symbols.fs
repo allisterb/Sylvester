@@ -46,3 +46,8 @@ module LatinVars =
     let n<'t> = var'<'t> "n"
     let X<'t> = var'<'t> "X"
     let x<'t> = var'<'t> "x"
+
+[<RequireQualifiedAccess>]
+module LatinDiffs =
+    let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
+    let x<'t> = var'<'t> "dx"
