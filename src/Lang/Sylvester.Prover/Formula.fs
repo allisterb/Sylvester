@@ -22,8 +22,7 @@ module Formula =
     /// Introduce a symbolic formula.
     let formula<'t> = Unchecked.defaultof<'t>
 
-    (* Define variable names for formulas *)
-    
+    (* Define variable names for formulas *)    
     let symbolic_var<'t> = formula<'t>
     
     let symbolic_var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
@@ -32,7 +31,6 @@ module Formula =
     let truth_value = formula<bool>
 
     (* Introduce variable names for formulas *)
-
     let var<'t> = symbolic_var<'t>
     let var2<'t> = symbolic_var<'t>, symbolic_var<'t>
     let var3<'t> = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>
@@ -47,14 +45,16 @@ module Formula =
     let var2''<'t> v1 v2 = symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @> , <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>
     let var3''<'t> v1 v2 v3 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>
     let var4''<'t> v1 v2 v3 v4 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v4, typeof<'t>))):'t @>
+    
     (* Propositions and predicates *)
-
     let prop p1 = var'<bool> p1
     let prop2 p1 p2 = var2'<bool> p1 p2
     let pred<'t> = (fun (_:'t) -> truth_value)
     let pred'<'t> p = (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p, typeof<'t>))):'t @>
     let pred2'<'t> p1 p2 = (fun (_:'t) -> truth_value), (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(p2, typeof<'t>))):'t @>
     
+    let predi<'a, 't> (x:'a) = (box x) :? 't
+
     (* Quantifiers *)
 
     /// Generic quantifier for binary op that is symmetric, associative and has an identity.

@@ -6,11 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="Z3.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Z3.x64" Version="4.8.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj" />
+    <ProjectReference Include="..\..\..\Base\Sylvester.Runtime\Sylvester.Runtime.csproj" />
+    <ProjectReference Include="..\..\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -84,12 +84,28 @@ module Patterns =
 
     let (|Add|_|) =
         function
-        | SpecificCall <@@ (+) @@> (None,_,l::r::[]) -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["UInt16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["Int16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["UInt32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["Int32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["UInt64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["Int64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["Single"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["Double"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = addOp.["Decimal"].Name -> Some(l, r)
         | _ -> None
 
     let (|Subtract|_|) =
         function
-        | SpecificCall <@@ (-) @@> (None,_,l::r::[]) -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["UInt16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["Int16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["UInt32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["Int32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["UInt64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["Int64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["Single"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["Double"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = subOp.["Decimal"].Name -> Some(l, r)
         | _ -> None
     
     let (|Negate|_|) =
@@ -99,9 +115,30 @@ module Patterns =
 
     let (|Multiply|_|) =
         function
-        | SpecificCall <@@ (*) @@> (None,_,l::r::[]) -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["UInt16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["Int16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["UInt32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["Int32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["UInt64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["Int64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["Single"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["Double"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = mulOp.["Decimal"].Name -> Some(l, r)
         | _ -> None
         
+    let (|Divide|_|) =
+        function
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["UInt16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["Int16"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["UInt32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["Int32"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["UInt64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["Int64"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["Single"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["Double"].Name -> Some(l, r)
+        | Call(None, mi ,l::r::[]) when mi.Name = divOp.["Decimal"].Name -> Some(l, r)
+        | _ -> None
+
     let (|Range|_|) =
         function
         | SpecificCall <@@ (..) @@> (None,_,l::r::[]) -> Some(l,r)

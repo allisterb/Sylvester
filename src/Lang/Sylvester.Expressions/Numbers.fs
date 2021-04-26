@@ -3,6 +3,7 @@
 open System
 open System.Numerics
 open FSharp.Quotations
+open FSharp.Quotations.DerivedPatterns
 
 [<CustomEquality; CustomComparison>]
 type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob/master/src/FSharp/BigRational.fs
@@ -247,6 +248,19 @@ module Numbers =
     let inline (..*) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (*) l r
 
     let take n s = s |> (Seq.take n >> Seq.toList)
+
+    let (|NumericConstant|_|) = 
+        function
+        | UInt16 x -> Expr.Value(x) |> Some 
+        | UInt32 x -> Expr.Value(x) |> Some
+        | UInt64 x -> Expr.Value(x) |> Some
+        | Int16 x -> Expr.Value(x) |> Some
+        | Int32 x -> Expr.Value(x) |> Some
+        | Int64 x -> Expr.Value(x) |> Some
+        | Decimal x -> Expr.Value(x) |> Some
+        | Double x -> Expr.Value(x) |> Some
+        | Decimal x -> Expr.Value(x) |> Some
+        | _ -> None
 
     let (|BigRationalType|_|): Type -> Type option =
         function
