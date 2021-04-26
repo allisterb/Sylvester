@@ -130,7 +130,7 @@ module IntegerAlgebra =
     let left_assoc = Admit("(expression) is left-associative", _left_assoc)
 
     /// Expression is comutative.
-    let commute = Admit("(expression) is commutative", _left_assoc)
+    let commute = Admit("(expression) is commutative", _commute)
 
     /// Expression is distributive.
     let distrib = Admit("(expression) is distributive", _distrib)
