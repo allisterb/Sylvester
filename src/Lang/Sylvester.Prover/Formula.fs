@@ -36,7 +36,7 @@ module Formula =
     let var3<'t> = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>
     let var4<'t> = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>
 
-    let var'<'t> v = symbolic_var' v
+    let var'<'t> v = symbolic_var'<'t> v
     let var2'<'t> v1 v2 = symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @> , <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>
     let var3'<'t> v1 v2 v3 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>
     let var4'<'t> v1 v2 v3 v4 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v4, typeof<'t>))):'t @>

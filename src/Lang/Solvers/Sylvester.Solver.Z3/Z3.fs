@@ -12,9 +12,18 @@ open Microsoft.Z3
 module Z3 =
     let create_ctx() = new Context()
 
-    //let push (ctx:Context) = ctx.P
-    let create_numeral<'t when 't : struct> (ctx:Context) (i:'t)  = 
-        match box i with
+    let create_solver (ctx:Context) = ctx.MkSolver()
+
+    let create_solver' (ctx:Context) (t:string) = ctx.MkSolver(t)
+
+    let check_sat (s:Solver) (a: BoolExpr list) = 
+        let sol = s.Check(List.toArray a)
+        match sol with
+        | Status.SATISFIABLE -> true
+        | _ -> false
+
+    let create_numeral (ctx:Context) (i:obj)  = 
+        match i with
         | :? uint64  as n -> n |> ctx.MkInt :> ArithExpr
         | :? int64 as n -> n |> ctx.MkInt :> ArithExpr
         | :? uint32 as n -> n |> ctx.MkInt :> ArithExpr
@@ -35,9 +44,10 @@ module Z3 =
         | t -> failwithf "Cannot create constant of type %A." t
 
     let rec create_arith_expr (ctx:Context) (expr:FSharp.Quotations.Expr) : ArithExpr =
-        let vars = expr |> get_vars |> List.map(fun v -> create_const ctx v.Name v.Type) |> Map.ofList 
+        let vars = expr |> expand |> get_vars |> List.map(fun v -> create_const ctx v.Name v.Type) |> Map.ofList 
         match expr with
         | Var v -> vars.[v.Name] 
+        | ValueWithName(v,_,_) -> create_numeral ctx v
         | UInt32 n -> create_numeral ctx n
         | Int32 n -> create_numeral ctx n
         | UInt64 n -> create_numeral ctx n
@@ -45,7 +55,6 @@ module Z3 =
         | Single n -> create_numeral ctx n
         | Double n -> create_numeral ctx n
         | Rational n -> create_numeral ctx n
-        //| Va
         | Call(None, Op "op_Addition" ,l::r::[]) -> ctx.MkAdd((create_arith_expr ctx l), (create_arith_expr ctx r))
         | Call(None, Op "op_Multiply" ,l::r::[]) -> ctx.MkMul((create_arith_expr ctx l), (create_arith_expr ctx r))
         | Call(None, Op "op_Subtraction" ,l::r::[]) -> ctx.MkSub((create_arith_expr ctx l), (create_arith_expr ctx r))
@@ -55,7 +64,8 @@ module Z3 =
 
     let rec create_bool_expr (ctx:Context) (expr:FSharp.Quotations.Expr) : BoolExpr =
         let vars = 
-            expr 
+            expr
+            |> expand
             |> get_vars 
             |> List.choose(fun v -> if v.Type = typeof<bool> then Some v else None)
             |> List.map(fun v -> v.Name, ctx.MkBoolConst(v.Name)) |> Map.ofList
@@ -70,10 +80,11 @@ module Z3 =
             | "Rational" ->
                 match expr with
                 | Var v when v.Type = typeof<bool> -> vars.[v.Name]
+                | ValueWithName(v, t, _) when t = typeof<bool> -> ctx.MkBool(v :?> bool)
                 | Bool true -> ctx.MkTrue()
                 | Bool false -> ctx.MkFalse()
-                | Call(None, Op "op_Equality" ,l::r::[]) when expr.Type = typeof<bool> -> ctx.MkEq(create_bool_expr ctx l, create_bool_expr ctx r)
-                | Call(None, Op "op_Inequality" ,l::r::[]) when expr.Type = typeof<bool> -> ctx.MkDistinct(create_bool_expr ctx l, create_bool_expr ctx r)
+                | Call(None, Op "op_Equality" ,l::r::[]) when l.Type = typeof<bool> -> ctx.MkEq(create_bool_expr ctx l, create_bool_expr ctx r)
+                | Call(None, Op "op_Inequality" ,l::r::[]) when l.Type = typeof<bool> -> ctx.MkDistinct(create_bool_expr ctx l, create_bool_expr ctx r)
                 | Call(None, Op "op_BarAmpBar" ,l::r::[]) -> ctx.MkAnd(create_bool_expr ctx l, create_bool_expr ctx r)
                 | Call(None, Op "op_BitwiseOr" ,l::r::[]) -> ctx.MkOr(create_bool_expr ctx l, create_bool_expr ctx r)
                 | Call(None, Op "Not" ,r::[]) -> ctx.MkNot(create_bool_expr ctx r)
