@@ -1,7 +1,7 @@
 ﻿namespace Sylvester
 
 open System
-open System.Reflection
+open System.Runtime.CompilerServices
 
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
@@ -34,7 +34,7 @@ module Z3 =
         else 
             x.FuncInterp(index) |> FuncResult
     
-    let create_numeral (solver:Z3Solver) (i:obj)  = 
+    let internal create_numeral (solver:Z3Solver) (i:obj)  = 
         match i with
         | :? uint64  as n -> n |> solver.Ctx.MkInt :> ArithExpr
         | :? int64 as n -> n |> solver.Ctx.MkInt :> ArithExpr
@@ -44,7 +44,7 @@ module Z3 =
         | :? real as n -> solver.Ctx.MkReal(n.ToString()) :> ArithExpr
         | _ -> failwithf "Cannot create numeral from value %A of type %A." i (i.GetType())
 
-    let create_const (solver:Z3Solver) (s:string) (t:Type) = 
+    let internal create_const (solver:Z3Solver) (s:string) (t:Type) = 
         match t.Name with
         | "UInt32 "
         | "Int32"
@@ -55,7 +55,7 @@ module Z3 =
         | "Rational" -> (s, s |> solver.Ctx.MkRealConst :> ArithExpr) 
         | t -> failwithf "Cannot create constant of type %A." t
 
-    let rec create_arith_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : ArithExpr =
+    let rec internal create_arith_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : ArithExpr =
         let vars = expr |> expand |> get_vars |> List.map(fun v -> create_const solver v.Name v.Type) |> Map.ofList 
         match expr with
         | Var v -> vars.[v.Name] 
@@ -76,7 +76,7 @@ module Z3 =
         | e when e.Type = typeof<bool>-> failwithf "The expression %A is a boolean expression." e
         | e  -> failwithf "The expression %A of type %A is not an arithmetic expression." e (e.Type)
 
-    let rec create_bool_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : BoolExpr =
+    let rec internal create_bool_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : BoolExpr =
         let vars = 
             expr
             |> expand
@@ -115,42 +115,48 @@ module Z3 =
             
             | _ -> failwithf "Cannot create Z3 expression fron expression %A of type %A." expr (expr.Type)
 
-
-    let check_sat (s:Z3Solver) (a: Expr<bool list>) = 
-        let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check
-        match sol with
-        | Status.SATISFIABLE -> true
-        | _ -> false
-
-    let check_sat_model (s:Z3Solver) (a: Expr<bool list>) = 
+    let internal check_sat_model (s:Z3Solver) (a: Expr<bool list>) = 
         let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check 
         match sol with
         | Status.SATISFIABLE -> Some (s.Model())
         | _ -> None
 
-    let get_var_model (m:Model) = 
+    let internal get_var_model (m:Model) = 
         m.ConstDecls 
         |> Array.toList 
         |> List.map(fun c -> c.Name, match  m.[c] with | ConstResult c -> c  | _ -> failwith "This not a constant result.")
         
-    let get_int_const : Expr->int =
+    let internal get_int_const : Expr->int =
         function
         | e when e.IsIntNum -> (e :?> IntNum).Int
         | e -> failwithf "The expression %A is not an integer constant." e
 
-    let get_rat_const : Expr->Rational =
+    let internal get_rat_const : Expr->Rational =
         function
         | e when e.IsRatNum -> let r = (e :?> RatNum) in Rational(r.BigIntNumerator, r.BigIntDenominator)
         | e -> failwithf "The expression %A is not a rational constant." e 
         
-    let get_int_var_model : Model-> (string *int) list = 
+    let internal _get_int_var_model : Model-> (string *int) list = 
         get_var_model >> List.map(fun (l, r) -> l.ToString(), get_int_const r)
 
-    let get_rat_var_model : Model-> (string * Rational) list = 
+    let internal _get_rat_var_model : Model-> (string * Rational) list = 
         get_var_model >> List.map(fun (l, r) -> l.ToString(), get_rat_const r)
 
     //let create_sort (ctx:Context) (t:Type) =
     //    match t.Name with
     //    | "UInt32" -> ctx.MkIntSort() :> Sort
     //    | "Rational" -> ctx.MkRealSort() :> Sort
+    let check_sat (s:Z3Solver) (a: Expr<bool list>) = 
+        let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check
+        match sol with
+        | Status.SATISFIABLE -> true
+        | _ -> false
+
+    let get_int_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_int_var_model
+
+    let get_rat_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_rat_var_model
+
+    [<assembly:InternalsVisibleTo("Sylvester.Tests.Solver.Z3")>]
+    do()
+
  

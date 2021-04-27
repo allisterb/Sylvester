@@ -47,7 +47,7 @@ module Z3Tests =
          let a = <@ [%x = 5; %y = %x + 2] @>  
          let sol = check_sat_model solver a
          Assert.True sol.IsSome
-         let rr = get_int_var_model sol.Value
+         let rr = _get_int_var_model sol.Value
          Assert.NotEmpty rr
 
          let qx = var'<Rational> "qx"
