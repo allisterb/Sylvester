@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ExprTests.fs" />
+    <Compile Include="Z3Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
