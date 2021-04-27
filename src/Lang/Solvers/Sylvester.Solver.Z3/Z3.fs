@@ -10,18 +10,21 @@ open FSharp.Quotations.DerivedPatterns
 open Microsoft.Z3
 
 module Z3 =
-    let create_ctx() = new Context()
-
-    let create_solver (ctx:Context) = ctx.MkSolver()
-
-    let create_solver' (ctx:Context) (t:string) = ctx.MkSolver(t)
-
-    let check_sat (s:Solver) (a: BoolExpr list) = 
-        let sol = s.Check(List.toArray a)
-        match sol with
-        | Status.SATISFIABLE -> true
-        | _ -> false
-
+    type ModelResult =
+    | ConstResult of Expr
+    | FuncResult of FuncInterp
+    
+    /// Multiple indexers for evaluating formulas
+    type Microsoft.Z3.Model with
+      member x.Item (index: Expr) =
+        x.Eval(index, true)
+      member x.Item (index: FuncDecl) =
+        // Taking care of array declaration
+        if index.DomainSize = 0u && index.Range.SortKind <> Z3_sort_kind.Z3_ARRAY_SORT then 
+            x.ConstInterp(index) |> ConstResult
+        else 
+            x.FuncInterp(index) |> FuncResult
+    
     let create_numeral (ctx:Context) (i:obj)  = 
         match i with
         | :? uint64  as n -> n |> ctx.MkInt :> ArithExpr
@@ -30,7 +33,7 @@ module Z3 =
         | :? int32 as n -> n |> ctx.MkInt  :> ArithExpr
         | :? Rational as n -> ctx.MkReal((int) n.Numerator, (int) n.Denominator) :> ArithExpr
         | :? real as n -> ctx.MkReal(n.ToString()) :> ArithExpr
-        | _ -> failwithf "Cannot create numeral from value %A of type %A." i typeof<'t>
+        | _ -> failwithf "Cannot create numeral from value %A of type %A." i (i.GetType())
 
     let create_const (ctx:Context) (s:string) (t:Type) = 
         match t.Name with
@@ -96,5 +99,44 @@ module Z3 =
                 | Call(None, Op "op_LessThanOrEqual" ,l::r::[]) -> ctx.MkLe(create_arith_expr ctx l, create_arith_expr ctx r)
                 | Call(None, Op "op_GreaterThan" ,l::r::[]) -> ctx.MkGt(create_arith_expr ctx l, create_arith_expr ctx r)
                 | Call(None, Op "op_GreaterThanOrEqual" ,l::r::[]) -> ctx.MkGe(create_arith_expr ctx l, create_arith_expr ctx r)
+                
                 | _ -> failwithf "Cannot create Z3 expression fron expression %A of type %A." expr (expr.Type)
+            
             | _ -> failwithf "Cannot create Z3 expression fron expression %A of type %A." expr (expr.Type)
+
+    let create_ctx() = new Context()
+
+    let tactics = let ctx = create_ctx() in ctx.TacticNames
+
+    let create_solver (ctx:Context) = ctx.MkSolver()
+
+    let create_solver' (ctx:Context) (logic:string) = ctx.MkSolver(logic)
+
+    let check_sat (ctx:Context) (s:Solver) (a: Expr<bool list>) = 
+        let sol = a |> expand_list |> List.map (create_bool_expr ctx) |> s.Check
+        match sol with
+        | Status.SATISFIABLE -> true
+        | _ -> false
+
+    let check_sat_model (ctx:Context) (s:Solver) (a: Expr<bool list>) = 
+        let sol = a |> expand_list |> List.map (create_bool_expr ctx) |> s.Check 
+        match sol with
+        | Status.SATISFIABLE -> Some s.Model
+        | _ -> None
+
+    let get_model_consts (m:Model) = 
+        m.ConstDecls 
+        |> Array.toList 
+        |> List.map(fun c -> c.Name, match  m.[c] with | ConstResult c -> c  | _ -> failwith "This not a constant result.")
+        
+    let get_int_const : Expr->int =
+        function
+        | e when e.IsIntNum -> (e :?> IntNum).Int
+        | e -> failwithf "The expression %A is not an integer constant." e
+
+    let get_rat_const : Expr->Rational =
+        function
+        | e when e.IsRatNum -> let r = (e :?> RatNum) in Rational(r.BigIntNumerator, r.BigIntDenominator)
+        | e -> failwithf "The expression %A is not a rational constant." e 
+        
+    let get_int_model_consts : Model-> int list = get_model_consts >> List.map(snd >> get_int_const)

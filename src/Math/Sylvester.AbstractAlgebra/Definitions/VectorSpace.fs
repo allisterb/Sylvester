@@ -21,7 +21,7 @@ type VectorSpace<'n, 't, 'v when 'v: equality and 'n :> Number and 't: equality 
     member val Op = op
     member val Op2 = op2
     interface IVectorSpace<'n, 't, 'v> with
-        member val Set = let x = var<'v> in (set' x x).Set 
+        member val Set = (set' pos_inf<'v> pos_inf<'v>).Set 
         member x.Equals (y:Set<'v>) = x.Equals y
         member val Field = field
         member val Dim0 = number<'n>

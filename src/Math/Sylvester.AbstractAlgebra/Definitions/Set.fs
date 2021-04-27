@@ -83,7 +83,7 @@ with
     member x.Range =
         match x with
         | Empty -> <@@ false @@>
-        | Seq _ -> <@ let i = var<int> in i >= 0 @> |> expand
+        | Seq _ -> let i = var'<int> "i" in <@ %i >= 0 @> |> expand
         | Set set -> set.Range
       
     member x.Body = 
@@ -258,13 +258,13 @@ with
                 | _, Finite _-> (finite_seq_gen a) |> Set.fromSeq
                 | Aleph _, Aleph _ -> infinite_seq_gen(Seq.initInfinite (fun n -> Seq.item n a) ) |> Set.fromSeq
             c
-        |(_,_) -> SetComprehension<'t * 't>(<@ let a, b = var2<'t> in (a, b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
+        |(_,_) -> let a, b = var2'<'t> "a" "b" in SetComprehension<'t * 't>(<@  (%a, %b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
 
     interface ISet<'t> with member x.Set = x
 
     /// The universal set.
     static member U = 
-        let x = var<'t> in Set(SetComprehension(<@ x @>, <@ true @>, <@ x @>, default_card<'t>, fun _ _ -> true)) 
+        let x = var'<'t> "x" in Set(SetComprehension(<@ %x @>, <@ true @>, <@ %x @>, default_card<'t>, fun _ _ -> true)) 
     
     /// A singleton set containing 0. 
     static member Zero = Singleton<int>(0)

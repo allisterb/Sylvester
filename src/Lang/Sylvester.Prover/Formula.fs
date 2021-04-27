@@ -23,28 +23,17 @@ module Formula =
     let formula<'t> = Unchecked.defaultof<'t>
 
     (* Define variable names for formulas *)    
-    let symbolic_var<'t> = formula<'t>
-    
     let symbolic_var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
 
     /// Result of symbolic truth-functional operation.
     let truth_value = formula<bool>
 
     (* Introduce variable names for formulas *)
-    let var<'t> = symbolic_var<'t>
-    let var2<'t> = symbolic_var<'t>, symbolic_var<'t>
-    let var3<'t> = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>
-    let var4<'t> = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>
 
     let var'<'t> v = symbolic_var'<'t> v
-    let var2'<'t> v1 v2 = symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @> , <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>
-    let var3'<'t> v1 v2 v3 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>
-    let var4'<'t> v1 v2 v3 v4 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v4, typeof<'t>))):'t @>
-    
-    let var''<'t> v = symbolic_var v, symbolic_var' v
-    let var2''<'t> v1 v2 = symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @> , <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>
-    let var3''<'t> v1 v2 v3 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>
-    let var4''<'t> v1 v2 v3 v4 = symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, symbolic_var<'t>, <@ %%(Expr.Var(Var(v1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v2, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v3, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(v4, typeof<'t>))):'t @>
+    let var2'<'t> v1 v2 = symbolic_var'<'t> v1, symbolic_var'<'t> v2
+    let var3'<'t> v1 v2 v3 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var'<'t> v3
+    let var4'<'t> v1 v2 v3 v4 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var' v3, symbolic_var'<'t> v4
     
     (* Propositions and predicates *)
     let prop p1 = var'<bool> p1

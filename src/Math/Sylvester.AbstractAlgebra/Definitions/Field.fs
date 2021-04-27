@@ -26,5 +26,5 @@ type OrderedField<'t when 't: equality and 't : comparison>(additiveGroup: IAddi
 
 module Field = 
     let R = 
-        let reals = let x = var<real> in set' x x 
+        let reals = set' pos_inf<real> pos_inf<real> 
         OrderedField(additive_group(reals), multiplicative_group(reals))

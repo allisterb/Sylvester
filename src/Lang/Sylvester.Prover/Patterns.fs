@@ -253,72 +253,72 @@ module Patterns =
     /// Symmetry, reflexivity, transitivity, and Leibniz's rule: A = B <=> S(A) = S(B)
     let (|SEqual|_|) =
         function
-        | Equals(A, B) when sequal A B -> pattern_desc "Symbolic Equality" <@ let x, y = var2<obj> in x = y @> |> Some
+        | Equals(A, B) when sequal A B -> pattern_desc' "Symbolic Equality" |> Some
         | _ -> None
 
     /// (x = x)
     let (|Reflex|_|) (op:Expr<'t->'t->bool>) =
         function
         | Binary op (a1, a2) when sequal a1 a2 -> 
-            pattern_desc (sprintf "Reflexivity of %s" (src op)) <@ let x = var<'t> in (%op) x x @> |> Some
+            pattern_desc' (sprintf "Reflexivity of %s" (src op)) |> Some
         | _ -> None
 
     /// (x + y) + z = x + (y + z)
     let (|Assoc|_|) (eq:Expr<'t->'t->bool>)  (op:Expr<'t->'t->'t>) =
         function
         | Binary eq (Binary op (Binary op (a1, a2), a3), Binary op (b1, Binary op (b2, b3))) when sequal3 a1 a2 a3 b1 b2 b3 -> 
-            pattern_desc "Associativity" <@ let x, y, z = var3<'t> in (%eq) ((%op) ((%op) x y) z) ((%op) x ((%op) y z)) @> |> Some
+            pattern_desc' "Associativity" |> Some
         | _ -> None
 
     /// (x = y = y) = x
     let (|Symm|_|) (op:Expr<'t->'t->'t>)   =
         function
-        | Binary op (Binary op (Binary op (a1, a2), a3), a4)  when sequal2 a1 a2 a4 a3-> pattern_desc "Symmetry" <@ let x, y = var2<'t> in (%op) (((%op) x y)) ((%op) y x) @> |> Some
+        | Binary op (Binary op (Binary op (a1, a2), a3), a4)  when sequal2 a1 a2 a4 a3-> pattern_desc' "Symmetry" |> Some
         | _ -> None 
 
     /// (x + y) = (y + x)
     let (|Commute|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) =
         function
-        | Binary eq (Binary op (a1, a2), Binary op (b1, b2)) when sequal2 a1 a2 b2 b1 -> pattern_desc "Commutativity" <@fun (x:'t) (y:'t) -> (%eq) ((%op) x y) ((%op) y x) @> |> Some   
+        | Binary eq (Binary op (a1, a2), Binary op (b1, b2)) when sequal2 a1 a2 b2 b1 -> pattern_desc' "Commutativity" |> Some   
         | _ -> None
 
     /// x + 0 = x
     let (|Identity|_|) (eq:Expr<'t->'t->bool>) (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
         function
-        | Binary eq (Binary op (a1, z), a2) when sequal a1 a2 && sequal zero z -> pattern_desc "Identity" <@ let x = var<'t> in (%eq) ((%op) x (%zero)) (%zero) @> |> Some
+        | Binary eq (Binary op (a1, z), a2) when sequal a1 a2 && sequal zero z -> pattern_desc' "Identity" |> Some
         | _ -> None
 
     /// x * (y + z) = x * y + x * z
     let (|Distrib|_|) (eq:Expr<'t->'t->bool>)  (op1: Expr<'t->'t->'t>) (op2: Expr<'t->'t->'t>)  = 
         function
         | Binary eq (Binary op1 (a3, Binary op2 (b3, b4)), Binary op2 (Binary op1 (a1, b1), Binary op1 (a2, b2))) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> 
-                pattern_desc "Distributivity" <@ let x, y, z = var3<'t> in (%eq) ((%op1) x ((%op2) y z)) ((%op2) ((%op1) x y) ((%op1) x z)) @> |> Some
+                pattern_desc' "Distributivity" |> Some
         | _ -> None
 
     ///  -(y + z) = -y  * - z
     let (|UnaryDistrib|_|) (eq:Expr<'t->'t->bool>)  (op1: Expr<'t->'t>) (op2: Expr<'t->'t->'t>)  = 
         function
         | Binary eq (Unary op1 (Binary op2 (a1, a2)), Binary op2 (Unary op1 a3, Unary op1 a4)) when sequal a1 a3 && sequal a2 a4 -> 
-                pattern_desc "Distributivity" <@ let x, y = var2<'t> in (%eq) ((%op1) ((%op2) x y)) ((%op2) ((%op1) x ) ((%op1) y)) @> |> Some
+                pattern_desc' "Distributivity" |> Some
         | _ -> None
 
     /// x + (-x) = zero
     let (|Inverse|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) (inverse: Expr<'t -> 't>) (zero: Expr<'t>)   =
         function
-        | Binary eq (Binary op (a1, Unary inverse (a2)), z)  when sequal a1 a2 && sequal zero z -> pattern_desc "Definition of Inverse" <@ let x = var<'t> in (%eq) ((%op) x ((%inverse) x)) (%zero) @> |> Some
+        | Binary eq (Binary op (a1, Unary inverse (a2)), z)  when sequal a1 a2 && sequal zero z -> pattern_desc' "Definition of Inverse" |> Some
         | _ -> None
 
     /// x + x = x
     let (|Idempotency|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) = 
         function
-        | Binary eq (Binary op (a1, a2), a3) when sequal a1 a2 && sequal a1 a3 -> pattern_desc "Idempotency" <@ let x = var<'t> in (%eq) ((%op) x x) x @> |> Some
+        | Binary eq (Binary op (a1, a2), a3) when sequal a1 a2 && sequal a1 a3 -> pattern_desc' "Idempotency" |> Some
         | _ -> None
 
     /// not (x = y) = not(x) <> not(y)
     let (|Duality|_|) (eq:Expr<'t->'t->bool>)  (op1: Expr<'t->'t->'t>) (op2: Expr<'t->'t->'t>) (inverse: Expr<'t->'t>) =
         function
         | Binary eq (Unary inverse (Binary op1 (a1, a2)), Binary op2 (Unary inverse b1, Unary inverse b2)) when sequal2 a1 a2 b2 b1 -> 
-            pattern_desc "Duality" <@ let x, y = var2<'t> in (%eq) ((%inverse)((%op1) x y)) ((%op2) ((%inverse)(x)) ((%inverse)(y))) @> |> Some
+            pattern_desc' "Duality" |> Some
         | _ -> None
 
     /// Define the LHS by the RHS
@@ -330,30 +330,30 @@ module Patterns =
     /// Define a binary operator by another binary operator and a unary operator applied to the entire expression e.g p <> q = not (p = q).
     let (|BinaryOpDef|_|) (eq:Expr<'t->'t->bool>)  (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
         function
-        | Binary eq (Binary op1 (a1, a2), Unary op3 (Binary op2 (a3, a4))) when sequal2 a1 a2 a3 a4 -> pattern_desc (sprintf "Definition of %s" (src op1)) <@ let x, y = var2<'t> in (%eq) ((%op1) x y) ((%op2) x y) @> |> Some
+        | Binary eq (Binary op1 (a1, a2), Unary op3 (Binary op2 (a3, a4))) when sequal2 a1 a2 a3 a4 -> pattern_desc' (sprintf "Definition of %s" (src op1)) |> Some
         | _ -> None
 
     //. Define a binary operator by another binary operator and a unary operator applied to the left of the expression
     let (|BinaryOpDefL|_|) (eq:Expr<'t->'t->bool>)  (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
         function
-        | Binary eq (Binary op1 (a1, a2), (Binary op2 (Unary op3 a3, a4))) when sequal2 a1 a2 a3 a4 -> pattern_desc (sprintf "Definition of %s" (src op1)) <@ let x, y = var2<'t> in (%eq) ((%op1) x y) ((%op2) x y) @> |> Some
+        | Binary eq (Binary op1 (a1, a2), (Binary op2 (Unary op3 a3, a4))) when sequal2 a1 a2 a3 a4 -> pattern_desc' (sprintf "Definition of %s" (src op1)) |> Some
         | _ -> None
 
     let (|BinaryOpDefR|_|) (eq:Expr<'t->'t->bool>)  (op1:Expr<'t->'t->'t>) (op2:Expr<'t->'t->'t>) (op3:Expr<'t->'t>)=
         function
-        | Binary eq (Binary op1 (a1, a2), (Binary op2 (a3, Unary op3 a4))) when sequal2 a1 a2 a3 a4 -> pattern_desc (sprintf "Definition of %s" (src op1)) <@ let x, y = var2<'t> in (%eq) ((%op1) x y) ((%op2) x y) @> |> Some
+        | Binary eq (Binary op1 (a1, a2), (Binary op2 (a3, Unary op3 a4))) when sequal2 a1 a2 a3 a4 -> pattern_desc' (sprintf "Definition of %s" (src op1)) |> Some
         | _ -> None
 
     let (|LeftCancel|_|) (op:Expr<'t->'t->'t>)  =
         function
         | Equals (Equals(Binary op (a1, b), Binary op (a2, c)), Equals(b1, c1)) when sequal a1 a2 && sequal b b1 && sequal c c1 
-            -> pattern_desc "Left Cancellation" <@ fun a b c -> (((%op) a b = (%op) a c)) = ((b = c)) @> |> Some
+            -> pattern_desc' "Left Cancellation" |> Some
         | _ -> None
 
     let (|RightCancel|_|) (op:Expr<'t->'t->'t>)  =
         function
         | Equals (Equals (Binary op (b, a1), Binary op (c, a2)), Equals (b1, c1)) when sequal a1 a2 && sequal b b1 && sequal c c1 
-            -> pattern_desc "Right Cancellation" <@ fun a b c -> ((%op) b a = (%op) c a) = (b = c) @> |> Some
+            -> pattern_desc' "Right Cancellation" |> Some
         | _ -> None
 
     let (|LeftCancelNonZero|_|) (op:Expr<'t->'t->'t>) (zero:Expr<'t>)  =
@@ -367,20 +367,20 @@ module Patterns =
         | Equals(Quantifier(_,[x], Equals(Var x', E), P), P') when not (occurs_free [x] E) && vequal x x' && sequal P' (subst_var_value x E P) -> 
             pattern_desc "the One-Point Rule" <@ fun x E P -> (forall x (x = E) P) = P @> |> Some
         | Equals(Quantifier(_,[x], Bool true, P), Implies(Equals(E, E'), P')) when not (occurs_free [x] E) && sequal E E' && sequal P' (subst_var_value x E P) -> 
-            pattern_desc "the One-Point Rule" <@ fun x E P -> (forall x (x = E) P) = P @> |> Some
+            pattern_desc' "the One-Point Rule" |> Some
 
         | _ -> None
 
     let (|Nesting|_|) =
         function
         | Equals(Quantifier(_, x::y, R1, P), Quantifier(_, [x'], R2, Quantifier(_,y', R3, P'))) 
-            when not_occurs_free y R1 && vequal x x' && vequal' y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc "Interchange Variables" <@ let x = var<bool> in not x @> |> Some
+            when not_occurs_free y R1 && vequal x x' && vequal' y y' && sequal P P' && sequal R1 R2 && sequal R2 R3-> pattern_desc' "Interchange Variables" |> Some
         | Equals(Quantifier(_, x::y, And(R, Q), P), Quantifier(_, [x'], R',Quantifier(_,y', Q', P'))) 
-            when not_occurs_free y R && vequal x x' && vequal' y y' && sequal3 R Q P R' Q' P'-> pattern_desc "Interchange Variables" <@ let x = var<bool> in not x @> |> Some
+            when not_occurs_free y R && vequal x x' && vequal' y y' && sequal3 R Q P R' Q' P'-> pattern_desc' "Interchange Variables" |> Some
         | _ -> None
 
     let (|Renaming|_|) =
         function
         | Equals(Quantifier(_, x, R, P), Quantifier(_, y, R', P')) 
-            when not (vequal' x y) && x.Length = y.Length && not_occurs_free y R && not_occurs_free y P && sequal R' (replace_var_var' x y R) && sequal P' (replace_var_var' x y P) -> pattern_desc "Renaming Variables" <@ let x = var<bool> in not x @> |> Some
+            when not (vequal' x y) && x.Length = y.Length && not_occurs_free y R && not_occurs_free y P && sequal R' (replace_var_var' x y R) && sequal P' (replace_var_var' x y P) -> pattern_desc' "Renaming Variables" |> Some
         | _ -> None
