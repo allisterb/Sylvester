@@ -4,20 +4,43 @@ open FSharp.Quotations
 
 open Sylvester
 open Sylvester.CAS
-open PropCalculus
-open PredCalculus
+
+open IntegerAlgebra
+
+
+let a = var<int>
+let pp = proof integer_algebra <@ a <> 0 ==> (((a + 4) = (a + 4)) = (4 = 4))@> [
+    //commute |> L
+]
 
 [<Formula>]
-let f x = x ** 3. + 2. * x
+let g = 
+    function
+    | x when x < 0 -> 9
+    | _ -> 1
+<@ g @> |> expand
+let fupa<'a, 't> (x:'a) = (box x) :? 't
+
+type IIncreasing<'t> = inherit seq<'t>
+
+
+let bran = <@ fupa<seq<_>, IIncreasing<_>> @>
+
+expand <@ bran @> //|> function | Patterns.Lambda(_, Patterns.Call(_, mi, _)) -> mi | _ -> failwith "G"
+
+let m = <@ bran Seq.empty @> |> function | Patterns.Application(Patterns.Call(None, m, _), _) -> m | _ -> failwith "Foo"
+//MathNet.Symbolics.Infix.parse "((x+a)^3.0*((-x^3.0)-2*x^2.0)+(x+a)^2.0*((-2*x^3.0)-4*x^2.0)+a) /((x+a)^3.0+2*(x+a)^2.0)"
+[<Formula>]
+let f x = x ** 3. + 2. * x ** 2.
 
 Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
+Series.harmonic_series' |> take 10
+
 let x = LatinVars.x<real>
-let a = LatinVars.a<real>
+let dx = LatinDiffs.x<real>
 
-//<@ (f(%x + %a) - f %x) / %a @> |> expand |> MathNetExpr.fromQuotation
-
-Analysis.limit <@ (f(%x + %a) - f %x) / %a @> a <@ 0. @>
+Analysis.limit <@ (f(%x + %dx) - f %x) / %dx @> dx <@ 0.@>
 
 MathNetExprParser.parse "(a + x) ^ 2"
 
