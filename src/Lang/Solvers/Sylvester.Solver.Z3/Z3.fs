@@ -45,6 +45,7 @@ module Z3 =
         | Single n -> create_numeral ctx n
         | Double n -> create_numeral ctx n
         | Rational n -> create_numeral ctx n
+        //| Va
         | Call(None, Op "op_Addition" ,l::r::[]) -> ctx.MkAdd((create_arith_expr ctx l), (create_arith_expr ctx r))
         | Call(None, Op "op_Multiply" ,l::r::[]) -> ctx.MkMul((create_arith_expr ctx l), (create_arith_expr ctx r))
         | Call(None, Op "op_Subtraction" ,l::r::[]) -> ctx.MkSub((create_arith_expr ctx l), (create_arith_expr ctx r))
@@ -59,7 +60,7 @@ module Z3 =
             |> List.choose(fun v -> if v.Type = typeof<bool> then Some v else None)
             |> List.map(fun v -> v.Name, ctx.MkBoolConst(v.Name)) |> Map.ofList
         match expr.Type.Name with
-            | "Bool"
+            | "Boolean"
             | "UInt32 "
             | "Int32"
             | "UInt64"
