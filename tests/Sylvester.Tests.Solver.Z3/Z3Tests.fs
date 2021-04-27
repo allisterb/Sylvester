@@ -14,7 +14,7 @@ module Z3Tests =
         let x = var'<int> "x"
         let x' = var'<real> "xx"
         let y' = var'<real> "y"
-        let s = Z3Solver()
+        let s = new Z3Solver()
         
         Assert.NotNull <| create_arith_expr s <@ %x + 2 @>
         Assert.NotNull <| create_arith_expr s <@ %x' + %y' * 2. @>
@@ -23,7 +23,7 @@ module Z3Tests =
     let ``Can create bool expr``() =
         let x = var'<int> "x"
         let b = var'<bool> "b"
-        let s = Z3Solver()
+        use s = new Z3Solver()
         Assert.NotNull <| create_bool_expr s <@ %x > %x + 2 @>
         Assert.NotNull <| create_bool_expr s <@ %b ==> false @>
 
@@ -33,9 +33,13 @@ module Z3Tests =
         let y = var'<real> "y"
         let b = var'<bool> "b"
        
-        let solver = Z3Solver()
+        let solver = new Z3Solver()
         let a = <@ [%x = 6.; %x > 5.] @>  
         Assert.True <| check_sat solver a
+
+        let A = var'<Set<real>> "A"
+        let U:Set<real> = Set.U
+        Assert.False <| check_sat solver <@ [Empty = U] @>
 
     [<Fact>]
     let ``Can solve``() =
@@ -43,7 +47,7 @@ module Z3Tests =
          let y = var'<int> "y"
          let b = var'<bool> "b"
          
-         let solver = Z3Solver()
+         let solver = new Z3Solver()
          let a = <@ [%x = 5; %y = %x + 2] @>  
          let sol = check_sat_model solver a
          Assert.True sol.IsSome

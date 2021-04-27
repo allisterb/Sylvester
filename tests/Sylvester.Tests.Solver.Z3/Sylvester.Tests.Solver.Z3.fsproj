@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lang\Solvers\Sylvester.Solver.Z3\Sylvester.Solver.Z3.fsproj" />
     <ProjectReference Include="..\..\src\Lang\Sylvester.Prover\Sylvester.Prover.fsproj" />
+    <ProjectReference Include="..\..\src\Math\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
   </ItemGroup>
 
 </Project>
