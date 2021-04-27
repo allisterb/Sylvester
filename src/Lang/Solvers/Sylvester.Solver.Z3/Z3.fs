@@ -7,47 +7,12 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
-
 open Microsoft.Z3
 
-(*
-type Z3Const =
-| Z3Bool of string * BoolExpr
-| Z3Real of string * RealExpr
-| Z3Int of string * IntExpr
-with 
-    member x.Name =
-        match x with
-        | Z3Bool (n, _) -> n
-        | Z3Real (n, _) -> n
-        | Z3Int (n, _) -> n
-    member x.Type =
-        match x with
-        | Z3Bool _ -> typeof<bool>
-        | Z3Real _ -> typeof<real>
-        | Z3Int _ -> typeof<int>
-   
-    member x.Bool = x |> function | Z3Bool (_,b) -> b | _ -> failwith "This is not a BoolExpr."
-
-    member x.Real = x |> function | Z3Real (_,r) -> r | _ -> failwith "This is not a RealExpr."
-
-    member x.Int = x |> function | Z3Int (_,i) -> i | _ -> failwith "This is not a IntExpr."
-   
-    member x.Match(n:string, t:Type) = x.Name = n && x.Type = t
-
-type Z3Num =
-| Z3IntNum of IntNum
-| Z3RatNum of RatNum
-    
-type Z3Arith = Z3Arith of ArithExpr
-*)
-
-type Z3Expr =
-| Z3Arith of ArithExpr
-| Z3Bool of BoolExpr
-| Z3Int of IntExpr
-
 module Z3 =
+    let create_ctx() = new Context()
+
+    //let push (ctx:Context) = ctx.P
     let create_numeral<'t when 't : struct> (ctx:Context) (i:'t)  = 
         match box i with
         | :? uint64  as n -> n |> ctx.MkInt :> ArithExpr
@@ -57,12 +22,6 @@ module Z3 =
         | :? Rational as n -> ctx.MkReal((int) n.Numerator, (int) n.Denominator) :> ArithExpr
         | :? real as n -> ctx.MkReal(n.ToString()) :> ArithExpr
         | _ -> failwithf "Cannot create numeral from value %A of type %A." i typeof<'t>
-
-    let create_real_numeral(ctx:Context) (r:obj) =
-        match r with
-        | :? Rational as n -> ctx.MkReal((int) n.Numerator, (int) n.Denominator)
-        | :? real as n -> ctx.MkReal(n.ToString())
-        | _ -> failwithf "Cannot create real numeral from value %A." r
 
     let create_const (ctx:Context) (s:string) (t:Type) = 
         match t.Name with
@@ -75,14 +34,7 @@ module Z3 =
         | "Rational" -> (s, s |> ctx.MkRealConst :> ArithExpr) 
         | t -> failwithf "Cannot create constant of type %A." t
 
-    let create_real_const (ctx:Context) (s:string) (t:Type) = 
-        match t.Name with
-        | "Single"
-        | "Double"
-        | "Rational" -> (s, s |> ctx.MkRealConst :> ArithExpr) 
-        | t -> failwithf "Cannot create real constant of type %s." t
-
-    let rec create_arith_expr ctx expr : ArithExpr =
+    let rec create_arith_expr (ctx:Context) (expr:FSharp.Quotations.Expr) : ArithExpr =
         let vars = expr |> get_vars |> List.map(fun v -> create_const ctx v.Name v.Type) |> Map.ofList 
         match expr with
         | Var v -> vars.[v.Name] 
@@ -117,13 +69,14 @@ module Z3 =
             | "Rational" ->
                 match expr with
                 | Var v when v.Type = typeof<bool> -> vars.[v.Name]
-                | Bool b -> ctx.MkBool b
+                | Bool true -> ctx.MkTrue()
+                | Bool false -> ctx.MkFalse()
                 | Call(None, Op "op_Equality" ,l::r::[]) when expr.Type = typeof<bool> -> ctx.MkEq(create_bool_expr ctx l, create_bool_expr ctx r)
                 | Call(None, Op "op_Inequality" ,l::r::[]) when expr.Type = typeof<bool> -> ctx.MkDistinct(create_bool_expr ctx l, create_bool_expr ctx r)
                 | Call(None, Op "op_BarAmpBar" ,l::r::[]) -> ctx.MkAnd(create_bool_expr ctx l, create_bool_expr ctx r)
                 | Call(None, Op "op_BitwiseOr" ,l::r::[]) -> ctx.MkOr(create_bool_expr ctx l, create_bool_expr ctx r)
                 | Call(None, Op "Not" ,r::[]) -> ctx.MkNot(create_bool_expr ctx r)
-
+                | Call(None, Op "op_EqualsEqualsGreater" ,l::r::[]) -> ctx.MkImplies(create_bool_expr ctx l, create_bool_expr ctx r)
                 
                 | Call(None, Op "op_Equality" ,l::r::[]) -> ctx.MkEq(create_arith_expr ctx l, create_arith_expr ctx r)
                 | Call(None, Op "op_Inequality" ,l::r::[]) -> ctx.MkDistinct(create_arith_expr ctx l, create_arith_expr ctx r)
@@ -131,17 +84,5 @@ module Z3 =
                 | Call(None, Op "op_LessThanOrEqual" ,l::r::[]) -> ctx.MkLe(create_arith_expr ctx l, create_arith_expr ctx r)
                 | Call(None, Op "op_GreaterThan" ,l::r::[]) -> ctx.MkGt(create_arith_expr ctx l, create_arith_expr ctx r)
                 | Call(None, Op "op_GreaterThanOrEqual" ,l::r::[]) -> ctx.MkGe(create_arith_expr ctx l, create_arith_expr ctx r)
+                | _ -> failwithf "Cannot create Z3 expression fron expression %A of type %A." expr (expr.Type)
             | _ -> failwithf "Cannot create Z3 expression fron expression %A of type %A." expr (expr.Type)
-    //let create_func (ctx:Context) = ctx.mkFu
-//type Z3() = 
-//    inherit Runtime()
-//    let ctx = new Context()
-
-//    member val Ctx = ctx
-
-
-    //member x.MkInt() = ctx.MkInt()
-//module Z3 =
-//    let create_var (z3:Z3) (v:Var) =
-//        match v.Type.Name with
-//        | "Int32" -> z3.Ctx.Mk
