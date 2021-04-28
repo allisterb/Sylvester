@@ -126,7 +126,8 @@ module Z3 =
             | NewUnionCase(uc, e) when uc.Name = "Empty" -> let s = create_sort solver expr.Type.GenericTypeArguments.[0] in solver.Ctx.MkEmptySet s
             | U when (src U = "U" || src U = "Set`1.U" || U.ToString() = "Value (Set {x|true:x})") && expr.Type.IsGenericType -> let s = create_sort solver expr.Type.GenericTypeArguments.[0] in solver.Ctx.MkFullSet s
             | Call(None, Op "op_BarPlusBar" ,l::r::[]) -> solver.Ctx.MkSetUnion((create_set_expr solver l), (create_set_expr solver r))
-            | _ -> failwith "Not supported"
+            | Call(None, Op "op_BarMultiplyBar",l::r::[]) -> solver.Ctx.MkSetIntersection(create_set_expr solver l, create_set_expr solver r)
+            | _ -> failwithf "The expression %A is not a set expression." expr
     
     let rec internal create_bool_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : BoolExpr =
         let expr' = expand expr
@@ -141,18 +142,18 @@ module Z3 =
         | Bool true -> solver.Ctx.MkTrue()
         | Bool false -> solver.Ctx.MkFalse()
         | Call(None, Op "op_Equality" ,l::r::[]) ->
-            match l.Type with
-            | BoolType -> solver.Ctx.MkEq(create_bool_expr solver l, create_bool_expr solver r)
-            | SetType -> solver.Ctx.MkEq(create_set_expr solver l, create_set_expr solver r)
-            | IntType
-            | RatType -> solver.Ctx.MkEq(create_arith_expr solver l, create_arith_expr solver r)
+            match l.Type, r.Type with
+            | BoolType, BoolType -> solver.Ctx.MkEq(create_bool_expr solver l, create_bool_expr solver r)
+            | SetType, SetType -> solver.Ctx.MkEq(create_set_expr solver l, create_set_expr solver r)
+            | IntType, IntType
+            | RatType, RatType -> solver.Ctx.MkEq(create_arith_expr solver l, create_arith_expr solver r)
             | _ -> failwith ""
         | Call(None, Op "op_Inequality" ,l::r::[])  -> 
-            match l.Type with
-            | BoolType -> solver.Ctx.MkDistinct(create_bool_expr solver l, create_bool_expr solver r)
-            | SetType -> solver.Ctx.MkDistinct(create_set_expr solver l, create_set_expr solver r)
-            | IntType
-            | RatType -> solver.Ctx.MkDistinct(create_arith_expr solver l, create_arith_expr solver r)
+            match l.Type, r.Type with
+            | BoolType, BoolType -> solver.Ctx.MkDistinct(create_bool_expr solver l, create_bool_expr solver r)
+            | SetType, SetType -> solver.Ctx.MkDistinct(create_set_expr solver l, create_set_expr solver r)
+            | IntType, IntType
+            | RatType, RatType -> solver.Ctx.MkDistinct(create_arith_expr solver l, create_arith_expr solver r)
             | _ -> failwith ""
         | Call(None, Op "op_BarAmpBar",l::r::[]) -> solver.Ctx.MkAnd(create_bool_expr solver l, create_bool_expr solver r)
         | Call(None, Op "op_BitwiseOr",l::r::[]) -> solver.Ctx.MkOr(create_bool_expr solver l, create_bool_expr solver r)
@@ -165,7 +166,8 @@ module Z3 =
         | Call(None, Op "op_GreaterThanOrEqual",l::r::[]) -> solver.Ctx.MkGe(create_arith_expr solver l, create_arith_expr solver r)
         (* Set constraints *)
         | Call(None, Op "op_BarQmarkBar",l::r::[]) -> solver.Ctx.MkSetMembership(create_set_expr solver l, create_set_expr solver r)
-        | _ -> failwithf "Cannot create Z3 expression from %A." expr
+        | Call(None, Op "op_BarLessBar",l::r::[]) -> solver.Ctx.MkSetSubset(create_set_expr solver l, create_set_expr solver r)
+        | _ -> failwithf "Cannot create Z3 constraint from %A." expr
 
     let internal check_sat_model (s:Z3Solver) (a: Expr<bool list>) = 
         let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check 
