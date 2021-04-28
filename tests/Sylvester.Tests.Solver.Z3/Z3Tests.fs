@@ -38,8 +38,8 @@ module Z3Tests =
         Assert.True <| check_sat solver a
 
         let A = var'<Set<real>> "A"
-        let U:Set<real> = Set.U
-        Assert.False <| check_sat solver <@ [Empty = U] @>
+        
+        Assert.True <| check_sat solver <@ [%A |?| Set.U] @>
 
     [<Fact>]
     let ``Can solve``() =
