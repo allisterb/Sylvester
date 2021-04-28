@@ -65,11 +65,11 @@ module Z3Tests =
          let x = var'<int> "x"
          let y = var'<int> "y"
          let s = new Z3Solver()
-         assert_opt_hard s <@ [%x < 10] @>
-         let h = opt_maximize s <@ %x @>
+         opt_assert_hard s <@ [%x < 10; %y < 5] @>
+         let h = opt_maximize s <@ %x + %y@>
          
-         Assert.True <| check_opt_sat s
-         let m = get_opt_int_var_model s
+         Assert.True <| opt_check_sat s
+         let m = opt_get_int_var_model s
          Assert.NotNull m
          
 

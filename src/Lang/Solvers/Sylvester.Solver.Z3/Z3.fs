@@ -229,28 +229,27 @@ module Z3 =
 
     let check_sat (s:Z3Solver) a = (Option.isSome <| check_sat_model s a)
 
-    //let get_solver_int_var_model (s:Z3Solver)  |> Option.map _get_int_var_model
-    let set_opt_param (s:Z3Solver) (k:string) (v:string) = s.OptimizeParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
+    let opt_set_param (s:Z3Solver) (k:string) (v:string) = s.OptimizeParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
 
-    let assert_opt_hard (s:Z3Solver) (a:Expr<bool list >) = 
+    let opt_assert_hard (s:Z3Solver) (a:Expr<bool list >) = 
         let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Optimize.Assert constraints
 
-    let asset_opt_at_most (s:Z3Solver) (a:Expr<bool list >) k = 
+    let opt_assert_at_most (s:Z3Solver) (a:Expr<bool list >) k = 
         let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtMost(constraints, k) |> s.Optimize.Assert
 
-    let assert_opt_at_least (s:Z3Solver) (a:Expr<bool list >) k = 
+    let opt_assert_at_least (s:Z3Solver) (a:Expr<bool list >) k = 
         let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtLeast(constraints, k) |> s.Optimize.Assert
 
     let opt_maximize (s:Z3Solver) (a:FSharp.Quotations.Expr) = 
         a |> create_arith_expr  s |> s.Optimize.MkMaximize
 
-    let check_opt_sat (s:Z3Solver)  = 
+    let opt_check_sat (s:Z3Solver)  = 
         let sol = s.Optimize.Check()
         match sol with
         | Status.SATISFIABLE -> true
         | _ -> false
 
-    let get_opt_int_var_model (s:Z3Solver) =
+    let opt_get_int_var_model (s:Z3Solver) =
         match s.Solver.Check() with
         | Status.SATISFIABLE -> s.OptModel() |> _get_int_var_model |> Some
         | _ -> None
