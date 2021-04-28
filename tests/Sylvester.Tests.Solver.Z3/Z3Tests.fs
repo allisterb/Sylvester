@@ -35,12 +35,12 @@ module Z3Tests =
        
         let solver = new Z3Solver()
         let a = <@ [%x = 6.; %x > 5.] @>  
-        Assert.True <| check_sat solver a
+        Assert.True <| (Option.isSome <| check_sat_model solver a)
 
         let A = var'<Set<real>> "A"
         let B = var'<Set<real>> "B"
         let C = var'<Set<real>> "C"
-        Assert.True <| check_sat solver <@ [%A |*| (%B |+| %C) <> ((%A |*| %B) |+| (%A |*| %C))] @>
+        Assert.False <| check_sat solver <@ [%A |*| (%B |+| %C) <> ((%A |*| %B) |+| (%A |*| %C))] @>
 
     [<Fact>]
     let ``Can solve``() =
@@ -60,5 +60,17 @@ module Z3Tests =
          let sol2 = check_sat_model solver <@[%qx = 1Q ]@>
          Assert.True sol2.IsSome
 
+    [<Fact>]
+    let ``Can optimize``() =
+         let x = var'<int> "x"
+         let y = var'<int> "y"
+         let s = new Z3Solver()
+         assert_opt_hard s <@ [%x < 10] @>
+         let h = opt_maximize s <@ %x @>
+         
+         Assert.True <| check_opt_sat s
+         let m = get_opt_int_var_model s
+         Assert.NotNull m
+         
 
  

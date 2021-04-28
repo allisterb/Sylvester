@@ -15,14 +15,33 @@ type Z3ModelResult =
 
 type Z3Solver(?logic:string) =
     let ctx = new Context()
-    let solver = logic |> function | Some l -> ctx.MkSolver(l)| None -> ctx.MkSolver()    
+    let sp = ctx.MkParams();
+    let op = ctx.MkParams()
+    let solver = logic |> function | Some l -> ctx.MkSolver(l) | None -> ctx.MkSolver()
+    do solver.Parameters <- sp
+    let optimize = ctx.MkOptimize()
+    do optimize.Parameters <- op 
     member val Ctx = ctx
+    member val SolverParams = sp
     member val Solver = solver
+    member val Optimize = optimize
+    member val OptimizeParams = op
+
     member x.Check(constraints: seq<BoolExpr>) = solver.Check constraints
-    member x.Model() = solver.Model
-    
+    member x.Model() = let m = solver.Model in if isNull m then failwith "No model exists." else m
+    member x.OptModel() = let m = optimize.Model in if isNull m then failwith "No model exists." else m
     interface IDisposable with member x.Dispose() = solver.Dispose()
-    static member Tactics = let ctx = new Context() in ctx.TacticNames |> Array.map(fun t -> t, ctx.TacticDescription t) |> Map.ofArray
+    static member val Tactics = 
+        let ctx = new Context() in 
+        let d = ctx.TacticNames |> Array.map(fun t -> t, ctx.TacticDescription t) |> Map.ofArray
+        ctx.Dispose()
+    static member val OptimizeParamsHelp = 
+        let ctx = new Context()
+        let opt = ctx.MkOptimize()
+        let pd = opt.ParameterDescriptions.Names |> Array.map(fun d -> d.ToString(), opt.ParameterDescriptions.GetDocumentation d) |> Map.ofArray
+        opt.Dispose()
+        ctx.Dispose()
+        pd
 
 module Z3 =
     /// Multiple indexers for evaluating formulas
@@ -196,15 +215,45 @@ module Z3 =
     let internal _get_rat_var_model : Model-> (string * Rational) list = 
         get_var_model >> List.map(fun (l, r) -> l.ToString(), get_rat_const r)
 
-    let check_sat (s:Z3Solver) (a: Expr<bool list>) = 
-        let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check
-        match sol with
-        | Status.SATISFIABLE -> true
-        | _ -> false
+    let set_solver_param (s:Z3Solver) (k:string) (v:string) = s.SolverParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
+
+    let reset (s:Z3Solver) = s.Solver.Reset()
+    
+    let push(s:Z3Solver) = s.Solver.Push()
+
+    let pop(s:Z3Solver) = s.Solver.Pop()
 
     let get_int_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_int_var_model
 
     let get_rat_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_rat_var_model
+
+    let check_sat (s:Z3Solver) a = (Option.isSome <| check_sat_model s a)
+
+    //let get_solver_int_var_model (s:Z3Solver)  |> Option.map _get_int_var_model
+    let set_opt_param (s:Z3Solver) (k:string) (v:string) = s.OptimizeParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
+
+    let assert_opt_hard (s:Z3Solver) (a:Expr<bool list >) = 
+        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Optimize.Assert constraints
+
+    let asset_opt_at_most (s:Z3Solver) (a:Expr<bool list >) k = 
+        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtMost(constraints, k) |> s.Optimize.Assert
+
+    let assert_opt_at_least (s:Z3Solver) (a:Expr<bool list >) k = 
+        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtLeast(constraints, k) |> s.Optimize.Assert
+
+    let opt_maximize (s:Z3Solver) (a:FSharp.Quotations.Expr) = 
+        a |> create_arith_expr  s |> s.Optimize.MkMaximize
+
+    let check_opt_sat (s:Z3Solver)  = 
+        let sol = s.Optimize.Check()
+        match sol with
+        | Status.SATISFIABLE -> true
+        | _ -> false
+
+    let get_opt_int_var_model (s:Z3Solver) =
+        match s.Solver.Check() with
+        | Status.SATISFIABLE -> s.OptModel() |> _get_int_var_model |> Some
+        | _ -> None
 
     [<assembly:InternalsVisibleTo("Sylvester.Tests.Solver.Z3")>]
     do()
