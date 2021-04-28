@@ -64,9 +64,10 @@ module Z3Tests =
     let ``Can optimize``() =
          let x = var'<int> "x"
          let y = var'<int> "y"
+         let b = var'<int> "b"
          let s = new Z3Solver()
-         opt_assert_hard s <@ [%x < 10; %y < 5] @>
-         let h = opt_maximize s <@ %x + %y@>
+         opt_assert_hard s <@ [%x > 0; %y > 0; %x * %x + %y * %y < 10] @>
+         let h = opt_maximize s <@ %x * %x + %y * %y@>
          
          Assert.True <| opt_check_sat s
          let m = opt_get_int_var_model s

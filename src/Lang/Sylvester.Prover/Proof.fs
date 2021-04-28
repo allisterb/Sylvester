@@ -405,6 +405,16 @@ and Theorem (expr: Expr, proof:Proof) =
 
 [<AutoOpen>]
 module ProofOps =
+    type Apply = RuleApplication
+    
+    let ApplyLeft = Apply.L
+    
+    let ApplyRight = Apply.R
+    
+    let AfterLeft = Apply.L'
+
+    let AfterRight = Apply.R'
+    
     let print_formula (p:Proof) = p.Theory.PrintFormula
     
     let last_state (p:Proof) = p.LastState
@@ -543,8 +553,9 @@ module Proof =
     let id_ax' e = id_ax Proof.Logic e
     
     (* Deductions *)
-    let deduce p = Theorem(p) |> Deduce
-    let deduce' p = Theorem(p) |> Deduce'
+    let deduce (p:Theorem) = p|> Deduce
+    let deduce' p = p |> Deduce'
+    let deduce_ident p = deduce' p
 
     (* Definitions *)
     let def (theory:Theory) (e:Expr<bool>) = 

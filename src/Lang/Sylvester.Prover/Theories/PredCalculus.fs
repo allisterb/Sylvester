@@ -79,7 +79,7 @@ module PredCalculus =
 
     /// not (forall x true (not N)) ==> (forall x N (P |&| Q) = (P |&| forall x N Q))
     let distrib_forall_and_cond x N P Q = ident pred_calculus <@ not (forall' %x (not %N)) ==> (forall %x %N (%P |&| %Q) = (%P |&| forall %x %N %Q)) @> [
-        let lemma1 = proof pred_calculus <@ not (forall' %x (not %N)) ==> (forall' %x (not %N) = false) @> [
+        let lemma1 = theorem pred_calculus <@ not (forall' %x (not %N)) ==> (forall' %x (not %N) = false) @> [
             distrib_implies_eq_and <@ (not (forall' %x (not %N))) @> <@ forall' %x (not %N) @> <@ false @> |> LR
             contr <@ forall' %x (not %N) @> |> CommuteL |> L
             zero_and <@ not (forall' %x (not %N)) @> |> R   

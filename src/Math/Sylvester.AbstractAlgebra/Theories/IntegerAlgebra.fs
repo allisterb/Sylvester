@@ -29,7 +29,20 @@ module IntegerAlgebra =
         | Distrib <@(=)@> (<@ (*) @> :Expr<int->int->int>) (<@ (+) @> :Expr<int->int->int>) x  
         | LeftCancelNonZero (<@ (+) @> :Expr<int->int->int>) <@ 0 @> x
         | BinaryOpDefR <@(=)@> <@ (-) @> (<@ (+) @> :Expr<int->int->int>) <@ (~-) @> x  -> Some (desc x)
-        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Int32 0))) when vequal a a' -> Some (axiom_desc "Integer Algebra" (pattern_desc' "Additive inverse")) 
+        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Int32 0))) when vequal a a' -> Some (axiom_desc "Integer Algebra" (pattern_desc' "Additive Inverse")) 
+        
+        | Assoc <@(=)@> (<@ (+) @> :Expr<real->real->real>) x
+        | Assoc <@(=)@> (<@ (*) @> :Expr<real->real->real>) x
+        | Commute <@(=)@> (<@ (+) @> :Expr<real->real->real>) x
+        | Commute <@(=)@> (<@ (*) @> :Expr<real->real->real>) x
+        | Identity <@(=)@> (<@ (+) @> :Expr<real->real->real>) <@ 0. @> x 
+        | Identity <@(=)@> (<@ (*) @> :Expr<real->real->real>) <@ 1. @> x
+        | Inverse <@(=)@> (<@ (+) @> :Expr<real->real->real>) <@ (~-) @> <@ 0. @> x
+        | Distrib <@(=)@> (<@ (*) @> :Expr<real->real->real>) (<@ (+) @> :Expr<real->real->real>) x  
+        | LeftCancelNonZero (<@ (+) @> :Expr<real->real->real>) <@ 0. @> x
+        | BinaryOpDefR <@(=)@> <@ (-) @> (<@ (+) @> :Expr<real->real->real>) <@ (~-) @> x  -> Some (desc x)
+        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Double 0.))) when vequal a a' -> Some (axiom_desc "Integer Algebra" (pattern_desc' "Additive Inverse")) 
+           
         | _ -> None
 
     let rec _reduce_constants  =

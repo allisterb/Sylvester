@@ -19,17 +19,17 @@ type Z3Solver(?logic:string) =
     let op = ctx.MkParams()
     let solver = logic |> function | Some l -> ctx.MkSolver(l) | None -> ctx.MkSolver()
     do solver.Parameters <- sp
-    let optimize = ctx.MkOptimize()
-    do optimize.Parameters <- op 
+    let optimizer = ctx.MkOptimize()
+    do optimizer.Parameters <- op 
     member val Ctx = ctx
     member val SolverParams = sp
     member val Solver = solver
-    member val Optimize = optimize
-    member val OptimizeParams = op
+    member val Optimizer = optimizer
+    member val OptimizerParams = op
 
     member x.Check(constraints: seq<BoolExpr>) = solver.Check constraints
     member x.Model() = let m = solver.Model in if isNull m then failwith "No model exists." else m
-    member x.OptModel() = let m = optimize.Model in if isNull m then failwith "No model exists." else m
+    member x.OptModel() = let m = optimizer.Model in if isNull m then failwith "No model exists." else m
     interface IDisposable with member x.Dispose() = solver.Dispose()
     static member val Tactics = 
         let ctx = new Context() in 
@@ -229,22 +229,22 @@ module Z3 =
 
     let check_sat (s:Z3Solver) a = (Option.isSome <| check_sat_model s a)
 
-    let opt_set_param (s:Z3Solver) (k:string) (v:string) = s.OptimizeParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
+    let opt_set_param (s:Z3Solver) (k:string) (v:string) = s.OptimizerParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
 
     let opt_assert_hard (s:Z3Solver) (a:Expr<bool list >) = 
-        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Optimize.Assert constraints
+        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Optimizer.Assert constraints
 
     let opt_assert_at_most (s:Z3Solver) (a:Expr<bool list >) k = 
-        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtMost(constraints, k) |> s.Optimize.Assert
+        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtMost(constraints, k) |> s.Optimizer.Assert
 
     let opt_assert_at_least (s:Z3Solver) (a:Expr<bool list >) k = 
-        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtLeast(constraints, k) |> s.Optimize.Assert
+        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtLeast(constraints, k) |> s.Optimizer.Assert
 
     let opt_maximize (s:Z3Solver) (a:FSharp.Quotations.Expr) = 
-        a |> create_arith_expr  s |> s.Optimize.MkMaximize
+        a |> create_arith_expr  s |> s.Optimizer.MkMaximize
 
     let opt_check_sat (s:Z3Solver)  = 
-        let sol = s.Optimize.Check()
+        let sol = s.Optimizer.Check()
         match sol with
         | Status.SATISFIABLE -> true
         | _ -> false
