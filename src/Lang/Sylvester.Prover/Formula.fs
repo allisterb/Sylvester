@@ -1,16 +1,13 @@
 ﻿namespace Sylvester
 
-open System
 open FSharp.Quotations
 
 // Make Formula an alias for the reflected definition attribute.
 type Formula = ReflectedDefinitionAttribute
 
-type any = obj
 [<AutoOpen>]
 module Formula =    
     (* Logical operators for formulas *)
-
     [<Symbol"\u2227">]
     let (|&|) l r = l && r
     [<Symbol"\u2228">]
@@ -19,29 +16,28 @@ module Formula =
     let (==>) l r = not l || r
     let (<==) l r = r ==> l
 
-    /// Introduce a symbolic formula.
+    /// Represents a symbolic formula.
     let formula<'t> = Unchecked.defaultof<'t>
 
-    (* Define variable names for formulas *)    
+    /// Create a symbolic variable   
     let symbolic_var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
 
     /// Result of symbolic truth-functional operation.
     let truth_value = formula<bool>
 
-    (* Introduce variable names for formulas *)
-
+    (* Create variable and predicate symbols for formulas. *)
     let var'<'t> v = symbolic_var'<'t> v
     let var2'<'t> v1 v2 = symbolic_var'<'t> v1, symbolic_var'<'t> v2
     let var3'<'t> v1 v2 v3 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var'<'t> v3
-    let var4'<'t> v1 v2 v3 v4 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var' v3, symbolic_var'<'t> v4
+    let var4'<'t> v1 v2 v3 v4 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var'<'t> v3, symbolic_var'<'t> v4
     
-    (* Propositions and predicates *)
-    let prop p1 = var'<bool> p1
-    let prop2 p1 p2 = var2'<bool> p1 p2
+    /// Represents a predicate
     let pred<'t> = (fun (_:'t) -> truth_value)
-    let pred'<'t> p = (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p, typeof<'t>))):'t @>
-    let pred2'<'t> p1 p2 = (fun (_:'t) -> truth_value), (fun (_:'t) -> truth_value), <@ %%(Expr.Var(Var(p1, typeof<'t>))):'t @>, <@ %%(Expr.Var(Var(p2, typeof<'t>))):'t @>
     
+    /// Create a predicate with a name
+    let pred'<'t> n = 
+        let var = Expr.Var(Var(n, typeof<'t -> bool>)) in <@ %%var:'t->bool @>
+
     let predi<'a, 't> (x:'a) = (box x) :? 't
 
     (* Quantifiers *)

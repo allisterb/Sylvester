@@ -74,5 +74,5 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
    
 /// A set of elements with a total order relation.
 type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
-    inherit Poset<'t>(set, (<))
+    inherit Poset<'t>(set, (<=))
     interface ITotalOrder<'t>

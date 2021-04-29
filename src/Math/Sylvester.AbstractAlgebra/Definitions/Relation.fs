@@ -41,7 +41,9 @@ module Function =
 
     let range (f:'d->'r) = formula<Set<'r>>
 
-    let relation (f:'d->'r) = formula<IRelation<'d, 'r>>
+    let relation (f:'t->'t) = formula<IRelation<'t>>
+
+    let relation' (f:'d->'r) = formula<IRelation<'d, 'r>>
 
     let injection = pred<'d->'r>
 

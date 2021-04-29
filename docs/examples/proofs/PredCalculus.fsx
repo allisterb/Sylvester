@@ -4,41 +4,36 @@ open Sylvester
 open PropCalculus
 open PredCalculus
 
-/// true = (p = p)
-let p,q,r,s = var4<bool>
-let x,y = var2<bool>
-let x' = <@ x @>
-let y' = <@ y @>
-let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
-let P,N,Q,S = var4<bool>
-let P', Q', N' = <@ P @>, <@ Q @>, <@ N @>
+let p,q,r,s = var4'<bool> "p" "q" "r" "s"
+let x,y = var2'<bool> "x" "y"
+let P,N,Q,S = var4'<bool> "P" "N" "Q" "S"
 
-let ``9.3a`` = theorem pred_calculus <@ forall x N P = (forall' x (not N ||| P)) @> [
-    trade_forall_implies x' N' P'  |> L
-    ident_implies_not_or <@ N @> <@ P @> |> L
+let ``9.3a`` = theorem pred_calculus <@ forall %x %N %P = (forall' %x (not %N ||| %P)) @> [
+    trade_forall_implies x N P  |> L
+    ident_implies_not_or N P |> L
 ]
 
-let ``9.3b`` = theorem pred_calculus <@ forall x N P = (forall' x ((N |&| P) = N)) @> [
-    trade_forall_implies x' N' P' |> L
-    ident_implies_eq_and_eq N' P' |> L
+let ``9.3b`` = theorem pred_calculus <@ forall %x %N %P = (forall' %x ((%N |&| %P) = %N)) @> [
+    trade_forall_implies x N P |> L
+    ident_implies_eq_and_eq N P |> L
 ]
 
-let ``9.3c`` = theorem pred_calculus <@ forall x N P = (forall' x ((N ||| P) = P)) @> [
-    trade_forall_implies x' <@ N @> <@ P @>  |> L
-    def_implies' N' P' |> L
+let ``9.3c`` = theorem pred_calculus <@ forall %x %N %P = (forall' %x ((%N ||| %P) = %P)) @> [
+    trade_forall_implies x N P |> L
+    def_implies' N P |> L
 ]
 
-let ``9.4a`` = theorem pred_calculus <@ forall x (Q |&| N) P = (forall x Q (N ==> P)) @> [
-    trade_forall_implies x' <@ Q |&| N @> P' |> L
+let ``9.4a`` = theorem pred_calculus <@ forall %x (%Q |&| %N) %P = (forall %x %Q (%N ==> %P)) @> [
+    trade_forall_implies x <@ %Q |&| %N @> P |> L
     shunt |> QB |> L'
-    trade_forall_implies x' Q' <@ N==> P @> |> Commute |> L  
+    trade_forall_implies x Q <@ %N==> %P @> |> Commute |> L  
 ]
 
-let ``9.4b``= theorem pred_calculus <@ forall x (Q |&| N) P = (forall x Q (not N ||| P)) @> [
-    trade_forall_implies x' <@ Q |&| N @> P' |> L
+let ``9.4b``= theorem pred_calculus <@ forall %x (%Q |&| %N) %P = (forall %x %Q (not %N ||| %P)) @> [
+    trade_forall_implies x <@ %Q |&| %N @> P |> L
     shunt |> QB |> L'
-    trade_forall_implies x' <@ Q @> <@ N==> P @> |> Commute |> L
-    ident_implies_not_or N' P' |> L
+    trade_forall_implies x <@ %Q @> <@ %N==> %P @> |> Commute |> L
+    ident_implies_not_or N P |> L
 ]
 
 let ``9.6`` = theorem pred_calculus <@ forall x N P = (P ||| forall' x (not N))  @> [

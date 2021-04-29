@@ -3,8 +3,6 @@
 open FSharp.Quotations
 open PropCalculus
 
-//type NotOccursFree (vars) (expr:Expr)
-
 /// Predicate calculus using the axioms and rules of S.
 module PredCalculus =
     let pred_calculus = Theory.S
@@ -41,12 +39,6 @@ module PredCalculus =
     let inst' x P = Instantiate pred_calculus <@ forall' %x %P @> P [ident_conseq_true P |> Commute |> R; def_true P |> R]
 
     (* Theorems *)
-
-    /// forall x N P = (N ==> P)
-    let inst x N P = ident pred_calculus <@ forall %x %N %P = (%N ==> %P)@> [
-        trade_body |> L
-        inst' x <@ %N ==> %P @> |> LR
-    ]
 
     /// forall x N P = (forall x true (N ==> P))
     let trade_forall_implies x N P = id_ax pred_calculus <@ forall %x %N %P = (forall %x true (%N ==> %P)) @>
@@ -278,7 +270,8 @@ module PredCalculus =
         idemp |> QB |> QB' |> L'
     ]
 
-    /// exists x N P ==> Q = (N |&| P ==> Q)
+    /// exists x N P ==> Q ==> (N |&| P ==> Q)
+    (*
     let ident_exists_implies x N P Q = ident pred_calculus <@ exists %x %N %P ==> %Q = (%N |&| %P ==> %Q) @> [
         trade_body |> L |> L'
         ident_implies_not_or <@ (exists' %x (%N |&| %P)) @> Q |> L
@@ -286,3 +279,4 @@ module PredCalculus =
         inst' x <@ not (%N |&| %P)@> |> L |> L'
         ident_implies_not_or <@ %N |&| %P@> Q |> Commute |> L   
     ]
+    *)

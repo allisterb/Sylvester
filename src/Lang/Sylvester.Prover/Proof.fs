@@ -411,10 +411,22 @@ module ProofOps =
     
     let ApplyRight = Apply.R
     
+    let ApplyBoth = Apply.LR
+
+    let ApplyBody = Apply.QB
+
+    let ApplyRange = Apply.QR
+
     let AfterLeft = Apply.L'
 
     let AfterRight = Apply.R'
     
+    let AfterBoth = Apply.LR'
+
+    let AfterBody = Apply.QB'
+
+    let AfterRange = Apply.QR'
+
     let print_formula (p:Proof) = p.Theory.PrintFormula
     
     let last_state (p:Proof) = p.LastState
