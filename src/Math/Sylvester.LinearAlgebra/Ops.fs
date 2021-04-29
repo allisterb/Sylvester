@@ -67,9 +67,9 @@ type MathNetLinearAlgebraSymbolic() =
 
 [<AutoOpen>]
 module LinearAlgbra =
-    let (|LinearAlgebraNumericOpType|_|):Type->Type option =
+    let (|LinearAlgebraNumericOpType|_|):Type->unit option =
         function
-        | t when t.Name = "Single" || t.Name = "Double" || t.Name = "Complex" || t.Name = "Complex32" -> Some t
+        | t when t.Name = "Single" || t.Name = "Double" || t.Name = "Complex" || t.Name = "Complex32" -> Some()
         | _ -> None
     
     let mutable defaultLinearAlgebraNumericOps = new MathNetLinearAlgebraNumeric() :> ILinearAlgebraNumericOps

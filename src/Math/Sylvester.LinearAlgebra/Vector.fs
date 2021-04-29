@@ -16,6 +16,11 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
     member val Expr' = Array.map MathNetExpr.fromQuotation expr
     member val Display = expr
+    member x.AsNumeric() = 
+        let t= typeof<'t>
+        match t with
+        | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
+        | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     interface IPartialShape<one> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
@@ -54,3 +59,4 @@ type VecF<'dim0 when 'dim0 :> Number> = Vec<'dim0, float32>
 
 module Vector =
     let add (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
+    let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
