@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Scalar.fs" />
     <Compile Include="Shapes.fs" />
     <Compile Include="Ops.fs" />
+    <Compile Include="Scalar.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Matrix.fs" />
   </ItemGroup>

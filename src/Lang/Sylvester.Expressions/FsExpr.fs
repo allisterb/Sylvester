@@ -131,6 +131,7 @@ module FsExpr =
         | Value(v, t) when t = typeof<'t> -> v :?> 't
         | ValueWithName(v, t, _) when t = typeof<'t> -> v :?> 't
         | WithValue(v, t, _ ) when t = typeof<'t> -> v :?> 't
+        | Var _ -> Unchecked.defaultof<'t>
         | expr -> failwithf "The expression %A has type %s and is not like a value of type %s." (expr) (expr.Type.Name) (typeof<'t>.Name)
 
     let getVal''<'t> =
@@ -291,6 +292,10 @@ module FsExpr =
         let e = expand expr
         <@ %%e:'a @>
 
+    let expand''<'t> (expr:Expr) =
+        let e = expand expr
+        <@ %%e:'t @> |> expand'<'t, 't>
+
     let expand_left = 
         function
         | Call(_,_,l::r::[]) when l.Type = r.Type -> expand l 
@@ -376,4 +381,7 @@ module FsExpr =
         let l = expand_list list
         l
 
-    let evaluate q = FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
+    let evaluate (q:Expr<'t>) = 
+        match q with
+        | Var _ -> Unchecked.defaultof<'t>
+        | _ -> FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q

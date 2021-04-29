@@ -11,6 +11,15 @@ type _Vector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) an
 
 type _Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'t>
 
+(*
+type IScalarSymbolicOps =
+    abstract Add:Expr<'t> -> Expr<'t> -> Expr<'t>
+    abstract AddL:Expr<'t> -> 't -> Expr<'t>
+    abstract AddR:'t -> Expr<'t> -> Expr<'t>
+    abstract Subtract:Expr<'t> -> Expr<'t> -> Expr<'t>
+    abstract Multiply:Expr<'t> -> Expr<'t> -> Expr<'t>
+    abstract Divide:Expr<'t> -> Expr<'t> -> Expr<'t>
+*)
 type IVectorNumericOps =
     abstract Add:_Vector<'t> -> _Vector<'t> -> _Vector<'t>
     abstract Subtract:_Vector<'t> -> _Vector<'t> -> _Vector<'t>
@@ -54,12 +63,7 @@ type MathNetLinearAlgebraNumeric() =
 
 type MathNetLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with
-        member x.Add l r = 
-            let vars = Ops.vars [l;r]
-            let l',r' = Ops.fromQ l, Ops.fromQ r             
-            Array.map2 (+) l' r' 
-            |> Array.map (Ops.toQ<'t> vars)
-            |> Array.map (fun e -> <@ %%e:'t @>)
+        member x.Add l r = Array.map2 call_add l r |> Array.map expand''
         
         member x.Subtract l r = 
             let vars = Ops.vars [l;r]

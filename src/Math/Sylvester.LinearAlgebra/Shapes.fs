@@ -109,6 +109,9 @@ type IPartialShape<'n when 'n :> Number> =
 type IFullShape<'n when 'n :> Number> = 
     inherit IPartialShape<'n>
 
+type IScalar =
+    inherit IFullShape<rank.zero>
+
 type IVector<'n> = 
     inherit IFullShape<rank.one>
     abstract Dim0: 'n
