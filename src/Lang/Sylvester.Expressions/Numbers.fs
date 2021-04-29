@@ -208,6 +208,7 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         MathNet.Numerics.BigRational.FromBigIntFraction(r.Numerator, r.Denominator)
     static member op_Explicit(r: BigInteger): Rational = Rational(r)
     static member op_Explicit(r: int): Rational = Rational(r, 1)   
+    static member op_Explicit(r: float): Rational = Rational(r)
     static member op_Equality (l:Rational, r:Rational) = l.Equals r
     static member op_Inequality (l:Rational, r:Rational) = not <| l.Equals r
 

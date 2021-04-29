@@ -26,7 +26,7 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     interface IPartialShape<two> with
         member val Rank = Some 2 with get,set
         member val Dims = if data.Length <> 0 then [| data.[0].LongLength; data.LongLength |] |> Some else None with get,set
-        member val Data = data :> Array with get, set
+       
     new(e:Expr<'t list list>) = Matrix(e, true)
     new(d:'t list list) = Matrix(<@ d @>, false)
     new(d:'t array array) = let _d = d |> Array.map Array.toList |> Array.toList in Matrix(_d)

@@ -56,6 +56,7 @@ module FsExpr =
             .Add("Single", <@ (+) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (+))
             .Add("Double", <@ (+) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (+))
             .Add("Decimal", <@ (+) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (+))
+            .Add("Rational", <@ (+) 0Q 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (+))
   
     let subOp = 
         Map.empty
@@ -68,31 +69,35 @@ module FsExpr =
             .Add("Single", <@ (-) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
             .Add("Double", <@ (-) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
             .Add("Decimal", <@ (-) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
+            .Add("Rational", <@ (-) 0Q 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
 
     let mulOp = 
         Map.empty
-            .Add("UInt16", <@ (*) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Int16", <@ (*) 0s 0s @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
-            .Add("UInt32", <@ (*) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Int32", <@ (*) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
-            .Add("UInt64", <@ (*) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Int64", <@ (*) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Single", <@ (*) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Double", <@ (*) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Decimal", <@ (*) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            
+            .Add("UInt16", <@ (*) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+            .Add("Int16", <@ (*) 0s 0s @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (*))
+            .Add("UInt32", <@ (*) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+            .Add("Int32", <@ (*) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (*))
+            .Add("UInt64", <@ (*) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+            .Add("Int64", <@ (*) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+            .Add("Single", <@ (*) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+            .Add("Double", <@ (*) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+            .Add("Decimal", <@ (*) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+            .Add("Rational", <@ (*) 0Q 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
+
+
     let divOp = 
         Map.empty
-            .Add("UInt16", <@ (/) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Int16", <@ (/) 0s 0s @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
-            .Add("UInt32", <@ (/) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Int32", <@ (/) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
-            .Add("UInt64", <@ (/) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Int64", <@ (/) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (-))
-            .Add("Single", <@ (/) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (-))
-            .Add("Double", <@ (/) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (-))
-            .Add("Decimal", <@ (/) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (-))
- 
+            .Add("UInt16", <@ (/) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Int16", <@ (/) 0s 0s @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("UInt32", <@ (/) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (/))
+            .Add("Int32", <@ (/) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (/))
+            .Add("UInt64", <@ (/) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (/))
+            .Add("Int64", <@ (/) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (/))
+            .Add("Single", <@ (/) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Double", <@ (/) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Decimal", <@ (/) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Rational", <@ (/) 0Q 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+
     let negateOp = 
         Map.empty
             .Add("Int16", <@ (~-) 0s @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (-))
@@ -267,6 +272,7 @@ module FsExpr =
                 | WithValue(_, _, List el) -> rexpand vars (Expr.NewArray(t, el))
                 | ValueWithName(o, t, _) -> Expr.Value(o, t)
                 | e -> failwithf "Unknown expression trying to expand List.toArray: %A." e
+            | Call(None, Op "FromInt32" ,Value(v, _)::[]) -> Expr.Value(Rational((v :?> int32), 1))
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])

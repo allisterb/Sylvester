@@ -28,6 +28,7 @@ module MathNetExpr =
         | SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow(fromQuotation xt, fromQuotation yt)
         | SpecificCall <@@ Numbers.real @@> (_, _, Int32 n::[]) -> Expression.Real (float n)
         | SpecificCall <@@ Numbers.real @@> (_, _, e::[]) -> fromQuotation e
+        | Call(None, Op "FromInt32" ,Value(v, _)::[]) -> fromInt32 (v :?> int)
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
@@ -75,6 +76,8 @@ module MathNetExpr =
             | Value.Number n -> 
                 if typeof<'t> = typeof<int> && n.IsInteger then 
                     Expr.Value(int n.Numerator) |> Some
+                else if typeof<'t> = typeof<Rational> then 
+                    Expr.Value(Rational(n.Numerator, n.Denominator)) |> Some
                 else
                     Expr.Value(Convert.ChangeType(float n, typeof<'t>) :?> 't) |> Some
             | v -> failwithf "Could not convert the value %A to an Expr." v
@@ -204,7 +207,7 @@ module MathNetExpr =
 
     let toQuotation'<'t> (vars: Var list) (expr: Expression) =
         match toQuotation<'t> vars expr with
-        | Some e -> e
+        | Some e -> e |> expand''<'t>
         | None -> failwithf "Failed to convert expression %s to quotation" (Infix.format expr)
 
     let toIdentifier(v:Var) = 
@@ -212,12 +215,11 @@ module MathNetExpr =
         |> Symbol 
         |> Identifier
 
-    let callUnary (op:Expression -> Expression) (x:Expr) = 
+    let callUnary<'t> (op:Expression -> Expression) (x:Expr<'t>) = 
         x
         |> fromQuotation 
         |> op 
-        |> toQuotation (x |> get_vars)
-        |> Option.get
+        |> toQuotation'<'t> (x |> get_vars)
 
     let callBinary (op:Expression -> Expression -> Expression) (p:Expression) (x:Expr) = 
         x 

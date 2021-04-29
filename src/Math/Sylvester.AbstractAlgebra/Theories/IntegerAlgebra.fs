@@ -53,15 +53,10 @@ module IntegerAlgebra =
         | Add(Int16 l, Int16 r) -> <@@ l + r @@>  
         | Add(Int32 l, Int32 r) -> <@@ l + r @@>
         | Add(Int64 l, Int64 r) -> <@@ l + r @@>
-        | Add(Decimal l, Decimal r) -> <@@ l + r @@>  
-        | Add(Decimal l, Decimal r) -> <@@ l + r @@>
-        | Add(Decimal l, Decimal r) -> <@@ l + r @@>
-        | Add(Double l, Double r) -> <@@ l + r @@>  
+        | Add(Single l, Single r) -> <@@ l + r @@>  
         | Add(Double l, Double r) -> <@@ l + r @@>
-        | Add(Double l, Double r) -> <@@ l + r @@>
-        | Add(Decimal l, Decimal r) -> <@@ l + r @@>  
         | Add(Decimal l, Decimal r) -> <@@ l + r @@>
-        | Add(Decimal l, Decimal r) -> <@@ l + r @@>
+        | Add(Rational l, Rational r) -> <@@ l + r @@>
 
         | Multiply(UInt16 l, UInt16 r) -> <@@ l * r @@>  
         | Multiply(UInt32 l, UInt32 r) -> <@@ l * r @@>
@@ -69,32 +64,22 @@ module IntegerAlgebra =
         | Multiply(Int16 l, Int16 r) -> <@@ l * r @@>  
         | Multiply(Int32 l, Int32 r) -> <@@ l * r @@>
         | Multiply(Int64 l, Int64 r) -> <@@ l * r @@>
-        | Multiply(Decimal l, Decimal r) -> <@@ l * r @@>  
-        | Multiply(Decimal l, Decimal r) -> <@@ l * r @@>
-        | Multiply(Decimal l, Decimal r) -> <@@ l * r @@>
-        | Multiply(Double l, Double r) -> <@@ l * r @@>  
+        | Multiply(Single l, Single r) -> <@@ l * r @@>  
         | Multiply(Double l, Double r) -> <@@ l * r @@>
-        | Multiply(Double l, Double r) -> <@@ l * r @@>
-        | Multiply(Decimal l, Decimal r) -> <@@ l * r @@>  
         | Multiply(Decimal l, Decimal r) -> <@@ l * r @@>
-        | Multiply(Decimal l, Decimal r) -> <@@ l * r @@>
-
+        | Multiply(Rational l, Rational r) -> <@@ l * r @@>
+        
         | Subtract(UInt16 l, UInt16 r) -> <@@ l - r @@>  
         | Subtract(UInt32 l, UInt32 r) -> <@@ l - r @@>
         | Subtract(UInt64 l, UInt64 r) -> <@@ l - r @@>
         | Subtract(Int16 l, Int16 r) -> <@@ l - r @@>  
         | Subtract(Int32 l, Int32 r) -> <@@ l - r @@>
         | Subtract(Int64 l, Int64 r) -> <@@ l - r @@>
-        | Subtract(Decimal l, Decimal r) -> <@@ l - r @@>  
-        | Subtract(Decimal l, Decimal r) -> <@@ l - r @@>
-        | Subtract(Decimal l, Decimal r) -> <@@ l - r @@>
-        | Subtract(Double l, Double r) -> <@@ l - r @@>  
+        | Subtract(Single l, Single r) -> <@@ l - r @@>  
         | Subtract(Double l, Double r) -> <@@ l - r @@>
-        | Subtract(Double l, Double r) -> <@@ l - r @@>
-        | Subtract(Decimal l, Decimal r) -> <@@ l - r @@>  
         | Subtract(Decimal l, Decimal r) -> <@@ l - r @@>
-        | Subtract(Decimal l, Decimal r) -> <@@ l - r @@>
-
+        | Subtract(Rational l, Rational r) -> <@@ l - r @@>
+        
         | expr -> traverse expr _reduce_constants
 
     let rec _right_assoc =
