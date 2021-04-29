@@ -511,22 +511,23 @@ module LogicalRules =
     /// Substitute the LHS q of a proven identity p ==> (q = r) with the RHS r in a proof where p is one of the conjuncts of the antecedent.
     let Deduce'(t:Theorem) = t.Proof |> Subst''
 
-    /// Instantiate a quantifier at a single point or value e.g forall' x P[x := e] = P[x := e].
-    let Instantiate (theory:Theory) (_quantifier:Expr) (_value:Expr) (steps: RuleApplication list) =
+    /// Instantiate a quantifier at a single point or value e.g forall x P[x := e] ==> P[x := e].
+    let Instantiate (theory:Theory) (_quantifier:Expr) (_value:Expr) =
         let print_formula = theory.PrintFormula
         let quantifier, op, bound, body = 
             match (expand _quantifier) with 
-            | Quantifier (op, [x], DerivedPatterns.Bool true, body) as q -> q, op, x, body
-            | Quantifier _ as q -> failwithf "The quantifier %s must have a range of true to be replaced with an instantiation." (print_formula q)
+            | Quantifier (op, [x], Equals(Var x', v), body) as q when sequal v _value && vequal x x'-> q, op, x, body
+            | Quantifier _ as q -> failwithf "The quantifier expression %s does not have the required form for instantiation." (print_formula q)
             | _ -> failwithf "The expression %s is not a quantifier." (_quantifier |> expand |> print_formula)
         let var_inst = bound
         do if occurs_free [var_inst] body then failwithf "The variable %A occurs free in the body of quantifier %s" var_inst (print_formula quantifier)
         let var_expr = vars_to_tuple [bound]
         let value = expand _value
+        let b = Expr.Var bound
         let inst_value = subst_var_value var_inst value body
-        let qop = call op (var_expr::(<@@ true @@>)::body::[])        
-        let stmt = call <@ (=) @> (qop::inst_value::[])
-        let p = Proof(stmt, theory, steps, true) in p |> Theorem |> Ident
+        let qop = call op (var_expr::(<@@ %%var_expr = %%value @@>)::body::[])        
+        let stmt = call <@ (==>) @> (qop::inst_value::[])
+        let p = Proof(stmt, theory, [], true) in p |> Theorem |> Ident
 
     let Define (theory:Theory) (expr:Expr) = 
         let rec subst (lhs:Expr, rhs:Expr) = 

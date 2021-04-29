@@ -366,9 +366,6 @@ module Patterns =
         function
         | Equals(Quantifier(_,[x], Equals(Var x', E), P), P') when not (occurs_free [x] E) && vequal x x' && sequal P' (subst_var_value x E P) -> 
             pattern_desc "the One-Point Rule" <@ fun x E P -> (forall x (x = E) P) = P @> |> Some
-        | Equals(Quantifier(_,[x], Bool true, P), Implies(Equals(E, E'), P')) when not (occurs_free [x] E) && sequal E E' && sequal P' (subst_var_value x E P) -> 
-            pattern_desc' "the One-Point Rule" |> Some
-
         | _ -> None
 
     let (|Nesting|_|) =
