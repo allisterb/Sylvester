@@ -11,7 +11,7 @@ open MathNetExpr
 
 [<AutoOpen>]
 module Symbolic =
-    let print_formula expr = expr |> expand |> MathNetExpr.fromQuotation |> Infix.format
+    let print_expr expr = expr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let simplify (x:Expr<'t>) = x |> callUnary<'t> id
         

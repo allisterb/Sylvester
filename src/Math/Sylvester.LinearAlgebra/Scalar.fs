@@ -6,14 +6,17 @@ open FSharp.Quotations
 
 open MathNet.Numerics
 
+[<StructuredFormatDisplay("{Display}")>]
 type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> internal (e:Expr<'t>) =
     let expr = expand'<'t, 't> e
+    let expr' = expr |> MathNetExpr.fromQuotation
     member val Expr = expr
-    member val Expr' = expr |> MathNetExpr.fromQuotation
+    member val Expr' = expr'
     interface IScalar with
         member val Rank = Some 0 with get,set
         member val Dims = [| |] |> Some with get,set
-      
+    member val Display = print_expr expr
+
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = 
         let e = call_add (l.Expr) (r.Expr) |> expand''<'t> in Scalar<'t> e
 

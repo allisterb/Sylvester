@@ -25,12 +25,15 @@ module MathNetExpr =
         | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) * (fromQuotation yt)
         | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) / (fromQuotation yt)
         | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) ** (fromQuotation yt)
-        | SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow(fromQuotation xt, fromQuotation yt)
+        //| SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow(fromQuotation xt, fromQuotation yt)
+        
         | SpecificCall <@@ Numbers.real @@> (_, _, Int32 n::[]) -> Expression.Real (float n)
         | SpecificCall <@@ Numbers.real @@> (_, _, e::[]) -> fromQuotation e
-        
         | Call(None, Op "FromInt32" ,Value(v, _)::[]) -> fromInt32 (v :?> int)
+        
         | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)
+        | Call(None, Op "Sqrt" ,v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
+        
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
@@ -44,6 +47,7 @@ module MathNetExpr =
         | Single d -> Expression.Real (float d)
         | Rational r -> Number (BigRational.FromBigIntFraction(r.Numerator, r.Denominator))
         | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
+        
         | Let (_, _, t) -> fromQuotation t
         | Lambda (_, t) -> fromQuotation t
         | _ -> failwithf "Expression %A is not currently supported." <| q
@@ -128,6 +132,8 @@ module MathNetExpr =
                     Option.map2 div nExp dExp
             | Function (func, par) ->
                 let convertFunc : Function -> MethodInfo option = function
+                    | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
+                    | Abs  ->  absOp.[typeof<'t>.Name] |> Some 
                     | Sin  -> getMethodInfo <@ Math.Sin @> |> Some
                     | Cos  -> getMethodInfo <@ Math.Cos @> |> Some
                     | Tan  -> getMethodInfo <@ Math.Tan @> |> Some
@@ -158,10 +164,6 @@ module MathNetExpr =
                     //| AiryBiPrime -> Some (mathCall1 "AiryBiPrime")
                     | Ln   -> getMethodInfo <@ Math.Log @> |> Some
                     //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
-                    | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
-                    | Abs  ->  absOp.[typeof<'t>.Name] |> Some 
-                    //    let a = Math.Abs
-                    //    let b = a.GetType
                     | e    -> failwithf "Could not convert function %A to quotation." e
                 let f = convertFunc func
                 let e = convertExpr par
@@ -185,7 +187,7 @@ module MathNetExpr =
                 let a = convertExpr x
                 let b = convertExpr (Power(n, minusOne))
                 if n = Operators.two then
-                    Option.map (fun x -> Expr.Call((getMethodInfo <@ Math.Sqrt @>), [x])) a
+                    Option.map (fun x -> call_sqrt x) a
                 else
                     let a = convertExpr x
                     let b = convertExpr (Power(n, minusOne))
