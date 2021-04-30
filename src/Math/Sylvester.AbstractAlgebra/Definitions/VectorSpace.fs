@@ -12,11 +12,11 @@ type IVectorSpace<'n, 't, 'v when 'v: equality and 'n :> Number and 't: equality
     abstract Dim0:'n
     abstract Field:IField<'t>
     abstract Op:BinaryOp<'v>
-    abstract Op2:BinaryOp<'v>
+    abstract Op2:BinaryOp<'t, 'v>
     
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type VectorSpace<'n, 't, 'v when 'v: equality and 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    (field: IField<'t>, op: BinaryOp<'v>, op2: BinaryOp<'v>) =
+    (field: IField<'t>, op: BinaryOp<'v>, op2: BinaryOp<'t, 'v>) =
     member val Field = field
     member val Op = op
     member val Op2 = op2

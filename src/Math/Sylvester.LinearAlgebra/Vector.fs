@@ -12,10 +12,15 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     internal(e: Expr<'t> array) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand'<'t, 't>
+    let expr' = Array.map MathNetExpr.fromQuotation expr
     member val Expr = expr
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
-    member val Expr' = Array.map MathNetExpr.fromQuotation expr
-    member val Display = expr
+    member val Expr' = expr'
+    member val Display = 
+        expr 
+        |> Array.skip 1 
+        |> Array.fold(fun s e -> sprintf "%s, %s" s (print_expr e)) (print_expr expr.[0]) 
+        |> sprintf "[%s]"
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
@@ -52,18 +57,29 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     static member (*) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
         let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Scalar<'t> e
 
+    static member (*) (l: Scalar<'t>, r: Vector<'dim0, 't>) = 
+        r.Expr |> Array.map(fun e -> expand''<'t> <| call_mul (l.Expr) e) |> Vector<'n, 't>
+
+    static member (*) (l: Vector<'dim0, 't>, r: Scalar<'t>) = 
+        l.Expr |> Array.map(fun e -> expand''<'t> <| call_mul e (r.Expr) ) |> Vector<'n, 't>
+
+    static member (*) (l: Vector<'dim0, 't>, r: 't) : Vector<'dim0, 't> = let r' = Scalar<'t>(r) in l * r' 
+
+    static member (*) (l: 't, r: Vector<'dim0, 't>) : Vector<'dim0, 't> = let l' = Scalar<'t>(l) in l' * r
+
 type Vec<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
     Vector<'dim0, 't>
 type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, real>
-type VecF<'dim0 when 'dim0 :> Number> = Vec<'dim0, float32>
+type VecQ<'dim0 when 'dim0 :> Number> = Vec<'dim0, rat>
 
 module Vector =
-    let add (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
-    let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
+    let vadd (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
+    let vsub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
+    let inline vsmul (l:'t) (r:Vector<'n, 't>) = l * r
 
     let vsimplify (l:Vector<'n,'t>) = l.Expr |> Array.map simplify |> Vector<'n,'t>
     
-    let norm (l:Vector<'n, 't>) =
+    let vnorm (l:Vector<'n, 't>) =
         let p = l * l in p |> ssimplify |> sexpr |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
 
-    let dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> ssimplify
+    let dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> ssimplify

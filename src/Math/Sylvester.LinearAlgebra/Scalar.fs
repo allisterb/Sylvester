@@ -16,6 +16,7 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member val Rank = Some 0 with get,set
         member val Dims = [| |] |> Some with get,set
     member val Display = print_expr expr
+    new(d:'t) = Scalar<@ d @>
 
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = 
         let e = call_add (l.Expr) (r.Expr) |> expand''<'t> in Scalar<'t> e
