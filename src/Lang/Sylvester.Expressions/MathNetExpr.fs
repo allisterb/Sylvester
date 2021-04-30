@@ -28,7 +28,9 @@ module MathNetExpr =
         | SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow(fromQuotation xt, fromQuotation yt)
         | SpecificCall <@@ Numbers.real @@> (_, _, Int32 n::[]) -> Expression.Real (float n)
         | SpecificCall <@@ Numbers.real @@> (_, _, e::[]) -> fromQuotation e
+        
         | Call(None, Op "FromInt32" ,Value(v, _)::[]) -> fromInt32 (v :?> int)
+        | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
@@ -157,7 +159,7 @@ module MathNetExpr =
                     | Ln   -> getMethodInfo <@ Math.Log @> |> Some
                     //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
-                    | Abs  -> getMethodInfo <@ Math.Abs @> |> Some 
+                    | Abs  ->  absOp.[typeof<'t>.Name] |> Some 
                     //    let a = Math.Abs
                     //    let b = a.GetType
                     | e    -> failwithf "Could not convert function %A to quotation." e

@@ -84,7 +84,6 @@ module FsExpr =
             .Add("Decimal", <@ (*) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
             .Add("Rational", <@ (*) 0Q 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (*))
 
-
     let divOp = 
         Map.empty
             .Add("UInt16", <@ (/) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
@@ -106,7 +105,24 @@ module FsExpr =
             .Add("Single", <@ (~-) 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (-))
             .Add("Double", <@ (~-) 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (-))
             .Add("Decimal", <@ (~-) 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (-))
-    
+            .Add("Rational", <@ (~-) 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (-))
+        
+    let absOp = 
+        Map.empty
+            .Add("Int16", <@ abs 0s @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Int32", <@ abs 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (/))
+            .Add("Int64", <@ abs 0L @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (/))
+            .Add("Single", <@ abs 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Double", <@ abs 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Decimal", <@ abs 0m @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Rational", <@ abs 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+
+    let sqrtOp = 
+        Map.empty
+            .Add("Single", <@ sqrt 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Double", <@ sqrt 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+            .Add("Rational", <@ sqrt 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
+
     let rec getExprName = function
     | Call(None, info, _) -> info.Name
     | Lambda(_, expr) -> getExprName expr
@@ -339,6 +355,10 @@ module FsExpr =
 
     let call_div (l:Expr) (r:Expr) = binary_call(None, divOp.[l.Type.Name], l, r)
 
+    let call_abs (r:Expr) = unary_call(None, absOp.[r.Type.Name], r)
+
+    let call_sqrt (r:Expr) = unary_call(None, sqrtOp.[r.Type.Name], r)
+
     let expand_list (expr:Expr): Expr list =
         let expr' = expand expr
         match expr' with
@@ -354,38 +374,10 @@ module FsExpr =
 
     let expand_lists (expr: Expr<'t list list>) = expr |> expand_list |> List.map expand_list
 
-    let expand_list_values<'t> expr = 
-        expr 
-        |> expand_list 
-        |> List.map (fun el -> 
-            match el with 
-            | List l -> l |> List.map getVal<'t> 
-            | _ -> failwithf "The expression %s is not a list." <| src el)
-
-    let expand_list_values'<'t> expr = 
-        expr 
-        |> expand_list 
-        |> List.map (fun el -> 
-            match el with 
-            | List l -> l |> List.map getVal'<'t> 
-            | _ -> failwithf "The expression %s is not a list." <| src el)
-
-    let expand_list_values''<'t> expr = 
-        expr 
-        |> expand_list 
-        |> List.map (fun el -> 
-            match el with 
-            | List l -> l |> List.map getVal''<'t> 
-            | _ -> failwithf "The expression %s is not a list." <| src el)
-
     let expand_equality =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
         | expr -> failwithf "The expression %s is not a equality expression." <| src expr
-
-    let sprint_list_values list =
-        let l = expand_list list
-        l
 
     let evaluate (q:Expr<'t>) = 
         match q with

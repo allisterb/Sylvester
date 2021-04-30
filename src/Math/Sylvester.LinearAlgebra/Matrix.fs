@@ -36,7 +36,7 @@ type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and
     member x.toInt64() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToInt64 a)) |> Matrix
     member x.toRational() = x._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Rational(Convert.ToDouble(a)))) |> Matrix
     
-    static member NumericOps = defaultLinearAlgebraNumericOps
+    //static member NumericOps = defaultLinearAlgebraNumericOps
     static member create(x: Array) = Matrix(x :?> 't [] [])
     static member create(x:_Matrix<'t>) = Matrix<'t>(let a = x.AsColumnArrays() in if not(isNull (a)) then a else x.ToColumnArrays()) 
     static member internal toDouble(m:Matrix<'t>) = m._Array |> Array.map(fun ar -> ar |> Array.map (fun a -> Convert.ToDouble a)) |> Matrix.create

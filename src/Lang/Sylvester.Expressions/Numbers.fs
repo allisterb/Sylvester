@@ -97,6 +97,12 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         else 
             Rational (BigInteger.Pow (num.Numerator, n), BigInteger.Pow (num.Denominator, n))
         
+    static member Abs(r: Rational) = Rational((abs r.Numerator), (abs r.Denominator))
+
+    static member Sqrt(r: Rational) = 
+        let n, d = (float) r.Numerator, (float) r.Denominator
+        Rational((sqrt n), (sqrt d))
+    
     static member (~+) (r : Rational) = r
 
     static member (~-) (num : Rational) = Rational(-num.Numerator, num.Denominator)

@@ -17,7 +17,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val Expr' = Array.map MathNetExpr.fromQuotation expr
     member val Display = expr
     member x.AsNumeric() = 
-        let t= typeof<'t>
+        let t = typeof<'t>
         match t with
         | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
@@ -60,3 +60,8 @@ type VecF<'dim0 when 'dim0 :> Number> = Vec<'dim0, float32>
 module Vector =
     let add (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
     let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
+
+    let vsimplify (l:Vector<'n,'t>) = l.Expr |> Array.map simplify |> Vector<'n,'t>
+    
+    let norm (l:Vector<'n, 't>) =
+        let p = l * l in p |> ssimplify |> sexpr |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
