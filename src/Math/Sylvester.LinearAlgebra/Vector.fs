@@ -65,3 +65,5 @@ module Vector =
     
     let norm (l:Vector<'n, 't>) =
         let p = l * l in p |> ssimplify |> sexpr |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
+
+    let dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> ssimplify

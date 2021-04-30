@@ -97,6 +97,10 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         else 
             Rational (BigInteger.Pow (num.Numerator, n), BigInteger.Pow (num.Denominator, n))
         
+    static member Pow (num : Rational, pow : Rational) =
+        let g, p = (float) num,  (float) pow
+        Rational(g ** p)
+
     static member Abs(r: Rational) = Rational((abs r.Numerator), (abs r.Denominator))
 
     static member Sqrt(r: Rational) = 
@@ -219,6 +223,8 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     static member op_Inequality (l:Rational, r:Rational) = not <| l.Equals r
 
 type real = float
+
+type rat = Rational
 
 [<RequireQualifiedAccess>]
  module NumericLiteralQ = 

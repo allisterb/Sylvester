@@ -123,6 +123,25 @@ module FsExpr =
             .Add("Double", <@ sqrt 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
             .Add("Rational", <@ sqrt 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (/))
 
+    let powOp = 
+        Map.empty
+            .Add("Single", <@ ( ** ) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+            .Add("Double", <@ ( ** ) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+            .Add("Rational", <@ ( ** ) 0Q 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+    
+    let pownOp = 
+        Map.empty
+            .Add("UInt16", <@ pown 0us 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+            .Add("Int16", <@ pown 0s 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+            .Add("UInt32", <@ pown 0u 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (pown))
+            .Add("Int32", <@ pown 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (pown))
+            .Add("UInt64", <@ pown 0UL 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (pown))
+            .Add("Int64", <@ pown 0L 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (pown))
+            .Add("Single", <@ pown 0.0f 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+            .Add("Double", <@ pown 0. 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+            .Add("Decimal", <@ pown 0m 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+            .Add("Rational", <@ pown 0Q 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+
     let rec getExprName = function
     | Call(None, info, _) -> info.Name
     | Lambda(_, expr) -> getExprName expr
@@ -358,6 +377,10 @@ module FsExpr =
     let call_abs (r:Expr) = unary_call(None, absOp.[r.Type.Name], r)
 
     let call_sqrt (r:Expr) = unary_call(None, sqrtOp.[r.Type.Name], r)
+
+    let call_pow (l:Expr) (r:Expr) = binary_call(None, powOp.[l.Type.Name], l, r)
+
+    let call_pown (l:Expr) (r:Expr) = binary_call(None, pownOp.[l.Type.Name], l, r)
 
     let expand_list (expr:Expr): Expr list =
         let expr' = expand expr

@@ -33,6 +33,7 @@ module MathNetExpr =
         
         | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)
         | Call(None, Op "Sqrt" ,v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
+            //Expression.Pow((fromQuotation v), Expression.Pow(Number(BigRational.FromInt 2), Number(-BigRational.One)))
         
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
@@ -191,14 +192,16 @@ module MathNetExpr =
                 else
                     let a = convertExpr x
                     let b = convertExpr (Power(n, minusOne))
-                    Option.map2 (fun x y -> Expr.Call ((<@ Math.Pow @> |> expand |> getFuncInfo ), x::y::[])) a b
+                    let t = a.Value.Type
+                    Option.map2 (fun x y -> if t = typeof<int> then call_pown x y else call_pow x y) a b
             | Power(Constant E, y) ->
                 let exponent = convertExpr y
                 Option.map (fun x -> Expr.Call((getMethodInfo <@ Math.Exp @>), [x])) exponent
             | Power(x, y) ->
-                let baseE = convertExpr x
-                let exponE = convertExpr y
-                Option.map2 (fun x y -> Expr.Call(<@ Math.Pow @> |> expand |> getFuncInfo, x::y::[])) baseE exponE
+                let a = convertExpr x
+                let b = convertExpr y
+                let t = a.Value.Type
+                Option.map2 (fun j k -> if t = typeof<int> then call_pown j k else call_pow j k) a b
             | expr -> failwithf "Did not convert %A." expr
         and compileFraction = 
             function
