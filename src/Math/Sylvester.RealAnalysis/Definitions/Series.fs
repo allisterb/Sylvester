@@ -5,9 +5,6 @@ open FSharp.Quotations
 
 module Series =
     [<Formula>]
-    let abs (r:real) :real= Math.Abs r
-
-    [<Formula>]
     let geometric_series (a:real) r = infinite_series (fun n -> a * r ** (real n - 1.))
     
     let geometric_series' (a:Expr<real>) = infinite_series' <@ fun n r -> %a * r ** (real n - 1.) @>

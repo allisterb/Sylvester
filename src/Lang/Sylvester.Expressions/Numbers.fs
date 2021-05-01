@@ -244,7 +244,7 @@ module Numbers =
         | :? int as i -> Rational(i, 1)
         | :? int64 as i -> Rational(i, 1L)
         | :? bigint as i -> Rational(i, bigint.One)
-        | :? float as f -> Rational(f, 1.)
+        | :? double as f -> Rational(f, 1.)
         | :? single as f -> Rational(f, 1.0f)
         | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'a>.Name
 
@@ -252,6 +252,8 @@ module Numbers =
 
     let neg_inf<'t> = Unchecked.defaultof<'t>
     
+    let inline inv n = n ** - 1.
+     
     let inline (..+) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (+) l r
 
     let inline (..-) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (-) l r

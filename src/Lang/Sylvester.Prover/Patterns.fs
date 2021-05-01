@@ -303,9 +303,10 @@ module Patterns =
         | _ -> None
 
     /// x + (-x) = zero
-    let (|Inverse|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) (inverse: Expr<'t -> 't>) (zero: Expr<'t>)   =
+    /// x + (1/x) = one
+    let (|Inverse|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) (inverse: Expr<'t -> 't>) (ident: Expr<'t>)   =
         function
-        | Binary eq (Binary op (a1, Unary inverse (a2)), z)  when sequal a1 a2 && sequal zero z -> pattern_desc' "Definition of Inverse" |> Some
+        | Binary eq (Binary op (a1, Unary inverse (a2)), z)  when sequal a1 a2 && sequal ident z -> pattern_desc' "Definition of Inverse" |> Some
         | _ -> None
 
     /// x + x = x

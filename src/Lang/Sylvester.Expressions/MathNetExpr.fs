@@ -25,16 +25,14 @@ module MathNetExpr =
         | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) * (fromQuotation yt)
         | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) / (fromQuotation yt)
         | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) ** (fromQuotation yt)
-        //| SpecificCall <@@ Math.Pow @@> (_, _, [xt; yt]) -> Expression.Pow(fromQuotation xt, fromQuotation yt)
         
         | SpecificCall <@@ Numbers.real @@> (_, _, Int32 n::[]) -> Expression.Real (float n)
         | SpecificCall <@@ Numbers.real @@> (_, _, e::[]) -> fromQuotation e
-        | Call(None, Op "FromInt32" ,Value(v, _)::[]) -> fromInt32 (v :?> int)
-        
+        | Call(None, Op "FromInt32" ,Value(v, _)::[]) when q.Type = typeof<Rational> -> fromInt32 (v :?> int)
+        | Call (None, Op "FromZero", _) when q.Type = typeof<Rational> -> Number(BigRational.Zero)
         | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)
         | Call(None, Op "Sqrt" ,v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
-            //Expression.Pow((fromQuotation v), Expression.Pow(Number(BigRational.FromInt 2), Number(-BigRational.One)))
-        
+          
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)

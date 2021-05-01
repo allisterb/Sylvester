@@ -142,6 +142,31 @@ module FsExpr =
             .Add("Decimal", <@ pown 0m 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
             .Add("Rational", <@ pown 0Q 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
 
+    let zeroVal = 
+        Map.empty
+            .Add("UInt16", <@ (+) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("Int16", <@ (+) 0s 0s @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("UInt32", <@ (+) 0u 0u @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("Int32", <@ (+) 0 0 @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("UInt64", <@ (+) 0UL 0UL @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("Int64", <@ (+) 0L 0L @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("Single", <@ (+) 0.0f 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("Double", <@ (+) 0. 0. @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("Decimal", <@ (+) 0m 0m @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+            .Add("Rational", <@ (+) 0Q 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
+
+    let oneVal = 
+        Map.empty
+            .Add("UInt16", <@ (+) 1us 1us @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Int16", <@ (+) 1s 1s @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("UInt32", <@ (+) 1u 1u @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Int32", <@ (+) 1 1 @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("UInt64", <@ (+) 1UL 1UL @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Int64", <@ (+) 1L 1L @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Single", <@ (+) 1.0f 1.0f @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Double", <@ (+) 1. 1. @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Decimal", <@ (+) 1m 1m @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Rational", <@ (+) 1Q 1Q @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
     let rec getExprName = function
     | Call(None, info, _) -> info.Name
     | Lambda(_, expr) -> getExprName expr
@@ -307,7 +332,8 @@ module FsExpr =
                 | WithValue(_, _, List el) -> rexpand vars (Expr.NewArray(t, el))
                 | ValueWithName(o, t, _) -> Expr.Value(o, t)
                 | e -> failwithf "Unknown expression trying to expand List.toArray: %A." e
-            | Call(None, Op "FromInt32" ,Value(v, _)::[]) -> Expr.Value(Rational((v :?> int32), 1))
+            | Call(None, Op "FromInt32" ,Value(v, _)::[]) as e when e.Type = typeof<Rational> -> Expr.Value(Rational((v :?> int32), 1))
+            | Call (None, Op "FromZero", _) as e -> e
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
                 let res = Expr.Applications(this, [ for a in args -> [a]])
@@ -376,12 +402,16 @@ module FsExpr =
 
     let call_abs (r:Expr) = unary_call(None, absOp.[r.Type.Name], r)
 
+    let call_neg (r:Expr) = unary_call(None, negateOp.[r.Type.Name], r)
+
     let call_sqrt (r:Expr) = unary_call(None, sqrtOp.[r.Type.Name], r)
 
     let call_pow (l:Expr) (r:Expr) = binary_call(None, powOp.[l.Type.Name], l, r)
 
     let call_pown (l:Expr) (r:Expr) = binary_call(None, pownOp.[l.Type.Name], l, r)
 
+    let zero_val(t:Type) = zeroVal.[t.Name]
+    
     let expand_list (expr:Expr): Expr list =
         let expr' = expand expr
         match expr' with

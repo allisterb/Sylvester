@@ -10,35 +10,35 @@ open Descriptions
 
 /// Theory of algebraic operations on an integral domain of integers with binary operations (+) and (*) and (*) distributes over (+), 
 /// identities 0 and 1, and unary inverse operation (-), where c <> 0  ==> (c * a = c * b = (a = b)).
-module IntegerAlgebra =      
-    (* Symbols *)
-    do Symbols.BulitIn.Add(src <@ (*) @>, "\u22C5")
-    
-    let desc = axiom_desc "Integer Algebra"
+module RealNumbers =      
+    let desc = axiom_desc "Real Numbers"
     
     (* Axioms *)
-    let integer_algebra_axioms =
-        function                    
-        | Assoc <@(=)@> (<@ (+) @> :Expr<int->int->int>) x
-        | Assoc <@(=)@> (<@ (*) @> :Expr<int->int->int>) x
-        | Commute <@(=)@> (<@ (+) @> :Expr<int->int->int>) x
-        | Commute <@(=)@> (<@ (*) @> :Expr<int->int->int>) x
-        | Identity <@(=)@> (<@ (+) @> :Expr<int->int->int>) <@ 0 @> x 
-        | Identity <@(=)@> (<@ (*) @> :Expr<int->int->int>) <@ 1 @> x
-        | Inverse <@(=)@> (<@ (+) @> :Expr<int->int->int>) <@ (~-) @> <@ 0 @> x
-        | Distrib <@(=)@> (<@ (*) @> :Expr<int->int->int>) (<@ (+) @> :Expr<int->int->int>) x  
-        | LeftCancelNonZero (<@ (+) @> :Expr<int->int->int>) <@ 0 @> x
-        | BinaryOpDefR <@(=)@> <@ (-) @> (<@ (+) @> :Expr<int->int->int>) <@ (~-) @> x  -> Some (desc x)
-        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Int32 0))) when vequal a a' -> Some (axiom_desc "Integer Algebra" (pattern_desc' "Additive Inverse")) 
-                   
+    let real_numbers_axioms =
+        function                            
+        | Assoc <@(=)@> (<@ (+) @> :Expr<real->real->real>) x
+        | Assoc <@(=)@> (<@ (*) @> :Expr<real->real->real>) x
+        | Commute <@(=)@> (<@ (+) @> :Expr<real->real->real>) x
+        | Commute <@(=)@> (<@ (*) @> :Expr<real->real->real>) x
+        | Identity <@(=)@> (<@ (+) @> :Expr<real->real->real>) <@ 0. @> x 
+        | Identity <@(=)@> (<@ (*) @> :Expr<real->real->real>) <@ 1. @> x
+        | Inverse <@(=)@> (<@ (+) @> :Expr<real->real->real>) <@ (~-) @> <@ 0. @> x
+        | Inverse <@(=)@> (<@ (/) @> :Expr<real->real->real>) <@ inv @> <@ 1. @> x
+        | Distrib <@(=)@> (<@ (*) @> :Expr<real->real->real>) (<@ (+) @> :Expr<real->real->real>) x  
+        | LeftCancelNonZero (<@ (+) @> :Expr<real->real->real>) <@ 0. @> x
+        | BinaryOpDefR <@(=)@> <@ (-) @> (<@ (+) @> :Expr<real->real->real>) <@ (~-) @> x  -> Some (desc x)
+        | BinaryOpDefR <@(=)@> <@ (/) @> (<@ (*) @> :Expr<real->real->real>) <@ inv @> x  -> Some (desc x)
+        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Double 0.))) when vequal a a' -> Some (desc (pattern_desc' "Additive Inverse"))
+        | Exists(_, a::[], Bool true, (Equals(Multiply(Var _, Var a'), Double 1.))) when vequal a a' -> Some (desc (pattern_desc' "Multiplicative Inverse"))
         | _ -> None
-
+    
     let rec _reduce_constants  =
-        function
-        | Add(Int32 l, Int32 r) -> <@@ l + r @@>
-        | Multiply(Int32 l, Int32 r) -> <@@ l * r @@>        
-        | Subtract(Int32 l, Int32 r) -> <@@ l - r @@>        
-        | expr -> traverse expr _reduce_constants
+         function
+         | Add(Double l,  Double r) -> <@@ l + r @@>
+         | Multiply(Double l, Double r) -> <@@ l * r @@>        
+         | Subtract(Double l, Double r) -> <@@ l - r @@>
+         | Divide(Double l, Double r) -> <@@ l / r @@>
+         | expr -> traverse expr _reduce_constants
 
     let rec _right_assoc =
         function
@@ -72,12 +72,12 @@ module IntegerAlgebra =
 
     let rec _ident =
         function
-        | Add(x, Int32 0) -> x
-        | Multiply(x, Int32 1) -> x
+        | Add(x, Double 0.) -> x
+        | Multiply(x, Double 1.) -> x
         | expr -> traverse expr _ident
 
     /// Reduce equal constants in expression. 
-    let reduce = Admit("Reduce integer constants in (expression)", _reduce_constants)
+    let reduce = Admit("Reduce real constants in (expression)", _reduce_constants)
 
     /// Expression is right associative.
     let right_assoc = Admit("(expression) is right-associative", _right_assoc)
@@ -97,7 +97,7 @@ module IntegerAlgebra =
     /// Zero is the identity of the addition operation.
     let zero_ident = Admit("Zero is the identity of the addition operation in (expression)", _collect)
 
-    type IntegerAlgebra() = inherit Theory(integer_algebra_axioms, [
+    type RealNumbers() = inherit Theory(real_numbers_axioms, [
         reduce
         right_assoc
         left_assoc
@@ -107,4 +107,4 @@ module IntegerAlgebra =
         zero_ident
     ])
     
-    let integer_algebra = IntegerAlgebra()
+    let real_numbers = RealNumbers()

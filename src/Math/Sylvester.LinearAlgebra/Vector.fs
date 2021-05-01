@@ -19,8 +19,8 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val Display = 
         expr 
         |> Array.skip 1 
-        |> Array.fold(fun s e -> sprintf "%s, %s" s (print_expr e)) (print_expr expr.[0]) 
-        |> sprintf "[%s]"
+        |> Array.fold(fun s e -> sprintf "%s, %s" s (sprint' e)) (sprint' expr.[0]) 
+        |> sprintf "(%s)"
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
@@ -42,12 +42,16 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     do if e.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of %i." e.Length dim0.IntVal
     member val Dim0:'dim0 = dim0
     member val Display = base.Display
+    member x.Item(i: int) = e.[i] |> Scalar<'t>
     interface IVector<'dim0> with member val Dim0 = dim0
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'dim0, 't>(expr)
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
     new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
-    static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't>(data)
     
+    static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't>(data)
+        
+    static member Zero:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (zero_val(typeof<'t>) |> expand''<'t>) in Vector<'dim0, 't> e
+
     static member (+) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
         let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'dim0, 't>(e)
     
@@ -67,19 +71,20 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
 
     static member (*) (l: 't, r: Vector<'dim0, 't>) : Vector<'dim0, 't> = let l' = Scalar<'t>(l) in l' * r
 
-type Vec<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =
-    Vector<'dim0, 't>
-type Vec<'dim0 when 'dim0 :> Number> = Vec<'dim0, real>
-type VecQ<'dim0 when 'dim0 :> Number> = Vec<'dim0, rat>
+    static member (~-) (l: Vector<'dim0, 't>) =
+        l.Expr |> Array.map(call_neg >> expand''<'t>) |> Vector<'n, 't>
+
+type Vec<'dim0 when 'dim0 :> Number> = Vector<'dim0, real>
+type VecQ<'dim0 when 'dim0 :> Number> = Vector<'dim0, rat>
 
 module Vector =
     let vadd (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
     let vsub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
     let inline vsmul (l:'t) (r:Vector<'n, 't>) = l * r
 
-    let vsimplify (l:Vector<'n,'t>) = l.Expr |> Array.map simplify |> Vector<'n,'t>
-    
-    let vnorm (l:Vector<'n, 't>) =
-        let p = l * l in p |> ssimplify |> sexpr |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
+    let vsimplify (l:Vector<_,_>) = l.Expr |> Array.map simplify' |> Vector<_,_>
 
-    let dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> ssimplify
+    let vnorm (l:Vector<'n, 't>) =
+        let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
+
+    let dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> simplify

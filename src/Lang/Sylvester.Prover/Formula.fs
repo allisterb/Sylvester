@@ -31,6 +31,8 @@ module Formula =
     let var3'<'t> v1 v2 v3 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var'<'t> v3
     let var4'<'t> v1 v2 v3 v4 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var'<'t> v3, symbolic_var'<'t> v4
     
+    let var_seq<'t> (s:string) n = seq {for i in 0..n -> var'<'t> <| sprintf "%s%i" s i }
+
     /// Represents a predicate
     let pred<'t> = (fun (_:'t) -> truth_value)
     

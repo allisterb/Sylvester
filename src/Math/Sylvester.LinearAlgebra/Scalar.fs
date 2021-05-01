@@ -15,7 +15,7 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     interface IScalar with
         member val Rank = Some 0 with get,set
         member val Dims = [| |] |> Some with get,set
-    member val Display = print_expr expr
+    member val Display = sprint' expr
     new(d:'t) = Scalar<@ d @>
 
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = 
@@ -53,9 +53,3 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         
     static member (*) (l:Scalar<'t>, r:'t) = 
         let e = call_mul (l.Expr) (Expr.Value r) |> expand''<'t> in Scalar<'t> e
-
-[<AutoOpen>]
-module Scalar =
-    let sexpr (s:Scalar<_>) = s.Expr
-
-    let ssimplify (s:Scalar<_>) = s.Expr |> simplify |> Scalar<_>

@@ -11,10 +11,16 @@ open MathNetExpr
 
 [<AutoOpen>]
 module Symbolic =
-    let print_expr expr = expr |> expand |> MathNetExpr.fromQuotation |> Infix.format
+    let simplify' (x:Expr<'t>) = x |> callUnary<'t> id
 
-    let simplify (x:Expr<'t>) = x |> callUnary<'t> id
-        
+    let sprint' (x:Expr<'t>) = x |> expand |> MathNetExpr.fromQuotation |> Infix.format
+
+    let inline sexpr (x : ^T) = (^T : (member Expr : Expr<'t>) (x))
+
+    let inline sprint expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
+
+    let inline simplify expr = expr |> sexpr |> simplify'
+       
     let algebraic_expand x = x |> callUnary Algebraic.expand 
         
     let polyn_coeffs e x = 
