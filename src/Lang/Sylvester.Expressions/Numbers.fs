@@ -1,4 +1,6 @@
-﻿namespace Sylvester
+﻿#nowarn "0077"
+
+namespace Sylvester
 
 open System
 open System.Numerics
@@ -244,8 +246,8 @@ module Numbers =
         | :? int as i -> Rational(i, 1)
         | :? int64 as i -> Rational(i, 1L)
         | :? bigint as i -> Rational(i, bigint.One)
-        | :? double as f -> Rational(f, 1.)
         | :? single as f -> Rational(f, 1.0f)
+        | :? double as f -> Rational(f, 1.)
         | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'a>.Name
 
     let pos_inf<'t> = Unchecked.defaultof<'t>
@@ -254,6 +256,10 @@ module Numbers =
     
     let inline inv n = n ** - 1.
      
+    let inline zero (x : ^T) = (^T : (member Zero : 't) (x))
+
+    let inline one (x : ^T) = (^T : (member One : 't) (x))
+
     let inline (..+) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (+) l r
 
     let inline (..-) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (-) l r

@@ -8,8 +8,7 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
-/// Theory of algebraic operations on an integral domain of integers with binary operations (+) and (*) and (*) distributes over (+), 
-/// identities 0 and 1, and unary inverse operation (-), where c <> 0  ==> (c * a = c * b = (a = b)).
+/// Theory of real numbers
 module RealNumbers =      
     let desc = axiom_desc "Real Numbers"
     
@@ -26,6 +25,7 @@ module RealNumbers =
         | Inverse <@(=)@> (<@ (/) @> :Expr<real->real->real>) <@ inv @> <@ 1. @> x
         | Distrib <@(=)@> (<@ (*) @> :Expr<real->real->real>) (<@ (+) @> :Expr<real->real->real>) x  
         | LeftCancelNonZero (<@ (+) @> :Expr<real->real->real>) <@ 0. @> x
+        | LeftCancelNonZero (<@ (/) @> :Expr<real->real->real>) <@ 1. @> x
         | BinaryOpDefR <@(=)@> <@ (-) @> (<@ (+) @> :Expr<real->real->real>) <@ (~-) @> x  -> Some (desc x)
         | BinaryOpDefR <@(=)@> <@ (/) @> (<@ (*) @> :Expr<real->real->real>) <@ inv @> x  -> Some (desc x)
         | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Double 0.))) when vequal a a' -> Some (desc (pattern_desc' "Additive Inverse"))
@@ -108,3 +108,5 @@ module RealNumbers =
     ])
     
     let real_numbers = RealNumbers()
+
+    (* Predicates *)

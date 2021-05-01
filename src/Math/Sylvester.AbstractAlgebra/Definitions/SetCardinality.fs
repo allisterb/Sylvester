@@ -6,7 +6,7 @@ type CardinalNumber =
 with    
     member x.Measure() :real = 
         match x with
-        | Finite m -> float(m.Force())
+        | Finite m -> real(m.Force())
         | _ -> failwith "This set does not have finite cardinality."
     static member (+) (l:CardinalNumber, r:CardinalNumber) =
         match l, r with

@@ -114,9 +114,9 @@ module Patterns =
 
     let (|Sequence|_|) =
         function
-        | Call(None, mi0, Call(None, mi1, Lambda(_, Call(None, mi2, v))::[])::[]) when mi0.Name = "CreateSequence" && mi1.Name = "Delay" && mi2.Name = "Singleton" 
+        | Call(None, Op "CreateSequence", Call(None, Op "Delay", Lambda(_, Call(None, Op "Singleton", v))::[])::[]) 
             ->  v |> List.map expand |> Some
-        | Call (None, mi, e) when mi.Name = "InitializeInfinite" -> e |> List.map expand |> Some
+        | Call (None, Op "InitializeInfinite", e) -> e |> List.map expand |> Some
         | List l -> l |> List.map expand |> Some
         | NewArray(_, a) -> a |> List.map expand |> Some
         | _ -> None

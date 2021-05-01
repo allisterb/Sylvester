@@ -87,4 +87,4 @@ module Vector =
     let vnorm (l:Vector<'n, 't>) =
         let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
 
-    let dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> simplify
+    let vdist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> simplify |> Scalar<'t>

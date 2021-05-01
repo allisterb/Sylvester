@@ -11,5 +11,3 @@ module R =
     let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
     let line (origin:real) (step:real) = infinite_seq (fun n -> origin + ((real n) * step)) 
     let axis step = line 0.0 step
-
-    let euclid_dist (l:Vec<'n>) (r:Vec<'n>) = () 

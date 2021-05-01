@@ -1,14 +1,11 @@
 ﻿namespace Sylvester 
 
 open FSharp.Quotations
-open FSharp.Quotations.Patterns
-open FSharp.Quotations.DerivedPatterns
-open System
 
-open Patterns
 open Descriptions
 open SetTheory
 open Series
+open Vector
 
 module Sequences =
     let desc = axiom_desc "Sequences"
@@ -45,7 +42,7 @@ module Sequences =
 
     (* Definitions *)
 
-    let def_seq_n (f:Expr<int->real>) (n:Expr<int>) =
+    let def_seq_n (f:Expr<int->_>) (n:Expr<int>) =
         def sequences <@ infinite_seq %f = seq {(%f) %n} @>
 
     let def_series_n (f:Expr<int->real>) (n:Expr<int>) =
@@ -54,11 +51,14 @@ module Sequences =
     let def_limit (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (a:Expr<int->real>) =
         def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  ((%Li - (%a) %n) < %epsilon)) @>
 
-    let def_subsequence (n:Expr<int>) (a:Expr<int->real>) (f:Expr<int->int>) =
+    let def_limit' (epsilon:Expr<Scalar<real>>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<Vector<_, real>>) (a:Expr<int->Vector<_, real>>) =
+        def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0R) (exists %N  (%n > %N) ((vdist %Li ((%a) %n)) < %epsilon)) @>
+    
+    let def_subsequence (n:Expr<int>) (a:Expr<int->_>) (f:Expr<int->int>) =
         def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Function.increasing %f @>
 
-    let def_converges (a:Expr<int->real>) (Li:Expr<real>)  =      
-            def sequences <@ converges (infinite_seq %a)  = (lim pos_inf (infinite_seq %a) = %Li) @> 
+    let def_converges (a:Expr<int->_>) (Li:Expr<_>)  =      
+            def sequences <@ converges (infinite_seq %a) = (lim pos_inf (infinite_seq %a) = %Li) @> 
     
     let def_bounded_above (d:Expr<seq<_>>) =
             def sequences <@ bounded %d = sseq %d :? IBoundedAbove<_> @>
@@ -66,10 +66,10 @@ module Sequences =
     let def_bounded (d:Expr<seq<_>>) =
             def sequences <@ bounded %d = sseq %d :? IBounded<_> @>
 
-    let def_increasing (n:Expr<int>) (a:Expr<int->real>) =
+    let def_increasing (n:Expr<int>) (a:Expr<int->_>) =
         def sequences <@ increasing (seq {(%a) %n}) = forall' %n ((%a)((%n)+1) > (%a) %n) @>
 
-    let def_decreasing (n:Expr<int>) (a:Expr<int->real>) =
+    let def_decreasing (n:Expr<int>) (a:Expr<int->_>) =
         def sequences <@ decreasing (seq {(%a) %n}) = forall' %n ((%a) ((%n)+1) < (%a) %n) @>
 
     let def_monotonic (s:Expr<seq<_>>) =
