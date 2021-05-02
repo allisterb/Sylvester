@@ -8,7 +8,7 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
-/// Theory of real numbers
+/// Theory of the field of real numbers with the least.
 module RealNumbers =      
     let desc = axiom_desc "Real Numbers"
     
@@ -40,24 +40,6 @@ module RealNumbers =
          | Divide(Double l, Double r) -> <@@ l / r @@>
          | expr -> traverse expr _reduce_constants
 
-    let rec _right_assoc =
-        function
-        | Add(Add(a1, a2), a3) -> call_add a1 (call_add a2 a3)
-        | Multiply(Multiply(a1, a2), a3) -> call_mul a1 (call_add a2 a3)
-        | expr -> traverse expr _right_assoc
-
-    let rec _left_assoc =
-        function
-        | Add(a1, Add(a2, a3)) -> call_add (call_add a1 a2) a3
-        | Multiply(a1, Multiply(a2, a3)) -> call_mul (call_mul a1 a2) a3
-        | expr -> traverse expr _left_assoc
-
-    let rec _commute =
-        function
-        | Add(a1, a2) -> call_add a2 a1
-        | Multiply(a1, a2) -> call_mul a2 a1
-        | expr -> traverse expr _commute
-
     let rec _distrib =
         function
         | Multiply(a1, Add(a2, a3)) -> call_add (call_mul a1 a2)  (call_mul a1 a3) 
@@ -77,16 +59,7 @@ module RealNumbers =
         | expr -> traverse expr _ident
 
     /// Reduce equal constants in expression. 
-    let reduce = Admit("Reduce real constants in (expression)", _reduce_constants)
-
-    /// Expression is right associative.
-    let right_assoc = Admit("(expression) is right-associative", _right_assoc)
-
-    /// Expression is left associative.
-    let left_assoc = Admit("(expression) is left-associative", _left_assoc)
-
-    /// Expression is comutative.
-    let commute = Admit("(expression) is commutative", _commute)
+    let reduce = Admit("Reduce real number constants in (expression)", _reduce_constants)
 
     /// Expression is distributive.
     let distrib = Admit("(expression) is distributive", _distrib)
@@ -97,11 +70,16 @@ module RealNumbers =
     /// Zero is the identity of the addition operation.
     let zero_ident = Admit("Zero is the identity of the addition operation in (expression)", _collect)
 
+    (* Theory *)
     type RealNumbers() = inherit Theory(real_numbers_axioms, [
+        Integers.reduce
+        Integers.right_assoc_add
+        Integers.right_assoc_mul
+        Integers.left_assoc_add
+        Integers.left_assoc_mul
+        Integers.commute_add
+        Integers.commute_mul
         reduce
-        right_assoc
-        left_assoc
-        commute
         distrib
         collect
         zero_ident
@@ -109,4 +87,21 @@ module RealNumbers =
     
     let real_numbers = RealNumbers()
 
+    (* Functions *)
+
+    let sup (s:IOrderedSet<real>) = formula<real>
+
+    let inf (s:IOrderedSet<real>) = formula<real>
+
     (* Predicates *)
+
+    let bounded_above = pred<IOrderedSet<real>>
+    
+    let bounded_below = pred<IOrderedSet<real>>
+
+    let bounded = pred<IOrderedSet<real>>
+
+
+    (* Definitions *)
+
+    let lub (S:Expr<IOrderedSet<real>>) (E:Expr<IOrderedSet<real>>) = def real_numbers <@ forall %E (%E |<| %S) (not_empty %E |&| bounded_above %E ==> (sup %E |?| %S)) @>

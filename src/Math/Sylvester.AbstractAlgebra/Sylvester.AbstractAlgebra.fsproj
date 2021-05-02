@@ -44,7 +44,8 @@
     <Compile Include="Theories\BooleanAlgebra.fs" />
     <Compile Include="Theories\SetAlgebra.fs" />
     <Compile Include="Theories\SetTheory.fs" />
-    <Compile Include="Theories\IntegerAlgebra.fs" />
+    <Compile Include="Theories\Integers.fs" />
+    <Compile Include="Theories\RealNumbers.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,12 +7,13 @@ open FSharp.Quotations
 open MathNet.Numerics
 
 [<StructuredFormatDisplay("{Display}")>]
-type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> internal (e:Expr<'t>) =
+type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> internal (e:Expr<'t>) =
     let expr = expand'<'t, 't> e
     let expr' = expr |> MathNetExpr.fromQuotation
     member val Expr = expr
     member val Expr' = expr'
     member val Val = evaluate expr
+    member val Val' = box (evaluate expr)
     interface IScalar with
         member val Rank = Some 0 with get,set
         member val Dims = [| |] |> Some with get,set
@@ -20,13 +21,13 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     new(d:'t) = Scalar<@ d @>
 
     interface IComparable<Scalar<'t>> with
-        member a.CompareTo b = a.Val.CompareTo b.Val
+        member a.CompareTo b = if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo b.Val else failwithf "The scalar type %A is not comparable" typeof<'t>
     
     interface IComparable with
         member a.CompareTo b = 
             match b with
             | :? Scalar<'t> as bs -> (a :> IComparable<Scalar<'t>>).CompareTo bs
-            | :? 't as bs -> a.Val.CompareTo bs
+            | :? 't as bs -> if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo bs else failwithf "The scalar type %A is not comparable." typeof<'t>
             | _ -> failwith "This object is not a set."
     
     static member Zero = Unchecked.defaultof<'t> |> Scalar<'t>
@@ -72,3 +73,6 @@ module NumericLiteralR =
   let FromZero() = Scalar<real> 0.
   let FromOne() = Scalar<real> 1.
   let FromInt32 (i:int) = i |> real |> Scalar<real>
+
+module ZZ =
+    let r = Scalar 3. > 0R

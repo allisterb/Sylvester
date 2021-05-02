@@ -8,7 +8,7 @@ open MathNet.Numerics
 open Sylvester.Arithmetic
 
 [<StructuredFormatDisplay("{Display}")>]
-type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
+type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal(e: Expr<'t> array) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand'<'t, 't>
@@ -35,7 +35,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
-type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
+type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal (e: Expr<'t> array) =
     inherit Vector<'t>(e)
     let dim0 = number<'dim0>
@@ -51,6 +51,8 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't>(data)
         
     static member Zero:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (zero_val(typeof<'t>) |> expand''<'t>) in Vector<'dim0, 't> e
+
+    static member One:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (one_val(typeof<'t>) |> expand''<'t>) in Vector<'dim0, 't> e
 
     static member (+) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
         let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'dim0, 't>(e)
@@ -75,12 +77,15 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
         l.Expr |> Array.map(call_neg >> expand''<'t>) |> Vector<'n, 't>
 
 type Vec<'dim0 when 'dim0 :> Number> = Vector<'dim0, real>
+type ComplexVec<'dim0 when 'dim0 :> Number> = Vector<'dim0, complex>
 type VecQ<'dim0 when 'dim0 :> Number> = Vector<'dim0, rat>
 
 module Vector =
     let vadd (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
+    
     let vsub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
-    let inline vsmul (l:'t) (r:Vector<'n, 't>) = l * r
+    
+    let vsmul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
 
     let vsimplify (l:Vector<_,_>) = l.Expr |> Array.map simplify' |> Vector<_,_>
 

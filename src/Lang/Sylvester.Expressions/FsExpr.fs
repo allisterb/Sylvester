@@ -412,6 +412,8 @@ module FsExpr =
 
     let zero_val(t:Type) = zeroVal.[t.Name]
     
+    let one_val(t:Type) = oneVal.[t.Name]
+
     let expand_list (expr:Expr): Expr list =
         let expr' = expand expr
         match expr' with

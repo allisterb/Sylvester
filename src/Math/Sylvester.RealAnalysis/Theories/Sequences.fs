@@ -112,7 +112,4 @@ module Sequences =
         proof sequences <@ converges (infinite_series %a) ==> (lim pos_inf (infinite_seq %a) = 0.) @>
 
 
-
-
-
    

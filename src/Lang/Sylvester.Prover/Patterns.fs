@@ -62,6 +62,11 @@ module Patterns =
         | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'t> -> Some (l,r)
         | _ -> None
 
+    let (|Binary'|_|) (op:Expr<'t->'u->'u>) =
+        function
+        | SpecificCall op (None,_,l::r::[]) when l.Type = typeof<'t> && r.Type = typeof<'u> -> Some (l,r)
+        | _ -> None
+
     let (|Unary|_|) (op:Expr<'t->'u>) =
         function
         | SpecificCall op (None,_,r::[]) when r.Type = typeof<'t> -> Some r
@@ -106,6 +111,11 @@ module Patterns =
         function
         | Call(None, Op "op_UnaryNegation" ,r::[]) -> Some r 
         | _ -> None
+
+    let (|LessThan|_|) =
+         function
+         | SpecificCall <@@ (<) @@> (None,_,l::r::[]) -> Some (l, r)
+         | _ -> None
 
     let (|Range|_|) =
         function
@@ -282,6 +292,10 @@ module Patterns =
         | Binary eq (Binary op (a1, a2), Binary op (b1, b2)) when sequal2 a1 a2 b2 b1 -> pattern_desc' "Commutativity" |> Some   
         | _ -> None
 
+    let (|Commute'|_|) (eq:Expr<'u->'u->bool>)  (op: Expr<'t->'u->'u>) =
+        function
+        | Binary eq (Binary' op (a1, a2), Binary' op (b1, b2)) when sequal2 a1 a2 b2 b1 -> pattern_desc' "Commutativity" |> Some   
+        | _ -> None
     /// x + 0 = x
     let (|Identity|_|) (eq:Expr<'t->'t->bool>) (op: Expr<'t->'t->'t>) (zero:Expr<'t>)   = 
         function
@@ -295,6 +309,12 @@ module Patterns =
                 pattern_desc' "Distributivity" |> Some
         | _ -> None
 
+    /// x * (y + z) = x * y + x * z
+    let (|Distrib'|_|) (eq:Expr<'u->'u->bool>)  (op1: Expr<'t->'u->'u>) (op2: Expr<'u->'u->'u>)  = 
+        function
+        | Binary eq (Binary' op1 (a3, Binary op2 (b3, b4)), Binary op2 (Binary' op1 (a1, b1), Binary' op1 (a2, b2))) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> 
+                pattern_desc' "Distributivity" |> Some
+        | _ -> None
     ///  -(y + z) = -y  * - z
     let (|UnaryDistrib|_|) (eq:Expr<'t->'t->bool>)  (op1: Expr<'t->'t>) (op2: Expr<'t->'t->'t>)  = 
         function

@@ -322,6 +322,8 @@ module Set =
     /// Set relative complement operator.
     let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
+    let not_empty (l:ISet<'t>) = l.Set <> Empty
+
     let card (s:ISet<'t>) = s.Set.Cardinality
     
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
