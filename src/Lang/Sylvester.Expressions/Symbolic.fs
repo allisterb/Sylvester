@@ -21,8 +21,13 @@ module Symbolic =
 
     let inline simplify expr = expr |> sexpr |> simplify'
        
+    let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>
+    
     let algebraic_expand x = x |> callUnary Algebraic.expand 
-        
+       
+    let subst_term (e:Expr<'t>) (var:Var) (r:Expr) = 
+        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r else None) |> expand''<'t> |> simplify'
+
     let polyn_coeffs e x = 
         let x' = x |> expand in
         x'

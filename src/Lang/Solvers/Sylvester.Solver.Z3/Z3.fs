@@ -121,10 +121,14 @@ module Z3 =
         | Rational n -> create_numeral solver n
         | Call(None, Op "FromOne" , []) as e when e.Type = typeof<Rational> -> create_numeral solver 1Q
         | Call(None, Op "FromZero" , []) as e when e.Type = typeof<Rational> -> create_numeral solver 0Q
+        | Call(None, Op "FromInt32", (Int32 i)::[]) as e when  e.Type = typeof<Rational> -> create_numeral solver i
         | Call(None, Op "op_Addition" ,l::r::[]) -> solver.Ctx.MkAdd((create_arith_expr solver l), (create_arith_expr solver r))
         | Call(None, Op "op_Multiply" ,l::r::[]) -> solver.Ctx.MkMul((create_arith_expr solver l), (create_arith_expr solver r))
         | Call(None, Op "op_Subtraction" ,l::r::[]) -> solver.Ctx.MkSub((create_arith_expr solver l), (create_arith_expr solver r))
         | Call(None, Op "op_Division" ,l::r::[]) -> solver.Ctx.MkDiv((create_arith_expr solver l), (create_arith_expr solver r))
+        | Call(None, Op "op_Exponentiation" ,l::r::[]) -> solver.Ctx.MkPower((create_arith_expr solver l), (create_arith_expr solver r))
+        | Call(None, Op "Sqrt", r::[]) -> solver.Ctx.MkPower((create_arith_expr solver r), (create_arith_expr solver (<@@ 1/2Q @@>)))
+        //
         | e when e.Type = typeof<bool>-> failwithf "The expression %A is a boolean expression." e
         | e  -> failwithf "The expression %A of type %A is not an arithmetic expression." e (e.Type)
 
@@ -250,8 +254,13 @@ module Z3 =
         | _ -> false
 
     let opt_get_int_var_model (s:Z3Solver) =
-        match s.Solver.Check() with
+        match s.Optimizer.Check() with
         | Status.SATISFIABLE -> s.OptModel() |> _get_int_var_model |> Some
+        | _ -> None
+
+    let opt_get_rat_var_model (s:Z3Solver) =
+        match s.Optimizer.Check() with
+        | Status.SATISFIABLE -> s.OptModel() |> _get_rat_var_model |> Some
         | _ -> None
 
     [<assembly:InternalsVisibleTo("Sylvester.Tests.Solver.Z3")>]

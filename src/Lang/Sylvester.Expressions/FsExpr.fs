@@ -17,6 +17,8 @@ type DelayedEval<'t> = Lazy<'t>
 module FsExpr =
     let src expr = Swensen.Unquote.Operators.decompile expr
     
+    let rec dom_count a = if FSharpType.IsFunction a then 1 + dom_count(FSharpType.GetFunctionElements(a) |> snd) else 0
+    
     let rec range_type a = if FSharpType.IsFunction a then range_type(FSharpType.GetFunctionElements(a) |> snd) else a
 
     let is_prop p = range_type p = typeof<bool>

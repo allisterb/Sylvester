@@ -1,15 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="LP.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LpSolveDotNet" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lang\Solvers\Sylvester.Solver.Z3\Sylvester.Solver.Z3.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

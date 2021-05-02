@@ -46,6 +46,8 @@ module LatinVars =
     let n<'t> = var'<'t> "n"
     let X<'t> = var'<'t> "X"
     let x<'t> = var'<'t> "x"
+    let Y<'t> = var'<'t> "Y"
+    let y<'t> = var'<'t> "y"
 
 [<RequireQualifiedAccess>]
 module LatinDiffs =
