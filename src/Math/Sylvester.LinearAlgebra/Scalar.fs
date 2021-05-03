@@ -30,7 +30,9 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
             | :? 't as bs -> if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo bs else failwithf "The scalar type %A is not comparable." typeof<'t>
             | _ -> failwith "This object is not a set."
     
-    static member Zero = Unchecked.defaultof<'t> |> Scalar<'t>
+    static member Zero = typeof<'t> |> zero_val |> expand''<'t> |> Scalar
+
+    static member One = typeof<'t> |> zero_val |> expand''<'t> |> Scalar
 
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = 
         let e = call_add (l.Expr) (r.Expr) |> expand''<'t> in Scalar<'t> e

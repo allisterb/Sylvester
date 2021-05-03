@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open FSharp.Quotations
+
 open Sylvester.Arithmetic
 open Vector
 
@@ -7,6 +9,8 @@ type R<'n when 'n :>Number>() =
     inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.vadd, Vector.vsmul)
     
 type Region<'n when 'n :> Number> = Set<Vec<'n>>
+
+type Region'<'n when 'n :> Number> = Expr<Region<'n>>
 
 [<AutoOpen>]
 module R =
@@ -20,3 +24,5 @@ module R =
     
     [<Formula>]
     let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (vdist x y) < Scalar r)
+
+    let part_deriv (f:Expr<Vec<_>->real>) = ()

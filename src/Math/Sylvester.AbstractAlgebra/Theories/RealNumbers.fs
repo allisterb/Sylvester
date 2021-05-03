@@ -8,6 +8,8 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
+type real' = Expr<real>
+
 /// Theory of the field of real numbers with the least.
 module RealNumbers =      
     let desc = axiom_desc "Real Numbers"

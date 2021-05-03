@@ -4,7 +4,6 @@ open System
 
 open Sylvester.Arithmetic
 
-[<AutoOpen>]
 module Dimension = 
     type zero = dim<0>
     

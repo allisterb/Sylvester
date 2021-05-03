@@ -9,6 +9,8 @@ open Descriptions
 
 open SetAlgebra
 
+type Set'<'t when 't: equality> = Expr<Set<'t>>
+
 /// Theory of sets and set algebra.
 module SetTheory =
     let desc = Some << axiom_desc' "Set Theory"
@@ -51,16 +53,19 @@ module SetTheory =
         | Equals(ElementOf(F, BoundVars(bound)::range::body::_), Exists(_, bound', range', Equals(F', body'))) when vequal' bound bound' && sequal3 F range body F' range' body' -> desc "Set Membership"
         | _ -> None    
 
-    /// 
+    
     let (|Extensionality|_|) =
         function
         |Equals(Equals((Set(BoundVars(sbound)::srange::sbody::_) as S), (Set(BoundVars(tbound)::trange::tbody::_) as T)), ForAll(_, stbound, strange, Equals(ElementOf(x, S'), ElementOf(x', T')))) 
             when sequal S T && vequal' sbound stbound && sequal srange strange -> desc "Set Extensionality"
         | _ -> None
 
-
     (* Theory *)
 
     type SetTheory<'t when 't : equality>() = inherit SetAlgebra<'t>()
 
     let set_theory<'t when 't: equality> = SetTheory<'t>()
+
+    (* Predicates *)
+    
+    let bounded_set = pred<Set<_>>

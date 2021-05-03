@@ -205,3 +205,5 @@ module internal SetInternal =
                                 k := !l
                                 l :=  m
         }
+
+type seq'<'t> = Expr<seq<'t>>

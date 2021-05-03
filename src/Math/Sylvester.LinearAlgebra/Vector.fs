@@ -4,8 +4,8 @@ open System
 open FSharp.Quotations
 
 open MathNet.Numerics
-
 open Sylvester.Arithmetic
+open Dimension
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
@@ -26,7 +26,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         match t with
         | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
-    interface IPartialShape<one> with
+    interface IPartialShape<Dimension.one> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'t>(expr)

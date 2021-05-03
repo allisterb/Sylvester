@@ -54,9 +54,6 @@ module Sequences =
 
     let def_limit (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (a:Expr<int->real>) =
         def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  (abs(%Li - (%a) %n) < %epsilon)) @>
-
-    let def_limit' (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<Vector<_, real>>) (a:Expr<int->Vector<_, real>>) =
-        def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N) ((vdist %Li ((%a) %n)) < scalar %epsilon)) @>
     
     let def_subsequence (n:Expr<int>) (a:Expr<int->_>) (f:Expr<int->int>) =
         def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Function.increasing %f @>

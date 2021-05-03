@@ -3,9 +3,9 @@
 open System
 open FSharp.Quotations
 
-open Sylvester.Arithmetic
-
 open MathNet.Numerics
+
+open Dimension
 
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
