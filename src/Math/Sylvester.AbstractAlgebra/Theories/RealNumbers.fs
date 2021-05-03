@@ -8,7 +8,7 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
-type real' = Expr<real>
+type RealExpr = Expr<real>
 
 /// Theory of the field of real numbers with the least.
 module RealNumbers =      

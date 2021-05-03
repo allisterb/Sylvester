@@ -11,7 +11,7 @@ open Descriptions
 
 open Vector
 
-type Vec'<'n when 'n :>Number > = Expr<Vec<'n>>
+type VecExpr<'n when 'n :>Number > = Expr<Vec<'n>>
 
 /// Theory of a Euclidean vector space over the field of real numbers
 module EuclideanSpace =      

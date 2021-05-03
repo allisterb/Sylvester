@@ -8,6 +8,8 @@ open FSharp.Quotations.DerivedPatterns
 open Patterns
 open Descriptions
 
+type IntExpr = Expr<int>
+
 /// Theory of operations on an integral domain of integers with binary operations (+) and (*) and (*) distributes over (+), 
 /// identities 0 and 1, and unary inverse operation (-), where c <> 0  ==> (c * a = c * b = (a = b)). 
 /// < is defined by a < b = (b - a) |?| Zpos  

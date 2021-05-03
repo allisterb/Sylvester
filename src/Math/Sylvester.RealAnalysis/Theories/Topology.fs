@@ -37,25 +37,25 @@ module Topology =
 
     (* Definitions *)
 
-    let def_limit (epsilon:real') (N:Expr<int>) (n:Expr<int>) (Li:Expr<Vec<_>>) (a:Expr<int->Vec<_>>) =
+    let def_limit (epsilon:RealExpr) (N:Expr<int>) (n:Expr<int>) (Li:Expr<Vec<_>>) (a:Expr<int->Vec<_>>) =
         def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N) ((vdist %Li ((%a) %n)) < scalar %epsilon)) @>
 
-    let def_open_set (S:Expr<Set<Vec<_>>>) (x:Expr<Vec<_>>) (r:real')= 
+    let def_open_set (S:Expr<Set<Vec<_>>>) (x:Expr<Vec<_>>) (r:RealExpr)= 
         def topology <@ open_set %S = forall %x (%x |?| %S) (exists %r (%r > 0.) ((open_ball %x %r) |<| %S)) @>
 
     let def_closed_set (S:Expr<Set<Vec<_>>>)= 
         def topology <@ closed_set %S = open_set (%S |/| R) @>
 
-    let def_interior_point (S:Region'<_>) (x:Vec'<_>) (epsilon:real') =
+    let def_interior_point (S:Region'<_>) (x:VecExpr<_>) (epsilon:RealExpr) =
         def topology <@ interior_point %S %x = (exists %epsilon (%epsilon > 0.) ((open_ball %x %epsilon) |<| %S)) @>
 
     let def_compact (S:Region'<_>) (s:seq'<Vec<_>>) (ss:seq'<Vec<_>>)= 
         def topology <@ (compact %S) = forall %s (sseq %s |<| %S) (exists %ss (subsequence %ss %s) ((lim pos_inf %ss) |?| %S)) @>
 
-    let def_continuous_at (S:Region'<'n>) (f:Expr<Vec<'n>->Vec<'m>>) (a:Vec'<'m>) (s:seq'<Vec<'n>>) (x:Vec'<'n>) =
+    let def_continuous_at (S:Region'<'n>) (f:Expr<Vec<'n>->Vec<'m>>) (a:VecExpr<'m>) (s:seq'<Vec<'n>>) (x:VecExpr<'n>) =
         def topology <@ (dom %f = %S) |&| forall %s (sseq %s |<| %S |&| (lim pos_inf %s = %x)) ((%f) %x = %a) @>
 
-    let def_continuous_on (A:Region'<'n>) (f:Expr<Vec<'n>->Vec<'m>>) (a:Vec'<'n>)= 
+    let def_continuous_on (A:Region'<'n>) (f:Expr<Vec<'n>->Vec<'m>>) (a:VecExpr<'n>)= 
         def topology <@ continuous_on %A %f = (forall %a (%a |?| %A) (continuous_at %a %f)) @>
 
     (* Theorems *)

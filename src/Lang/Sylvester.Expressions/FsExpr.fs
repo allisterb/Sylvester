@@ -431,6 +431,8 @@ module FsExpr =
 
     let expand_lists (expr: Expr<'t list list>) = expr |> expand_list |> List.map expand_list
 
+    let expand_lists' (expr: Expr<'t list list>) = expr |> expand_list' |> List.map expand_list'
+
     let expand_equality =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
