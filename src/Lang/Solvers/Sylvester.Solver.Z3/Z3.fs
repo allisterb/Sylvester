@@ -13,11 +13,15 @@ type Z3ModelResult =
 | ConstResult of Expr
 | FuncResult of FuncInterp
 
-type Z3Solver(?logic:string) =
+type Z3Solver(?nonLinear:bool, ?logic:string) =
+    let nl = defaultArg nonLinear false
     let ctx = new Context()
     let sp = ctx.MkParams();
     let op = ctx.MkParams()
-    let solver = logic |> function | Some l -> ctx.MkSolver(l) | None -> ctx.MkSolver()
+    let solver = 
+        match nl with
+        | false -> logic |> function | Some l -> ctx.MkSolver(l) | None -> ctx.MkSolver()
+        | true -> ctx.MkTactic("qfnra-nlsat").Solver
     do solver.Parameters <- sp
     let optimizer = ctx.MkOptimize()
     do optimizer.Parameters <- op 
@@ -30,18 +34,27 @@ type Z3Solver(?logic:string) =
     member x.Check(constraints: seq<BoolExpr>) = solver.Check constraints
     member x.Model() = let m = solver.Model in if isNull m then failwith "No model exists." else m
     member x.OptModel() = let m = optimizer.Model in if isNull m then failwith "No model exists." else m
+    
     interface IDisposable with member x.Dispose() = solver.Dispose()
-    static member val Tactics = 
+   
+    static member val SolverTacticsHelp = 
         let ctx = new Context() in 
         let d = ctx.TacticNames |> Array.map(fun t -> t, ctx.TacticDescription t) |> Map.ofArray
         ctx.Dispose()
-    static member val OptimizeParamsHelp = 
+        d
+
+    static member DescribeTactic n = if Z3Solver.SolverTacticsHelp |> Map.containsKey n then Some (Z3Solver.SolverTacticsHelp.[n]) else None
+
+    static member val OptimizerParamsHelp = 
         let ctx = new Context()
         let opt = ctx.MkOptimize()
         let pd = opt.ParameterDescriptions.Names |> Array.map(fun d -> d.ToString(), opt.ParameterDescriptions.GetDocumentation d) |> Map.ofArray
         opt.Dispose()
         ctx.Dispose()
         pd
+    
+    static member DescribeOptimizerParam n = if Z3Solver.OptimizerParamsHelp |> Map.containsKey n then Some (Z3Solver.OptimizerParamsHelp.[n]) else None
+
 
 module Z3 =
     /// Multiple indexers for evaluating formulas
@@ -128,7 +141,7 @@ module Z3 =
         | Call(None, Op "op_Division" ,l::r::[]) -> solver.Ctx.MkDiv((create_arith_expr solver l), (create_arith_expr solver r))
         | Call(None, Op "op_Exponentiation" ,l::r::[]) -> solver.Ctx.MkPower((create_arith_expr solver l), (create_arith_expr solver r))
         | Call(None, Op "Sqrt", r::[]) -> solver.Ctx.MkPower((create_arith_expr solver r), (create_arith_expr solver (<@@ 1/2Q @@>)))
-        //
+        
         | e when e.Type = typeof<bool>-> failwithf "The expression %A is a boolean expression." e
         | e  -> failwithf "The expression %A of type %A is not an arithmetic expression." e (e.Type)
 

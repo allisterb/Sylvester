@@ -51,9 +51,46 @@ module Integers =
 
     let rec _reduce_constants  =
         function
+        | Add(UInt16 l, UInt16 r) -> <@@ l + r @@>
+        | Multiply(UInt16 l, UInt16 r) -> <@@ l * r @@>        
+        | Subtract(UInt16 l, UInt16 r) -> <@@ l - r @@>
+
+        | Add(Int16 l, Int16 r) -> <@@ l + r @@>
+        | Multiply(Int16 l, Int16 r) -> <@@ l * r @@>        
+        | Subtract(Int16 l, Int16 r) -> <@@ l - r @@>
+
+        | Add(UInt32 l, UInt32 r) -> <@@ l + r @@>
+        | Multiply(UInt32 l, UInt32 r) -> <@@ l * r @@>        
+        | Subtract(UInt32 l, UInt32 r) -> <@@ l - r @@>
+
         | Add(Int32 l, Int32 r) -> <@@ l + r @@>
         | Multiply(Int32 l, Int32 r) -> <@@ l * r @@>        
-        | Subtract(Int32 l, Int32 r) -> <@@ l - r @@>        
+        | Subtract(Int32 l, Int32 r) -> <@@ l - r @@>
+        
+        | Add(UInt64 l, UInt64 r) -> <@@ l + r @@>
+        | Multiply(UInt64 l, UInt64 r) -> <@@ l * r @@>        
+        | Subtract(UInt64 l, UInt64 r) -> <@@ l - r @@>
+
+        | Add(Int64 l, Int64 r) -> <@@ l + r @@>
+        | Multiply(Int64 l, Int64 r) -> <@@ l * r @@>        
+        | Subtract(Int64 l, Int64 r) -> <@@ l - r @@>
+
+        | Add(Rational l, Rational r) -> <@@ l + r @@>
+        | Multiply(Rational l, Rational r) -> <@@ l * r @@>        
+        | Subtract(Rational l, Rational r) -> <@@ l - r @@>
+
+        | Add(Single l, Single r) -> <@@ l + r @@>
+        | Multiply(Single l, Single r) -> <@@ l * r @@>        
+        | Subtract(Single l, Single r) -> <@@ l - r @@>
+
+        | Add(Double l, Double r) -> <@@ l + r @@>
+        | Multiply(Double l, Double r) -> <@@ l * r @@>        
+        | Subtract(Double l, Double r) -> <@@ l - r @@>
+        
+        | Add(Decimal l, Decimal r) -> <@@ l + r @@>
+        | Multiply(Decimal l, Decimal r) -> <@@ l * r @@>        
+        | Subtract(Decimal l, Decimal r) -> <@@ l - r @@>
+
         | expr -> traverse expr _reduce_constants
 
     let rec _right_assoc_add =
@@ -108,11 +145,15 @@ module Integers =
          | Subtract(Multiply(a1, a2), Multiply(a1', a3)) when sequal a1 a1' -> call_mul a1 (call_sub a2 a3) 
          | expr -> traverse expr _collect_mul_sub
 
-    let rec _ident =
+    let rec _ident_add =
         function
         | Add(x, Int32 0) -> x
+        | expr -> traverse expr _ident_add
+
+    let rec _ident_mul =
+        function
         | Multiply(x, Int32 1) -> x
-        | expr -> traverse expr _ident
+        | expr -> traverse expr _ident_mul
 
     (* Admitted rules *)
 
@@ -135,16 +176,25 @@ module Integers =
     let commute_add = Admit("Addition operation in (expression) is commutative", _commute_add)
 
     /// Multiplication is comutative.
-    let commute_mul = Admit("Multiplication operation in (expression) is commutative", _commute_add)
+    let commute_mul = Admit("Multiplication operation in (expression) is commutative", _commute_mul)
 
-    /// Expression is distributive.
-    //let distrib = Admit("Multipication distributes over addition (expression) is distributive", _distrib)
+    /// Multiplication is distributive over addition.
+    let distrib_mul_add = Admit("Multipication distributes over addition in (expression)", _distrib_mul_add)
+
+    /// Multiplication is distributive over subtraction.
+    let distrib_mul_sub = Admit("Multipication distributes over addition in (expression)", _distrib_mul_sub)
 
     /// Collect multiplication terms distributed over addition.
-    //let collect = Admit("Collect multiplication terms distributed over addition in (expression)", _collect)
+    let collect_mul_add = Admit("Collect multiplication terms distributed over addition in (expression)", _collect_mul_add)
+
+    /// Collect multiplication terms distributed over subtraction.
+    let collect_mul_sub = Admit("Collect multiplication terms distributed over addition in (expression)", _collect_mul_sub)
 
     /// Zero is the identity of the addition operation.
-    let zero_ident = Admit("Zero is the identity of the addition operation in (expression)", _ident)
+    let ident_add = Admit("0 is the identity of the addition operation in (expression)", _ident_add)
+
+    /// One is the identity of the multiplication operation.
+    let ident_mul = Admit("1 is the identity of the multiplication operation in (expression)", _ident_mul)
 
     type Integers() = inherit Theory(integer_axioms, [
         reduce
@@ -154,9 +204,12 @@ module Integers =
         left_assoc_mul
         commute_add
         commute_mul
-        //distrib
-        //collect
-        zero_ident
+        distrib_mul_add
+        distrib_mul_sub
+        collect_mul_add
+        collect_mul_sub
+        ident_add
+        ident_mul
     ])
     
     let integers = Integers()

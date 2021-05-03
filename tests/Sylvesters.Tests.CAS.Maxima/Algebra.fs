@@ -40,3 +40,10 @@ module MaximaTests =
         
         let f''' = Analysis.limit <@ (fo(%x + %a) - fo %x) / %a @> a <@ 0. @>
         Assert.NotNull f'''
+
+    [<Fact>]
+    let ``Can differentiate``() =
+        let x = LatinVars.x<real>
+        let y = LatinVars.y<real>
+        let d0 = Analysis.diff <@ %x ** 2.@> x 1
+        Assert.NotNull d0

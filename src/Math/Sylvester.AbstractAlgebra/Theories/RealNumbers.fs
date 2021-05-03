@@ -34,17 +34,13 @@ module RealNumbers =
     
     let rec _reduce_constants  =
          function
-         | Add(Double l,  Double r) -> <@@ l + r @@>
-         | Multiply(Double l, Double r) -> <@@ l * r @@>        
-         | Subtract(Double l, Double r) -> <@@ l - r @@>
          | Divide(Double l, Double r) -> <@@ l / r @@>
          | expr -> traverse expr _reduce_constants
 
-    let rec _distrib =
+    let rec _distrib_divide_add =
         function
-        | Multiply(a1, Add(a2, a3)) -> call_add (call_mul a1 a2)  (call_mul a1 a3) 
-        | Multiply(a1, Subtract(a2, a3)) -> call_sub (call_mul a1 a2) (call_mul a1 a3) 
-        | expr -> traverse expr _distrib
+        | Divide(a1, Add(a2, a3)) -> call_add (call_mul a1 a2)  (call_mul a1 a3) 
+        | expr -> traverse expr _distrib_divide_add
 
     let rec _collect =
         function
@@ -62,7 +58,7 @@ module RealNumbers =
     let reduce = Admit("Reduce real number constants in (expression)", _reduce_constants)
 
     /// Expression is distributive.
-    let distrib = Admit("(expression) is distributive", _distrib)
+    let distrib = Admit("(expression) is distributive", _distrib_divide_add)
 
     /// Collect multiplication terms distributed over addition.
     let collect = Admit("Collect multiplication terms distributed over addition in (expression)", _collect)
@@ -79,6 +75,12 @@ module RealNumbers =
         Integers.left_assoc_mul
         Integers.commute_add
         Integers.commute_mul
+        Integers.distrib_mul_add
+        Integers.distrib_mul_sub
+        Integers.collect_mul_add
+        Integers.collect_mul_sub
+        Integers.ident_add
+        Integers.ident_mul
         reduce
         distrib
         collect

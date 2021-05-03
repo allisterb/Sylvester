@@ -9,8 +9,8 @@ type LPSol =
 | RatLPSol of (string * rat) list 
 
 module LP =
-    let max (f:Expr<'t>) (constraints:Expr<bool list>)  =
-        use z3 = new Z3Solver()
+    let max (nl:bool) (constraints:Expr<bool list>) (f:Expr<'t>) =
+        use z3 = new Z3Solver(nl)
         opt_assert_hard z3 constraints
         let h = opt_maximize z3 f
         match (f.Type).Name with
