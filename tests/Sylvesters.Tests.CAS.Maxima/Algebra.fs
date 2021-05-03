@@ -1,6 +1,6 @@
 namespace Sylvester.Tests.CAS
 
-module MaximaTests = 
+module Algebra = 
 
     open System
     open Xunit
@@ -8,7 +8,7 @@ module MaximaTests =
     open Sylvester
     open Sylvester.CAS
 
-    Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+    do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
     
     [<Fact>]
     let ``Can start maxima process`` () =
@@ -40,10 +40,3 @@ module MaximaTests =
         
         let f''' = Analysis.limit <@ (fo(%x + %a) - fo %x) / %a @> a <@ 0. @>
         Assert.NotNull f'''
-
-    [<Fact>]
-    let ``Can differentiate``() =
-        let x = LatinVars.x<real>
-        let y = LatinVars.y<real>
-        let d0 = Analysis.diff <@ %x ** 2.@> x 1
-        Assert.NotNull d0

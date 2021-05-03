@@ -102,7 +102,7 @@ module Integers =
     let rec _right_assoc_mul =
         function
         | Multiply(Multiply(a1, a2), a3) -> call_mul a1 (call_add a2 a3)
-        | expr -> traverse expr _right_assoc_add
+        | expr -> traverse expr _right_assoc_mul
 
     let rec _left_assoc_add =
         function
@@ -112,7 +112,7 @@ module Integers =
     let rec _left_assoc_mul =
         function
         | Multiply(a1, Multiply(a2, a3)) -> call_mul (call_mul a1 a2) a3
-        | expr -> traverse expr _left_assoc_add
+        | expr -> traverse expr _left_assoc_mul
 
     let rec _commute_add =
         function
