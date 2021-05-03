@@ -27,6 +27,8 @@ module Analysis =
         | Ok r -> if r.Trim() <> "done" then failwithf "Could not declare symbol %A as constant. Maxima returned %s." v r
         | Error e -> failwithf "Could not declare symbol %A as constant. Maxima returned %s." v e.Message
 
+    let declare_constants v = List.iter declare_constant v
+
     let limit expr x v =
         send expr <| sprintf "limit(%s, %s, %s);" (sprint' expr) (sprint' x) (sprint' v) in
                 

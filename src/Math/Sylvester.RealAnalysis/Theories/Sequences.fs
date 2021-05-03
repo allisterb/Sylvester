@@ -40,6 +40,10 @@ module Sequences =
 
     let monotonic = pred<seq<_>>
 
+    let null_sequence = pred<seq<_>>
+
+    let cauchy = pred<seq<_>>
+
     (* Definitions *)
 
     let def_seq_n (f:Expr<int->_>) (n:Expr<int>) =
@@ -49,10 +53,10 @@ module Sequences =
         def sequences <@ infinite_series %f = seq { partial_sum %n (seq {(%f) %n}) } @>
 
     let def_limit (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (a:Expr<int->real>) =
-        def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  ((%Li - (%a) %n) < %epsilon)) @>
+        def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  (abs(%Li - (%a) %n) < %epsilon)) @>
 
-    let def_limit' (epsilon:Expr<Scalar<real>>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<Vector<_, real>>) (a:Expr<int->Vector<_, real>>) =
-        def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0R) (exists %N  (%n > %N) ((vdist %Li ((%a) %n)) < %epsilon)) @>
+    let def_limit' (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<Vector<_, real>>) (a:Expr<int->Vector<_, real>>) =
+        def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N) ((vdist %Li ((%a) %n)) < scalar %epsilon)) @>
     
     let def_subsequence (n:Expr<int>) (a:Expr<int->_>) (f:Expr<int->int>) =
         def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Function.increasing %f @>
@@ -75,6 +79,9 @@ module Sequences =
     let def_monotonic (s:Expr<seq<_>>) =
         def sequences <@ monotonic %s = (increasing %s ||| decreasing %s) @>
 
+    let def_null_sequence(a:Expr<int->real>) (epsilon:Expr<real>) (k: Expr<int>) (K:Expr<int>) =
+        def sequences <@ null_sequence (seq {(%a) %k}) = forall %epsilon (%epsilon > 0.) (exists %K (%K > 0) (forall' %K  (abs((%a) %k) < %epsilon))) @>
+    
     (* Theorems *)
 
     let seq_conv_implies_bound (s:Expr<seq<_>>) = proof sequences <@ converges %s  ==> bounded %s  @> [] 
@@ -110,6 +117,5 @@ module Sequences =
 
     let series_conv_implies_limit_zero (a:Expr<int->real>)  =
         proof sequences <@ converges (infinite_series %a) ==> (lim pos_inf (infinite_seq %a) = 0.) @>
-
 
    

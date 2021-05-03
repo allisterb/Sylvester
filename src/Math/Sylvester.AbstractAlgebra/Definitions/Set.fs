@@ -151,7 +151,7 @@ with
             | InfiniteSeq _ -> x |> Seq.filter f |> infinite_seq_gen |> Set.fromSeq
             | _ -> failwithf "Cannot determine the cardinality of the sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
         | Set s -> 
-            let r = s.Range';
+            let r = s.Range'
             let nr = expand f'
             Set(SetComprehension(s.Bound, <@ %r |&| (%%nr:bool) @>, s.Body', s.Cardinality))
 

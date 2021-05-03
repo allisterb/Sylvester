@@ -74,5 +74,6 @@ module NumericLiteralR =
   let FromOne() = Scalar<real> 1.
   let FromInt32 (i:int) = i |> real |> Scalar<real>
 
-module ZZ =
-    let r = Scalar 3. > 0R
+[<AutoOpen>]
+module Scalar =
+    let scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (n:'t) = Scalar n  
