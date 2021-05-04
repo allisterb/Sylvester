@@ -13,10 +13,23 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand''<'t>)
     let expr' = Array.map (Array.map MathNetExpr.fromQuotation) expr
+    (* Transposes rectangular matrices *)
+    let transpose matrix =
+        let rec fetch_column acc (matr:(Expr<'t> list list)) = (* Makes a column list from a row list *)
+            if matr.Head.Length = 0 then (List.rev acc) (* Stop *)
+            else fetch_column
+                    ([for row in matr -> row.Head]::acc) (* Fetches the first item from each row *)
+                    (List.map (fun row -> match row with [] -> [] | h::t -> t) matr)
+        fetch_column [] matrix 
+    let exprT = expr |> Array.map(Array.toList) |> Array.toList |> transpose |> List.map(List.toArray) |> List.toArray
     member val Expr = expr
     member val ExprVars = expr |> Array.map (Array.map(get_vars >>List.toArray)) |> Array.concat
     member val Expr' = expr'
     member val Display = ""
+    member val ExprT = exprT
+    member val RowVectors = expr |> Array.map Vector<'t>
+    member val ColumnVectors = exprT |> Array.map Vector<'t>
+    member x.Item(i:int, j:int) = expr.[i].[j]
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
@@ -36,10 +49,13 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     inherit Matrix<'t>(e)
     let dim0 = number<'dim0>
     let dim1 = number<'dim1>
-    do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions (%i,%i) instead of (%i,%i)." e.Length e.[0].Length dim0.IntVal dim1.IntVal
+    do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
     member val Dim0:'dim0 = dim0
+    member val Dim1:'dim1 = dim1
     member val Display = base.Display
-    member x.Item(i: int, j:int) = e.[i].[j] |> Scalar<'t>
+    member x.ColumnVectors = x.ExprT |> Array.map Vector<'dim0, 't>
+    member x.RowVectors = x.Expr |> Array.map Vector<'dim1, 't>
+    member x.Item(i: int) = x.RowVectors.[i]
     interface IMatrix<'dim0, 'dim1> with 
         member val Dim0 = dim0
         member val Dim1 = dim1
