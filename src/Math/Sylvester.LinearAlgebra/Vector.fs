@@ -21,6 +21,11 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         |> Array.skip 1 
         |> Array.fold(fun s e -> sprintf "%s, %s" s (sprint' e)) (sprint' expr.[0]) 
         |> sprintf "(%s)"
+    member val LinearDisplay =
+        expr 
+        |> Array.skip 1 
+        |> Array.fold(fun s e -> sprintf "%s %s" s (sprint' e)) (sprint' expr.[0]) 
+        |> sprintf "%s"
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
