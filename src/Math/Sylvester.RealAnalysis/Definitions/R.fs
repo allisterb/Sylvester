@@ -25,4 +25,11 @@ module R =
 
     let lim f x v = defaultRealAnalysisSymbolicOps.Limit f x v
 
-    let diff f x n  =  defaultRealAnalysisSymbolicOps.Diff f x n
+    let lim_right f x v = defaultRealAnalysisSymbolicOps.LimitRight f x v
+
+    let lim_left f x v = defaultRealAnalysisSymbolicOps.LimitLeft f x v
+
+    let diff f x  =  defaultRealAnalysisSymbolicOps.Diff f x 1
+
+    let inline deriv f x a = 
+        lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>

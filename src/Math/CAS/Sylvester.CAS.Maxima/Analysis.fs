@@ -30,8 +30,14 @@ module Analysis =
     let declare_constants v = List.iter declare_constant v
 
     let limit expr x v =
-        send expr <| sprintf "limit(%s, %s, %s);" (sprint' expr) (sprint' x) (sprint' v) in
+        send expr <| sprintf "limit(%s, %s, %s);" (sprint' expr) (sprint' x) (sprint' v)
                 
+    let limit_right expr x v =
+        send expr <| sprintf "limit(%s, %s, %s, plus);" (sprint' expr) (sprint' x) (sprint' v)
+
+    let limit_left expr x v =
+        send expr <| sprintf "limit(%s, %s, %s, minus);" (sprint' expr) (sprint' x) (sprint' v)
+
     let diff expr x (constants:Var list) n =
         do constants |> List.iter(fun c -> declare_constant c)
         let r = send expr  <| sprintf "diff(%s, %s, %i);" (sprint' expr) (sprint' x) n

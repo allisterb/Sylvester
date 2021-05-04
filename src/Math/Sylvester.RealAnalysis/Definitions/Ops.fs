@@ -6,11 +6,15 @@ open Sylvester.CAS
 
 type IRealAnalysisSymbolicOps =
     abstract Limit:Expr<'a> -> Expr<'b> -> Expr<'c> -> Expr<'a>
+    abstract LimitRight:Expr<'a> -> Expr<'b> -> Expr<'c> -> Expr<'a>
+    abstract LimitLeft:Expr<'a> -> Expr<'b> -> Expr<'c> -> Expr<'a>
     abstract Diff:Expr<'a> -> Expr<'b> -> int -> Expr<'a>
   
  type MaximaRealAnalysisOps() = 
     interface IRealAnalysisSymbolicOps with
-        member __.Limit f x v = Analysis.limit f x v 
+        member __.Limit f x v = Analysis.limit f x v
+        member __.LimitRight f x v = Analysis.limit_left f x v
+        member __.LimitLeft f x v = Analysis.limit_left f x v
         member __.Diff (f:Expr<'a>) (x:Expr<'b>) n = 
             let c = f |> get_vars |> List.except (get_vars x)
             Analysis.diff f x c n
