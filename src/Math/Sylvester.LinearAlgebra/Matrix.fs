@@ -71,6 +71,9 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     new(v: Expr<'t list list>) = let expr = v |> expand_lists' |> List.map(List.toArray) |> List.toArray in Matrix<'dim0, 'dim1, 't>(expr)
     new(d:'t list list) = Matrix<'dim0, 'dim1, 't>((List.map(List.toArray) >> List.toArray) d)
     new(rows: Vector<'dim1, 't> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'dim0, 'dim1, 't>(e)
+    new (v:Expr<'t>) = 
+        let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) v) in 
+            Matrix<'dim0, 'dim1, 't> e
     static member create([<ParamArray>] data: 't array array) = Matrix<'dim0, 'dim1,'t>(data)
         
     static member Zero:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (zero_val(typeof<'t>) |> expand''<'t>)) in Matrix<'dim0, 'dim1, 't> e
@@ -118,15 +121,10 @@ type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 
 module Matrix =
     let mtrans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose
 
-    let madd (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
+    let madd (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l + r
     
-    let msub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
+    let msub (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l - r
     
-    let msmul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
+    let msmul (l:'t) (r:Matrix<'dim0, 'dim1, 't>) = Matrix<'dim0, 'dim1, 't>.(*) (l, r)
 
-    let msimplify (l:Vector<_,_>) = l.Expr |> Array.map simplify' |> Vector<_,_>
-
-    //let vnorm (l:Vector<'n, 't>) =
-//        let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
-
- //   let vdist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> simplify |> Scalar<'t>
+    let msimplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplify') |> Matrix<'dim0, 'dim1, 't>
