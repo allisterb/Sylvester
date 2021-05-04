@@ -7,7 +7,7 @@ open FSharp.Quotations
 open MathNet.Numerics
 
 [<StructuredFormatDisplay("{Display}")>]
-type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> internal (e:Expr<'t>) =
+type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (e:Expr<'t>) =
     let expr = expand'<'t, 't> e
     let expr' = expr |> MathNetExpr.fromQuotation
     member val Expr = expr

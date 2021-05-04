@@ -18,7 +18,7 @@ module Sequences =
 
     (* Functions *)
 
-    let lim (r:int) (s:seq<'t>) = formula<'t>
+    let lim_seq (r:int) (s:seq<'t>) = formula<'t>
     
     (* Predicates *)
     
@@ -52,14 +52,14 @@ module Sequences =
     let def_series_n (f:Expr<int->real>) (n:Expr<int>) =
         def sequences <@ infinite_series %f = seq { partial_sum %n (seq {(%f) %n}) } @>
 
-    let def_limit (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (a:Expr<int->real>) =
-        def sequences <@ lim pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  (abs(%Li - (%a) %n) < %epsilon)) @>
+    let def_lim_seqit (epsilon:Expr<real>) (N:Expr<int>) (n:Expr<int>) (Li:Expr<real>) (a:Expr<int->real>) =
+        def sequences <@ lim_seq pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  (abs(%Li - (%a) %n) < %epsilon)) @>
     
     let def_subsequence (n:Expr<int>) (a:Expr<int->_>) (f:Expr<int->int>) =
         def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Function.increasing %f @>
 
     let def_converges (a:Expr<int->_>) (Li:Expr<_>)  =      
-            def sequences <@ converges (infinite_seq %a) = (lim pos_inf (infinite_seq %a) = %Li) @> 
+            def sequences <@ converges (infinite_seq %a) = (lim_seq pos_inf (infinite_seq %a) = %Li) @> 
     
     let def_bounded_above (d:Expr<seq<_>>) =
             def sequences <@ bounded %d = sseq %d :? IBoundedAbove<_> @>
@@ -91,34 +91,34 @@ module Sequences =
 
     let seq_bolzano_weierstrass (s:SeqExpr<real>) (ss:SeqExpr<real>) = proof sequences <@ forall %s (bounded %s) (exists %ss (subsequence %s %ss) (converges %ss)) @> []
 
-    let limit_subseq (s:Expr<seq<_>>) (ss:Expr<seq<_>>) (n:Expr<int>) (Li:Expr<real>) =
-        proof sequences <@ lim %n %s = %Li |&| subsequence %s %ss ==> (lim %n %ss = %Li) @>
+    let lim_seqit_subseq (s:Expr<seq<_>>) (ss:Expr<seq<_>>) (n:Expr<int>) (Li:Expr<real>) =
+        proof sequences <@ lim_seq %n %s = %Li |&| subsequence %s %ss ==> (lim_seq %n %ss = %Li) @>
         
-    let lim_algebra_const_eq (a:Expr<int->real>) (n:Expr<int>) (C:Expr<real>) = 
-        proof sequences <@ lim pos_inf (seq {%C * (%a) %n}) = %C * lim pos_inf (seq {(%a) %n}) @> []
+    let lim_seq_algebra_const_eq (a:Expr<int->real>) (n:Expr<int>) (C:Expr<real>) = 
+        proof sequences <@ lim_seq pos_inf (seq {%C * (%a) %n}) = %C * lim_seq pos_inf (seq {(%a) %n}) @> []
 
-    let lim_algebra_abs_eq (a:Expr<int->real>) (n:Expr<int>) = 
-        proof sequences <@ lim pos_inf (seq {abs((%a) %n)}) = abs(lim pos_inf (seq {(%a) %n})) @> []
+    let lim_seq_algebra_abs_eq (a:Expr<int->real>) (n:Expr<int>) = 
+        proof sequences <@ lim_seq pos_inf (seq {abs((%a) %n)}) = abs(lim_seq pos_inf (seq {(%a) %n})) @> []
 
-    let lim_algebra_add_eq (a:Expr<int->real>) (b:Expr<int->real>) (n:Expr<int>)  = 
-        proof sequences <@ lim pos_inf (seq {(%a) %n + (%b) %n}) = lim pos_inf (seq {(%a) %n}) + lim pos_inf (seq {(%b) %n}) @> []
+    let lim_seq_algebra_add_eq (a:Expr<int->real>) (b:Expr<int->real>) (n:Expr<int>)  = 
+        proof sequences <@ lim_seq pos_inf (seq {(%a) %n + (%b) %n}) = lim_seq pos_inf (seq {(%a) %n}) + lim_seq pos_inf (seq {(%b) %n}) @> []
 
-    let lim_algebra_mul_eq (a:Expr<int->real>) (b:Expr<int->real>) (n:Expr<int>)  = 
-        proof sequences <@ lim pos_inf (seq {(%a) %n * (%b) %n}) = lim pos_inf (seq {(%a) %n}) * lim pos_inf (seq {(%b) %n}) @> []
+    let lim_seq_algebra_mul_eq (a:Expr<int->real>) (b:Expr<int->real>) (n:Expr<int>)  = 
+        proof sequences <@ lim_seq pos_inf (seq {(%a) %n * (%b) %n}) = lim_seq pos_inf (seq {(%a) %n}) * lim_seq pos_inf (seq {(%b) %n}) @> []
     
-    let lim_algebra_div_eq (a:Expr<int->real>) (n:Expr<int>) (Li:Expr<real>) = 
-        proof sequences <@ forall' %n ((%a) %n <> 0.) && %Li <> 0. ==> (lim pos_inf (seq {1./(%a) %n}) = 1. / %Li) @> []
+    let lim_seq_algebra_div_eq (a:Expr<int->real>) (n:Expr<int>) (Li:Expr<real>) = 
+        proof sequences <@ forall' %n ((%a) %n <> 0.) && %Li <> 0. ==> (lim_seq pos_inf (seq {1./(%a) %n}) = 1. / %Li) @> []
 
-    let lim_algebra_pow_eq (a:Expr<int->real>) (n:Expr<int>) (k:Expr<real>) = 
-        proof sequences <@ lim pos_inf (seq {((%a) %n) ** %k}) = lim pos_inf (seq {(%a) %n}) ** %k @> []
+    let lim_seq_algebra_pow_eq (a:Expr<int->real>) (n:Expr<int>) (k:Expr<real>) = 
+        proof sequences <@ lim_seq pos_inf (seq {((%a) %n) ** %k}) = lim_seq pos_inf (seq {(%a) %n}) ** %k @> []
 
-    let lim_algebra_gt0_eq (a:Expr<int->real>) (n:Expr<int>) = 
-        proof sequences <@ forall' %n ((%a) %n > 0.) ==> (lim pos_inf (seq {(%a) %n}) > 0.) @> []
+    let lim_seq_algebra_gt0_eq (a:Expr<int->real>) (n:Expr<int>) = 
+        proof sequences <@ forall' %n ((%a) %n > 0.) ==> (lim_seq pos_inf (seq {(%a) %n}) > 0.) @> []
 
-    let lim_geom_series (a:Expr<real>) (r:Expr<real>)  = 
-        proof sequences <@ lim pos_inf (geometric_series %a %r)  = (%a / real 1 - %r) @> []
+    let lim_seq_geom_series (a:Expr<real>) (r:Expr<real>)  = 
+        proof sequences <@ lim_seq pos_inf (geometric_series %a %r)  = (%a / real 1 - %r) @> []
 
-    let series_conv_implies_limit_zero (a:Expr<int->real>)  =
-        proof sequences <@ converges (infinite_series %a) ==> (lim pos_inf (infinite_seq %a) = 0.) @>
+    let series_conv_implies_lim_seqit_zero (a:Expr<int->real>)  =
+        proof sequences <@ converges (infinite_series %a) ==> (lim_seq pos_inf (infinite_seq %a) = 0.) @>
 
    

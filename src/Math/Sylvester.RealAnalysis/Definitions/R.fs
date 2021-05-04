@@ -20,16 +20,15 @@ module R =
     
     [<Formula>]
     let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (euclid_dist x y) < Scalar r)
+    
+    let lim f x v : Scalar<real> = defaultRealAnalysisSymbolicOps.Limit f x v |> Scalar
+       
+    let lim_right f x v = defaultRealAnalysisSymbolicOps.LimitRight f x v |> Scalar
 
-    let part_deriv (f:Expr<Vec<_>->real>) = ()
+    let lim_left f x v = defaultRealAnalysisSymbolicOps.LimitLeft f x v |> Scalar
 
-    let lim f x v = defaultRealAnalysisSymbolicOps.Limit f x v
-
-    let lim_right f x v = defaultRealAnalysisSymbolicOps.LimitRight f x v
-
-    let lim_left f x v = defaultRealAnalysisSymbolicOps.LimitLeft f x v
-
-    let diff f x  =  defaultRealAnalysisSymbolicOps.Diff f x 1
+    let diff f x  =  defaultRealAnalysisSymbolicOps.Diff f x 1 |> Scalar
 
     let inline deriv f x a = 
         lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
+
