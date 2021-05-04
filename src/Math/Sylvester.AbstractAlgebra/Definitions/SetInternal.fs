@@ -206,4 +206,4 @@ module internal SetInternal =
                                 l :=  m
         }
 
-type seq'<'t> = Expr<seq<'t>>
+type SeqExpr<'t> = Expr<seq<'t>>

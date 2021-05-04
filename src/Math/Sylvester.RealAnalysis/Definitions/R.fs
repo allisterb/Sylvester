@@ -8,10 +8,6 @@ open Vector
 type R<'n when 'n :>Number>() = 
     inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.vadd, Vector.vsmul)
     
-type Region<'n when 'n :> Number> = Set<Vec<'n>>
-
-type Region'<'n when 'n :> Number> = Expr<Region<'n>>
-
 [<AutoOpen>]
 module R =
     let R<'n when 'n :> Number> =  R<'n>()
@@ -23,6 +19,10 @@ module R =
     let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
     
     [<Formula>]
-    let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (vdist x y) < Scalar r)
+    let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (euclid_dist x y) < Scalar r)
 
     let part_deriv (f:Expr<Vec<_>->real>) = ()
+
+    let lim f x v = defaultRealAnalysisSymbolicOps.Limit f x v
+
+    let diff f x n  =  defaultRealAnalysisSymbolicOps.Diff f x n

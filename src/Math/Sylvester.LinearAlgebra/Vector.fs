@@ -48,6 +48,7 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     member val Dim0:'dim0 = dim0
     member val Display = base.Display
     member x.Item(i: int) = e.[i] |> Scalar<'t>
+    member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
     interface IVector<'dim0> with member val Dim0 = dim0
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'dim0, 't>(expr)
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
@@ -99,4 +100,4 @@ module Vector =
     let vnorm (l:Vector<'n, 't>) =
         let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
 
-    let vdist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> simplify |> Scalar<'t>
+    let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> simplify |> Scalar<'t>

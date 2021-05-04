@@ -27,7 +27,6 @@
     <Compile Include="Display.fs" />
     <Compile Include="EquationalLogic.fs" />
     <Compile Include="Proof.fs" />
-    <Compile Include="E.fs" />
     <Compile Include="Tactics.fs" />
     <Compile Include="Theories\PropCalculus.fs" />
     <Compile Include="Theories\PredCalculus.fs" />

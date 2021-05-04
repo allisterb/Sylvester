@@ -85,6 +85,12 @@ module Sequences =
 
     let seq_divg_implies_notbound (s:Expr<seq<_>>) = proof sequences <@ diverges %s  ==> not (bounded %s)  @> []
 
+    let seq_bounded_mono_implies_converg (s:SeqExpr<_>)= proof sequences <@ bounded %s |&|monotonic %s ==> converges %s @> []
+
+    let seq_exists_mono_seq (s:SeqExpr<_>) (ss:SeqExpr<_>) = proof sequences <@ forall' %s (exists %ss (subsequence %s %ss) (monotonic %ss)) @> []
+
+    let seq_bolzano_weierstrass (s:SeqExpr<real>) (ss:SeqExpr<real>) = proof sequences <@ forall %s (bounded %s) (exists %ss (subsequence %s %ss) (converges %ss)) @> []
+
     let limit_subseq (s:Expr<seq<_>>) (ss:Expr<seq<_>>) (n:Expr<int>) (Li:Expr<real>) =
         proof sequences <@ lim %n %s = %Li |&| subsequence %s %ss ==> (lim %n %ss = %Li) @>
         
