@@ -21,8 +21,8 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
             else fetch_column
                     ([for row in matr -> row.Head]::acc) (* Fetches the first item from each row *)
                     (List.map (fun row -> match row with [] -> [] | h::t -> t) matr)
-        fetch_column [] matrix 
-    let exprT = expr |> Array.map(Array.toList) |> Array.toList |> transpose |> List.map(List.toArray) |> List.toArray
+        fetch_column [] (matrix |> (Array.map(Array.toList) >> Array.toList)) |> (List.map(List.toArray) >> List.toArray)
+    let exprT = expr  |> transpose 
     member val Expr = expr
     member val ExprVars = expr |> Array.map (Array.map(get_vars >>List.toArray)) |> Array.concat
     member val Expr' = expr'
@@ -55,6 +55,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     inherit Matrix<'t>(e)
     let dim0 = number<'dim0>
     let dim1 = number<'dim1>
+    
     do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
     member val Dim0:'dim0 = dim0
     member val Dim1:'dim1 = dim1
@@ -95,8 +96,20 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     static member (~-) (l: Matrix<'dim0, 'dim1, 't>) = 
         let m = l.RowVectors |> Array.map (~-) in Matrix<'dim0, 'dim1, 't> m
 
-    static member (*) (l:Matrix<'dim0, 'dim0, 't>, r:Vector<'dim0, 't>) =
+    static member (*) (l:Matrix<'dim0, 'dim1, 't>, r:Vector<'dim1, 't>) =
         seq {for i in 0..l.Dim0.IntVal - 1 -> l.RowVectors.[i] * r} |> Seq.map sexpr |> Seq.toArray |> Vector<'dim0, 't>
+
+    static member (*) (l:Matrix<'dim0, 'dim1, 't>, r:Matrix<'dim1, 'dim2, 't> ) =       
+        (* Transposes rectangular matrices *)
+        let transpose matrix =
+            let rec fetch_column acc (matr:(Expr<'t> list list)) = (* Makes a column list from a row list *)
+                if matr.Head.Length = 0 then (List.rev acc) (* Stop *)
+                else fetch_column
+                        ([for row in matr -> row.Head]::acc) (* Fetches the first item from each row *)
+                        (List.map (fun row -> match row with [] -> [] | h::t -> t) matr)
+            fetch_column [] (matrix |> (Array.map(Array.toList) >> Array.toList)) |> (List.map(List.toArray) >> List.toArray)
+            
+        seq {for i in 0..r.Dim1.IntVal - 1 -> l * r.ColumnVectors.[i]} |> Seq.map(vexpr)  |> Seq.toArray |> transpose |> Matrix<'dim0, 'dim2, 't>
 
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, real>
 type ComplexMat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, complex>

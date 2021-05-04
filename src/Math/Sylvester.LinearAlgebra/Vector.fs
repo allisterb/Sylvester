@@ -86,6 +86,8 @@ type ComplexVec<'dim0 when 'dim0 :> Number> = Vector<'dim0, complex>
 type VecQ<'dim0 when 'dim0 :> Number> = Vector<'dim0, rat>
 
 module Vector =
+    let vexpr(l:Vector<'n, 't>) = l.Expr
+
     let vadd (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
     
     let vsub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
