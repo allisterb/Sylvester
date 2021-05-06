@@ -18,8 +18,14 @@ type IVectorSymbolicOps =
     
 type ILinearAlgebraSymbolicOps =
     inherit IVectorSymbolicOps
-    
-module private Ops =
+
+module Array2D = 
+    let toJagged<'a> (arr: 'a[,]) : 'a [][] = 
+        [| for x in 0 .. Array2D.length1 arr - 1 do
+               yield [| for y in 0 .. Array2D.length2 arr - 1 -> arr.[x, y] |]
+            |]
+            
+module internal Ops =
     let vars (a:Expr<_> array list) = a |> List.map Array.toList |> List.concat |> List.map get_vars |> List.concat
 
     let exprs (a:Expr<_> array list) = a |> List.map Array.toList |> List.concat |> List.map MathNetExpr.fromQuotation
@@ -27,6 +33,21 @@ module private Ops =
     let fromQ e = Array.map MathNetExpr.fromQuotation e
 
     let toQ<'t> v e = MathNetExpr.toQuotation'<'t> v e
+
+    let mat_to_array (a:Expr<'t> list list) = (List.map(List.toArray) >> List.toArray) a
+    
+    let mat_to_list (a:Expr<'t> array array) = (Array.map(Array.toList) >> Array.toList) a
+
+    let identity_mat<'t> i  = Array2D.init i i (krdelta<'t>) |> Array2D.map(expand''<'t>) |> Array2D.toJagged
+
+    /// Based on: http://www.fssnip.net/aD/title/Matrix
+    let transpose_mat matrix =
+        let rec fetch_column acc (matr:(Expr<'t> list list)) = (* Makes a column list from a row list *)
+            if matr.Head.Length = 0 then (List.rev acc) (* Stop *)
+            else fetch_column
+                    ([for row in matr -> row.Head]::acc) (* Fetches the first item from each row *)
+                    (List.map (fun row -> match row with [] -> [] | h::t -> t) matr)
+        fetch_column [] (matrix |> (Array.map(Array.toList) >> Array.toList)) |> (List.map(List.toArray) >> List.toArray)
 
 type DefaultLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with
@@ -46,3 +67,5 @@ module LinearAlgbra =
         | _ -> None
 
     let mutable defaultLinearAlgebraSymbolicOps = new DefaultLinearAlgebraSymbolic() :> IVectorSymbolicOps
+
+ 

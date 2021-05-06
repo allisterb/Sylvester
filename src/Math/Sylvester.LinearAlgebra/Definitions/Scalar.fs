@@ -20,6 +20,9 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val Display = sprint' expr
     new(d:'t) = Scalar<@ d @>
 
+    interface IEquatable<Scalar<'t>> with
+        member a.Equals b = a.Display = b.Display
+
     interface IComparable<Scalar<'t>> with
         member a.CompareTo b = if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo b.Val else failwithf "The scalar type %A is not comparable" typeof<'t>
     
@@ -29,6 +32,11 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
             | :? Scalar<'t> as bs -> (a :> IComparable<Scalar<'t>>).CompareTo bs
             | :? 't as bs -> if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo bs else failwithf "The scalar type %A is not comparable." typeof<'t>
             | _ -> failwith "This object is not a set."
+    
+    override a.Equals (_b:obj) = 
+            match _b with 
+            | :? Scalar<'t> as b -> (a :> IEquatable<Scalar<'t>>).Equals b
+            | _ -> false
     
     static member Zero = typeof<'t> |> zero_val |> expand''<'t> |> Scalar
 

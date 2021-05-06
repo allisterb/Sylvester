@@ -12,7 +12,7 @@ type RealExpr<'n when 'n :> Number> = Expr<R<'n>>
 
 
 
-module Functions =
+//module Functions =
     
     
     (* Predicates *)

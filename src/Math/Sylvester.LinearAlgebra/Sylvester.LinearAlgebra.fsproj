@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Shapes.fs" />
-    <Compile Include="Ops.fs" />
-    <Compile Include="Scalar.fs" />
-    <Compile Include="Vector.fs" />
-    <Compile Include="Matrix.fs" />
+    <Compile Include="Definitions\Shapes.fs" />
+    <Compile Include="Definitions\Ops.fs" />
+    <Compile Include="Definitions\Scalar.fs" />
+    <Compile Include="Definitions\Vector.fs" />
+    <Compile Include="Definitions\Matrix.fs" />
+    <Compile Include="Theories\VectorSpace.fs" />
+    <Compile Include="Theories\MatrixAlgebra.fs" />
   </ItemGroup>
 
   <ItemGroup>

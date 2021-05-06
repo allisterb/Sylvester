@@ -169,6 +169,17 @@ module FsExpr =
             .Add("Double", <@ (+) 1. 1. @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
             .Add("Decimal", <@ (+) 1m 1m @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
             .Add("Rational", <@ (+) 1Q 1Q @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+
+    let negOneVal = 
+        Map.empty
+            .Add("Int16", <@ (+) -1s 1s @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Int32", <@ (+) -1 1 @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Int64", <@ (+) -1L 1L @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Single", <@ (+) -1.0f 1.0f @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Double", <@ (+) -1. 1. @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Decimal", <@ (+) -1m 1m @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+            .Add("Rational", <@ (+) -1Q 1Q @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
+    
     let rec getExprName = function
     | Call(None, info, _) -> info.Name
     | Lambda(_, expr) -> getExprName expr
@@ -416,6 +427,10 @@ module FsExpr =
     
     let one_val(t:Type) = oneVal.[t.Name]
 
+    let neg_one_val(t:Type) = negOneVal.[t.Name]
+
+    let krdelta<'t>  = fun (i:int) (j:int) -> if i = j then one_val (typeof<'t>) else zero_val (typeof<'t>)
+
     let expand_list (expr:Expr): Expr list =
         let expr' = expand expr
         match expr' with
@@ -442,12 +457,3 @@ module FsExpr =
         match q with
         | Var _ -> Unchecked.defaultof<'t>
         | _ -> FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
-
-    /// Based on: http://www.fssnip.net/aD/title/Matrix
-    let transpose matrix =
-        let rec fetch_column acc (matr:(Expr<'t> list list)) = (* Makes a column list from a row list *)
-            if matr.Head.Length = 0 then (List.rev acc) (* Stop *)
-            else fetch_column
-                    ([for row in matr -> row.Head]::acc) (* Fetches the first item from each row *)
-                    (List.map (fun row -> match row with [] -> [] | h::t -> t) matr)
-        fetch_column [] (matrix |> (Array.map(Array.toList) >> Array.toList)) |> (List.map(List.toArray) >> List.toArray)
