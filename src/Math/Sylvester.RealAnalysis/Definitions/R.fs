@@ -12,13 +12,10 @@ type R<'n when 'n :>Number>() =
 module R =
     let R<'n when 'n :> Number> =  R<'n>()
     
-    [<Formula>]
     let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
     
-    [<Formula>]
     let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
     
-    [<Formula>]
     let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (euclid_dist x y) < Scalar r)
     
     let lim f x v : Scalar<real> = defaultRealAnalysisSymbolicOps.Limit f x v |> Scalar

@@ -442,3 +442,12 @@ module FsExpr =
         match q with
         | Var _ -> Unchecked.defaultof<'t>
         | _ -> FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
+
+    /// Based on: http://www.fssnip.net/aD/title/Matrix
+    let transpose matrix =
+        let rec fetch_column acc (matr:(Expr<'t> list list)) = (* Makes a column list from a row list *)
+            if matr.Head.Length = 0 then (List.rev acc) (* Stop *)
+            else fetch_column
+                    ([for row in matr -> row.Head]::acc) (* Fetches the first item from each row *)
+                    (List.map (fun row -> match row with [] -> [] | h::t -> t) matr)
+        fetch_column [] (matrix |> (Array.map(Array.toList) >> Array.toList)) |> (List.map(List.toArray) >> List.toArray)
