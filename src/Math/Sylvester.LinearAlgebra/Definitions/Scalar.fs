@@ -86,4 +86,4 @@ module NumericLiteralR =
 
 [<AutoOpen>]
 module Scalar =
-    let scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (n:'t) = Scalar n  
+    let scalar (n:'t) = let e =  expand''<'t> <@ n @> in Scalar(e)

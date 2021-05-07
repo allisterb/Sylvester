@@ -10,6 +10,7 @@ open Patterns
 open Descriptions
 
 open Vector
+open Matrix
 
 type VectorExpr<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
     Expr<Vector<'dim0, 't>>
@@ -36,10 +37,15 @@ module VectorSpace =
         | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
         | _ -> None
     
-    let matrix_axioms<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
-        let one = one_val(typeof<'t>)
+    let matrix_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+        let neg_one = neg_one_val(typeof<'t>)
         function
-        | Assoc <@(=)@> (<@ (+) @> :Expr<Matrix<'dim0, 'dim1, 't>->Matrix<'dim0, 'dim1, 't>->Matrix<'dim0, 'dim1, 't>>) x -> Some(desc x)
-        | Commute <@(=)@> (<@ (+) @> :Expr<Matrix<'dim0, 'dim1, 't>->Matrix<'dim0, 'dim1, 't>->Matrix<'dim0, 'dim1, 't>>) x -> Some(desc x)
-        | Identity <@(=)@> (<@ (+) @> : Expr<Matrix<'dim0, 'dim1, 't>->Matrix<'dim0, 'dim1, 't>->Matrix<'dim0, 'dim1, 't>>) <@ Matrix<'dim0, 'dim1, 't>.Zero @> x -> Some(desc x)
+        | Assoc <@(=)@> (<@ (+) @> :Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) x -> Some(desc x)
+        | Identity <@(=)@> (<@ (+) @> : Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) <@ Matrix<_, _, 't>.Zero @> x -> Some(desc x)
+        | Inverse <@(=)@> (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (expand'' <@ msmul %%neg_one @>) <@ Matrix<_,_, 't>.Zero @> x
+        | LeftCancelNonZero (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) <@ Matrix<_,_, 't>.Zero @> x -> Some (desc x)
+        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Value(v, t)))) when vequal a a' && t = typeof<Matrix<_,_, 't>> && (v :?> Matrix<_,_, 't>) = Matrix<_,_, 't>.Zero -> Some (desc (pattern_desc' "Additive Inverse"))
+        | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x -> Some (desc x)
+        | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x  -> Some (desc x)
+
         | _ -> None

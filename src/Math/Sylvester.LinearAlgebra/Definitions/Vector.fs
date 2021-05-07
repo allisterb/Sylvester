@@ -32,7 +32,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         match t with
         | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
-    member x.Item(i: int) = e.[i] |> Scalar<'t>
+    member x.Item with get(i)  = e.[i] |> Scalar<'t>
     member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
     interface IPartialShape<Dimension.one> with
         member val Rank = Some 1 with get,set

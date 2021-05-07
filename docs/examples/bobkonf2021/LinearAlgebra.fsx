@@ -2,9 +2,26 @@
 
 open Sylvester
 open Dimension
+open Vector
 open Matrix
 
-let m = Mat<three, two>.One
+
+let tt = 2
+
+<@ tt + 2 @> |> expand
+let z = var'<int> "z"
+
+let m = MatZ<three, four> <@[[%z;4;-1;2]; [0;2;1;3]; [-2; 1; -2; 2]]@>
+let n = MatZ<four, two>.ofCols <@[[%z; 0; 2; 3]; [-1;2;1;-2]]@>
+
+let mv = MatZ<three, three> <@[[-1;4;-1]; [0;2;1]; [-2; 1; -2]]@>
+let v =  vvars<three, int> "x"
+let e = mv |+|| v
+
+
+//mdiag n
+
+
 
 let m1 = Mat<four, two>.One
 
