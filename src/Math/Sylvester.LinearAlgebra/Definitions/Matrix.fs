@@ -77,9 +77,9 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
       
     static member ofCols(data: Expr<'t list list>) = Matrix<'dim0, 'dim1,'t>(data |> expand_lists' |> Ops.mat_to_array |> Ops.transpose_mat)
 
- //   static member ofRows (l:'dim0, r:'dim1, data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
+    static member ofRows (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
     
- //   static member ofColst (l:'dim0, r:'dim1, data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data |> Ops.transpose_mat)
+    static member ofCols (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data |> Ops.transpose_mat)
 
     static member Zero:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (zero_val(typeof<'t>) |> expand''<'t>)) in Matrix<'dim0, 'dim1, 't> e
 
@@ -127,50 +127,52 @@ module Matrix =
 
     let mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
     
+    let matc (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
+
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
-        Array.append l.Cols [|r|] |> Array.map vexpr |> mat l.Dim0 ((l.Dim1 + one))
-    let identm<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> mat l.Dim0 ((l.Dim1 + one))
+
+    let ident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>
 
-    let mtrans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose
+    let trans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose
 
-    let madd (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l + r
+    let add (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l + r
     
-    let msub (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l - r
+    let sub (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l - r
     
-    let msmul (l:'t) (r:Matrix<'dim0, 'dim1, 't>) = Matrix<'dim0, 'dim1, 't>.(*) (l, r)
+    let smul (l:'t) (r:Matrix<'dim0, 'dim1, 't>) = Matrix<'dim0, 'dim1, 't>.(*) (l, r)
 
-    let msimplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplify') |> Matrix<'dim0, 'dim1, 't>
+    let simplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplify') |> Matrix<'dim0, 'dim1, 't>
 
-    let inline mrmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
+    let inline rmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
         check (i +< l.Dim0)
-        let rows = l.Rows
+        let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
         let ri = Scalar k * l.[int i]
         rows.[int i] <- ri
         Matrix<'dim0, 'dim1, 't> rows
 
-    let inline mrswitch (l:Matrix<'dim0, 'dim1, 't>) i j =
+    let inline rswitch (l:Matrix<'dim0, 'dim1, 't>) i j =
         check (i +< l.Dim0)
         check (j +< l.Dim1)
         let ri = l.[int i] 
         let rj = l.[int j]
-        let rows = l.Rows
+        let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
         rows.[(int) i] <- rj
         rows.[(int) j] <- ri
         Matrix<'dim0, 'dim1, 't> rows
     
-    let inline mraddmul (l:Matrix<'dim0, 'dim1, 't>) i j (k:Expr<'t>) =
+    let inline raddmul (l:Matrix<'dim0, 'dim1, 't>) i j (k:Expr<'t>) =
          check (i +< l.Dim0)
          check (j +< l.Dim1)
-         let rows = l.Rows
+         let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
          let ri = l.[int i] + Scalar k * l.[int j] 
          rows.[int i] <- ri
          Matrix<'dim0, 'dim1, 't> rows
 
-    let inline mdiag (l:Matrix<'dim0,'dim1,'t>) = 
+    let inline diag (l:Matrix<'dim0,'dim1,'t>) = 
         let dim = Math.Min(l.Dim0.IntVal, l.Dim1.IntVal)
         Array2D.init dim dim l.Kr
         |> Array2D.toJagged
         |> sexprs'
-        |> mat (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
-    
+        |> matc (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)

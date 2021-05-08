@@ -9,43 +9,31 @@ open Sylvester.Arithmetic
 open Patterns
 open Descriptions
 
-open Vector
-open Matrix
+type VectorSet<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+    Expr<Set<Vector<'dim0, 't>>>
 
-type VectorExpr<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
-    Expr<Vector<'dim0, 't>>
-
-type MatrixExpr<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
-    Expr<Matrix<'dim0, 'dim1, 't>>
-
-/// Theory of operations in a vector space over a field of scalars
+/// Theory of vector spaces and subspaces.
 module VectorSpace =      
-    let desc = axiom_desc "Linear Algebra"
+    let desc = axiom_desc "Vector Space"
     
     (* Axioms *)
     
-    let vector_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+    let vector_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
+        let one = one_val(typeof<'t>) |> expand'' |> Scalar<'t>
+        
         function                            
         | Assoc <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
-        | Commute <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x
-        | Identity <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) <@ Vector<_, 't>.Zero @> x 
-        | Inverse <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) (expand'' <@ vsmul %%neg_one @>) <@ Vector<_, 't>.Zero @> x
-        | LeftCancelNonZero (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) <@ Vector<_, 't>.Zero @> x -> Some (desc x)
-        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Value(v, t)))) when vequal a a' && t = typeof<Vector<_, 't>> && (v :?> Vector<_, 't>) = Vector<_, 't>.Zero -> Some (desc (pattern_desc' "Additive Inverse"))
+        | Commute <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
+        | Identity <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) <@ Vector<_,'t>.Zero @> x 
+        | Inverse <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) (expand'' <@ Vector.smul %%neg_one @>) <@ Vector<_, 't>.Zero @> x
         | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) x -> Some (desc x)
         | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
+        | Distrib'' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
+        | Assoc' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Vector<_,'t>->Vector<_,'t>>) x -> Some (desc x)
+        | Identity <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Scalar<'t>->Scalar<'t>>) (expand'' <@ one @>) x -> Some (desc x)
         | _ -> None
-    
-    let matrix_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
-        let neg_one = neg_one_val(typeof<'t>)
-        function
-        | Assoc <@(=)@> (<@ (+) @> :Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) x -> Some(desc x)
-        | Identity <@(=)@> (<@ (+) @> : Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) <@ Matrix<_, _, 't>.Zero @> x -> Some(desc x)
-        | Inverse <@(=)@> (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (expand'' <@ msmul %%neg_one @>) <@ Matrix<_,_, 't>.Zero @> x
-        | LeftCancelNonZero (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) <@ Matrix<_,_, 't>.Zero @> x -> Some (desc x)
-        | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Value(v, t)))) when vequal a a' && t = typeof<Matrix<_,_, 't>> && (v :?> Matrix<_,_, 't>) = Matrix<_,_, 't>.Zero -> Some (desc (pattern_desc' "Additive Inverse"))
-        | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x -> Some (desc x)
-        | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x  -> Some (desc x)
 
-        | _ -> None
+    (* Predicates *)
+
+    let linearly_independent = pred<VectorSet<_,_>>

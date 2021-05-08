@@ -25,6 +25,8 @@ module Array2D =
                yield [| for y in 0 .. Array2D.length2 arr - 1 -> arr.[x, y] |]
             |]
             
+    let transpose (mtx : _ [,]) = Array2D.init (mtx.GetLength 1) (mtx.GetLength 0) (fun x y -> mtx.[y,x])
+
 module internal Ops =
     let vars (a:Expr<_> array list) = a |> List.map Array.toList |> List.concat |> List.map get_vars |> List.concat
 

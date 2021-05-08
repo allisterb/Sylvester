@@ -107,6 +107,8 @@ module MathNetExprParser =
    
     let list_parser :VisualExpression list parser = ws >>. pstring "[" >>. sepBy expression (pstring ",") .>> pstring "]" .>> eof
     
+    let list_list_parser :VisualExpression list list parser = ws >>. pstring "[" >>. sepBy list_parser (pstring ",") .>> pstring "]" .>> eof
+
     let parse text : Result<VisualExpression, string> =
         match run parser text with
         | ParserResult.Success (result,_,_) -> Ok result
@@ -117,6 +119,10 @@ module MathNetExprParser =
         | ParserResult.Success (result,_,_) -> Ok result
         | ParserResult.Failure (error,_,_) -> Error error
 
+    let parse_list_list s : Result<VisualExpression list list, string> =
+        match run list_list_parser s with
+        | ParserResult.Success (result,_,_) -> Ok result
+        | ParserResult.Failure (error,_,_) -> Error error
 module private InfixFormatter =
 
     open Operators

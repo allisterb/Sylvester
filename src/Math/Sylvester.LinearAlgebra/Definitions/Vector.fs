@@ -98,15 +98,15 @@ module Vector =
     
     let vexpr(l:Vector<'n, 't>) = l.Expr
 
-    let vadd (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
+    let add (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
     
-    let vsub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
+    let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
     
-    let vsmul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
+    let smul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
 
-    let vsimplify (l:Vector<_,_>) = l.Expr |> Array.map simplify' |> Vector<_,_>
+    //let simplify (l:Vector<_,_>) = l.Expr |> Array.map simplify' |> Vector<_,_>
 
-    let vnorm (l:Vector<'n, 't>) =
+    let norm (l:Vector<'n, 't>) =
         let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
 
-    let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> vnorm |> simplify |> Scalar<'t>
+    let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar<'t>

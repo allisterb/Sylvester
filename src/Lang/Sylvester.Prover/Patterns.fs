@@ -280,6 +280,12 @@ module Patterns =
             pattern_desc' "Associativity" |> Some
         | _ -> None
 
+    /// (x + y) + z = x + (y + z)
+    let (|Assoc'|_|) (eq:Expr<'t->'t->bool>)  (op:Expr<'u->'t->'t>) =
+        function
+        | Binary eq (Binary' op (Binary' op (a1, a2), a3), Binary' op (b1, Binary' op (b2, b3))) when sequal3 a1 a2 a3 b1 b2 b3 -> 
+            pattern_desc' "Associativity" |> Some
+        | _ -> None
     /// (x = y = y) = x
     let (|Symm|_|) (op:Expr<'t->'t->'t>)   =
         function
@@ -315,6 +321,14 @@ module Patterns =
         | Binary eq (Binary' op1 (a3, Binary op2 (b3, b4)), Binary op2 (Binary' op1 (a1, b1), Binary' op1 (a2, b2))) when (sequal a1 a2) && (sequal a1 a3) && sequal2 b1 b2 b3 b4 -> 
                 pattern_desc' "Distributivity" |> Some
         | _ -> None
+    
+    /// (y + z) * x = y * x + z * x
+    let (|Distrib''|_|) (eq:Expr<'v->'v->bool>)  (op1: Expr<'s->'v->'v>) (op2: Expr<'v->'v->'v>)  = 
+        function
+        | Binary eq (Binary' op1 (Binary op2 (y, z), x), Binary op2 (Binary' op1 (y', x'), Binary' op1 (z', x''))) when (sequal3 x y z x' y' z') && (sequal x' x'') -> 
+                pattern_desc' "Distributivity" |> Some
+        | _ -> None
+
     ///  -(y + z) = -y  * - z
     let (|UnaryDistrib|_|) (eq:Expr<'t->'t->bool>)  (op1: Expr<'t->'t>) (op2: Expr<'t->'t->'t>)  = 
         function

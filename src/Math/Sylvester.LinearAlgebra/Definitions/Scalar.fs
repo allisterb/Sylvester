@@ -38,6 +38,8 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
             | :? Scalar<'t> as b -> (a :> IEquatable<Scalar<'t>>).Equals b
             | _ -> false
     
+    override a.GetHashCode() = a.Display.GetHashCode()
+
     static member Zero = typeof<'t> |> zero_val |> expand''<'t> |> Scalar
 
     static member One = typeof<'t> |> zero_val |> expand''<'t> |> Scalar

@@ -6,7 +6,7 @@ open Sylvester.Arithmetic
 open Vector
 
 type R<'n when 'n :>Number>() = 
-    inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.vadd, Vector.vsmul)
+    inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.add, Vector.smul)
     
 [<AutoOpen>]
 module R =
