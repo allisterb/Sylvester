@@ -9,7 +9,9 @@ open Sylvester.Arithmetic
 open Patterns
 open Descriptions
 
-type VectorSet<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+open SetTheory
+
+type VectorSetExpr<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
     Expr<Set<Vector<'dim0, 't>>>
 
 /// Theory of vector spaces and subspaces.
@@ -34,6 +36,20 @@ module VectorSpace =
         | Identity <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Scalar<'t>->Scalar<'t>>) (expand'' <@ one @>) x -> Some (desc x)
         | _ -> None
 
+    type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>() = inherit SetTheory<Vector<'n,'t>>()
+
+    let vector_space<'n,'t> = VectorSpace<_,_>()
+
+    (* Functions *)
+
+    let linear_relation (_:Set<Scalar<'t>>) (_:Set<Vector<_,'t>>) = formula<Vector<_,'t>>
+
+    let span (_:Set<Vector<'t>>) = formula<Set<Vector<_,'t>>>
+
     (* Predicates *)
 
-    let linearly_independent = pred<VectorSet<_,_>>
+    let linear_combination (b:Set<Vector<_,_>>) = pred<Vector<_,_>>
+
+    let linearly_independent = pred<Set<Vector<_,_>>>
+
+    let basis (_:VectorSpace<_,_,'v>) = pred<Set<'v>>

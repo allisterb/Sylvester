@@ -12,7 +12,7 @@ open Descriptions
 type MatrixExpr<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
     Expr<Matrix<'dim0, 'dim1, 't>>
 
-/// Theory of operations in a vector space over a field of scalars
+/// Theory of linear maps between vector spaces
 module MatrixAlgbra =      
     let desc = axiom_desc "Matrix Algebra"
 

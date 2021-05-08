@@ -24,22 +24,24 @@ module SetAlgebra =
     
     (* Theory *)
 
-    type SetAlgebra<'t when 't: equality>() = inherit BooleanAlgebra<Set<'t>>("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>)
+    type SetAlgebra<'t when 't: equality>(?axioms:Axioms, ?rules:Rules) = 
+        inherit BooleanAlgebra<Set<'t>>("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>, 
+            defaultArg axioms (fun _-> None), defaultArg rules [])
     
-    let set_algebra<'t when 't: equality> = SetAlgebra()
+    let set_algebra<'t when 't: equality> = SetAlgebra<'t>()
 
     (* Admissible Rules *)
     
-    let left_assoc = set_algebra.Rules.[0]
+    let left_assoc<'t when 't : equality> = set_algebra<'t>.Rules.[0]
 
-    let right_assoc = set_algebra.Rules.[1]
+    let right_assoc<'t when 't : equality> = set_algebra<'t>.Rules.[1]
 
-    let commute = set_algebra.Rules.[2]
+    let commute<'t when 't : equality> = set_algebra<'t>.Rules.[2]
 
-    let idemp = set_algebra.Rules.[3]
+    let idemp<'t when 't : equality> = set_algebra<'t>.Rules.[3]
 
-    let ident_set = set_algebra.Rules.[4]
+    let ident_set<'t when 't : equality> = set_algebra<'t>.Rules.[4]
 
-    let comp = set_algebra.Rules.[5]
+    let comp<'t when 't : equality> = set_algebra<'t>.Rules.[5]
 
-    let distrib = set_algebra.Rules.[6]
+    let distrib<'t when 't : equality> = set_algebra<'t>.Rules.[6]

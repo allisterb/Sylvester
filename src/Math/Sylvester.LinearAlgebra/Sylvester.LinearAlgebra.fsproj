@@ -11,7 +11,7 @@
     <Compile Include="Definitions\Vector.fs" />
     <Compile Include="Definitions\Matrix.fs" />
     <Compile Include="Theories\VectorSpace.fs" />
-    <Compile Include="Theories\MatrixAlgebra.fs" />
+    <Compile Include="Theories\Matrices.fs" />
   </ItemGroup>
 
   <ItemGroup>
