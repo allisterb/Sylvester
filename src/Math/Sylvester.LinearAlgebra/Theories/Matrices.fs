@@ -14,7 +14,7 @@ type MatrixExpr<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't
 
 /// Theory of linear maps between vector spaces
 module MatrixAlgbra =      
-    let desc = axiom_desc "Matrix Algebra"
+    let desc = axiom_desc "Matrices"
 
     let matrix_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
@@ -29,3 +29,29 @@ module MatrixAlgbra =
 
         | _ -> None
     
+    //type Matrices() = inherit Veco
+    (* Predicates *)
+    
+    let identity = pred<Matrix<_,_,_>>
+
+    let symmetric = pred<Matrix<_,_,_>>
+
+    let diagonal = pred<Matrix<_,_,_>>
+
+    let diagonizable = pred<Matrix<_,_,_>>
+
+    let invertible = pred<SquareMatrix<_,_>>
+
+    let row_echelon_form = pred<Matrix<_,_,_>>
+
+    let reduced_row_echelon_form = pred<Matrix<_,_,_>>
+
+    let elementary = pred<Matrix<_,_,_>>
+
+    let row_equivalent (A:Matrix<_,_,_>) = pred<Matrix<_,_,_>>
+
+    let similar (A:Matrix<_,_,_>) = pred<Matrix<_,_,_>>
+
+    (* Functions *)
+
+    let nullspace (A:Matrix<_,'dim1,_>) = formula<Set<Vector<'dim1,_>>>

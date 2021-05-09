@@ -14,7 +14,7 @@ open SetTheory
 type VectorSetExpr<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
     Expr<Set<Vector<'dim0, 't>>>
 
-/// Theory of vector spaces and subspaces.
+/// Theory of vector spaces, inner product spaces, and subspaces.
 module VectorSpace =      
     let desc = axiom_desc "Vector Space"
     
@@ -23,7 +23,6 @@ module VectorSpace =
     let vector_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
         let one = one_val(typeof<'t>) |> expand'' |> Scalar<'t>
-        
         function                            
         | Assoc <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
         | Commute <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
@@ -36,7 +35,14 @@ module VectorSpace =
         | Identity <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Scalar<'t>->Scalar<'t>>) (expand'' <@ one @>) x -> Some (desc x)
         | _ -> None
 
-    type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>() = inherit SetTheory<Vector<'n,'t>>()
+    let inner_product_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+        let neg_one = neg_one_val(typeof<'t>)
+        let one = one_val(typeof<'t>) |> expand'' |> Scalar<'t>
+        function                            
+        | Commute <@(=)@> (<@ (*) @> :Expr<Vector<_,'t>->Vector<_,'t>->Scalar<'t>>) x -> Some(desc x)
+        | _ -> None
+
+    type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>() = inherit SetTheory<Vector<'n,'t>>(vector_space_axioms)
 
     let vector_space<'n,'t> = VectorSpace<_,_>()
 
@@ -53,3 +59,5 @@ module VectorSpace =
     let linearly_independent = pred<Set<Vector<_,_>>>
 
     let basis (_:VectorSpace<_,_,'v>) = pred<Set<'v>>
+
+    let subspace (_:VectorSpace<_,_,'v>) = pred<Set<'v>>

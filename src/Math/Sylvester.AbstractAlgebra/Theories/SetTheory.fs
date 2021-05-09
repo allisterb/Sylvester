@@ -62,7 +62,7 @@ module SetTheory =
 
     (* Theory *)
 
-    type SetTheory<'t when 't : equality>() = inherit SetAlgebra<'t>()
+    type SetTheory<'t when 't : equality>(?axioms:Axioms, ?rules:Rules) = inherit SetAlgebra<'t>(defaultArg axioms (fun _ -> None), defaultArg rules [])
 
     let set_theory<'t when 't: equality> = SetTheory<'t>()
 

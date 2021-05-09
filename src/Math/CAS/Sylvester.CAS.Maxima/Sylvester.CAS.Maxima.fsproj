@@ -8,6 +8,7 @@
     <Compile Include="Maxima.fs" />
     <Compile Include="Algebra.fs" />
     <Compile Include="Analysis.fs" />
+    <Compile Include="LinearAlgebra.fs" />
   </ItemGroup>
 
   <ItemGroup>

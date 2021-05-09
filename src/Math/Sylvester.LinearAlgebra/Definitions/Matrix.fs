@@ -31,6 +31,14 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         |> Array.skip 1 
         |> Array.fold(fun s e -> sprintf "%s%s%s" s (nl) (e.LinearDisplay)) (nl + x.Rows.[0].LinearDisplay) 
         |> sprintf "%s"
+    member x.LinearDisplay = 
+        let replace (o:string) n (s:string) = s.Replace(o, n) 
+        x.Rows
+        |> Array.skip 1 
+        |> Array.fold(fun s e -> sprintf "%s, %s" s (e.Display)) (x.Rows.[0].Display) 
+        |> replace "(" "["
+        |> replace ")" "]"
+        |> sprintf "[%s]"
     member x.Item with get(i) = x.Rows.[i] and set i value = Array.set x.Rows i value
     member x.AsNumeric() = 
         let t = typeof<'t>
@@ -56,6 +64,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     member val Dim0:'dim0 = dim0
     member val Dim1:'dim1 = dim1
     member val Display = base.Display
+    member val LinearDisplay = base.LinearDisplay
     member x.Cols = x.ExprT |> Array.map Vector<'dim0, 't>
     member x.Rows = x.Expr |> Array.map Vector<'dim1, 't>
     member x.Transpose = Matrix<'dim1, 'dim0, 't>(x.ExprT)
@@ -176,3 +185,8 @@ module Matrix =
         |> Array2D.toJagged
         |> sexprs'
         |> matc (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
+
+    let det (l:SquareMatrix<'dim0, _>) =
+        l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
+
+    //let detm (l:SquareMatrix<one, two, _>) = ()

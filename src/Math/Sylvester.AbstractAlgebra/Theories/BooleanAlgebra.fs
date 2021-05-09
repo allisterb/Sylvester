@@ -106,7 +106,7 @@ module BooleanAlgebra =
     let distrib join meet = Admit("(expression) is distributive", _distrib join meet)
 
     type BooleanAlgebra<'t when 't: equality>(theoryName: string, join: Expr<'t->'t->'t>, meet: Expr<'t->'t->'t>, zero: Expr<'t>, one: Expr<'t>, comp: Expr<'t->'t>, 
-        ?additionalAxioms:Axioms, ?additionalRules:Rules) = 
+        ?axioms:Axioms, ?rules:Rules, ?formula_printer:Expr->string) = 
         inherit Theory(boolean_algebra_axioms theoryName join meet zero one comp, [
             left_assoc join meet
             right_assoc join meet

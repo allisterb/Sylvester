@@ -293,7 +293,7 @@ module Patterns =
         | _ -> None 
 
     /// (x + y) = (y + x)
-    let (|Commute|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'t>) =
+    let (|Commute|_|) (eq:Expr<'t->'t->bool>)  (op: Expr<'t->'t->'u>) =
         function
         | Binary eq (Binary op (a1, a2), Binary op (b1, b2)) when sequal2 a1 a2 b2 b1 -> pattern_desc' "Commutativity" |> Some   
         | _ -> None
