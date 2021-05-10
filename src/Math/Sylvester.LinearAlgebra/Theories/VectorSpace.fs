@@ -42,15 +42,20 @@ module VectorSpace =
         | Commute <@(=)@> (<@ (*) @> :Expr<Vector<_,'t>->Vector<_,'t>->Scalar<'t>>) x -> Some(desc x)
         | _ -> None
 
-    type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>() = inherit SetTheory<Vector<'n,'t>>(vector_space_axioms)
+    (* Theory *)
+    type VectorSpace<'dim, 't when 'dim :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>() = 
+        inherit SetTheory<Vector<'dim,'t>>(vector_space_axioms)
 
-    let vector_space<'n,'t> = VectorSpace<_,_>()
+    let vector_space<'dim, 't when 'dim :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+        VectorSpace<'dim,'t>()
 
     (* Functions *)
 
     let linear_relation (_:Set<Scalar<'t>>) (_:Set<Vector<_,'t>>) = formula<Vector<_,'t>>
 
     let span (_:Set<Vector<'t>>) = formula<Set<Vector<_,'t>>>
+
+    let direct_sum (_:VectorSpace<_,_,'v>) (_:VectorSpace<_,_,'v>) = formula<(VectorSpace<_,_,'v>)>
 
     (* Predicates *)
 
@@ -61,3 +66,10 @@ module VectorSpace =
     let basis (_:VectorSpace<_,_,'v>) = pred<Set<'v>>
 
     let subspace (_:VectorSpace<_,_,'v>) = pred<Set<'v>>
+
+    
+
+    (*Definitions *)
+
+    let def_direct_sum (A:Expr<VectorSpace<_,_,'v>>) (B:Expr<VectorSpace<_,_,'v>>) (C:Expr<VectorSpace<_,_,'v>>)=
+        def vector_space <@ (%C = (direct_sum %A %B)) = (setOf %C = (%A |+| %B)) |&| (%A |*| %B = Empty) @>

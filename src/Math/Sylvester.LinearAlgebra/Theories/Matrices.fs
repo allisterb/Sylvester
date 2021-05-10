@@ -29,7 +29,6 @@ module MatrixAlgbra =
 
         | _ -> None
     
-    //type Matrices() = inherit Veco
     (* Predicates *)
     
     let identity = pred<Matrix<_,_,_>>
@@ -48,10 +47,14 @@ module MatrixAlgbra =
 
     let elementary = pred<Matrix<_,_,_>>
 
-    let row_equivalent (A:Matrix<_,_,_>) = pred<Matrix<_,_,_>>
+    let row_equivalent (_:Matrix<_,_,_>) = pred<Matrix<_,_,_>>
 
-    let similar (A:Matrix<_,_,_>) = pred<Matrix<_,_,_>>
+    let similar (_:Matrix<_,_,_>) = pred<Matrix<_,_,_>>
 
     (* Functions *)
 
-    let nullspace (A:Matrix<_,'dim1,_>) = formula<Set<Vector<'dim1,_>>>
+    let null_space (_:Matrix<_,'dim1,_>) = formula<Set<Vector<'dim1,_>>>
+
+    let row_space (_:Matrix<_,'dim1,_>) = formula<Set<Vector<'dim1,_>>>
+
+    let column_space (_:Matrix<_,'dim1,_>) = formula<Set<Vector<'dim1,_>>>

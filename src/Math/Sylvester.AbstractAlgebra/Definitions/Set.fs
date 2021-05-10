@@ -391,3 +391,5 @@ module Set =
     let inline infinite_series g = g |> (infinite_seq >> series)
     
     let inline infinite_series' g = g |> (infinite_seq' >> series')
+
+    let setOf<'t when 't : equality> (s:ISet<'t>) = s.Set
