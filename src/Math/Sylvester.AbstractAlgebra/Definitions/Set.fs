@@ -284,7 +284,7 @@ and KnownSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: '
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
     new (items:seq<'t>) = KnownSet(items |> Seq.toArray)
 
-and Singleton<'t when 't: equality>(e:'t) = inherit KnownSet<Nat<1>, 't>([|e|])
+and Singleton<'t when 't: equality>(e:'t) = inherit KnownSet<nat<1>, 't>([|e|])
 
 and ISet<'t when 't: equality> = 
     inherit IEquatable<Set<'t>>

@@ -2,7 +2,9 @@
 
 open System.Collections
 
-open Sylvester.Arithmetic
+open Sylvester
+open Arithmetic
+open N10
 open Sylvester.Collections
 
 /// Set of elements closed under some binary operation.
@@ -13,7 +15,7 @@ type IGroupoid<'t when 't: equality> =
     
 /// Set of elements closed under some binary operation.
 type Groupoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
-    inherit Struct<'t, card.one>(set, arrayOf1 (Binary(op)))
+    inherit Struct<'t, ``1``>(set, arrayOf1 (Binary(op)))
     member val Op = op
     member x.Item(l:'t, r:'t) = x.Op l r
     member x.ToArray n = x |> Seq.take n |> Seq.toArray
@@ -26,5 +28,5 @@ type Groupoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
 
 /// Category of groupoids with n structure-preserving morphisms.
 type Groupoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Groupoid<'ut>, r:Groupoid<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
-    inherit Category<'ut, 'vt, card.one, card.one, 'n>(l, r, maps)
+    inherit Category<'ut, 'vt, ``1``, ``1``, 'n>(l, r, maps)
 

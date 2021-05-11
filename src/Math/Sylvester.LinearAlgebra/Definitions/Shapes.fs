@@ -2,97 +2,66 @@
 
 open System
 
-open Sylvester.Arithmetic
+open Sylvester
+open Arithmetic
 
 module Dimension = 
-    type zero = dim<0>
+    type ``0`` = dim<0>
     
-    type one = dim<1>
+    type ``1`` = dim<1>
     
-    type two = dim<2>
+    type ``2`` = dim<2>
     
-    type three = dim<3>
+    type ``3`` = dim<3>
     
-    type four = dim<4>
+    type ``4`` = dim<4>
     
-    type five = dim<5>
+    type ``5`` = dim<5>
     
-    type six = dim<6>
+    type ``6`` = dim<6>
     
-    type seven = dim<7>
+    type ``7`` = dim<7>
     
-    type eight = dim<8>
+    type ``8`` = dim<8>
     
-    type nine = dim<9>
+    type ``9`` = dim<9>
     
-    type ten = dim<10>
+    type ``10`` = dim<10>
     
-    let zero = new zero()
+    let ``0`` = new ``0``()
     
-    let one = new one()
+    let ``1`` = new ``1``()
     
-    let two = new two()
+    let ``2`` = new ``2``()
     
-    let three = new three()
+    let ``3`` = new ``3``()
     
-    let four = new four()
+    let ``4`` = new ``4``()
     
-    let five = new five()
+    let ``5`` = new ``5``()
     
-    let six = new six()
+    let ``6`` = new ``6``()
     
-    let seven = new seven()
+    let ``7`` = new ``7``()
     
-    let eight = new eight()
+    let ``8`` = new ``8``()
     
-    let nine = new nine()
+    let ``9`` = new ``9``()
     
-    let ten = new ten()
+    let ``10`` = new ``10``()
 
-module rank = 
-    type zero = Nat<0>
-
-    type one = Nat<1>
-
-    type two = Nat<2>
-
-    type three = Nat<3>
-
-    type four = Nat<4>
-
-    type five = Nat<5>
-
-    type six = Nat<6>
-
-    type seven = Nat<7>
-
-    type eight = Nat<8>
-
-    type nine = Nat<9>
-
-    type ten = Nat<10>
-
-    let zero = new zero()
-
-    let one = new one()
-
-    let two = new two()
-
-    let three = new three()
-
-    let four = new four()
-
-    let five = new five()
-
-    let six = new six()
-
-    let seven = new seven()
-
-    let eight = new eight()
-
-    let nine = new nine()
-
-    let ten = new ten()
+    let inline pp l =
+        l +== ``0`` <?>  (``0``,
+            l +== ``1`` <?>  (``1``, 
+                l +== ``2`` <?>  (``2``, 
+                    l +== ``3`` <?>  (``3``,
+                        l +== ``4`` <?> (``4``, 
+                            l +== ``5`` <?>  (``5``, 
+                                l +== ``6`` <?>  (``6``, 
+                                    l +== ``7`` <?>  (``7``, 
+                                        l +== ``8`` <?>  (``8``, 
+                                            l +== ``9`` <?>  (``9``, 
+                                                l +== ``10`` <?>  (``10``, l)))))))))))
 
 /// A linear algebra object whose rank and dimensions may be unknown until runtime
 type IUnknownShape =
@@ -108,13 +77,13 @@ type IFullShape<'n when 'n :> Number> =
     inherit IPartialShape<'n>
 
 type IScalar =
-    inherit IFullShape<rank.zero>
+    inherit IFullShape<dim<0>>
 
 type IVector<'n> = 
-    inherit IFullShape<rank.one>
+    inherit IFullShape<dim<1>>
     abstract Dim0: 'n
 
 type IMatrix<'r, 'c when 'r :> Number and 'c :> Number> = 
-    inherit IFullShape<rank.two>
+    inherit IFullShape<dim<2>>
     abstract Dim0:'r
     abstract Dim1:'c

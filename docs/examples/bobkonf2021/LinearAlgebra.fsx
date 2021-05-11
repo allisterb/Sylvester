@@ -1,36 +1,35 @@
 #load "IncludeMath2.fsx"
 
 open Sylvester
+open Arithmetic
+
 open Dimension
 open Vector
 open Matrix
 
+let aa:FSharp.Quotations.Expr<_*_> = <@(4, 5, 6, 7), (8, 19, 10)@>
+expand aa
 
-let tt = 2
-
-<@ tt + 2 @> |> expand
 let z = var'<int> "z"
 
-let m = MatZ<three, four> <@[[%z;4;-1;2]; [0;2;1;3]; [-2; 1; -2; 2]]@>
-let n = MatZ<four, two>.ofCols <@[[%z; 0; 2; 3]; [-1;2;1;-2]]@>
+let m = MatZ<``3``, ``4``> <@[ [%z;4;-1;2]; [0;2;1;3]; [-2; 1; -2; 2] ]@>
+let n = MatZ<``4``, ``2``>.ofCols <@[[%z; 0; 2; 3]; [-1;2;1;-2]]@>
 
+m.LinearDisplay
+
+let nn = n |+|| Vector<``4``, int> <@[3; 6; 9; 12]@>
+
+
+let md = m |> diag
+
+let i = raddmul m zero one <@ 4 @>
+
+let s (x:int) = <@ x @>
+
+s 5
 let mv = MatZ<three, three> <@[[-1;4;-1]; [0;2;1]; [-2; 1; -2]]@>
 let v =  vvars<three, int> "x"
-let e = mv |+|| v
-
-
-//mdiag n
-
-
-
-let m1 = Mat<four, two>.One
-
-let md = mdiag m
-
-let a = LatinVars.a<real>
-let v = Vec<two> <@[%a; %a]@>
-
-let dd = m * v
+let dd = m * n
 
 let mm = Mat<two, five>.One
 

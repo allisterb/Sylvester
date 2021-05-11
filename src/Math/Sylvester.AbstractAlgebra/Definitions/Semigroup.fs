@@ -1,6 +1,8 @@
 ﻿namespace Sylvester
 
-open Sylvester.Arithmetic
+open Sylvester
+open Arithmetic
+open N10
 open Sylvester.Collections
 
 /// Set of elements closed under some left-associative operation.
@@ -22,5 +24,5 @@ type CommutativeSemigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
 
 /// Category of semigroups with an n structure-preserving morphism.
 type Semigroups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Semigroup<'ut>, r:Semigroup<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
-    inherit Category<'ut, 'vt, card.one, card.one, 'n>(l, r, maps)
+    inherit Category<'ut, 'vt, ``1``, ``1``, 'n>(l, r, maps)
 

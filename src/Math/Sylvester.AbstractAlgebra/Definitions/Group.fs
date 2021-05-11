@@ -2,7 +2,9 @@
 
 open System.Collections
 
-open Sylvester.Arithmetic
+open Sylvester
+open Arithmetic
+open N10
 open Sylvester.Collections
 
 [<StructuredFormatDisplay("e{Index}")>]
@@ -43,7 +45,7 @@ type ISubGroup<'order, 't when 'order :> Number and 't : equality> = inherit ISu
 
 /// Set of elements closed under some left-associative operation with identity and an inverse unary operation.
 type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
-    inherit Struct<'t, card.three>(set, arrayOf3 (Binary(op)) (Nullary(ident)) (Unary(inv)))    
+    inherit Struct<'t, ``3``>(set, arrayOf3 (Binary(op)) (Nullary(ident)) (Unary(inv)))    
     member val Op = op
     member val Identity = ident
     member val Inverse = inv
@@ -78,8 +80,8 @@ type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, i
 /// Finite group of known order.
 type Group<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, ident, inv)
-    member x.El0<'n when 'n :> card.one>() = (x, GroupElement<'order>(0))
-    member x.El1<'n when 'n :> card.two>() = (x, GroupElement<'order>(0), GroupElement<'order>(1))
+    member x.El0<'n when 'n :> ``1``>() = (x, GroupElement<'order>(0))
+    member x.El1<'n when 'n :> ``2``>() = (x, GroupElement<'order>(0), GroupElement<'order>(1))
 
 /// Finite abelian group of known order.
 type AbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
@@ -89,7 +91,7 @@ type AbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSe
 
 /// Category of groups with n structure-preserving morphisms.
 type Groups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Group<'ut>, r:Group<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
-    inherit Category<'ut, 'vt, card.three, card.three, 'n>(l, r, maps) 
+    inherit Category<'ut, 'vt, ``3``, ``3``, 'n>(l, r, maps) 
 
 [<AutoOpen>]
 module Group =
@@ -128,4 +130,4 @@ module Group =
                     member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         } 
 
-    let Zero = AbelianGroup<Nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
+    let Zero = AbelianGroup<nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)

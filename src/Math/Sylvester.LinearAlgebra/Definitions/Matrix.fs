@@ -4,7 +4,9 @@ open System
 open FSharp.Quotations
 
 open MathNet.Numerics
-open Sylvester.Arithmetic
+
+open Sylvester
+open Arithmetic
 open Dimension
 open Vector
 
@@ -45,7 +47,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         match t with
         | LinearAlgebraNumericOpType -> expr |> Array.map (Array.map evaluate) |> LinearAlgebra.DenseMatrix.ofRowArrays
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
-    interface IPartialShape<one> with
+    interface IPartialShape<``2``> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(fun e -> <@ e @>)) in Matrix<'t>(expr)
@@ -132,14 +134,12 @@ module Matrix =
 
     let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.Cols |> Array.toList |> Some
 
-    let inline min(l:'dim0) (r:'dim1) = (l +< r) <?> (l, r)
-
     let mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
     
     let matc (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
-        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> mat l.Dim0 ((l.Dim1 + one))
+        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> mat l.Dim0 (pp (l.Dim1 + ``1``))
 
     let ident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>

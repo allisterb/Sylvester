@@ -4,7 +4,9 @@ open System
 open FSharp.Quotations
 
 open MathNet.Numerics
-open Sylvester.Arithmetic
+
+open Sylvester
+open Arithmetic
 open Dimension
 
 [<StructuredFormatDisplay("{Display}")>]
@@ -34,7 +36,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     member x.Item with get(i)  = e.[i] |> Scalar<'t>
     member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
-    interface IPartialShape<Dimension.one> with
+    interface IPartialShape<``1``> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'t>(expr)

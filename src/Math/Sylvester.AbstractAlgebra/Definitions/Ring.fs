@@ -2,7 +2,9 @@
 
 open System.Collections
 
-open Sylvester.Arithmetic
+open Sylvester
+open Arithmetic
+open N10
 open Sylvester.Collections
 
 /// Set of elements closed under a left-associative commutative invertible operation with identity, 
@@ -16,7 +18,7 @@ type ICommutativeRing<'t when 't: equality> =
 
 /// Set of elements closed under a left-associative commutative operations and a 2nd left-associative distributive operation.
 type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
-    inherit Struct<'t, card.four>(group.Set, arrayOf4 (Binary(group.Op)) (Nullary(group.Identity)) (Unary(group.Inverse)) (Binary(op2)))
+    inherit Struct<'t, ``4``>(group.Set, arrayOf4 (Binary(group.Op)) (Nullary(group.Identity)) (Unary(group.Inverse)) (Binary(op2)))
     do group.Op |> fail_if_not_distributive_over op2 
     member val Op = group.Op
     member val Op2 = op2

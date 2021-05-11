@@ -2,7 +2,9 @@
 
 open System.Collections
 
-open Sylvester.Arithmetic
+open Sylvester
+open Arithmetic
+open N10
 open Sylvester.Collections
 
 /// Set of elements closed under some left-associative operation with identity.
@@ -16,7 +18,7 @@ type IMultiplicativeMonoid<'t when 't : equality> = IMonoid<'t>
 
 /// Set of elements closed under some left-associative operation with identity element.
 type Monoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id: NullaryOp<'t>) =
-    inherit Struct<'t, card.two>(set, arrayOf2 (Binary(op)) (Nullary(id)))
+    inherit Struct<'t, ``2``>(set, arrayOf2 (Binary(op)) (Nullary(id)))
     member val Op = op
     member val Identity = id
     interface IMonoid<'t> with 
@@ -33,7 +35,7 @@ type CommutativeMonoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'
 
 /// Category of monoids with n structure-preserving morphisms.
 type Monoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Monoid<'ut>, r:Monoid<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
-    inherit Category<'ut, 'vt, card.two, card.two,'n>(l, r, maps)
+    inherit Category<'ut, 'vt, ``2``, ``2``,'n>(l, r, maps)
 
 [<AutoOpen>]
 module Monoid =
