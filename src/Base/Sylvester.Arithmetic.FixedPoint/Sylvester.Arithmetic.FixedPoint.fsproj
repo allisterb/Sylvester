@@ -17,10 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Number.fs" />
     <Compile Include="Bool.fs" />
     <Compile Include="Constraints.fs" />
     <Compile Include="Base10.fs" />
+    <Compile Include="Arithmetic.fs" />
     <Compile Include="N10.fs" />
   </ItemGroup>
 

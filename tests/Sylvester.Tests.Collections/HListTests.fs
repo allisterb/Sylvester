@@ -3,8 +3,8 @@
 module HListTests =
 
     open Xunit
-    open Sylvester.Arithmetic
-    open Sylvester.Arithmetic.N10
+    open Sylvester
+    open N10
     open Sylvester.Collections
 
     type ZeroMap = ZeroMap with
@@ -20,6 +20,7 @@ module HListTests =
     let hl2 =  "1" ^+^ true ^+^ HNil
     let hl3 = "one" ^+^ 123 ^+^ HNil
     
+    (*
     [<Fact>]
     let ``Can create HList``() =
         let len1 = !+ hl1
@@ -29,3 +30,4 @@ module HListTests =
         Assert.Equal('1', x)
         ()
 
+        *)

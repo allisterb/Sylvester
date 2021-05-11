@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <AssemblyVersion>0.2.7.0</AssemblyVersion>
-    <FileVersion>0.2.7.0</FileVersion>
-    <Version>0.2.7</Version>
+    <AssemblyVersion>0.2.8.0</AssemblyVersion>
+    <FileVersion>0.2.8.0</FileVersion>
+    <Version>0.2.8</Version>
     <Authors>Allister Beharry</Authors>
     <Product>Sylvester</Product>
     <Copyright>Copyright © 2019, 2020 2021 Allister Beharry</Copyright>
@@ -14,7 +14,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageTags>fsharp type-level</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Sync with 0.2.7 version of Sylvester.Arithmetic</PackageReleaseNotes>
+    <PackageReleaseNotes>Sync with 0.2.8 version of Sylvester.Arithmetic</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.7" />
+    <PackageReference Include="Sylvester.Arithmetic" Version="0.2.8.1" />
   </ItemGroup>
 
   <ItemGroup>

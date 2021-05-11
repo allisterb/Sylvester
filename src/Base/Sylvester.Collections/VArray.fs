@@ -4,7 +4,7 @@ open System
 open System.Collections.Generic
 
 open Sylvester
-open Sylvester.Arithmetic
+open Arithmetic
 
 /// An array of n objects.
 [<AbstractClass>]
@@ -78,7 +78,7 @@ type Array<'n, 't when 'n :> Number>(items:'t[]) =
 
 [<AutoOpen>]
 module VArray =
-    open Sylvester.Arithmetic.N10
+    open N10
 
     let inline vainit (items:IEnumerable<'t>) (vl:Array<'n, 't>) = 
         do vl.SetVals items
@@ -90,23 +90,23 @@ module VArray =
 
     let inline vacopy (n: 'n) (items:IEnumerable<'t>) =  vanew<'n, 't>  |> vainit items
 
-    let arrayOf1<'t> (x1:'t) = Array<one, 't>(x1)
+    let arrayOf1<'t> (x1:'t) = Array<``1``, 't>(x1)
 
-    let arrayOf2<'t> (x1:'t) (x2:'t) = Array<two, 't>([|x1; x2|])
+    let arrayOf2<'t> (x1:'t) (x2:'t) = Array<``2``, 't>([|x1; x2|])
 
-    let arrayOf3<'t> (x1:'t) (x2:'t) (x3:'t) = Array<three, 't>([|x1; x2; x3|])
+    let arrayOf3<'t> (x1:'t) (x2:'t) (x3:'t) = Array<``3``, 't>([|x1; x2; x3|])
 
-    let arrayOf4<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) = Array<four, 't>([|x1; x2; x3; x4|])
+    let arrayOf4<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) = Array<``4``, 't>([|x1; x2; x3; x4|])
 
-    let arrayOf5<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) = Array<five, 't>([|x1; x2; x3; x4; x5|])
+    let arrayOf5<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) = Array<``5``, 't>([|x1; x2; x3; x4; x5|])
 
-    let arrayOf6<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) = Array<six, 't>([|x1; x2; x3; x4; x5; x6|])
+    let arrayOf6<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) = Array<``6``, 't>([|x1; x2; x3; x4; x5; x6|])
 
-    let arrayOf7<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) = Array<seven, 't>([|x1; x2; x3; x4; x5; x6; x7|])
+    let arrayOf7<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) = Array<``7``, 't>([|x1; x2; x3; x4; x5; x6; x7|])
 
-    let arrayOf8<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) (x8:'t) = Array<eight, 't>([|x1; x2; x3; x4; x5; x6; x7; x8|])
+    let arrayOf8<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) (x8:'t) = Array<``8``, 't>([|x1; x2; x3; x4; x5; x6; x7; x8|])
 
-    let arrayOf9<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) (x8:'t) (x9:'t) = Array<nine, 't>([|x1; x2; x3; x4; x5; x6; x7; x8; x9|])
+    let arrayOf9<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) (x8:'t) (x9:'t) = Array<``9``, 't>([|x1; x2; x3; x4; x5; x6; x7; x8; x9|])
 
-    let arrayOf10<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) (x8:'t) (x9:'t) (x10:'t) = Array<ten, 't>([|x1; x2; x3; x4; x5; x6; x7; x8; x9; x10|])
+    let arrayOf10<'t> (x1:'t) (x2:'t) (x3:'t) (x4:'t) (x5:'t) (x6:'t) (x7:'t) (x8:'t) (x9:'t) (x10:'t) = Array<``10``, 't>([|x1; x2; x3; x4; x5; x6; x7; x8; x9; x10|])
     

@@ -1,7 +1,7 @@
 namespace Sylvester.Collections
 
-open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
+open Sylvester
+open N10
 
 type HList = interface end
 
@@ -14,24 +14,24 @@ type HCons<'a, 'b when 'b :> HList>  = HCons of 'a * 'b with
     static member inline (^*^) (x, y) = (HAppend $ x) <| y
     static member inline (^<|^) (mapper:HMapper<'a>, x) = mapper $ x
     static member inline (^<|-^) (folder:HFolder<'a, 'v>, x) = folder $ x
-    static member inline (!+)(HCons(x, xs)) = (!+ xs) + one
+    static member inline (!+)(HCons(x, xs)) = (!+ xs) + ``1``
       
-    static member inline (|@|) (HCons(x, _), _:zero) = x
-    static member inline (|@|) (HCons(_, HCons(y, _)), _:one) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(y, _))), _:N1<``2``>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(y, _)))), _:N1<``3``>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))), _:N1<``4``>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))), _:N1<``5``>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))), _:N1<``6``>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))), _:N1<``7``>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))))), _:N1<``8``>) = y
-    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))))), _:N1<``9``>) = y
+    static member inline (|@|) (HCons(x, _), _:``0``) = x
+    static member inline (|@|) (HCons(_, HCons(y, _)), _:``1``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(y, _))), _:``2``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(y, _)))), _:``3``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))), _:``4``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))), _:``5``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))), _:``6``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))), _:``7``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _))))))))), _:``8``) = y
+    static member inline (|@|) (HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(_, HCons(y, _)))))))))), _:``9``) = y
  
 and HNil = HNil with
     interface HList
     static member inline (|*|) (f, HNil) = f $ HNil
     static member inline (!?)(HNil) = _true
-    static member inline (!+)(HNil) = zero
+    static member inline (!+)(HNil) = ``0``
     static member inline (^+^) (x, HNil) = HCons(x, HNil)
    
 and HAppend = HAppend with

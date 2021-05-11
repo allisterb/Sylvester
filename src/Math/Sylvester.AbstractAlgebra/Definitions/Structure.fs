@@ -1,6 +1,6 @@
 ﻿namespace Sylvester
 
-open Sylvester.Arithmetic
+open Arithmetic
 
 /// A mathematical structure consisting of a set together with a collection of n closed operations on elements of type t.
 type IStruct<'t, 'n when 't: equality and 'n :> Number> = 

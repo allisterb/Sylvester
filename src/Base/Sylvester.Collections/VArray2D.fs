@@ -3,7 +3,7 @@ namespace Sylvester.Collections
 open System
 
 open Sylvester
-open Sylvester.Arithmetic
+open Arithmetic
 
 [<AbstractClass>]
 type Array2D<'dim0, 'dim1 when 'dim0 :> Number and 'dim1 :> Number>() = 
@@ -87,7 +87,7 @@ type Array2D<'i0, 'i1 when 'i0 :> Number and 'i1:> Number> with
 
 [<AutoOpen>]
 module VArray2D =
-    open Sylvester.Arithmetic.N10
+    open N10
     
     let inline va2dinit (items: 't[,]) (vl:Array2D<'dim0, 'dim1, 't>) = vl.SetVals items
 
