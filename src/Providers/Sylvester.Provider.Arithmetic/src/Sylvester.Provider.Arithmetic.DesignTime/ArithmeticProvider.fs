@@ -8,18 +8,19 @@ open FSharp.Reflection
 open ProviderImplementation
 open ProviderImplementation.ProvidedTypes
 
-open Sylvester.Arithmetic
-open Sylvester.Arithmetic.N10
+open Sylvester
+open Base10
+open Arithmetic
 
 [<TypeProvider>]
 type ArithmeticProvider (config : TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces (config, assemblyReplacementMap=[("Sylvester.Provider.Arithmetic.DesignTime", "Sylvester.Provider.Arithmetic.Runtime")], addDefaultProbingLocation=true)
 
-    let ns = "Sylvester.Arithmetic"
+    let ns = "Sylvester"
     let asm = Assembly.GetExecutingAssembly()
 
     let Nat =
-        let N = ProvidedTypeDefinition(asm, ns, "Nat", Some typeof<N10<_,_,_,_,_,_,_,_,_,_>>, false)
+        let N = ProvidedTypeDefinition(asm, ns, "nat", Some typeof<N10<_,_,_,_,_,_,_,_,_,_>>, false)
         N.AddXmlDoc "<summary>Typed representation of a natural number.</summary>\n<param name='Val'>The number to represent.</param>"
         let valueParam = ProvidedStaticParameter("Val", typeof<int>)
         let createN (name:string) (args:obj[]) =

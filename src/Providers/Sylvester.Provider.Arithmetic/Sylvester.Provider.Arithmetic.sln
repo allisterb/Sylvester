@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.489
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,7 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ED8079DD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6EA7A12F-39E8-4A69-8C98-2CB951060839}"
 	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
+		pack.cmd = pack.cmd
 		src\Sylvester.Provider.Arithmetic.Runtime\paket.template = src\Sylvester.Provider.Arithmetic.Runtime\paket.template
+		push.cmd = push.cmd
 	EndProjectSection
 EndProject
 Global

@@ -1,15 +1,15 @@
-﻿namespace Sylvester.Arithmetic
-#nowarn "0077"
+﻿#nowarn "0077"
+namespace Sylvester
+
+open System 
+
+[<NoEquality; NoComparison>]
+type Base10Digit = 
+  abstract member Val:int
+  abstract member Val_:uint64
 
 [<AutoOpen>]
 module Base10 =
-
-  open System 
-  
-  [<NoEquality; NoComparison>]
-  type Base10Digit = 
-    abstract member Val:int
-    abstract member Val_:uint64
     
   type ZeroDigit = interface inherit Base10Digit end
 

@@ -1,4 +1,4 @@
-﻿namespace Sylvester.Arithmetic
+﻿namespace Sylvester
 
 [<AutoOpen>]
 module Bool = 

@@ -7,12 +7,13 @@
     <OutputType>Library</OutputType>
     <TargetFrameworks>netstandard2.0;net45;netcoreapp2.0</TargetFrameworks>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
-    <Version>0.2.7</Version>
+    <Version>0.2.8</Version>
     <Authors>Allister Beharry</Authors>
     <Product>Sylvester</Product>
-    <Description>Type-level natural number arithmetic and constraints</Description>
-    <AssemblyVersion>0.2.7.0</AssemblyVersion>
-    <FileVersion>0.2.7.0</FileVersion>
+    <Description>F# type-level natural number arithmetic and constraints</Description>
+    <AssemblyVersion>0.2.8.0</AssemblyVersion>
+    <FileVersion>0.2.8.0</FileVersion>
+    <PackageTags>fsharp type-level</PackageTags>
   </PropertyGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
@@ -26,8 +27,8 @@
     </Compile>
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Bool.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Constraints.fs" />
-    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Number.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Base10.fs" />
+    <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\Arithmetic.fs" />
     <Compile Include="..\..\..\..\Base\Sylvester.Arithmetic.FixedPoint\N10.fs" />
 
     <Compile Include="AssemblyInfo.fs" />
