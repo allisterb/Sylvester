@@ -5,7 +5,6 @@ open FSharp.Quotations
 
 open MathNet.Numerics
 
-open Sylvester
 open Arithmetic
 open Dimension
 open Vector
@@ -19,14 +18,15 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     let exprT = expr  |> Ops.transpose_mat
     let exprL = expr |> Array.map Array.toList |> Array.toList
     member val Expr = expr
-    member val ExprVars = expr |> Array.map (Array.map(get_vars >>List.toArray)) |> Array.concat
     member val Expr' = expr'
-    member val ExprL = exprL
     member val ExprT = exprT
+    member val ExprL = exprL
     member val ExprS = expr |> array2D
+    member val ExprVars = expr |> Array.map (Array.map(get_vars >> List.toArray)) |> Array.concat
     member val Rows = expr |> Array.map Vector<'t>
     member val Cols = exprT |> Array.map Vector<'t>
     member val RowsL = expr |> Array.map Vector<'t> |> Array.toList
+    member val ColsL = exprT |> Array.map Vector<'t> |> Array.toList
     member x.Display = 
         let nl = System.Environment.NewLine
         x.Rows
@@ -130,9 +130,9 @@ type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 
 
 module Matrix =
 
-    let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.ExprL |> Some
+    let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.RowsL |> Some
 
-    let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.Cols |> Array.toList |> Some
+    let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsL |> Some
 
     let mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
     

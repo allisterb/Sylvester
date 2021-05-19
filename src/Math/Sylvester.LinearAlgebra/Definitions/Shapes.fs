@@ -1,8 +1,5 @@
 ﻿namespace Sylvester
 
-open System
-
-open Sylvester
 open Arithmetic
 
 module Dimension = 
@@ -28,6 +25,26 @@ module Dimension =
     
     type ``10`` = dim<10>
     
+    type ``11`` = dim<11>
+
+    type ``12`` = dim<12>
+
+    type ``13`` = dim<13>
+
+    type ``14`` = dim<14>
+
+    type ``15`` = dim<15>
+
+    type ``16`` = dim<16>
+
+    type ``17`` = dim<17>
+
+    type ``18`` = dim<18>
+
+    type ``19`` = dim<19>
+
+    type ``20`` = dim<20>
+
     let ``0`` = new ``0``()
     
     let ``1`` = new ``1``()
@@ -50,6 +67,26 @@ module Dimension =
     
     let ``10`` = new ``10``()
 
+    let ``11`` = new ``11``()
+    
+    let ``12`` = new ``12``()
+    
+    let ``13`` = new ``13``()
+    
+    let ``14`` = new ``14``()
+    
+    let ``15`` = new ``15``()
+    
+    let ``16`` = new ``16``()
+    
+    let ``17`` = new ``17``()
+    
+    let ``18`` = new ``18``()
+    
+    let ``19`` = new ``19``()
+    
+    let ``20`` = new ``10``()
+
     let inline pp l =
         l +== ``0`` <?>  (``0``,
             l +== ``1`` <?>  (``1``, 
@@ -61,7 +98,17 @@ module Dimension =
                                     l +== ``7`` <?>  (``7``, 
                                         l +== ``8`` <?>  (``8``, 
                                             l +== ``9`` <?>  (``9``, 
-                                                l +== ``10`` <?>  (``10``, l)))))))))))
+                                                l +== ``10`` <?>  (``10``, 
+                                                    l +== ``11`` <?>  (``11``, 
+                                                        l +== ``12`` <?>  (``12``, 
+                                                            l +== ``13`` <?>  (``13``, 
+                                                                l +== ``14`` <?>  (``14``, 
+                                                                    l +== ``15`` <?>  (``15``, 
+                                                                        l +== ``16`` <?>  (``16``, 
+                                                                            l +== ``17`` <?>  (``17``, 
+                                                                                l +== ``18`` <?>  (``18``, 
+                                                                                    l +== ``19`` <?>  (``19``, 
+                                                                                        l +== ``20`` <?>  (``20``, l)))))))))))))))))))))
 
 /// A linear algebra object whose rank and dimensions may be unknown until runtime
 type IUnknownShape =

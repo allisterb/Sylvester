@@ -93,19 +93,19 @@ module RealNumbers =
 
     (* Functions *)
 
-    let sup (s:IOrderedSet<real>) = formula<real>
+    let sup (s:ITotalOrder<real>) = formula<real>
 
-    let inf (s:IOrderedSet<real>) = formula<real>
+    let inf (s:ITotalOrder<real>) = formula<real>
 
     (* Predicates *)
 
-    let bounded_above = pred<IOrderedSet<real>>
+    let bounded_above = pred<ITotalOrder<real>>
     
-    let bounded_below = pred<IOrderedSet<real>>
+    let bounded_below = pred<ITotalOrder<real>>
 
-    let bounded = pred<IOrderedSet<real>>
+    let bounded = pred<ITotalOrder<real>>
 
 
     (* Definitions *)
 
-    let lub (S:Expr<IOrderedSet<real>>) (E:Expr<IOrderedSet<real>>) = def real_numbers <@ forall %E (%E |<| %S) (not_empty %E |&| bounded_above %E ==> (sup %E |?| %S)) @>
+    let lub (S:Expr<ITotalOrder<real>>) (E:Expr<ITotalOrder<real>>) = def real_numbers <@ forall %E (%E |<| %S) (not_empty %E |&| bounded_above %E ==> (sup %E |?| %S)) @>

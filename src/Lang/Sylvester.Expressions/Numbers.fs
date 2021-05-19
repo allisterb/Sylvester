@@ -230,10 +230,8 @@ type rat = Rational
 
 [<RequireQualifiedAccess>]
  module NumericLiteralQ = 
-   let zero = Rational.Zero 
-   let one = Rational.One
-   let FromZero() = zero
-   let FromOne() = one 
+   let FromZero() = Rational.Zero
+   let FromOne() = Rational.One
    let FromInt32 (i:int) = Rational(i, 1)
    let FromInt64 (i:int64) = Rational(i, 1L)
 

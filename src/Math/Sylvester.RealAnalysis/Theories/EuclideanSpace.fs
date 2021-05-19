@@ -18,4 +18,4 @@ module EuclideanSpace =
     let desc = axiom_desc "Euclidean Space"
     
     (* Axioms *)
-    let eculidean_space_axioms<'n when 'n :> Number> = VectorSpace.vector_axioms<real>
+    let eculidean_space_axioms<'n when 'n :> Number> = VectorSpace.vector_space_axioms<real>

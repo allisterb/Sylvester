@@ -448,6 +448,17 @@ module FsExpr =
 
     let expand_lists' (expr: Expr<'t list list>) = expr |> expand_list' |> List.map expand_list'
 
+    let expand_tuple<'t> (expr:Expr) =
+        match expr with
+        | NewTuple el when el |> List.forall(fun e -> e.Type = typeof<'t>) -> Some (List.map expand''<'t> el)
+        | _ -> None
+    
+    let expand_tuples<'t> (expr:Expr) =
+        match expr with
+        | NewTuple el when el |> List.forall(fun e -> e.Type |> FSharpType.IsTuple && e.Type |> FSharpType.GetTupleElements |> Array.forall(fun t -> t = typeof<'t>)) -> 
+            el |> List.map (expand_tuple<'t> >> Option.get) |> Some
+        | _ -> None
+    
     let expand_equality =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r

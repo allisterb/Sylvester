@@ -72,11 +72,7 @@ type Poset<'t when 't: equality>(set:ISet<'t>, order:Order<'t>) =
         member val Order = order
         member x.Equals (y:Set<'t>) = x.Set.Equals y
    
-type IOrderedSet<'t when 't: equality and 't: comparison> =
-    inherit ISet<'t>
-    inherit ITotalOrder<'t>
-
 /// A set of elements with a total order relation.
 type OrderedSet<'t when 't: equality and 't : comparison>(set:ISet<'t>) =
     inherit Poset<'t>(set, (<=))
-    interface IOrderedSet<'t>
+    interface ITotalOrder<'t>

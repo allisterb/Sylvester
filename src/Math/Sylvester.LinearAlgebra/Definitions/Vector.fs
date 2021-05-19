@@ -2,10 +2,9 @@
 
 open System
 open FSharp.Quotations
-
+open FSharp.Quotations.Patterns
 open MathNet.Numerics
 
-open Sylvester
 open Arithmetic
 open Dimension
 
@@ -35,16 +34,15 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     member x.Item with get(i)  = e.[i] |> Scalar<'t>
-    member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
     interface IPartialShape<``1``> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'t>(expr)
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'t>(expr)
     new(d:'t list) = Vector<'t>(List.toArray d)
+    new(t:Expr) = match expand_tuple<'t> t with | Some el -> Vector<'t>(List.toArray el)  | _ -> Vector<'t>[]
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
-    static member (*) (l: Vector<'t>, r: Vector<'t>) = 
-        let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Scalar<'t> e
+
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal (e: Expr<'t> array) =
@@ -53,10 +51,12 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     do if e.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of %i." e.Length dim0.IntVal
     member val Dim0:'dim0 = dim0
     member val Display = base.Display
+    member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'dim0, 't>(expr)
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
     new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
-    
+    new(t:Expr) = match expand_tuple<'t> t with | Some el -> Vector<'dim0, 't>(List.toArray el) | _ -> Vector<'dim0, 't>[]
+
     interface IVector<'dim0> with member val Dim0 = dim0
 
     interface IEquatable<Vector<'dim0, 't>> with
@@ -95,6 +95,21 @@ type VecZ<'dim0 when 'dim0 :> Number> = Vector<'dim0, int>
 
 module Vector =
     let (|Vector|_|) (v: Vector<'n, 't>) : Expr<'t> list option = Some(v.ExprL)
+
+    let vector<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (dim:'n) (data:Expr) = 
+        match data with
+        | List el when el |> List.forall(fun e -> e.Type = typeof<'t>) -> el |> List.map expand''<'t> |> List.toArray |> Vector<'n, 't>
+        | NewTuple tu when tu |> List.forall(fun e -> e.Type = typeof<'t>) -> tu |> List.map expand''<'t> |> List.toArray |> Vector<'n, 't>
+        | NewArray (t, ar) when t = typeof<'t>  -> ar |> List.map expand''<'t> |> List.toArray |> Vector<'n, 't>
+        | _ -> failwithf "The expression %A is not a valid initializer expression for a %A array of size %A." data typeof<'t> dim.IntVal
+    
+    let vec (dim:'n) (data:Expr) = vector<'n, real> dim data
+    
+    let vecz (dim:'n) (data:Expr) = vector<'n, int> dim data
+    
+    let vecq  (dim:'n) (data:Expr<rat list>) = vector<'n, rat> dim data
+
+    let vecc (dim:'n) (data:Expr<complex list>) = vector<'n, complex> dim data
 
     let vvars<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> s = vars<'t> s (number<'n>.IntVal) |> Vector<'n, 't> 
     
