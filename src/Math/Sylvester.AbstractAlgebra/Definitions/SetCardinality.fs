@@ -8,6 +8,10 @@ with
         match x with
         | Finite m -> real(m.Force())
         | _ -> failwith "This set does not have finite cardinality."
+    override x.ToString() = 
+        match x with
+        | Finite m -> if m.IsValueCreated then sprintf "Finite %A" m.Value else "Finite"
+        | Aleph a -> sprintf "Aleph %A" a
     static member (+) (l:CardinalNumber, r:CardinalNumber) =
         match l, r with
         | Finite a, Finite b -> Finite(lazy(a.Force() + b.Force()))
@@ -38,7 +42,6 @@ type ICardinality =
 
 [<AutoOpen>]
 module SetCardinality =
-    
     let default_card<'t> =
         match typeof<'t>.Name with
         | "Int8"

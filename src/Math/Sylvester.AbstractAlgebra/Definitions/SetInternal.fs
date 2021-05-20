@@ -119,7 +119,11 @@ module internal SetInternal =
 
     let infinite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, true) :> seq<'t>
     
-    let cart_seq (xs:seq<'t>) (ys:seq<'t>) = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y)) |> infinite_seq_gen<'t * 't>
+    let cart_seq (xs:seq<'t>) (ys:seq<'t>) = 
+        let s = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y)) 
+        match xs, ys with
+        | FiniteSeq _, FiniteSeq _ -> finite_seq_gen s
+        | _ -> infinite_seq_gen<'t * 't> s
         
     let rec cart_seq' ss =
         match ss with

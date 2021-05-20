@@ -68,4 +68,8 @@ module SetTheory =
 
     (* Predicates *)
     
-    let bounded_set = pred<Set<_>>
+    let bounded_above = pred<Set<_>>
+
+    let bounded_below = pred<Set<_>>
+
+    let bounded = pred<Set<_>>

@@ -1,69 +1,28 @@
 #load "IncludeMath.fsx"
 
-open FSharp.Quotations
-open FSharp.Quotations.Patterns
 open Sylvester
-open Sylvester.CAS
-open PropCalculus
-open PredCalculus
-
-let x = Unchecked.defaultof<bool>
-let a = Unchecked.defaultof<int>
-let P = Unchecked.defaultof<bool>
-let N = Unchecked.defaultof<bool>
-let Q = Unchecked.defaultof<bool>
 
 
-proof pred_calculus <@ exists x N P ==> Q ==> ((N |&| P) ==> Q) @> [
-    trade_body |> L |> L'
-    ident_implies_not_or <@ (exists' x  (N  |&| P )) @> <@ Q @> |> L
-    ident_not_exists_forall_not' <@ x @> <@ N |&| P @> |> L |> L'
-    ident_implies_not_or <@ N |&| P @> <@ Q @> |> ApplyRight
-    def_implies |> Apply.LR 
-    commute_or <@ not (N |&| P) @> <@ Q @> |> Apply.L
-    idemp_or <@ Q @> |> L
-    //commute |> L
-    //distrib_or_forall |> L
+let urn = sseq2 [1..5]  
 
-]
+let S = prob_space urn
 
+let P = prob_measure S
 
-theorem pred_calculus <@ forall' x P ==> P @> [
-        inst' <@ x @> <@ P @> |> L
-    ]
-let einst x P = Instantiate pred_calculus <@ exists' %x %P @> P []
+[<Formula>]
+let E1 = urn |>| (fun s -> fst s = 5)
 
-//open IntegerAlgebra
-
-einst <@ a @> <@ a > 0 @>
-
-type Apply = RuleApplication
-let ApplyLeft = Apply.L
-let AfterRight = Apply.R'
-let a = var'<int> "a"
-let c = var'<int> "c"
-axiom integer_algebra <@ exists' %c (%a + %c = 0) @>
+card E1
+let E2 = urn |>| (fun s -> snd s < 4)
+let E3 = urn |>| (fun s -> fst s - snd s >= 8)
 
 
-let pp = proof integer_algebra <@ %a <> 0 ==> (((%a + 4) = (%a + 4)) = (6 = 6))@> [
-    axiom integer_algebra <@ %a <> 0 ==> (((%a + 4) = (%a + 4)) = (4 = 4)) @> |> deduce_ident |> ApplyLeft |> AfterRight
-]
+P(E1 |/| S )
 
-let a = var'<Set<real>> "a"
-expand <@ (%a).[0] = 1. @>
-let u:Set<real> = Set.U 
-//<@ u = Empty @> |> expand
-(expand <@ %a |/| Set.U @>)
-match (expand <@ %a |?| u @>) with
-| Value e -> printf "Value %A" e
-| ValueWithName (v, t, _) -> printf " VN %A" v
-| Var v -> printf " VN %A" v
-| e -> printf "na %A" e
+let ee = var<bool>
 
+expand <@ urn @>
 
-rr.ToString()
-let b = var<bool>
-let e = <@ a  + 6@> |> expand |> get_vars
 e
     //commute |> L
 ]
@@ -307,22 +266,3 @@ let rec f =
 //let iff = infinite_seq f
 <@ infinite_seq f @>
 
-let urn = sseq [1..5] * sseq [1..4]
-
-
-
-let S = prob_space urn
-let P = prob_measure S
-
-[<Formula>]
-let E1 = urn |>| (fun s -> fst s = 5)
-
-let E2 = urn |>| (fun s -> snd s < 4)
-let E3 = urn |>| (fun s -> fst s - snd s >= 8)
-
-
-P(E1 |/| S ) - P(E1)
-
-let ee = var<bool>
-
-expand <@ urn @>

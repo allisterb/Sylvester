@@ -6,7 +6,7 @@ open System.Collections.Generic
 open System.Linq
 open FSharp.Quotations
 
-open Sylvester.Arithmetic
+open Arithmetic
 open Sylvester.Collections
 
 /// A set of elements each with type or class denoted by t.
@@ -27,7 +27,7 @@ with
                 match s with
                 | FiniteSeq _ 
                 | InfiniteSeq _ -> let ds = Seq.distinct s in ds.GetEnumerator()
-                | _ -> failwithf "Cannot determine the cardinality of this sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
+                | _ -> failwithf "Cannot determine the cardinality of this sequence expression %A. Use a list, array, or sequence generator." s
             | Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
@@ -125,7 +125,7 @@ with
     member x.HasElement elem = 
         match x, elem with
         | Empty, _ -> false
-        | Seq set, e -> set.Contains e 
+        | Seq _, e -> x.Contains e 
         | Set s, e -> s.HasElement s e
     
     /// Indicator function for an element.
@@ -159,13 +159,15 @@ with
         match a, b with
         | _, Empty -> a
         | Empty, _ -> Empty
-        | Seq a, Seq b -> (Seq.except b a) |> Set.fromSeq
+        | Seq (FiniteSeq s1), Seq s2 -> s1 |> Seq.except s2 |> finite_seq_gen |>Set.fromSeq
+        | Seq (InfiniteSeq s1), Seq s2 -> s1 |> Seq.except s2 |> infinite_seq_gen |>Set.fromSeq
         | _,_ -> a.Subset(fun x -> b.HasElement x |> not)
         
     member a.ElementDifference b =
         match a with
         | Empty -> Empty
-        | Seq _ -> Seq(a |> Seq.except [b])
+        | Seq (FiniteSeq s) -> s |> Seq.except [b] |> finite_seq_gen |> Set.fromSeq
+        | Seq s -> s |> Seq.except [b] |> infinite_seq_gen |> Set.fromSeq
         | Set s -> SetComprehension(s.Bound, s.Range', s.Body', (a.Cardinality - (Finite (lazy 1))), (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
@@ -325,7 +327,7 @@ module Set =
     let not_empty (l:ISet<'t>) = l.Set <> Empty
 
     let card (s:ISet<'t>) = s.Set.Cardinality
-    
+  
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
     let set<'t when 't: equality> (bound:'t) range body card = SetComprehension(bound, range, body, card) |> Set :> ISet<'t>
@@ -346,11 +348,11 @@ module Set =
 
     let subset (sub:'t->bool) (set: ISet<'t>) = set.Set.Subset sub
 
-    let sseq(s:seq<'t>) = (Seq s) :> ISet<'t>
+    let sseq(s:seq<'t>) = (Seq s)
 
-    let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq :> ISet<'t * 't>
+    let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq
 
-    let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq :> ISet<'t * 't>
+    let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq
     
     let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()
 

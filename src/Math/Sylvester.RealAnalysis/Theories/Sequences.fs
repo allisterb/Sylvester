@@ -62,10 +62,10 @@ module Sequences =
             def sequences <@ converges (infinite_seq %a) = (lim_seq pos_inf (infinite_seq %a) = %Li) @> 
     
     let def_bounded_above (d:Expr<seq<_>>) =
-            def sequences <@ bounded %d = sseq %d :? IBoundedAbove<_> @>
+            def sequences <@ bounded %d = SetTheory.bounded_above (sseq %d) @>
 
     let def_bounded (d:Expr<seq<_>>) =
-            def sequences <@ bounded %d = sseq %d :? IBounded<_> @>
+            def sequences <@ bounded %d = SetTheory.bounded (sseq %d)  @>
 
     let def_increasing (n:Expr<int>) (a:Expr<int->_>) =
         def sequences <@ increasing (seq {(%a) %n}) = forall' %n ((%a)((%n)+1) > (%a) %n) @>

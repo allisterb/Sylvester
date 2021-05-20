@@ -24,7 +24,7 @@ module Topology =
   
     let bounded = pred<Region<_>>
 
-    let closed_set = pred<Region<_>>
+    let closed = pred<Region<_>>
 
     let open_set = pred<Region<_>>
 
@@ -51,11 +51,11 @@ module Topology =
     let def_limit (epsilon:RealExpr) (N:Expr<int>) (n:Expr<int>) (Li:Expr<Vec<_>>) (a:Expr<int->Vec<_>>) =
         def sequences <@ lim_seq pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N) ((euclid_dist %Li ((%a) %n)) < scalar %epsilon)) @>
 
-    let def_open_set (S:Expr<Set<Vec<_>>>) (x:Expr<Vec<_>>) (r:RealExpr)= 
+    let def_open (S:Expr<Set<Vec<_>>>) (x:Expr<Vec<_>>) (r:RealExpr)= 
         def topology <@ open_set %S = forall %x (%x |?| %S) (exists %r (%r > 0.) ((open_ball %x %r) |<| %S)) @>
 
-    let def_closed_set (S:Expr<Set<Vec<_>>>)= 
-        def topology <@ closed_set %S = open_set (%S |/| R) @>
+    let def_closed (S:Expr<Set<Vec<_>>>)= 
+        def topology <@ closed %S = open_set (%S |/| R) @>
 
     let def_interior_point (S:RegionExpr<_>) (x:VecExpr<_>) (epsilon:RealExpr) =
         def topology <@ interior_point %S %x = (exists %epsilon (%epsilon > 0.) ((open_ball %x %epsilon) |<| %S)) @>
@@ -79,4 +79,4 @@ module Topology =
     //let def_
     (* Theorems *)
     let compact_implies_closed_bounded (S:RegionExpr<_>) =
-        proof topology <@ compact %S ==> (closed_set %S |&| bounded_set %S) @> []
+        proof topology <@ compact %S ==> (closed %S |&| bounded %S) @> []
