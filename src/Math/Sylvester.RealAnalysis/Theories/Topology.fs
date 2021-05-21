@@ -26,7 +26,7 @@ module Topology =
 
     let closed = pred<Region<_>>
 
-    let open_set = pred<Region<_>>
+    let ``open`` = pred<Region<_>>
 
     let interior_point (_:Region<_>) = pred<Vec<_>>
 
@@ -52,10 +52,10 @@ module Topology =
         def sequences <@ lim_seq pos_inf (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N) ((euclid_dist %Li ((%a) %n)) < scalar %epsilon)) @>
 
     let def_open (S:Expr<Set<Vec<_>>>) (x:Expr<Vec<_>>) (r:RealExpr)= 
-        def topology <@ open_set %S = forall %x (%x |?| %S) (exists %r (%r > 0.) ((open_ball %x %r) |<| %S)) @>
+        def topology <@ ``open`` %S = forall %x (%x |?| %S) (exists %r (%r > 0.) ((open_ball %x %r) |<| %S)) @>
 
     let def_closed (S:Expr<Set<Vec<_>>>)= 
-        def topology <@ closed %S = open_set (%S |/| R) @>
+        def topology <@ closed %S = ``open`` (%S |/| R) @>
 
     let def_interior_point (S:RegionExpr<_>) (x:VecExpr<_>) (epsilon:RealExpr) =
         def topology <@ interior_point %S %x = (exists %epsilon (%epsilon > 0.) ((open_ball %x %epsilon) |<| %S)) @>

@@ -248,7 +248,7 @@ with
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
     
 /// Set Cartesian product.
-    static member (*) (l, r) = 
+    static member (*) (l:Set<'a>, r:Set<'b>) = 
         match (l, r) with
         |(_, Empty) -> Empty
         |(Empty, _) -> Empty
@@ -260,7 +260,7 @@ with
                 | _, Finite _-> (finite_seq_gen a) |> Set.fromSeq
                 | Aleph _, Aleph _ -> infinite_seq_gen(Seq.initInfinite (fun n -> Seq.item n a) ) |> Set.fromSeq
             c
-        |(_,_) -> let a, b = var2'<'t> "a" "b" in SetComprehension<'t * 't>(<@  (%a, %b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
+        |(_,_) -> let a, b = var'<'a> "a", var'<'b> "b" in SetComprehension<'a * 'b>(<@  (%a, %b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
 
     interface ISet<'t> with member x.Set = x
 
