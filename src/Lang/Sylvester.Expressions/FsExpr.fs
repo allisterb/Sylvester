@@ -248,6 +248,19 @@ module FsExpr =
         | Let(_, _, b) -> b
         | expr -> expr
 
+    let rec param_vars :Expr<'a->'b>->Var list = 
+         function
+         | Lambda(v, Lambda(_, _)) as l -> [v] @ (param_vars l)
+         | Lambda(v, _) -> [v]
+         | Let(v, _, _) -> [v]
+         | expr -> failwithf "The expression %A is not a function." expr
+
+    let rec recombine_func (vars:Var list) (body:Expr) =
+        match vars with
+        | [] -> failwithf "Cannot recombine function body %A with an empty parameter list." body
+        | v::[] -> Expr.Lambda(v, body)
+        | v1::v2 -> recombine_func v2 (Expr.Lambda(v1, body))
+
     let traverse expr f =
         match expr with
         | ShapeVar v -> Expr.Var v
@@ -391,6 +404,8 @@ module FsExpr =
         | WithValue(v, t, e) -> (v, t, expand e)
         | _ -> failwith "Expression is not a reflected definition parameter."
 
+    let body'(expr:Expr<'a->'b>) = expr |> body |> expand''<'b>
+    
     let call expr p = 
         let mi = getFuncInfo expr
         Expr.Call(mi, p)

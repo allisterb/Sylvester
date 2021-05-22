@@ -252,6 +252,10 @@ module Numbers =
 
     let neg_inf<'t> = Unchecked.defaultof<'t>
     
+    let (e:real) = Math.E
+    
+    let (pi:real) = Math.PI
+
     let inline inv n = n ** - 1.
      
     let inline zero (x : ^T) = (^T : (member Zero : 't) (x))

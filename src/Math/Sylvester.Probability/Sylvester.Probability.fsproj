@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
+    <ProjectReference Include="..\Sylvester.RealAnalysis\Sylvester.RealAnalysis.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
