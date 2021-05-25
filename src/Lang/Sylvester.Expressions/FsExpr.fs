@@ -254,7 +254,7 @@ module FsExpr =
          | Lambda(v, _) -> [v]
          | Let(v, _, _) -> [v]
          | expr -> failwithf "The expression %A is not a function." expr
-
+        
     let rec recombine_func (vars:Var list) (body:Expr) =
         match vars with
         | [] -> failwithf "Cannot recombine function body %A with an empty parameter list." body
@@ -478,6 +478,8 @@ module FsExpr =
         function
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
         | expr -> failwithf "The expression %s is not a equality expression." <| src expr
+
+    let param_var_expr (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne |> Expr.Var |> expand''<'a>
 
     let evaluate (q:Expr<'t>) = 
         match q with

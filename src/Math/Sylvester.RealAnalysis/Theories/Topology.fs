@@ -2,8 +2,7 @@
 
 open FSharp.Quotations
 
-open Sylvester.Arithmetic
-
+open Arithmetic
 open SetTheory
 open Vector
 open Sequences
@@ -39,7 +38,6 @@ module Topology =
     let diffrentiable_at (a:Vec<'n>)= pred<(Vec<'n>->Vec<'m>)>
 
     let diffrentiable_on (a:Region<'n>)= pred<(Vec<'n>->Vec<'m>)>
-
 
     (* Functions *)
     

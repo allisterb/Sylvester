@@ -38,9 +38,9 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'t>(expr)
+    new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand''<'t>) in Vector<'t>(expr)    
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'t>(expr)
     new(d:'t list) = Vector<'t>(List.toArray d)
-    new(t:Expr) = match expand_tuple<'t> t with | Some el -> Vector<'t>(List.toArray el)  | _ -> Vector<'t>[]
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
@@ -53,10 +53,10 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     member val Display = base.Display
     member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'dim0, 't>(expr)
+    new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand''<'t>) in Vector<'dim0, 't>(expr)
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
     new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
-    new(t:Expr) = match expand_tuple<'t> t with | Some el -> Vector<'dim0, 't>(List.toArray el) | _ -> Vector<'dim0, 't>[]
-
+    
     interface IVector<'dim0> with member val Dim0 = dim0
 
     interface IEquatable<Vector<'dim0, 't>> with
@@ -123,6 +123,8 @@ module Vector =
 
     //let simplify (l:Vector<_,_>) = l.Expr |> Array.map simplify' |> Vector<_,_>
 
+    let inner_product_val (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) |> sval
+    
     let norm (l:Vector<'n, 't>) =
         let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
 

@@ -235,6 +235,17 @@ type rat = Rational
    let FromInt32 (i:int) = Rational(i, 1)
    let FromInt64 (i:int64) = Rational(i, 1L)
 
+[<ReflectedDefinition;AutoOpen>]
+module Math =
+    let (e:real) = Math.E
+    
+    let (pi:real) = Math.PI
+
+    let rec factorial n =
+        match n with
+        | 0 | 1 -> 1
+        | _ -> n * factorial(n-1)
+
 [<AutoOpen>]
 module Numbers =
     let real n :real = float n
@@ -252,16 +263,15 @@ module Numbers =
 
     let neg_inf<'t> = Unchecked.defaultof<'t>
     
-    let (e:real) = Math.E
-    
-    let (pi:real) = Math.PI
+    let (^) (l:'t) (r:'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IConvertible) =
+        let l', r' = System.Convert.ToDouble l, System.Convert.ToDouble r in
+        System.Convert.ChangeType(l' ** r', typeof<'t>) :?> 't
 
     let inline inv n = n ** - 1.
      
     let inline zero (x : ^T) = (^T : (member Zero : 't) (x))
 
     let inline one (x : ^T) = (^T : (member One : 't) (x))
-
     let inline (..+) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (+) l r
 
     let inline (..-) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (-) l r
@@ -269,8 +279,6 @@ module Numbers =
     let inline (../) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (/) l r
 
     let inline (..*) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (*) l r
-
-    let take n s = s |> (Seq.take n >> Seq.toList)
 
     let (|NumericConstant|_|) = 
         function

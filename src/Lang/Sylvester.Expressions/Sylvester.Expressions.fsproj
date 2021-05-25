@@ -8,7 +8,6 @@
     <Compile Include="Numbers.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Term.fs" />
-    <Compile Include="Display.fs" />
     <Compile Include="FsExpr.fs" />
     <Compile Include="MathNetExpr.fs" />
     <Compile Include="MathNetExprParser.fs" />

@@ -300,9 +300,6 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
         if l.Complete then 
             failwith "Cannot add a step to a completed proof." 
         else Proof(l.Stmt, l.Theory, l.Steps @ r)
-    interface IDisplay with
-        member x.Output(item:'t) = item.ToString()
-        member x.Transform(str:string) = str
 
 and RuleApplication =
     | L  of Rule

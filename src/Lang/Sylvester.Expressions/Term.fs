@@ -38,3 +38,11 @@ module Term =
     let expr (t:Term<'t>) = t.Expr
 
     let src(t:Term<'t>) = t |> (expr >> Swensen.Unquote.Operators.decompile)
+
+[<AutoOpen>]
+module TermSeq =
+    let term n (s:seq<Term<_>>) = s |> Seq.item n
+
+    let take n (s:seq<_>) = s |> Seq.take n |> Seq.toList
+
+    let map f (s:seq<_>) = s |> Seq.map f 

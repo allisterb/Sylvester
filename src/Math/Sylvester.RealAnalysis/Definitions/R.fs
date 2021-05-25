@@ -2,7 +2,8 @@
 
 open FSharp.Quotations
 
-open Sylvester.Arithmetic
+open Arithmetic
+open Scalar
 open Vector
 
 type R<'n when 'n :>Number>() = 
@@ -14,22 +15,23 @@ module R =
     
     let internal Ops = RealAnalysis.defaultRealAnalysisSymbolicOps
 
+    let realvar n = var'<real> n
+
     let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
     
     let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
     
-    let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (euclid_dist x y) < Scalar r)
+    let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (euclid_dist x y) < scalar r)
     
-    let lim f x v : Scalar<real> = Ops.Limit f x v |> Scalar
+    let lim f x v = Ops.Limit f x v |> Scalar
        
     let lim_right f x v = Ops.LimitRight f x v |> Scalar
 
     let lim_left f x v = Ops.LimitLeft f x v |> Scalar
 
-    let diff f x  =  Ops.Diff f x 1
-
-    let integrate f x = Ops.Integrate f x 
-
-    let inline deriv f x a = 
+    let inline deriv_lim f x a = 
         lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
 
+    let diff f  =  Ops.Diff f 1
+
+    let integrate f = Ops.Integrate f

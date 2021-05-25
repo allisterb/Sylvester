@@ -1,10 +1,8 @@
 ﻿namespace Sylvester
 
 open System
-open System.Collections  
 
-open Sylvester.Arithmetic
-open Sylvester.Collections
+open Arithmetic
 
 /// Set of n-ary elements called vectors over a field of scalars with 2 left-associative, commutative, operations on vectors. 
 type IVectorSpace<'n, 't, 'v when 'v: equality and 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> =  
