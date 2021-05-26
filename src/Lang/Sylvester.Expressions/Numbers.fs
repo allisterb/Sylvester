@@ -241,10 +241,9 @@ module Math =
     
     let (pi:real) = Math.PI
 
-    let rec factorial n =
-        match n with
-        | 0 | 1 -> 1
-        | _ -> n * factorial(n-1)
+    let factorial (n:int) = MathNet.Numerics.SpecialFunctions.Factorial n
+
+    let binomial_coeff n r = (factorial n) / (factorial(n - r))
 
 [<AutoOpen>]
 module Numbers =

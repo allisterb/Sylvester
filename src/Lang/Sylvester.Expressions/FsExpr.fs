@@ -479,6 +479,8 @@ module FsExpr =
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> expand l, expand r
         | expr -> failwithf "The expression %s is not a equality expression." <| src expr
 
+    let param_var (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne 
+
     let param_var_expr (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne |> Expr.Var |> expand''<'a>
 
     let evaluate (q:Expr<'t>) = 
