@@ -358,10 +358,7 @@ module Set =
     
     let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()
 
-    let finite_seq s = 
-        match s with
-        | FiniteSeq f -> Seq f
-        | _ -> failwithf "This is not a finite sequence expression."
+    let finite_seq s = s |> finite_seq_gen |> Set.fromSeq
 
     let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t>
     

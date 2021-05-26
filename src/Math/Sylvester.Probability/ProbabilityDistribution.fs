@@ -2,41 +2,50 @@
 
 open FSharp.Quotations
 
-type IRandomElement<'t, 'd when 't : equality> = 
-    abstract Distribution : ProbabilityDistribution<'t> option
+type ProbabilityDistribution<'t when 't:equality> = 
+| ProbabilityMass of Expr<real->real>
+| ProbabilityDensity of Expr<real->real>
+| JointDistribution of ProbabilityDistribution<'t> * ProbabilityDistribution<'t>
+with 
+    member x.Expr = 
+        match x with
+        | ProbabilityMass d
+        | ProbabilityDensity d -> d
+        | JointDistribution(l, r) -> <@ fun x -> (%l.Expr) x + (%r.Expr) x @>
 
-and ProbabilityDistribution<'t when 't:equality> = 
-| ProbabilityMass of Expr<int -> real>
-| ProbabilityDensity of Expr<real -> real>
-    
-type RandomVariable<'t when 't : equality>(support: Set<real> option, map:Expr<'t -> real> option, distr:ProbabilityDistribution<'t> option) = 
-    member val Support = defaultArg support (setOf Field.R)
+type IRandomElement<'t, 'd when 't : equality> = interface end
+
+type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support: Set<real> option, distr:ProbabilityDistribution<'t> option) = 
     member val Map = map 
     member val Map' = Option.bind(evaluate >> Option.Some) map
-    member val Distribution = distr
-    interface IRandomElement<'t, real> with
-        member x.Distribution = distr
+    member val Support = defaultArg support RandomVariable<'t>.DefaultSupport
+    member val Distribution = defaultArg distr (ProbabilityMass(<@ fun _ -> 0. @>))
+    member x.Prob = evaluate x.Distribution.Expr
+    interface IRandomElement<'t, real>
     static member DefaultSupport = setOf Field.R
+    interface ISet<real> with 
+        member x.Set = x.Support
+        member x.Equals b = x.Support.Equals b
 
-type Discrete<'t when 't : equality>(?support:Set<real>, ?map:Expr<'t -> real>, ?d:Expr<int->real>) = 
-    inherit RandomVariable<'t>(support, map, d |> Option.bind (ProbabilityMass >> Some))
-    member x.Prob(n:int) = 
-        match x.Distribution with
-        | Some(ProbabilityMass m) -> evaluate m <| n
-        | _ -> failwith "The distribution function for this random variable is not defined."
-type Continuous<'t when 't : equality>(?support:Set<real>, ?map:Expr<'t->real>, ?d:Expr<real->real>) = 
-    inherit RandomVariable<'t>(support, map, d |> Option.bind (integrate >> ProbabilityDensity >> Some))
-    member x.Prob(n:real) = 
-        match x.Distribution with
-        | Some(ProbabilityDensity d) -> evaluate d <| n
-        | _ -> failwith "The distribution function for this random variable is not defined."
+type Discrete<'t when 't : equality>(?map:Expr<'t -> real>, ?support:Set<real>, ?pmf:Expr<real->real>) = 
+    inherit RandomVariable<'t>(map, support, pmf |> Option.bind (ProbabilityMass >> Some))
+     
+type Continuous<'t when 't : equality>(?map:Expr<'t->real>, ?support:Set<real>, ?cdf:Expr<real->real>) = 
+    inherit RandomVariable<'t>(map, support, cdf |> Option.bind (integrate >> ProbabilityDensity >> Some))
    
 [<AutoOpen>]
 module ProbabilityDistribution =
-    let random() = RandomVariable(None,None,None)
+    let random<'t when 't : equality> s d = RandomVariable<'t>(None, Some s, Some d)
 
-    let discrete distr = Discrete(d = distr)
+    let discrete<'t when 't : equality> s d = Discrete<'t>(support=s, pmf=d)
 
-    let continuous distr = Continuous(d = distr)
+    let continuous<'t when 't : equality> s d = Continuous<'t>(support=s, cdf=d)
 
-    let poisson l = discrete <@ fun n -> l ** real n * Math.e ** -l / real (Math.factorial n) @>
+    let poisson<'t when 't : equality> l n = discrete<'t> ([1. .. (real n)] |> finite_seq) <@ fun x -> l ** x * (Math.e ** -l) / real (Math.factorial ((int) x)) @>
+
+    let rvprob (d:RandomVariable<_>) x = d.Prob x
+
+    let expectation (x:RandomVariable<_>) =
+        match x with
+        | :? Discrete<_> as d -> d.Support |> Seq.map(fun e ->  e * (rvprob d e )) |> Seq.reduce (+)
+        | _ -> failwith "Can only compute expectation of a discrete or continuous variable."

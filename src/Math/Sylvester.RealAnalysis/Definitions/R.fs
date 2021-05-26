@@ -20,6 +20,10 @@ module R =
     let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
     
     let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
+
+    let half_open_interval left right = Field.R |>| (fun x -> x > left && x <= right)
+    
+    let half_closed_interval left right = Field.R |>| (fun x -> x >= left && x < right)
     
     let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (euclid_dist x y) < scalar r)
     

@@ -34,6 +34,9 @@ module MathNetExpr =
         | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)
         | Call(None, Op "Sqrt" ,v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
           
+        | Call(None, Op "prob" ,_::v::[]) 
+        | Call(None, Op "rvprob" ,_::v::[]) -> Expression.Prob (fromQuotation v)
+        
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)

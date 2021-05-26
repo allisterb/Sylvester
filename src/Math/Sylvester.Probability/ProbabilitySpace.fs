@@ -16,7 +16,11 @@ type ProbabilitySpace<'t when 't : equality>(set:Set<'t>, algebra:SigmaAlgebra<'
 [<AutoOpen>]
 module ProbabilitySpace =
     let prob_space s = ProbabilitySpace s
+    
     let prob_space_m s m = ProbabilitySpace(s, m)
+    
     let prob_space_a_m s a m = ProbabilitySpace(s, a, m)
     
     let prob_measure (p:ProbabilitySpace<'t>) :(Set<'t>->real)= p.Measure
+
+    let inline prob (p : ^T) x =  (^T : (member Prob : ('t->real)) (p)) <| x
