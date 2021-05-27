@@ -10,8 +10,8 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     let expr' = expr |> MathNetExpr.fromQuotation
     member val Expr = expr
     member val Expr' = expr'
-    member val Val = evaluate expr
-    member val Val' = box (evaluate expr)
+    //member val Val = evaluate expr
+    //member val Val' = box (evaluate expr)
     interface IScalar with
         member val Rank = Some 0 with get,set
         member val Dims = [| |] |> Some with get,set
@@ -22,14 +22,14 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member a.Equals b = a.Display = b.Display
 
     interface IComparable<Scalar<'t>> with
-        member a.CompareTo b = if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo b.Val else failwithf "The scalar type %A is not comparable" typeof<'t>
+        member a.CompareTo b = a.Expr.ToString().CompareTo (b.Expr.ToString()) //if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo b.Val else failwithf "The scalar type %A is not comparable" typeof<'t>
     
     interface IComparable with
         member a.CompareTo b = 
             match b with
             | :? Scalar<'t> as bs -> (a :> IComparable<Scalar<'t>>).CompareTo bs
-            | :? 't as bs -> if a.Val' :? IComparable<'t> then (a.Val' :?> IComparable<'t>).CompareTo bs else failwithf "The scalar type %A is not comparable." typeof<'t>
-            | _ -> failwith "This object is not a set."
+         
+            | _ -> failwith "This object is not a scalar value."
     
     override a.Equals (_b:obj) = 
             match _b with 
@@ -88,7 +88,7 @@ module NumericLiteralR =
 module Scalar =
     let scalar (n:'t) = let e =  expand''<'t> <@ n @> in Scalar(e)
 
-    let sval (s:Scalar<'t>) = s.Val
+    let sval (s:Scalar<'t>) = evaluate s.Expr
 
     let realvar n = var'<real> n
     

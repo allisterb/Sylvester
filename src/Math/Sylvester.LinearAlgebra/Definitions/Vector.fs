@@ -95,21 +95,14 @@ type VecZ<'dim0 when 'dim0 :> Number> = Vector<'dim0, int>
 
 module Vector =
     let (|Vector|_|) (v: Vector<'n, 't>) : Expr<'t> list option = Some(v.ExprL)
+    
+    let vec (dim:'n) (data:Expr<real list>) = Vector<'n, real> data
+    
+    let vecz (dim:'n) (data:Expr<int list>) = Vector<'n, int> data
+    
+    let vecq  (dim:'n) (data:Expr<rat list>) = Vector<'n, rat> data
 
-    let vector<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (dim:'n) (data:Expr) = 
-        match data with
-        | List el when el |> List.forall(fun e -> e.Type = typeof<'t>) -> el |> List.map expand''<'t> |> List.toArray |> Vector<'n, 't>
-        | NewTuple tu when tu |> List.forall(fun e -> e.Type = typeof<'t>) -> tu |> List.map expand''<'t> |> List.toArray |> Vector<'n, 't>
-        | NewArray (t, ar) when t = typeof<'t>  -> ar |> List.map expand''<'t> |> List.toArray |> Vector<'n, 't>
-        | _ -> failwithf "The expression %A is not a valid initializer expression for a %A array of size %A." data typeof<'t> dim.IntVal
-    
-    let vec (dim:'n) (data:Expr) = vector<'n, real> dim data
-    
-    let vecz (dim:'n) (data:Expr) = vector<'n, int> dim data
-    
-    let vecq  (dim:'n) (data:Expr<rat list>) = vector<'n, rat> dim data
-
-    let vecc (dim:'n) (data:Expr<complex list>) = vector<'n, complex> dim data
+    let vecc (dim:'n) (data:Expr<complex list>) = Vector<'n, complex> data
 
     let vvars<'n, 't when 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> s = vars<'t> s (number<'n>.IntVal) |> Vector<'n, 't> 
     
@@ -120,8 +113,6 @@ module Vector =
     let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
     
     let smul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
-
-    //let simplify (l:Vector<_,_>) = l.Expr |> Array.map simplify' |> Vector<_,_>
 
     let inner_product_val (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) |> sval
     

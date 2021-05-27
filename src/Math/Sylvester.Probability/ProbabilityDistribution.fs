@@ -25,6 +25,11 @@ type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support:
             let v = param_var x.Distribution.Expr
             x.Distribution.Expr |> body |> subst_var_value v (Expr.Value a) |> expand''<real> |> Scalar
     member x.Prob = fun a -> if a |?| x.Support then x.Func a else 0R
+    member x.ProbExpr = 
+        fun (a:Expr<real>) ->
+            let v = param_var x.Distribution.Expr
+            let b = x.Distribution.Expr |> body |> subst_var_value v a 
+            <@ %%b:real @> |> Scalar<real>
     interface IRandomElement<'t, real>
     static member DefaultSupport = setOf Field.R
     interface ISet<real> with 
@@ -33,7 +38,7 @@ type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support:
 
 type Discrete<'t when 't : equality>(?map:Expr<'t -> real>, ?support:Set<real>, ?pmf:Expr<real->real>) = 
     inherit RandomVariable<'t>(map, support, pmf |> Option.bind (ProbabilityMass >> Some))
-    member x.CProb = fun i -> seq {0. .. i} |> Seq.map x.Prob |> Seq.reduce (+) 
+    member x.Cdf = fun i -> seq {0. .. i} |> Seq.map x.Prob |> Seq.reduce (+) 
     member x.Expectation =
         let p = let b = body x.Distribution.Expr in <@ %%b:real @>
         let n = param_var_expr x.Distribution.Expr
@@ -42,7 +47,7 @@ type Discrete<'t when 't : equality>(?map:Expr<'t -> real>, ?support:Set<real>, 
         let p =            
             let v = param_var r.Distribution.Expr
             r.Distribution.Expr |> body |> subst_var_value v (call_sub (Expr.Value l) (Expr.Var v)) |> recombine_func [v] 
-        Discrete<'t>(support = r.Support, pmf =  <@ %%p:real->real @>)
+        Discrete<'t>(support = r.Support, pmf = <@ %%p:real->real @>)
 
 type Continuous<'t when 't : equality>(?map:Expr<'t->real>, ?support:Set<real>, ?pdf:Expr<real->real>) = 
     inherit RandomVariable<'t>(map, support, pdf |> Option.bind (integrate >> ProbabilityDensity >> Some))

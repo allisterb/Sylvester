@@ -37,12 +37,13 @@ module MathNetExpr =
         | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)
         | Call(None, Op "Sqrt" ,v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
           
-        | Call(None, Op "sum", v) -> Expression.Sum(v |> List.map fromQuotation)
         | Call(None, Op "prob",_::v::[]) 
         | Call(None, Op "rvprob",_::v::[]) -> Expression.Prob (fromQuotation v)
         | Call(None, Op "factorial", v::[]) -> Expression.Factorial (fromQuotation v)
         | Call(None, Op "Factorial", v::[]) -> Expression.Factorial (fromQuotation v)
-        
+        | Call(None, Op "binomial_coeff", n::r::[]) -> 
+            let n',r' = fromQuotation n, fromQuotation r in
+            (Expression.Factorial n') / (Expression.Factorial(r') * (Expression.Factorial(n' - r')))
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)

@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open FSharp.Quotations
+
 type ProbabilityMeasure<'t when 't: equality> = Map<Set<'t>, real>
 
 type ProbabilitySpace<'t when 't : equality>(set:Set<'t>, algebra:SigmaAlgebra<'t>, measure: ProbabilityMeasure<'t>) =
@@ -25,6 +27,8 @@ module ProbabilitySpace =
 
     let inline prob (p : ^T) x  =  (^T : (member Prob : (real->Scalar<real>)) (p)) <| (float) x
 
-    let inline cprob (p : ^T) x  =  (^T : (member CProb : (real->Scalar<real>)) (p)) <| (float) x
+    let inline cprob (p : ^T) x  =  (^T : (member Cdf : (real->Scalar<real>)) (p)) <| (float) x
 
     let inline expectation (x : ^T) = (^T : (member Expectation : Scalar<real>) (x))
+
+    let inline prob_expr (p : ^T) x  =  (^T : (member ProbExpr : (Expr<real>->Scalar<real>)) (p)) <|  x
