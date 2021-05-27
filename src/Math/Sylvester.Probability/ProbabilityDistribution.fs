@@ -33,9 +33,11 @@ type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support:
 
 type Discrete<'t when 't : equality>(?map:Expr<'t -> real>, ?support:Set<real>, ?pmf:Expr<real->real>) = 
     inherit RandomVariable<'t>(map, support, pmf |> Option.bind (ProbabilityMass >> Some))
-    
     member x.CProb = fun i -> seq {0. .. i} |> Seq.map x.Prob |> Seq.reduce (+) 
-
+    member x.Expectation =
+        let p = let b = body x.Distribution.Expr in <@ %%b:real @>
+        let n = param_var_expr x.Distribution.Expr
+        sum(<@ %p * %n @>) n (Seq.min x.Support) (Seq.max x.Support)
     static member (-) (l:real, r:Discrete<'t>) =
         let p =            
             let v = param_var r.Distribution.Expr
@@ -51,11 +53,12 @@ module ProbabilityDistribution =
 
     let continuous<'t when 't : equality> d = Continuous<'t>(pdf=d)
 
+    let degenerate<'t when 't : equality> a = discrete<'t> (finite_seq [a]) <@ fun x -> 1. @>
+
+    let uniform<'t when 't : equality> s = let l = (Seq.length s) in discrete<'t> (finite_seq s) <@ fun x -> 1. / real l  @>
+    
     let poisson<'t when 't : equality> l n = discrete<'t> ([0. .. (real n)] |> finite_seq) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @>
 
     let binomial<'t when 't : equality> p n = discrete<'t> ([0. .. real n] |> finite_seq) <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
     
-    let expectation (x:RandomVariable<_>) =
-        match x with
-        | :? Discrete<_> as d -> d.Support |> Seq.map(fun e ->  e * (prob d e )) |> Seq.reduce (+)
-        | _ -> failwith "Can only compute expectation of a discrete or continuous variable."
+    let bernoulli<'t when 't : equality> p = binomial p 1

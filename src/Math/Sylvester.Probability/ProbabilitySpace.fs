@@ -26,3 +26,5 @@ module ProbabilitySpace =
     let inline prob (p : ^T) x  =  (^T : (member Prob : (real->Scalar<real>)) (p)) <| (float) x
 
     let inline cprob (p : ^T) x  =  (^T : (member CProb : (real->Scalar<real>)) (p)) <| (float) x
+
+    let inline expectation (x : ^T) = (^T : (member Expectation : Scalar<real>) (x))

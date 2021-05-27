@@ -28,5 +28,5 @@ type OrderedField<'t when 't: equality and 't : comparison>(additiveGroup: IAddi
 
 module Field = 
     let R = 
-        let reals = let x = Unchecked.defaultof<real> in set' x x  
+        let reals = let x = var'<real> "x" in SetComprehension(x, Aleph 1) |> Set
         OrderedField(additive_group(reals), multiplicative_group(reals))

@@ -94,6 +94,8 @@ module Scalar =
     
     let intvar n = var'<int> n
 
+    let ratvar n = var'<rat> n
+
     let int_expr x = 
         match box x with
         | :? Scalar<int> as s -> s.Expr
@@ -109,3 +111,11 @@ module Scalar =
         | :? real as n -> Expr.Value n |> expand''<real>
         | :? int as n -> Expr.Value (real n) |> expand''<real>
         | _ -> failwithf "The expression %A is not a real number expression." x
+
+    let rat_expr x = 
+        match box x with
+        | :? Scalar<rat> as s -> s.Expr
+        | :? Expr<rat> as e -> e
+        | :? rat as n -> Expr.Value n |> expand''<rat>
+        | :? int as n -> Expr.Value (rat n) |> expand''<rat>
+        | _ -> failwithf "The expression %A is not a rational number expression." x

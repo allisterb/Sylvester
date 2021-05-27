@@ -15,7 +15,7 @@ module R =
     
     let internal Ops = RealAnalysis.defaultRealAnalysisSymbolicOps
 
-    let sum expr x l u = Ops.Sum expr x (int_expr l) (int_expr u)
+    let sum expr x l u = Ops.Sum expr x (int_expr l) (int_expr u) |> Scalar
 
     let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
     
