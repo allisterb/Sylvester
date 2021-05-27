@@ -30,6 +30,7 @@ module MathNetExpr =
         | SpecificCall <@@ Numbers.real @@> (_, _, e::[]) -> fromQuotation e
         | Call(None, Op "FromInt32" ,Value(v, _)::[]) when q.Type = typeof<Rational> -> fromInt32 (v :?> int)
         | Call(None, Op "ToInt" , Double v::[]) -> fromInt32 ((int) v)
+        | Call(None, Op "ToInt" , e::[]) -> fromQuotation e
         | Call (None, Op "FromZero", _) when q.Type = typeof<Rational> -> Number(BigRational.Zero)
         | Call (None, Op "FromOne", _) when q.Type = typeof<Rational> -> Number(BigRational.One)
         | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)

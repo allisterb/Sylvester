@@ -181,11 +181,11 @@ module FsExpr =
             .Add("Rational", <@ (+) -1Q 1Q @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for one.")
     
     let rec getExprName = function
-    | Call(None, info, _) -> info.Name
-    | Lambda(_, expr) -> getExprName expr
-    | PropertyGet (_, info, _) -> info.Name
-    | FieldGet (_, info) -> info.Name
-    | _ -> failwith "Expression does not have information to retrieve name."
+        | Call(None, info, _) -> info.Name
+        | Lambda(_, expr) -> getExprName expr
+        | PropertyGet (_, info, _) -> info.Name
+        | FieldGet (_, info) -> info.Name
+        | _ -> failwith "Expression does not have information to retrieve name."
 
     let getExprFromReflectedDefinition<'t> =
         function
@@ -482,6 +482,11 @@ module FsExpr =
     let param_var (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne 
 
     let param_var_expr (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne |> Expr.Var |> expand''<'a>
+
+    let subst_func_var_value (f:Expr<'a->'b>) (r:Expr) =            
+        let v = param_var f
+        f |> body |> subst_var_value v r  |> recombine_func [v] |> expand''<'a->'b>
+            
 
     let evaluate (q:Expr<'t>) = 
         match q with

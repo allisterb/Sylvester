@@ -17,6 +17,14 @@ module R =
 
     let realvar n = var'<real> n
 
+    let real_expr x = 
+        match box x with
+        | :? Scalar<real> as s -> s.Expr
+        | :? Expr<real> as e -> e
+        | :? real as n -> Expr.Value n |> expand''<real>
+        | :? int as n -> Expr.Value (real n) |> expand''<real>
+        | _ -> failwithf "The expression %A is not a real number expression." x
+
     let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
     
     let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
@@ -40,4 +48,4 @@ module R =
 
     let integrate f = Ops.Integrate f
 
-    let definite_integral f (l:Scalar<_>) (r:Scalar<_>) = Ops.DefiniteIntegral f (sexpr l) (sexpr r)
+    let definite_integral f (l:'a) (r:'b) = Ops.DefiniteIntegral f (real_expr l) (real_expr r) |> Scalar<real>

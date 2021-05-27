@@ -23,4 +23,4 @@ module ProbabilitySpace =
     
     let prob_measure (p:ProbabilitySpace<'t>) :(Set<'t>->real)= p.Measure
 
-    let inline prob (p : ^T) x =  (^T : (member Prob : ('t->Scalar<real>)) (p)) <| x
+    let inline prob (p : ^T) x  =  (^T : (member Prob : (real->Scalar<real>)) (p)) <| (float) x

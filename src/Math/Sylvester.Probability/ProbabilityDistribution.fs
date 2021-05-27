@@ -12,7 +12,11 @@ with
         | ProbabilityMass d
         | ProbabilityDensity d -> d
         | JointDistribution(l, r) -> <@ fun x -> (%l.Expr) x + (%r.Expr) x @>
-
+    member x.Copy a =
+        match x with
+        | ProbabilityMass _ -> ProbabilityMass a
+        | ProbabilityDensity _ -> ProbabilityDensity a
+        | _ -> failwith "Can only copy a probability mass or probability density function." 
 type IRandomElement<'t, 'd when 't : equality> = interface end
 
 type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support: Set<real> option, distr:ProbabilityDistribution<'t> option) = 
@@ -29,6 +33,12 @@ type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support:
     interface ISet<real> with 
         member x.Set = x.Support
         member x.Equals b = x.Support.Equals b
+    static member (-) (l:real, r:RandomVariable<'t>) =
+        let p =            
+            let v = param_var r.Distribution.Expr
+            r.Distribution.Expr |> body |> subst_var_value v (call_sub (Expr.Value l) (Expr.Var v)) |> recombine_func [v] 
+            
+        RandomVariable<'t>(r.Map, Some(r.Support), Some(r.Distribution.Copy <@ %%p:real->real @>))
 
 type Discrete<'t when 't : equality>(?map:Expr<'t -> real>, ?support:Set<real>, ?pmf:Expr<real->real>) = 
     inherit RandomVariable<'t>(map, support, pmf |> Option.bind (ProbabilityMass >> Some))
