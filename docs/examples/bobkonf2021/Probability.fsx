@@ -4,18 +4,24 @@ open Sylvester
 
 type Coin = Heads | Tails
 
-let pp = poisson<int> 5. 10
-
-let s = pp.Prob 5.
-
 let X = binomial<Coin> 0.3 6 
 
+sexpr <| cprob X 3.
+
+type WCGoals = int array
+
+let pp = poisson<WCGoals> 0.5 10
+
+expectation pp
+
+let Y = 6. - X
 X.Distribution.Expr
-sexpr <| prob X 4.
+Y.Distribution.Expr
+prob Y 2
 
 sexpr <| expectation pp 
 
-pp.Prob <| 4
+pp.Prob <| 4.
 
 let urn = sseq [1..5]  
 

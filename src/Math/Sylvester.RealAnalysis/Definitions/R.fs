@@ -15,15 +15,7 @@ module R =
     
     let internal Ops = RealAnalysis.defaultRealAnalysisSymbolicOps
 
-    let realvar n = var'<real> n
-
-    let real_expr x = 
-        match box x with
-        | :? Scalar<real> as s -> s.Expr
-        | :? Expr<real> as e -> e
-        | :? real as n -> Expr.Value n |> expand''<real>
-        | :? int as n -> Expr.Value (real n) |> expand''<real>
-        | _ -> failwithf "The expression %A is not a real number expression." x
+    let sum expr x l u = Ops.Sum expr x (int_expr l) (int_expr u)
 
     let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
     

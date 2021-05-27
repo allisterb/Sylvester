@@ -41,6 +41,12 @@ module Analysis =
 
     let declare_constants v = List.iter declare_constant v
 
+    let sum expr x l u = 
+        assume <@ %u > %l @>
+        let r = send expr <| sprintf "sum(%s, %s, %s, %s);" (sprint' expr) (sprint' x) (sprint' l) (sprint' u)
+        forget <@ %u > %l @>
+        r
+
     let limit expr x v =
         send expr <| sprintf "limit(%s, %s, %s);" (sprint' expr) (sprint' x) (sprint' v)
                 

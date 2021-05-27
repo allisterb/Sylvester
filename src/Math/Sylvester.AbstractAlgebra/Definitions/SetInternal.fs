@@ -34,32 +34,25 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
         | Some h -> SetComprehension(bound, r, body, card, h)
         | None -> SetComprehension(bound, r, body, card)
     
-    internal new(bound:Expr<'t>, body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
-        match hasElement with
-        | Some e -> SetComprehension(bound, <@ true @>, body, card, e)
-        | None -> SetComprehension(bound, <@ true @>, body, card)
-
+    internal new(bound:Expr<'t>, body: Expr<'t>, card:CardinalNumber) = SetComprehension(bound, <@ true @>, body, card, fun _ _ -> true)
+        
     internal new (range:Expr<bool>, body:Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =
         let b = get_vars_to_tuple range
         match hasElement with
         | Some h -> SetComprehension(<@ %%b:'t @>, range, body, card, h)
         | None -> SetComprehension(<@ %%b:'t @>, range, body, card)
 
-    internal new (body:Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =
+    internal new (body:Expr<'t>, card:CardinalNumber) =
         let b = get_vars_to_tuple body
-        match hasElement with
-        | Some h -> SetComprehension(<@ %%b:'t @>, <@ true @>, body, card, h)
-        | None -> SetComprehension(<@ %%b:'t @>, <@ true @>, body, card)
+        SetComprehension(<@ %%b:'t @>, <@ true @>, body, card, fun _ _ -> true)
 
-    internal new (range:Expr<bool>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =
+    internal new (range:Expr<bool>, card:CardinalNumber) =
         let b = get_vars_to_tuple range
-        match hasElement with
-        | Some h -> SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card, h)
-        | None -> SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card)
+        SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card, fun _ _ -> true)
         
     (* --------------------------------------------------------------------------------------------------------------------------- *)
 
-    internal new(bound:'t, range:bool, body:'t, card:CardinalNumber) = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, card)
+    internal new(bound:'t, body:'t, card:CardinalNumber) = SetComprehension(<@ bound @>, <@ true @>, <@ body @>, card, fun _ _ -> true)
 
     internal new(range:bool, body:'t, card:CardinalNumber) = SetComprehension(<@ range @>, <@ body @>, card)
 

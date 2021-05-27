@@ -204,10 +204,10 @@ with
         |(Seq _, Seq _) -> Seq.concat[l; r] |> Set.fromSeq //SetGenerator(Seq.concat[l; r], (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |Set a, _ -> 
             let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(a.Bound, <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
+            SetComprehension(a.Bound, a.Range', <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
         |_, Set b -> 
             let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(b.Bound, <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
+            SetComprehension(b.Bound, b.Range', <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
         
     /// Set intersection operator.
     [<Symbol "\u2229">]
@@ -218,10 +218,10 @@ with
         |(Seq a, Seq b) -> Seq(a.Intersect b) 
         |(Set a, _) -> 
             let set_intersect(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(a.Bound, <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
+            SetComprehension(a.Bound, a.Range', <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
         |(_, Set b) -> 
             let set_intersect(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(b.Bound, <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
+            SetComprehension(b.Bound, b.Range', <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
 
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
@@ -260,7 +260,7 @@ with
                 | _, Finite _-> (finite_seq_gen a) |> Set.fromSeq
                 | Aleph _, Aleph _ -> infinite_seq_gen(Seq.initInfinite (fun n -> Seq.item n a) ) |> Set.fromSeq
             c
-        |(_,_) -> let a, b = var'<'a> "a", var'<'b> "b" in SetComprehension<'a * 'b>(<@  (%a, %b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
+        |(_,_) -> let a, b = var'<'a> "a", var'<'b> "b" in SetComprehension<'a * 'b>(<@  (%a, %b) @>, <@ true @>, <@  (%a, %b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
 
     interface ISet<'t> with member x.Set = x
 
@@ -332,17 +332,17 @@ module Set =
   
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
-    let set<'t when 't: equality> (bound:'t) range body card = SetComprehension(bound, range, body, card) |> Set :> ISet<'t>
+    let set<'t when 't: equality> (bound:'t) (range:bool) body card = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, card) |> Set :> ISet<'t>
 
-    let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, true, body, default_card<'t>) |> Set :> ISet<'t>
+    let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, body, default_card<'t>) |> Set :> ISet<'t>
 
-    let finite_set (bound:'t) range body n = SetComprehension(bound, range, body, (lazy n) |> Finite) |> Set 
+    //let finite_set (bound:'t) range body n = SetComprehension(bound, range, body, (lazy n) |> Finite) |> Set 
     
-    let infinite_set bound range body n = SetComprehension(bound, range, body, Aleph n) |> Set  
+    //let infinite_set bound range body n = SetComprehension(bound, range, body, Aleph n) |> Set  
 
-    let infinite_set_0 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 0) |> Set
+    //let infinite_set_0 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 0) |> Set
 
-    let infinite_set_1 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 1) |> Set
+    //let infinite_set_1 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 1) |> Set
     
     let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
 

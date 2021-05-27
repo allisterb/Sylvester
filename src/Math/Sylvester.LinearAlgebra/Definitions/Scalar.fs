@@ -89,3 +89,23 @@ module Scalar =
     let scalar (n:'t) = let e =  expand''<'t> <@ n @> in Scalar(e)
 
     let sval (s:Scalar<'t>) = s.Val
+
+    let realvar n = var'<real> n
+    
+    let intvar n = var'<int> n
+
+    let int_expr x = 
+        match box x with
+        | :? Scalar<int> as s -> s.Expr
+        | :? Expr<int> as e -> e
+        | :? int as n -> Expr.Value n |> expand''<int>
+        | :? real as n -> Expr.Value ((int) n) |> expand''<int>
+        | _ -> failwithf "The expression %A is not an integer expression." x
+
+    let real_expr x = 
+        match box x with
+        | :? Scalar<real> as s -> s.Expr
+        | :? Expr<real> as e -> e
+        | :? real as n -> Expr.Value n |> expand''<real>
+        | :? int as n -> Expr.Value (real n) |> expand''<real>
+        | _ -> failwithf "The expression %A is not a real number expression." x

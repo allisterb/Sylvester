@@ -13,6 +13,7 @@ type IRealAnalysisSymbolicOps =
     abstract Diff:Expr<'a->'b> -> int -> Expr<'a->'b>
     abstract Integrate:Expr<'a->'b> -> Expr<'a->'b>
     abstract DefiniteIntegral:Expr<'a->'b> -> Expr<'a> -> Expr<'a> ->Expr<'b> when 'a : comparison
+    abstract Sum:Expr<'a>->Expr<'b>->Expr<int>->Expr<int>->Expr<'a>
   
  type MaximaRealAnalysisOps() = 
     interface IRealAnalysisSymbolicOps with
@@ -36,6 +37,8 @@ type IRealAnalysisSymbolicOps =
              let var = vars |> List.exactlyOne |> Expr.Var |> expand''<'a> 
              let body = f |> body |> expand''<'b> 
              Analysis.definite_integral body var l u
+        member __.Sum (expr:Expr<'a>) (x:Expr<'b>) (l:Expr<int>) (u:Expr<int>) = 
+             Analysis.sum expr x l u
              
 
 [<AutoOpen>]    

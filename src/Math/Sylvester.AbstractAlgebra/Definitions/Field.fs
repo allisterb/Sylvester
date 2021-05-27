@@ -28,5 +28,5 @@ type OrderedField<'t when 't: equality and 't : comparison>(additiveGroup: IAddi
 
 module Field = 
     let R = 
-        let reals = set' pos_inf<real> pos_inf<real> 
+        let reals = let x = Unchecked.defaultof<real> in set' x x  
         OrderedField(additive_group(reals), multiplicative_group(reals))
