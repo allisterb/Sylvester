@@ -2,12 +2,20 @@
 
 open Sylvester
 open Series
-let x = LatinVars.x<rat>
+open Vector
+open Dimension
+
+let x, y = realvar "x", realvar "y" 
+
+let n = realvar "n"
 
 [<Formula>]
-let f x = x ** 2Q
+let F x y = Vec<``2``> <@[x + 2.; y]@> 
 
-src <| integrate <@ f @> x 
+vexpr (F 1. 1.)
+//
 
-let a = LatinVars.a<real>
-geometric_series' a |> take 3
+//let x = vec ``3`` <@ 1. / %n, 1. / %n, 2. / %n @>
+
+norm x
+

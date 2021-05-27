@@ -1,16 +1,22 @@
 #load "IncludeMath2.fsx"
 
-open Sylvester
-open Arithmetic
+open FSharp.Quotations
+open FSharp.Quotations.Patterns
+open FSharp.Reflection
 
+open Sylvester
 open Dimension
 open Vector
-open Matrix
-
-let aa:FSharp.Quotations.Expr<_*_> = <@(4, 5, 6, 7), (8, 19, 10)@>
-expand aa
 
 let z = var'<int> "z"
+
+let v = vecz ``5`` <@ 4,5,6,7,%z @>
+
+let u = vecz ``4`` <@ 4,5,6,7 @>
+
+let r = vec ``3`` <@ 3., 5., 6.@>
+
+let aa = <@(4, 5, 6, 7), (8, 19, 10)@>
 
 let m = MatZ<``3``, ``4``> <@[ [%z;4;-1;2]; [0;2;1;3]; [-2; 1; -2; 2] ]@>
 let n = MatZ<``4``, ``2``>.ofCols <@[[%z; 0; 2; 3]; [-1;2;1;-2]]@>

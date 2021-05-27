@@ -27,6 +27,18 @@ module Analysis =
         | Ok r -> if r.Trim() <> "done" then failwithf "Could not declare symbol %A as constant. Maxima returned %s." v r
         | Error e -> failwithf "Could not declare symbol %A as constant. Maxima returned %s." v e.Message
 
+    let assume (a:Expr<bool>) =
+        let a' = sprint' a
+        match Maxima.send' <| sprintf "assume(%s);" a'  with
+        | Ok r -> if r.Trim() <> sprintf "[%s]" a' && r.Trim() <> "[redundant]" then failwithf "Could not add assumption %s. Unrecognized response: %s." a' r
+        | Error e -> failwithf "Could not add assumption %s. Maxima returned %s." a' (e.Message)
+
+    let forget (a:Expr<bool>) =
+        let a' = sprint' a
+        match Maxima.send' <| sprintf "forget(%s);" a'  with
+        | Ok _ -> ()
+        | Error e -> failwithf "Could not forget assumption %s. Maxima returned: %s." a' (e.Message)
+
     let declare_constants v = List.iter declare_constant v
 
     let limit expr x v =
@@ -41,4 +53,10 @@ module Analysis =
     let diff expr x n =
         send expr <| sprintf "diff(%s, %s, %i);" (sprint' expr) (sprint' x) n
         
-    let integrate expr x = send expr <| sprintf "integrate(%s, %s);" (sprint' expr) (sprint' x) 
+    let integrate expr x = send expr <| sprintf "integrate(%s, %s);" (sprint' expr) (sprint' x)
+    
+    let definite_integral expr x l u = 
+        assume <@ %u > %l @>
+        let r = send expr <| sprintf "integrate(%s, %s, %s, %s);" (sprint' expr) (sprint' x) (sprint' l) (sprint' u)
+        forget <@ %u > %l @>
+        r

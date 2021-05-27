@@ -39,3 +39,5 @@ module R =
     let diff f  =  Ops.Diff f 1
 
     let integrate f = Ops.Integrate f
+
+    let definite_integral f (l:Scalar<_>) (r:Scalar<_>) = Ops.DefiniteIntegral f (sexpr l) (sexpr r)

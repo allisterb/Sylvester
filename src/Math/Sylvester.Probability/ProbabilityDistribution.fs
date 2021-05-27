@@ -20,9 +20,10 @@ type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support:
     member val Map' = Option.bind(evaluate >> Option.Some) map
     member val Support = defaultArg support RandomVariable<'t>.DefaultSupport
     member val Distribution = defaultArg distr (ProbabilityMass(<@ fun _ -> 0. @>))
-    member x.Prob (a:real) = 
-        let v = param_var x.Distribution.Expr
-        x.Distribution.Expr |> body |> subst_var_value v (Expr.Value a) |> expand''<real> |> Scalar
+    member x.Prob  =
+        fun a ->
+            let v = param_var x.Distribution.Expr
+            x.Distribution.Expr |> body |> subst_var_value v (Expr.Value a) |> expand''<real> |> Scalar
     interface IRandomElement<'t, real>
     static member DefaultSupport = setOf Field.R
     interface ISet<real> with 
@@ -43,13 +44,11 @@ module ProbabilityDistribution =
 
     let continuous<'t when 't : equality> d = Continuous<'t>(cdf=d)
 
-    let poisson<'t when 't : equality> l n = discrete<'t> ([1. .. (real n)] |> finite_seq) <@ fun x -> l ** x * (Math.e ** -l) / (Math.factorial ((int) x)) @>
+    let poisson<'t when 't : equality> l n = discrete<'t> ([1. .. (real n)] |> finite_seq) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @>
 
-    //let binomial<'t when 't : equality> p n = discrete<'t> ([1. .. (real n)] |> finite_seq) <@ fun x -> binomial_coeff n p @> 
+    let binomial<'t when 't : equality> p n = discrete<'t> ([0. .. real n] |> finite_seq) <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
     
-    let rvprob (d:RandomVariable<_>) x = d.Prob x
-
     let expectation (x:RandomVariable<_>) =
         match x with
-        | :? Discrete<_> as d -> d.Support |> Seq.map(fun e ->  e * (rvprob d e )) |> Seq.reduce (+)
+        | :? Discrete<_> as d -> d.Support |> Seq.map(fun e ->  e * (prob d e )) |> Seq.reduce (+)
         | _ -> failwith "Can only compute expectation of a discrete or continuous variable."

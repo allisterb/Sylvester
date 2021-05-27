@@ -4,7 +4,7 @@ open System.Collections.Generic
 
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
-
+open FSharp.Quotations.DerivedPatterns
 open MathNet.Symbolics
 
 open MathNetExpr
@@ -35,7 +35,14 @@ module Symbolic =
 
     let simplify' (x:Expr<'t>) = x |> callUnary<'t> id
 
-    let sprint' (x:Expr<'t>) = x |> expand |> MathNetExpr.fromQuotation |> Infix.format
+    let sprint' (x:Expr<'t>) = 
+        match x with
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
+        | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let inline sprint expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 

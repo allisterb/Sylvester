@@ -12,6 +12,7 @@ type IRealAnalysisSymbolicOps =
     abstract LimitLeft:Expr<'a> -> Expr<'b> -> Expr<'c> -> Expr<'a>
     abstract Diff:Expr<'a->'b> -> int -> Expr<'a->'b>
     abstract Integrate:Expr<'a->'b> -> Expr<'a->'b>
+    abstract DefiniteIntegral:Expr<'a->'b> -> Expr<'a> -> Expr<'a> ->Expr<'a->'b> when 'a : comparison
   
  type MaximaRealAnalysisOps() = 
     interface IRealAnalysisSymbolicOps with
@@ -29,6 +30,12 @@ type IRealAnalysisSymbolicOps =
              let var = vars |> List.exactlyOne |> Expr.Var |> expand''<'a> 
              let body = f |> body |> expand''<'b> 
              let i = Analysis.integrate body var
+             expand''<'a->'b> (recombine_func vars i)
+        member __.DefiniteIntegral (f:Expr<'a->'b >) (l:Expr<'a>) (u:Expr<'a>) = 
+             let vars = param_vars f
+             let var = vars |> List.exactlyOne |> Expr.Var |> expand''<'a> 
+             let body = f |> body |> expand''<'b> 
+             let i = Analysis.definite_integral body var l u
              expand''<'a->'b> (recombine_func vars i)
 
 [<AutoOpen>]    

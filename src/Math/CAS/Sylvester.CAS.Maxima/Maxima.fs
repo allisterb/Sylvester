@@ -53,7 +53,7 @@ type Maxima(?maximaCmd:string) =
     member val CurrentInputLine = 1 with get, set
  
 module Maxima =
-    let private outputPattern = """\(%o(\d)+\)\s+(\S+)\s\(%i(\d)+\)\s+"""
+    let private outputPattern = """\(%o(\d)+\)\s+(.+)\s+\(%i(\d)+\)\s?"""
     let private outputRegex = new Regex(outputPattern, RegexOptions.Compiled ||| RegexOptions.Multiline)
 
     let extract_output text =

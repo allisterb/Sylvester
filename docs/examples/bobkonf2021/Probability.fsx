@@ -2,7 +2,18 @@
 
 open Sylvester
 
-let pp = poisson 3.
+type Coin = Heads | Tails
+
+let pp = poisson<int> 5. 10
+
+let s = pp.Prob 5.
+
+let X = binomial<Coin> 0.3 6 
+
+X.Distribution.Expr
+sexpr <| prob X 4.
+
+sexpr <| expectation pp 
 
 pp.Prob <| 4
 
