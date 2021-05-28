@@ -17,15 +17,15 @@ module R =
 
     let sum expr x l u = Ops.Sum expr x (int_expr l) (int_expr u) |> Scalar
 
-    let open_interval left right = Field.R |>| (fun x -> x > left && x < right)
+    let open_interval left right = Field.R |>| <@ fun x -> x > left && x < right @>
     
-    let closed_interval left right = Field.R |>| (fun x -> x >= left && x <= right)
+    let closed_interval left right = Field.R |>| <@ fun x -> x >= left && x <= right @>
 
-    let half_open_interval left right = Field.R |>| (fun x -> x > left && x <= right)
+    let half_open_interval left right = Field.R |>| <@ fun x -> x > left && x <= right @>
     
-    let half_closed_interval left right = Field.R |>| (fun x -> x >= left && x < right)
+    let half_closed_interval left right = Field.R |>| <@ fun x -> x >= left && x < right @>
     
-    let open_ball (x:Vec<_>) (r:real) = R |>| (fun y -> (euclid_dist x y) < scalar r)
+    let open_ball (x:Vec<_>) (r:real) = R |>| <@ fun y -> (euclid_dist x y) < scalar r @>
     
     let lim f x v = Ops.Limit f x v |> Scalar
        

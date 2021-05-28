@@ -27,13 +27,7 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
         let vars = body |> get_vars
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
         sprintf "{%s%s:%s}" v (src range) (src body)
-    
-    internal new (bound:Expr<'t>, range:Expr<'t->bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) = 
-        let r = expand'<bool, 't->bool> range
-        match hasElement with
-        | Some h -> SetComprehension(bound, r, body, card, h)
-        | None -> SetComprehension(bound, r, body, card)
-    
+        
     internal new(bound:Expr<'t>, body: Expr<'t>, card:CardinalNumber) = SetComprehension(bound, <@ true @>, body, card, fun _ _ -> true)
         
     internal new (range:Expr<bool>, body:Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =

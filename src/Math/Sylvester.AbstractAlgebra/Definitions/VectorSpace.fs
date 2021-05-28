@@ -21,7 +21,7 @@ type IInnerProductSpace<'n, 't, 'v when 'v: equality and 'n :> Number and 't: eq
 type VectorSpace<'n, 't, 'v when 'v: equality and 'n :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
     (field: IField<'t>, op: BinaryOp<'v>, op2: BinaryOp<'t, 'v>) =
     interface IVectorSpace<'n, 't, 'v> with
-        member val Set = (set' pos_inf<'v> pos_inf<'v>).Set 
+        member val Set = let x = var'<'v> "x" in SetComprehension(x, default_card<'t>) |> Set
         member x.Equals (y:Set<'v>) = x.Equals y
         member val Field = field
         member val Dim0 = number<'n>

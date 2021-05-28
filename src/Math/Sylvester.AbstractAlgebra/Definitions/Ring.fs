@@ -68,9 +68,23 @@ module Ring =
     let inline additive_ring<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)>(set:ISet<'t>, op2) =
         Ring(AbelianGroup<'t>(set, Binary(+).DestructureBinary, LanguagePrimitives.GenericZero, (~-)), op2)
 
+    /// Ring of integers.
+    let Z =
+        let set = let x = var'<int> "x" in SetComprehension(x, Aleph 0) |> Set
+        {
+            new OrderedRing<int>(additive_group(set), (*)) 
+                interface IIntegralDomain<int> with
+                    member x.ZeroDivisors = singleton 0
+                interface IWellOrder<int> with
+                    member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
+                interface Generic.IEnumerable<int> with
+                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
+                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()     
+        }
+
     /// Ring of positive integers.
     let Zpos =
-        let set = id |> (infinite_seq >> Set.fromSeq) in
+        let set = Z |>| <@ fun x -> x >= 0 @>
         {
             new OrderedRing<int>(additive_group(set), (*)) 
                 interface IIntegralDomain<int> with
@@ -90,7 +104,7 @@ module Ring =
 
     /// Ring of negative integers.
     let Zneg =
-        let set = Set.fromSeq(infinite_seq (fun n -> -n))
+        let set = Zpos |>| <@ fun x -> x <= 0 @>
         {
             new OrderedRing<int>(additive_group(set), (*)) 
                 interface IIntegralDomain<int> with
@@ -108,19 +122,7 @@ module Ring =
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
         }
 
-    /// Ring of integers.
-    let Z =
-        let set = Zpos |+| Zneg
-        {
-            new OrderedRing<int>(additive_group(set), (*)) 
-                interface IIntegralDomain<int> with
-                    member x.ZeroDivisors = singleton 0
-                interface IWellOrder<int> with
-                    member x.Least(subset:ISet<int>) = subset.Set |> Seq.sort |> Seq.item 0
-                interface Generic.IEnumerable<int> with
-                    member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
-                    member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()     
-        }
+
 
     /// Ring of natural numbers with zero.
     let N = Zpos

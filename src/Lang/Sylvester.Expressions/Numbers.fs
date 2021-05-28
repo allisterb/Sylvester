@@ -258,10 +258,14 @@ module Numbers =
         | :? double as f -> Rational(f, 1.)
         | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'a>.Name
 
-    let pos_inf<'t> = Unchecked.defaultof<'t>
+    let int_pos_inf = Int32.MaxValue
 
-    let neg_inf<'t> = Unchecked.defaultof<'t>
+    let int_neg_inf = Int32.MinValue
     
+    let real_pos_inf = Double.MaxValue
+
+    let real_neg_inf = Double.MinValue
+
     let (^) (l:'t) (r:'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IConvertible) =
         let l', r' = System.Convert.ToDouble l, System.Convert.ToDouble r in
         System.Convert.ChangeType(l' ** r', typeof<'t>) :?> 't

@@ -26,6 +26,7 @@ type Maxima(?maximaCmd:string) =
                 s.Send.Line "ratprint:false;"
                 s.Send.Line "display2d:false;"
                 s.Send.Line "linel:500;"
+                s.Send.Line "load(simplify_sum)"
                 if s.Expect.Contains("(%i4)", Nullable(2000)).IsMatch then
                     true
                 else
@@ -61,7 +62,7 @@ module Maxima =
         if m.Success then 
             ((m.Groups.Item 1).Value, (m.Groups.Item 2).Value, (m.Groups.Item 3).Value) |> Success 
         else 
-            sprintf "Could not extract Maxima output from process response %s" text |> exn |> Failure
+            sprintf "Could not extract Maxima output from process response: %s" text |> exn |> Failure
         
     let start path = new Maxima(path)
     

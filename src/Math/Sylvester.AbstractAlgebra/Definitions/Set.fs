@@ -141,7 +141,7 @@ with
         | Set _, Set _ ->  failwith "Cannot test two sets defined by set comprehensions for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
 
     /// Create a subset of a set using a filter predicate.
-    member x.Subset([<ReflectedDefinition>] f':Expr<'t -> bool>) = 
+    member x.Subset(f':Expr<'t -> bool>) = 
         let f = evaluate f'
         match x with
         | Empty -> failwith "The empty set has no subsets."
@@ -152,8 +152,8 @@ with
             | _ -> failwithf "Cannot determine the cardinality of the sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
         | Set s -> 
             let r = s.Range'
-            let nr = expand f'
-            Set(SetComprehension(s.Bound, <@ %r |&| (%%nr:bool) @>, s.Body', s.Cardinality))
+            let nr = body f'
+            Set(SetComprehension(s.Bound, <@ %r |&| (%%nr:bool) @>, s.Body', s.Cardinality, fun _ e -> x.HasElement e && f e))
 
     member a.Difference b =
         match a, b with
@@ -161,7 +161,7 @@ with
         | Empty, _ -> Empty
         | Seq (FiniteSeq s1), Seq s2 -> s1 |> Seq.except s2 |> finite_seq_gen |>Set.fromSeq
         | Seq (InfiniteSeq s1), Seq s2 -> s1 |> Seq.except s2 |> infinite_seq_gen |>Set.fromSeq
-        | _,_ -> a.Subset(fun x -> b.HasElement x |> not)
+        | _,_ -> a.Subset(<@ fun x -> b.HasElement x |> not @>)
         
     member a.ElementDifference b =
         match a with
@@ -239,10 +239,10 @@ with
     static member (~-) (l:Set<'t>) = l.Complement Set.U
 
     /// Set create subset operator.
-    static member (|>|) (l:Set<'t>, r:'t->bool) = l.Subset r
+    static member (|>|) (l:Set<'t>, [<ReflectedDefinition>] r:Expr<'t->bool>) = l.Subset r
 
     /// Set filter subsets operator.
-    static member (|>>|) (l:Set<'t>, r:Set<'t> -> bool) = l.Powerset.Subset r
+    static member (|>>|) (l:Set<'t>, r:Expr<Set<'t> -> bool>) = l.Powerset.Subset r
 
     /// Set difference operator
     static member (|-|) (l:Set<'t>, r:Set<'t>) = l.Difference r
@@ -312,8 +312,8 @@ module Set =
     /// Set subset relation.
     let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
 
-    /// Set create subset
-    let (|>|) (l:ISet<'t>) (r:'t -> bool) = l.Set |>| r
+    // Set create subset
+    let (|>|) (l:ISet<'t>) (r:Expr<'t -> bool>) = l.Set |>| r
       
     /// Set difference operator.
     let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
@@ -348,7 +348,7 @@ module Set =
 
     let singleton<'t when 't: equality> (e:'t) = Singleton e
 
-    let subset (sub:'t->bool) (set: ISet<'t>) = set.Set.Subset sub
+    let subset (sub:Expr<'t->bool>) (set: ISet<'t>) = set.Set.Subset sub
 
     let sseq(s:seq<'t>) = (Seq s)
 

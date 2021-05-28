@@ -44,6 +44,15 @@ module Symbolic =
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
+    let sprint_noexpand (x:Expr<'t>) = 
+        match x with
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
+        | _ -> x |> MathNetExpr.fromQuotation |> Infix.format
+
     let inline sprint expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let inline simplify expr = expr |> sexpr |> simplify'

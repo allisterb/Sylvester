@@ -246,7 +246,7 @@ module FsExpr =
         | Lambda(_, Lambda(v2, b)) -> body (Expr.Lambda(v2, b))
         | Lambda(_, b) -> b
         | Let(_, _, b) -> b
-        | expr -> expr
+        | expr -> failwithf "The expression %A is not a function." expr
 
     let rec param_vars :Expr<'a->'b>->Var list = 
          function

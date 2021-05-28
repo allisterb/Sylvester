@@ -29,9 +29,9 @@ module Analysis =
 
     let assume (a:Expr<bool>) =
         let a' = sprint' a
-        match Maxima.send' <| sprintf "assume(%s);" a'  with
+        match Maxima.send' <| sprintf "assume((%s));" a'  with
         | Ok r -> if r.Trim() <> sprintf "[%s]" a' && r.Trim() <> "[redundant]" then failwithf "Could not add assumption %s. Unrecognized response: %s." a' r
-        | Error e -> failwithf "Could not add assumption %s. Maxima returned %s." a' (e.Message)
+        | Error e -> failwithf "Could not add assumption %s. Maxima returned: %s." a' (e.Message)
 
     let forget (a:Expr<bool>) =
         let a' = sprint' a
