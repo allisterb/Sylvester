@@ -1,17 +1,16 @@
 ﻿namespace Sylvester.CAS
 
 open FSharp.Quotations
+open FSharp.Quotations.Patterns
 
 open Sylvester
 open Maxima
-
-open MathNet.Symbolics
 
 module Analysis =
     let private send (expr:Expr<'t>) cmd = 
         Maxima.send' cmd
         |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> Infix.parse o)
+        |> Result.bind(fun o -> MathNet.Symbolics.Infix.parse o)
         |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars expr) e)
         |> function
         | Ok s -> s
@@ -62,7 +61,16 @@ module Analysis =
     let integrate expr x = send expr <| sprintf "integrate(%s, %s);" (sprint' expr) (sprint' x)
     
     let definite_integral expr x l u = 
-        assume <@ %u > %l @>
-        let r = send expr <| sprintf "integrate(%s, %s, %s, %s);" (sprint' expr) (sprint' x) (sprint' l) (sprint' u)
-        forget <@ %u > %l @>
+        let l' =
+            match l with
+            | NegInf -> "minf"
+            | _ -> sprint' l
+        let u' =
+            match u with
+            | PosInf -> "inf"
+            | _ -> sprint' u
+
+        do if l' <> "minf" && u' <> "inf" then assume <@ %u > %l @>
+        let r = send expr <| sprintf "integrate(%s, %s, %s, %s);" (sprint' expr) (sprint' x) l' u'
+        do if l' <> "minf" && u' <> "inf" then forget <@ %u > %l @>
         r

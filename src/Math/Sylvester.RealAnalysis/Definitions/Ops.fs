@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open System
+
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
@@ -40,11 +42,8 @@ type IRealAnalysisSymbolicOps =
         member __.Sum (expr:Expr<'a>) (x:Expr<'b>) (l:Expr<int>) (u:Expr<int>) = 
              Analysis.sum expr x l u
              
-
 [<AutoOpen>]    
 module RealAnalysis =
     do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
-    let mutable defaultRealAnalysisSymbolicOps = MaximaRealAnalysisOps() :> IRealAnalysisSymbolicOps
-
- 
+    let mutable defaultRealAnalysisSymbolicOps = MaximaRealAnalysisOps() :> IRealAnalysisSymbolicOps 

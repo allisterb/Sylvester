@@ -1,18 +1,49 @@
 #load "IncludeMath.fsx"
 
 open Sylvester
+open Dimension
 
+let i = integrate_over_R <@fun x -> 1. / x @>
+
+let g = sseq <| infinite_seq (fun i -> real i) 
+
+card g
 type Coin = Heads | Tails
 
-let X = binomial<Coin> 0.3 6 
+let X = binomial<Coin> 0.5 6 
 
-sexpr <| cprob X 3.
+prob X 4
 
+let sx = 4R - X
+
+expectation X
+expectation sx
+sx.Distribution.Func |> src
+prob X 1
+
+
+expectation sx
+
+let Y = binomial<Coin> 0.7 6 
+expectation Y
+
+
+prob_expr sx xx |> sexpr |> sprint'
+
+let a =  prob_expr X xx
+
+
+let b = prob_expr X <@ %xx - 1.@>
+a - b
 type WCGoals = int array
 
-let pp = poisson<WCGoals> 0.5 10
+let pp = uniform<WCGoals> [1. .. 10.]
+
+cprob pp 3.
 
 expectation pp
+
+
 
 let Y = 6. - X
 X.Distribution.Expr

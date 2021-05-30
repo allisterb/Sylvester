@@ -40,4 +40,6 @@ module R =
 
     let integrate f = Ops.Integrate f
 
-    let definite_integral f (l:'a) (r:'b) = Ops.DefiniteIntegral f (real_expr l) (real_expr r) |> Scalar<real>
+    let definite_integral (l:'a) (r:'b) f = Ops.DefiniteIntegral f (real_expr l) (real_expr r) |> Scalar<real>
+
+    let integrate_over_R f = Ops.DefiniteIntegral f neg_inf'<real> pos_inf'<real> |> Scalar<real>

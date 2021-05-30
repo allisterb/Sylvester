@@ -338,12 +338,12 @@ module Set =
 
     let finite_set (bound:'t) range body n = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, (lazy n) |> Finite) |> Set 
     
-    //let infinite_set bound range body n = SetComprehension(bound, range, body, Aleph n) |> Set  
+    let infinite_set bound range body n = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, Aleph n) |> Set  
 
-    //let infinite_set_0 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 0) |> Set
+    let countable_infinite_set (bound:'t) range body = infinite_set bound range body 0
 
-    //let infinite_set_1 (bound:'t) range body = SetComprehension(bound, range, body, Aleph 1) |> Set
-    
+    let uncountable_infinite_set (bound:'t) range body = infinite_set bound range body 1
+
     let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
     let singleton<'t when 't: equality> (e:'t) = Singleton e
