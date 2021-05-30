@@ -36,9 +36,6 @@ module MathNetExpr =
         
         | Call(None, Op "Abs" ,v::[]) -> Expression.Abs (fromQuotation v)
         | Call(None, Op "Sqrt" ,v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
-          
-        | Call(None, Op "prob",_::v::[]) 
-        | Call(None, Op "rvprob",_::v::[]) -> Expression.Prob (fromQuotation v)
         | Call(None, Op "factorial", v::[]) -> Expression.Factorial (fromQuotation v)
         | Call(None, Op "Factorial", v::[]) -> Expression.Factorial (fromQuotation v)
         | Call(None, Op "binomial_coeff", n::r::[]) -> 
