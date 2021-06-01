@@ -258,7 +258,7 @@ module Numbers =
         | :? double as f -> Rational(f, 1.)
         | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'a>.Name
 
-    let pos_inf<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+    let inf<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         match typeof<'t>.Name with
         | "Int32" -> box Int32.MaxValue :?> 't
         | "Double" -> box Double.MaxValue :?> 't
@@ -268,7 +268,7 @@ module Numbers =
         | "BigInteger" -> box <| bigint(Double.MaxValue) :?> 't
         | _ -> failwithf "The type %A is not supported by the pos_inf operator." typeof<'t>
 
-    let neg_inf<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+    let minf<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         match typeof<'t>.Name with
         | "Int32" -> box Int32.MinValue :?> 't
         | "Double" -> box Double.MinValue :?> 't
@@ -278,11 +278,11 @@ module Numbers =
         | "BigInteger" -> box <| bigint(Double.MinValue) :?> 't
         | _ -> failwithf "The type %A is not supported by the neg_inf operator." typeof<'t>
 
-    let pos_inf'<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
-        let v = Expr.Value pos_inf<'t> in <@ %%v:'t @>
+    let inf'<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+        let v = Expr.Value inf<'t> in <@ %%v:'t @>
 
-    let neg_inf'<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
-        let v = Expr.Value neg_inf<'t> in <@ %%v:'t @> 
+    let minf'<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+        let v = Expr.Value minf<'t> in <@ %%v:'t @> 
     
     let (|PosInf|_|) (e:Expr<'t>) =
         match e with
@@ -292,6 +292,7 @@ module Numbers =
 
     let (|NegInf|_|) (e:Expr<'t>) =
         match e with
+        | Int32 (Int32.MinValue) -> Some()
         | Double (Double.MinValue) -> Some()
         | _ -> None
 

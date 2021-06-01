@@ -14,7 +14,7 @@ module Analysis =
         |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars expr) e)
         |> function
         | Ok s -> s
-        | Error e -> failwithf "Error executing Maxima command %s: %s" cmd e
+        | Error e -> failwithf "Error executing Maxima command %s: %s. The last command sent was: %s" cmd e (Maxima.defaultInt.Value.ConsoleSession.LastLineSent)
 
     let kill (v:Var) =
         match Maxima.send' <| sprintf "kill(%s);" v.Name with

@@ -26,7 +26,7 @@ type Maxima(?maximaCmd:string) =
                 s.Send.Line "ratprint:false;"
                 s.Send.Line "display2d:false;"
                 s.Send.Line "linel:500;"
-                s.Send.Line "load(simplify_sum)"
+                s.Send.Line "load(simplify_sum);"
                 if s.Expect.Contains("(%i4)", Nullable(2000)).IsMatch then
                     true
                 else

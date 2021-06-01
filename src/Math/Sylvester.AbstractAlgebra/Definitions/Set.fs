@@ -62,7 +62,7 @@ with
         match a with
         | Empty -> "Empty".GetHashCode()
         | Seq s -> s.GetHashCode()
-        | Set p -> p.ToString().GetHashCode()
+        | Set p -> p.GetHashCode()
 
     override x.ToString() =
         match x with
