@@ -7,7 +7,6 @@ open SetTheory
 open Vector
 open Sequences
 
-type Region<'n when 'n :> Number> = Set<Vec<'n>>
 
 type RegionExpr<'n when 'n :> Number> = Expr<Region<'n>>
 

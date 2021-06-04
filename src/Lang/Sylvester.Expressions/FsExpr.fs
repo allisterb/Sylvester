@@ -243,23 +243,25 @@ module FsExpr =
 
     let rec body = 
         function
-        | Lambda(_, Lambda(v2, b)) -> body (Expr.Lambda(v2, b))
+        | Lambda(_, (Lambda(_, _) as l)) -> body l
+        | Lambda(_, (Call(_, f, _) as b))  -> match Expr.TryGetReflectedDefinition f with | Some e -> body e | None -> b
         | Lambda(_, b) -> b
         | Let(_, _, b) -> b
-        | expr -> failwithf "The expression %A is not a function." expr
+        | expr -> failwithf "The expression %A is not a function or a let binding." expr
 
-    let rec param_vars :Expr<'a->'b>->Var list = 
+    let rec param_vars : Expr->Var list = 
          function
-         | Lambda(v, Lambda(_, _)) as l -> [v] @ (param_vars l)
+         | Lambda(v, (Lambda(_, _) as l))  -> [v] @ (param_vars l)
          | Lambda(v, _) -> [v]
          | Let(v, _, _) -> [v]
-         | expr -> failwithf "The expression %A is not a function." expr
+         | expr -> failwithf "The expression %A is not a function or a let binding." expr
         
     let rec recombine_func (vars:Var list) (body:Expr) =
         match vars with
         | [] -> failwithf "Cannot recombine function body %A with an empty parameter list." body
         | v::[] -> Expr.Lambda(v, body)
-        | v1::v2 -> recombine_func v2 (Expr.Lambda(v1, body))
+        | v1::v2::[] -> Expr.Lambda(v1, Expr.Lambda(v2, body))
+        | v -> recombine_func (List.take (v.Length - 1) v) (Expr.Lambda(List.last v, body))
 
     let traverse expr f =
         match expr with
@@ -382,12 +384,10 @@ module FsExpr =
         rexpand Map.empty expr
 
     let expand'<'a, 'b> (expr:Expr<'b>) =
-        let e = expand expr
-        <@ %%e:'a @>
+        let e = expand expr in <@ %%e:'a @>
 
     let expand''<'t> (expr:Expr) =
-        let e = expand expr
-        <@ %%e:'t @> |> expand'<'t, 't>
+        let e = expand expr in <@ %%e:'t @>
 
     let expand_left = 
         function
@@ -492,3 +492,5 @@ module FsExpr =
         match q with
         | Var _ -> Unchecked.defaultof<'t>
         | _ -> FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
+
+

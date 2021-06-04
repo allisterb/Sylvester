@@ -6,6 +6,8 @@ open Arithmetic
 open Scalar
 open Vector
 
+type Region<'n when 'n :> Number> = Set<Vec<'n>>
+
 type R<'n when 'n :>Number>() = 
     inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.add, Vector.smul)
     
@@ -13,8 +15,6 @@ type R<'n when 'n :>Number>() =
 module R =
     let R<'n when 'n :> Number> =  R<'n>()
     
-    let internal Ops = RealAnalysis.defaultRealAnalysisSymbolicOps
-
     let sum expr x l u = Ops.Sum expr x (int_expr l) (int_expr u) |> Scalar
 
     let open_interval left right = Field.R |>| <@ fun x -> x > left && x < right @>
@@ -25,7 +25,7 @@ module R =
     
     let half_closed_interval left right = Field.R |>| <@ fun x -> x >= left && x < right @>
     
-    let open_ball (x:Vec<_>) (r:real) = R |>| <@ fun y -> (euclid_dist x y) < scalar r @>
+    let open_ball (x:Vec<_>) (r:real) : Region<_> = R |>| <@ fun y -> (euclid_dist x y) < scalar r @>
     
     let lim f x v = Ops.Limit f x v |> Scalar
        
@@ -36,7 +36,7 @@ module R =
     let inline deriv_lim f x a = 
         lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
 
-    let diff f  =  Ops.Diff f 1
+    let diff f x  =  Ops.Diff f x 1
 
     let integrate f = Ops.Integrate f
 

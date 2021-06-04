@@ -7,7 +7,7 @@ module Descriptions =
         member x.Description = let (PatternDescription(n, d)) = x in d
            
     /// Create a pattern description from a name and an example formula.
-    let pattern_desc name example  = PatternDescription(name, example |> body |> src)
+    let pattern_desc name example  = PatternDescription(name, example |> src)
 
     /// Create a pattern description from a name only.
     let pattern_desc' name = PatternDescription(name, "")

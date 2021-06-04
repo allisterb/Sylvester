@@ -9,7 +9,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
     member val Axioms = axioms
     member val Rules = rules
     member val PrintFormula = defaultArg formula_printer Display.print_formula
-    member x.AxEquiv a  = a |> body |> expand |> x.Axioms |> Option.isSome  
+    member x.AxEquiv a  = a |> expand |> x.Axioms |> Option.isSome  
     static member (|-) ((c:Theory), a) = c.AxEquiv a
     /// The default logical theory used in Sylph proofs.
     static member val S =     
@@ -404,25 +404,25 @@ and Theorem (expr: Expr, proof:Proof) =
 module ProofOps =
     type Apply = RuleApplication
     
-    let ApplyLeft = Apply.L
+    let apply_left = Apply.L
     
-    let ApplyRight = Apply.R
+    let apply_right = Apply.R
     
-    let ApplyBoth = Apply.LR
+    let apply = Apply.LR
 
-    let ApplyBody = Apply.QB
+    let apply_body = Apply.QB
 
-    let ApplyRange = Apply.QR
+    let apply_range = Apply.QR
 
-    let AfterLeft = Apply.L'
+    let after_left = Apply.L'
 
-    let AfterRight = Apply.R'
+    let after_right = Apply.R'
     
-    let AfterBoth = Apply.LR'
+    let after_both = Apply.LR'
 
-    let AfterBody = Apply.QB'
+    let after_body = Apply.QB'
 
-    let AfterRange = Apply.QR'
+    let after_range = Apply.QR'
 
     let print_formula (p:Proof) = p.Theory.PrintFormula
     
@@ -538,22 +538,22 @@ module LogicalRules =
 [<AutoOpen>]
 module Proof = 
     let proof (theory:Theory) (e:Expr<'t>) steps =         
-        let f = e |> expand |> body
+        let f = e |> expand
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Proof(f, theory, steps)
     let theorem (theory:Theory) (e:Expr<'t>) steps  = 
-        let f = e |> expand |> body
+        let f = e |> expand
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps))
     let lemma (theory:Theory) (e:Expr<'t>) steps =
-        let f = e |> expand |> body
+        let f = e |> expand 
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         Theorem(f, Proof(f, theory, steps, true))
     let axiom (theory:Theory) (e:Expr<'t>) = lemma theory e []
 
     (* Identities *)
     let ident (theory:Theory) (e:Expr<'t>) steps =
-        let f = e |> expand |> body
+        let f = e |> expand 
         do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
         match f with
         | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
@@ -569,7 +569,7 @@ module Proof =
 
     (* Definitions *)
     let def (theory:Theory) (e:Expr<bool>) = 
-        let f = e |> expand |> body
+        let f = e |> expand
         match f with
         | Equals(_, _) -> Define theory f
         | _ -> failwithf "The expression %s is not an identity." (theory.PrintFormula f)

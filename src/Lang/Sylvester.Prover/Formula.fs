@@ -16,6 +16,11 @@ module Formula =
     let (==>) l r = not l || r
     let (<==) l r = r ==> l
 
+    let boolvar n = var'<bool> n
+    let boolvar2 n o = var2'<bool> n o
+    let boolvar3 n o p = var3'<bool> n o p
+    let boolvar4 n o p q = var4'<bool> n o p q
+
     /// Represents a symbolic formula.
     let formula<'t> = Unchecked.defaultof<'t>
 
