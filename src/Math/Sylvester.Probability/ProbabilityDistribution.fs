@@ -7,58 +7,61 @@ open Sylvester.Collections
 
 open Arithmetic
 
-type UnivariateDistribution<'t when 't:equality> = 
-| ProbabilityMass of Expr<real->real>
-| ProbabilityDensity of Expr<real->real>
+type UnivariateDistribution = 
+| ProbabilityMass of Expr<real->real> * Set<real> 
+| ProbabilityDensity of Expr<real->real> * Set<real>
     with
         member x.Func = 
             match x with
-            | ProbabilityMass d
-            | ProbabilityDensity d -> d
-        member x.Transform(t:Expr<real->real>) =
+            | ProbabilityMass(d, _) -> d
+            | ProbabilityDensity(d, _) -> d
+        member x.Support = 
+            match x with
+            | ProbabilityMass(_, s) -> s
+            | ProbabilityDensity(_, s) -> s
+        member x.Transform(t:Expr<real->real>, support:Set<real>) =
             let vd = param_var x.Func
             let vt = param_var t
             let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
             let td = x.Func |> body |> subst_var_value vd bodyt |> recombine_func [vd] 
             match x with
-            | ProbabilityMass _ -> ProbabilityMass <@ %%td:real->real @>
-            | ProbabilityDensity _ -> ProbabilityMass <@ %%td:real->real @>
+            | ProbabilityMass _ -> ProbabilityMass(<@ %%td:real->real @>, support)
+            | ProbabilityDensity _ -> ProbabilityMass (<@ %%td:real->real @>, support)
 
-type MultivariateDistribution<'n, 't when 't:equality and 'n :> Number> = 
-| JointProbability of Array<'n, UnivariateDistribution<'t>>
+type MultivariateDistribution<'n when 'n :> Number> = 
+| JointProbability of Array<'n, UnivariateDistribution>
     
-type ProbabilityDistribution<'n, 't when 'n :> Number and 't : equality> =
-| UnivariateDistribution of UnivariateDistribution<'t>
-| MultivariateDistribution of MultivariateDistribution<'n,'t>
+type ProbabilityDistribution<'n when 'n :> Number> =
+| UnivariateDistribution of UnivariateDistribution
+| MultivariateDistribution of MultivariateDistribution<'n>
 
-type IRandomElement<'n, 't, 'd when 'n :> Number and 't : equality> = 
-    abstract ProbabilityDistribution: ProbabilityDistribution<'n, 't>
+type IRandomElement<'n, 'd when 'n :> Number> = 
+    abstract ProbabilityDistribution: ProbabilityDistribution<'n>
 
-type RandomVariable<'t when 't : equality>(map:Expr<'t -> real> option, support: Set<real> option, distr:UnivariateDistribution<'t> option, mean:Scalar<real> option) = 
-    member val Map = map 
-    member val Support = defaultArg support (setOf Field.R)
-    member val Distribution = defaultArg distr (ProbabilityMass(<@ fun _ -> 0. @>))
-    interface IRandomElement<dim<1>, 't, real> with member x.ProbabilityDistribution = UnivariateDistribution(x.Distribution)
+type RandomVariable(distr:UnivariateDistribution option, mean:Scalar<real> option) = 
+    member val Distribution = defaultArg distr (ProbabilityMass(<@ fun _ -> 0. @>, Set.Empty))
+    interface IRandomElement<dim<1>, real> with member x.ProbabilityDistribution = UnivariateDistribution(x.Distribution)
     interface ISet<real> with 
-        member x.Set = x.Support
-        member x.Equals b = x.Support.Equals b
+        member x.Set = x.Distribution.Support
+        member x.Equals b = x.Distribution.Support.Equals b
     
-type Discrete<'t when 't : equality>(map:Expr<'t -> real> option, support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option) = 
-    inherit RandomVariable<'t>(map, Some support, pmf |> ProbabilityMass |> Some, mean)
+type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option) = 
+    inherit RandomVariable(Some(ProbabilityMass(pmf, support)), mean)
     member x.ProbFunc = 
         fun (a:real) ->
             let v = param_var x.Distribution.Func
             let b = x.Distribution.Func |> body |> subst_var_value v (Expr.Value a) 
             <@ %%b:real @>        
-    member x.Prob = fun a -> if a |?| x.Support then x.ProbFunc a |> Scalar<real> else 0R 
+    member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> Scalar<real> else 0R 
     member x.Cdf = 
         fun (i:real) -> seq {0. .. i} |> Seq.map x.Prob |> Seq.reduce (+) 
-    member x.Expectation = if mean.IsSome then mean.Value else x.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+)
-    member x.Transform(t, m) = Discrete<'t>(map, support, (x.Distribution.Transform t).Func, Some m)
-    static member (-) (l:Scalar<real>, r:Discrete<'t>) = r.Transform(<@ fun x -> %l.Expr - x @>, l - r.Expectation)
+    member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+)
+    member x.Transform(t, s, m) = Discrete((x.Distribution.Transform(t,s)), Some m)
+    new(r:UnivariateDistribution, mean:Scalar<real> option) = Discrete(r.Support, r.Func, mean)
+    static member (-) (l:'a, r:Discrete) = let l' = real_expr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
 
-type Continuous<'t when 't : equality>(map:Expr<'t->real> option, support:Set<real> option, pdf:Expr<real->real>, mean:Scalar<real> option) = 
-    inherit RandomVariable<'t>(map, support, pdf |> ProbabilityDensity |> Some, mean)
+type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> option) = 
+    inherit RandomVariable(Some(ProbabilityDensity(pdf, support)), mean)
     member x.ProbFunc = 
         fun (a:real) ->         
             let v = param_var x.Distribution.Func
@@ -76,24 +79,24 @@ type Continuous<'t when 't : equality>(map:Expr<'t->real> option, support:Set<re
    
 [<AutoOpen>]
 module ProbabilityDistribution =
-    let discrete<'t when 't : equality> s d = Discrete<'t>(None, s, d, None)
+    let discrete s d = Discrete(s, d, None)
 
-    let discrete_m<'t when 't : equality> s d m = Discrete<'t>(None, s, d, Some m)
+    let discrete_m s d m = Discrete(s, d, Some m)
 
-    let continuous<'t when 't : equality> d = Continuous<'t>(None, None, d, None)
+    let continuous s d = Continuous(s, d, None)
 
-    let degenerate<'t when 't : equality> a = discrete<'t> (finite_seq [a]) <@ fun x -> 1. @>
+    let degenerate a = discrete (finite_seq [a]) <@ fun x -> 1. @>
 
-    let uniform<'t when 't : equality> s = let l = (Seq.length s) in discrete<'t> (finite_seq s) <@ fun x -> 1. / real l  @>
+    let uniform s = let l = (Seq.length s) in discrete (finite_seq s) <@ fun x -> 1. / real l  @>
     
-    let poisson<'t when 't : equality> l = discrete_m<'t> (infinite_seq (fun i -> real i) |> Set.fromSeq) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (scalar l)
+    let poisson l = discrete_m (infinite_seq (fun i -> real i) |> Set.fromSeq) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (scalar l)
 
-    let binomial<'t when 't : equality> p n = discrete<'t> ([0. .. real n] |> finite_seq) <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
+    let binomial p n = discrete ([0. .. real n] |> finite_seq) <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
     
     let bernoulli<'t when 't : equality> p = binomial p 1
 
-    let geometric<'t when 't : equality> p n = discrete<'t> ([0. .. real n] |> finite_seq) <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
+    let geometric<'t when 't : equality> p n = discrete ([0. .. real n] |> finite_seq) <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
     
     let uniform_continuous<'t when 't : equality> a b = 
         let a',b' = real_expr a, real_expr b
-        Continuous<'t>(None, None, <@ fun _ -> 1. / (%b' - %a') @> , None)
+        continuous (open_interval a b) <@ fun _ -> 1. / (%b' - %a') @> 
