@@ -1,5 +1,6 @@
 ﻿namespace Sylvester 
 
+[<StructuredFormatDisplay("{Display}")>]
 type CardinalNumber =
 | Finite of DelayedEval<int>
 | Aleph of int
@@ -8,10 +9,11 @@ with
         match x with
         | Finite m -> real(m.Force())
         | _ -> failwith "This set does not have finite cardinality."
-    override x.ToString() = 
+    member x.Display =
         match x with
         | Finite m -> if m.IsValueCreated then sprintf "Finite %A" m.Value else "Finite"
         | Aleph a -> sprintf "Aleph %A" a
+    override x.ToString() = x.Display
     static member (+) (l:CardinalNumber, r:CardinalNumber) =
         match l, r with
         | Finite a, Finite b -> Finite(lazy(a.Force() + b.Force()))
