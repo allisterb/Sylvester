@@ -20,13 +20,21 @@ type UnivariateDistribution =
             | ProbabilityMass(_, s) -> s
             | ProbabilityDensity(_, s) -> s
         member x.Transform(t:Expr<real->real>, support:Set<real>) =
-            let vd = param_var x.Func
-            let vt = param_var t
-            let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
-            let td = x.Func |> body |> subst_var_value vd bodyt |> recombine_func [vd] 
             match x with
-            | ProbabilityMass _ -> ProbabilityMass(<@ %%td:real->real @>, support)
-            | ProbabilityDensity _ -> ProbabilityMass (<@ %%td:real->real @>, support)
+            | ProbabilityMass _ -> 
+                let vd = param_var x.Func
+                let vt = param_var t
+                let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
+                let td = x.Func |> body |> subst_var_value vd bodyt |> recombine_func [vd] 
+                ProbabilityMass(<@ %%td:real->real @>, support)
+            | ProbabilityDensity _ -> 
+                let vd = param_var x.Func
+                let vt = param_var t
+                let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
+                let pd = integrate x.Func <@ %%Expr.Var(vd): real @>
+                let td = pd |> body |> subst_var_value vd bodyt |> recombine_func [vd]
+                let tpd = diff <@ %%td:real->real @> <@ %%Expr.Var(vd): real @>
+                ProbabilityDensity(tpd, support)
 
 type MultivariateDistribution<'n when 'n :> Number> = 
 | JointProbability of Array<'n, UnivariateDistribution>
@@ -125,4 +133,4 @@ module ProbabilityDistribution =
     
     let uniform_continuous<'t when 't : equality> a b = 
         let a',b' = real_expr a, real_expr b
-        continuous (open_interval a b) <@ fun _ -> 1. / (%b' - %a') @> 
+        continuous (open_interval a b) <@ fun x -> 1. / (%b' - %a') @> 

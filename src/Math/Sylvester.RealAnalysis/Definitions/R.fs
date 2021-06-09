@@ -36,9 +36,9 @@ module R =
     let inline deriv_lim f x a = 
         lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
 
-    let diff f x  =  Ops.Diff f x 1
+    let diff (f:Expr<real->'a>) x  =  Ops.Diff (expand''<real->'a> f) x 1
 
-    let integrate f = Ops.Integrate f
+    let integrate f x = Ops.Integrate f x
 
     let integrate_over l r f = Ops.DefiniteIntegral f (real_expr l) (real_expr r) |> Scalar<real>
 

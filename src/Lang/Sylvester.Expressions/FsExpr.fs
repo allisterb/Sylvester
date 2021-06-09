@@ -309,6 +309,7 @@ module FsExpr =
     let get_vars expr =
         let rec rget_vars prev expr =
             match expr with
+            | PropertyGet(None, p, []) -> prev @ []
             | ShapeVar v -> prev @ [v]
             | ShapeLambda (v, body) -> rget_vars (prev @ [v]) body
             | ShapeCombination (_, exprs) ->  List.map (rget_vars prev) exprs |> List.collect id
@@ -369,7 +370,7 @@ module FsExpr =
             | PropertyGet(body, PropertyGetterWithReflectedDefinition p, []) -> 
                 let this = match body with Some b -> b | None -> p
                 rexpand vars this
-            | PropertyGet(None, p, []) -> rexpand vars (Expr.Var(Var(p.Name, p.PropertyType)))
+            //| PropertyGet(None, p, []) -> rexpand vars (Expr.Var(Var(p.Name, p.PropertyType)))
             // If the variable has an assignment, then replace it with the expression
             | ExprShape.ShapeVar v when Map.containsKey v vars -> vars.[v]
             // Else apply rexpand recursively on all sub-expressions
@@ -492,5 +493,9 @@ module FsExpr =
         match q with
         | Var _ -> Unchecked.defaultof<'t>
         | _ -> FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
+
+    let ev q  = evaluate q
+
+    let inline (%!) q = ev q
 
 

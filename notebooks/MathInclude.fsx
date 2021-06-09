@@ -2,6 +2,8 @@
 #r @"C:\Users\Allister\.nuget\packages\fparsec\1.0.3\lib\netstandard1.6\FParsec.dll"
 #r @"C:\Users\Allister\.nuget\packages\mathnet.numerics\4.15.0\lib\netstandard2.0\MathNet.Numerics.dll"
 #r @"C:\Users\Allister\.nuget\packages\mathnet.numerics.fsharp\4.15.0\lib\netstandard2.0\MathNet.Numerics.FSharp.dll"
+#r @"C:\\Users\\Allister\\.nuget\\packages\\xplot.plotly\\4.0.2\\lib\\netstandard2.0\\XPlot.Plotly.dll"
+
 #r @"C:\Projects\Sylvester.git\ext\mathnet-symbolics\src\Symbolics\bin\Debug\netstandard2.0\MathNet.Symbolics.dll"
 
 
