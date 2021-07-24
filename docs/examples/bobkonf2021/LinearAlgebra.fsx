@@ -6,27 +6,26 @@ open FSharp.Reflection
 
 open Sylvester
 open Dimension
-open Vector
+open Matrix
 
-let z = var'<int> "z"
+let x = 0 
+and y = x
 
-let v = vecz ``5`` <@ 4,5,6,7,%z @>
 
-let u = vecz ``4`` <@ 4,5,6,7 @>
+let inline length(List l) = 
 
-let r = vec ``3`` <@ 3., 5., 6.@>
+<@ (>>) @> |> expand
+let yy(t:Expr<_*_*_>) = t.ToString()
 
-let aa = <@(4, 5, 6, 7), (8, 19, 10)@>
+yy <@(4,5) @>
+let z = intvar "z"
 
 let m = MatZ<``3``, ``4``> <@[ [%z;4;-1;2]; [0;2;1;3]; [-2; 1; -2; 2] ]@>
 let n = MatZ<``4``, ``2``>.ofCols <@[[%z; 0; 2; 3]; [-1;2;1;-2]]@>
 
-m.LinearDisplay
+let nn = n |+|| VecZ<``4``> <@[3; 6; 9; 12]@>
 
-let nn = n |+|| Vector<``4``, int> <@[3; 6; 9; 12]@>
-
-
-let md = m |> diag
+diag nn
 
 let i = raddmul m zero one <@ 4 @>
 

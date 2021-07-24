@@ -3,30 +3,31 @@
 open Sylvester
 open Dimension
 
-let i = integrate_over_R <@fun x -> 1. / x @>
+MathNetExpr.toQuotation (Expr.VMathMathNetMathNet.Symbolics.Infix.parse "0.3333333333333333*x"
 
-let g = sseq <| infinite_seq (fun i -> real i) 
 
-card g
-type Coin = Heads | Tails
+let X = binomial 0.5 6 
 
-let X = binomial<Coin> 0.5 6 
+let sx = 4 - X
 
-prob X 4
-
-let sx = 4R - X
-
+prob sx 3 = prob X 1
 expectation X
-expectation sx
+expectation sx = 4. - expectation X
 sx.Distribution.Func |> src
 prob X 1
 
+let U = uniform_continuous 2. 5.
 
+
+probi (U + 1) (2.1) 3.
 expectation sx
 
 let Y = binomial<Coin> 0.7 6 
 expectation Y
 
+let U = uniform_continuous<Coin> 1 4
+
+probi U 0 0.5
 
 prob_expr sx xx |> sexpr |> sprint'
 
@@ -54,6 +55,18 @@ sexpr <| expectation pp
 
 pp.Prob <| 4.
 
+
+type Coin = | Heads | Tails
+
+let coin = sseq [Heads; Tails]
+
+let dice = sseq [1..6]
+
+let SS = prob_space (coin * dice)
+
+let E4 = SS |>| (fun (_,d) -> d = 3)
+
+prob_measure SS E4
 let urn = sseq [1..5]  
 
 let S = prob_space (urn * urn)
@@ -70,14 +83,3 @@ let E3 = S |>| (fun s -> fst s - snd s >= 8)
 
 P (E1 |/| S)
 
-type Coin = | Heads | Tails
-
-let coin = sseq [Heads; Tails]
-
-let dice = sseq [1..6]
-
-let SS = prob_space (coin * dice)
-
-let E4 = SS |>| (fun (_,d) -> d = 3)
-
-prob_measure SS E4
