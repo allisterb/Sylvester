@@ -8,8 +8,8 @@ module ETests =
     open Sylvester
  
     module Vars = 
-        let P,Q,N,S = var4<bool>
-        let x,y = var2<bool>
+        let P,Q,N,S = boolvar4 "P" "Q" "N" "S"
+        let x,y = boolvar2 "x" "y"
 
     [<Fact>]
     let ``Can parse propositional logic``() =

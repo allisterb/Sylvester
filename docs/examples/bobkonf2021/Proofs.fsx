@@ -4,6 +4,12 @@ open Sylvester
 open PropCalculus
 open PredCalculus
 
+
+let x, y = var2'<int> "x" "y"
+let f(x, y) = 0 
+
+sprint' <@ f(%x, %y)  = f(%y, %x) @>
+
 let p, q = boolvar2 "p" "q"
 
 let x, Q, N, P = boolvar4 "x" "Q" "N" "P"

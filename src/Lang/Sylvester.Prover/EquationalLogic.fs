@@ -332,19 +332,35 @@ module EquationalLogic =
 
     let rec _dual = 
         function
+        | Bool false -> <@@ true @@>
+        | Bool true -> <@@ false @@>
+        | Not p -> let _p = _dual p in <@@ not (%%_p:bool) @@>
+        | And(p, q) -> 
+            let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) ||| (%%_q:bool) @@>
+        | Or(p, q) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) |&| (%%_q:bool) @@>
+        | Equals _
+        | NotEquals _
+        | Implies _
+        | Conseq _ 
+        | ForAll _
+        | Exists _ as expr -> failwithf "Expression %s not supported for dual operator." <| src expr
+        | expr -> traverse expr _dual
+
+    let rec _double_neg = 
+        function
         | Bool true -> <@@ not false @@>
         | Bool false -> <@@ not true @@>
-        | Equals(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) <> (%%_q:bool)) @@>
-        | Not(NotEquals(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) = (%%_q:bool) @@>
-        | Implies(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) <== (%%_q:bool)) @@>
-        | Not(Conseq(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) ==> (%%_q:bool) @@>
-        | Conseq(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not ((%%_p:bool) ==> (%%_q:bool)) @@>
-        | Not(Implies(p, q)) -> let _p = _dual p in let _q = _dual q in <@@ (%%_p:bool) <== (%%_q:bool) @@>
-        | And(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not (not(%%_p:bool) ||| (not(%%_q:bool))) @@>
-        | Or(p, q) -> let _p = _dual p in let _q = _dual q in <@@ not (not(%%_p:bool) |&| not (%%_q:bool)) @@>
+        | Equals(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) <> (%%_q:bool)) @@>
+        | Not(NotEquals(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) = (%%_q:bool) @@>
+        | Implies(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) <== (%%_q:bool)) @@>
+        | Not(Conseq(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) ==> (%%_q:bool) @@>
+        | Conseq(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) ==> (%%_q:bool)) @@>
+        | Not(Implies(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) <== (%%_q:bool) @@>
+        | And(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not (not(%%_p:bool) ||| (not(%%_q:bool))) @@>
+        | Or(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not (not(%%_p:bool) |&| not (%%_q:bool)) @@>
         | ForAll(_, bound, range, body) -> let v = vars_to_tuple bound in let q = call <@ exists @> (v::range::(<@@ not (%%body:bool) @@>)::[]) in call <@ not @> (q::[])
         | Exists(_, bound, range, body) -> let v = vars_to_tuple bound in let q = call <@ forall @> (v::range::(<@@ not (%%body:bool) @@>)::[]) in call <@ not @> (q::[]) 
-        | expr -> traverse expr _dual
+        | expr -> traverse expr _double_neg
 
     let _distrib_implies =
         function

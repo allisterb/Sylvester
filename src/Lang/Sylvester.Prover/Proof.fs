@@ -53,7 +53,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
 
         let distrib_implies = Admit("Distribute implication in (expression)", EquationalLogic._distrib_implies)
 
-        let dual = Admit("Replace (expression) with its dual", EquationalLogic._dual)
+        let double_neg = Admit("Replace (expression) with its dual", EquationalLogic._double_neg)
 
         let empty_range = Admit("Substitute the quantifier's empty range in (expression)", EquationalLogic._empty_range)
 
@@ -90,7 +90,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
             subst_false
             subst_or_and
             distrib_implies
-            dual
+            double_neg
             empty_range
             trade_body
             collect_forall_and

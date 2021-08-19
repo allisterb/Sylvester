@@ -4,6 +4,13 @@ open Sylvester
 open Vector
 open Dimension
 
+
+
+let x, y = var2'<int> "x" "y"
+let f(x, y) = 0 
+
+sprint' <@ f(%x, %y)  = f(%y, %x) @>
+
 let inline (|HasId|) (n:int) x = (^a : (member Id : 'Id)x) // define type class
 let inline getId (HasId 4 x) = x // call type class instance
 

@@ -44,7 +44,7 @@ module PropCalculus =
 
     let _distrib_implies = EquationalLogic._distrib_implies
 
-    let _dual = EquationalLogic._dual
+    let _double_neg = EquationalLogic._double_neg
 
     (* Admissible rules *)
 
@@ -97,7 +97,7 @@ module PropCalculus =
 
     let distrib_implies = Theory.S.Rules.[19]
 
-    let dual = Theory.S.Rules.[20]
+    let double_neg = Theory.S.Rules.[20]
      
     (* Tactics for rules *)
 
