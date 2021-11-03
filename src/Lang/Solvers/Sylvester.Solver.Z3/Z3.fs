@@ -83,6 +83,12 @@ module Z3 =
         | "Rational" -> Some ()
         | _ -> None
 
+    let internal (|ArithType|_|) =
+        function
+        | IntType _
+        | RatType _ -> Some ()
+        | _ -> None
+
     let internal (|BoolType|_|) (t:Type) =
         match t.Name with
         | "Boolean" -> Some()
@@ -163,7 +169,7 @@ module Z3 =
             | U when (src U = "U" || src U = "Set`1.U" || U.ToString() = "Value (Set {x|true:x})") && expr.Type.IsGenericType -> let s = create_sort solver expr.Type.GenericTypeArguments.[0] in solver.Ctx.MkFullSet s
             | Call(None, Op "op_BarPlusBar" ,l::r::[]) -> solver.Ctx.MkSetUnion((create_set_expr solver l), (create_set_expr solver r))
             | Call(None, Op "op_BarMultiplyBar",l::r::[]) -> solver.Ctx.MkSetIntersection(create_set_expr solver l, create_set_expr solver r)
-            | _ -> failwithf "The expression %A is not a set expression." expr
+            | _ -> failwithf "The expression %A is not a supported set expression." expr
     
     let rec internal create_bool_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : BoolExpr =
         let expr' = expand expr
@@ -201,9 +207,16 @@ module Z3 =
         | Call(None, Op "op_LessThanOrEqual",l::r::[]) -> solver.Ctx.MkLe(create_arith_expr solver l, create_arith_expr solver r)
         | Call(None, Op "op_GreaterThanOrEqual",l::r::[]) -> solver.Ctx.MkGe(create_arith_expr solver l, create_arith_expr solver r)
         (* Set constraints *)
-        | Call(None, Op "op_BarQmarkBar",l::r::[]) -> solver.Ctx.MkSetMembership(create_set_expr solver l, create_set_expr solver r)
+        | Call(None, Op "op_BarQmarkBar",l::r::[]) -> solver.Ctx.MkSetMembership(create_expr solver l, create_set_expr solver r)
         | Call(None, Op "op_BarLessBar",l::r::[]) -> solver.Ctx.MkSetSubset(create_set_expr solver l, create_set_expr solver r)
         | _ -> failwithf "Cannot create Z3 constraint from %A." expr
+
+    and internal create_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : Expr =
+        match expr.Type with
+        | ArithType -> (create_arith_expr solver expr) :> Expr
+        | BoolType -> (create_bool_expr solver expr) :> Expr
+        | SetType -> (create_set_expr solver expr) :> Expr
+        | _ -> failwithf "Cannot convert expression %A of type %A to Z3 expression." expr (expr.Type)
 
     let internal check_sat_model (s:Z3Solver) (a: Expr<bool list>) = 
         let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check 

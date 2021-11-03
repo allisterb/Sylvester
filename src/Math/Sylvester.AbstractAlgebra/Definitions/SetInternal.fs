@@ -6,7 +6,7 @@ open System.Collections
 open FSharp.Quotations
 
 /// A statement that formally defines a set using bound variables, range predicate, body, cardinality, and an optional F# function for computing set membership.
-type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr<bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
+type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr<bool>,body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     member val Bound = 
         match bound with
         | Patterns.BoundVars v -> bound
@@ -28,7 +28,7 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
         sprintf "{%s%s:%s}" v (src range) (src body)
         
-    internal new(bound:Expr<'t>, body: Expr<'t>, card:CardinalNumber) = SetComprehension(bound, <@ true @>, body, card, fun _ _ -> true)
+    internal new(bound:Expr<'t>, body:Expr<'t>, card:CardinalNumber) = SetComprehension(bound, <@ true @>, body, card, fun _ _ -> true)
         
     internal new (range:Expr<bool>, body:Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =
         let b = get_vars_to_tuple range
@@ -44,13 +44,11 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
         let b = get_vars_to_tuple range
         SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card, fun _ _ -> true)
         
-    (* --------------------------------------------------------------------------------------------------------------------------- *)
-
-    internal new(bound:'t, body:'t, card:CardinalNumber) = SetComprehension(<@ bound @>, <@ true @>, <@ body @>, card, fun _ _ -> true)
-
-    internal new(range:bool, body:'t, card:CardinalNumber) = SetComprehension(<@ range @>, <@ body @>, card)
-
-    internal new(range:bool, card:CardinalNumber) = SetComprehension(<@ range @>, card)
+    internal new (b:Expr<'t->bool>, card:CardinalNumber) =
+        let p = evaluate b
+        let b' = body b
+        let v = get_vars_to_tuple b'
+        SetComprehension(<@ %%v:'t @>, <@ %%b':bool @>, <@ %%v:'t @>, card, fun _ x -> p x)
 
 type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
     member val Sequence = s

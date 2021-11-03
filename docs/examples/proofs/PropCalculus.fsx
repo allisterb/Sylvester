@@ -5,17 +5,15 @@ open Sylvester
 
 open PropCalculus
 
-
-let p,q,r,s = var4<bool>
-let p',q',r',s' = <@ p @>, <@ q @>, <@ r @>, <@ s @>
-let P,N,A,S = var4<bool>
+let p,q,r,s = boolvar4 "p" "q" "r" "s"
+let P,N,A,S = boolvar4 "P" "N" "A" "S"
  
-let ``3.52`` = theorem prop_calculus <@ (p = q) = (p |&| q) ||| (not p |&| not q) @> [
-        collect |> R
-        commute |> L |> L'
-        commute |> L
-        commute |> R |> L'
-        golden_rule' p' q' |> LeftAssoc |> L
+let ``3.52`` = theorem prop_calculus <@ (%p = %q) = (%p |&| %q) ||| (not %p |&| not %q) @> [
+        collect |> apply_right
+        commute |> apply_left |> after_left
+        commute |> apply_left
+        commute |> apply_right |> after_left
+        golden_rule' p q |> LeftAssoc |> apply_left
 ]
 
 let ``3.59`` = theorem prop_calculus <@ p ==> q = (not p ||| q) @> [

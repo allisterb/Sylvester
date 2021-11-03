@@ -72,11 +72,11 @@ with
         
     member x.Cardinality =      
         match x with
-        | Empty -> lazy 0 |> Finite
+        | Empty -> lazy 0 |> Finite 
         | Seq s ->
             match s with
             | FiniteSeq _ -> lazy(x |> Seq.length) |> Finite 
-            | InfiniteSeq _ -> Aleph 0
+            | InfiniteSeq _ -> Aleph 0 
             | _ -> failwithf "Cannot determine the cardinality of this sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
         | Set sc -> sc.Cardinality
         
@@ -332,19 +332,19 @@ module Set =
   
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
-    let set<'t when 't: equality> (bound:'t) (range:bool) body = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, default_card<'t>) |> Set :> ISet<'t>
+    let set<'t when 't: equality> (bound:Expr<'t>) (range:Expr<bool>) body card = SetComprehension(bound, range, body, card) |> Set :> ISet<'t>
 
-    let set'<'t when 't: equality> (bound:'t) body = SetComprehension(bound, body, default_card<'t>) |> Set :> ISet<'t>
+    let set'<'t when 't: equality> (bound:Expr<'t>) (body:Expr<'t>) card = SetComprehension(bound, body, card) |> Set :> ISet<'t>
 
-    let finite_set (bound:'t) range body n = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, (lazy n) |> Finite) |> Set 
+    let finite_set bound (range:Expr<bool>) body n = SetComprehension(bound, range, body (lazy n) |> Finite) |> Set 
     
-    let infinite_set bound range body n = SetComprehension(<@ bound @>, <@ range @>, <@ body @>, Aleph n) |> Set  
+    let infinite_set bound (range:Expr<bool>) body n = SetComprehension(bound, range, body, Aleph n) |> Set  
 
     let countable_infinite_set (bound:'t) range body = infinite_set bound range body 0
 
     let uncountable_infinite_set (bound:'t) range body = infinite_set bound range body 1
 
-    let pred_set<'t when 't: equality>(p:bool) = SetComprehension<'t>(p, default_card<'t>) |> Set
+    let set_pred<'t when 't: equality>(p:Expr<'t->bool>) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
     let singleton<'t when 't: equality> (e:'t) = Singleton e
 
@@ -392,3 +392,21 @@ module Set =
     let inline infinite_series g = g |> (infinite_seq >> series)
     
     let inline infinite_series' g = g |> (infinite_seq' >> series')
+
+    let setvar<'t when 't : equality> n = var'<Set<'t>> n
+    
+    let setvar2<'t when 't : equality> n o = var2'<Set<'t>> n o
+
+    let setvar3<'t when 't : equality> n o p = var3'<Set<'t>> n o p
+    
+    let setvar4<'t when 't : equality> n o p q = var4'<Set<'t>> n o p q
+
+    type uninterp = obj
+
+    let setvar' n = setvar<uninterp> n
+
+    let setvar2' n o = setvar2<uninterp> n o
+
+    let setvar3' n o p = setvar3<uninterp> n o p
+
+    let setvar4' n o p q= setvar4<uninterp> n o p q

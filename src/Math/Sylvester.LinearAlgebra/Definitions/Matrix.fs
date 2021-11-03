@@ -13,16 +13,19 @@ open Vector
 type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal(e: Expr<'t> array array) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
+    
     let expr = e  |> Array.map (Array.map expand''<'t>)
     let expr' = Array.map (Array.map MathNetExpr.fromQuotation) expr
     let exprT = expr  |> Ops.transpose_mat
     let exprL = expr |> Array.map Array.toList |> Array.toList
+    
     member val Expr = expr
     member val Expr' = expr'
     member val ExprT = exprT
     member val ExprL = exprL
     member val ExprS = expr |> array2D
     member val ExprVars = expr |> Array.map (Array.map(get_vars >> List.toArray)) |> Array.concat
+    
     member val Rows = expr |> Array.map Vector<'t>
     member val Cols = exprT |> Array.map Vector<'t>
     member val RowsL = expr |> Array.map Vector<'t> |> Array.toList
@@ -134,12 +137,16 @@ module Matrix =
 
     let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsL |> Some
 
-    let mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
+    let internal _mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
     
-    let matc (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
+    let mat (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>(data)
+    
+    let mat' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
+    let internal _mat' (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
+    
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
-        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> mat l.Dim0 (pp (l.Dim1 + ``1``))
+        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> _mat l.Dim0 (pp (l.Dim1 + ``1``))
 
     let ident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>
@@ -184,7 +191,7 @@ module Matrix =
         Array2D.init dim dim l.Kr
         |> Array2D.toJagged
         |> sexprs'
-        |> matc (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
+        |> _mat' (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
 
     let det (l:SquareMatrix<'dim0, _>) =
         l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
