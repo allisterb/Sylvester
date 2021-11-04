@@ -1,8 +1,6 @@
 #load "Include.fsx"
 
 open Sylvester
-
-
 open PropCalculus
 
 let p,q,r,s = boolvar4 "p" "q" "r" "s"
@@ -16,80 +14,80 @@ let ``3.52`` = theorem prop_calculus <@ (%p = %q) = (%p |&| %q) ||| (not %p |&| 
         golden_rule' p q |> LeftAssoc |> apply_left
 ]
 
-let ``3.59`` = theorem prop_calculus <@ p ==> q = (not p ||| q) @> [
-    def_implies |> L
-    ident_or_not_or q' p' |> CommuteL |> R
-    commute |> R
-    commute |> L |> R'
+let ``3.59`` = theorem prop_calculus <@ %p ==> %q = (not %p ||| %q) @> [
+    def_implies |> apply_left
+    ident_or_not_or q p |> CommuteL |> apply_right
+    commute |> apply_right
+    commute |> apply_left |> after_right
 ]
 
-let ``3.60`` = theorem prop_calculus <@ p ==> q = ((p |&| q) = p) @> [
-    def_implies |> L
-    commute |> LR
-    right_assoc |> LR
-    commute |> R |> R' 
-    left_assoc |> R 
+let ``3.60`` = theorem prop_calculus <@ %p ==> %q = ((%p |&| %q) = %p) @> [
+    def_implies |> apply_left
+    commute |> apply
+    right_assoc |> apply
+    commute |> apply_right |> after_right 
+    left_assoc |> apply_right 
 ]
 
-let ``3.61`` = theorem prop_calculus <@ p ==> q = (not q ==> not p) @> [
-    def_implies |> R
-    commute |> R
-    commute |> R |> R'
-    distrib_not_and p' q' |> Commute |> R |> R'
-    symm_eq_not_eq p' <@ p |&| q @> |> Commute |> R 
-    commute |> R
-    ident_implies_eq_and_eq p' q' |> Lemma'
+let ``3.61`` = theorem prop_calculus <@ %p ==> %q = (not %q ==> not %p) @> [
+    def_implies |> apply_right
+    commute |> apply_right
+    commute |> apply_right |> after_right
+    distrib_not_and p q |> Commute |> apply_right |> after_right
+    symm_eq_not_eq p <@ %p |&| %q @> |> Commute |> apply_right 
+    commute |> apply_right
+    ident_implies_eq_and_eq p q |> Lemma'
 ]
 
-let ``3.62`` = theorem prop_calculus <@p ==> (q = r) = ((p |&| q) = (p |&| r))@> [
-    ident_implies_eq_and_eq p' <@ q = r @> |> L
-    distrib_and_eq p' q' r' |> L
+let ``3.62`` = theorem prop_calculus <@ %p ==> (%q = %r) = ((%p |&| %q) = (%p |&| %r)) @> [
+    ident_implies_eq_and_eq p <@ %q = %r @> |> apply_left
+    distrib_and_eq p q r |> apply_left
 ]
 
-let ``3.71`` = theorem prop_calculus <@ p ==> p @> [
-    def_implies |> LR
+let ``3.71`` = theorem prop_calculus <@ %p ==> %p @> [
+    def_implies |> apply
 ]
 
 
-let ``3.76a`` = theorem prop_calculus <@ p ==> (p ||| q) @> [
-    def_implies |> LR
-    left_assoc |> L
-    idemp_or p' |> L
+let ``3.76a`` = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
+    def_implies |> apply
+    left_assoc |> apply_left
+    idemp_or p |> apply_left
 ]
 
-let ``3.76c`` = theorem prop_calculus <@ p |&| q ==> p ||| q @> [
-    def_implies |> L
-    commute |> L |> L'
-    distrib |> L |> L'
-    commute |> LR
-    idemp_or p' |> LR
-    distrib |> L |> R'
-    idemp_and p' |> LR
-    distrib |> LR
-    distrib |> R |> L'
-    distrib |> L
-    idemp_or p' |> L
-    distrib |> L
-    commute_or q' p' |> L
-    idemp_and <@ p ||| q @> |> L
-    commute |> L |> L'
-    distrib |> L |> L'
-    idemp_and q' |> L
-    absorb_or q' p' |> CommuteL |> L
-    commute |> R |> L'
-    left_assoc |> L
-    idemp_or q' |> L
+let ``3.76c`` = theorem prop_calculus <@ %p |&| %q ==> %p ||| %q @> [
+    def_implies |> apply_left
+    commute |> apply_left |> after_left
+    distrib |> apply_left |> after_left
+    commute |> apply
+    idemp_or p |> apply
+    distrib |> apply_left |> after_right
+    idemp_and p |> apply
+    distrib |> apply
+    distrib |> apply_right |> after_left
+    distrib |> apply_left
+    idemp_or p |> apply_left
+    distrib |> apply_left
+    commute_or q p |> apply_left
+    idemp_and <@ %p ||| %q @> |> apply_left
+    commute |> apply_left |> after_left
+    distrib |> apply_left |> after_left
+    idemp_and q |> apply_left
+    absorb_or q p |> CommuteL |> apply_left
+    commute |> apply_right |> after_left
+    left_assoc |> apply_left
+    idemp_or q |> apply_left
 ] 
 
-theorem prop_calculus <@  (p |&| q ) ==> p @> [
-    def_implies |> LR
-    commute |> L
-    absorb_or p' q' |> Lemma'
+theorem prop_calculus <@  (%p |&| %q ) ==> %p @> [
+    def_implies |> apply
+    commute |> apply_left
+    absorb_or p q |> Lemma' |> apply
 ]
 
-theorem prop_calculus <@ p ==> true @> [
-    def_implies |> LR
-    zero_or p' |> L
+theorem prop_calculus <@ %p ==> true @> [
+    def_implies |> apply
+    zero_or p |> apply_left
     //ident_eq <@ true @> |> L
 ]
 
