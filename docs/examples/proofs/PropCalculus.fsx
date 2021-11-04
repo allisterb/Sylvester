@@ -101,13 +101,12 @@ let ``3.76e`` = theorem prop_calculus <@ (%p |&| %q)  ==> (%p |&| (%q ||| %r)) @
     weaken_or <@ %p |&| %q @> <@ %p |&| %r @> |> Lemma
 ]
 
-(*
-let ``3.77`` = theorem prop_calculus <@ p |&| (p ==> q) ==> q @> [
-    ident_and_implies p' q' |> L
-    commute_and p' q' |> LR
-    strengthen_and q' p' |> Taut |> LR
+let ``3.77`` = theorem prop_calculus <@ %p |&| (%p ==> %q) ==> %q @> [
+    ident_and_implies p q |> L
+    commute_and p q |> LR
+    strengthen_and q p |> Lemma 
 ]
-*)
+
 let ``3.78`` = theorem prop_calculus <@ (%p ==> %r) |&| (%q ==> %r) = (%p ||| %q  ==> %r) @> [
     ident_implies_not_or <@ %p ||| %q @> r |> apply_right
     distrib|> apply_left |> after_right
