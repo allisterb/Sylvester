@@ -128,6 +128,12 @@ module EquationalLogic =
         | Equals(Exists(_, x, R, P), Not(ForAll(_, x', R', Not(P')))) when vequal' x x' && sequal2 R P R' P'-> pattern_desc "Generalized De Morgan" <@ fun x -> not x @> |> Some
         | _ -> None
     
+    let (|UniversalInstantiation|_|) =
+        function
+        | Implies(ForAll(_, [x], Bool true, P), P') when is_inst_expr x P P' -> 
+                pattern_desc "Universal Instantiation" <@ fun x P P' -> (forall x true P) = P' @> |> Some
+        | _ -> None
+
     let equational_logic_axioms = 
         function
         | SEqual x
@@ -161,7 +167,8 @@ module EquationalLogic =
         | Interchange x 
         | Trading x 
         | ForAllDistribOr x 
-        | GeneralizedDeMorgan x -> Some (desc x) 
+        | GeneralizedDeMorgan x 
+        | UniversalInstantiation x -> Some (desc x) 
         | _ -> None
 
     (* Expression functions for admissible rules *) 
@@ -414,5 +421,4 @@ module EquationalLogic =
             let c1 = let v = vars_to_tuple x in call <@ exists @> (v::R1::P::[])
             let c2 = let v = vars_to_tuple x in call <@ exists @> (v::R2::P::[])
             <@@ (%%c1:bool) ||| (%%c2:bool) @@>
-        | expr -> expr
-    
+        | expr -> expr    

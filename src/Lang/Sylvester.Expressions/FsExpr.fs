@@ -333,7 +333,7 @@ module FsExpr =
         | _ -> vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
 
     let get_vars_to_tuple x = x |> (get_vars >> vars_to_tuple) 
-    
+            
     let rec (|List|_|) =
         let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>
         function
@@ -495,6 +495,19 @@ module FsExpr =
         | _ -> FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
 
     let ev q  = evaluate q
+
+    let is_inst_expr (bv:Var) (l:Expr) (r:Expr)=
+        let s = src l
+        let s' = src r
+        let m = l.Substitute(fun v -> if vequal v bv then Expr.Var(new Var("$$_$$", l.Type)) |> Some else None)
+        let p = (src m).IndexOf("$$_$$")
+        if p = -1 || p > s'.Length - 1 then
+            sequal l r
+            
+        else 
+            let v = s' |> Seq.skip p |> Seq.takeWhile(fun c -> c <> ' ') |> Seq.toArray |> String
+            let s'' = (src m).Replace("$$_$$", v)
+            s' = s''
 
     let inline (%!) q = ev q
 
