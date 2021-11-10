@@ -7,70 +7,83 @@ open PredCalculus
 let p,q,r,s = var4'<bool> "p" "q" "r" "s"
 let x,y = var2'<bool> "x" "y"
 let P,N,Q,S = var4'<bool> "P" "N" "Q" "S"
+let d = boolvar "d"
+let H, F = pred<bool>, pred<bool>
+
+let ``9.xx`` = theorem pred_calculus <@ (forall' %x (H %x ==> not (F %x)) |&| H %d) ==> not (F %d)@> [
+    apply shunt 
+]
+
 
 let ``9.3a`` = theorem pred_calculus <@ forall %x %N %P = (forall' %x (not %N ||| %P)) @> [
-    trade_forall_implies x N P  |> L
-    ident_implies_not_or N P |> L
+    trade_forall_implies x N P  |> apply_left
+    ident_implies_not_or N P |> apply_left
 ]
 
 let ``9.3b`` = theorem pred_calculus <@ forall %x %N %P = (forall' %x ((%N |&| %P) = %N)) @> [
-    trade_forall_implies x N P |> L
-    ident_implies_eq_and_eq N P |> L
+    trade_forall_implies x N P |> apply_left
+    ident_implies_eq_and_eq N P |> apply_left
 ]
 
 let ``9.3c`` = theorem pred_calculus <@ forall %x %N %P = (forall' %x ((%N ||| %P) = %P)) @> [
-    trade_forall_implies x N P |> L
-    def_implies' N P |> L
+    trade_forall_implies x N P |> apply_left
+    def_implies' N P |> apply_left
 ]
 
 let ``9.4a`` = theorem pred_calculus <@ forall %x (%Q |&| %N) %P = (forall %x %Q (%N ==> %P)) @> [
-    trade_forall_implies x <@ %Q |&| %N @> P |> L
-    shunt |> QB |> L'
-    trade_forall_implies x Q <@ %N==> %P @> |> Commute |> L  
+    trade_forall_implies x <@ %Q |&| %N @> P |> apply_left
+    shunt |> QB |> after_left
+    trade_forall_implies x Q <@ %N==> %P @> |> Commute |> apply_left  
 ]
+
 
 let ``9.4b``= theorem pred_calculus <@ forall %x (%Q |&| %N) %P = (forall %x %Q (not %N ||| %P)) @> [
-    trade_forall_implies x <@ %Q |&| %N @> P |> L
-    shunt |> QB |> L'
-    trade_forall_implies x <@ %Q @> <@ %N==> %P @> |> Commute |> L
-    ident_implies_not_or N P |> L
+    trade_forall_implies x <@ %Q |&| %N @> P |> apply_left
+    shunt |> QB |> after_left
+    trade_forall_implies x <@ %Q @> <@ %N==> %P @> |> Commute |> apply_left
+    ident_implies_not_or N P |> apply_left
 ]
 
-let ``9.6`` = theorem pred_calculus <@ forall x N P = (P ||| forall' x (not N))  @> [
-    distrib_or_forall |> R
-    commute_or P' <@ not N @> |> R
-    ident_implies_not_or N' P' |> Commute |> R 
+
+
+let ``9.6`` = theorem pred_calculus <@ forall %x %N %P = (%P ||| forall' %x (not %N))  @> [
+    distrib_or_forall |> apply_right
+    commute_or P <@ not %N @> |> apply_right
+    ident_implies_not_or N P |> Commute |> apply_right 
 ]
 
-let ``9.7`` = theorem pred_calculus <@ not (forall' x (not N)) ==> (forall x N (P |&| Q) = (P |&| forall x N Q)) @> [
-    let lemma1 = proof pred_calculus <@ not (forall' x (not N)) ==> (forall' x (not N) = false) @> [
-        distrib_implies_eq_and <@ (not (forall' x (not N))) @> <@ forall' x (not N) @> <@ false @> |> LR
-        contr <@ forall' x (not N) @> |> CommuteL |> L
-        zero_and <@ not (forall' x (not N)) @> |> R   
+let ``9.7`` = theorem pred_calculus <@ not (forall' %x (not %N)) ==> (forall %x %N (%P |&| %Q) = (%P |&| forall %x %N %Q)) @> [
+    let lemma1 = lemma pred_calculus <@ not (forall' %x (not %N)) ==> (forall' %x (not %N) = false) @> [
+        distrib_implies_eq_and <@ (not (forall' %x (not %N))) @> <@ forall' %x (not %N) @> <@ false @> |> apply
+        contr <@ forall' %x (not %N) @> |> CommuteL |> apply_left
+        zero_and <@ not (forall' %x (not %N)) @> |> apply_right   
     ]
-    distrib_forall_and' x' N' P' Q' |> R
-    trade_forall_or_not x' N' P' |> R
-    deduce' lemma1 |> R
-    ident_or P' |> R
-    def_true <@ P |&| forall x N Q @> |> Commute |> R
+    distrib_forall_and' x N P Q |> apply_right
+    trade_forall_or_not x N P |> apply_right
+    deduce' lemma1 |> apply_right
+    ident_or P |> apply_right
+    def_true <@ %P |&| forall %x %N %Q @> |> Commute |> apply_right
 ] 
 
-let ``9.8`` = theorem pred_calculus <@ forall x N true = true @> [
-    trade_forall_or_not x' N' <@ true @> |> L
-    commute |> L
-    zero_or <@ forall' x (not N ) @> |> L 
+
+let ``9.8`` = theorem pred_calculus <@ forall %x %N true = true @> [
+    trade_forall_implies x N <@ true @> |> apply_left
+    implies_true  N |> Taut |> apply_left
+    trade_forall_or_not x <@ true @> <@ true @> |> apply_left
+    commute |> apply_left
+    zero_or <@ forall' %x (not true ) @> |> apply_left
 ]
 
-let ``9.9`` = theorem pred_calculus <@ forall x N (P = Q) ==> (forall x N P  = (forall x N Q)) @> [
-     distrib_implies_eq_and <@ forall x N (P = Q) @> <@ forall x N P @> <@ forall x N Q @> |> LR
-     collect_forall_and |> L
-     collect_forall_and |> R
-     commute_and <@ P = Q @> P' |> L
-     commute_and <@ P = Q @> Q' |> R
-     commute_eq P' Q' |> L
-     ident_and_eq P' Q' |> L
-     ident_and_eq Q' P' |> R
-     commute_and Q' P' |> R
+let ``9.9`` = theorem pred_calculus <@ forall %x %N (%P = %Q) ==> (forall %x %N %P  = (forall %x %N %Q)) @> [
+     distrib_implies_eq_and <@ forall %x %N (%P = %Q) @> <@ forall %x %N %P @> <@ forall %x %N %Q @> |> apply
+     collect_forall_and |> apply_left
+     collect_forall_and |> apply_right
+     commute_and <@ %P = %Q @> P |> apply_left
+     commute_and <@ %P = %Q @> Q |> apply_right
+     commute_eq P Q |> apply_left
+     ident_and_eq P Q |> apply_left
+     ident_and_eq Q P |> apply_right
+     commute_and Q P |> apply_right
 ]
 
 let ``9.10``= theorem pred_calculus <@ (forall x (Q ||| N) P) ==> (forall x Q P) @> [

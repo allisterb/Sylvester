@@ -34,10 +34,6 @@ module PredCalculus =
 
     let split_range_exists = Theory.S.Rules.[27]
 
-    (* Instantiation *)
-
-    let inst x Ra P v = Instantiate pred_calculus <@ forall %x %Ra %P @> v 
-
     (* Theorems *)
 
     /// forall x N P = (forall x true (N ==> P))
@@ -85,9 +81,11 @@ module PredCalculus =
 
     /// forall x N true = true
     let ident_forall_true x N = ident pred_calculus <@ forall %x %N true = true @> [
-        trade_forall_or_not x N <@ true @> |> L
-        commute |> L
-        zero_or <@ forall' %x (not %N ) @> |> L 
+        trade_forall_implies x N <@ true @> |> apply_left
+        implies_true  N |> Taut |> apply_left
+        trade_forall_or_not x <@ true @> <@ true @> |> apply_left
+        commute |> apply_left
+        zero_or <@ forall' %x (not true ) @> |> apply_left
     ]
 
     /// forall x true true = true
@@ -127,11 +125,6 @@ module PredCalculus =
         commute_and Q P |> L
         strengthen_forall_body_and x N P Q |> Lemma
     ]
-
-    /// forall' x P ==> P
-    //let forall_implies_inst' x P = theorem pred_calculus <@ forall' %x %P ==> %P @> [
-        //inst' x P |> L
-    //]
 
     /// P ==> forall' %x %P
     let forall_conseq_inst' x P = theorem pred_calculus <@ %P ==> forall' %x %P @> [
