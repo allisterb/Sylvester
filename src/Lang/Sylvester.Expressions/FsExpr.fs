@@ -269,6 +269,24 @@ module FsExpr =
         | ShapeLambda (v, body) -> Expr.Lambda (v, f body)
         | ShapeCombination (o, exprs) -> RebuildShapeCombination (o,List.map f exprs)
 
+    /// Based on: http://www.fssnip.net/1i/title/Traverse-quotation by Tomas Petrick
+    /// Traverse an entire quotation and use the provided function
+    /// to transform some parts of the quotation. If the function 'f'
+    /// returns 'Some' for some sub-quotation then we replace that
+    /// part of the quotation. The function then recursively processes
+    /// the quotation tree.
+    let rec traverse' f q = 
+      let q = defaultArg (f q) q
+      match q with
+      | ExprShape.ShapeCombination(a, args) -> 
+          let nargs = args |> List.map (traverse' f)
+          ExprShape.RebuildShapeCombination(a, nargs)
+      | ExprShape.ShapeLambda(v, body)  -> 
+          Expr.Lambda(v, traverse' f body)
+      | ExprShape.ShapeVar(v) ->
+          Expr.Var(v)
+
+
     let subst_var_value (var:Var) (value: Expr) (expr:Expr)  =
         match expr with
         | ShapeLambda(bound, body) -> Expr.Lambda(bound, body.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some value else None))
@@ -508,6 +526,14 @@ module FsExpr =
             let v = s' |> Seq.skip p |> Seq.takeWhile(fun c -> c <> ' ') |> Seq.toArray |> String
             let s'' = (src m).Replace("$$_$$", v)
             s' = s''
+
+    let find_expr s t expr =
+        let dict = new System.Collections.Generic.List<Expr>()
+        expr |> traverse' (fun q -> 
+        if src q = s && q.Type = t then dict.Add q
+        None) |> ignore
+        dict |> List.ofSeq
+
 
     let inline (%!) q = ev q
 

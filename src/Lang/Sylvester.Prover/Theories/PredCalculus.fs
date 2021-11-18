@@ -127,35 +127,24 @@ module PredCalculus =
     ]
 
     /// P ==> forall' %x %P
-    let forall_conseq_inst' x P = theorem pred_calculus <@ %P ==> forall' %x %P @> [
+    let forall_conseq x P = theorem pred_calculus <@ %P ==> forall' %x %P @> [
         axiom pred_calculus <@ %P ==> %P @> |> Deduce |> R
         ident_forall_true' x |> R
     ]
 
     /// forall x N P ==> (N ==> P)
-    (*
-    let forall_implies_inst x N P = theorem pred_calculus <@ forall %x %N %P ==> (%N ==> %P) @> [
-        trade_body |> L
-        inst' x <@ %N ==> %P @> |> L
-        trade_forall_implies x N P |> Commute |> L
+    let forall_implies x N P = theorem pred_calculus <@ forall %x %N %P ==> (%N ==> %P) @> [
+        trade_body |> apply_left
     ]
-    *)
+
+
     /// N ==> P ==> forall x N P
-    let forall_conseq_inst x N P = theorem pred_calculus <@ %N ==> %P ==> (forall %x %N %P) @> [
+    let forall_conseq_trade_body x N P = theorem pred_calculus <@ %N ==> %P ==> (forall %x %N %P) @> [
         trade_body |> R
-        forall_conseq_inst' x <@ %N ==> %P @> |> Lemma
+        forall_conseq x <@ %N ==> %P @> |> Lemma
         trade_forall_implies x N P |> Commute |> R
     ]
 
-    (*
-    /// forall x N P = (N ==> P)
-    let ident_forall_inst x N P = ident pred_calculus <@ forall %x %N %P = (%N ==> %P) @> [
-        mutual_implication |> LR
-        forall_conseq_inst x N P |> Taut |> R
-        forall_implies_inst x N P |> Taut |> L
-        idemp_and <@ true @> |> Truth |> LR
-    ]
-    *)
     /// exists x N P = not (forall x N (not P))
     let ident_exists_not_forall x N P = id_ax pred_calculus <@ exists %x %N %P = not (forall %x %N (not %P)) @>
 

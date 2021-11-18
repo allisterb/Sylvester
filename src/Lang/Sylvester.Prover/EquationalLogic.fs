@@ -130,7 +130,7 @@ module EquationalLogic =
     
     let (|UniversalInstantiation|_|) =
         function
-        | Implies(ForAll(_, [x], Bool true, P), P') when is_inst_expr x P P' -> 
+        | Implies(ForAll(_, [x], Bool true, P), P') when is_inst_expr x P P' && not_occurs_free [x] P -> 
                 pattern_desc "Universal Instantiation" <@ fun x P P' -> (forall x true P) = P' @> |> Some
         | _ -> None
 
@@ -351,7 +351,7 @@ module EquationalLogic =
         | Conseq _ 
         | ForAll _
         | Exists _ as expr -> failwithf "Expression %s not supported for dual operator." <| src expr
-        | expr -> traverse expr _dual
+        | expr -> traverse expr _dual 
 
     let rec _double_neg = 
         function
@@ -367,7 +367,7 @@ module EquationalLogic =
         | Or(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not (not(%%_p:bool) |&| not (%%_q:bool)) @@>
         | ForAll(_, bound, range, body) -> let v = vars_to_tuple bound in let q = call <@ exists @> (v::range::(<@@ not (%%body:bool) @@>)::[]) in call <@ not @> (q::[])
         | Exists(_, bound, range, body) -> let v = vars_to_tuple bound in let q = call <@ forall @> (v::range::(<@@ not (%%body:bool) @@>)::[]) in call <@ not @> (q::[]) 
-        | expr -> traverse expr _double_neg
+        | expr -> traverse expr _double_neg 
 
     let _distrib_implies =
         function
