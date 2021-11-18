@@ -4,7 +4,15 @@ open FSharp.Quotations
 
 open Sylvester
 
-<@fun x -> x + 9 @>
+let find_expr expr =
+    
+    expr |> traverse' (fun q -> 
+    match q with 
+    | Patterns.Value(v, typ) -> printfn "Constant: %A" v
+    | _ -> ()
+    None ) 
+  |> ignore
+
 
 let is_inst_expr (bv:Var) (l:Expr) (r:Expr)=
     let s = src l

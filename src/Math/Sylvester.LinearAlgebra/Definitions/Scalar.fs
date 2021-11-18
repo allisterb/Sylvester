@@ -40,12 +40,14 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
     static member One = typeof<'t> |> zero_val |> expand''<'t> |> Scalar
 
+    static member op_Implicit (l:'t):Scalar<'t> = Scalar l
+
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = 
         let e = call_add (l.Expr) (r.Expr) |> expand''<'t> in Scalar<'t> e
-
+        
     static member (+) (l:'t, r:Scalar<'t>) = 
         let e = call_add (Expr.Value l) (r.Expr) |> expand''<'t> in Scalar<'t> e
-        
+
     static member (+) (l:Scalar<'t>, r:'t) = 
         let e = call_add (l.Expr) (Expr.Value r) |> expand''<'t> in Scalar<'t> e
 
