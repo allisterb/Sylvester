@@ -78,12 +78,6 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member (*) (l:Scalar<'t>, r:'t) = 
         let e = call_mul (l.Expr) (Expr.Value r) |> expand''<'t> in Scalar<'t> e
 
-[<RequireQualifiedAccess>]
-module NumericLiteralR = 
-  let FromZero() = Scalar<real> 0.
-  let FromOne() = Scalar<real> 1.
-  let FromInt32 (i:int) = i |> real |> Scalar<real>
-
 [<AutoOpen>]
 module Scalar =
     let scalar (n:'t) = let e =  expand''<'t> <@ n @> in Scalar(e)

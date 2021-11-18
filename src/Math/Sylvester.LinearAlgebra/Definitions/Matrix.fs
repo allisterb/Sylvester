@@ -30,6 +30,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val Cols = exprT |> Array.map Vector<'t>
     member val RowsL = expr |> Array.map Vector<'t> |> Array.toList
     member val ColsL = exprT |> Array.map Vector<'t> |> Array.toList
+    
     member x.Display = 
         let nl = System.Environment.NewLine
         x.Rows
@@ -90,8 +91,6 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
         let d = data |> expand_list' |> List.toArray |> Array.chunkBySize (number<'dim0>.IntVal)
         Matrix<'dim0, 'dim1, 't> d
         
-    //|> Seq.chunkBySize (dim0.IntVal) 
-
     static member ofRows(data: Expr<'t list list>) = Matrix<'dim0, 'dim1,'t>(data)
       
     static member ofCols(data: Expr<'t list list>) = Matrix<'dim0, 'dim1,'t>(data |> expand_lists' |> Ops.mat_to_array |> Ops.transpose_mat)
@@ -142,17 +141,18 @@ module Matrix =
 
     let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsL |> Some
 
-    let _mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
+    let _mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
     
-    let mat (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>(data)
+    let _mat' (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
+
+    let mat (l:'dim0) (r:'dim1) (data:Expr<'t list>) = Matrix<'dim0, 'dim1, 't> data
     
     let mat' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
-    let mat_l (l:'dim0) (r:'dim1) (data:Expr<'t list>) = Matrix<'dim0, 'dim1, 't>(data)
+    let mat_l (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>(data)
     
-    let mat_l' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
+    //let mat' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
-    let _mat' (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
     
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
         Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> _mat l.Dim0 (pp (l.Dim1 + ``1``))
@@ -205,4 +205,4 @@ module Matrix =
     let det (l:SquareMatrix<'dim0, _>) =
         l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
 
-    //let detm (l:SquareMatrix<one, two, _>) = ()
+    //

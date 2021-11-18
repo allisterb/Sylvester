@@ -135,7 +135,7 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member (+) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in Rational.Normalize ((x'.Numerator * y.Denominator) + (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
     
-
+    
     static member (-) (x : Rational, y : Rational) = Rational.Normalize ((x.Numerator * y.Denominator) - (y.Numerator * x.Denominator), x.Denominator * y.Denominator)
     
     static member (-) (x : Rational, y : int) = let y' = Rational (y, 1) in Rational.Normalize ((x.Numerator * y'.Denominator) - (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
@@ -228,10 +228,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
 type Natural = 
     struct 
         val IntVal: BigInteger
-        new(p:BigInteger) = {IntVal = if p >= BigInteger.Zero then p else failwithf "The value %A must be a rational number." p} 
-        
-        new(p:int) = {IntVal = if p >= 0 then BigInteger p else failwithf "The value %A must be a rational number." p} 
-        new(p:int64) = {IntVal = if p >= 0L then BigInteger p else failwithf "The value %A must be a rational number." p} 
+        new(p:BigInteger) = {IntVal = if p >= BigInteger.Zero then p else failwithf "The value %A must be an integer." p}     
+        new(p:int) = {IntVal = if p >= 0 then BigInteger p else failwithf "The value %A must be an integer." p} 
+        new(p:int64) = {IntVal = if p >= 0L then BigInteger p else failwithf "The value %A must be an integer." p} 
         new(p:float) = {IntVal = if p >= 0. then BigInteger p else failwithf "The value %A must be a rational number." p} 
         new(p:float32) = {IntVal = if p >= 0.0f then BigInteger p else failwithf "The value %A must be a rational number." p}     
     end 
@@ -267,140 +266,130 @@ type Natural =
     
     static member One = Natural(BigInteger.One)
     
-    (*
-    static member Reciprocal (num : Rational) = Rational.Normalize (num.Denominator, num.Numerator)
+    static member Reciprocal (num : Natural) = Rational.Normalize (Natural.One.IntVal, num.IntVal)
 
-    static member Pow (num : Rational, n : int) =
-        if n < 0 then 
-            Rational.Normalize (BigInteger.Pow (num.Denominator, -n), BigInteger.Pow (num.Numerator, -n))
-        else 
-            Rational (BigInteger.Pow (num.Numerator, n), BigInteger.Pow (num.Denominator, n))
-        
-    static member Pow (num : Rational, pow : Rational) =
-        let g, p = (float) num,  (float) pow
-        Rational(g ** p)
-
-    static member Abs(r: Rational) = Rational((abs r.Numerator), (abs r.Denominator))
-
-    static member Sqrt(r: Rational) = 
-        let n, d = (float) r.Numerator, (float) r.Denominator
-        Rational((sqrt n), (sqrt d))
-    
-    static member (~+) (r : Rational) = r
-
-    static member (~-) (num : Rational) = Rational(-num.Numerator, num.Denominator)
-
-    static member (+) (x : Rational, y : Rational) = Rational.Normalize ((x.Numerator * y.Denominator) + (y.Numerator * x.Denominator), x.Denominator * y.Denominator)
-
-    static member (+) (x : Rational, y : int) = let y' = Rational (y, 1) in Rational.Normalize ((x.Numerator * y'.Denominator) + (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (+) (x : Rational, y : int64) = let y' = Rational (y, 1L) in Rational.Normalize ((x.Numerator * y'.Denominator) + (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-    
-    static member (+) (x : Rational, y : BigInteger) = let y' = Rational (y, BigInteger.One) in Rational.Normalize ((x.Numerator * y'.Denominator) + (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (+) (x : Rational, y : float) = let y' = Rational (y, 1.) in Rational.Normalize ((x.Numerator * y'.Denominator) + (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (+) (x : Rational, y : float32) = let y' = Rational (y, 1.0f) in Rational.Normalize ((x.Numerator * y'.Denominator) + (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (+) (x : int, y : Rational) = let x' = Rational (x, 1) in Rational.Normalize ((x'.Numerator * y.Denominator) + (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (+) (x : int64, y : Rational) = let x' = Rational (x, 1L) in Rational.Normalize ((x'.Numerator * y.Denominator) + (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (+) (x : BigInteger, y : Rational) = let x' = Rational (x, BigInteger.One) in Rational.Normalize ((x'.Numerator * y.Denominator) + (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (+) (x : float, y : Rational) = let x' = Rational (x, 1.) in Rational.Normalize ((x'.Numerator * y.Denominator) + (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (+) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in Rational.Normalize ((x'.Numerator * y.Denominator) + (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-
-    static member (-) (x : Rational, y : Rational) = Rational.Normalize ((x.Numerator * y.Denominator) - (y.Numerator * x.Denominator), x.Denominator * y.Denominator)
-    
-    static member (-) (x : Rational, y : int) = let y' = Rational (y, 1) in Rational.Normalize ((x.Numerator * y'.Denominator) - (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (-) (x : Rational, y : int64) = let y' = Rational (y, 1L) in Rational.Normalize ((x.Numerator * y'.Denominator) - (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-    
-    static member (-) (x : Rational, y : BigInteger) = let y' = Rational (y, BigInteger.One) in Rational.Normalize ((x.Numerator * y'.Denominator) - (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (-) (x : Rational, y : float) = let y' = Rational (y, 1.) in Rational.Normalize ((x.Numerator * y'.Denominator) - (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (-) (x : Rational, y : float32) = let y' = Rational (y, 1.0f) in Rational.Normalize ((x.Numerator * y'.Denominator) - (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (-) (x : int, y : Rational) = let x' = Rational (x, 1) in Rational.Normalize ((x'.Numerator * y.Denominator) - (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (-) (x : int64, y : Rational) = let x' = Rational (x, 1L) in Rational.Normalize ((x'.Numerator * y.Denominator) - (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (-) (x : BigInteger, y : Rational) = let x' = Rational (x, BigInteger.One) in Rational.Normalize ((x'.Numerator * y.Denominator) - (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (-) (x : float, y : Rational) = let x' = Rational (x, 1.) in Rational.Normalize ((x'.Numerator * y.Denominator) - (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (-) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in Rational.Normalize ((x'.Numerator * y.Denominator) - (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    
-    static member (*) (x : Rational, y : Rational) = Rational.Normalize (x.Numerator * y.Numerator, x.Denominator * y.Denominator)
-    
-    static member (*) (x : Rational, y : int) = let y' = Rational (y, 1) in Rational.Normalize ((x.Numerator * y'.Denominator) * (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (*) (x : Rational, y : int64) = let y' = Rational (y, 1L) in Rational.Normalize ((x.Numerator * y'.Denominator) * (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-    
-    static member (*) (x : Rational, y : BigInteger) = let y' = Rational (y, BigInteger.One) in Rational.Normalize ((x.Numerator * y'.Denominator) * (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (*) (x : Rational, y : float) = let y' = Rational (y, 1.) in Rational.Normalize ((x.Numerator * y'.Denominator) * (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (*) (x : Rational, y : float32) = let y' = Rational (y, 1.0f) in Rational.Normalize ((x.Numerator * y'.Denominator) * (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (*) (x : int, y : Rational) = let x' = Rational (x, 1) in Rational.Normalize ((x'.Numerator * y.Denominator) * (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (*) (x : int64, y : Rational) = let x' = Rational (x, 1L) in Rational.Normalize ((x'.Numerator * y.Denominator) * (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (*) (x : BigInteger, y : Rational) = let x' = Rational (x, BigInteger.One) in Rational.Normalize ((x'.Numerator * y.Denominator) * (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (*) (x : float, y : Rational) = let x' = Rational (x, 1.) in Rational.Normalize ((x'.Numerator * y.Denominator) * (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (*) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in Rational.Normalize ((x'.Numerator * y.Denominator) * (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    
-    static member (/) (x : Rational, y : Rational) = Rational.Normalize (x.Numerator * y.Denominator, x.Denominator * y.Numerator)
-    
-    static member (/) (x : Rational, y : int) = let y' = Rational (y, 1) in Rational.Normalize ((x.Numerator * y'.Denominator) / (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (/) (x : Rational, y : int64) = let y' = Rational (y, 1L) in Rational.Normalize ((x.Numerator * y'.Denominator) / (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-    
-    static member (/) (x : Rational, y : BigInteger) = let y' = Rational (y, BigInteger.One) in Rational.Normalize ((x.Numerator * y'.Denominator) / (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (/) (x : Rational, y : float) = let y' = Rational (y, 1.) in Rational.Normalize ((x.Numerator * y'.Denominator) / (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (/) (x : Rational, y : float32) = let y' = Rational (y, 1.0f) in Rational.Normalize ((x.Numerator * y'.Denominator) / (y'.Numerator * x.Denominator), x.Denominator * y'.Denominator)
-
-    static member (/) (x : int, y : Rational) = let x' = Rational (x, 1) in Rational.Normalize ((x'.Numerator * y.Denominator) / (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (/) (x : int64, y : Rational) = let x' = Rational (x, 1L) in Rational.Normalize ((x'.Numerator * y.Denominator) / (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (/) (x : BigInteger, y : Rational) = let x' = Rational (x, BigInteger.One) in Rational.Normalize ((x'.Numerator * y.Denominator) / (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (/) (x : float, y : Rational) = let x' = Rational (x, 1.) in Rational.Normalize ((x'.Numerator * y.Denominator) / (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member (/) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in Rational.Normalize ((x'.Numerator * y.Denominator) / (y.Numerator * x'.Denominator), x'.Denominator * y.Denominator)
-    
-    static member op_Explicit(r: Rational): float = (float) r.Numerator / (float) r.Denominator
-    static member op_Explicit(r: Rational): float32 = (float32) r.Numerator / (float32) r.Denominator
-    static member op_Explicit(r: Rational): decimal = (decimal) r.Numerator / (decimal) r.Denominator
-    static member op_Explicit(r: Rational): BigInteger = 
-        // have p = d.q + r, |r| < |q|
-        let d, r = BigInteger.DivRem (r.Numerator, r.Denominator)
-        if r < BigInteger.Zero then
-            // p = (d-1).q + (r+q)
-            d - BigInteger.One
+    static member Pow (num : Natural, n : int) =
+        if n < 0 then
+            Rational.Normalize(BigInteger.One, BigInteger.Pow (num.IntVal, -n)) 
         else
-            // p = d.q + r
-            d
-    static member op_Explicit(r: Rational): MathNet.Numerics.BigRational = 
-        MathNet.Numerics.BigRational.FromBigIntFraction(r.Numerator, r.Denominator)
-    static member op_Explicit(r: BigInteger): Rational = Rational(r)
-    static member op_Explicit(r: int): Rational = Rational(r, 1)   
-    static member op_Explicit(r: float): Rational = Rational(r)
-    static member op_Equality (l:Rational, r:Rational) = l.Equals r
-    static member op_Inequality (l:Rational, r:Rational) = not <| l.Equals r
-*)
+            BigInteger.Pow (num.IntVal, n) |> Rational
+
+    static member Pow (num : Natural, pow : Natural) =
+       Natural.Pow(num, (int) pow)
+       
+    static member Abs(r: Natural) = r
+
+    static member Sqrt(r: Natural) = 
+        r.IntVal |> float |> sqrt
+    
+    static member (~+) (r : Natural) = r
+
+    static member (~-) (num : Natural) = Rational(-num.IntVal, BigInteger.One)
+
+    static member (+) (x : Natural, y : Natural) = Natural(x.IntVal + y.IntVal)
+
+    static member (+) (x : Natural, y : int) = x + Natural y
+
+    static member (+) (x : Natural, y : int64) = x + Natural y
+    
+    static member (+) (x : Natural, y : BigInteger) = x + Natural y
+
+    static member (+) (x : Natural, y : float) = x + Natural y
+
+    static member (+) (x : Natural, y : float32) = x + Natural y
+
+    static member (+) (x : int, y : Natural) = Natural x + y
+    
+    static member (+) (x : int64, y : Natural) = Natural x + y
+    
+    static member (+) (x : BigInteger, y : Natural) = Natural x + y
+    
+    static member (+) (x : float, y : Natural) = Natural x + y
+    
+    static member (+) (x : float32, y : Natural) = Natural x + y
+    
+
+    static member (-) (x : Natural, y : Natural) = Natural(x.IntVal - y.IntVal)
+
+    static member (-) (x : Natural, y : int) = x - Natural y
+
+    static member (-) (x : Natural, y : int64) = x - Natural y
+
+    static member (-) (x : Natural, y : BigInteger) = x - Natural y
+
+    static member (-) (x : Natural, y : float) = x - Natural y
+
+    static member (-) (x : Natural, y : float32) = x - Natural y
+
+    static member (-) (x : int, y : Natural) = Natural x - y
+
+    static member (-) (x : int64, y : Natural) = Natural x - y
+
+    static member (-) (x : BigInteger, y : Natural) = Natural x - y
+
+    static member (-) (x : float, y : Natural) = Natural x - y
+
+    static member (-) (x : float32, y : Natural) = Natural x - y
+    
+    
+    static member (*) (x : Natural, y : Natural) = Natural(x.IntVal * y.IntVal)
+
+    static member (*) (x : Natural, y : int) = x * Natural y
+
+    static member (*) (x : Natural, y : int64) = x * Natural y
+    
+    static member (*) (x : Natural, y : BigInteger) = x * Natural y
+
+    static member (*) (x : Natural, y : float) = x * Natural y
+
+    static member (*) (x : Natural, y : float32) = x * Natural y
+
+    static member (*) (x : int, y : Natural) = Natural x * y
+    
+    static member (*) (x : int64, y : Natural) = Natural x * y
+    
+    static member (*) (x : BigInteger, y : Natural) = Natural x * y
+    
+    static member (*) (x : float, y : Natural) = Natural x * y
+    
+    static member (*) (x : float32, y : Natural) = Natural x * y
+
+        
+    static member (/) (x : Natural, y : Natural) = Natural(x.IntVal / y.IntVal)
+
+    static member (/) (x : Natural, y : int) = x / Natural y
+
+    static member (/) (x : Natural, y : int64) = x / Natural y
+
+    static member (/) (x : Natural, y : BigInteger) = x / Natural y
+
+    static member (/) (x : Natural, y : float) = x + Natural y
+
+    static member (/) (x : Natural, y : float32) = x + Natural y
+
+    static member (/) (x : int, y : Natural) = Natural x / y
+
+    static member (/) (x : int64, y : Natural) = Natural x / y
+
+    static member (/) (x : BigInteger, y : Natural) = Natural x / y
+
+    static member (/) (x : float, y : Natural) = Natural x / y
+
+    static member (/) (x : float32, y : Natural) = Natural x / y    
+    
+    static member op_Explicit(r: Natural): int = (int) r.IntVal
+    static member op_Explicit(r: Natural): float = (float) r.IntVal
+    static member op_Explicit(r: Natural): float32 = (float32) r.IntVal
+    static member op_Explicit(r: Natural): decimal = (decimal) r.IntVal 
+    static member op_Explicit(r: Natural): BigInteger = r.IntVal
+    static member op_Explicit(r: Natural): MathNet.Numerics.BigRational = 
+        MathNet.Numerics.BigRational.FromBigInt r.IntVal
+    static member op_Explicit(r: BigInteger): Natural = Natural r
+    static member op_Explicit(r: int): Natural = Natural r   
+    static member op_Explicit(r: float): Natural = Natural r
+    static member op_Equality (l:Natural, r:Natural) = l.Equals r
+    static member op_Inequality (l:Natural, r:Natural) = not <| l.Equals r
+
 type real = float
 
 type rat = Rational
@@ -411,6 +400,18 @@ type rat = Rational
    let FromOne() = Rational.One
    let FromInt32 (i:int) = Rational(i, 1)
    let FromInt64 (i:int64) = Rational(i, 1L)
+
+[<RequireQualifiedAccess>]
+module NumericLiteralR = 
+  let FromZero() :real = 0.
+  let FromOne() :real = 1.
+  let FromInt32 (i:int) :real = float i
+
+[<RequireQualifiedAccess>]
+module NumericLiteralN = 
+  let FromZero() = Natural.Zero
+  let FromOne() = Natural.One
+  let FromInt32 (i:int) = Natural i
 
 [<ReflectedDefinition;AutoOpen>]
 module Math =

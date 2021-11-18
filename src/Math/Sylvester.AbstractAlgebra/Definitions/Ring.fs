@@ -58,6 +58,16 @@ type IIdeal<'t when 't : equality> =
     inherit IGroup<'t>
     abstract Op:BinaryOp<'t>
 
+[<RequireQualifiedAccess>]
+module internal Mod = 
+    // Based on: https://paulor.land/writing/algebra-beyond-numbers/index.html#modular-arithmetic
+    let modulo n x = (x % n + n) % n
+    
+    let (+) n x y = modulo n (x + y)
+    let (-) n x y = modulo n (x - y)
+    let (*) n x y = modulo n (x * y)
+    let (/) n x y = x % y
+
 [<AutoOpen>]
 module Ring =
     /// Zero ring.

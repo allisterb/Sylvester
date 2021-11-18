@@ -33,7 +33,6 @@
     <Compile Include="Definitions\Groupoid.fs" />
     <Compile Include="Definitions\Semigroup.fs" />
     <Compile Include="Definitions\Monoid.fs" />
-    <Compile Include="Definitions\Arithmetic.fs" />
     <Compile Include="Definitions\Group.fs" />
     <Compile Include="Definitions\Ring.fs" />
     <Compile Include="Definitions\Field.fs" />
