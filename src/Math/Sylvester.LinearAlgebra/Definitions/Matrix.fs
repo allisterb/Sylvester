@@ -141,43 +141,59 @@ module Matrix =
 
     let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsL |> Some
 
+    let marray (m:Matrix<_,_,_>) = m.Expr
+
+    let marrayi (m:Matrix<_,_,_>) = m.Expr |> Array.indexed
+
+    let marray' (m:Matrix<_,_,_>) = m.ExprT
+
+    let marrayi' (m:Matrix<_,_,_>) = m.ExprT |> Array.indexed
+
     let _mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
     
     let _mat' (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
     let mat (l:'dim0) (r:'dim1) (data:Expr<'t list>) = Matrix<'dim0, 'dim1, 't> data
     
-    let mat' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
+    let mat' (l:'dim0) (r:'dim1) (data:Expr<'t list>) = 
+        let d = data |> expand_list' |> List.toArray |> Array.chunkBySize (number<'dim1>.IntVal)
+        Matrix<'dim0, 'dim1, 't>.ofCols d
 
-    let mat_l (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>(data)
+    let matl (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't> data
     
-    //let mat' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
+    let matl' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
+    
+    let mata (l:'dim0) (r:'dim1) (data:Expr<'t> array array) = Matrix<'dim0, 'dim1, 't> data
+    
+    let mata' (l:'dim0) (r:'dim1) (data:Expr<'t> array array) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
-    
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
         Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> _mat l.Dim0 (pp (l.Dim1 + ``1``))
 
-    let ident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+    let inline (||+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
+        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> _mat l.Dim0 (pp (l.Dim1 + ``1``))
+
+    let mident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>
 
-    let trans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose
+    let mtrans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose
 
-    let add (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l + r
+    let madd (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l + r
     
-    let sub (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l - r
+    let msub (l:Matrix<'dim0, 'dim1, 't>) (r:Matrix<'dim0, 'dim1, 't>) = l - r
     
-    let smul (l:'t) (r:Matrix<'dim0, 'dim1, 't>) = Matrix<'dim0, 'dim1, 't>.(*) (l, r)
+    let msmul (l:'t) (r:Matrix<'dim0, 'dim1, 't>) = Matrix<'dim0, 'dim1, 't>.(*) (l, r)
 
-    let simplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplify') |> Matrix<'dim0, 'dim1, 't>
+    let msimplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplify') |> Matrix<'dim0, 'dim1, 't>
 
-    let inline rmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
+    let inline mrmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
         check (i +< l.Dim0)
         let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
         let ri = Scalar k * l.[int i]
         rows.[int i] <- ri
         Matrix<'dim0, 'dim1, 't> rows
 
-    let inline rswitch (l:Matrix<'dim0, 'dim1, 't>) i j =
+    let inline mrswitch (l:Matrix<'dim0, 'dim1, 't>) i j =
         check (i +< l.Dim0)
         check (j +< l.Dim1)
         let ri = l.[int i] 
@@ -187,7 +203,7 @@ module Matrix =
         rows.[(int) j] <- ri
         Matrix<'dim0, 'dim1, 't> rows
     
-    let inline raddmul (l:Matrix<'dim0, 'dim1, 't>) i j (k:Expr<'t>) =
+    let inline mraddmul (l:Matrix<'dim0, 'dim1, 't>) i j (k:Expr<'t>) =
          check (i +< l.Dim0)
          check (j +< l.Dim1)
          let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
@@ -195,14 +211,23 @@ module Matrix =
          rows.[int i] <- ri
          Matrix<'dim0, 'dim1, 't> rows
 
-    let inline diag (l:Matrix<'dim0,'dim1,'t>) = 
+    let inline mdiag (l:Matrix<'dim0,'dim1,'t>) = 
         let dim = Math.Min(l.Dim0.IntVal, l.Dim1.IntVal)
         Array2D.init dim dim l.Kr
         |> Array2D.toJagged
         |> sexprs'
         |> _mat' (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
 
-    let det (l:SquareMatrix<'dim0, _>) =
-        l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
+    let inline mdelr n (m:Matrix<_,_,_>) =
+        check (n +< m.Dim0)
+        m |> marrayi |> Array.filter(fun (i, r) -> i <> (int) n) |> Array.map snd |> mata (pp (m.Dim0 - ``1``)) m.Dim1
+    
+    let inline mdelc n (m:Matrix<_,_,_>) =
+        check (n +< m.Dim1)
+        m |> marrayi' |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> mata' m.Dim0 (pp (m.Dim1 - ``1``))
+    //let det (l:SquareMatrix<'dim0, _>) =
+    //    match l.Dim0.IntVal with
+    //    | 1 -> l.[0].[0]
+    //    | 2 -> l.[0] * l.[3]
 
     //

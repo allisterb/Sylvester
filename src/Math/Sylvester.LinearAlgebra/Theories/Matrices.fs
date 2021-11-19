@@ -21,7 +21,7 @@ module MatrixAlgbra =
         function
         | Assoc <@(=)@> (<@ (+) @> :Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) x -> Some(desc x)
         | Identity <@(=)@> (<@ (+) @> : Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) <@ Matrix<_, _, 't>.Zero @> x -> Some(desc x)
-        | Inverse <@(=)@> (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (expand'' <@ Matrix.smul %%neg_one @>) <@ Matrix<_,_, 't>.Zero @> x
+        | Inverse <@(=)@> (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (expand'' <@ Matrix.msmul %%neg_one @>) <@ Matrix<_,_, 't>.Zero @> x
         | LeftCancelNonZero (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) <@ Matrix<_,_, 't>.Zero @> x -> Some (desc x)
         | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Value(v, t)))) when vequal a a' && t = typeof<Matrix<_,_, 't>> && (v :?> Matrix<_,_, 't>) = Matrix<_,_, 't>.Zero -> Some (desc (pattern_desc' "Additive Inverse"))
         | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x -> Some (desc x)

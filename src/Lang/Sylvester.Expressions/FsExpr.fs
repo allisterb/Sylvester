@@ -380,6 +380,7 @@ module FsExpr =
                 | ValueWithName(o, t, _) -> Expr.Value(o, t)
                 | e -> failwithf "Unknown expression trying to expand List.toArray: %A." e
             | Call(None, Op "FromInt32" ,Value(v, _)::[]) as e when e.Type = typeof<Rational> -> Expr.Value(Rational((v :?> int32), 1))
+            | Call(None, Op "ToDouble" ,Value(v, _)::[]) as e when e.Type = typeof<real> -> Expr.Value(Convert.ToDouble(v))
             | Call (None, Op "FromZero", _) as e -> e
             | Call(body, MethodWithReflectedDefinition meth, args) ->
                 let this = match body with Some b -> Expr.Application(meth, b) | _ -> meth
