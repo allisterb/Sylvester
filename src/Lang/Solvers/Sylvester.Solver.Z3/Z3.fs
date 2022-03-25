@@ -209,6 +209,11 @@ module Z3 =
         (* Set constraints *)
         | Call(None, Op "op_BarQmarkBar",l::r::[]) -> solver.Ctx.MkSetMembership(create_expr solver l, create_set_expr solver r)
         | Call(None, Op "op_BarLessBar",l::r::[]) -> solver.Ctx.MkSetSubset(create_set_expr solver l, create_set_expr solver r)
+        
+        (* Quantifiers *)
+        | Call(None, Op "forall", Var v::range::body::[]) -> solver.Ctx.MkForall([|(v |> Expr.Var |> create_expr solver)|], create_expr solver (<@@ (%%range:bool) ==> (%%body:bool) @@>)) :> BoolExpr
+        | Call(None, Op "exists", Var v::range::body::[]) -> solver.Ctx.MkExists([|(v |> Expr.Var |> create_expr solver)|], create_expr solver (<@@ (%%range:bool) |&| (%%body:bool) @@>)) :> BoolExpr
+
         | _ -> failwithf "Cannot create Z3 constraint from %A." expr
 
     and internal create_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : Expr =
