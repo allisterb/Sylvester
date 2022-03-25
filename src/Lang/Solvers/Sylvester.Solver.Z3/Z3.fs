@@ -239,11 +239,19 @@ module Z3 =
         | e when e.IsRatNum -> let r = (e :?> RatNum) in Rational(r.BigIntNumerator, r.BigIntDenominator)
         | e -> failwithf "The expression %A is not a rational constant." e 
         
+    let internal get_bool_const : Expr->bool =
+         function
+         | e when e.IsBool -> bool.Parse((e :?> Microsoft.Z3.BoolExpr).ToString())
+         | e -> failwithf "The expression %A is not a boolean constant." e
+
     let internal _get_int_var_model : Model-> (string *int) list = 
         get_var_model >> List.map(fun (l, r) -> l.ToString(), get_int_const r)
 
     let internal _get_rat_var_model : Model-> (string * Rational) list = 
         get_var_model >> List.map(fun (l, r) -> l.ToString(), get_rat_const r)
+
+    let internal _get_bool_var_model : Model-> (string * bool) list = 
+        get_var_model >> List.map(fun (l, r) -> l.ToString(), get_bool_const r)
 
     let set_solver_param (s:Z3Solver) (k:string) (v:string) = s.SolverParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
 
@@ -257,6 +265,8 @@ module Z3 =
 
     let get_rat_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_rat_var_model
 
+    let get_bool_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_bool_var_model
+    
     let check_sat (s:Z3Solver) a = (Option.isSome <| check_sat_model s a)
 
     let opt_set_param (s:Z3Solver) (k:string) (v:string) = s.OptimizerParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
