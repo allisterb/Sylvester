@@ -55,7 +55,6 @@ type Z3Solver(?nonLinear:bool, ?logic:string) =
     
     static member DescribeOptimizerParam n = if Z3Solver.OptimizerParamsHelp |> Map.containsKey n then Some (Z3Solver.OptimizerParamsHelp.[n]) else None
 
-
 module Z3 =
     /// Multiple indexers for evaluating formulas
     type Microsoft.Z3.Model with
@@ -68,6 +67,11 @@ module Z3 =
         else 
             x.FuncInterp(index) |> FuncResult
     
+    let internal (|FuncApply|_|) =
+        function
+        | Application(PropertyGet (None, pin,  []), e) -> Some(pin, e)
+        | _ -> None
+
     let internal (|IntType|_|) (t:Type) =
         match t.Name with
         | "UInt32 "
@@ -88,6 +92,7 @@ module Z3 =
         | IntType _
         | RatType _ -> Some ()
         | _ -> None
+
 
     let internal (|BoolType|_|) (t:Type) =
         match t.Name with
@@ -126,8 +131,13 @@ module Z3 =
         let sort = create_sort solver t
         solver.Ctx.MkArrayConst(s, sort, solver.Ctx.MkBoolSort())
 
+    let internal create_func_decl (solver:Z3Solver) (funcDecls:System.Collections.Generic.Dictionary<string, FuncDecl>)(p:Reflection.PropertyInfo) (expr:FSharp.Quotations.Expr) = 
+        do if not (funcDecls.ContainsKey(p.Name)) then funcDecls.Add(p.Name, solver.Ctx.MkFuncDecl(p.Name, (create_sort solver expr.Type), (create_sort solver p.PropertyType)))
+        funcDecls.[p.Name]
+            
     let rec internal create_arith_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : ArithExpr =
-        let vars = expr |> expand |> get_vars |> List.map(fun v -> create_arith_const solver v.Name v.Type) |> Map.ofList 
+        let vars = expr |> expand |> get_vars |> List.map(fun v -> create_arith_const solver v.Name v.Type) |> Map.ofList
+        
         match expr with
         | Var v -> vars.[v.Name] 
         | ValueWithName(v,_,_) -> create_numeral solver v
@@ -148,7 +158,7 @@ module Z3 =
         | Call(None, Op "op_Exponentiation" ,l::r::[]) -> solver.Ctx.MkPower((create_arith_expr solver l), (create_arith_expr solver r))
         | Call(None, Op "Sqrt", r::[]) -> solver.Ctx.MkPower((create_arith_expr solver r), (create_arith_expr solver (<@@ 1/2Q @@>)))
         
-        | e when e.Type = typeof<bool>-> failwithf "The expression %A is a boolean expression." e
+        | e when e.Type = typeof<bool>-> failwithf "The expression %A is a boolean expression not an arithmetic expression." e
         | e  -> failwithf "The expression %A of type %A is not an arithmetic expression." e (e.Type)
 
     let rec internal create_set_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : ArrayExpr =
@@ -162,6 +172,7 @@ module Z3 =
             |> get_vars 
             |> List.map (fun v -> v.Name, get_array_var_or_fail v)
             |> Map.ofList
+        
         match expr with
             | Var v -> vars.[v.Name]
             | Coerce(e, t) when t.Name.StartsWith "ISet" -> create_set_expr solver e
@@ -169,6 +180,7 @@ module Z3 =
             | U when (src U = "U" || src U = "Set`1.U" || U.ToString() = "Value (Set {x|true:x})") && expr.Type.IsGenericType -> let s = create_sort solver expr.Type.GenericTypeArguments.[0] in solver.Ctx.MkFullSet s
             | Call(None, Op "op_BarPlusBar" ,l::r::[]) -> solver.Ctx.MkSetUnion((create_set_expr solver l), (create_set_expr solver r))
             | Call(None, Op "op_BarMultiplyBar",l::r::[]) -> solver.Ctx.MkSetIntersection(create_set_expr solver l, create_set_expr solver r)
+            
             | _ -> failwithf "The expression %A is not a supported set expression." expr
     
     let rec internal create_bool_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : BoolExpr =
@@ -178,25 +190,14 @@ module Z3 =
             |> get_vars 
             |> List.choose(fun v -> if v.Type = typeof<bool> then Some v else None)
             |> List.map(fun v -> v.Name, solver.Ctx.MkBoolConst(v.Name)) |> Map.ofList
+        
         match expr' with
         | Var v when v.Type = typeof<bool> -> vars.[v.Name]
         | ValueWithName(v, t, _) when t = typeof<bool> -> solver.Ctx.MkBool(v :?> bool)
         | Bool true -> solver.Ctx.MkTrue()
         | Bool false -> solver.Ctx.MkFalse()
-        | Call(None, Op "op_Equality" ,l::r::[]) ->
-            match l.Type, r.Type with
-            | BoolType, BoolType -> solver.Ctx.MkEq(create_bool_expr solver l, create_bool_expr solver r)
-            | SetType, SetType -> solver.Ctx.MkEq(create_set_expr solver l, create_set_expr solver r)
-            | IntType, IntType
-            | RatType, RatType -> solver.Ctx.MkEq(create_arith_expr solver l, create_arith_expr solver r)
-            | _ -> failwith ""
-        | Call(None, Op "op_Inequality" ,l::r::[])  -> 
-            match l.Type, r.Type with
-            | BoolType, BoolType -> solver.Ctx.MkDistinct(create_bool_expr solver l, create_bool_expr solver r)
-            | SetType, SetType -> solver.Ctx.MkDistinct(create_set_expr solver l, create_set_expr solver r)
-            | IntType, IntType
-            | RatType, RatType -> solver.Ctx.MkDistinct(create_arith_expr solver l, create_arith_expr solver r)
-            | _ -> failwith ""
+        | Call(None, Op "op_Equality" ,l::r::[]) -> solver.Ctx.MkEq(create_expr solver l, create_expr solver r)
+        | Call(None, Op "op_Inequality" ,l::r::[])  -> solver.Ctx.MkDistinct(create_expr solver l, create_expr solver r)
         | Call(None, Op "op_BarAmpBar",l::r::[]) -> solver.Ctx.MkAnd(create_bool_expr solver l, create_bool_expr solver r)
         | Call(None, Op "op_BitwiseOr",l::r::[]) -> solver.Ctx.MkOr(create_bool_expr solver l, create_bool_expr solver r)
         | Call(None, Op "Not",r::[]) -> solver.Ctx.MkNot(create_bool_expr solver r)
@@ -209,7 +210,6 @@ module Z3 =
         (* Set constraints *)
         | Call(None, Op "op_BarQmarkBar",l::r::[]) -> solver.Ctx.MkSetMembership(create_expr solver l, create_set_expr solver r)
         | Call(None, Op "op_BarLessBar",l::r::[]) -> solver.Ctx.MkSetSubset(create_set_expr solver l, create_set_expr solver r)
-        
         (* Quantifiers *)
         | Call(None, Op "forall", Var v::range::body::[]) -> solver.Ctx.MkForall([|(v |> Expr.Var |> create_expr solver)|], create_expr solver (<@@ (%%range:bool) ==> (%%body:bool) @@>)) :> BoolExpr
         | Call(None, Op "exists", Var v::range::body::[]) -> solver.Ctx.MkExists([|(v |> Expr.Var |> create_expr solver)|], create_expr solver (<@@ (%%range:bool) |&| (%%body:bool) @@>)) :> BoolExpr
@@ -217,12 +217,18 @@ module Z3 =
         | _ -> failwithf "Cannot create Z3 constraint from %A." expr
 
     and internal create_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : Expr =
-        match expr.Type with
-        | ArithType -> (create_arith_expr solver expr) :> Expr
-        | BoolType -> (create_bool_expr solver expr) :> Expr
-        | SetType -> (create_set_expr solver expr) :> Expr
-        | _ -> failwithf "Cannot convert expression %A of type %A to Z3 expression." expr (expr.Type)
-
+        let funcDecls = new System.Collections.Generic.Dictionary<string, FuncDecl>()
+        match expr with
+        | FuncApply(p, var) ->
+            do if not (funcDecls.ContainsKey(p.Name)) then funcDecls.Add(p.Name, solver.Ctx.MkFuncDecl(p.Name, (create_sort solver var.Type), (create_sort solver expr.Type)))
+            let fd = funcDecls.[p.Name] in fd.Apply(create_expr solver var)
+        | _ ->
+            match expr.Type with
+            | ArithType -> (create_arith_expr solver expr) :> Expr
+            | BoolType -> (create_bool_expr solver expr) :> Expr
+            | SetType -> (create_set_expr solver expr) :> Expr
+            | _ -> failwithf "Cannot convert expression %A of type %A to Z3 expression." expr (expr.Type)
+           
     let internal check_sat_model (s:Z3Solver) (a: Expr<bool list>) = 
         let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check 
         match sol with

@@ -69,3 +69,7 @@ module Formula =
     let sum<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = formula<'t>
     /// Generic quantifier with product semantics.
     let product<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = formula<'t>
+
+    // Create a function
+    let func<'s, 't> = (fun (_:'s) -> Unchecked.defaultof<'t>)
+    
