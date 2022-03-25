@@ -36,6 +36,12 @@ module Formula =
     let ratvar3 n o p = var3'<rat> n o p
     let ratvar4 n o p q = var4'<rat> n o p q
     
+    let arrayvar<'t> = Unchecked.defaultof<'t[]>
+
+    let uninterp_var<'t> n = var'<'t> n
+
+    let (<--) (a:'t) (b:'t) = arrayvar<'t>
+
     /// Represents a symbolic formula.
     let formula<'t> = Unchecked.defaultof<'t>
 
@@ -70,6 +76,7 @@ module Formula =
     /// Generic quantifier with product semantics.
     let product<'t,'u> (op:'t -> 't -> 't) (symbol: string) (bound:'u) (range:bool) (body:'t) = formula<'t>
 
-    // Create a function
-    let func<'s, 't> = (fun (_:'s) -> Unchecked.defaultof<'t>)
+    // Functions
+    let func<'s, 't> = fun (_:'s) -> Unchecked.defaultof<'t>
     
+    let func2<'r, 's, 't> = fun (_:'r) (_:'s) -> Unchecked.defaultof<'t>

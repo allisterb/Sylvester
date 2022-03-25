@@ -56,20 +56,20 @@ type Z3Solver(?nonLinear:bool, ?logic:string) =
     static member DescribeOptimizerParam n = if Z3Solver.OptimizerParamsHelp |> Map.containsKey n then Some (Z3Solver.OptimizerParamsHelp.[n]) else None
 
 module Z3 =
-    /// Multiple indexers for evaluating formulas
-    type Microsoft.Z3.Model with
-      member x.Item (index: Expr) =
-        x.Eval(index, true)
-      member x.Item (index: FuncDecl) =
-        // Taking care of array declaration
-        if index.DomainSize = 0u && index.Range.SortKind <> Z3_sort_kind.Z3_ARRAY_SORT then 
-            x.ConstInterp(index) |> ConstResult
-        else 
-            x.FuncInterp(index) |> FuncResult
     
     let internal (|FuncApply|_|) =
         function
         | Application(PropertyGet (None, pin,  []), e) -> Some(pin, e)
+        | _ -> None
+
+    let internal (|ArrayGet|_|) =
+        function
+        | Call (None, Op "GetArray", PropertyGet(None, arr, [])::idx::[]) -> Some(arr, idx)
+        | _ -> None
+
+    let internal (|ArraySet|_|) =
+        function
+        | Call (None, Op "op_LessMinusMinus", ArrayGet(arr, idx)::v::[]) -> Some(arr, idx, v)
         | _ -> None
 
     let internal (|IntType|_|) (t:Type) =
@@ -121,6 +121,9 @@ module Z3 =
         | :? real as n -> solver.Ctx.MkReal(n.ToString()) :> ArithExpr
         | _ -> failwithf "Cannot create numeral from value %A of type %A." i (i.GetType())
 
+    let internal create_uninterp_const (solver:Z3Solver) (s:string) (t:Type) =
+        s, solver.Ctx.MkConst(s, (create_sort solver t))
+
     let internal create_arith_const (solver:Z3Solver) (s:string) (t:Type) = 
         match t with
         | IntType -> (s, s |> solver.Ctx.MkIntConst :> ArithExpr)
@@ -135,6 +138,13 @@ module Z3 =
         do if not (funcDecls.ContainsKey(p.Name)) then funcDecls.Add(p.Name, solver.Ctx.MkFuncDecl(p.Name, (create_sort solver expr.Type), (create_sort solver p.PropertyType)))
         funcDecls.[p.Name]
             
+    let rec internal create_uninterp_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : Expr =
+           let vars = expr |> expand |> get_vars |> List.map(fun v -> create_uninterp_const solver v.Name v.Type) |> Map.ofList
+           
+           match expr with
+           | Var v -> vars.[v.Name] 
+           | e  -> failwithf "The expression %A of type %A is not an uninterpreted constant." e (e.Type)
+
     let rec internal create_arith_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : ArithExpr =
         let vars = expr |> expand |> get_vars |> List.map(fun v -> create_arith_const solver v.Name v.Type) |> Map.ofList
         
@@ -218,24 +228,55 @@ module Z3 =
 
     and internal create_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : Expr =
         let funcDecls = new System.Collections.Generic.Dictionary<string, FuncDecl>()
+        let arrayDecls = new System.Collections.Generic.Dictionary<string, ArrayExpr>()
         match expr with
         | FuncApply(p, var) ->
             do if not (funcDecls.ContainsKey(p.Name)) then funcDecls.Add(p.Name, solver.Ctx.MkFuncDecl(p.Name, (create_sort solver var.Type), (create_sort solver expr.Type)))
             let fd = funcDecls.[p.Name] in fd.Apply(create_expr solver var)
+        
+        | ArrayGet(arr, idx) -> 
+            do if not (arrayDecls.ContainsKey(arr.Name)) then arrayDecls.Add(arr.Name, solver.Ctx.MkArrayConst(arr.Name, (create_sort solver idx.Type), (create_sort solver (expr.Type))))
+            let ad = arrayDecls.[arr.Name] in solver.Ctx.MkSelect(ad, create_expr solver idx)
+
+        | ArraySet(arr, idx, v) -> 
+           do if not (arrayDecls.ContainsKey(arr.Name)) then arrayDecls.Add(arr.Name, solver.Ctx.MkArrayConst(arr.Name, (create_sort solver idx.Type), (create_sort solver (v.Type))))
+           let ad = arrayDecls.[arr.Name] in solver.Ctx.MkStore(ad, (create_expr solver idx), (create_expr solver v)) :> Expr
+
         | _ ->
             match expr.Type with
             | ArithType -> (create_arith_expr solver expr) :> Expr
             | BoolType -> (create_bool_expr solver expr) :> Expr
             | SetType -> (create_set_expr solver expr) :> Expr
-            | _ -> failwithf "Cannot convert expression %A of type %A to Z3 expression." expr (expr.Type)
+            | _ -> create_uninterp_expr solver expr
+            //| _ -> failwithf "Cannot convert expression %A of type %A to Z3 expression." expr (expr.Type)
            
-    let internal check_sat_model (s:Z3Solver) (a: Expr<bool list>) = 
+    type Microsoft.Z3.Model with /// Based on https://github.com/dungpa/Z3Fs/blob/master/src/FsZ3/Api.fs
+      member x.Item (index: Expr) = x.Eval(index, true)
+      member x.Item (index: FuncDecl) =
+        // Taking care of array declaration
+        if index.DomainSize = 0u && index.Range.SortKind <> Z3_sort_kind.Z3_ARRAY_SORT then 
+            x.ConstInterp(index) |> ConstResult
+        else 
+            x.FuncInterp(index) |> FuncResult
+      member x.Item(solver:Z3Solver, index: FSharp.Quotations.Expr) =
+        match index with
+        | FuncApply(p, var) -> 
+            let fd = solver.Ctx.MkFuncDecl(p.Name, (create_sort solver var.Type), (create_sort solver index.Type)) in
+            x.Item(fd)
+        | _ -> x.Eval(create_expr solver index) |> ConstResult
+
+    let check_sat_model (s:Z3Solver) (a: Expr<bool list>) = 
         let sol = a |> expand_list |> List.map (create_bool_expr s) |> s.Check 
         match sol with
         | Status.SATISFIABLE -> Some (s.Model())
         | _ -> None
 
     let internal get_var_model (m:Model) = 
+        m.ConstDecls 
+        |> Array.toList 
+        |> List.map(fun c -> c.Name, match  m.[c] with | ConstResult c -> c  | _ -> failwith "This not a constant result.")
+        
+    let internal get_fun_model (m:Model) = 
         m.ConstDecls 
         |> Array.toList 
         |> List.map(fun c -> c.Name, match  m.[c] with | ConstResult c -> c  | _ -> failwith "This not a constant result.")
