@@ -26,6 +26,7 @@ module Parsers =
         let (==>) l r = not l || r
         let (<==) l r = r ==> l
 
+    let private (||||) l r = Microsoft.FSharp.Core.Operators.(|||) l r
     let ws = spaces
     let str_ws s = pstring s .>> ws
     let parens p = between (str_ws "(") (str_ws ")") p
@@ -65,9 +66,9 @@ module Parsers =
         let number = 
             let options =
                 NumberLiteralOptions.AllowFraction
-                ||| NumberLiteralOptions.AllowFractionWOIntegerPart
-                ||| NumberLiteralOptions.AllowInfinity
-                ||| NumberLiteralOptions.AllowExponent
+                |||| NumberLiteralOptions.AllowFractionWOIntegerPart
+                |||| NumberLiteralOptions.AllowInfinity
+                |||| NumberLiteralOptions.AllowExponent
             numberLiteral options "number" .>> ws|>> fun num -> Expr.Value(float num.String)
 
         let integerIdentifier : Expr parser = many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws |>> (fun id -> Expr.Var(Var(id, typeof<int>)))

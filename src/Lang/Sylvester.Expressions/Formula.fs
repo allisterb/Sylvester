@@ -15,12 +15,27 @@ module Formula =
     [<Symbol"\u21D2">]
     let (==>) l r = not l || r
     let (<==) l r = r ==> l
-
+ 
     let boolvar n = var'<bool> n
     let boolvar2 n o = var2'<bool> n o
     let boolvar3 n o p = var3'<bool> n o p
     let boolvar4 n o p q = var4'<bool> n o p q
 
+    let realvar n = var'<real> n
+    let realvar2 n o = var2'<real> n o
+    let realvar3 n o p = var3'<real> n o p
+    let realvar4 n o p q = var4'<real> n o p q
+
+    let intvar n = var'<int> n
+    let intvar2 n o = var2'<int> n o
+    let intvar3 n o p = var3'<int> n o p
+    let intvar4 n o p q = var4'<int> n o p q
+
+    let ratvar n = var'<rat> n
+    let ratvar2 n o = var2'<rat> n o
+    let ratvar3 n o p = var3'<rat> n o p
+    let ratvar4 n o p q = var4'<rat> n o p q
+    
     /// Represents a symbolic formula.
     let formula<'t> = Unchecked.defaultof<'t>
 

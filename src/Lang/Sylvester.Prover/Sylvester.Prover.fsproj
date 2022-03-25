@@ -21,7 +21,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Formula.fs" />
     <Compile Include="Descriptions.fs" />
     <Compile Include="Patterns.fs" />
     <Compile Include="Display.fs" />

@@ -17,7 +17,6 @@
     <ProjectReference Include="..\..\..\Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj" />
     <ProjectReference Include="..\..\..\Base\Sylvester.Runtime\Sylvester.Runtime.csproj" />
     <ProjectReference Include="..\..\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
-    <ProjectReference Include="..\..\Sylvester.Prover\Sylvester.Prover.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
