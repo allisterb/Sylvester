@@ -200,7 +200,8 @@ module Z3 =
             |> get_vars 
             |> List.choose(fun v -> if v.Type = typeof<bool> then Some v else None)
             |> List.map(fun v -> v.Name, solver.Ctx.MkBoolConst(v.Name)) |> Map.ofList
-        
+        let arrayDecls = new System.Collections.Generic.Dictionary<string, ArrayExpr>()
+
         match expr' with
         | Var v when v.Type = typeof<bool> -> vars.[v.Name]
         | ValueWithName(v, t, _) when t = typeof<bool> -> solver.Ctx.MkBool(v :?> bool)
@@ -222,8 +223,9 @@ module Z3 =
         | Call(None, Op "op_BarLessBar",l::r::[]) -> solver.Ctx.MkSetSubset(create_set_expr solver l, create_set_expr solver r)
         (* Quantifiers *)
         | Call(None, Op "forall", Var v::range::body::[]) -> solver.Ctx.MkForall([|(v |> Expr.Var |> create_expr solver)|], create_expr solver (<@@ (%%range:bool) ==> (%%body:bool) @@>)) :> BoolExpr
+        | Call(None, Op "forall", PropertyGet (None, arr, [])::range::body::[]) when arr.PropertyType.IsArray -> solver.Ctx.MkForall([|solver.Ctx.MkArrayConst(arr.Name, solver.Ctx.MkIntSort(), (create_sort solver (arr.PropertyType.GetElementType())))|], create_expr solver (<@@ (%%range:bool) ==> (%%body:bool) @@>)) :> BoolExpr
         | Call(None, Op "exists", Var v::range::body::[]) -> solver.Ctx.MkExists([|(v |> Expr.Var |> create_expr solver)|], create_expr solver (<@@ (%%range:bool) |&| (%%body:bool) @@>)) :> BoolExpr
-
+        | Call(None, Op "exists", PropertyGet (None, arr, [])::range::body::[]) when arr.PropertyType.IsArray -> solver.Ctx.MkExists([|solver.Ctx.MkArrayConst(arr.Name, solver.Ctx.MkIntSort(), (create_sort solver (arr.PropertyType.GetElementType())))|], create_expr solver (<@@ (%%range:bool) |&| (%%body:bool) @@>)) :> BoolExpr
         | _ -> failwithf "Cannot create Z3 constraint from %A." expr
 
     and internal create_expr (solver:Z3Solver) (expr:FSharp.Quotations.Expr) : Expr =
@@ -320,6 +322,9 @@ module Z3 =
     let get_bool_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_bool_var_model
     
     let check_sat (s:Z3Solver) a = (Option.isSome <| check_sat_model s a)
+
+    let check_unsat (s:Z3Solver) (e:Expr<bool>) =
+        let ne = <@ not(%e) @> in check_sat s <@[%ne]@>
 
     let opt_set_param (s:Z3Solver) (k:string) (v:string) = s.OptimizerParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
 
