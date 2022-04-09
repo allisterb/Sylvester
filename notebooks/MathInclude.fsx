@@ -17,6 +17,7 @@
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.LinearAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.LinearAlgebra.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Probability\\bin\\Debug\\netstandard2.0\\Sylvester.Probability.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
+#r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Optimization\\bin\\x64\\Debug\\netstandard2.0\\Sylvester.Optimization.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.CAS.Maxima.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.Runtime.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Expect.NETStandard.dll"

@@ -3,9 +3,6 @@
 open Sylvester
 open Dimension
 
-MathNetExpr.toQuotation (Expr.VMathMathNetMathNet.Symbolics.Infix.parse "0.3333333333333333*x"
-
-
 let X = binomial 0.5 6 
 
 let sx = 4 - X
@@ -17,7 +14,6 @@ sx.Distribution.Func |> src
 prob X 1
 
 let U = uniform_continuous 2. 5.
-
 
 probi (U + 1) (2.1) 3.
 expectation sx

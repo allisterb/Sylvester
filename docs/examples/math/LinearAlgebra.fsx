@@ -9,7 +9,6 @@ let a, b = realvar "a", realvar "b"
 
 let c = 1N + 5N
 
-
 let A = set_pred<real> <@ fun y -> y > 5. @>
 
 4. |?| A

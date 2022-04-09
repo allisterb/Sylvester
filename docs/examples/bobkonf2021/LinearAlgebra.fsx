@@ -8,16 +8,6 @@ open Sylvester
 open Dimension
 open Matrix
 
-let x = 0 
-and y = x
-
-
-let inline length(List l) = 
-
-<@ (>>) @> |> expand
-let yy(t:Expr<_*_*_>) = t.ToString()
-
-yy <@(4,5) @>
 let z = intvar "z"
 
 let m = MatZ<``3``, ``4``> <@[ [%z;4;-1;2]; [0;2;1;3]; [-2; 1; -2; 2] ]@>
