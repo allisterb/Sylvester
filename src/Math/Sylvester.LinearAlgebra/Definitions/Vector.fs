@@ -1,8 +1,10 @@
 ﻿namespace Sylvester
 
 open System
+open System.Collections
+open System.Collections.Generic
+
 open FSharp.Quotations
-open FSharp.Quotations.Patterns
 open MathNet.Numerics
 
 open Arithmetic
@@ -13,34 +15,49 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     internal(e: Expr<'t> array) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand'<'t, 't>
-    let expr' = Array.map MathNetExpr.fromQuotation expr
+    let mnexpr = Array.map MathNetExpr.fromQuotation expr
+    
     member val Expr = expr
-    member val ExprL = expr |> Array.toList
+    member val ExprList = expr |> Array.toList
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
-    member val Expr' = expr'
+    member val MathNetExpr = mnexpr
+    
     member val Display = 
         expr 
         |> Array.skip 1 
         |> Array.fold(fun s e -> sprintf "%s, %s" s (sprint' e)) (sprint' expr.[0]) 
         |> sprintf "(%s)"
+    
     member val LinearDisplay =
         expr 
         |> Array.skip 1 
         |> Array.fold(fun s e -> sprintf "%s %s" s (sprint' e)) (sprint' expr.[0]) 
         |> sprintf "%s"
+    
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
         | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
+    
     member x.Item with get(i)  = e.[i] |> Scalar<'t>
+    
     interface IPartialShape<``1``> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
+    
+    interface IEnumerable<Expr<'t>> with
+        member x.GetEnumerator ()  = (x.Expr |> Array.toSeq).GetEnumerator()
+        member x.GetEnumerator () = (x :> IEnumerable<Expr<'t>>).GetEnumerator () :> IEnumerator
+    
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'t>(expr)
+    
     new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand''<'t>) in Vector<'t>(expr)    
+    
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'t>(expr)
+    
     new(d:'t list) = Vector<'t>(List.toArray d)
+    
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
@@ -49,12 +66,17 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     inherit Vector<'t>(e)
     let dim0 = number<'dim0>
     do if e.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of %i." e.Length dim0.IntVal
+    
     member val Dim0:'dim0 = dim0
     member val Display = base.Display
     member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
+    
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'dim0, 't>(expr)
+    
     new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand''<'t>) in Vector<'dim0, 't>(expr)
+    
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
+    
     new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
     
     interface IVector<'dim0> with member val Dim0 = dim0
@@ -94,7 +116,7 @@ type VecQ<'dim0 when 'dim0 :> Number> = Vector<'dim0, rat>
 type VecZ<'dim0 when 'dim0 :> Number> = Vector<'dim0, int>
 
 module Vector =
-    let (|Vector|_|) (v: Vector<'n, 't>) : Expr<'t> list option = Some(v.ExprL)
+    let (|Vector|_|) (v: Vector<'n, 't>) : Expr<'t> list option = Some(v.ExprList)
     
     let vec (dim:'n) (data:Expr<real list>) = Vector<'n, real> data
     

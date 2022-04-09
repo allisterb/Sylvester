@@ -1,6 +1,7 @@
 ﻿namespace Sylvester
 
 open System
+
 open FSharp.Quotations
 
 open MathNet.Numerics
@@ -13,23 +14,22 @@ open Vector
 type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal(e: Expr<'t> array array) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
-    
     let expr = e  |> Array.map (Array.map expand''<'t>)
-    let expr' = Array.map (Array.map MathNetExpr.fromQuotation) expr
-    let exprT = expr  |> Ops.transpose_mat
-    let exprL = expr |> Array.map Array.toList |> Array.toList
-    
+    let mnexpr = Array.map (Array.map MathNetExpr.fromQuotation) expr
+    let exprlist = expr |> Array.map Array.toList |> Array.toList
+    let exprt = expr  |> Ops.transpose_mat
+  
     member val Expr = expr
-    member val Expr' = expr'
-    member val ExprT = exprT
-    member val ExprL = exprL
-    member val ExprS = expr |> array2D
+    member val MathNetExpr = mnexpr
+    member val ExprT = exprt
+    member val ExprList = exprlist
+    member val ExprArray = expr |> array2D
     member val ExprVars = expr |> Array.map (Array.map(get_vars >> List.toArray)) |> Array.concat
     
     member val Rows = expr |> Array.map Vector<'t>
-    member val Cols = exprT |> Array.map Vector<'t>
-    member val RowsL = expr |> Array.map Vector<'t> |> Array.toList
-    member val ColsL = exprT |> Array.map Vector<'t> |> Array.toList
+    member val Cols = exprt |> Array.map Vector<'t>
+    member val RowsList = expr |> Array.map Vector<'t> |> Array.toList
+    member val ColsList = exprt |> Array.map Vector<'t> |> Array.toList
     
     member x.Display = 
         let nl = System.Environment.NewLine
@@ -37,6 +37,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         |> Array.skip 1 
         |> Array.fold(fun s e -> sprintf "%s%s%s" s (nl) (e.LinearDisplay)) (nl + x.Rows.[0].LinearDisplay) 
         |> sprintf "%s"
+    
     member x.LinearDisplay = 
         let replace (o:string) n (s:string) = s.Replace(o, n) 
         x.Rows
@@ -45,19 +46,27 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         |> replace "(" "["
         |> replace ")" "]"
         |> sprintf "[%s]"
+    
     member x.Item with get(i) = x.Rows.[i] and set i value = Array.set x.Rows i value
+    
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
         | LinearAlgebraNumericOpType -> expr |> Array.map (Array.map evaluate) |> LinearAlgebra.DenseMatrix.ofRowArrays
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
+    
     interface IPartialShape<``2``> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
+    
     new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(fun e -> <@ e @>)) in Matrix<'t>(expr)
+    
     new(v: Expr<'t list list>) = let expr = v |> expand_lists' |> List.map(List.toArray) |> List.toArray in Matrix<'t>(expr)
+    
     new(d:'t list list) = Matrix<'t>((List.map(List.toArray) >> List.toArray) d)
+    
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'t> d'
+    
     static member create([<ParamArray>] data: 't array array) = Matrix<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
@@ -69,28 +78,38 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
     member val Dim0:'dim0 = dim0
     member val Dim1:'dim1 = dim1
+    member x.Cols = x.ExprT |> Array.map Vector<'dim0, 't>
+    member x.Rows = x.Expr |> Array.map Vector<'dim1, 't>  
+    member x.Transpose = Matrix<'dim1, 'dim0, 't>(x.ExprT)
     member val Display = base.Display
     member val LinearDisplay = base.LinearDisplay
-    member x.Cols = x.ExprT |> Array.map Vector<'dim0, 't>
-    member x.Rows = x.Expr |> Array.map Vector<'dim1, 't>
-    member x.Transpose = Matrix<'dim1, 'dim0, 't>(x.ExprT)
+    
     member x.Item(i: int) = x.Rows.[i]
+    
     member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand''<'t>(zero_val(typeof<'t>)) |> Scalar<'t>
+    
     interface IMatrix<'dim0, 'dim1> with 
         member val Dim0 = dim0
         member val Dim1 = dim1
+    
     new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(fun e -> <@ e @>)) in Matrix<'dim0, 'dim1, 't>(expr)
+    
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'dim0, 'dim1, 't> d'
+    
     new(v: Expr<'t list list>) = let expr = v |> expand_lists' |> List.map(List.toArray) |> List.toArray in Matrix<'dim0, 'dim1, 't>(expr)
+    
     new(d:'t list list) = Matrix<'dim0, 'dim1, 't>((List.map(List.toArray) >> List.toArray) d)
+    
     new(rows: Vector<'dim1, 't> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'dim0, 'dim1, 't>(e)
+    
     new (v:Expr<'t>) = 
         let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) v) in 
             Matrix<'dim0, 'dim1, 't> e
     new(data:Expr<'t list>) = 
         let d = data |> expand_list' |> List.toArray |> Array.chunkBySize (number<'dim0>.IntVal)
         Matrix<'dim0, 'dim1, 't> d
-        
+    new (_:'dim0, _:'dim1, data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
+    
     static member ofRows(data: Expr<'t list list>) = Matrix<'dim0, 'dim1,'t>(data)
       
     static member ofCols(data: Expr<'t list list>) = Matrix<'dim0, 'dim1,'t>(data |> expand_lists' |> Ops.mat_to_array |> Ops.transpose_mat)
@@ -128,18 +147,16 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     static member (*) (l:Matrix<'dim0, 'dim1, 't>, r:Matrix<'dim1, 'dim2, 't> ) =             
         [| for i in 0..r.Dim1.IntVal - 1 -> l * r.Cols.[i] |] |> Array.map vexpr  |> Ops.transpose_mat |> Matrix<'dim0, 'dim2, 't>
 
-and SquareMatrix<'dim0, 't when 'dim0 :> Number  and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim0, 't>
-
+type SquareMatrix<'dim0, 't when 'dim0 :> Number  and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim0, 't>
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, real>
 type MatC<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, complex>
 type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, rat>
 type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, int>
 
 module Matrix =
+    let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.RowsList |> Some
 
-    let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.RowsL |> Some
-
-    let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsL |> Some
+    let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsList |> Some
 
     let marray (m:Matrix<_,_,_>) = m.Expr
 
@@ -168,10 +185,15 @@ module Matrix =
     let mata' (l:'dim0) (r:'dim1) (data:Expr<'t> array array) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
-        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> _mat l.Dim0 (pp (l.Dim1 + ``1``))
+        let data = Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged 
+        Matrix<_,_,'t> (l.Dim0, (pp (l.Dim1 + ``1``)), data)
 
-    let inline (||+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
-        Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> _mat l.Dim0 (pp (l.Dim1 + ``1``))
+    let inline (||+|) (l:Vector<'dim0, 't>) (r:Matrix<'dim0, 'dim1, 't>)  = 
+        let data = Array.append [|l|] r.Cols |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged 
+        Matrix<_,_,'t> (l.Dim0, (pp (r.Dim1 + ``1``)), data)
+
+    let inline (||+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim1, 't>) = 
+        Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.toJagged |> _mat (pp (l.Dim0 + ``1``)) l.Dim1 
 
     let mident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>
@@ -225,9 +247,12 @@ module Matrix =
     let inline mdelc n (m:Matrix<_,_,_>) =
         check (n +< m.Dim1)
         m |> marrayi' |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> mata' m.Dim0 (pp (m.Dim1 - ``1``))
-    //let det (l:SquareMatrix<'dim0, _>) =
-    //    match l.Dim0.IntVal with
-    //    | 1 -> l.[0].[0]
-    //    | 2 -> l.[0] * l.[3]
+    
+    let det (l:SquareMatrix<'dim0, _>) =
+        match l.Dim0.IntVal with
+        | 1 -> l.[0].[0]
+        | 2 -> l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
+        | _ -> failwith "Not supported" 
 
-    //
+
+    

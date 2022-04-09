@@ -84,11 +84,7 @@ module Scalar =
 
     let sval (s:Scalar<'t>) = evaluate s.Expr
 
-    let realvar n = var'<real> n
-    
-    let intvar n = var'<int> n
 
-    let ratvar n = var'<rat> n
 
     let int_expr x = 
         match box x with

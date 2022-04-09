@@ -39,6 +39,9 @@ module Formula =
     let arrayvar<'t> = Unchecked.defaultof<'t[]>
 
     let uninterp_var<'t> n = var'<'t> n
+    let uninterp_var2<'t> n o = uninterp_var<'t> n, uninterp_var<'t> o
+    let uninterp_var3<'t> n o p = uninterp_var<'t> n, uninterp_var<'t> o, uninterp_var<'t> p
+    let uninterp_var4<'t> n o p q = uninterp_var<'t> n, uninterp_var<'t> o, uninterp_var<'t> p, uninterp_var<'t> q
 
     let (<--) (a:'t) (b:'t) = arrayvar<'t>
 
