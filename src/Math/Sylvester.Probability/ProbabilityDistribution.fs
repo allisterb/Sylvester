@@ -60,10 +60,10 @@ type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option)
             let v = param_var x.Distribution.Func
             let b = x.Distribution.Func |> body |> subst_var_value v (Expr.Value a) 
             <@ %%b:real @>        
-    member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> Scalar<real> else 0R 
+    member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> Scalar<real> else scalar 0. 
     member x.Cdf = 
         fun (i:real) -> seq {0. .. i} |> Seq.map x.Prob |> Seq.reduce (+) 
-    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
+    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else scalar 0. 
     member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+)
     member x.Transform(t, s, m) = Discrete(s, x.Distribution.Transform(t,s).Func, Some m)
    
@@ -88,8 +88,8 @@ type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> optio
             let b = x.Distribution.Func |> integrate_over minf a |> sexpr |> subst_var_value v (Expr.Value a) 
             <@ %%b:real @>
     member x.Cdf = fun i -> Scalar<real>(x.ProbFunc i)
-    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
-    member x.ProbInterval = fun a b -> if a |?| x.Distribution.Support && b |?| x.Distribution.Support then (-) (Scalar<real>(x.ProbFunc b)) (Scalar<real>(x.ProbFunc a)) else 0R
+    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else scalar 0. 
+    member x.ProbInterval = fun a b -> if a |?| x.Distribution.Support && b |?| x.Distribution.Support then (-) (Scalar<real>(x.ProbFunc b)) (Scalar<real>(x.ProbFunc a)) else scalar 0R
     member x.Expectation = 
         if mean.IsSome then 
             mean.Value 
