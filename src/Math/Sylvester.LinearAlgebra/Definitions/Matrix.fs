@@ -15,12 +15,12 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     internal(e: Expr<'t> array array) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand''<'t>)
-    let mnexpr = Array.map (Array.map MathNetExpr.fromQuotation) expr
+    let exprmn = Array.map (Array.map MathNetExpr.fromQuotation) expr
     let exprlist = expr |> Array.map Array.toList |> Array.toList
     let exprt = expr  |> Ops.transpose_mat
   
     member val Expr = expr
-    member val MathNetExpr = mnexpr
+    member val ExprMathNet = exprmn
     member val ExprT = exprt
     member val ExprList = exprlist
     member val ExprArray = expr |> array2D
@@ -153,7 +153,7 @@ type MatC<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 
 type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, rat>
 type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, int>
 
-module Matrix =
+module Matrix' =
     let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.RowsList |> Some
 
     let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsList |> Some

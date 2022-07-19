@@ -7,7 +7,7 @@ let X = binomial 0.5 6
 
 let sx = 4 - X
 
-prob sx 3 = prob X 1
+//prob sx 3 = prob X 1
 expectation X
 expectation sx = 4. - expectation X
 sx.Distribution.Func |> src
@@ -18,10 +18,10 @@ let U = uniform_continuous 2. 5.
 probi (U + 1) (2.1) 3.
 expectation sx
 
-let Y = binomial<Coin> 0.7 6 
+let Y = binomial 0.7 6 
 expectation Y
 
-let U = uniform_continuous<Coin> 1 4
+let U = uniform_continuous 1 4
 
 probi U 0 0.5
 
