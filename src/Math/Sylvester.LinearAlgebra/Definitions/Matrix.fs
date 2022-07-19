@@ -153,7 +153,7 @@ type MatC<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 
 type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, rat>
 type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, int>
 
-module Matrix' =
+module Matrix =
     let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.RowsList |> Some
 
     let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsList |> Some

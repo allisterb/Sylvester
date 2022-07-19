@@ -15,12 +15,12 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     internal(e: Expr<'t> array) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand'<'t, 't>
-    let mnexpr = Array.map MathNetExpr.fromQuotation expr
+    let exprmn = Array.map MathNetExpr.fromQuotation expr
     
     member val Expr = expr
     member val ExprList = expr |> Array.toList
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
-    member val MathNetExpr = mnexpr
+    member val ExprMathNet = exprmn
     
     member val Display = 
         expr 
@@ -50,6 +50,9 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member x.GetEnumerator ()  = (x.Expr |> Array.toSeq).GetEnumerator()
         member x.GetEnumerator () = (x :> IEnumerable<Expr<'t>>).GetEnumerator () :> IEnumerator
     
+    interface IEquatable<Vector<'t>> with
+          member a.Equals b = a.LinearDisplay = b.LinearDisplay
+
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'t>(expr)
     
     new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand''<'t>) in Vector<'t>(expr)    
@@ -58,6 +61,9 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     
     new(d:'t list) = Vector<'t>(List.toArray d)
     
+    static member (+) (l: Vector<'t>, r: Vector<'t>) = 
+        let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'t>(e)
+
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
@@ -131,6 +137,34 @@ module Vector =
     let vexpr(l:Vector<'n, 't>) = l.Expr
 
     let add (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l + r
+    
+    let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
+    
+    let smul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
+
+    let inner_product_val (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) |> sval
+    
+    let norm (l:Vector<'n, 't>) =
+        let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
+
+    let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar<'t>
+
+module VectorD =
+    let (|Vector|_|) (v: Vector<'t>) : Expr<'t> list option = Some(v.ExprList)
+    
+    let vec (data:Expr<real list>) = Vector<real> data
+    
+    let vecz (data:Expr<int list>) = Vector<int> data
+    
+    let vecq  (data:Expr<rat list>) = Vector<rat> data
+
+    let vecc (data:Expr<complex list>) = Vector<complex> data
+
+    let vvars<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> s n = vars<'t> s n |> Vector<'t> 
+    
+    let vexpr(l:Vector<'t>) = l.Expr
+
+    let add (l:Vector<'t>) (r:Vector<'t>) = l + r
     
     let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
     
