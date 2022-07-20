@@ -6,7 +6,7 @@ open Arithmetic
 open SetTheory
 open Vector
 open Sequences
-
+open Functions
 
 type RegionExpr<'n when 'n :> Number> = Expr<Region<'n>>
 

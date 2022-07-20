@@ -56,7 +56,7 @@ module Sequences =
         def sequences <@ lim_seq inf<int> (seq {(%a) %n}) = %Li = forall %epsilon (%epsilon > 0.) (exists %N  (%n > %N)  (abs(%Li - (%a) %n) < %epsilon)) @>
     
     let def_subsequence (n:Expr<int>) (a:Expr<int->_>) (f:Expr<int->int>) =
-        def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Function.increasing %f @>
+        def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Functions.increasing %f @>
 
     let def_converges (a:Expr<int->_>) (Li:Expr<_>)  =      
             def sequences <@ converges (infinite_seq %a) = (lim_seq inf<int> (infinite_seq %a) = %Li) @> 

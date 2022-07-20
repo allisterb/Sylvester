@@ -394,6 +394,8 @@ type real = float
 
 type rat = Rational
 
+type complex = System.Numerics.Complex
+
 [<RequireQualifiedAccess>]
  module NumericLiteralQ = 
    let FromZero() = Rational.Zero

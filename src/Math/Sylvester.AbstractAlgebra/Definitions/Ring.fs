@@ -70,7 +70,7 @@ module Ring =
 
     /// Ring of integers.
     let Z =
-        let set = let x = var'<int> "x" in SetComprehension(x, Aleph 0) |> Set
+        let set = let x = intvar "x" in SetComprehension(x, Aleph 0) |> Set
         {
             new OrderedRing<int>(additive_group(set), (*)) 
                 interface IIntegralDomain<int> with

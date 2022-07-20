@@ -332,17 +332,15 @@ module Set =
   
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
-    let set<'t when 't: equality> (bound:Expr<'t>) (range:Expr<bool>) body card = SetComprehension(bound, range, body, card) |> Set :> ISet<'t>
+    let set<'t when 't: equality> (range:Expr<bool>) (body:Expr<'t>) card = SetComprehension(range, body, card) |> Set :> ISet<'t>
 
-    let set'<'t when 't: equality> (bound:Expr<'t>) (body:Expr<'t>) card = SetComprehension(bound, body, card) |> Set :> ISet<'t>
-
-    let finite_set bound (range:Expr<bool>) body n = SetComprehension(bound, range, body (lazy n) |> Finite) |> Set 
+    let finite_set (range:Expr<bool>) (body:Expr<'t>) n = SetComprehension(range, body, (lazy n) |> Finite) |> Set 
     
-    let infinite_set bound (range:Expr<bool>) body n = SetComprehension(bound, range, body, Aleph n) |> Set  
+    let infinite_set (range:Expr<bool>) (body:Expr<'t>) n = SetComprehension(range, body, Aleph n) |> Set  
 
-    let countable_infinite_set (bound:'t) range body = infinite_set bound range body 0
+    let countable_infinite_set range (body:Expr<'t>) = infinite_set range body 0
 
-    let uncountable_infinite_set (bound:'t) range body = infinite_set bound range body 1
+    let uncountable_infinite_set range (body:Expr<'t>) = infinite_set range body 1
 
     let set_pred<'t when 't: equality>(p:Expr<'t->bool>) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
@@ -403,10 +401,10 @@ module Set =
 
     type uninterp = obj
 
-    let setvar' n = setvar<uninterp> n
+    let infinite_int_set range (body:Expr<int>) = countable_infinite_set range body
 
-    let setvar2' n o = setvar2<uninterp> n o
+    let infinite_rat_set range (body:Expr<rat>) = countable_infinite_set range body
 
-    let setvar3' n o p = setvar3<uninterp> n o p
+    let infinite_real_set range (body:Expr<real>) = uncountable_infinite_set range body
 
-    let setvar4' n o p q= setvar4<uninterp> n o p q
+    let infinite_complex_set range (body:Expr<complex>) = uncountable_infinite_set range body 
