@@ -321,6 +321,15 @@ module Z3 =
 
     let get_bool_var_model (s:Z3Solver) (a: Expr<bool list>) = check_sat_model s a |> Option.map _get_bool_var_model
     
+    let get_int_var_sol (solver:Z3Solver) (a: Expr<bool list>) (v:Expr<int>) =
+        match get_int_var_model solver a with
+        | Some l -> 
+            match List.tryFind (fun (name, _) -> name = v.ToString()) l with
+            | Some(_, x) -> Some x
+            | None -> None
+
+        | None -> None
+
     let check_sat (s:Z3Solver) a = (Option.isSome <| check_sat_model s a)
 
     let check_unsat (s:Z3Solver) (e:Expr<bool>) =
