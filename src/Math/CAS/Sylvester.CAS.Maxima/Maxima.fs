@@ -27,7 +27,7 @@ type Maxima(?maximaCmd:string) =
                 s.Send.Line "display2d:false;"
                 s.Send.Line "linel:500;"
                 s.Send.Line "load(simplify_sum);"
-                if s.Expect.Contains("(%i4)", Nullable(2000)).IsMatch then
+                if s.Expect.Contains("simplify_sum.mac", Nullable(2000)).IsMatch then
                     true
                 else
                     err' "Could not set Maxima default options."

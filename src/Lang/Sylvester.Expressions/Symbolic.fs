@@ -14,7 +14,7 @@ module Symbolic =
     /// Create a symbolic variable   
     let symbolic_var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
 
-    (* Create sequences of variable *)
+    (* Create sequences of variables *)
     
     let var'<'t> v = symbolic_var'<'t> v
     let var2'<'t> v1 v2 = symbolic_var'<'t> v1, symbolic_var'<'t> v2
@@ -25,6 +25,9 @@ module Symbolic =
 
     let vars<'t> s n  = var_seq<'t> s n |> Seq.toArray
     
+    
+    (* Get quotation from type *)
+
     let inline sexpr (x : ^T) = (^T : (member Expr : Expr<'t>) (x))
 
     let inline sexprl (x : ^T) = (^T : (member Expr : Expr<'t> list) (x))
@@ -33,10 +36,12 @@ module Symbolic =
     
     let inline sexprs'(a:'t [] []) = a |> Array.map(Array.map sexpr)
 
-    let simplify' (x:Expr<'t>) = x |> callUnary<'t> id
+    
+    (* Print quotation as string *)
 
-    let sprint' (x:Expr<'t>) = 
+    let rec sprint' (x:Expr) = 
         match x with
+        | List l -> "[" + (l |>  List.map sprint' |> List.reduce (fun l r -> l + ", " + r)) + "]"
         | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
         | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
         | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
@@ -64,14 +69,17 @@ module Symbolic =
 
     let inline sprint expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
+    let simplify' (x:Expr<'t>) = x |> callUnary<'t> id
+
     let inline simplify expr = expr |> sexpr |> simplify'
        
     let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>
     
     let algebraic_expand x = x |> callUnary Algebraic.expand 
        
-    let subst_term (e:Expr<'t>) (var:Var) (r:Expr) = 
-        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r else None) |> expand''<'t> |> simplify'
+    let subst (e:Expr<'t>) (v:Expr<'u>) (r:Expr<'u>) =
+        let var = get_var v
+        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand''<'t> |> simplify'
 
     let polyn_coeffs e x = 
         let x' = x |> expand in
