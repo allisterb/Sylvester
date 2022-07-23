@@ -41,6 +41,12 @@ module Algebra =
         let f''' = Analysis.limit <@ (fo(%x + %a) - fo %x) / %a @> a <@ 0. @>
         Assert.NotNull f'''
 
+
+    [<Fact>]
+    let ``Can divide``() =
+        let gg = 1 / 5N
+        Assert.True ((1 / 5N) = 0Q)
+
     [<Fact>]
     let ``Can solve``() =
         let x, y = intvar2 "x" "y"

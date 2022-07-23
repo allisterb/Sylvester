@@ -228,16 +228,17 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
 type Natural = 
     struct 
         val IntVal: BigInteger
-        new(p:BigInteger) = {IntVal = if p >= BigInteger.Zero then p else failwithf "The value %A must be an integer." p}     
-        new(p:int) = {IntVal = if p >= 0 then BigInteger p else failwithf "The value %A must be an integer." p} 
-        new(p:int64) = {IntVal = if p >= 0L then BigInteger p else failwithf "The value %A must be an integer." p} 
-        new(p:float) = {IntVal = if p >= 0. then BigInteger p else failwithf "The value %A must be a rational number." p} 
-        new(p:float32) = {IntVal = if p >= 0.0f then BigInteger p else failwithf "The value %A must be a rational number." p}     
+        new(p:BigInteger) = {IntVal = if p >= BigInteger.Zero then p else failwithf "The value %A must be a positive integer." p}     
+        new(p:int) = {IntVal = if p >= 0 then BigInteger p else failwithf "The value %A must be a positive integer." p} 
+        new(p:int64) = {IntVal = if p >= 0L then BigInteger p else failwithf "The value %A must be a positive integer." p} 
+        new(p:float) = {IntVal = if p >= 0. && p = floor p then BigInteger p else failwithf "The value %A must be a positive integer." p} 
+        new(p:float32) = {IntVal = if p >= 0.0f && p = floor p then BigInteger p else failwithf "The value %A must be a positive integer." p}     
     end 
     
     member x.Equals(y: Natural) = x.IntVal.Equals y.IntVal
     override x.Equals (y:obj) = 
         match y with 
+        | :? Natural as n -> x.IntVal.Equals n.IntVal
         | :? Rational as r -> x.IntVal.Equals r 
         | :? BigInteger as i -> Rational(i, BigInteger.One) |> x.IntVal.Equals
         | :? int as i -> Rational(i, 1) |> x.IntVal.Equals
@@ -355,7 +356,7 @@ type Natural =
     static member (*) (x : float32, y : Natural) = Natural x * y
 
         
-    static member (/) (x : Natural, y : Natural) = Natural(x.IntVal / y.IntVal)
+    static member (/) (x : Natural, y : Natural) = Rational(x.IntVal, y.IntVal)
 
     static member (/) (x : Natural, y : int) = x / Natural y
 
@@ -367,7 +368,7 @@ type Natural =
 
     static member (/) (x : Natural, y : float32) = x + Natural y
 
-    static member (/) (x : int, y : Natural) = Natural x / y
+    static member (/) (x : int, y : Natural) = Rational(BigInteger(x), y.IntVal)
 
     static member (/) (x : int64, y : Natural) = Natural x / y
 
