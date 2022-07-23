@@ -34,7 +34,7 @@ module internal Ops =
     
     let fromQ e = Array.map MathNetExpr.fromQuotation e
 
-    let toQ<'t> v e = MathNetExpr.toQuotation'<'t> v e
+    let toQ<'t> v e = MathNetExpr.toQuotation<'t> v e
 
     let mat_to_array (a:Expr<'t> list list) = (List.map(List.toArray) >> List.toArray) a
     

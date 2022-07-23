@@ -40,3 +40,12 @@ module Algebra =
         
         let f''' = Analysis.limit <@ (fo(%x + %a) - fo %x) / %a @> a <@ 0. @>
         Assert.NotNull f'''
+
+    [<Fact>]
+    let ``Can solve``() =
+        let x, y = intvar2 "x" "y"
+        let soln = Algebra.solve y <@[3 * %x + 5 * %y = 120 ]@>
+        let xx = MathNet.Symbolics.Infix.parse "(3*x-120)/5"
+        
+        let r = xx |> function | Ok e -> Some <| MathNetExpr.toQuotation<int> (get_vars x) e | _ -> None
+        Assert.True <| Option.isSome r

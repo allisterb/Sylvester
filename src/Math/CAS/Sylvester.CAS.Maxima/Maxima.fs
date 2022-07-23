@@ -91,6 +91,11 @@ module Maxima =
             match send (defaultInt.Value) s with
             | Success o -> Ok o
             | Failure e -> Error e
-        | None -> failwith "The default Maxima interpreter is not set."
+        | None -> failwith "The default Maxima interpreter is not initialized."
+
+    let last_output() =
+        match defaultInt with
+        | Some m -> m.ConsoleSession.Last10Output
+        | None -> failwith "The default Maxima interpreter is not initialzed."
 
 

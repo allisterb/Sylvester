@@ -12,7 +12,7 @@ module LinearAlgebra =
         Maxima.send' cmd
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars expr) e)
+        |> Result.map(fun e -> MathNetExpr.toQuotation<'t> (get_vars expr) e)
         |> function
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima command %s: %s" cmd e

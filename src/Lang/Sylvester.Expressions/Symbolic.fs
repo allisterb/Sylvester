@@ -1,7 +1,5 @@
 ﻿namespace Sylvester
 
-open System.Collections.Generic
-
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
@@ -73,65 +71,8 @@ module Symbolic =
 
     let inline simplify expr = expr |> sexpr |> simplify'
        
-    let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>
-    
-    let algebraic_expand x = x |> callUnary Algebraic.expand 
-       
     let subst (e:Expr<'t>) (v:Expr<'u>) (r:Expr<'u>) =
         let var = get_var v
         e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand''<'t> |> simplify'
 
-    let polyn_coeffs e x = 
-        let x' = x |> expand in
-        x'
-        |> fromQuotation 
-        |> Polynomial.coefficients (e |> expand |> fromQuotation) 
-        |> Array.map (toQuotation (x' |> get_vars))
-        |> Array.map(Option.get)
-        |> Array.toList
-
-    let polyn_coeff term x = 
-        let x' = x |> expand in
-        match x' |> polyn_coeffs term with
-        | _::c::[] -> c
-        | _ -> failwithf "Expression %s is not an algebraic expression." <| src term
-    
-    let polyn_coeff_val term (x:Expr<'t>) =
-        let x' = x |> expand in
-        match x' |> polyn_coeff term with
-        | Value(v, t) when t = x.Type -> v :?> 't
-        | _ -> failwithf "The expression %s does not have a term %s with coefficient type %s." (src x) (src term) (term.Type.ToString())
-
-    let polyn_all_coeffs x = 
-        let x' = x |> expand in
-        x'  
-        |> get_vars 
-        |> List.sortBy(fun v -> v.Name) 
-        |> List.map (fun v -> v, polyn_coeff (Expr.Var v) x')
-
-    let polyn_all_coeffs_val x = 
-        let x' = x |> expand  in
-        x' 
-        |> get_vars 
-        |> List.sortBy(fun v -> v.Name) 
-        |> List.map (fun v -> v, polyn_coeff_val (Expr.Var v) x)
-    
-    let polyn_degree (x:Expr) = 
-        let x' = expand x in 
-        get_vars x'
-        |> List.map (fun v -> x' |> fromQuotation |> (Polynomial.degree (v |> toIdentifier)))
-        |> List.map (toQuotation [])
-        |> List.map (Option.get)
-        |> List.map (fun e -> match e with | Value(v, t) -> v :?> float | _ -> failwith "Unexpected expression in degree.")
-        |> List.max
-        |> int
-    
-    let polyn_eqn_all_coeffs (x:Expr<bool list>) =
-        let am = expand_list x |> List.map expand_equality
-        let cm = am |> List.map (fst >> polyn_all_coeffs)
-        let vm = am |> List.map snd
-        cm, vm
-
-    let polyn_eqn_is_linear x = 
-        let l, r = expand_equality x in 
-        polyn_degree l = 1 && polyn_degree r = 0
+    let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>

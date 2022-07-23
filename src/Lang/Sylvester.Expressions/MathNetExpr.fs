@@ -67,7 +67,7 @@ module MathNetExpr =
         | SpecificCall <@@ ( = ) @@> (_, _, [l; r]) -> fromQuotation l, fromQuotation r
         | expr -> failwithf "The expression %s is not an equality." <| src expr
 
-    let rec toQuotation<'t> (vars: Var list) (expr: Expression)  =    
+    let rec _toQuotation<'t> (vars: Var list) (expr: Expression)  =    
         let rec numerator = function
             | NegPower _ -> one
             | Product ax -> product <| List.map numerator ax
@@ -221,8 +221,8 @@ module MathNetExpr =
 
         convertExpr expr
 
-    let toQuotation'<'t> (vars: Var list) (expr: Expression) =
-        match toQuotation<'t> vars expr with
+    let toQuotation<'t> (vars: Var list) (expr: Expression) =
+        match _toQuotation<'t> vars expr with
         | Some e -> e |> expand''<'t>
         | None -> failwithf "Failed to convert expression %s to quotation" (Infix.format expr)
 
@@ -235,11 +235,11 @@ module MathNetExpr =
         x
         |> fromQuotation 
         |> op 
-        |> toQuotation'<'t> (x |> get_vars)
+        |> toQuotation<'t> (x |> get_vars)
 
     let callBinary (op:Expression -> Expression -> Expression) (p:Expression) (x:Expr) = 
         x 
         |> fromQuotation 
         |> op p
-        |> toQuotation (x |> get_vars)
+        |> _toQuotation (x |> get_vars)
         |> Option.get

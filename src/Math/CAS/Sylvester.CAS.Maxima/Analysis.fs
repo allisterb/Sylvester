@@ -11,7 +11,7 @@ module Analysis =
         Maxima.send' cmd
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> MathNet.Symbolics.Infix.parse o)
-        |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars expr) e)
+        |> Result.map(fun e -> MathNetExpr.toQuotation<'t> (get_vars expr) e)
         |> function
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima command %s: %s. The last command sent was: %s" cmd e (Maxima.defaultInt.Value.ConsoleSession.LastLineSent)

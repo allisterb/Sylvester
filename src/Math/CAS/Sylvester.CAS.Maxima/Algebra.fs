@@ -14,7 +14,7 @@ module Algebra =
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars expr) e)
+        |> Result.map(fun e -> MathNetExpr.toQuotation<'t> (get_vars expr) e)
         |> function
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima ratexpand command: %s" e
@@ -24,7 +24,7 @@ module Algebra =
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> MathNetExpr.toQuotation'<'t> (get_vars expr) e)
+        |> Result.map(fun e -> MathNetExpr.toQuotation<'t> (get_vars expr) e)
         |> function
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima partfrac command: %s" e
@@ -34,7 +34,7 @@ module Algebra =
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> Infix.parseList (o.Split('=').[1]))
-        |> Result.map(fun e -> e.[0] |> (MathNetExpr.toQuotation'<'t> (get_vars system)))
+        |> Result.map(fun e -> e.[0] |> (MathNetExpr.toQuotation<'t> (get_vars system)))
         |> function
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)

@@ -7,8 +7,9 @@
 #r @"C:\\Users\\Allister\\.nuget\\packages\\microsoft.z3.x64\4.8.10\\lib\\netstandard1.4\\Microsoft.Z3.dll"
 
 #r @"C:\Projects\Sylvester.git\ext\mathnet-symbolics\src\Symbolics\bin\Debug\netstandard2.0\MathNet.Symbolics.dll"
+#r @"C:\Projects\Sylvester.git\ext\Expect.NET\Expect.NET\bin\Debug\netstandard2.0\Expect.NETStandard.dll"
 
-
+#r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.Runtime.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Providers\\Sylvester.Provider.Arithmetic\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\netstandard2.0\\Sylvester.Provider.Arithmetic.Runtime.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Base\\Sylvester.Collections\\bin\\Debug\\netstandard2.0\\Sylvester.Collections.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Lang\\Sylvester.Prover\\bin\\Debug\\netstandard2.0\\Sylvester.Expressions.dll"
