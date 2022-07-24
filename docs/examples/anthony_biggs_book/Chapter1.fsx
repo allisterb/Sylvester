@@ -17,5 +17,10 @@ let solK = solve K <@[%pK * %K + %pL * %L = %E]@>
 
 
 let x, y = ratvar2 "x" "y"
-let soly = solve_as_func_of y x <@[3 * %x + 5 * %y = 120Q ]@>
-<@ soly @>
+
+
+let soly = rat >> (solve_as_func_of x y <@[3 * %x + 5 * %y = 120Q ]@>) >> real
+
+soly 0.
+
+//let gg = Nat 4

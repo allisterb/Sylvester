@@ -428,16 +428,26 @@ module Math =
 
 [<AutoOpen>]
 module Numbers =
-    let real n :real = float n
+    let real<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(n:'t) :real = 
+        match box n with
+        | :? int as i -> float i
+        | :? int64 as i -> float i
+        | :? bigint as i -> float i
+        | :? single as f -> float f
+        | :? double as f -> float f
+        | :? rat as r -> float r
+        | :? Natural as n -> float n
+        | _ -> failwithf "Cannot convert type %s to type real." typeof<'t>.Name
 
-    let rat<'a when 'a: struct>(n:'a)  = 
+    let rat<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(n:'t)  = 
         match box n with
         | :? int as i -> Rational(i, 1)
         | :? int64 as i -> Rational(i, 1L)
         | :? bigint as i -> Rational(i, bigint.One)
         | :? single as f -> Rational(f, 1.0f)
         | :? double as f -> Rational(f, 1.)
-        | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'a>.Name
+        | :? Natural as n -> Rational(n.IntVal)
+        | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'t>.Name
 
     let inf<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         match typeof<'t>.Name with
@@ -486,6 +496,7 @@ module Numbers =
     let inline zero (x : ^T) = (^T : (member Zero : 't) (x))
 
     let inline one (x : ^T) = (^T : (member One : 't) (x))
+    
     let inline (..+) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (+) l r
 
     let inline (..-) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (-) l r
