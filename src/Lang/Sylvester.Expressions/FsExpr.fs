@@ -403,9 +403,11 @@ module FsExpr =
 
         rexpand Map.empty expr
 
+    // Expand typed expression and cast to another type.
     let expand'<'a, 'b> (expr:Expr<'b>) =
         let e = expand expr in <@ %%e:'a @>
 
+    // Expand untyped expression and cast to type.
     let expand''<'t> (expr:Expr) =
         let e = expand expr in <@ %%e:'t @>
 
@@ -507,13 +509,15 @@ module FsExpr =
         let v = param_var f
         f |> body |> subst_var_value v r  |> recombine_func [v] |> expand''<'a->'b>
             
-
     let evaluate (q:Expr<'t>) = 
         match q with
         | Var _ -> Unchecked.defaultof<'t>
         | _ -> FSharp.Quotations.Evaluator.QuotationEvaluator.Evaluate q
 
     let ev q  = evaluate q
+
+    let as_func_of (v:Expr<'t>) (body:Expr<'u>) =
+        body |> recombine_func (get_vars v) |> expand''<'t->'u> |> ev
 
     let is_inst_expr (bv:Var) (l:Expr) (r:Expr)=
         let s = src l

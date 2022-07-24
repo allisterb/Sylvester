@@ -29,12 +29,24 @@ module Algebra =
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima partfrac command: %s" e
 
-    let solve (v:Expr<'t>) (system:Expr<bool list>)=
+    let solve (v:Expr<'t>) (system:Expr<bool list>) =
         sprintf "solve(%s, %s);" (sprint' system) (sprint' v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> Infix.parseList (o.Split('=').[1]))
-        |> Result.map(fun e -> e.[0] |> (MathNetExpr.toQuotation<'t> (get_vars system)))
+        |> Result.map(fun e -> e.[0] |> (MathNetExpr.toQuotation<'t> (get_vars system))) 
         |> function
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+
+    let solve_as_func_of (v:Expr<'a>) (x:Expr<'b>) (system:Expr<bool list>) = system |> solve v |> as_func_of x
+
+    let algb_expand (expr:Expr<'t>)=
+        sprintf "expand(%s);" (sprint' expr) 
+        |> send 
+        |> Result.mapError(fun e -> e.Message)
+        |> Result.bind(fun o -> Infix.parse o)
+        |> Result.map(fun e -> e|> (MathNetExpr.toQuotation<'t> (get_vars expr)))
+        |> function
+        | Ok s -> s
+        | Error e -> failwithf "Error executing Maxima expand command: %s.\n. Session output:%s." e (Maxima.last_output())
