@@ -39,7 +39,7 @@ module Algebra =
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
 
-    let solve_as_func_of (v:Expr<'a>) (x:Expr<'b>) (system:Expr<bool list>) = system |> solve v |> as_func_of x
+    let solve_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve v |> as_func_of x
 
     let algb_expand (expr:Expr<'t>)=
         sprintf "expand(%s);" (sprint' expr) 

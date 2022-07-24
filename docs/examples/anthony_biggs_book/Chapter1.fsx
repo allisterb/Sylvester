@@ -14,6 +14,8 @@ let K, pK, pL = realvar3 "K" "pK" "pL"
 let E = realvar "E"
 
 let solK = solve K <@[%pK * %K + %pL * %L = %E]@>
-sprint' solK
+
+
 let x, y = ratvar2 "x" "y"
-sprint' <| solve y <@[3 * %x + 5 * %y = 120Q ]@>
+let soly = solve_as_func_of y x <@[3 * %x + 5 * %y = 120Q ]@>
+<@ soly @>
