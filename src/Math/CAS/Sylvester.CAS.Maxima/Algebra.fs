@@ -41,6 +41,8 @@ module Algebra =
 
     let solve_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve v |> as_func_of x
 
+    let solve_as_real_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = (solve_as_func_of x v system) >> real
+    
     let algb_expand (expr:Expr<'t>)=
         sprintf "expand(%s);" (sprint' expr) 
         |> send 

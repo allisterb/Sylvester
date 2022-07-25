@@ -1,11 +1,33 @@
-﻿module Plot
-
-open System
-open FSharp.Quotations
-open XPlot.Plotly
+﻿[<AutoOpen>]
+module Plot
 
 open Sylvester
+open XPlot.Plotly
 
-let plot2d<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> width height label (xrange:seq<real>) (f:real->real) =
-    let trace = Scatter(x=xrange, y=(xrange |> Seq.map f))
-    [trace] |> Chart.Plot |> Chart.WithWidth width |> Chart.WithHeight height |> Chart.WithLabel label
+let plot2d width height title xaxis_label yaxis_label (traces:seq<#Trace>) = 
+    let layout =
+        Layout(
+            title = title,
+            xaxis =
+                Xaxis(
+                    title = xaxis_label,
+                    showgrid = true
+                ),
+            yaxis =
+                Yaxis(
+                    title = yaxis_label,
+                    showgrid = true
+                )
+        )
+
+    traces |> Chart.Plot |> Chart.WithWidth width |> Chart.WithHeight height |> Chart.WithTitle title |> Chart.WithLayout layout
+
+let trace2d_func color min max step (f:real->real) =
+    let xdat = seq {min..step..max}
+    let ydat = xdat |> Seq.map f
+    Scatter(x=xdat, y=ydat, line = Line(color=color), showlegend = true)
+    
+let plot2d_func width height title xaxis_label yaxis_label color min max step (f:real->real) =
+    let trace1 = trace2d_func color min max step f
+    plot2d width height title xaxis_label yaxis_label [trace1]
+
