@@ -22,12 +22,12 @@ let plot2d width height title xaxis_label yaxis_label (traces:seq<#Trace>) =
 
     traces |> Chart.Plot |> Chart.WithWidth width |> Chart.WithHeight height |> Chart.WithTitle title |> Chart.WithLayout layout
 
-let trace2d_func color min max step (f:real->real) =
+let trace2d name color min max step (f:real->real) =
     let xdat = seq {min..step..max}
     let ydat = xdat |> Seq.map f
-    Scatter(x=xdat, y=ydat, line = Line(color=color), showlegend = true)
+    Scatter(x=xdat, y=ydat, line = Line(color=color), name = name, showlegend = true)
     
-let plot2d_func width height title xaxis_label yaxis_label color min max step (f:real->real) =
-    let trace1 = trace2d_func color min max step f
+let plot2d_func width height title xaxis_label yaxis_label name color min max step (f:real->real) =
+    let trace1 = trace2d name color min max step f
     plot2d width height title xaxis_label yaxis_label [trace1]
 

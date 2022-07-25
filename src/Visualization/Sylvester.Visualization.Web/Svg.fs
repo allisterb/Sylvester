@@ -44,3 +44,5 @@ module Svg =
     let group = Group.ofSeq
     let groupAdd = Group.addElements
     let groupTransform = Group.addTransform
+
+    let svg_to_html (svg:Svg) = svg.ToString()
