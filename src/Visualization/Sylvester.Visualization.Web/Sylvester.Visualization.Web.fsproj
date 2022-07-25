@@ -1,21 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Plot.fs" />
     <Compile Include="FsHtml.fs" />
     <Compile Include="Svg.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="XPlot.Plotly" Version="4.0.2" />
+    <PackageReference Include="XPlot.Plotly" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\ext\SharpVG\SharpVG\SharpVG.fsproj" />
-    
+    <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
   </ItemGroup>
 
 </Project>

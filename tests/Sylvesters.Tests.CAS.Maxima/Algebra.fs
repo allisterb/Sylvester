@@ -44,7 +44,7 @@ module Algebra =
 
     [<Fact>]
     let ``Can divide``() =
-        let gg = 1 / 5N
+        let gg = rat 0.01
         Assert.True ((1 / 5N) = 0Q)
 
     [<Fact>]

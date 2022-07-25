@@ -444,8 +444,8 @@ module Numbers =
         | :? int as i -> Rational(i, 1)
         | :? int64 as i -> Rational(i, 1L)
         | :? bigint as i -> Rational(i, bigint.One)
-        | :? single as f -> Rational(f, 1.0f)
-        | :? double as f -> Rational(f, 1.)
+        | :? single as f -> Rational((double) f)
+        | :? double as f -> Rational(f)
         | :? Natural as n -> Rational(n.IntVal)
         | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'t>.Name
 
