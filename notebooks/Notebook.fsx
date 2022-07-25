@@ -12,7 +12,7 @@ do
 
     Printers.addDisplayPrinter(fun (expr: Expr) ->
         try
-            let html = sprint' expr in
+            let html = "$" + latex' expr + "$" in
             { ContentType = "text/html"; Data = html }
         with
         | _ -> 

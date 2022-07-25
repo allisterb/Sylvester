@@ -39,31 +39,23 @@ module Symbolic =
 
     let rec sprint' (x:Expr) = 
         match x with
-        | List l -> "[" + (l |>  List.map sprint' |> List.reduce (fun l r -> l + ", " + r)) + "]"
-        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (l |> expand |> MathNetExpr.fromQuotation |> Infix.format) (r |> expand |> MathNetExpr.fromQuotation |> Infix.format)
+        | List list -> "[" + (list |>  List.map sprint' |> List.reduce (fun l r -> l + ", " + r)) + "]"
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (sprint' l) (sprint' r)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (sprint' l) (sprint' r)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (sprint' l) (sprint' r)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprint' l) (sprint' r)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprint' l) (sprint' r)
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint' e)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
-    let sprint_noexpand (x:Expr<'t>) = 
+    let rec latex' (x:Expr) = 
         match x with
-        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
-        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (l |> MathNetExpr.fromQuotation |> Infix.format) (r |> MathNetExpr.fromQuotation |> Infix.format)
-        | _ -> x |> MathNetExpr.fromQuotation |> Infix.format
-
-    let latex' (x:Expr<'t>) = 
-        match x with
-        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (l |> MathNetExpr.fromQuotation |> LaTeX.format) (r |> MathNetExpr.fromQuotation |> LaTeX.format)
-        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (l |> MathNetExpr.fromQuotation |> LaTeX.format) (r |> MathNetExpr.fromQuotation |> LaTeX.format)
-        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (l |> MathNetExpr.fromQuotation |> LaTeX.format) (r |> MathNetExpr.fromQuotation |> LaTeX.format)
-        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (l |> MathNetExpr.fromQuotation |> LaTeX.format) (r |> MathNetExpr.fromQuotation |> LaTeX.format)
-        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (l |> MathNetExpr.fromQuotation |> LaTeX.format) (r |> MathNetExpr.fromQuotation |> LaTeX.format)
+        | List list -> "[" + (list |>  List.map latex' |> List.reduce (fun l r -> l + ", " + r)) + "]"
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (latex' l) (latex' r)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (latex' l) (latex' r)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (latex' l) (latex' r)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (latex' l) (latex' r)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latex' l) (latex' r)
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
 
     let inline sprint expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
