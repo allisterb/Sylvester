@@ -1,5 +1,7 @@
 ﻿namespace Sylvester 
 
+open FSharp.Reflection
+
 [<StructuredFormatDisplay("{Display}")>]
 type CardinalNumber =
 | Finite of DelayedEval<int>
@@ -45,18 +47,29 @@ type ICardinality =
 [<AutoOpen>]
 module SetCardinality =
     let default_card<'t> =
-        match typeof<'t>.Name with
-        | "Int8"
-        | "UInt8"
-        | "Int16" 
-        | "UInt16"
-        | "Int32"
-        | "UInt32"
-        | "Int64"
-        | "UInt64"
-        | "Rational"
-        | "String" -> Aleph 0
-        | "Single"
-        | "Double" 
-        | "Complex" -> Aleph 1
-        | _ -> failwithf "Unable to automatically determine cardinality of type %s." typeof<'t>.Name
+        let _default_card (t:System.Type) = 
+            match t.Name with
+            | "Int8"
+            | "UInt8"
+            | "Int16" 
+            | "UInt16"
+            | "Int32"
+            | "UInt32"
+            | "Int64"
+            | "UInt64"
+            | "Rational"
+            | "Natural"
+            | "String" -> Some <| Aleph 0
+            | "Single"
+            | "Double" 
+            | "Complex" -> Some <| Aleph 1
+            | _ -> None //
+        let t = typeof<'t>
+        if FSharpType.IsTuple t then
+            let a = FSharpType.GetTupleElements t |> Array.map _default_card
+            do if a |> Array.exists(fun e -> Option.isNone e) then failwithf "Unable to automatically determine cardinality for one of the elements of cardinal type %s." t.Name
+            a |> Array.map Option.get |> Array.reduce(+)
+        else
+            match _default_card t with
+            | Some c -> c
+            | None -> failwithf "Unable to automatically determine cardinality of type %s." t.Name

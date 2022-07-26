@@ -338,11 +338,11 @@ module Set =
     
     let infinite_set (range:Expr<bool>) (body:Expr<'t>) n = SetComprehension(range, body, Aleph n) |> Set  
 
-    let countable_infinite_set range (body:Expr<'t>) = infinite_set range body 0
+    let countable_set range (body:Expr<'t>) = infinite_set range body 0
 
-    let uncountable_infinite_set range (body:Expr<'t>) = infinite_set range body 1
+    let uncountable_set range (body:Expr<'t>) = infinite_set range body 1
 
-    let set_pred<'t when 't: equality>(p:Expr<'t->bool>) = SetComprehension<'t>(p, default_card<'t>) |> Set
+    let set_from_pred<'t when 't: equality>(p:Expr<'t -> bool>) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
     let singleton<'t when 't: equality> (e:'t) = Singleton e
 
@@ -400,11 +400,3 @@ module Set =
     let setvar4<'t when 't : equality> n o p q = var4'<Set<'t>> n o p q
 
     type uninterp = obj
-
-    let infinite_int_set range (body:Expr<int>) = countable_infinite_set range body
-
-    let infinite_rat_set range (body:Expr<rat>) = countable_infinite_set range body
-
-    let infinite_real_set range (body:Expr<real>) = uncountable_infinite_set range body
-
-    let infinite_complex_set range (body:Expr<complex>) = uncountable_infinite_set range body 

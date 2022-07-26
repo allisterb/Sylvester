@@ -299,6 +299,8 @@ module FsExpr =
         do if not (lvar.Length = lval.Length) then failwithf "The lengths of the variable/expression lists lists are not the same for replacement operation in %s." (src expr)
         List.fold2 (fun e v s -> subst_var_value v s e) expr lvar lval
 
+    let subst_all_value (expr:Expr) (value:Expr) = expr.Substitute(fun _ -> Some value)
+    
     let rec replace_var_expr (var:Var) (value:Expr) (expr:Expr)  =
         match expr with
         | ShapeVar v  when vequal v var ->  value
@@ -322,8 +324,12 @@ module FsExpr =
         do if not (lvar1.Length = lvar2.Length) then failwithf "The lengths of the variable lists are not the same for replacement operation in %s." (src expr)
         List.fold2 (fun e v1 v2 -> replace_var_var v1 v2 e) expr lvar1 lvar2
        
-    let subst_all_value (expr:Expr) (value:Expr) = expr.Substitute(fun _ -> Some value)
         
+    let rec replace_expr (o:Expr) (n:Expr)  = 
+            function
+            | l when sequal l o -> n
+            | expr -> traverse expr (replace_expr o n)
+            
     let get_vars expr =
         let rec rget_vars prev expr =
             match expr with
@@ -348,9 +354,10 @@ module FsExpr =
     let vars_to_tuple (vars:Var list) = 
         match vars with
         | v::[] -> Expr.Var v
+        | v::[] when FSharpType.IsTuple v.Type -> Expr.Var v
         | _ -> vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
 
-    let get_vars_to_tuple x = x |> (get_vars >> vars_to_tuple) 
+    let get_vars_to_tuple (x:Expr) = x |> get_vars |> vars_to_tuple 
             
     let rec (|List|_|) =
         let isListType (u:UnionCaseInfo) = u.DeclaringType.IsGenericType && u.DeclaringType.GetGenericTypeDefinition() = typedefof<list<_>>

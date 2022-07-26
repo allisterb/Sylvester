@@ -39,15 +39,11 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
     internal new (body:Expr<'t>, card:CardinalNumber) =
         let b = get_vars_to_tuple body
         SetComprehension(<@ %%b:'t @>, <@ true @>, body, card, fun _ _ -> true)
-
-    internal new (range:Expr<bool>, card:CardinalNumber) =
-        let b = get_vars_to_tuple range
-        SetComprehension(<@ %%b:'t @>, <@ true @>, <@ %%b:'t @>, card, fun _ _ -> true)
-        
-    internal new (b:Expr<'t->bool>, card:CardinalNumber) =
-        let p = evaluate b
-        let b' = body b
-        let v = get_vars_to_tuple b'
+    
+    internal new (pred:Expr<'t->bool>, card:CardinalNumber) =
+        let p = evaluate pred
+        let b' = body pred
+        let v = pred |> param_vars |> vars_to_tuple
         SetComprehension(<@ %%v:'t @>, <@ %%b':bool @>, <@ %%v:'t @>, card, fun _ x -> p x)
 
 type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
