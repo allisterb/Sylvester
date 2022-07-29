@@ -40,7 +40,7 @@ module Algebra =
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima ratexpand command: %s" e
 
-    let partfrac (expr:Expr<'t>) (frac:Expr<'t>)=
+    let partfrac_of (frac:Expr<'t>) (expr:Expr<'t>) =
         sprintf "partfrac(%s, %s);" (sprint' expr) (sprint' frac) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
@@ -50,7 +50,7 @@ module Algebra =
         | Ok s -> s
         | Error e -> failwithf "Error executing Maxima partfrac command: %s" e
 
-    let solve (v:Expr<'t>) (system:Expr<bool list>) =
+    let solve_for (v:Expr<'t>) (system:Expr<bool list>) =
         sprintf "solve(%s, %s);" (sprint' system) (sprint' v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
@@ -61,9 +61,9 @@ module Algebra =
         | Error "" -> None
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
 
-    let solve_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve v |> Option.get |> as_func_of x
+    let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> Option.get |> as_func_of x
 
-    let solve2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool list>) =
+    let solve_for2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool list>) =
         sprintf "solve(%s, [%s, %s]);" (sprint' system) (sprint' x) (sprint' y) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
@@ -76,3 +76,5 @@ module Algebra =
         | Error "" -> None
         | Ok r -> failwithf "Error executing Maxima solve command: received unexpected solution output: %A." r
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+
+    let solve_for_as_func_of2 (x:Expr<'b>)(y:Expr<'c>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> Option.get |> as_func_of2 x y

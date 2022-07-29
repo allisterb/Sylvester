@@ -526,6 +526,9 @@ module FsExpr =
     let as_func_of (v:Expr<'t>) (body:Expr<'u>) =
         body |> recombine_func (get_vars v) |> expand''<'t->'u> |> ev
 
+    let as_func_of2 (x:Expr<'t>) (y:Expr<'u>) (body:Expr<'v>) =
+        body |> recombine_func (get_vars x @ get_vars y) |> expand''<'t->'u->'v> |> ev
+
     let is_inst_expr (bv:Var) (l:Expr) (r:Expr)=
         let s = src l
         let s' = src r

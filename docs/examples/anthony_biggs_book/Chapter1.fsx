@@ -13,15 +13,16 @@ let L = realvar "L"
 let K, pK, pL = realvar3 "K" "pK" "pL"
 let E = realvar "E"
 
-let solK = solve K <@[%pK * %K + %pL * %L = %E]@>
+let solK = solve_for K <@[%pK * %K + %pL * %L = %E]@>
 
 
 let x, y = ratvar2 "x" "y"
 
 
-let soly = rat<real> >> (solve_as_real_func_of x y <@[3 * %x + 5 * %y = 120Q ]@>) >> real
+let soly = solve_for_as_func_of x y <@[3 * %x + 5 * %y = 120Q ]@> >> real
 
-soly 0.
+soly 0Q
 
-solve2 p q <@[%q + 5 * %p = 40Q; 2 * %q - 15 * %p = -20Q]@>
+solve_for2 p q <@[%q + 5 * %p = 40Q; 2 * %q + 15 * %p = -30Q]@>
+
 //let gg = Nat 4
