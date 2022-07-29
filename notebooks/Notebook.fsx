@@ -10,11 +10,31 @@ do
     /// Setup MathJax and HTML helpers
     @"<script src=""https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML""></script>" |> Util.Html |> Display
 
-    Printers.addDisplayPrinter(fun (expr: Expr) ->
+    let print_expr expr = 
         try
             let html = "$" + latex' expr + "$" in
-            { ContentType = "text/html"; Data = html }
+            html
         with
-        | _ -> 
-            { ContentType = "text/html"; Data = (expr.ToString()) }
+        | _ -> expr.ToString()
+            
+    Printers.addDisplayPrinter(fun (expr: Expr) -> 
+        let html = print_expr expr in 
+        { ContentType = "text/html"; Data = html }
+        
+    )
+    Printers.addDisplayPrinter(fun (expr: Expr*Expr) -> 
+        let html = sprintf "%s, %s" (print_expr (fst expr)) (print_expr (snd expr)) in
+        { ContentType = "text/html"; Data = html }
+    )
+    Printers.addDisplayPrinter(fun (expr: Expr<rat>*Expr<rat>) -> 
+        let html = sprintf "%s, %s" (print_expr (fst expr)) (print_expr (snd expr)) in
+        { ContentType = "text/html"; Data = html }
+    )
+    Printers.addDisplayPrinter(fun (expr: Expr<int>*Expr<int>) -> 
+        let html = sprintf "%s, %s" (print_expr (fst expr)) (print_expr (snd expr)) in
+        { ContentType = "text/html"; Data = html }
+    )
+    Printers.addDisplayPrinter(fun (expr: Expr<real>*Expr<real>) -> 
+        let html = sprintf "%s, %s" (print_expr (fst expr)) (print_expr (snd expr)) in
+        { ContentType = "text/html"; Data = html }
     )
