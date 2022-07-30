@@ -42,12 +42,15 @@ module Display =
         | Index(l, r) -> sprintf "here"
         
         (* Unary terms *)
+        | Not (Var(VarDisplay v)) -> sprintf "not %s" v
+        | r -> sprintf "not(%s)" (print_formula r)
+        
         | UnaryTerm(SymbolDisplay symbol , r) -> 
             match r with
             | Var _ 
-            | Quantifier _ -> sprintf "%s%s" (symbol) (print_formula r)
-            | _ -> sprintf "%s(%s)" (symbol) (print_formula r)
-
+            | Quantifier _ 
+            | _ -> sprintf "%s%s" (symbol) (print_formula r)
+                        
         (* Binary terms *)
         | Equals(l, r) -> sprintf "%s = %s" (print_formula l) (print_formula r)
         | BinaryTerm(SymbolDisplay symbol, l, r) -> 
