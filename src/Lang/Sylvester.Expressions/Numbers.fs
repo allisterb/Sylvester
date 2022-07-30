@@ -569,3 +569,5 @@ module Numbers =
         function
         | Patterns.Value(v, RationalType _) -> Some (v :?> Rational)
         | _ -> None
+
+    let real_seq<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (s:seq<'t>) = s |> Seq.map real
