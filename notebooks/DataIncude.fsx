@@ -1,4 +1,6 @@
-#r @"C:\Users\Allister\.nuget\packages\fparsec\1.0.3\lib\netstandard1.6\FParsecCS.dll"
+#r @"C:\Users\Allister\.nuget\packages\microsoft.csharp\4.5.0\lib\netstandard2.0\Microsoft.CSharp.dll"
+#r @"C:\Users\Allister\.nuget\packages\system.reflection.emit.lightweight\4.3.0\lib\netstandard1.3\System.Reflection.Emit.Lightweight.dll"
+
 #r @"C:\Users\Allister\.nuget\packages\fparsec\1.0.3\lib\netstandard1.6\FParsec.dll"
 #r @"C:\Users\Allister\.nuget\packages\mathnet.numerics\4.15.0\lib\netstandard2.0\MathNet.Numerics.dll"
 #r @"C:\Users\Allister\.nuget\packages\mathnet.numerics.fsharp\4.15.0\lib\netstandard2.0\MathNet.Numerics.FSharp.dll"
@@ -19,8 +21,6 @@
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Probability\\bin\\Debug\\netstandard2.0\\Sylvester.Probability.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Optimization\\bin\\x64\\Debug\\netstandard2.0\\Sylvester.Optimization.dll"
-#r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Statistics\\bin\\Debug\\netstandard2.0\\Sylvester.Statistics.dll"
-
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.CAS.Maxima.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.Runtime.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Expect.NETStandard.dll"

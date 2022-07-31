@@ -31,3 +31,28 @@ let plot2d_func width height title xaxis_label yaxis_label name color min max st
     let trace1 = trace2d name color min max step f
     plot2d width height title xaxis_label yaxis_label [trace1]
 
+
+let histogram name color (x:seq<'t>) (xbin_start:'t) (xbin_end:'t) (xbin_size:'t) = 
+    Histogram (
+        name = name,
+        x = x,
+        autobinx = false,
+        xbins =
+            Xbins(
+                start = real xbin_start,
+                ``end`` = real xbin_end,
+                size = real xbin_size
+            ),
+        marker =
+            Marker(
+                color = color,
+                line =
+                    Line(
+                        color = "grey",
+                        width = 0
+                    ),
+                opacity = 0.75
+            )
+    
+    )
+

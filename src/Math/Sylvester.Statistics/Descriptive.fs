@@ -1,10 +1,10 @@
-﻿namespace Sylvester.Statistics
+﻿namespace Sylvester
 
 open MathNet.Numerics.Statistics
 
 open Sylvester
 
-module Descriptive =
+module DescriptiveStatistics =
     
     let mean (s:seq<'t>) = s |> real_seq |> Statistics.Mean |> real
 
