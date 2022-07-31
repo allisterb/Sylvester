@@ -42,8 +42,8 @@ module Display =
         | Index(l, r) -> sprintf "here"
         
         (* Unary terms *)
-        | Not (Var(VarDisplay v)) -> sprintf "not %s" v
-        | r -> sprintf "not(%s)" (print_formula r)
+        | Not (Var(VarDisplay v)) -> sprintf "\u00ac%s" v
+        | Not r -> sprintf "\u00ac(%s)" (print_formula r)
         
         | UnaryTerm(SymbolDisplay symbol , r) -> 
             match r with

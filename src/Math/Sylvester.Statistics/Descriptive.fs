@@ -5,10 +5,9 @@ open MathNet.Numerics.Statistics
 open Sylvester
 
 module Descriptive =
-    let hello name =
-        printfn "Hello %s" name
+    
+    let mean (s:seq<'t>) = s |> real_seq |> Statistics.Mean |> real
 
+    let median (s:seq<'t>) = s |> real_seq |> Statistics.Median |> real
 
-    let gg = seq<double> {0.0..0.4}
-
-    //let int
+    let inter_quartile_range (s:seq<'t>) = s |> real_seq |> Statistics.InterquartileRange |> real
