@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\ext\SharpVG\SharpVG\SharpVG.fsproj" />
+    <ProjectReference Include="..\..\Base\Sylvester.Runtime\Sylvester.Runtime.csproj" />
     <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
   </ItemGroup>
 

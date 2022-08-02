@@ -9,6 +9,11 @@ open Sylvester
 do
     /// Setup MathJax and HTML helpers
     @"<script src=""https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML""></script>" |> Util.Html |> Display
+    
+    do Printers.addDisplayPrinter(fun (expr: IHtmlDisplay) -> 
+        { ContentType = "text/html"; Data = expr.Html() }
+        
+    )
 
     let print_expr expr = 
         try
@@ -17,7 +22,7 @@ do
         with
         | _ -> expr.ToString()
             
-    Printers.addDisplayPrinter(fun (expr: Expr) -> 
+    do Printers.addDisplayPrinter(fun (expr: Expr) -> 
         let html = print_expr expr in 
         { ContentType = "text/html"; Data = html }
         

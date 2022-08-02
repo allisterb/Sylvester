@@ -9,3 +9,5 @@
 #load "Paket.fsx"
 Paket.Package [ "FSharp.Interop.Dynamic" ]
 
+open FSharp.Interop.Dynamic
+
