@@ -71,6 +71,7 @@ module MathNetExpr =
         | Double d -> Expression.Real d
         | Single d -> Expression.Real (float d)
         | Rational r -> Number (BigRational.FromBigIntFraction(r.Numerator, r.Denominator))
+        | Natural n -> Number (BigRational.FromBigInt(n.IntVal))
         | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
         
         | Let (_, _, t) -> fromQuotation t
@@ -138,7 +139,7 @@ module MathNetExpr =
         let sub (a:Expr) (b:Expr) = let op = subOp.[a.Type.Name] in Expr.Call(op, a::b::[])
         
         let div (a:Expr) (b:Expr) = let op = divOp.[a.Type.Name] in Expr.Call(op, a::b::[])
-            
+       
         let rec convertExpr : Expression -> Expr option = 
             function 
             | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
@@ -161,9 +162,9 @@ module MathNetExpr =
             | Function (func, par) ->
                 let convertFunc : Function -> MethodInfo option = function
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
-                    | Abs  ->  absOp.[typeof<'t>.Name] |> Some 
-                    | Sin  -> getMethodInfo <@ Math.Sin @> |> Some
-                    | Cos  -> getMethodInfo <@ Math.Cos @> |> Some
+                    | Abs  -> absOp.[typeof<'t>.Name] |> Some 
+                    | Sin  -> sinOp.[typeof<'t>.Name]  |> Some
+                    | Cos  -> cosOp.[typeof<'t>.Name]  |> Some
                     | Tan  -> getMethodInfo <@ Math.Tan @> |> Some
                     //| Csc  -> getMethodInfo <@ Math.Csc @> |> Some
                     //| Sec  -> getMethodInfo <@ Math.Sec @> |> Some

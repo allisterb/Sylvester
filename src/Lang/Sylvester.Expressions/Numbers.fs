@@ -115,6 +115,18 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         let n, d = (float) r.Numerator, (float) r.Denominator
         Rational((sqrt n), (sqrt d))
     
+    static member Sin(r:Rational) = (float) r |> sin |> Rational
+
+    static member Cos(r:Rational) = (float) r |> cos |> Rational
+    
+    static member Tan(r:Rational) = (float) r |> tan |> Rational
+
+    static member Sinh(r:Rational) = (float) r |> sinh |> Rational
+
+    static member Cosh(r:Rational) = (float) r |> cosh |> Rational
+    
+    static member Tanh(r:Rational) = (float) r |> tanh |> Rational
+    
     static member (~+) (r : Rational) = r
 
     static member (~-) (num : Rational) = Rational(-num.Numerator, num.Denominator)
@@ -139,9 +151,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member (+) (x : Natural, y : Rational) = let x' = Rational x in x' + y
 
-    static member (+) (x : float, y : Rational) = let x' = Rational (x, 1.) in x' + y
+    static member (+) (x : float, y : Rational) = let x' = Rational x in x' + y
     
-    static member (+) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in x' + y
+    static member (+) (x : float32, y : Rational) = let x' = Rational ((float) x) in x' + y
     
     
     static member (-) (x : Rational, y : Rational) = Rational.Normalize ((x.Numerator * y.Denominator) - (y.Numerator * x.Denominator), x.Denominator * y.Denominator)
@@ -154,9 +166,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
 
     static member (-) (x : Rational, y : Natural) = let y' = Rational y in x - y'
 
-    static member (-) (x : Rational, y : float) = let y' = Rational (y, 1.) in x - y'
+    static member (-) (x : Rational, y : float) = let y' = Rational y in x - y'
 
-    static member (-) (x : Rational, y : float32) = let y' = Rational (y, 1.0f) in x - y'
+    static member (-) (x : Rational, y : float32) = let y' = Rational ((float) y) in x - y'
 
     static member (-) (x : int, y : Rational) = let x' = Rational (x, 1) in x' - y
     
@@ -166,9 +178,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member (-) (x : Natural, y : Rational) = let x' = Rational x in x' - y
 
-    static member (-) (x : float, y : Rational) = let x' = Rational (x, 1.) in x' - y
+    static member (-) (x : float, y : Rational) = let x' = Rational x in x' - y
     
-    static member (-) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in x' - y
+    static member (-) (x : float32, y : Rational) = let x' = Rational ((float) x) in x' - y
     
     
     static member (*) (x : Rational, y : Rational) = Rational.Normalize (x.Numerator * y.Numerator, x.Denominator * y.Denominator)
@@ -179,11 +191,11 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member (*) (x : Rational, y : BigInteger) = let y' = Rational (y, BigInteger.One) in x * y'
 
-    static member (*) (x : Rational, y : Natural) = let y' = Rational (y) in x * y'
+    static member (*) (x : Rational, y : Natural) = let y' = Rational y in x * y'
 
-    static member (*) (x : Rational, y : float) = let y' = Rational (y, 1.) in x * y'
+    static member (*) (x : Rational, y : float) = let y' = Rational y in x * y'
 
-    static member (*) (x : Rational, y : float32) = let y' = Rational (y, 1.0f) in x * y'
+    static member (*) (x : Rational, y : float32) = let y' = Rational ((float) y) in x * y'
 
     static member (*) (x : int, y : Rational) = let x' = Rational (x, 1) in x' * y
     
@@ -193,9 +205,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member (*) (x : Natural, y : Rational) = let x' = Rational x in x' * y
 
-    static member (*) (x : float, y : Rational) = let x' = Rational (x, 1.) in x' * y
+    static member (*) (x : float, y : Rational) = let x' = Rational x in x' * y
     
-    static member (*) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in x' * y
+    static member (*) (x : float32, y : Rational) = let x' = Rational ((float) x) in x' * y
     
     
     static member (/) (x : Rational, y : Rational) = Rational.Normalize (x.Numerator * y.Denominator, x.Denominator * y.Numerator)
@@ -212,9 +224,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
 
     static member (/) (x : Rational, y : Natural) = let y' = Rational y in x / y'
 
-    static member (/) (x : Rational, y : float) = let y' = Rational (y, 1.) in x / y'
+    static member (/) (x : Rational, y : float) = let y' = Rational y in x / y'
 
-    static member (/) (x : Rational, y : float32) = let y' = Rational (y, 1.0f) in x / y'
+    static member (/) (x : Rational, y : float32) = let y' = Rational ((float) y) in x / y'
 
     static member (/) (x : int, y : Rational) = let x' = Rational (x, 1) in x' / y
     
@@ -224,9 +236,9 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
     
     static member (/) (x : Natural, y : Rational) = let x' = Rational x in x' / y
 
-    static member (/) (x : float, y : Rational) = let x' = Rational (x, 1.) in x' / y
+    static member (/) (x : float, y : Rational) = let x' = Rational x in x' / y
     
-    static member (/) (x : float32, y : Rational) = let x' = Rational (x, 1.0f) in x' / y
+    static member (/) (x : float32, y : Rational) = let x' = Rational ((float) x) in x' / y
     
     static member op_Explicit(r: Rational): float = (float) r.Numerator / (float) r.Denominator
     static member op_Explicit(r: Rational): float32 = (float32) r.Numerator / (float32) r.Denominator
@@ -547,17 +559,14 @@ module Numbers =
         | Decimal x -> Expr.Value(x) |> Some
         | _ -> None
 
-    let (|BigRationalType|_|): Type -> Type option =
-        function
-        | t when t.Name = "BigRational" -> Some t
-        | _ -> None
-    let (|BigIntegerType|_|): Type -> Type option =
-        function
-        | t when t.Name = "BigInteger" -> Some t
-        | _ -> None
     let (|RationalType|_|): Type -> Type option =
         function
         | t when t.Name = "Rational" -> Some t
+        | _ -> None
+
+    let (|NaturalType|_|): Type -> Type option =
+        function
+        | t when t.Name = "Natural" -> Some t
         | _ -> None
 
     let (|ComplexType|_|): Type -> Type option =
@@ -568,6 +577,11 @@ module Numbers =
     let (|Rational|_|) =
         function
         | Patterns.Value(v, RationalType _) -> Some (v :?> Rational)
+        | _ -> None
+
+    let (|Natural|_|) =
+        function
+        | Patterns.Value(v, NaturalType _) -> Some (v :?> Natural)
         | _ -> None
 
     let real_seq<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (s:seq<'t>) = s |> Seq.map real

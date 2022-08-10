@@ -149,6 +149,18 @@ module FsExpr =
             .Add("Decimal", <@ pown 0m 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
             .Add("Rational", <@ pown 0Q 0 @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
 
+    let sinOp = 
+        Map.empty
+            .Add("Single", <@ sin 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
+            .Add("Double", <@ sin 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
+            .Add("Rational", <@ sin 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
+
+    let cosOp = 
+        Map.empty
+            .Add("Single", <@ cos 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
+            .Add("Double", <@ cos 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
+            .Add("Rational", <@ cos 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
+    
     let zeroVal = 
         Map.empty
             .Add("UInt16", <@ (+) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
