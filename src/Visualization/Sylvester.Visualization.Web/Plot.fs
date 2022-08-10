@@ -37,18 +37,12 @@ module Plot =
     let plot2d width height title xaxis_label yaxis_label (traces:seq<Trace>) = Plot2D(width, height, title, xaxis_label, yaxis_label, traces) 
 
     let lineplot name color min max step (f:real->real) =
-        let xdat = seq {min..step..max}
-        let ydat = xdat |> Seq.map f
-        let s = Scatter(x=xdat, y=ydat, line = Line(color=color), name = name, showlegend = true)
-        s.mode <- "lines"
-        s
+        let xdat = seq {min..step..max} in
+        let ydat = xdat |> Seq.map f in
+        Scatter(x=xdat, y=ydat, line = Line(color=color), mode="lines", name = name, showlegend = true)
 
     let lineplot_as_func min max (expr:Expr<real>) =
-        let v = get_vars expr
-        let f = 
-            match v with
-            | x::[] -> recombine_func [x] expr |> expand''<real->real> |> ev
-            | _ -> failwithf "Expression %s is not an expression of a single variable." (sprint' expr)
+        let f = as_func_of_single_var expr in
         lineplot (sprint' expr) "black" min max 0.1 f
 
     let with_lineplot_color c (s:Scatter) = s.line.color <- c; s

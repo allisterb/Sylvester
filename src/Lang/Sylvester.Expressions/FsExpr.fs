@@ -529,6 +529,12 @@ module FsExpr =
     let as_func_of2 (x:Expr<'t>) (y:Expr<'u>) (body:Expr<'v>) =
         body |> recombine_func (get_vars x @ get_vars y) |> expand''<'t->'u->'v> |> ev
 
+    let as_func_of_single_var<'t> (expr:Expr<'t>) =
+        let v = get_vars expr
+        match v with
+        | x::[] -> recombine_func [x] expr |> expand''<'t->'t> |> ev
+        | _ -> failwithf "Expression %A is not an expression of a single variable." expr
+
     let is_inst_expr (bv:Var) (l:Expr) (r:Expr)=
         let s = src l
         let s' = src r

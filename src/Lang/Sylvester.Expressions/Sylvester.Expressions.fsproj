@@ -10,11 +10,9 @@
     <Compile Include="Term.fs" />
     <Compile Include="FsExpr.fs" />
     <Compile Include="MathNetExpr.fs" />
-    <Compile Include="MathNetExprParser.fs" />
     <Compile Include="Symbolic.fs" />
     <Compile Include="Formula.fs" />
     <Compile Include="Parsers.fs" />
-    <Compile Include="TPTP.fs" />
     <None Include="Script1.fsx" />
   </ItemGroup>
 

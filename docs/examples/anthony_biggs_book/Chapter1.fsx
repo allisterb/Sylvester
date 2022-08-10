@@ -25,4 +25,6 @@ soly 0Q
 
 solve_for2 p q <@[%q + 5 * %p = 40Q; 2 * %q + 15 * %p = -30Q]@>
 
+
+let OO = <@ sin %E @> |> MathNetExpr.fromQuotation
 //let gg = Nat 4
