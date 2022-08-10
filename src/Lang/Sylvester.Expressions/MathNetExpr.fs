@@ -17,7 +17,7 @@ open MathNet.Symbolics
 open MathNet.Symbolics.ExpressionPatterns
 open MathNet.Symbolics.Operators
 
-type MathNetExpr = Expression
+type MathNetExpr = MathNet.Symbolics.Expression
 
 module MathNetExpr =
     let rec fromQuotation (q:Expr) : Expression =
@@ -56,6 +56,8 @@ module MathNetExpr =
             let n',r' = fromQuotation n, fromQuotation r in
             (Expression.Factorial n') / (Expression.Factorial(r') * (Expression.Factorial(n' - r')))
         
+        | PropertyGet(None, Prop "pi", []) -> Expression.Pi
+
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
@@ -127,6 +129,8 @@ module MathNetExpr =
         
         let getMethodInfo = expand >> getFuncInfo
         
+        let getPropInfo = expand >> getPropertyInfo
+
         let add (a:Expr) (b:Expr) = let op = addOp.[a.Type.Name] in Expr.Call(op, a::b::[])
     
         let mul (a:Expr) (b:Expr) = let op = mulOp.[a.Type.Name] in Expr.Call(op, a::b::[])
@@ -140,6 +144,7 @@ module MathNetExpr =
             | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
             | Identifier(sym) -> (getParam sym) |> Option.map (fun x -> Expr.Var(x))
             | Values.Value v -> value v
+            | Constant (Constant.Pi) -> let p = getPropertyInfo <@ pi @> in Expr.PropertyGet p |> Some
             | Constant c -> constant c
             | Sum(xs) ->
                 let summands = List.map convertExpr xs

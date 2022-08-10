@@ -47,6 +47,11 @@ module FsExpr =
         | mi when mi.Name = n -> Some()
         | _ -> None
 
+    let (|Prop|_|) (n:string) :PropertyInfo->unit option =
+        function
+        | mi when mi.Name = n -> Some()
+        | _ -> None
+
     let addOp = 
         Map.empty
             .Add("UInt16", <@ (+) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (+))

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Plot.fs" />
-    <Compile Include="FsHtml.fs" />
+    <Compile Include="Html.fs" />
     <Compile Include="Svg.fs" />
   </ItemGroup>
 
