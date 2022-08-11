@@ -32,14 +32,14 @@ module Algebra =
         sprintf "solve(%s, %s);" (sprint system) (sprint v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList (o.Split('=').[1]))
-        |> Result.map(fun e -> e.[0] |> (MathNetExpr.toQuotation<'t> (get_vars system))) 
+        |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
+        |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_vars system))) 
         |> function
-        | Ok s -> Some s
-        | Error "" -> None
+        | Ok s -> s
+        | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
 
-    let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> Option.get |> as_func_of x
+    let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> List.head |> as_func_of x
 
     let solve_for2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool list>) =
         sprintf "solve(%s, [%s, %s]);" (sprint system) (sprint x) (sprint y) 
@@ -50,9 +50,8 @@ module Algebra =
         |> Result.bind(fun r -> "[" + r + "]" |> MathNet.Symbolics.Infix.parseList)
         |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_vars system))) 
         |> function
-        | Ok (r1::r2::[]) -> Some(r1, r2)
-        | Error "" -> None
-        | Ok r -> failwithf "Error executing Maxima solve command: received unexpected solution output: %A." r
+        | Ok s -> s
+        | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.last_output 10)
 
-    let solve_for_as_func_of2 (x:Expr<'b>)(y:Expr<'c>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> Option.get |> as_func_of2 x y
+    //let solve_for_as_func_of2 (x:Expr<'b>)(y:Expr<'c>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> Option.get |> as_func_of2 x y

@@ -29,8 +29,63 @@ do
     do Printers.addDisplayPrinter(fun (expr: Expr) -> 
         let html = print_expr expr in 
         { ContentType = "text/html"; Data = html }
-        
     )
+    
+    do Printers.addDisplayPrinter(fun (e: Expr option) -> 
+        match e with
+        | Some expr -> let html = print_expr expr in { ContentType = "text/html"; Data = html }
+        | None -> { ContentType = "text/html"; Data = "None" }
+    )
+    
+    do Printers.addDisplayPrinter(fun (expr: Expr list) -> 
+        let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+    )
+    
+    do Printers.addDisplayPrinter(fun (expr: Expr<int> list) -> 
+        let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+    )
+    
+    do Printers.addDisplayPrinter(fun (expr: Expr<Natural> list) -> 
+        let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+    )
+    
+    do Printers.addDisplayPrinter(fun (expr: Expr<rat> list) -> 
+        let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+    )
+    
+    do Printers.addDisplayPrinter(fun (expr: Expr<real> list) -> 
+        let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+    )
+    
+    do Printers.addDisplayPrinter(fun (e: Expr list option) -> 
+        match e with
+        | Some expr -> 
+            let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+        | None -> { ContentType = "text/html"; Data = "None" }
+    )
+    
+    do Printers.addDisplayPrinter(fun (e: Expr<int> list option) -> 
+        match e with
+        | Some expr -> 
+            let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+        | None -> { ContentType = "text/html"; Data = "None" }
+    )
+    
+    do Printers.addDisplayPrinter(fun (e: Expr<rat> list option) -> 
+        match e with
+        | Some expr -> 
+            let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+        | None -> { ContentType = "text/html"; Data = "None" }
+    )
+    
+    do Printers.addDisplayPrinter(fun (e: Expr<real> list option) -> 
+        match e with
+        | Some expr -> 
+            let html = expr |> List.map print_expr |> List.reduce (fun a b -> a + "<br>" + b) in { ContentType = "text/html"; Data = html }
+        | None -> { ContentType = "text/html"; Data = "None" }
+    )
+
+
     Printers.addDisplayPrinter(fun (expr: Expr*Expr) -> 
         let html = sprintf "%s, %s" (print_expr (fst expr)) (print_expr (snd expr)) in
         { ContentType = "text/html"; Data = html }
