@@ -54,6 +54,10 @@ module Analysis =
 
     let trigexpand (expr:Expr<'t>) = sprintf "trigexpand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
+    let trigrat (expr:Expr<'t>) = sprintf "trigrat(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
+
+    let trigreduce (expr:Expr<'t>) = sprintf "trigreduce(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
+
     let limit (expr:Expr<'t>) x v =
         sendCmd<'t> (get_vars expr) <| sprintf "limit(%s, %s, %s);" (sprint expr) (sprint x) (sprint v)
                 
@@ -61,8 +65,10 @@ module Analysis =
 
     let limit_left (expr:Expr<'t>) x v = sendCmd<'t> (get_vars expr) <| sprintf "limit(%s, %s, %s, minus);" (sprint expr) (sprint x) (sprint v)
 
-    let diff (expr:Expr<'t>) x n = sendCmd<'t> (get_vars expr) <| sprintf "diff(%s, %s, %i);" (sprint expr) (sprint x) n
+    let diffn n x (expr:Expr<'t>) = sendCmd<'t> (get_vars expr) <| sprintf "diff(%s, %s, %i);" (sprint expr) (sprint x) n
         
+    let diff x (expr:Expr<'t>) = diffn 1 x expr
+    
     let integrate (expr:Expr<'t>) x = sendCmd<'t> (get_vars expr) <| sprintf "integrate(%s, %s);" (sprint expr) (sprint x)
     
     let definite_integral (expr:Expr<'t>) x l u = 
@@ -79,4 +85,3 @@ module Analysis =
         let r = sendCmd<'t>(get_vars expr) <| sprintf "integrate(%s, %s, %s, %s);" (sprint expr) (sprint x) l' u'
         do if l' <> "minf" && u' <> "inf" then forget <@ %u > %l @>
         r
-

@@ -33,9 +33,9 @@ let OO = <@ sin (pi / 2Q) @> |> MathNetExpr.fromQuotation
 let r = pi/ 2Q
 
 
-diff <@ cos (%L * 2.) @> L 1 |> sprint'
+diff <@ cos (%L * 2. + sin %L) @> L |> sprinte
 
-Maxima.sprint <@cos (6Q * pi + 1/3Q)@> 
-sprinte <| trigexpand <@cos (2Q * pi + %x)@>
+
+sprinte <| trigexpand <@cos (6Q * pi + %x)@>
 
 //let RRR = <@ arcsin@>

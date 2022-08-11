@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Printers.fs" />
     <Compile Include="Rational.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

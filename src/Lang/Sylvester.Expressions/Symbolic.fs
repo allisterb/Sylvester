@@ -45,6 +45,7 @@ module Symbolic =
         | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (sprinte l) (sprinte r)
         | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprinte l) (sprinte r)
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprinte l) (sprinte r)
+        
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
 

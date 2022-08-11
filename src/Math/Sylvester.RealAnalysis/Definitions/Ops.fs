@@ -26,7 +26,7 @@ type IRealAnalysisSymbolicOps =
             do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprinte f) 
             let vars = param_vars f
             let b = f |> body  
-            let i = Analysis.diff <@ %%b:real @> x n
+            let i = Analysis.diffn n x <@ %%b:real @>
             expand''<real->'b> (recombine_func vars i)
         member __.Integrate (f:Expr<real->'b>) x = 
             do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprinte f) 
