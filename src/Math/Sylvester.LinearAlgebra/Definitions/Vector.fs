@@ -25,13 +25,13 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val Display = 
         expr 
         |> Array.skip 1 
-        |> Array.fold(fun s e -> sprintf "%s, %s" s (sprint' e)) (sprint' expr.[0]) 
+        |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte expr.[0]) 
         |> sprintf "(%s)"
     
     member val LinearDisplay =
         expr 
         |> Array.skip 1 
-        |> Array.fold(fun s e -> sprintf "%s %s" s (sprint' e)) (sprint' expr.[0]) 
+        |> Array.fold(fun s e -> sprintf "%s %s" s (sprinte e)) (sprinte expr.[0]) 
         |> sprintf "%s"
     
     member x.AsNumeric() = 

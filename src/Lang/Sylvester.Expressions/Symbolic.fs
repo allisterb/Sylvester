@@ -37,15 +37,15 @@ module Symbolic =
     
     (* Print quotation as string *)
 
-    let rec sprint' (x:Expr) = 
+    let rec sprinte (x:Expr) = 
         match x with
-        | List list -> "[" + (list |>  List.map sprint' |> List.reduce (fun l r -> l + ", " + r)) + "]"
-        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (sprint' l) (sprint' r)
-        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (sprint' l) (sprint' r)
-        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (sprint' l) (sprint' r)
-        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprint' l) (sprint' r)
-        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprint' l) (sprint' r)
-        | Lambda(x, e) -> sprintf("%A = %s") x (sprint' e)
+        | List list -> "[" + (list |>  List.map sprinte |> List.reduce (fun l r -> l + ", " + r)) + "]"
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (sprinte l) (sprinte r)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (sprinte l) (sprinte r)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (sprinte l) (sprinte r)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprinte l) (sprinte r)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprinte l) (sprinte r)
+        | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let rec latex' (x:Expr) = 
@@ -58,7 +58,7 @@ module Symbolic =
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latex' l) (latex' r)
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
 
-    let inline sprint expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
+    let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let simplify' (x:Expr<'t>) = x |> callUnary<'t> id
 

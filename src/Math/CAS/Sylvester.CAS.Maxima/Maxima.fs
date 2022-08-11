@@ -4,6 +4,8 @@ open System
 open System.Text
 open System.Text.RegularExpressions
 open FSharp.Quotations
+open FSharp.Quotations.Patterns
+open FSharp.Quotations.DerivedPatterns
 
 open Sylvester
 open ExpectNet
@@ -58,6 +60,23 @@ module Maxima =
     let private outputPattern = """\(%o(\d)+\)\s+(.+)\s+\(%i(\d)+\)\s?"""
     let private outputRegex = new Regex(outputPattern, RegexOptions.Compiled |||| RegexOptions.Multiline)
 
+    let rec sprint (x:Expr) = 
+        match x with
+        | List list -> "[" + (list |>  List.map sprint |> List.reduce (fun l r -> l + ", " + r)) + "]"
+        
+        | SpecificCall <@@ ( / ) @@> (_, _, [l; r]) -> sprintf("%s / %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprint l) (sprint r)
+        
+        | SpecificCall <@@ cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l) 
+        | PropertyGet(None, Prop "pi", []) -> "%pi"
+        
+        | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)
+        | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
+
     let extract_output text =
         let m = outputRegex.Match text 
         if m.Success then 
@@ -93,9 +112,9 @@ module Maxima =
             | Failure e -> Error e
         | None -> failwith "The default Maxima interpreter is not initialized."
 
-    let last_output() =
+    let last_output n =
         match defaultInt with
-        | Some m -> m.ConsoleSession.Last10Output
+        | Some m -> m.ConsoleSession.LastOutput n
         | None -> failwith "The default Maxima interpreter is not initialzed."
 
 

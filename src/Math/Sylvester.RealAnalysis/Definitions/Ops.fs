@@ -23,13 +23,13 @@ type IRealAnalysisSymbolicOps =
         member __.LimitRight f x v = Analysis.limit_left f x v
         member __.LimitLeft f x v = Analysis.limit_left f x v
         member __.Diff (f:Expr<real->'b>) x n = 
-            do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprint' f) 
+            do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprinte f) 
             let vars = param_vars f
             let b = f |> body  
             let i = Analysis.diff <@ %%b:real @> x n
             expand''<real->'b> (recombine_func vars i)
         member __.Integrate (f:Expr<real->'b>) x = 
-            do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprint' f) 
+            do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprinte f) 
             let vars = param_vars f
             let b = f |> body  
             let i = Analysis.integrate <@ %%b:real @> x 

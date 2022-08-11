@@ -98,11 +98,11 @@ module MathNetExpr =
             | Value.Approximation a -> 
                 match a with
                 | Real r -> 
-                    let v = r |> Expr.Value
-                    if typeof<'t> = typeof<float> then Some v else Some(Expr.Value(Convert.ChangeType(v, typeof<'t>) :?> 't))
-                | Complex c -> 
-                    let v = c |> Expr.Value
-                    if typeof<'t> = typeof<complex> then Some v else Some(Expr.Value(Convert.ChangeType(v, typeof<'t>) :?> 't))   
+                    match typeof<'t> with
+                    | RealType _ -> r |> Expr.Value  |> Some
+                    | RationalType _ -> r |> rat |> Expr.Value |> Some
+                    | _ -> failwithf "Cannot convert real number %A to type %A." r typeof<'t>
+                | Complex c -> if typeof<'t> = typeof<complex> then Some (Expr.Value c) else failwithf "Cannot convert complex number %A to type %A." c typeof<'t>   
             | Value.NegativeInfinity -> Expr.Value Double.NegativeInfinity |> Some
             | Value.PositiveInfinity -> Expr.Value System.Double.PositiveInfinity |> Some
             | Value.Number n -> 

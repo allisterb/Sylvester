@@ -18,4 +18,4 @@ module LinearAlgebra =
         | Error e -> failwithf "Error executing Maxima command %s: %s" cmd e
 
     let rank expr x v =
-        send expr <| sprintf "limit(%s, %s, %s);" (sprint' expr) (sprint' x) (sprint' v)
+        send expr <| sprintf "limit(%s, %s, %s);" (sprinte expr) (sprinte x) (sprinte v)

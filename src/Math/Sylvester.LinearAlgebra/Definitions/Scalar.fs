@@ -14,7 +14,7 @@ type Scalar<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     interface IScalar with
         member val Rank = Some 0 with get,set
         member val Dims = [| |] |> Some with get,set
-    member val Display = sprint' expr
+    member val Display = sprinte expr
     new(d:'t) = let e = expand''<'t> <@ d @> in Scalar e
 
     interface IEquatable<Scalar<'t>> with

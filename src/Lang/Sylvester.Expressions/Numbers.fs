@@ -559,14 +559,19 @@ module Numbers =
         | Decimal x -> Expr.Value(x) |> Some
         | _ -> None
 
+    let (|RealType|_|): Type -> Type option =
+        function
+        | t when t = typeof<real> -> Some t
+        | _ -> None
+
     let (|RationalType|_|): Type -> Type option =
         function
-        | t when t.Name = "Rational" -> Some t
+        | t when t = typeof<Rational> -> Some t
         | _ -> None
 
     let (|NaturalType|_|): Type -> Type option =
         function
-        | t when t.Name = "Natural" -> Some t
+        | t when t = typeof<Natural> -> Some t
         | _ -> None
 
     let (|ComplexType|_|): Type -> Type option =

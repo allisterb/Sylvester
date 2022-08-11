@@ -10,48 +10,26 @@ open MathNet.Symbolics
 module Algebra =
     let private send s = Maxima.send' s
 
-    let algb_expand (expr:Expr<'t>)=
-        sprintf "expand(%s);" (sprint' expr) 
+    let private sendCmd<'t> vars cmd = 
+        cmd 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> e|> (MathNetExpr.toQuotation<'t> (get_vars expr)))
+        |> Result.map(fun e -> MathNetExpr.toQuotation<'t> vars e)
         |> function
         | Ok s -> s
-        | Error e -> failwithf "Error executing Maxima expand command: %s.\n. Session output:%s." e (Maxima.last_output())
+        | Error e -> failwithf "Error executing Maxima %s command: %s" cmd e
+    
+    let algexpand (expr:Expr<'t>) = sprintf "expand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
-    let algb_simplify (expr:Expr<'t>)=
-        sprintf "simplify(%s);" (sprint' expr) 
-        |> send 
-        |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> e|> (MathNetExpr.toQuotation<'t> (get_vars expr)))
-        |> function
-        | Ok s -> s
-        | Error e -> failwithf "Error executing Maxima simplify command: %s.\n. Session output:%s." e (Maxima.last_output())
-
-    let ratexpand (expr:Expr<'t>) =
-        sprintf "ratexpand(%s);" (sprint' expr) 
-        |> send 
-        |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> MathNetExpr.toQuotation<'t> (get_vars expr) e)
-        |> function
-        | Ok s -> s
-        | Error e -> failwithf "Error executing Maxima ratexpand command: %s" e
-
-    let partfrac_of (frac:Expr<'t>) (expr:Expr<'t>) =
-        sprintf "partfrac(%s, %s);" (sprint' expr) (sprint' frac) 
-        |> send 
-        |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> Infix.parse o)
-        |> Result.map(fun e -> MathNetExpr.toQuotation<'t> (get_vars expr) e)
-        |> function
-        | Ok s -> s
-        | Error e -> failwithf "Error executing Maxima partfrac command: %s" e
+    let ratexpand (expr:Expr<'t>) = sprintf "ratexpand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
+    
+    let ratsimp (expr:Expr<'t>) = sprintf "ratsimp(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
+    
+    let partfrac_of (frac:Expr<'t>) (expr:Expr<'t>) = sprintf "partfrac(%s, %s);" (sprint expr) (sprint frac) |> sendCmd<'t> (get_vars expr)
 
     let solve_for (v:Expr<'t>) (system:Expr<bool list>) =
-        sprintf "solve(%s, %s);" (sprint' system) (sprint' v) 
+        sprintf "solve(%s, %s);" (sprint system) (sprint v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList (o.Split('=').[1]))
@@ -64,7 +42,7 @@ module Algebra =
     let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> Option.get |> as_func_of x
 
     let solve_for2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool list>) =
-        sprintf "solve(%s, [%s, %s]);" (sprint' system) (sprint' x) (sprint' y) 
+        sprintf "solve(%s, [%s, %s]);" (sprint system) (sprint x) (sprint y) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun e -> if e = "" then Error "" else Ok e)
@@ -75,6 +53,6 @@ module Algebra =
         | Ok (r1::r2::[]) -> Some(r1, r2)
         | Error "" -> None
         | Ok r -> failwithf "Error executing Maxima solve command: received unexpected solution output: %A." r
-        | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+        | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.last_output 10)
 
     let solve_for_as_func_of2 (x:Expr<'b>)(y:Expr<'c>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> Option.get |> as_func_of2 x y
