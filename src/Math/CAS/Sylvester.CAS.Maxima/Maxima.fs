@@ -64,14 +64,24 @@ module Maxima =
         match x with
         | List list -> "[" + (list |>  List.map sprint |> List.reduce (fun l r -> l + ", " + r)) + "]"
         
-        | SpecificCall <@@ ( / ) @@> (_, _, [l; r]) -> sprintf("%s / %s") (sprint l) (sprint r)
         | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (sprint l) (sprint r)
         | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (sprint l) (sprint r)
         | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (sprint l) (sprint r)
         | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprint l) (sprint r)
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprint l) (sprint r)
         
-        | SpecificCall <@@ cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l) 
+        | SpecificCall <@@ (~-) @@> (_, _, [l]) -> sprintf("-%s") (sprint l)
+        | SpecificCall <@@ (~+) @@> (_, _, [l]) -> sprintf("+%s") (sprint l)
+        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (sprint l) (sprint r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (sprint l) (sprint r)
+        
+        | SpecificCall <@@ sin @@> (_, _, [l]) -> sprintf("sin(%s)") (sprint l) 
+        | SpecificCall <@@ cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l)
+        | SpecificCall <@@ tan @@> (_, _, [l]) -> sprintf("tan(%s)") (sprint l)
+
         | PropertyGet(None, Prop "pi", []) -> "%pi"
         
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)

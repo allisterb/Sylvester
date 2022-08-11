@@ -44,6 +44,5 @@ type IRealAnalysisSymbolicOps =
              
 [<AutoOpen>]    
 module RealAnalysis =
-    do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
     let mutable Ops = MaximaRealAnalysisOps() :> IRealAnalysisSymbolicOps 
