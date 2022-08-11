@@ -19,9 +19,9 @@ type IRealAnalysisSymbolicOps =
   
  type MaximaRealAnalysisOps() = 
     interface IRealAnalysisSymbolicOps with
-        member __.Limit f x v = Analysis.limit f x v
-        member __.LimitRight f x v = Analysis.limit_left f x v
-        member __.LimitLeft f x v = Analysis.limit_left f x v
+        member __.Limit f x v = Analysis.limit x v f
+        member __.LimitRight f x v = Analysis.limit_left x v f
+        member __.LimitLeft f x v = Analysis.limit_left x v f
         member __.Diff (f:Expr<real->'b>) x n = 
             do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprinte f) 
             let vars = param_vars f
@@ -32,15 +32,15 @@ type IRealAnalysisSymbolicOps =
             do if range_type typeof<real->'b> <> typeof<real> then failwithf "The range of the function %s is not real." (sprinte f) 
             let vars = param_vars f
             let b = f |> body  
-            let i = Analysis.integrate <@ %%b:real @> x 
+            let i = Analysis.integrate x <@ %%b:real @> 
             expand''<real->'b> (recombine_func vars i)
         member __.DefiniteIntegral (f:Expr<'a->'b >) (l:Expr<'a>) (u:Expr<'a>) = 
              let vars = param_vars f
              let var = vars |> List.exactlyOne |> Expr.Var |> expand''<'a> 
              let body = f |> body |> expand''<'b> 
-             Analysis.definite_integral body var l u
+             Analysis.definite_integral var l u body
         member __.Sum (expr:Expr<'a>) (x:Expr<'b>) (l:Expr<int>) (u:Expr<int>) = 
-             Analysis.sum expr x l u
+             Analysis.sum x l u expr
              
 [<AutoOpen>]    
 module RealAnalysis =

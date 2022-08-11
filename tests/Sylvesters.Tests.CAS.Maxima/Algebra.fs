@@ -38,7 +38,7 @@ module Algebra =
         let x = LatinVars.x<real>
         let a = LatinVars.a<real>
         
-        let f''' = Analysis.limit <@ (fo(%x + %a) - fo %x) / %a @> a <@ 0. @>
+        let f''' = Analysis.limit a <@ 0. @> <@ (fo(%x + %a) - fo %x) / %a @>
         Assert.NotNull f'''
 
 

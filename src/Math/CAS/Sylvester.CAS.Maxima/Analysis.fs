@@ -44,7 +44,7 @@ module Analysis =
 
     let declare_constants v = List.iter declare_constant v
 
-    let sum (expr:Expr<'t>) x l u = 
+    let sum x l u (expr:Expr<'t>) = 
         assume <@ %u > %l @>
         let r = sendCmd<'t> (get_vars expr) <| sprintf "sum(%s, %s, %s, %s);" (sprint expr) (sprint x) (sprint l) (sprint u)
         forget <@ %u > %l @>
@@ -58,20 +58,20 @@ module Analysis =
 
     let trigreduce (expr:Expr<'t>) = sprintf "trigreduce(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
-    let limit (expr:Expr<'t>) x v =
+    let limit x v (expr:Expr<'t>) =
         sendCmd<'t> (get_vars expr) <| sprintf "limit(%s, %s, %s);" (sprint expr) (sprint x) (sprint v)
                 
-    let limit_right (expr:Expr<'t>) x v = sendCmd<'t> (get_vars expr) <| sprintf "limit(%s, %s, %s, plus);" (sprint expr) (sprint x) (sprint v)
+    let limit_right x v (expr:Expr<'t>) = sendCmd<'t> (get_vars expr) <| sprintf "limit(%s, %s, %s, plus);" (sprint expr) (sprint x) (sprint v)
 
-    let limit_left (expr:Expr<'t>) x v = sendCmd<'t> (get_vars expr) <| sprintf "limit(%s, %s, %s, minus);" (sprint expr) (sprint x) (sprint v)
+    let limit_left x v (expr:Expr<'t>) = sendCmd<'t> (get_vars expr) <| sprintf "limit(%s, %s, %s, minus);" (sprint expr) (sprint x) (sprint v)
 
     let diffn n x (expr:Expr<'t>) = sendCmd<'t> (get_vars expr) <| sprintf "diff(%s, %s, %i);" (sprint expr) (sprint x) n
         
     let diff x (expr:Expr<'t>) = diffn 1 x expr
     
-    let integrate (expr:Expr<'t>) x = sendCmd<'t> (get_vars expr) <| sprintf "integrate(%s, %s);" (sprint expr) (sprint x)
+    let integrate x (expr:Expr<'t>) = sendCmd<'t> (get_vars expr) <| sprintf "integrate(%s, %s);" (sprint expr) (sprint x)
     
-    let definite_integral (expr:Expr<'t>) x l u = 
+    let definite_integral x l u (expr:Expr<'t>) = 
         let l' =
             match l with
             | NegInf -> "minf"
