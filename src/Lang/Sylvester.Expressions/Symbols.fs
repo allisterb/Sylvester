@@ -9,28 +9,6 @@ type SymbolAttribute(symbol:string) =
     inherit Attribute()
     member val Symbol = symbol
 
-module Symbols =
-    let private src expr = Swensen.Unquote.Operators.decompile expr
-    let BulitIn = 
-        let b = new Dictionary<string, string>()
-        b.Add(src <@ not @>, "\u00AC")
-        b
-
-    let Greek = Map.ofList [
-        "epsilon", "fo"
-    ] 
-    
-[<RequireQualifiedAccess>]
-module GreekSymbols = 
-    [<Literal>] 
-    let epsilon = "\u03f5"
-
-[<RequireQualifiedAccess>]
-module GreekVars =
-    let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
-    
-    let epsilon<'t> = var'<'t> GreekSymbols.epsilon
-
 [<RequireQualifiedAccess>]
 module LatinVars =
     let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
@@ -54,6 +32,35 @@ module LatinVars =
     let y<'t> = var'<'t> "y"
 
 [<RequireQualifiedAccess>]
+module GreekVars =
+    let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
+        
+    let epsilon<'t> = var'<'t> "epsilon"
+    let theta<'t> = var'<'t> "theta"
+    
+[<RequireQualifiedAccess>]
 module LatinDiffs =
     let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
     let x<'t> = var'<'t> "dx"
+
+module Symbols =
+    let private src expr = Swensen.Unquote.Operators.decompile expr
+    let BulitIn = 
+        let b = new Dictionary<string, string>()
+        b.Add(src <@ not @>, "\u00AC")
+        b
+
+    let GreekUnicode = Map.ofList [
+        "epsilon", "\u03f5"
+        "theta", "\u03b8"
+    ]
+    
+    let GreekLatex = Map.ofList [
+           "epsilon", "\\epsilon"
+           "theta", "foo"
+    ]
+    let isGreek s = GreekUnicode.ContainsKey s
+
+    let mutable TransliterateGreek = true
+    
+

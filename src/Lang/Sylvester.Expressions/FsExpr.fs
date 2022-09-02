@@ -161,6 +161,11 @@ module FsExpr =
             .Add("Double", <@ cos 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
             .Add("Rational", <@ cos 0Q @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (sin))
     
+    let logOp = 
+        Map.empty
+            .Add("Single", <@ log 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log))
+            .Add("Double", <@ log 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log))
+
     let zeroVal = 
         Map.empty
             .Add("UInt16", <@ (+) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")

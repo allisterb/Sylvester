@@ -43,7 +43,7 @@ module Plot =
 
     let lineplot_as_func min max (expr:Expr<real>) =
         let f = as_func_of_single_var expr in
-        lineplot (sprint' expr) "black" min max 0.1 f
+        lineplot (sprinte expr) "black" min max 0.1 f
 
     let with_lineplot_color c (s:Scatter) = s.line.color <- c; s
 

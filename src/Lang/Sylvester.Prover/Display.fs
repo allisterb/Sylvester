@@ -10,8 +10,7 @@ open FSharp.Reflection
 open Patterns
     
 module Display = 
-    let mutable transliterateGreekSymbols = true
-
+   
     let (|SymbolDisplay|_|):obj -> string option = 
         function
         | :? MethodInfo as info when info.GetCustomAttributes(typeof<SymbolAttribute>, true) <> null && (Seq.length (info.GetCustomAttributes(typeof<SymbolAttribute>, true))) > 0 ->
@@ -23,7 +22,7 @@ module Display =
         | :? Type as t ->
             let a = t.GetCustomAttributes(typeof<SymbolAttribute>, true) in
             if a = null || a.Length = 0 then None else let u = (a.[0] :?> SymbolAttribute) in u.Symbol |> Some 
-        | :? string as s when Symbols.Greek.ContainsKey s && transliterateGreekSymbols -> Symbols.Greek.[s] |> Some
+        | :? string as s when Symbols.TransliterateGreek && Symbols.GreekUnicode.ContainsKey s -> Symbols.GreekUnicode.[s] |> Some
         | :? string as s -> s |> Some
         | _ -> None
 

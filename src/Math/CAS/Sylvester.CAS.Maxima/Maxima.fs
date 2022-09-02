@@ -82,8 +82,12 @@ module Maxima =
         | SpecificCall <@@ cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l)
         | SpecificCall <@@ tan @@> (_, _, [l]) -> sprintf("tan(%s)") (sprint l)
 
+        | SpecificCall <@@ log @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
+        | SpecificCall <@@ ln @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
+
         | PropertyGet(None, Prop "pi", []) -> "%pi"
-        
+        | PropertyGet(None, Prop "e", []) -> "%e"
+
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
 

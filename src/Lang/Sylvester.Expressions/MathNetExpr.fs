@@ -41,14 +41,18 @@ module MathNetExpr =
         | Call(None, Op "FromZero", _) when q.Type = typeof<Rational> -> Number(BigRational.Zero)
         | Call(None, Op "FromOne", _) when q.Type = typeof<Rational> -> Number(BigRational.One)
         
-        | Call(None, Op "Abs", v::[]) -> Expression.Abs (fromQuotation v)
-        | Call(None, Op "Sqrt", v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
         | Call(None, Op "Sin", v::[]) -> Expression.Sin(fromQuotation v)
         | Call(None, Op "Cos", v::[]) -> Expression.Cos(fromQuotation v)
         | Call(None, Op "Tan", v::[]) -> Expression.Tan(fromQuotation v)
         | Call(None, Op "Sinh", v::[]) -> Expression.Sinh(fromQuotation v)
         | Call(None, Op "Cosh", v::[]) -> Expression.Cosh(fromQuotation v)
         | Call(None, Op "Tanh", v::[]) -> Expression.Tanh(fromQuotation v)
+
+        | Call(None, Op "Abs", v::[]) -> Expression.Abs (fromQuotation v)
+        | Call(None, Op "Sqrt", v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
+        | Call(None, Op "Exp", v::[]) -> Expression.Exp(fromQuotation v)
+        | Call(None, Op "Log", v::[]) -> Expression.Ln(fromQuotation v)
+        | Call(None, Op "ln", v::[]) -> Expression.Ln(fromQuotation v)
 
         | Call(None, Op "factorial", v::[]) -> Expression.Factorial (fromQuotation v)
         | Call(None, Op "Factorial", v::[]) -> Expression.Factorial (fromQuotation v)
@@ -57,6 +61,7 @@ module MathNetExpr =
             (Expression.Factorial n') / (Expression.Factorial(r') * (Expression.Factorial(n' - r')))
         
         | PropertyGet(None, Prop "pi", []) -> Expression.Pi
+         | PropertyGet(None, Prop "e", []) -> Expression.E
 
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)
@@ -146,6 +151,7 @@ module MathNetExpr =
             | Identifier(sym) -> (getParam sym) |> Option.map (fun x -> Expr.Var(x))
             | Values.Value v -> value v
             | Constant (Constant.Pi) -> let p = getPropertyInfo <@ pi @> in Expr.PropertyGet p |> Some
+            | Constant (Constant.E) -> let p = getPropertyInfo <@ e @> in Expr.PropertyGet p |> Some
             | Constant c -> constant c
             | Sum(xs) ->
                 let summands = List.map convertExpr xs
@@ -191,7 +197,7 @@ module MathNetExpr =
                     //| AiryAiPrime -> Some (mathCall1 "AiryAiPrime")
                     //| AiryBi -> Some (mathCall1 "AiryBi")
                     //| AiryBiPrime -> Some (mathCall1 "AiryBiPrime")
-                    | Ln   -> getMethodInfo <@ Math.Log @> |> Some
+                    | Ln   -> logOp.[typeof<'t>.Name]  |> Some
                     //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | e    -> failwithf "Could not convert function %A to quotation." e
                 let f = convertFunc func
@@ -380,148 +386,3 @@ module MathNetExprParser =
         | ParserResult.Success (result,_,_) -> Result.Ok result
         | ParserResult.Failure (error,_,_) -> Result.Error error
 
-module private InfixFormatter =
-
-    open Operators
-
-    let culture = System.Globalization.CultureInfo.InvariantCulture
-
-    let private dropParenthesis = function
-        | VisualExpression.Parenthesis x -> x
-        | x -> x
-
-    let rec format write = function
-        | VisualExpression.Symbol s ->
-            match s with
-            | "pi" -> write "\u03C0" // "π"
-            | x -> write x
-        | VisualExpression.Infinity -> write "\u221E" // "∞"
-        | VisualExpression.ComplexInfinity -> write "\u29DD" // "⧝"
-        | VisualExpression.Undefined -> write "Undefined"
-        | VisualExpression.ComplexI -> write "j"
-        | VisualExpression.RealE -> write "e"
-        | VisualExpression.RealPi -> write "\u03C0" // "π"
-        | VisualExpression.PositiveInteger n -> write (n.ToString())
-        | VisualExpression.PositiveFloatingPoint fp ->
-            let s = fp.ToString(culture)
-            if s.IndexOf('.') = -1 then write (s + ".0") else write s
-        | VisualExpression.Parenthesis x ->
-            write "("
-            format write x
-            write ")"
-        | VisualExpression.Abs x ->
-            write "|"
-            format write x
-            write "|"
-        | VisualExpression.Negative x ->
-            write "-"
-            format write x
-        | VisualExpression.Sum (x::xs) ->
-            format write x
-            xs |> List.iter (function
-                | VisualExpression.Negative x -> write " - "; format write x
-                | x -> write " + "; format write x)
-        | VisualExpression.Product (x::xs) ->
-            format write x
-            xs |> List.iter (fun x -> write "*"; format write x)
-        | VisualExpression.Fraction (n, d) ->
-            format write n
-            write "/"
-            format write d
-        | VisualExpression.Power (r, p) ->
-            format write r
-            write "^"
-            format write p
-        | VisualExpression.Root (r, p) when p = bigint 2 ->
-            write "sqrt("
-            format write (dropParenthesis r)
-            write ")"
-        | VisualExpression.Root (r, p) ->
-            format write r
-            write "^(1/"
-            write (p.ToString())
-            write ")"
-        | VisualExpression.Function (fn, power, [x]) ->
-            write fn
-            if power.IsOne |> not then
-                write "^"
-                write (power.ToString())
-            write "("
-            format write x
-            write ")"
-        | VisualExpression.Function (fn, power, x::xs) ->
-            write fn
-            if power.IsOne |> not then
-                write "^"
-                write (power.ToString())
-            write "("
-            format write x
-            xs |> List.iter (fun x -> write ","; format write x)
-            write ")"
-        | VisualExpression.Sum [] | VisualExpression.Product [] | VisualExpression.Function (_, _, []) -> failwith "invalid expression"
-
-/// Print and parse infix expression string
-[<RequireQualifiedAccess>]
-module MathNetExprFormatter =
-
-    open Microsoft.FSharp.Core
-
-    let defaultStyle = { VisualExpressionStyle.CompactPowersOfFunctions = false }
-
-    [<CompiledName("FormatVisual")>]
-    let formatVisual visualExpression =
-        let sb = StringBuilder()
-        InfixFormatter.format (sb.Append >> ignore) visualExpression
-        sb.ToString()
-
-    /// Nicer human readable but slightly denormalized output
-    [<CompiledName("FormatStyle")>]
-    let formatStyle visualStyle expression =
-        let sb = StringBuilder()
-        let visual = VisualExpression.fromExpression visualStyle expression
-        InfixFormatter.format (sb.Append >> ignore) visual
-        sb.ToString()
-
-    /// Nicer human readable but slightly denormalized output
-    [<CompiledName("Format")>]
-    let format expression = formatStyle defaultStyle expression
-
-    [<CompiledName("FormatVisualWriter")>]
-    let formatVisualWriter (writer:TextWriter) visualExpression =
-        InfixFormatter.format (writer.Write) visualExpression
-
-    /// Nicer human readable but slightly denormalized output
-    [<CompiledName("FormatStyleWriter")>]
-    let formatStyleWriter visualStyle (writer:TextWriter) expression =
-        VisualExpression.fromExpression visualStyle expression |> formatVisualWriter writer
-
-    /// Nicer human readable but slightly denormalized output
-    [<CompiledName("FormatWriter")>]
-    let formatWriter (writer:TextWriter) expression =
-        VisualExpression.fromExpression defaultStyle expression |> formatVisualWriter writer
-
-    [<CompiledName("ParseVisual")>]
-    let parseVisual (infix: string) =
-        MathNetExprParser.parse infix
-
-    [<CompiledName("Parse")>]
-    let parse (infix: string) =
-        parseVisual infix |> Result.map VisualExpression.toExpression
-
-    [<CompiledName("TryParse")>]
-    let tryParse (infix: string) =
-        match parse infix with
-        | Ok expression -> Some expression
-        | _ -> None
-
-    [<CompiledName("ParseOrThrow")>]
-    let parseOrThrow (infix: string) =
-        match parse infix with
-        | Ok expression -> expression
-        | Error error -> failwith error
-
-    [<CompiledName("ParseOrUndefined")>]
-    let parseOrUndefined (infix: string) =
-        match parse infix with
-        | Ok expression -> expression
-        | _ -> Expression.Undefined

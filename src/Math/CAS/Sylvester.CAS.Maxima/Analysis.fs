@@ -13,12 +13,13 @@ module Analysis =
     let private sendCmd<'t> vars cmd = 
         cmd
         |> send
-        |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> MathNet.Symbolics.Infix.parse o)
+        |> Result.mapError(fun e -> sprintf "Error executing Maxima command %s: %s. Maxima session output: %s" cmd e.Message (Maxima.last_output 10))
+        |> Result.bind(fun o -> MathNet.Symbolics.Infix.parse (o.Replace("%", "")))
         |> Result.map(fun e -> MathNetExpr.toQuotation<'t> vars e)
+        |> Result.mapError(fun e -> sprintf "Error parsing output of Maxima command %s: %s. Maxima session output: %s" cmd e (Maxima.last_output 10))
         |> function
         | Ok s -> s
-        | Error e -> failwithf "Error executing Maxima command %s: %s. Maxima session output: %s" cmd e (Maxima.last_output 10)
+        | Error e -> failwith e
 
     let kill (v:Var) =
         match send <| sprintf "kill(%s);" v.Name with

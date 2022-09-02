@@ -11,14 +11,15 @@ module Algebra =
     let private send s = Maxima.send' s
 
     let private sendCmd<'t> vars cmd = 
-        cmd 
-        |> send 
-        |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> Infix.parse o)
+        cmd
+        |> send
+        |> Result.mapError(fun e -> sprintf "Error executing Maxima command %s: %s. Maxima session output: %s" cmd e.Message (Maxima.last_output 10))
+        |> Result.bind(fun o -> MathNet.Symbolics.Infix.parse (o.Replace("%", "")))
         |> Result.map(fun e -> MathNetExpr.toQuotation<'t> vars e)
+        |> Result.mapError(fun e -> sprintf "Error parsing output of Maxima command %s: %s. Maxima session output: %s" cmd e (Maxima.last_output 10))
         |> function
         | Ok s -> s
-        | Error e -> failwithf "Error executing Maxima %s command: %s" cmd e
+        | Error e -> failwith e
     
     let algexpand (expr:Expr<'t>) = sprintf "expand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
@@ -38,6 +39,8 @@ module Algebra =
         | Ok s -> s
         | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+
+    let solve_as_real_eqn_for (v:Expr<real>) (expr:Expr<real>) = solve_for v <@[ %expr = 0.0 ]@>
 
     let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> List.head |> as_func_of x
 

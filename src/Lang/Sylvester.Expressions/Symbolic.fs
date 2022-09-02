@@ -46,7 +46,12 @@ module Symbolic =
         | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprinte l) (sprinte r)
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprinte l) (sprinte r)
         
+        | PropertyGet(None, Prop "e", []) -> "e"
+        
+        | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
+        
+        
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let rec latex' (x:Expr) = 
@@ -57,6 +62,9 @@ module Symbolic =
         | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (latex' l) (latex' r)
         | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (latex' l) (latex' r)
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latex' l) (latex' r)
+
+        | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
+        
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
 
     let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
