@@ -4,12 +4,12 @@ open FSharp.Quotations
 
 open XPlot.Plotly
 
-type Plot2D(width:int, height:int, title:string, xaxis_label:string, yaxis_label:string, traces:seq<Trace>, ?layout:Layout) = 
+type Plot2D(width:int, height:int, title:string, xaxis_label:string, yaxis_label:string, plots:seq<Plottable>, ?layout:Layout) = 
     inherit PlotlyChart()
     member val Width = width with get,set
     member val Height = height with get,set
     member val Title = title with get,set
-    member val Traces = new System.Collections.Generic.List<Trace>(traces)
+    member val Plots = plots |> System.Collections.Generic.List with get, set
     member val Layout = 
         defaultArg layout (
             Layout(
@@ -26,26 +26,47 @@ type Plot2D(width:int, height:int, title:string, xaxis_label:string, yaxis_label
                     )
             )
         ) with get, set
-    
-    member x.Chart() = x.Traces |> Chart.Plot |> Chart.WithWidth x.Width |> Chart.WithHeight x.Height |> Chart.WithTitle x.Title |> Chart.WithLayout x.Layout
+    member x.Traces() = x.Plots |> Seq.choose(function | Trace x -> Some x | _ -> None)
+    member x.Shapes() = x.Plots |> Seq.choose(function | Shape x -> Some x | _ -> None)
+    member x.Annotations() = x.Plots |> Seq.choose(function | Annotation x -> Some x | _ -> None)
+    member x.Chart() = 
+        x.Layout.shapes <- x.Shapes()
+        x.Layout.annotations <- x.Annotations()
+        x.Traces() |> Chart.Plot |> Chart.WithWidth x.Width |> Chart.WithHeight x.Height |> Chart.WithTitle x.Title |> Chart.WithLayout x.Layout
 
     interface IHtmlDisplay with member x.Html() = x.Chart().GetInlineHtml()
 
+and Plottable = 
+| Trace of Graph.Trace
+| Shape of Graph.Shape
+| Annotation of Graph.Annotation
+    
 [<AutoOpen>]
 module Plot =
     
-    let plot2d width height title xaxis_label yaxis_label (traces:seq<Trace>) = Plot2D(width, height, title, xaxis_label, yaxis_label, traces) 
+    let plot2d width height title xaxis_label yaxis_label (plots:seq<Plottable>) = Plot2D(width, height, title, xaxis_label, yaxis_label, plots) 
+
+    let with_shapes shapes (p:Plot2D) =
+        p.Layout.shapes <- shapes
+        p
 
     let lineplot name color min max step (f:real->real) =
         let xdat = seq {min..step..max} in
         let ydat = xdat |> Seq.map f in
-        Scatter(x=xdat, y=ydat, line = Line(color=color), mode="lines", name = name, showlegend = true)
+        Scatter(x=xdat, y=ydat, line = Line(color=color), mode="lines", name = name, showlegend = true) 
+        :> Trace
+        |> Plottable.Trace
 
     let lineplot_as_func min max (expr:Expr<real>) =
         let f = as_func_of_single_var expr in
         lineplot (sprinte expr) "black" min max 0.1 f
 
-    let with_lineplot_color c (s:Scatter) = s.line.color <- c; s
+    let with_color c (p:Plottable) = 
+        match p with
+        | Trace t when (t :? Scatter) -> let s = t :?> Scatter in s.line.color <- c; s :> Trace |> Trace
+        | Shape s -> s.line.color <- c; Shape s
+        | Annotation a -> a.arrowcolor <- c; Annotation a
+
 
     let with_lineplot_markers (s:Scatter) = s.mode <- "lines+markers"; s
 
@@ -72,7 +93,9 @@ module Plot =
                         )
                 )
     
-        )
+        ) 
+        :> Trace
+        |> Plottable.Trace
 
     let with_histogram_opacity o (h:Histogram) = h.marker.opacity <- o; h
 
@@ -95,10 +118,20 @@ module Plot =
                     symbol = "circle",
                     size = 16
               )
-        )
+        ) 
+        :> Trace
+        |> Plottable.Trace
 
     let with_plot_barmode_overlay (p:Plot2D) = p.Layout.barmode <- "overlay"; p
 
     let with_plot_x_tick dt ticks (p:Plot2D) = p.Layout.xaxis.autotick <- false; p.Layout.xaxis.dtick <- dt; p.Layout.xaxis.ticks <- ticks; p 
     
     let with_plot_y_tick dt ticks (p:Plot2D) = p.Layout.yaxis.autotick <- false; p.Layout.yaxis.dtick <- dt; p.Layout.yaxis.ticks <- ticks; p
+
+    let circle color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="circle", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1), opacity=0.2)
+                    
+    let rect color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="rect", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1), opacity=0.2)
+
+    let line color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="rect", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1), opacity=0.2)
+
+    let annotation x y text = Plottable.Annotation <| Graph.Annotation(x=x, y=y, text=text, showarrow=true, arrowhead=1)
