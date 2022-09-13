@@ -58,8 +58,6 @@ module Plot =
 
     let lineplot min max (expr:Expr<real>) = Lineplot((sprinte expr), "black", min, max, 0.1, expr) |> Plottable.Lineplot 
 
-    
-        
     let histogram name color (xbin_start:'t) (xbin_end:'t) (xbin_size:'t) (x:seq<'t>) = 
         Graph.Histogram (
             name = name,
