@@ -554,6 +554,7 @@ module FsExpr =
     let as_func_of_single_var<'t> (expr:Expr<'t>) =
         let v = get_vars expr
         match v with
+        | [] -> let x = Var("x", typeof<'t>) in recombine_func [x] expr |> expand''<'t->'t> |> ev 
         | x::[] -> recombine_func [x] expr |> expand''<'t->'t> |> ev
         | _ -> failwithf "Expression %A is not an expression of a single variable." expr
 

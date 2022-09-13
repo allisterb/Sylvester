@@ -26,7 +26,7 @@ type Plot2D(width:int, height:int, title:string, xaxis_label:string, yaxis_label
                     )
             )
         ) with get, set
-    member x.Traces() = x.Plots |> Seq.choose(function | Trace x -> Some x | _ -> None)
+    member x.Traces() = x.Plots |> Seq.choose(function | Lineplot x -> x :> Trace |> Some | Histogram x -> x :> Trace |> Some | _ -> None)
     member x.Shapes() = x.Plots |> Seq.choose(function | Shape x -> Some x | _ -> None)
     member x.Annotations() = x.Plots |> Seq.choose(function | Annotation x -> Some x | _ -> None)
     member x.Chart() = 
@@ -37,43 +37,31 @@ type Plot2D(width:int, height:int, title:string, xaxis_label:string, yaxis_label
     interface IHtmlDisplay with member x.Html() = x.Chart().GetInlineHtml()
 
 and Plottable = 
-| Trace of Graph.Trace
+| Lineplot of Lineplot
+| Histogram of Graph.Histogram
 | Shape of Graph.Shape
 | Annotation of Graph.Annotation
     
+and Lineplot(name, color, ?x, ?y, ?expr:Expr<real>) = 
+    inherit Scatter(line = Line(color=color), mode="lines", name = name, showlegend = true, x = defaultArg x null, y = defaultArg y null)
+    member x.Expr = match expr with | Some e -> sprinte e | _ -> ""
+    
+    new(name, color, min, max, step, expr:Expr<real>) =
+        let f = as_func_of_single_var expr
+        let xdat = seq {min..step..max} 
+        let ydat = xdat |> Seq.map f
+        Lineplot(name, color, xdat, ydat, expr) 
+    
 [<AutoOpen>]
 module Plot =
-    
     let plot2d width height title xaxis_label yaxis_label (plots:seq<Plottable>) = Plot2D(width, height, title, xaxis_label, yaxis_label, plots) 
 
-    let with_shapes shapes (p:Plot2D) =
-        p.Layout.shapes <- shapes
-        p
+    let lineplot min max (expr:Expr<real>) = Lineplot((sprinte expr), "black", min, max, 0.1, expr) |> Plottable.Lineplot 
 
-    let lineplot name color min max step (f:real->real) =
-        let xdat = seq {min..step..max} in
-        let ydat = xdat |> Seq.map f in
-        Scatter(x=xdat, y=ydat, line = Line(color=color), mode="lines", name = name, showlegend = true) 
-        :> Trace
-        |> Plottable.Trace
-
-    let lineplot_as_func min max (expr:Expr<real>) =
-        let f = as_func_of_single_var expr in
-        lineplot (sprinte expr) "black" min max 0.1 f
-
-    let with_color c (p:Plottable) = 
-        match p with
-        | Trace t when (t :? Scatter) -> let s = t :?> Scatter in s.line.color <- c; s :> Trace |> Trace
-        | Shape s -> s.line.color <- c; Shape s
-        | Annotation a -> a.arrowcolor <- c; Annotation a
-
-
-    let with_lineplot_markers (s:Scatter) = s.mode <- "lines+markers"; s
-
-    let with_lineplot_fill f c (s:Scatter) = s.fill <- f; s.fillcolor <- c; s
-
+    
+        
     let histogram name color (xbin_start:'t) (xbin_end:'t) (xbin_size:'t) (x:seq<'t>) = 
-        Histogram (
+        Graph.Histogram (
             name = name,
             x = x,
             autobinx = false,
@@ -94,8 +82,7 @@ module Plot =
                 )
     
         ) 
-        :> Trace
-        |> Plottable.Trace
+        |> Plottable.Histogram
 
     let with_histogram_opacity o (h:Histogram) = h.marker.opacity <- o; h
 
@@ -120,7 +107,24 @@ module Plot =
               )
         ) 
         :> Trace
-        |> Plottable.Trace
+        //|> Plottable.Trace
+
+    let with_color c (p:Plottable) = 
+        match p with
+        | Lineplot l -> l.line.color <- c; p
+        | Shape s -> s.line.color <- c; p
+        | Annotation a -> a.arrowcolor <- c; p
+        | _ -> p
+
+    let with_markers (p:Plottable) = 
+        match p with
+        | Lineplot l -> l.mode <- "lines+markers"; p
+        | _ -> p
+    
+    let with_fill f c (p:Plottable) = 
+        match p with
+        | Lineplot l -> l.fill <- f; l.fillcolor <- c; p
+        | _ -> p
 
     let with_plot_barmode_overlay (p:Plot2D) = p.Layout.barmode <- "overlay"; p
 
@@ -132,6 +136,16 @@ module Plot =
                     
     let rect color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="rect", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1), opacity=0.2)
 
-    let line color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="rect", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1), opacity=0.2)
+    let line color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="line", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1))
+
+    let vertical_line color x0 =
+        let l = XPlot.Plotly.Graph.Shape(``type``="line", x0=x0, x1=x0, y0=0, y1=1, line = XPlot.Plotly.Graph.Line(color=color, width=0.5))
+        l.x0 <- x0
+        l.x1 <- x0
+        l.y0 <- 0.
+        l.y1 <- 1.
+        l.yref <- "paper"
+        l.xref <- "x"
+        l |> Plottable.Shape
 
     let annotation x y text = Plottable.Annotation <| Graph.Annotation(x=x, y=y, text=text, showarrow=true, arrowhead=1)
