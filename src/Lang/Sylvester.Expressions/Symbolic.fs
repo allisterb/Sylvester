@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open System 
+
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
@@ -72,8 +74,16 @@ module Symbolic =
         | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (latex' l) (latex' r)
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latex' l) (latex' r)
 
+        | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latex' l) (latex' r)
+        | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latex' l) (latex' r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (latex' l) (latex' r)
+        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (latex' l) (latex' r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (latex' l) (latex' r)
+
         | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
         
+        | Double d when d = Math.Floor(d + 0.00001) ->  latex' <| Expr.Value (Convert.ToInt32(d))
+
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
 
     let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
