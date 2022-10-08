@@ -80,6 +80,8 @@ module Symbolic =
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (latex' l) (latex' r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (latex' l) (latex' r)
 
+        | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latex' x)
+
         | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
         
         | Double d when d = Math.Floor(d + 0.00001) ->  latex' <| Expr.Value (Convert.ToInt32(d))
