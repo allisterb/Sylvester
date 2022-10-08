@@ -32,8 +32,8 @@ type UnivariateDistribution =
                 let vt = param_var t
                 let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
                 let pd = integrate x.Func <@ %%Expr.Var(vd): real @>
-                let td = pd |> body |> subst_var_value vd bodyt |> recombine_func [vd]
-                let tpd = diff <@ %%td:real->real @> <@ %%Expr.Var(vd): real @>
+                let td = pd |> body |> subst_var_value vd bodyt 
+                let tpd = <@ %%td:real @> |> diff <@ %%Expr.Var(vd): real @> |> recombine_func [vd] |> expand''<real->real>
                 ProbabilityDensity(tpd, support)
 
 type MultivariateDistribution<'n when 'n :> Number> = 
