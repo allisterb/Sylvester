@@ -76,7 +76,7 @@ module Maxima =
         | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (sprint l) (sprint r)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (sprint l) (sprint r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (sprint l) (sprint r)
-        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (sprint l) (sprint r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^(%s)") (sprint l) (sprint r)
         
         | SpecificCall <@@ sin @@> (_, _, [l]) -> sprintf("sin(%s)") (sprint l) 
         | SpecificCall <@@ cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l)

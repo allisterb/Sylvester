@@ -7,7 +7,6 @@ open MathNet.Numerics.Random
 open Sylvester
 
 module DescriptiveStatistics =
-    
     let mean (s:seq<'t>) = s |> real_seq |> Statistics.Mean |> real
 
     let median (s:seq<'t>) = s |> real_seq |> Statistics.Median |> real
@@ -29,6 +28,8 @@ module DescriptiveStatistics =
     let std_t_distrib (n:int) = new StudentT(0., 1.0, real n)
 
     let std_normal_distrib = new Normal()
+
+    let chi_sq f  = new ChiSquared(f)
 
     let phi (x:real) : real  = prob_cumul std_normal_distrib x
 
@@ -56,3 +57,5 @@ module DescriptiveStatistics =
         let sample_mean = mean s
         let sample_sd = standard_deviation s
         estimate_pop_mean_sample_sd_interval confidence (Seq.length s) sample_sd sample_mean
+
+    let proportion_sampling_distrib prop (n:int) = normal_distrib prop (prop * (1. - prop) / real n)
