@@ -457,6 +457,11 @@ module FsExpr =
 
     let body'(expr:Expr<'a->'b>) = expr |> body |> expand''<'b>
     
+    let binary_operands op (e:Expr) =
+           match e with
+             |SpecificCall op (None,_,l::r::[]) -> l, r
+             | _ -> failwithf "The expression %s is not a binary %s operation." (src e) (src op)
+
     let call expr p = 
         let mi = getFuncInfo expr
         Expr.Call(mi, p)

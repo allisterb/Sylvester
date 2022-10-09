@@ -10,6 +10,8 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let p,q = ratvar2 "p" "q"
 
+binary_operands <@@ (=) @@> <@ %p = %q @>
+
 let L = realvar "L"
 let K, pK, pL = realvar3 "K" "pK" "pL"
 let E = realvar "E"
@@ -35,7 +37,13 @@ let r = pi/ 2Q
 
 diff <@ cos (%L * 2. + sin %L) @> L |> sprinte
 
-
-sprinte <| trigexpand <@cos (6Q * pi + %x)@>
+<@ (sin %L) ** 2. + (cos %L) ** 2. + sin %L @> |> trigsimp |> diff L |> sprinte
+//sprinte <| trigexpand <@cos (6Q * pi + %x)@>
 
 //let RRR = <@ arcsin@>
+
+let th = GreekVars.theta<real>
+
+<@ sin 2. * %th @> |> latex'
+
+Symbols.TransliterateGreek
