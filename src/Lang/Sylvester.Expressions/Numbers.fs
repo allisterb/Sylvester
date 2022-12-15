@@ -436,6 +436,8 @@ type real = float
 
 type rat = Rational
 
+type nat = Natural
+
 type complex = System.Numerics.Complex
 
 [<RequireQualifiedAccess>]

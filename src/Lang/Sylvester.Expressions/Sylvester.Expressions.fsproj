@@ -11,6 +11,7 @@
     <Compile Include="FsExpr.fs" />
     <Compile Include="MathNetExpr.fs" />
     <Compile Include="Symbolic.fs" />
+    <Compile Include="Scalar.fs" />
     <Compile Include="Formula.fs" />
     <Compile Include="Parsers.fs" />
     <None Include="Script1.fsx" />

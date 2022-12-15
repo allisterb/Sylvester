@@ -5,6 +5,11 @@ open Arithmetic
 open Dimension
 open Matrix
 
+let ee = Scalar6 4
+
+let rr = ee + 5
+rr.Expr
+
 let a, b = realvar "a", realvar "b"
 
 let c = 1N + 5N
