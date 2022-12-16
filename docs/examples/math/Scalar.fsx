@@ -7,5 +7,8 @@ open Matrix
 
 let ee = Scalar6 4
 
-let rr = ee + 5
-rr.Expr
+let r = ee - 5
+
+let v = Scalar6.var6<real> "v"
+
+(4Q + v + 2)
