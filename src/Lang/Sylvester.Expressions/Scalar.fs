@@ -162,11 +162,23 @@ type Scalar6<'t when 't: equality and 't: comparison and 't:> ValueType and 't :
     static member (/) (l:Scalar6<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand''<'t> |> Scalar6<'t>
 
     
-    static member Pow (l : Scalar6<real>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Scalar6<'t>
+    static member Pow (l : Scalar6<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Scalar6<'t>
     
     static member Pow (l : Scalar6<real>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Scalar6<'t>
 
     static member Pow (l : Scalar6<real>, r : nat) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Scalar6<'t>
+
+    static member Pow (l : Scalar6<rat>, r : real) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Scalar6<'t>
+
+    static member Pow (l : Scalar6<rat>, r : rat) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Scalar6<'t>
+
+    static member Pow (l : Scalar6<rat>, r : int) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Scalar6<'t>
+         
+    static member Pow (l : Scalar6<int>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Scalar6<'t>
+         
+    static member Pow (l : Scalar6<nat>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Scalar6<'t>
+    
+    static member Pow (l : real, r : Scalar6<real>) = call_pow (Expr.Value l) r.Expr |> expand''<'t> |> Scalar6<'t>
 
     static member Pow (l : int, r : Scalar6<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Scalar6<'t>
 
@@ -179,6 +191,15 @@ type Scalar6<'t when 't: equality and 't: comparison and 't:> ValueType and 't :
     static member Pow (l : rat, r : Scalar6<rat>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Scalar6<'t>
     
     static member Pow (l : nat, r : Scalar6<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Scalar6<'t>
+
+   
+type realexpr = Scalar6<real>
+
+type ratexpr = Scalar6<rat>
+
+type intexpr = Scalar6<int>
+
+type natexpr = Scalar6<nat>
 
 [<RequireQualifiedAccess>]
 module NumericLiteralS = 
