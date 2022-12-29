@@ -25,6 +25,7 @@ type Ring<'t when 't: equality>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     member val Group = group
     interface IRing<'t> with
         member val Set = group.Set
+        member x.Equals y = x.Set.Equals y
         member val Op = group.Op
         member val Op2 = op2
         member val Identity = group.Identity
@@ -45,8 +46,13 @@ type CommutativeRing<'t when 't: equality>(group: IAbelianGroup<'t>, op2: Binary
 /// Commutative ring with a total order relation.
 type OrderedRing<'t when 't: equality and 't : comparison>(group: IAbelianGroup<'t>, op2: BinaryOp<'t>) =
     inherit CommutativeRing<'t>(group, op2)
+    interface ISet<'t> with
+        member val Set = group.Set
+        member x.Equals y = x.Set.Equals y 
     interface ITotalOrder<'t> with
-        member val Order = (<)
+        member val Domain = group.Set
+        member val CoDomain = group.Set
+        member val Op = <@ (<) @>
     new (set:ISet<'t>, op: BinaryOp<'t>, op2: BinaryOp<'t>, zero:'t, one:'t, inv:UnaryOp<'t>) =
         OrderedRing(AbelianGroup<'t>(set, op, zero, inv), op2)
 
@@ -96,7 +102,7 @@ module Ring =
                     member x.Minimal = 0
                     member x.LowerBound = 0
                 interface IPartialOrder<int>with
-                    member x.Order = (<=)
+                    member x.Op = <@ (<=) @>
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()
@@ -116,7 +122,7 @@ module Ring =
                     member x.Maximal = 0
                     member x.UpperBound = 0
                 interface IPartialOrder<int>with
-                    member x.Order = (<=)
+                    member x.Op= <@ (<=) @>
                 interface Generic.IEnumerable<int> with
                     member x.GetEnumerator(): Generic.IEnumerator<int> = (set :> Generic.IEnumerable<int>).GetEnumerator()
                     member x.GetEnumerator(): IEnumerator = (set :> IEnumerable).GetEnumerator()

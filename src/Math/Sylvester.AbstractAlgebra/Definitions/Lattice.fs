@@ -3,14 +3,13 @@
 /// Set of elements closed under a operation that is associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that the operation on every pair of elements results in the supremum of the pair.
 type ISemiLattice<'t when 't: equality> = 
-    inherit ISet<'t>
     inherit IPartialOrder<'t>
     abstract member Op: BinaryOp<'t>
     
 /// Set of elements closed under a operation that is associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that the operation on every pair of elements results in the supremum of the pair.
 type SemiLattice<'t when 't: equality>(set: ISet<'t>, op: BinaryOp<'t>) =
-    inherit Poset<'t>(set, (fun a b -> (if (op a b) = a then false else true)))
+    inherit Poset<'t>(set, <@ (fun a b -> (if (op a b) = a then false else true)) @>)
     do 
         fail_if_not_left_associative op
         fail_if_not_commutative op
@@ -29,7 +28,6 @@ type IBoundedMeetSemiLattice<'t when 't : equality> =
 /// Set of elements closed under 2 operations that are associative, commutative, and idempotent, which induces a partial order on the set 
 /// such that each operation on every pair of elements results in the supremum and infimum respectively of the pair.
 type ILattice<'t when 't: equality and 't: comparison> = 
-    inherit ISet<'t>
     inherit ITotalOrder<'t>
     abstract Join: BinaryOp<'t>
     abstract Meet: BinaryOp<'t>

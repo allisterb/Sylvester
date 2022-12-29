@@ -23,8 +23,13 @@ type Field<'t when 't: equality>(additiveGroup: IAdditiveGroup<'t>, multiplicati
 
 type OrderedField<'t when 't: equality and 't : comparison>(additiveGroup: IAdditiveGroup<'t>, multiplicativeGroup: IMultiplicativeGroup<'t>) =
     inherit Field<'t>(additiveGroup, multiplicativeGroup)
+    interface ISet<'t> with
+        member val Set = additiveGroup.Set
+        member x.Equals y = x.Set.Equals y 
     interface ITotalOrder<'t> with
-        member val Order = (<)
+        member val Domain = additiveGroup.Set
+        member val CoDomain = additiveGroup.Set
+        member val Op = <@ (<) @>
 
 module Field = 
     let R = 

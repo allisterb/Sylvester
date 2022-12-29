@@ -140,4 +140,4 @@ module Group =
                     member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         } 
 
-    let Zero = AbelianGroup<nat<1>, int>(Set.Zero, (*), 0, fun _ -> 0)
+    let Zero = AbelianGroup<dim<1>, int>(Set.Zero, (*), 0, fun _ -> 0)

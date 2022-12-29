@@ -36,6 +36,8 @@ type Scalar6<'t when 't: equality and 't: comparison and 't:> ValueType and 't :
 
     static member One = typeof<'t> |> one_val |> expand''<'t> |> Scalar6
 
+    static member op_Implicit (l:Scalar6<'t>):Expr<'t> = l.Expr
+
     static member op_Implicit (l:'t):Scalar6<'t> = Scalar6 l
 
     static member op_Implicit (l:int):Scalar6<real> = let v = real l in Scalar6 v

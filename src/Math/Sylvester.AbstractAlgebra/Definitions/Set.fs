@@ -16,7 +16,7 @@ type Set<'t when 't: equality> =
 | Empty
 /// A set defined by the distinct unordered values of a sequence.
 | Seq of seq<'t>
-/// A set formally defined by a bound variable, range and body expression. 
+/// A set symbolically defined by a bound variable, range and body expression. 
 | Set of SetComprehension<'t>
 with          
     interface IEnumerable<'t> with
@@ -286,7 +286,7 @@ and KnownSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: '
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
     new (items:seq<'t>) = KnownSet(items |> Seq.toArray)
 
-and Singleton<'t when 't: equality>(e:'t) = inherit KnownSet<nat<1>, 't>([|e|])
+and Singleton<'t when 't: equality>(e:'t) = inherit KnownSet<dim<1>, 't>([|e|])
 
 and ISet<'t when 't: equality> = 
     inherit IEquatable<Set<'t>>
@@ -399,4 +399,8 @@ module Set =
     
     let setvar4<'t when 't : equality> n o p q = var4'<Set<'t>> n o p q
 
+    let fail_if_set_not_eq (a:ISet<'t>) (b:ISet<'t>) = if not (a.Set = b.Set) then failwithf "The set %A is not equal to the set %A." a b
+
     type uninterp = obj
+
+     

@@ -5,7 +5,7 @@ open System.Collections
 
 open FSharp.Quotations
 
-/// A statement that formally defines a set using bound variables, range predicate, body, cardinality, and an optional F# function for computing set membership.
+/// A statement that symbolically defines a set using bound variables, range predicate, body, cardinality, and an optional F# function for computing set membership.
 type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr<bool>,body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     member val Bound = 
         match bound with
@@ -17,17 +17,18 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
     member val Body' = body
     member val HasElement = defaultArg hasElement (fun (sc:SetComprehension<'t>) (_:'t) -> failwithf "No set membership function is defined for the set comprehension %A." sc)
     member val Cardinality = card
-    interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
-    override a.GetHashCode() = (a.ToString()).GetHashCode()
-    override a.Equals (_b:obj) = 
-            match _b with 
-            | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
-            | _ -> false
+    
     override x.ToString() = 
         let vars = body |> get_vars
         let v = if Seq.isEmpty vars then "" else vars.[0].ToString() + "|"
         sprintf "{%s%s:%s}" v (src range) (src body)
-        
+     override a.GetHashCode() = (a.ToString()).GetHashCode()
+     override a.Equals (_b:obj) = 
+         match _b with 
+         | :? SetComprehension<'t> as b -> (a :> IEquatable<SetComprehension<'t>>).Equals b
+         | _ -> false
+    interface IEquatable<SetComprehension<'t>> with member a.Equals(b) = a.ToString() = b.ToString()
+    
     internal new(bound:Expr<'t>, body:Expr<'t>, card:CardinalNumber) = SetComprehension(bound, <@ true @>, body, card, fun _ _ -> true)
         
     internal new (range:Expr<bool>, body:Expr<'t>, card:CardinalNumber, ?hasElement: SetComprehension<'t> -> 't -> bool) =

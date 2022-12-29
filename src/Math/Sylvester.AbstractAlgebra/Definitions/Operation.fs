@@ -1,7 +1,8 @@
 ﻿namespace Sylvester
 
 open System
-open System.Collections
+
+open FSharp.Quotations
 
 open Sylvester.Arithmetic
 open Sylvester.Collections
@@ -27,7 +28,7 @@ type BinaryOp<'t when 't: equality> = Map<'t, 't, 't>
 type BinaryOp<'t, 'd when 't: equality and 'd: equality> = Map<'t, 'd, 'd>
 
 // Order operation on elements of type t. true indicates less-than-or equal, false indicates greater than.
-type Order<'t when 't: equality> = Map<'t, 't, bool>
+type Order<'t when 't: equality> = Expr<Map<'t, 't, bool>>
 
 /// Union of operations between elements of type t.
 type Op<'t when 't: equality> = 
