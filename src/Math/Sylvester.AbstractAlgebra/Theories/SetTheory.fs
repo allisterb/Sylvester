@@ -42,7 +42,7 @@ module SetTheory =
 
     let (|ElementOf|_|) =
         function
-        | SpecificCall <@@ (|?|) @@> (None,_,l::Set r::[]) -> Some(l, r)
+        | Call(None,mi,l::Set r::[]) when mi.Name = "op_BarQmarkBar" -> Some(l, r)
         | _ -> None
 
     (* Axioms *)

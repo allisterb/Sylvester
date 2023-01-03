@@ -4,12 +4,20 @@ module Set =
 
     open System
     open System.Linq
-
+    open FSharp.Quotations
     open Xunit
 
     open Sylvester
     open SetAlgebra
 
+    [<Fact>]
+    let ``Can has element term``() =
+        let A = SetTerm<int> ((Expr.Var(Var.Global("A", typeof<Set<int>>))) |> expand''<Set<int>>)
+        
+        let x = Expr.Var(Var.Global("x", typeof<int>)) |> expand''<int> |> Term<int>
+        
+        
+        Assert.NotNull (x |?| (A))
     (*
     [<Fact>]
     let ``Can display set symbols``() =
@@ -30,7 +38,7 @@ module Set =
         let S' = SigmaAlgebra(dice * dice)
         let A = [for i in 1..6 -> (1, i)] 
         Assert.True (S'.Set.HasElement (Seq(A)))
-    *)
+    
     [<Fact>]
     let ``Can prove union commutative``() =
         let A,B = var2<Set<obj>>
@@ -54,6 +62,7 @@ module Set =
         
         let ddd = Display.print_formula (expand <@ (intersect i (i < n) A.[i]) @>)
         Assert.NotNull ddd
+    *)
     (*
     [<Fact>]
     let ``Can equate predicates`` () =

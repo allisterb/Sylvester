@@ -90,7 +90,7 @@ module Ring =
 
     /// Ring of positive integers.
     let Zpos =
-        let set = Z |>| <@ fun x -> x >= 0 @>
+        let set = Z.Set |>| <@ fun x -> x >= 0 @>
         {
             new OrderedRing<int>(additive_group(set), (*)) 
                 interface IIntegralDomain<int> with
@@ -110,7 +110,7 @@ module Ring =
 
     /// Ring of negative integers.
     let Zneg =
-        let set = Zpos |>| <@ fun x -> x <= 0 @>
+        let set = Zpos.Set |>| <@ fun x -> x <= 0 @>
         {
             new OrderedRing<int>(additive_group(set), (*)) 
                 interface IIntegralDomain<int> with
@@ -135,7 +135,7 @@ module Ring =
     
     /// Ring of natural numbers without zero.
     let Nz =
-        let set = Zpos |^| 0
+        let set = Zpos.Set |^| 0
         {
             new OrderedRing<int>(additive_group(set), (*)) 
                 interface IIntegralDomain<int> with

@@ -20,12 +20,12 @@ module SetAlgebra =
 
     /// n-ary intersection of sets
     [<Formula>]
-    let intersect<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = product Set.(|*|) "\u22c2" bound range body
+    let intersect<'t when 't : equality> (bound:int) (range:bool) (body:Set<'t>) = product Set.set_intersection "\u22c2" bound range body
     
     (* Theory *)
 
     type SetAlgebra<'t when 't: equality>(?axioms:Axioms, ?rules:Rules) = 
-        inherit BooleanAlgebra<Set<'t>>("Set Algebra", <@ Set.(|+|) @>, <@ Set.(|*|) @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>, 
+        inherit BooleanAlgebra<Set<'t>>("Set Algebra", <@ Set.set_union @>, <@ Set.set_intersection @>, <@ Set.Empty @>, <@ Set.U @>, <@ Set.(~-) @>, 
             defaultArg axioms (fun _-> None), defaultArg rules [])
     
     let set_algebra<'t when 't: equality> = SetAlgebra<'t>()

@@ -448,12 +448,6 @@ type complex = System.Numerics.Complex
    let FromInt64 (i:int64) = Rational(i, 1L)
 
 [<RequireQualifiedAccess>]
-module NumericLiteralR = 
-  let FromZero() :real = 0.
-  let FromOne() :real = 1.
-  let FromInt32 (i:int) :real = float i
-
-[<RequireQualifiedAccess>]
 module NumericLiteralN = 
   let FromZero() = Natural.Zero
   let FromOne() = Natural.One

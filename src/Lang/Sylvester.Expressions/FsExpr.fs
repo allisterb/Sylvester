@@ -32,9 +32,10 @@ module FsExpr =
     | _ -> failwith "Expression is not a property."
 
     let rec getFuncInfo = function
-    | Call(None, methodInfo, _) -> methodInfo
+    | Call(_, methodInfo, _) -> methodInfo
     | Lambda(_, expr) -> getFuncInfo expr
-    | _ -> failwith "Expression is not a function."
+    | Application(Application(Lambda(_, expr), _), _) -> getFuncInfo expr
+    | expr -> failwithf "Expression is not a function: %A." expr
 
     let getModuleType = function
     | PropertyGet (_, info, _) -> info.DeclaringType

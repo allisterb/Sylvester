@@ -4,6 +4,7 @@ open System
 open System.Collections
 open System.Collections.Generic
 open System.Linq
+open System.Reflection
 open FSharp.Quotations
 
 open Arithmetic
@@ -92,17 +93,18 @@ with
         | Seq _ -> failwith "A sequence does not have a body expression. Use a set comprehension instead."  
         | Set s -> s.Body 
     
-    member x.Item([<ReflectedDefinition(true)>] e: Expr<'t>) : Expr =
+    (*
+    member x.Item([<ReflectedDefinition(true)>] e: Expr<'t>) : Expr<'t> =
         match x with
         | Empty -> failwith "The empty set has no elements."
         | Seq se -> 
             if typeof<'t> = typeof<int> then 
                 let i = box((getExprFromReflectedDefinition<'t> e)) :?> int
-                let v = Seq.item i se in Expr.Value v
+                let v = Seq.item i se in Expr.Value v |> expand''<'t>
             else
                 failwith "A sequence does not have a body expression. Use a set comprehension instead."  
-        | Set sc -> expand (sc.Body.Substitute(fun _ -> Some (e.Raw)))
-    
+        | Set sc -> expand (sc.Body.Substitute(fun _ -> Some (e.Raw))) |> expand''<'t>
+    *)
     member x.Item(e: obj) : 't =
         match x with
         | Empty -> failwith "The empty set has no elements."
@@ -194,7 +196,6 @@ with
     
     static member fromSeq(s: seq<'t>) = Seq s
     
-    
     /// Set union operator.
     [<Symbol "\u222A">]
     static member (|+|) (l, r) = 
@@ -208,7 +209,9 @@ with
         |_, Set b -> 
             let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in
             SetComprehension(b.Bound, b.Range', <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
-        
+    
+    member x.SetUnion(r:Set<'t>) = x |+| r
+
     /// Set intersection operator.
     [<Symbol "\u2229">]
     static member (|*|) (l, r) = 
@@ -295,36 +298,65 @@ and ISet<'t when 't: equality> =
 and IKnownSet<'n, 't when 'n :> Number and 't : equality> = 
     inherit ISet<'t>
     abstract Size: 'n
-    
+
+type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
+    inherit Term<Set<'t>>(expr) 
+    static member inline (|+|) (l:SetTerm<'t>, r:Set<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+        binary_call(None, m, l.Expr, Expr.Value r) |> expand''<Set<'t>> |> SetTerm
+
+    static member inline (|+|) (l:Set<'t>, r:SetTerm<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+        binary_call(None, m, Expr.Value l, r.Expr) |> expand''<Set<'t>> |> SetTerm
+
+    static member inline (|+|) (l:SetTerm<'t>, r:SetTerm<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+        binary_call(None, m, l.Expr, r.Expr) |> expand''<Set<'t>> |> SetTerm
+
+    static member inline (|*|) (l:SetTerm<'t>, r:Set<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarMultiplyBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in   
+        binary_call(None, m, l.Expr, Expr.Value r) |> expand''<Set<'t>> |> SetTerm
+
+    static member inline (|*|) (l:Set<'t>, r:SetTerm<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarMultiplyBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+        binary_call(None, m, Expr.Value(l), r.Expr) |> expand''<Set<'t>> |> SetTerm
+
+    static member inline (|*|) (l:SetTerm<'t>, r:SetTerm<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarMultiplyBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+        binary_call(None, m, l.Expr, r.Expr) |> expand''<Set<'t>> |> SetTerm
+
+    static member (|?|) (l:Term<'t>, r:SetTerm<'t>) : Term<bool> =  
+        let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in
+        binary_call(None, m, l.Expr, r.Expr) |> expand''<bool> |> Term<bool>
+
+    static member (|?|) (l:'t, r:SetTerm<'t>) : Term<bool> =  
+        let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in
+        binary_call(None, m, Expr.Value l, r.Expr) |> expand''<bool> |> Term<bool>
+
+    static member (|?|) (l:Term<'t>, r:Set<'t>) : Term<bool> =  
+           let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in
+           binary_call(None, m, l.Expr, Expr.Value r) |> expand''<bool> |> Term<bool>
+
+    static member inline (|<|) (l:SetTerm<'t>, r:Set<'t>) = 
+           let m = typeof<Set<'t>>.GetMethod("op_BarLessBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+           binary_call(None, m, l.Expr, Expr.Value r) |> expand''<Set<'t>> |> SetTerm
+
+    static member inline (|<|) (l:Set<'t>, r:SetTerm<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarLessBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+        binary_call(None, m, Expr.Value l, r.Expr) |> expand''<Set<'t>> |> SetTerm
+
+    static member inline (|<|) (l:SetTerm<'t>, r:SetTerm<'t>) = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarLessBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
+        binary_call(None, m, l.Expr, r.Expr) |> expand''<Set<'t>> |> SetTerm
+        
 [<AutoOpen>]
 module Set =
-    /// Set union operator.
-    [<Symbol "\u222A">]
-    let (|+|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |+| r.Set
-    
-    /// Set intersection operator.
-    [<Symbol "\u2229">]
-    let (|*|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |*| r.Set
-
-    /// Set element-of operator.
-    let (|?|) (e:'t) (l:ISet<'t>) = l.Set.HasElement e
-
-    /// Set subset relation.
-    let (|<|) (l:ISet<'t>) (r:ISet<'t>) = l.Set |<| r.Set
-
-    // Set create subset
-    let (|>|) (l:ISet<'t>) (r:Expr<'t -> bool>) = l.Set |>| r
-      
-    /// Set difference operator.
-    let (|-|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Difference r.Set
-
-    /// Set-element difference operator.
-    let (|^|) (l:ISet<'t>) (r:'t) = l.Set.ElementDifference r
-
-    /// Set relative complement operator.
-    let (|/|) (l:ISet<'t>) (r:ISet<'t>) = l.Set.Complement r.Set
     
     let setOf<'t when 't : equality> (s:ISet<'t>) = s.Set
+
+    let set_union (l:Set<'t>) (r:Set<'t>) = l |+| r
+
+    let set_intersection (l:Set<'t>) (r:Set<'t>) = l |*| r
 
     let not_empty (l:ISet<'t>) = l.Set <> Empty
 
@@ -365,7 +397,7 @@ module Set =
         infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
                     <@ (%%b:'t) @>)) 
-        |> Seq.map Term
+        |> Seq.map Term<'t>
         |> Seq.skip 1
         |> infinite_seq_gen<Term<'t>> 
        
@@ -381,15 +413,15 @@ module Set =
 
     let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1 
 
-    let inline series' s = Seq.scan (Term.add) (Term.zero()) s |> Seq.skip 1
-
     let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
-
-    let inline partial_sum' (n:int) s = s |> (series' >> Seq.item n)
-
+    
     let inline infinite_series g = g |> (infinite_seq >> series)
     
-    let inline infinite_series' g = g |> (infinite_seq' >> series')
+    //let inline series' s = Seq.scan (Term<'t>.add) (Term.zero()) s |> Seq.skip 1
+
+    //let inline partial_sum' (n:int) s = s |> (series' >> Seq.item n)
+    
+    //let inline infinite_series' g = g |> (infinite_seq' >> series')
 
     let setvar<'t when 't : equality> n = var'<Set<'t>> n
     
@@ -402,5 +434,3 @@ module Set =
     let fail_if_set_not_eq (a:ISet<'t>) (b:ISet<'t>) = if not (a.Set = b.Set) then failwithf "The set %A is not equal to the set %A." a b
 
     type uninterp = obj
-
-     

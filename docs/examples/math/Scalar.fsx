@@ -1,14 +1,13 @@
 #load "Include.fsx"
 
 open Sylvester
-open Arithmetic
-open Dimension
-open Matrix
 
-let ee = Scalar6 4
+let ee = Term 4
 
 let r = ee - 5
 
-let v = Scalar6.var6<real> "v"
+let v = Term.var6<real> "v"
 
-(4Q + v + 2)
+let q = Term.var6<rat> "q"
+
+q ** 4Q 

@@ -1,48 +1,246 @@
 ﻿namespace Sylvester
 
 open System
+
 open FSharp.Quotations
 
-type Term<'t> (expr:Expr<'t>) =
-    member x.Expr = expr
-    member x.Item(i:int) = Unchecked.defaultof<'t>
-    override a.GetHashCode() = (a.Expr.ToString()).GetHashCode()
-    override a.Equals (_b:obj) = 
-            match _b with 
-            | :? Term<'t> as e -> (a :> IEquatable<Term<'t>>).Equals e
-            | _ -> false
-    override x.ToString() = Swensen.Unquote.Operators.decompile (x.Expr)
-    interface IComparable<Term<'t>> with member a.CompareTo b = a.ToString().CompareTo(b.ToString())
+//[<StructuredFormatDisplay("{Display}")>]
+type Term<'t when 't: equality> (e:Expr<'t>) =
+    let expr = expand''<'t> e
+    
+    member val Expr = expr
+    //member val MathNetExpr = mnexpr
+    member val Val = match expr with | Patterns.Value(v, _) -> v :?> 't |> Some | _ -> None
+    //member val Display = sprinte expr
+    new(d:'t) = let e = expand''<'t> <@ d @> in Term<'t> e
+    interface IEquatable<Term<'t>> with
+        member a.Equals b = true//a.Display = b.Display
+
+    interface IComparable<Term<'t>> with
+       member a.CompareTo b = match (a.Val, b.Val) with | (Some av, Some bv) -> 0 | _, _ -> failwith ""
+    
     interface IComparable with
         member a.CompareTo b = 
             match b with
-            | :? Term<'t> as Term -> (a :> IComparable<Term<'t>>).CompareTo Term
-            | _ -> failwith "This object is not a Term."
-    interface IEquatable<Term<'t>> with member a.Equals b = a.Expr.ToString() = b.Expr.ToString()
+            | :? Term<'t> as bs -> (a :> IComparable<Term<'t>>).CompareTo bs
+            | _ -> failwith "This object is not a term."
+    
+    override a.Equals (_b:obj) = 
+            match _b with 
+            | :? Term<'t> as b -> (a :> IEquatable<Term<'t>>).Equals b
+            | _ -> false
+    
+    override a.GetHashCode() = a.Expr.GetHashCode()
+
+    static member Zero = typeof<'t> |> zero_val |> expand''<'t> |> Term<'t>
+
+    static member One = typeof<'t> |> one_val |> expand''<'t> |> Term<'t>
+
+    static member op_Implicit (l:Term<'t>):Expr<'t> = l.Expr
+
+    static member op_Implicit (l:'t):Term<'t> = Term l
+
+    static member op_Implicit (l:int):Term<real> = let v = real l in Term v
+
+    static member op_Implicit (l:rat):Term<real> = let v = real l in Term v
+
+    static member op_Implicit (l:nat):Term<real> = let v = real l in Term v
+
+    (* Binary operators *)
+
+    static member (+) (l:Term<'t>, r:Term<'t>) = call_add (l.Expr) (r.Expr) |> expand''<'t> |> Term<'t>
+    
+    static member (+) (l:Term<'t>, r:'t) = call_add (l.Expr) (Expr.Value r) |> expand''<'t> |> Term<'t>
+
+    static member (+) (l:'t, r:Term<'t>) = call_add (Expr.Value l) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (+) (l:Expr<'t>, r:Term<'t>) = call_add l r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (+) (l:Term<'t>, r:Expr<'t>) = call_add (l.Expr) r |> expand''<'t> |> Term<'t>
+    
+    static member (+) (l:Term<real>, r:int) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (+) (l:Term<real>, r:rat) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+    
+    static member (+) (l:Term<real>, r:nat) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (+) (l:int, r:Term<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (+) (l:rat, r:Term<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (+) (l:nat, r:Term<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (+) (l:Term<rat>, r:int) = call_add (l.Expr) (Expr.Value (rat r)) |> expand''<'t> |> Term<'t>
+
+    static member (+) (l:int, r:Term<rat>) = call_add (Expr.Value (rat l)) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (+) (l:Term<int>, r:nat) = call_add (l.Expr) (Expr.Value (int r)) |> expand''<'t> |> Term<'t>
+
+    
+    static member (-) (l:Term<'t>, r:Term<'t>) = call_sub (l.Expr) (r.Expr) |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Term<'t>, r:'t) = call_sub (l.Expr) (Expr.Value r) |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:'t, r:Term<'t>) = call_sub (Expr.Value l) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Expr<'t>, r:Term<'t>) = call_sub l r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Term<'t>, r:Expr<'t>) = call_sub (l.Expr) r |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Term<real>, r:int) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Term<real>, r:rat) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Term<real>, r:nat) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:int, r:Term<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:rat, r:Term<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:nat, r:Term<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Term<rat>, r:int) = call_sub (l.Expr) (Expr.Value (rat r)) |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:int, r:Term<rat>) = call_sub (Expr.Value (rat l)) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (-) (l:Term<int>, r:nat) = call_sub (l.Expr) (Expr.Value (int r)) |> expand''<'t> |> Term<'t>
+
+
+    static member (*) (l:Term<'t>, r:Term<'t>) = call_add (l.Expr) (r.Expr) |> expand''<'t> |> Term<'t>
+    
+    static member (*) (l:Term<'t>, r:'t) = call_add (l.Expr) (Expr.Value r) |> expand''<'t> |> Term<'t>
+
+    static member (*) (l:'t, r:Term<'t>) = call_add (Expr.Value l) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (*) (l:Expr<'t>, r:Term<'t>) = call_mul l r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (*) (l:Term<'t>, r:Expr<'t>) = call_mul (l.Expr) r |> expand''<'t> |> Term<'t>
+    
+    static member (*) (l:Term<real>, r:int) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (*) (l:Term<real>, r:rat) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+    
+    static member (*) (l:Term<real>, r:nat) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (*) (l:int, r:Term<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (*) (l:rat, r:Term<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (*) (l:nat, r:Term<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (*) (l:Term<rat>, r:int) = call_mul (l.Expr) (Expr.Value (rat r)) |> expand''<'t> |> Term<'t>
+
+    static member (*) (l:int, r:Term<rat>) = call_mul (Expr.Value (rat l)) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (*) (l:Term<int>, r:nat) = call_mul (l.Expr) (Expr.Value (int r)) |> expand''<'t> |> Term<'t>
+
+
+    static member (/) (l:Term<'t>, r:Term<'t>) = call_div (l.Expr) (r.Expr) |> expand''<'t> |> Term<'t>
+    
+    static member (/) (l:Term<'t>, r:'t) = call_div (l.Expr) (Expr.Value r) |> expand''<'t> |> Term<'t>
+
+    static member (/) (l:'t, r:Term<'t>) = call_div (Expr.Value l) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (/) (l:Expr<'t>, r:Term<'t>) = call_div l r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (/) (l:Term<'t>, r:Expr<'t>) = call_div (l.Expr) r |> expand''<'t> |> Term<'t>
+    
+    static member (/) (l:Term<real>, r:int) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (/) (l:Term<real>, r:rat) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+    
+    static member (/) (l:Term<real>, r:nat) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand''<'t> |> Term<'t>
+
+    static member (/) (l:int, r:Term<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (/) (l:rat, r:Term<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (/) (l:nat, r:Term<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member (/) (l:Term<rat>, r:int) = call_div (l.Expr) (Expr.Value (rat r)) |> expand''<'t> |> Term<'t>
+
+    static member (/) (l:int, r:Term<rat>) = call_div (Expr.Value (rat l)) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member (/) (l:Term<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand''<'t> |> Term<'t>
+
+    
+    static member Pow (l : Term<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Term<'t>
+    
+    static member Pow (l : Term<real>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : Term<real>, r : nat) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : Term<rat>, r : real) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : Term<rat>, r : rat) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : Term<rat>, r : int) = call_pow l.Expr (Expr.Value r) |> expand''<'t> |> Term<'t>
+         
+    static member Pow (l : Term<int>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Term<'t>
+         
+    static member Pow (l : Term<nat>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand''<'t> |> Term<'t>
+    
+    static member Pow (l : real, r : Term<real>) = call_pow (Expr.Value l) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : int, r : Term<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : rat, r : Term<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : nat, r : Term<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Term<'t>
+
+    static member Pow (l : int, r : Term<int>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member Pow (l : rat, r : Term<rat>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Term<'t>
+    
+    static member Pow (l : nat, r : Term<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand''<'t> |> Term<'t>
+
+   
+type realexpr = Term<real>
+
+type ratexpr = Term<rat>
+
+type intexpr = Term<int>
+
+type natexpr = Term<nat>
 
 [<RequireQualifiedAccess>]
+module NumericLiteralR = 
+  let FromZero() = Term 0.0
+  let FromOne() = Term 1.0
+  let FromInt32 n = n |> real |> Term
+  let FromInt64 n = n |> real |> Term
+  
 module Term =
-    let inline add (l:Term<'t>) (r:Term<'t>) = 
-        let ll, rr = l.Expr, r.Expr
-        match ll with
-        | Patterns.ValueWithName(_,_,n) when n = "__zero" -> Term rr
-        | _ -> Term <@ %ll + %rr @>
-   
-    let inline zero() = 
-        let __zero = LanguagePrimitives.GenericZero  
-        Term <@ __zero @>
+    let int_expr x = 
+        match box x with
+        | :? Term<int> as s -> s.Expr
+        | :? Expr<int> as e -> e
+        | :? int as n -> Expr.Value n |> expand''<int>
+        | :? real as n -> Expr.Value ((int) n) |> expand''<int>
+        | _ -> failwithf "The expression %A is not an integer expression." x
 
-    let var<'t> n = 
-        let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @> |> Term
+    let real_expr x = 
+        match box x with
+        | :? Term<real> as s -> s.Expr
+        | :? Expr<real> as e -> e
+        | :? real as n -> Expr.Value n |> expand''<real>
+        | :? int as n -> Expr.Value (real n) |> expand''<real>
+        | _ -> failwithf "The expression %A is not a real number expression." x
 
-    let expr (t:Term<'t>) = t.Expr
+    let rat_expr x = 
+        match box x with
+        | :? Term<rat> as s -> s.Expr
+        | :? Expr<rat> as e -> e
+        | :? rat as n -> Expr.Value n |> expand''<rat>
+        | :? int as n -> Expr.Value (rat n) |> expand''<rat>
+        | _ -> failwithf "The expression %A is not a rational number expression." x
 
-    let src(t:Term<'t>) = t |> (expr >> Swensen.Unquote.Operators.decompile)
+    let var6<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IFormattable> name = 
+        Expr.Var(Var(name, typeof<'t>)) |> expand''<'t> |> Term<'t>
 
-[<AutoOpen>]
-module TermSeq =
     let term n (s:seq<Term<_>>) = s |> Seq.item n
 
     let take n (s:seq<_>) = s |> Seq.take n |> Seq.toList
 
     let map f (s:seq<_>) = s |> Seq.map f 
+  

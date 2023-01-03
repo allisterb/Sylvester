@@ -17,11 +17,11 @@
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
+    <PackageReference Update="FSharp.Core" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Math\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
-    <ProjectReference Include="..\..\src\Math\Sylvester.Probability\Sylvester.Probability.fsproj" />
   </ItemGroup>
 
 </Project>
