@@ -248,7 +248,7 @@ module MathNetExpr =
 
     let toQuotation<'t> (vars: Var list) (expr: Expression) =
         match _toQuotation<'t> vars expr with
-        | Some e -> e |> expand''<'t>
+        | Some e -> e |> expand_as<'t>
         | None -> failwithf "Failed to convert expression %s to quotation" (Infix.format expr)
 
     let toIdentifier(v:Var) = 

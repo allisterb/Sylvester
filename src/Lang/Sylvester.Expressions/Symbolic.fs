@@ -96,6 +96,6 @@ module Symbolic =
        
     let subst (e:Expr<'t>) (v:Expr<'u>) (r:Expr<'u>) =
         let var = get_var v
-        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand''<'t> |> simplify'
+        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand_as<'t> |> simplify'
 
     let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>

@@ -434,11 +434,11 @@ module FsExpr =
         rexpand Map.empty expr
 
     // Expand typed expression and cast to another type.
-    let expand'<'a, 'b> (expr:Expr<'b>) =
+    let expand_cast<'a, 'b> (expr:Expr<'b>) =
         let e = expand expr in <@ %%e:'a @>
 
     // Expand untyped expression and cast to type.
-    let expand''<'t> (expr:Expr) =
+    let expand_as<'t> (expr:Expr) =
         let e = expand expr in <@ %%e:'t @>
 
     let expand_left = 
@@ -456,7 +456,7 @@ module FsExpr =
         | WithValue(v, t, e) -> (v, t, expand e)
         | _ -> failwith "Expression is not a reflected definition parameter."
 
-    let body'(expr:Expr<'a->'b>) = expr |> body |> expand''<'b>
+    let body'(expr:Expr<'a->'b>) = expr |> body |> expand_as<'b>
     
     let binary_operands op (e:Expr) =
            match e with
@@ -522,7 +522,7 @@ module FsExpr =
 
     let expand_tuple<'t> (expr:Expr) =
         match expr with
-        | NewTuple el when el |> List.forall(fun e -> e.Type = typeof<'t>) -> Some (List.map expand''<'t> el)
+        | NewTuple el when el |> List.forall(fun e -> e.Type = typeof<'t>) -> Some (List.map expand_as<'t> el)
         | _ -> None
     
     let expand_tuples<'t> (expr:Expr) =
@@ -538,11 +538,11 @@ module FsExpr =
 
     let param_var (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne 
 
-    let param_var_expr (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne |> Expr.Var |> expand''<'a>
+    let param_var_expr (f:Expr<'a->'b>) = f |> param_vars |> List.exactlyOne |> Expr.Var |> expand_as<'a>
 
     let subst_func_var_value (f:Expr<'a->'b>) (r:Expr) =            
         let v = param_var f
-        f |> body |> subst_var_value v r  |> recombine_func [v] |> expand''<'a->'b>
+        f |> body |> subst_var_value v r |> recombine_func [v] |> expand_as<'a->'b>
             
     let evaluate (q:Expr<'t>) = 
         match q with
@@ -552,16 +552,16 @@ module FsExpr =
     let ev q  = evaluate q
 
     let as_func_of (v:Expr<'t>) (body:Expr<'u>) =
-        body |> recombine_func (get_vars v) |> expand''<'t->'u> |> ev
+        body |> recombine_func (get_vars v) |> expand_as<'t->'u> |> ev
 
     let as_func_of2 (x:Expr<'t>) (y:Expr<'u>) (body:Expr<'v>) =
-        body |> recombine_func (get_vars x @ get_vars y) |> expand''<'t->'u->'v> |> ev
+        body |> recombine_func (get_vars x @ get_vars y) |> expand_as<'t->'u->'v> |> ev
 
     let as_func_of_single_var<'t> (expr:Expr<'t>) =
         let v = get_vars expr
         match v with
-        | [] -> let x = Var("x", typeof<'t>) in recombine_func [x] expr |> expand''<'t->'t> |> ev 
-        | x::[] -> recombine_func [x] expr |> expand''<'t->'t> |> ev
+        | [] -> let x = Var("x", typeof<'t>) in recombine_func [x] expr |> expand_as<'t->'t> |> ev 
+        | x::[] -> recombine_func [x] expr |> expand_as<'t->'t> |> ev
         | _ -> failwithf "Expression %A is not an expression of a single variable." expr
 
     let is_inst_expr (bv:Var) (l:Expr) (r:Expr)=
