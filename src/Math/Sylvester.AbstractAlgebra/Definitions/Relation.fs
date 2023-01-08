@@ -3,10 +3,12 @@
 open FSharp.Quotations
 
 // A binary relation between 2 sets
-type IRelation<'a, 'b when 'a : equality and 'b : equality> = 
+type IRelation<'a, 'b, 'c when 'a : equality and 'b : equality and 'c:equality> = 
     abstract member Domain: Set<'a>
     abstract member CoDomain: Set<'b>
-    abstract member Op:Expr<'a->'b->bool>
+    abstract member Op:Expr<'c->'b->bool>
+
+type IRelation<'a, 'b when 'a : equality and 'b : equality> = IRelation<'a, 'b, 'a>
 
 type IReflexiveRelation<'a, 'b when 'a : equality and 'b : equality>  = 
     inherit IRelation<'a, 'b>
@@ -35,12 +37,12 @@ type IAntiSymmetricRelation<'t when 't : equality> = IAntiSymmetricRelation<'t, 
 
 type ITransitiveRelation<'t when 't : equality> = ITransitiveRelation<'t, 't>
 
-type Function<'a, 'b when 'a : equality and 'b: equality> =
-| Fn of Set<'a> * Set<'b> * Expr<'a->'b->bool> with
+type Function<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality> =
+| Fn of Set<'a> * Set<'b> * Expr<'c->'b->bool> with
     member x.Domain = let (Fn(domain, _, _)) = x in domain
     member x.CoDomain = let (Fn(_, codomain, _)) = x in codomain
     member x.Op = let (Fn(_, _, op)) = x in op
-    interface IRelation<'a, 'b> with
+    interface IRelation<'a, 'b, 'c> with
         member x.Domain = x.Domain
         member x.CoDomain = x.CoDomain
         member x.Op = x.Op

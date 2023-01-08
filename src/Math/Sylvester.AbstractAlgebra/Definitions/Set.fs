@@ -216,8 +216,6 @@ with
     [<Symbol "\u222A">]
     static member (|+|) (l:Set<'t>, r:ISet<'t>) = l |+| r.Set
     
-    [<Symbol "\u222A">]
-    static member (|+|) (l:ISet<'t>, r:ISet<'t>) = l.Set |+| r.Set 
     /// Set intersection operator.
     [<Symbol "\u2229">]
     static member (|*|) (l, r) = 
@@ -235,11 +233,24 @@ with
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
 
+    static member (|?|) (l:Term<'t>, r:Set<'t>) : Term<bool> = 
+        let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, [| typeof<'t>; typeof<Set<'t>> |], [||]) in
+        binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<bool> |> Term<bool>
+    
     /// Set 'is subset of' operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
 
+    /// Set 'is subset of' operator.
+    static member (|<|) (l:Set<'t>, r:ISet<'t>) = r.Set.HasSubset l
+
+    /// Set 'is subset of' operator.
+    static member (|<|) (l:ISet<'t>, r:Set<'t>) = r.HasSubset l.Set
+
     /// Set element difference operator.
     static member (|^|) (l:Set<'t>, r:'t) = l.ElementDifference r
+
+    /// Set element difference operator.
+    static member (|^|) (l:ISet<'t>, r:'t) = l.Set.ElementDifference r
 
     /// Set relative complement operator: A |/| B = B \ A.
     static member (|/|) (l:Set<'t>, r:Set<'t>) = l.Complement r
@@ -280,8 +291,7 @@ with
     /// A singleton set containing 0. 
     static member Zero = Singleton<int>(0)
 
-    static member UnionOp<'t>() = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, [| typeof<Set<'t>>; typeof<Set<'t>> |], [||])
-
+    
 and SetFamily<'t when 't : equality> = Set<Set<'t>> 
 
 and KnownSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
@@ -309,68 +319,80 @@ and IKnownSet<'n, 't when 'n :> Number and 't : equality> =
 
 [<RequireQualifiedAccess>]
 module SetOps =
-    let union<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, [| typeof<Set<'t>>; typeof<Set<'t>> |], [||])
+    let union<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                        [| typeof<Set<'t>>; typeof<Set<'t>> |], [||])
 
-    let elementOf<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, [| typeof<'t>; typeof<Set<'t>> |], [||])
+    let intersection<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarMultiplyBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                                [| typeof<Set<'t>>; typeof<Set<'t>> |], [||])
+
+    let elementOf<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                            [| typeof<'t>; typeof<Set<'t>> |], [||])
+
+    let subsetOf<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarLessBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                            [| typeof<Set<'t>>; typeof<Set<'t>> |], [||])
+
+    let elementDifference<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarHatBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                                    [| typeof<Set<'t>>; typeof<'t> |], [||])
+
+    let complement<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarDivideBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                            [| typeof<Set<'t>>; typeof<Set<'t>> |], [||])
 
 type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
     inherit Term<Set<'t>>(expr) 
-    static member (|+|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.union, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
+    static member (|+|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.union<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
 
     static member (|+|) (l:Set<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.union<'t>, Expr.Value l, r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|+|) (l:SetTerm<'t>, r:SetTerm<'t>) = 
-        let m = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, [| typeof<Set<'t>>; typeof<Set<'t>> |], [||]) in  
-        binary_call(None, m, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+    static member (|+|) (l:SetTerm<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.union<'t>, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|+|) (l:SetTerm<'t>, r:ISet<'t>) = 
-         let m = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
-         binary_call(None, m, l.Expr, Expr.Value r.Set) |> expand_as<Set<'t>> |> SetTerm
+    static member (|+|) (l:SetTerm<'t>, r:ISet<'t>) = binary_call(None, SetOps.union<'t>, l.Expr, Expr.Value r.Set) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|+|) (l:ISet<'t>, r:SetTerm<'t>) = 
-        let m = typeof<Set<'t>>.GetMethod("op_BarPlusBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
-        binary_call(None, m, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+    static member (|+|) (l:ISet<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.union<'t>, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|*|) (l:SetTerm<'t>, r:Set<'t>) = 
-        let m = typeof<Set<'t>>.GetMethod("op_BarMultiplyBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in   
-        binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
+    static member (|*|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.intersection<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|*|) (l:Set<'t>, r:SetTerm<'t>) = 
-        let m = typeof<Set<'t>>.GetMethod("op_BarMultiplyBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
-        binary_call(None, m, Expr.Value(l), r.Expr) |> expand_as<Set<'t>> |> SetTerm
+    static member (|*|) (l:Set<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.intersection<'t>, Expr.Value(l), r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|*|) (l:SetTerm<'t>, r:SetTerm<'t>) = 
-        let m = typeof<Set<'t>>.GetMethod("op_BarMultiplyBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
-        binary_call(None, m, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+    static member (|*|) (l:SetTerm<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.intersection<'t>, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|?|) (l:Term<'t>, r:SetTerm<'t>) : Term<bool> =  
-        let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in
-        binary_call(None, m, l.Expr, r.Expr) |> expand_as<bool> |> Term<bool>
+    static member (|*|) (l:SetTerm<'t>, r:ISet<'t>) = binary_call(None, SetOps.intersection<'t>, l.Expr, Expr.Value r.Set) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|?|) (l:'t, r:SetTerm<'t>) : Term<bool> =  
-        let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in
-        binary_call(None, m, Expr.Value l, r.Expr) |> expand_as<bool> |> Term<bool>
+    static member (|*|) (l:ISet<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.intersection<'t>, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|?|) (l:Term<'t>, r:Set<'t>) : Term<bool> =  
-           let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in
-           binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<bool> |> Term<bool>
+    static member (|?|) (l:Term<'t>, r:SetTerm<'t>) : Term<bool> = binary_call(None, SetOps.elementOf<'t>, l.Expr, r.Expr) |> expand_as<bool> |> Term<bool>
 
-    static member inline (|<|) (l:SetTerm<'t>, r:Set<'t>) = 
-           let m = typeof<Set<'t>>.GetMethod("op_BarLessBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
-           binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
+    static member (|?|) (l:'t, r:SetTerm<'t>) : Term<bool> = binary_call(None, SetOps.elementOf<'t>, Expr.Value l, r.Expr) |> expand_as<bool> |> Term<bool>
+    
+    static member (|<|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.subsetOf<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
 
-    static member inline (|<|) (l:Set<'t>, r:SetTerm<'t>) = 
-        let m = typeof<Set<'t>>.GetMethod("op_BarLessBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
-        binary_call(None, m, Expr.Value l, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+    static member (|<|) (l:Set<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.subsetOf<'t>, Expr.Value(l), r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member inline (|<|) (l:SetTerm<'t>, r:SetTerm<'t>) = 
-        let m = typeof<Set<'t>>.GetMethod("op_BarLessBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static)) in  
-        binary_call(None, m, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
-        
+    static member (|<|) (l:SetTerm<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.subsetOf<'t>, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|<|) (l:SetTerm<'t>, r:ISet<'t>) = binary_call(None, SetOps.subsetOf<'t>, l.Expr, Expr.Value r.Set) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|<|) (l:ISet<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.subsetOf<'t>, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|^|) (l:SetTerm<'t>, r:'t) : SetTerm<'t> = binary_call(None, SetOps.elementDifference<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|^|) (l:SetTerm<'t>, r:Term<'t>) : SetTerm<'t> = binary_call(None, SetOps.elementDifference<'t>, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|^|) (l:Set<'t>, r:Term<'t>) : SetTerm<'t> = binary_call(None, SetOps.complement<'t>, Expr.Value l, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|/|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.complement<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|/|) (l:Set<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.complement<'t>, Expr.Value l, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|/|) (l:SetTerm<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.complement<'t>, l.Expr, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|/|) (l:SetTerm<'t>, r:ISet<'t>) = binary_call(None, SetOps.complement<'t>, l.Expr, Expr.Value r.Set) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|/|) (l:ISet<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.complement<'t>, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+    
 [<AutoOpen>]
 module Set =
     
-    let setOf<'t when 't : equality> (s:ISet<'t>) = s.Set
+    let set_of<'t when 't : equality> (s:ISet<'t>) = s.Set
 
     let set_union (l:Set<'t>) (r:Set<'t>) = l |+| r
 
