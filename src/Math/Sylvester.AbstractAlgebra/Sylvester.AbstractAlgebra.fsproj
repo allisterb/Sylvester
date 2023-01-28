@@ -25,7 +25,7 @@
     <Compile Include="Definitions\Set.fs" />
     <Compile Include="Definitions\MultiSet.fs" />
     <Compile Include="Definitions\Operation.fs" />
-    <Compile Include="Definitions\Relation.fs" />
+    <Compile Include="Definitions\Function.fs" />
     <Compile Include="Definitions\Structure.fs" />
     <Compile Include="Definitions\Order.fs" />
     <Compile Include="Definitions\Lattice.fs" />

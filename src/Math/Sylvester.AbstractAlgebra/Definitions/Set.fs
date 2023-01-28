@@ -337,6 +337,15 @@ module SetOps =
     let complement<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarDivideBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
                                             [| typeof<Set<'t>>; typeof<Set<'t>> |], [||])
 
+    let absoluteComplement<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_UnaryNegation", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                                    [| typeof<Set<'t>> |], [||])
+
+    let createSubset<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarGreaterBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                                [| typeof<Set<'t>>; typeof<Expr<'t -> bool>> |], [||])
+
+    let filterSubsets<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarGreaterGreaterBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
+                                                [| typeof<Set<'t>>; typeof<Expr<Set<'t> -> bool>> |], [||])
+
 type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
     inherit Term<Set<'t>>(expr) 
     static member (|+|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.union<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
@@ -388,10 +397,15 @@ type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
     static member (|/|) (l:SetTerm<'t>, r:ISet<'t>) = binary_call(None, SetOps.complement<'t>, l.Expr, Expr.Value r.Set) |> expand_as<Set<'t>> |> SetTerm
 
     static member (|/|) (l:ISet<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.complement<'t>, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (~-) (l:SetTerm<'t>) = unary_call(None, SetOps.absoluteComplement<'t>, l.Expr) |> expand_as<Set<'t>> |> SetTerm
+
+    static member (|>|) (l:SetTerm<'t>, r:Expr<'t->bool>) = binary_call(None, SetOps.createSubset<'t>, l.Expr, r) |> expand_as<Set<'t>> |> SetTerm
+    
+    static member (|>>|) (l:SetTerm<'t>, r:Expr<Set<'t>->bool>) = binary_call(None, SetOps.filterSubsets<'t>, l.Expr, r) |> expand_as<Set<Set<'t>>> |> SetTerm
     
 [<AutoOpen>]
 module Set =
-    
     let set_of<'t when 't : equality> (s:ISet<'t>) = s.Set
 
     let set_union (l:Set<'t>) (r:Set<'t>) = l |+| r
@@ -463,7 +477,9 @@ module Set =
     
     //let inline infinite_series' g = g |> (infinite_seq' >> series')
 
-    let setvar<'t when 't : equality> n = var'<Set<'t>> n
+    //let setvar<'t when 't : equality> n = var'<Set<'t>> n
+    
+    let setvar<'t when 't: equality> name = Expr.Var(Var(name, typeof<Set<'t>>)) |> expand_as<Set<'t>> |> SetTerm
     
     let setvar2<'t when 't : equality> n o = var2'<Set<'t>> n o
 

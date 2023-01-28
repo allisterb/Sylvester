@@ -3,9 +3,7 @@
 /// A set of elements with a partial order relation i.e. an operation that is reflexive, anti-symmetric and transitive.
 type IPartialOrder<'t when 't: equality> = 
     inherit ISet<'t>
-    inherit IReflexiveRelation<'t>
-    inherit IAntiSymmetricRelation<'t>
-    inherit ITransitiveRelation<'t>
+    inherit IRelation<'t>
     
 /// A set of elements with a total order.
 type ITotalOrder<'t when 't: equality and 't : comparison> = inherit IPartialOrder<'t>
