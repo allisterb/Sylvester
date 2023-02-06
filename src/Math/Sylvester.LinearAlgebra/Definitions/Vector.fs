@@ -14,7 +14,7 @@ open Dimension
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal(e: Expr<'t> array) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
-    let expr = e  |> Array.map expand'<'t, 't>
+    let expr = e  |> Array.map expand_as<'t>
     let exprmn = Array.map MathNetExpr.fromQuotation expr
     
     member val Expr = expr
@@ -55,7 +55,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'t>(expr)
     
-    new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand''<'t>) in Vector<'t>(expr)    
+    new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand_as<'t>) in Vector<'t>(expr)    
     
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'t>(expr)
     
@@ -75,11 +75,11 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     
     member val Dim0:'dim0 = dim0
     member val Display = base.Display
-    member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand''<'t> |> Scalar
+    member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand_as<'t> |> Scalar
     
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map(fun e -> <@ e @>) in Vector<'dim0, 't>(expr)
     
-    new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand''<'t>) in Vector<'dim0, 't>(expr)
+    new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map(sexpr >> expand_as<'t>) in Vector<'dim0, 't>(expr)
     
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
     
@@ -90,9 +90,9 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     interface IEquatable<Vector<'dim0, 't>> with
         member a.Equals b = a.LinearDisplay = b.LinearDisplay
      
-    static member Zero:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (zero_val(typeof<'t>) |> expand''<'t>) in Vector<'dim0, 't> e
+    static member Zero:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (zero_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
 
-    static member One:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (one_val(typeof<'t>) |> expand''<'t>) in Vector<'dim0, 't> e
+    static member One:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (one_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
 
     static member (+) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
         let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'dim0, 't>(e)
@@ -104,17 +104,17 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
         let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Scalar<'t> e
 
     static member (*) (l: Scalar<'t>, r: Vector<'dim0, 't>) = 
-        r.Expr |> Array.map(fun e -> expand''<'t> <| call_mul (l.Expr) e) |> Vector<'n, 't>
+        r.Expr |> Array.map(fun e -> expand_as<'t> <| call_mul (l.Expr) e) |> Vector<'n, 't>
 
     static member (*) (l: Vector<'dim0, 't>, r: Scalar<'t>) = 
-        l.Expr |> Array.map(fun e -> expand''<'t> <| call_mul e (r.Expr) ) |> Vector<'n, 't>
+        l.Expr |> Array.map(fun e -> expand_as<'t> <| call_mul e (r.Expr) ) |> Vector<'n, 't>
 
     static member (*) (l: Vector<'dim0, 't>, r: 't) : Vector<'dim0, 't> = let r' = Scalar<'t>(r) in l * r' 
 
     static member (*) (l: 't, r: Vector<'dim0, 't>) : Vector<'dim0, 't> = let l' = Scalar<'t>(l) in l' * r
 
     static member (~-) (l: Vector<'dim0, 't>) =
-        l.Expr |> Array.map(call_neg >> expand''<'t>) |> Vector<'n, 't>
+        l.Expr |> Array.map(call_neg >> expand_as<'t>) |> Vector<'n, 't>
 
 type Vec<'dim0 when 'dim0 :> Number> = Vector<'dim0, real>
 type VecC<'dim0 when 'dim0 :> Number> = Vector<'dim0, complex>
@@ -145,7 +145,7 @@ module Vector =
     let inner_product_val (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) |> sval
     
     let norm (l:Vector<'n, 't>) =
-        let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
+        let p = l * l in p |> simplify |> call_sqrt |> expand_as<'t>  |> Scalar<'t> 
 
     let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar<'t>
 
@@ -173,6 +173,6 @@ module VectorD =
     let inner_product_val (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) |> sval
     
     let norm (l:Vector<'n, 't>) =
-        let p = l * l in p |> simplify |> call_sqrt |> expand''<'t>  |> Scalar<'t> 
+        let p = l * l in p |> simplify |> call_sqrt |> expand_as<'t>  |> Scalar<'t> 
 
     let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar<'t>

@@ -22,22 +22,22 @@ module VectorSpace =
     
     let vector_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
-        let one = one_val(typeof<'t>) |> expand'' |> Scalar<'t>
+        let one = one_val(typeof<'t>) |> expand_as |> Scalar<'t>
         function                            
         | Assoc <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
         | Commute <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
         | Identity <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) <@ Vector<_,'t>.Zero @> x 
-        | Inverse <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) (expand'' <@ Vector.smul %%neg_one @>) <@ Vector<_, 't>.Zero @> x
+        | Inverse <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) (expand_as <@ Vector.smul %%neg_one @>) <@ Vector<_, 't>.Zero @> x
         | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) x -> Some (desc x)
         | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
         | Distrib'' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
         | Assoc' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Vector<_,'t>->Vector<_,'t>>) x -> Some (desc x)
-        | Identity <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Scalar<'t>->Scalar<'t>>) (expand'' <@ one @>) x -> Some (desc x)
+        | Identity <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Scalar<'t>->Scalar<'t>>) (expand_as <@ one @>) x -> Some (desc x)
         | _ -> None
 
     let inner_product_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
-        let one = one_val(typeof<'t>) |> expand'' |> Scalar<'t>
+        let one = one_val(typeof<'t>) |> expand_as |> Scalar<'t>
         function                            
         | Commute <@(=)@> (<@ (*) @> :Expr<Vector<_,'t>->Vector<_,'t>->Scalar<'t>>) x -> Some(desc x)
         | _ -> None
@@ -71,5 +71,5 @@ module VectorSpace =
 
     (*Definitions *)
 
-    let def_direct_sum (A:Expr<VectorSpace<_,_,'v>>) (B:Expr<VectorSpace<_,_,'v>>) (C:Expr<VectorSpace<_,_,'v>>)=
-        def vector_space <@ (%C = (direct_sum %A %B)) = (setOf %C = (%A |+| %B)) |&| (%A |*| %B = Empty) @>
+    //let def_direct_sum (A:Expr<VectorSpace<_,_,'v>>) (B:Expr<VectorSpace<_,_,'v>>) (C:Expr<VectorSpace<_,_,'v>>)=
+    //    def vector_space <@ (%C = (direct_sum %A %B)) = (set_of %C = ((%A) |+| %B)) |&| (%A |*| %B = Empty) @>

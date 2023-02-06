@@ -14,7 +14,7 @@ open Vector
 type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal(e: Expr<'t> array array) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
-    let expr = e  |> Array.map (Array.map expand''<'t>)
+    let expr = e  |> Array.map (Array.map expand_as<'t>)
     let exprmn = Array.map (Array.map MathNetExpr.fromQuotation) expr
     let exprlist = expr |> Array.map Array.toList |> Array.toList
     let exprt = expr  |> Ops.transpose_mat
@@ -86,7 +86,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     
     member x.Item(i: int) = x.Rows.[i]
     
-    member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand''<'t>(zero_val(typeof<'t>)) |> Scalar<'t>
+    member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand_as<'t>(zero_val(typeof<'t>)) |> Scalar<'t>
     
     interface IMatrix<'dim0, 'dim1> with 
         member val Dim0 = dim0
@@ -118,9 +118,9 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     
     static member ofCols (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data |> Ops.transpose_mat)
 
-    static member Zero:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (zero_val(typeof<'t>) |> expand''<'t>)) in Matrix<'dim0, 'dim1, 't> e
+    static member Zero:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (zero_val(typeof<'t>) |> expand_as<'t>)) in Matrix<'dim0, 'dim1, 't> e
 
-    static member One:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (one_val(typeof<'t>) |> expand''<'t>)) in Matrix<'dim0, 'dim1, 't> e
+    static member One:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (one_val(typeof<'t>) |> expand_as<'t>)) in Matrix<'dim0, 'dim1, 't> e
 
     static member (+) (l: Matrix<'dim0, 'dim1, 't>, r: Matrix<'dim0, 'dim1, 't>) = 
         let m = Array.map2 (+) l.Rows r.Rows in Matrix<'dim0, 'dim1, 't> m

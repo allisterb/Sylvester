@@ -40,7 +40,7 @@ module internal Ops =
     
     let mat_to_list (a:Expr<'t> array array) = (Array.map(Array.toList) >> Array.toList) a
 
-    let identity_mat<'t> i  = Array2D.init i i (krdelta<'t>) |> Array2D.map(expand''<'t>) |> Array2D.toJagged
+    let identity_mat<'t> i  = Array2D.init i i (krdelta<'t>) |> Array2D.map(expand_as<'t>) |> Array2D.toJagged
 
     /// Based on: http://www.fssnip.net/aD/title/Matrix
     let transpose_mat matrix =
@@ -53,13 +53,13 @@ module internal Ops =
 
 type DefaultLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with
-        member x.Add l r = Array.map2 call_add l r |> Array.map (expand'')        
-        member x.Subtract l r = Array.map2 call_sub l r |> Array.map expand''
+        member x.Add l r = Array.map2 call_add l r |> Array.map (expand_as)        
+        member x.Subtract l r = Array.map2 call_sub l r |> Array.map expand_as
         member x.InnerProduct l r =                     
             Array.zip l r 
             |> Array.map(fun(a, b) -> call_mul a b)
             |> Array.reduce (call_add)
-            |> expand''
+            |> expand_as
             
 [<AutoOpen>]
 module LinearAlgbra =
