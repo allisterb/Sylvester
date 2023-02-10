@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Board.fs" />
     <Compile Include="Plot.fs" />
     <Compile Include="Html.fs" />
     <Compile Include="Svg.fs" />
