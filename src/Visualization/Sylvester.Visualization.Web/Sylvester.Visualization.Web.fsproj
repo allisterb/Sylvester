@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Board.fs" />
     <Compile Include="Plot.fs" />
     <Compile Include="Html.fs" />
     <Compile Include="Svg.fs" />
+    <Compile Include="Board.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,10 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.3.4" />
+    <PackageReference Update="FSharp.Core" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ext\FunScript\src\extra\FunScript.Bindings.JSXGraph\FunScript.Bindings.JSXGraph.fsproj" />
+    <ProjectReference Include="..\..\..\ext\FunScript\src\main\FunScript\FunScript.NETStandard.fsproj" />
     <ProjectReference Include="..\..\..\ext\SharpVG\SharpVG\SharpVG.fsproj" />
     <ProjectReference Include="..\..\Base\Sylvester.Runtime\Sylvester.Runtime.csproj" />
     <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />

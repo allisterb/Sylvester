@@ -34,6 +34,7 @@ type Html =
 
 module Html = 
     let elem tag content = Elem(tag,content)
+    let attr name value = Attr(name, value)
     let html = elem "html"
     let head = elem "head"
     let title = elem "title"
@@ -62,5 +63,6 @@ module Html =
     let h3 = elem "h1"
     let h4 = elem "h1"
     let strong = elem "strong"
+    let script = elem "script"
     let (~%) s = [Text(s.ToString())]
     let (%=) name value = Attr(name,value)

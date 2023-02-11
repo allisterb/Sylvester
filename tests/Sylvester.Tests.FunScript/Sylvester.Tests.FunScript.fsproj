@@ -26,6 +26,11 @@
     <ProjectReference Include="..\..\ext\FunScript\src\main\FunScript.Bindings.Base\FunScript.Bindings.Base.fsproj" />
     <ProjectReference Include="..\..\ext\FunScript\src\main\FunScript.Interop\FunScript.Interop.NETStandard.fsproj" />
     <ProjectReference Include="..\..\ext\FunScript\src\main\FunScript\FunScript.NETStandard.fsproj" />
+    <ProjectReference Include="..\..\src\Visualization\Sylvester.Visualization.Web\Sylvester.Visualization.Web.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.2" />
   </ItemGroup>
 
 </Project>
