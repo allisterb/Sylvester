@@ -22,3 +22,8 @@ module Board =
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
     let create_board (attr:obj) = stub<Board>
         
+    [<Emit("{2}.create('point', {0}, {1})")>]
+    let create_point (coords:float[]) (attr:obj) (board:Board) = stub<Point> 
+
+    [<Emit("{2}.create('polygon', {0}, {1})")>]
+    let create_polygon (points:Point[]) (attr:obj) (board:Board) = stub<Polygon> 

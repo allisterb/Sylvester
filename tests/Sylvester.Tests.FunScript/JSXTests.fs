@@ -23,10 +23,11 @@ module JSXGraphTests =
     
     [<Fact>]
     let ``can create``() =
-        let ss = compile <@ 
-            let b = JXG.JSXGraph.initBoard("foo", {|boundingbox=[|4;5;6;7|]; show = false |}) 
-            b.hasPointerUp = true
-        @>
+        let ss = 
+            compile <@ 
+                    let b = JXG.JSXGraph.initBoard("foo", {|boundingbox=[|4;5;6;7|]; show = false |}) 
+                    b.hasPointerUp = true
+            @>
         Assert.NotNull ss
 
     [<Fact>]
@@ -48,7 +49,7 @@ module JSXGraphTests =
         Assert.NotNull d
 
     [<Fact>]
-     let ``can create board``() =
+    let ``can create board``() =
         let b =
             <@
             let board = JXG.JSXGraph.initBoard("jxgbox", {|boundingbox = [|-5; 2; 5; -2|];
@@ -62,7 +63,17 @@ module JSXGraphTests =
 
             let poly1 = board.createPolygon([|p; q; r; s; t|], {| name = "Polygon 1"; withLabel = true |});
             poly1
-            @> |> Board.draw 500 400 
+            @> |> draw_board
         Assert.NotNull b
+
+    [<Fact>]
+    let ``can create point``() =
+        let code = 
+            <@ 
+                let board = create_board {| boundingbox = [|-5; 2; 5; -2|]; keepAspectRatio =true; showCopyright = false; showNavigation =false |}
+                create_point [|-2.; 0.|] {||} board
+            @>
+        let s = code |> draw_board |> Html.toString
+        Assert.NotNull s
         
         
