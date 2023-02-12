@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open System
+
 open FSharp.Quotations
 
 open FunScript
@@ -9,9 +11,11 @@ open Html
 
 [<RequireQualifiedAccess>]
 module Board =
-    let draw (id:string) (width:int) (height:int) (src:Expr) =
+    let draw (src:Expr) =
+        let id = Guid.NewGuid().ToString()
+        let repbid (s:string) = s.Replace("_bid", id)
         div [
-            div [attr "id" id; attr "class" "jxgbox"; attr "style" $"width:{width}px;height:{height}px"]
-            script [src |> compile |> Text]
+            div [attr "id" id; attr "class" "jxgbox"; attr "style" $"width:1080px;height:200px"]
+            script [src |> compile |> repbid |> Text]
         ] |> Html.toString
         

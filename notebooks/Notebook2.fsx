@@ -48,6 +48,11 @@ do
         { ContentType = "text/html"; Data = expr.Html() }
         
     )
+    
+    do Printers.addDisplayPrinter(fun (expr: Html) -> 
+        { ContentType = "text/html"; Data = Html.toString(expr) }
+        
+    )
 
     let print_expr expr = 
         try
