@@ -21,6 +21,13 @@
 #r @"C:\\Projects\\Sylvester.git\\src\\Lang\\Solvers\\Sylvester.Solver.Z3\\bin\\x64\\Debug\\netstandard2.0\\Sylvester.Solver.Z3.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Visualization\\Sylvester.Visualization.Web\\bin\\Debug\\netstandard2.0\\Sylvester.Visualization.Web.dll"
 
+
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.Interop.NETStandard.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.Util.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.Base.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.JSXGraph.dll"
+
 #r "IfSharp.Kernel.dll"
 
 open FSharp.Quotations
@@ -30,8 +37,12 @@ open IfSharp.Kernel.Globals
 open Sylvester
 
 do
-    /// Setup MathJax and HTML helpers
+    // Setup MathJax and HTML helpers
     @"<script src=""https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML""></script>" |> Util.Html |> Display
+    
+    // Setup JSXGraph
+    @"<link href=""https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"" rel=""stylesheet"" type=""text/css"" />" |> Util.Html |> Display
+    @"<script src=""https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"" type=""text/javascript"" charset=""UTF-8""></script>" |> Util.Html |> Display
     
     do Printers.addDisplayPrinter(fun (expr: IHtmlDisplay) -> 
         { ContentType = "text/html"; Data = expr.Html() }

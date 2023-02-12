@@ -7,6 +7,8 @@ open FunScript
 open FunScript.Bindings
 open FunScript.Bindings.JSXGraph
 
+open Sylvester
+
 type Foo = {
     Bar: float[] option
     Baz: string option
@@ -44,6 +46,23 @@ module JSXGraphTests =
                         poly1
             @>
         Assert.NotNull d
+
+    [<Fact>]
+     let ``can create board``() =
+        let b =
+            <@
+            let board = JXG.JSXGraph.initBoard("jxgbox", {|boundingbox = [|-5; 2; 5; -2|];
+                                        keepAspectRatio =true; showCopyright = false; showNavigation =false |})
         
+            let p = board.createPoint([|-2.; 0.|], {| name = "A" |})
+            let q = board.createPoint([|-1.; -1.|], {| name = "B" |})
+            let r = board.createPoint([|1.0; -0.5|], {| name = "C" |})
+            let s = board.createPoint([|1.; 1.|], {| name = "D" |})
+            let t = board.createPoint([|-1.; 1.5|], {| name = "E" |})
+
+            let poly1 = board.createPolygon([|p; q; r; s; t|], {| name = "Polygon 1"; withLabel = true |});
+            poly1
+            @> |> Board.draw 500 400 
+        Assert.NotNull b
         
         

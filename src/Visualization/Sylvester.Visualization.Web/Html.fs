@@ -22,7 +22,7 @@ type Html =
                if attrs = [] then ""
                else " " + String.concat " " [for attr in attrs -> toString 0 attr]
             match elems with
-            | [] -> spaces+"<"+tag+attrs+"/>\r\n"
+            | [] -> spaces+"<"+tag+attrs+"></" + tag + ">\r\n"
             | _ ->
                spaces+"<"+tag+attrs+">\r\n"+
                   String.concat "" [for e in elems -> toString (indent+1) e] +
