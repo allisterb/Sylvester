@@ -9,6 +9,20 @@ open FunScript.Bindings
 open FunScript.Bindings.JSXGraph
 open Html
 
+type BoardLayout(src:Expr) =
+    member val Src = src with get, set
+    member val Width = 0 with get, set
+    member val Height = 0 with get, set
+
+    interface IHtmlDisplay with
+        member x.Html() = 
+            let id = Guid.NewGuid().ToString()
+            let repbid (s:string) = s.Replace("_bid", id)
+            div [
+                div [attr "id" id; attr "class" "jxgbox"; attr "style" $"width:{x.Width}px;height:{x.Height}px"]
+                script [src |> compile |> repbid |> Text]
+            ] |> Html.toString
+            
 [<AutoOpen>]
 module Board =
     let draw_board (src:Expr) =
@@ -22,8 +36,11 @@ module Board =
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
     let create_board (attr:obj) = stub<Board>
         
-    [<Emit("{2}.create('point', {0}, {1})")>]
-    let create_point (coords:float[]) (attr:obj) (board:Board) = stub<Point> 
+    [<Emit("{0}.create('point', {1}, {2})")>]
+    let create_point (board:Board) (coords:float[]) (attr:obj)  = stub<Point> 
 
-    [<Emit("{2}.create('polygon', {0}, {1})")>]
-    let create_polygon (points:Point[]) (attr:obj) (board:Board) = stub<Polygon> 
+    [<Emit("{0}.create('line', {1}, {2})")>]
+    let create_line (board:Board) (points:Point[]) (attr:obj) = stub<Line>
+
+    [<Emit("{0}.create('polygon', {1}, {2})")>]
+    let create_polygon (board:Board) (points:Point[]) (attr:obj) = stub<Polygon> 
