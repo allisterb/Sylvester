@@ -43,4 +43,9 @@ module Board =
     let create_line (board:Board) (points:Point[]) (attr:obj) = stub<Line>
 
     [<Emit("{0}.create('polygon', {1}, {2})")>]
-    let create_polygon (board:Board) (points:Point[]) (attr:obj) = stub<Polygon> 
+    let create_polygon (board:Board) (points:Point[]) (attr:obj) = stub<Polygon>
+    
+    [<Emit("{0}.create('circle', {1}, {2})")>]
+    let create_circle (board:Board) (children:obj[]) (attr:obj) = stub<Circle> 
+
+    //Create: board: Board * attributes: GeometryElementAttributes * ``type``: float * oclass: float -> Circle
