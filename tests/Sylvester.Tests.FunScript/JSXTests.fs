@@ -71,9 +71,19 @@ module JSXGraphTests =
         let code = 
             <@ 
                 let board = create_board {| boundingbox = [|-5; 2; 5; -2|]; keepAspectRatio =true; showCopyright = false; showNavigation =false |}
-                create_point [|-2.; 0.|] {||} board
+                create_point board [|-2.; 0.|] {||}
             @>
         let s = code |> draw_board |> Html.toString
         Assert.NotNull s
         
         
+    [<Fact>]
+       let ``can set board options``() =
+           let code = 
+               <@ 
+                   let board = create_board {| boundingbox = [|-5; 2; 5; -2|]; keepAspectRatio =true; showCopyright = false; showNavigation =false |}
+                   board.options.label.autoPosition <- true
+               @>
+           let s = code |> draw_board |> Html.toString
+           Assert.NotNull s
+           

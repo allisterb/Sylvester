@@ -239,9 +239,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Optimizatio
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Expressions", "..\tests\Sylvester.Tests.Expressions\Sylvester.Tests.Expressions.fsproj", "{79D27ED0-ADD2-4729-B522-2B6553D16D73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sylvester.Data.Formats", "Data\Sylvester.Data.Formats\Sylvester.Data.Formats.csproj", "{CC0C8932-A980-4BE2-8A1F-E0FD60FC9FB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sylvester.Data.Formats", "Data\Sylvester.Data.Formats\Sylvester.Data.Formats.csproj", "{CC0C8932-A980-4BE2-8A1F-E0FD60FC9FB5}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Statistics", "Math\Sylvester.Statistics\Sylvester.Statistics.fsproj", "{6571F0D7-90D4-4FF3-88DD-AC353644D9E3}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Statistics", "Math\Sylvester.Statistics\Sylvester.Statistics.fsproj", "{6571F0D7-90D4-4FF3-88DD-AC353644D9E3}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
