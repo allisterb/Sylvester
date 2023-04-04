@@ -42,7 +42,7 @@ do
     
     // Setup JSXGraph
     @"<link href=""https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"" rel=""stylesheet"" type=""text/css"" />" |> Util.Html |> Display
-    @"<script src=""https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"" type=""text/javascript"" charset=""UTF-8""></script>" |> Util.Html |> Display
+    @"<script src=""https://cdn.jsdelivr.net/npm/jsxgraph@1.4.6/distrib/jsxgraphcore.js"" type=""text/javascript"" charset=""UTF-8""></script>" |> Util.Html |> Display
     
     do Printers.addDisplayPrinter(fun (expr: IHtmlDisplay) -> 
         { ContentType = "text/html"; Data = expr.Html() }

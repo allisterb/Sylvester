@@ -20,7 +20,7 @@ type BoardLayout(src:Expr) =
             let repbid (s:string) = s.Replace("_bid", id)
             div [
                 div [attr "id" id; attr "class" "jxgbox"; attr "style" $"width:{x.Width}px;height:{x.Height}px"]
-                script [src |> compile |> repbid |> Text]
+                script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + (src |> compile |> repbid) + "});"|> Text]
             ] |> Html.toString
             
 [<AutoOpen>]
@@ -30,7 +30,7 @@ module Board =
         let repbid (s:string) = s.Replace("_bid", id)
         div [
             div [attr "id" id; attr "class" "jxgbox"; attr "style" $"width:768px;height:200px"]
-            script [src |> compile |> repbid |> Text]
+            script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + (src |> compile |> repbid) + "});"|> Text]
         ]
         
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
