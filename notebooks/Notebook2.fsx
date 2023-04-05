@@ -35,6 +35,7 @@ open IfSharp.Kernel
 open IfSharp.Kernel.Globals
 
 open Sylvester
+open FunScript.Bindings.JSXGraph
 
 do
     // Setup MathJax and HTML helpers
@@ -44,15 +45,21 @@ do
     @"<link href=""https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"" rel=""stylesheet"" type=""text/css"" />" |> Util.Html |> Display
     @"<script src=""https://cdn.jsdelivr.net/npm/jsxgraph@1.4.6/distrib/jsxgraphcore.js"" type=""text/javascript"" charset=""UTF-8""></script>" |> Util.Html |> Display
     
-    do Printers.addDisplayPrinter(fun (expr: IHtmlDisplay) -> 
+    Printers.addDisplayPrinter(fun (expr: IHtmlDisplay) -> 
         { ContentType = "text/html"; Data = expr.Html() }
         
     )
     
-    do Printers.addDisplayPrinter(fun (expr: Html) -> 
+    Printers.addDisplayPrinter(fun (expr: Html) -> 
         { ContentType = "text/html"; Data = Html.toString(expr) }
         
     )
+    
+    Printers.addDisplayPrinter(fun (expr: Expr<Board>) -> 
+        { ContentType = "text/html"; Data = (draw_board expr).ToString() }
+        
+    )
+    
 
     let print_expr expr = 
         try
@@ -61,10 +68,6 @@ do
         with
         | _ -> expr.ToString()
             
-    do Printers.addDisplayPrinter(fun (expr: Expr) -> 
-        let html = print_expr expr in 
-        { ContentType = "text/html"; Data = html }
-    )
     
     do Printers.addDisplayPrinter(fun (e: Expr option) -> 
         match e with

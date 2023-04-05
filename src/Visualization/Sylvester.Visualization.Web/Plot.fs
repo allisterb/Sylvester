@@ -52,7 +52,6 @@ and Lineplot(name, color, ?x, ?y, ?expr:Expr<real>) =
         let ydat = xdat |> Seq.map f
         Lineplot(name, color, xdat, ydat, expr) 
     
-[<AutoOpen>]
 module Plot =
     let plot2d width height title xaxis_label yaxis_label (plots:seq<Plottable>) = Plot2D(width, height, title, xaxis_label, yaxis_label, plots) 
 
@@ -134,6 +133,7 @@ module Plot =
                     
     let rect color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="rect", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1), opacity=0.2)
 
+   
     let line color x0 x1 y0 y1 = Plottable.Shape <| Graph.Shape(``type``="line", x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line = Line(color=color, width=1))
 
     let vertical_line color x0 =

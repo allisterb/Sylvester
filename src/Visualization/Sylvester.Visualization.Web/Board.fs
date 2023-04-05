@@ -34,18 +34,25 @@ module Board =
         ]
         
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
-    let create_board (attr:obj) = stub<Board>
+    let board (attr:obj) = stub<Board>
+
+    [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
+    let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis> 
         
-    [<Emit("{0}.create('point', {1}, {2})")>]
-    let create_point (board:Board) (coords:float[]) (attr:obj)  = stub<Point> 
+    [<Emit("{2}.create('point', {0}, {1})")>]
+    let point (coords:real[]) (attr:obj) (board:Board) = stub<Point> 
 
-    [<Emit("{0}.create('line', {1}, {2})")>]
-    let create_line (board:Board) (points:Point[]) (attr:obj) = stub<Line>
+    [<Emit("{2}.create('line', {0}, {1})")>]
+    let line (points:Point[]) (attr:obj) (board:Board) = stub<Line>
 
-    [<Emit("{0}.create('polygon', {1}, {2})")>]
-    let create_polygon (board:Board) (points:Point[]) (attr:obj) = stub<Polygon>
+    [<Emit("{2}.create('polygon', {0}, {1})")>]
+    let polygon (points:Point[]) (attr:obj) (board:Board) = stub<Polygon>
     
-    [<Emit("{0}.create('circle', {1}, {2})")>]
-    let create_circle (board:Board) (children:obj[]) (attr:obj) = stub<Circle> 
+    [<Emit("{2}.create('circle', {0}, {1})")>]
+    let circle (children:obj[]) (attr:obj) (board:Board) = stub<Circle> 
 
-    //Create: board: Board * attributes: GeometryElementAttributes * ``type``: float * oclass: float -> Circle
+    [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
+    let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<Functiongraph> 
+
+    [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
+    let chart (x:real[]) (y:real[]) (attr:obj) board = stub<Chart> 
