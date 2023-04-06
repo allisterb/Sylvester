@@ -10,10 +10,13 @@
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.Runtime.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Providers\\Sylvester.Provider.Arithmetic\\src\\Sylvester.Provider.Arithmetic.Runtime\\bin\\Release\\netstandard2.0\\Sylvester.Provider.Arithmetic.Runtime.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Base\\Sylvester.Collections\\bin\\Debug\\netstandard2.0\\Sylvester.Collections.dll"
-#r "C:\\Projects\\Sylvester.git\\src\\Lang\\Sylvester.Prover\\bin\\Debug\\netstandard2.0\\Sylvester.Expressions.dll"
+#r "C:\\Projects\\Sylvester.git\\src\\Lang\\Sylvester.Expressions\\bin\\Debug\\netstandard2.0\\Sylvester.Expressions.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Lang\\Sylvester.Prover\\bin\\Debug\\netstandard2.0\\Sylvester.Prover.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.AbstractAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.AbstractAlgebra.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.LinearAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.LinearAlgebra.dll"
+#r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Statistics\\bin\\Debug\\netstandard2.0\\Sylvester.Statistics.dll"
+
+#load "XPlot.Plotly.fsx"
 
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Statistics\\bin\\Debug\\netstandard2.0\\Sylvester.Statistics.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\CAS\\Sylvester.CAS.Maxima\\bin\\Debug\\netstandard2.0\\Sylvester.CAS.Maxima.dll"
@@ -29,6 +32,8 @@
 #r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.JSXGraph.dll"
 
 #r "IfSharp.Kernel.dll"
+
+
 
 open FSharp.Quotations
 open IfSharp.Kernel

@@ -15,5 +15,14 @@
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.LinearAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.LinearAlgebra.dll"
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.Probability\\bin\\Debug\\netstandard2.0\\Sylvester.Probability.dll"
+#r ".\\..\\..\\..\\src\\Math\\Sylvester.Statistics\\bin\\Debug\\netstandard2.0\\Sylvester.Statistics.dll"
 
 
+#r "C:\\Projects\\Sylvester.git\\src\\Visualization\\Sylvester.Visualization.Web\\bin\\Debug\\netstandard2.0\\Sylvester.Visualization.Web.dll"
+
+
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.Interop.NETStandard.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.Util.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.Base.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.JSXGraph.dll"

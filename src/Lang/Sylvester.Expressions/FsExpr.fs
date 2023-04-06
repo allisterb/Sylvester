@@ -456,6 +456,8 @@ module FsExpr =
         | WithValue(v, t, e) -> (v, t, expand e)
         | _ -> failwith "Expression is not a reflected definition parameter."
 
+    let expr_value<'t>(v:'t) = v |> Expr.Value |> expand_as<'t>
+
     let body'(expr:Expr<'a->'b>) = expr |> body |> expand_as<'b>
     
     let binary_operands op (e:Expr) =

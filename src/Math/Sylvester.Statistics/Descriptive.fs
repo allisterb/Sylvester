@@ -1,12 +1,19 @@
 ﻿namespace Sylvester
 
+open System.Collections.Generic
+
 open MathNet.Numerics.Statistics
 open MathNet.Numerics.Distributions
-open MathNet.Numerics.Random
 
 open Sylvester
 
 module DescriptiveStatistics =
+    let freq (s:seq<'t>) =
+        let values = Dictionary<'t, int>()
+        do s |> Seq.distinct |> Seq.iter (fun v -> values.Add(v, 0)) 
+        do s |> Seq.iter (fun v -> values.[v] <- values.[v] + 1)
+        values |> Seq.map(fun kv -> kv.Key, kv.Value) |> Map<'t, int>
+    
     let mean (s:seq<'t>) = s |> real_seq |> Statistics.Mean |> real
 
     let median (s:seq<'t>) = s |> real_seq |> Statistics.Median |> real
@@ -21,13 +28,13 @@ module DescriptiveStatistics =
        if b < a then failwith "The right of the interval must be greater than the left."
        prob_cumul d b - prob_cumul d a
 
-    let normal_distrib (mean:real) (variance:real) = new Normal(mean, (sqrt variance))
+    let normal_distrib (mean:real) (variance:real) = new MathNet.Numerics.Distributions.Normal(mean, (sqrt variance))
 
     let t_distrib mean variance d = new StudentT(mean, (sqrt variance), d)
 
     let std_t_distrib (n:int) = new StudentT(0., 1.0, real n)
 
-    let std_normal_distrib = new Normal()
+    let std_normal_distrib = new MathNet.Numerics.Distributions.Normal()
 
     let chi_sq f  = new ChiSquared(f)
 
@@ -59,3 +66,16 @@ module DescriptiveStatistics =
         estimate_pop_mean_sample_sd_interval confidence (Seq.length s) sample_sd sample_mean
 
     let proportion_sampling_distrib prop (n:int) = normal_distrib prop (prop * (1. - prop) / real n)
+
+    
+    let dotplot(f:Map<'t, int>) =
+        let minx, maxx, miny, maxy = f |> Map.toSeq |> Seq.map fst |> Seq.min |> real |> expr_value<real>, 
+                                     f |> Map.toSeq |> Seq.map fst |> Seq.max |> real |> expr_value<real>,
+                                     f |> Map.toSeq |> Seq.map snd |> Seq.min |> real |> expr_value<real>, 
+                                     f |> Map.toSeq |> Seq.map snd |> Seq.max |> real |> expr_value<real>
+        <@
+        let board = board {|boundingbox = [|%minx - 1.; %maxy + 1.; %maxx + 1.; 0.|]; showNavigation = true; showCopyright = false; axis = false |}
+        let _ = axis [|%minx;0.|] [|%maxx;0.|] {|lastArrow = false; strokeColor = "black"|} board
+        let _ = axis [|0.; %miny|] [|0.; %maxy|] {|lastArrow = false; strokeColor = "black"|} board
+        board
+        @>

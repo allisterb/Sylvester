@@ -16,10 +16,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
+    <ProjectReference Include="..\..\Visualization\Sylvester.Visualization.Web\Sylvester.Visualization.Web.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.3.4" />
+    <PackageReference Update="FSharp.Core" Version="5.0.2" />
   </ItemGroup>
 
 </Project>

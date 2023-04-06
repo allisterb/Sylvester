@@ -37,7 +37,10 @@ module Board =
     let board (attr:obj) = stub<Board>
 
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
-    let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis> 
+    let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
+
+    [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
+    let ticks (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Ticks> 
         
     [<Emit("{2}.create('point', {0}, {1})")>]
     let point (coords:real[]) (attr:obj) (board:Board) = stub<Point> 
