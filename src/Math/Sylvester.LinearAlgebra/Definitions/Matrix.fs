@@ -86,7 +86,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     
     member x.Item(i: int) = x.Rows.[i]
     
-    member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand_as<'t>(zero_val(typeof<'t>)) |> Scalar<'t>
+    member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand_as<'t>(zero_val(typeof<'t>)) |> Term
     
     interface IMatrix<'dim0, 'dim1> with 
         member val Dim0 = dim0
@@ -128,15 +128,15 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     static member (-) (l: Matrix<'dim0, 'dim1, 't>, r: Matrix<'dim0, 'dim1, 't>) = 
         let m = Array.map2 (-) l.Rows r.Rows in Matrix<'dim0, 'dim1, 't> m
 
-    static member (*) (l: Scalar<'t>, r: Matrix<'dim0, 'dim1, 't>) = 
+    static member (*) (l: Term<'t>, r: Matrix<'dim0, 'dim1, 't>) = 
         let m = r.Rows |> Array.map ((*) l) in Matrix<'dim0, 'dim1, 't> m
 
-    static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: Scalar<'t>) = 
+    static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: Term<'t>) = 
          let m = l.Rows |> Array.map (fun v -> v * r) in Matrix<'dim0, 'dim1, 't> m
 
-    static member (*) (l: 't, r: Matrix<'dim0, 'dim1, 't>) = scalar l * r
+    static member (*) (l: 't, r: Matrix<'dim0, 'dim1, 't>) = (l |> exprv |> Term) * r
 
-    static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: 't) = l * scalar r
+    static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: 't) = l * (r |> exprv |> Term)
     
     static member (~-) (l: Matrix<'dim0, 'dim1, 't>) = 
         let m = l.Rows |> Array.map (~-) in Matrix<'dim0, 'dim1, 't> m
@@ -211,7 +211,7 @@ module Matrix =
     let inline mrmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
         check (i +< l.Dim0)
         let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
-        let ri = Scalar k * l.[int i]
+        let ri = Term k * l.[int i]
         rows.[int i] <- ri
         Matrix<'dim0, 'dim1, 't> rows
 
@@ -229,7 +229,7 @@ module Matrix =
          check (i +< l.Dim0)
          check (j +< l.Dim1)
          let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
-         let ri = l.[int i] + Scalar k * l.[int j] 
+         let ri = l.[int i] + Term k * l.[int j] 
          rows.[int i] <- ri
          Matrix<'dim0, 'dim1, 't> rows
 
@@ -237,7 +237,7 @@ module Matrix =
         let dim = Math.Min(l.Dim0.IntVal, l.Dim1.IntVal)
         Array2D.init dim dim l.Kr
         |> Array2D.toJagged
-        |> sexprs'
+        |> sexprs2
         |> _mat' (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
 
     let inline mdelr n (m:Matrix<_,_,_>) =

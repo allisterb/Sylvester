@@ -30,11 +30,11 @@ module Symbolic =
 
     let inline sexpr (x : ^T) = (^T : (member Expr : Expr<'t>) (x))
 
-    let inline sexprl (x : ^T) = (^T : (member Expr : Expr<'t> list) (x))
+    let inline sexpr_l (x : ^T) = (^T : (member Expr : Expr<'t> list) (x))
 
     let inline sexprs(a:'t[]) = a |> Array.map sexpr
     
-    let inline sexprs'(a:'t [] []) = a |> Array.map(Array.map sexpr)
+    let inline sexprs2(a:'t [] []) = a |> Array.map(Array.map sexpr)
 
     
     (* Print quotation as string *)

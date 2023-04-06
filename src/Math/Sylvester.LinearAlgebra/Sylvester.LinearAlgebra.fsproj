@@ -7,7 +7,6 @@
   <ItemGroup>
     <Compile Include="Definitions\Shapes.fs" />
     <Compile Include="Definitions\Ops.fs" />
-    <Compile Include="Definitions\Scalar.fs" />
     <Compile Include="Definitions\Vector.fs" />
     <Compile Include="Definitions\Matrix.fs" />
     <Compile Include="Theories\VectorSpace.fs" />

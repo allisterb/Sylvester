@@ -22,24 +22,24 @@ module VectorSpace =
     
     let vector_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
-        let one = one_val(typeof<'t>) |> expand_as |> Scalar<'t>
+        let one = one_val(typeof<'t>) |> expand_as |> Term
         function                            
         | Assoc <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
         | Commute <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
         | Identity <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) <@ Vector<_,'t>.Zero @> x 
         | Inverse <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) (expand_as <@ Vector.smul %%neg_one @>) <@ Vector<_, 't>.Zero @> x
-        | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) x -> Some (desc x)
-        | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
-        | Distrib'' <@(=)@> (<@ (*) @> :Expr<Scalar<_>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
-        | Assoc' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Vector<_,'t>->Vector<_,'t>>) x -> Some (desc x)
-        | Identity <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Scalar<'t>->Scalar<'t>>) (expand_as <@ one @>) x -> Some (desc x)
+        | Commute' <@(=)@> (<@ (*) @> :Expr<Term<'t>->Vector<_, 't>->Vector<_, 't>>) x -> Some (desc x)
+        | Distrib' <@(=)@> (<@ (*) @> :Expr<Term<'t>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
+        | Distrib'' <@(=)@> (<@ (*) @> :Expr<Term<'t>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
+        | Assoc' <@(=)@> (<@ (*) @> :Expr<Term<'t>->Vector<_,'t>->Vector<_,'t>>) x -> Some (desc x)
+        | Identity <@(=)@> (<@ (*) @> :Expr<Term<'t>->Term<'t>->Term<'t>>) (expand_as <@ one @>) x -> Some (desc x)
         | _ -> None
 
     let inner_product_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
-        let one = one_val(typeof<'t>) |> expand_as |> Scalar<'t>
+        let one = one_val(typeof<'t>) |> expand_as |> Term<'t>
         function                            
-        | Commute <@(=)@> (<@ (*) @> :Expr<Vector<_,'t>->Vector<_,'t>->Scalar<'t>>) x -> Some(desc x)
+        | Commute <@(=)@> (<@ (*) @> :Expr<Vector<_,'t>->Vector<_,'t>->Term<'t>>) x -> Some(desc x)
         | _ -> None
 
     (* Theory *)
@@ -51,7 +51,7 @@ module VectorSpace =
 
     (* Functions *)
 
-    let linear_relation (_:Set<Scalar<'t>>) (_:Set<Vector<_,'t>>) = formula<Vector<_,'t>>
+    let linear_relation (_:Set<Term<'t>>) (_:Set<Vector<_,'t>>) = formula<Vector<_,'t>>
 
     let span (_:Set<Vector<'t>>) = formula<Set<Vector<_,'t>>>
 

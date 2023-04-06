@@ -67,7 +67,6 @@ module DescriptiveStatistics =
 
     let proportion_sampling_distrib prop (n:int) = normal_distrib prop (prop * (1. - prop) / real n)
 
-    
     let dotplot(f:Map<'t, int>) =
         let minx, maxx, miny, maxy = f |> Map.toSeq |> Seq.map fst |> Seq.min |> real |> expr_value<real>, 
                                      f |> Map.toSeq |> Seq.map fst |> Seq.max |> real |> expr_value<real>,

@@ -4,15 +4,16 @@ open System
 
 open FSharp.Quotations
 
-//[<StructuredFormatDisplay("{Display}")>]
+[<StructuredFormatDisplay("{Display}")>]
 type Term<'t when 't: equality> (e:Expr<'t>) =
     let expr = expand_as<'t> e
     
     member val Expr = expr
     //member val MathNetExpr = mnexpr
     member val Val = match expr with | Patterns.Value(v, _) -> v :?> 't |> Some | _ -> None
-    //member val Display = sprinte expr
-    new(d:'t) = let e = expand_as<'t> <@ d @> in Term<'t> e
+    
+    member val Display = sprinte expr
+    
     interface IEquatable<Term<'t>> with
         member a.Equals b = true//a.Display = b.Display
 
@@ -32,19 +33,21 @@ type Term<'t when 't: equality> (e:Expr<'t>) =
     
     override a.GetHashCode() = a.Expr.GetHashCode()
 
+    override a.ToString() = a.Display
+
     static member Zero = typeof<'t> |> zero_val |> expand_as<'t> |> Term<'t>
 
     static member One = typeof<'t> |> one_val |> expand_as<'t> |> Term<'t>
 
     static member op_Implicit (l:Term<'t>):Expr<'t> = l.Expr
 
-    static member op_Implicit (l:'t):Term<'t> = Term l
+    static member op_Implicit (l:'t):Term<'t> = Term (exprv l)
 
-    static member op_Implicit (l:int):Term<real> = let v = real l in Term v
+    static member op_Implicit (l:int):Term<real> = let v = real l in Term (exprv v)
 
-    static member op_Implicit (l:rat):Term<real> = let v = real l in Term v
+    static member op_Implicit (l:rat):Term<real> = let v = real l in Term (exprv v)
 
-    static member op_Implicit (l:nat):Term<real> = let v = real l in Term v
+    static member op_Implicit (l:nat):Term<real> = let v = real l in Term (exprv v)
 
     (* Binary operators *)
 
@@ -194,7 +197,6 @@ type Term<'t when 't: equality> (e:Expr<'t>) =
     
     static member Pow (l : nat, r : Term<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> Term<'t>
 
-   
 type realexpr = Term<real>
 
 type ratexpr = Term<rat>
@@ -205,12 +207,13 @@ type natexpr = Term<nat>
 
 [<RequireQualifiedAccess>]
 module NumericLiteralR = 
-  let FromZero() = Term 0.0
-  let FromOne() = Term 1.0
-  let FromInt32 n = n |> real |> Term
-  let FromInt64 n = n |> real |> Term
+  let FromZero() = Term <@ 0.0 @>
+  let FromOne() = Term <@ 1.0 @>
+  let FromInt32 n = n |> real |> exprv |> Term
+  let FromInt64 n = n |> real |> exprv |> Term
   
 module Term =
+    //let
     let int_expr x = 
         match box x with
         | :? Term<int> as s -> s.Expr
@@ -239,6 +242,27 @@ module Term =
         Expr.Var(Var(name, typeof<'t>)) |> expand_as<'t> |> Term<'t>
 
     let term n (s:seq<Term<_>>) = s |> Seq.item n
+
+    let terms<'t when 't : equality> (t:obj[]) =
+        let m:obj->Term<'t> = 
+            function
+            | :? 't as v -> v |> exprv |> Term
+            | :? Term<'t> as t -> t
+            | :? Expr<'t> as e -> e |> Term
+            | x -> failwithf "Cannot convert %A of type %A to Term of type %A." x (x.GetType()) (typeof<'t>)
+        t |> Array.map m
+
+    let realterms (t:obj[]) =
+        let m:obj->Term<real> = 
+            function
+            | :? real as v -> v |> exprv |> Term
+            | :? int as v -> v |> real |> exprv |> Term
+            | :? rat as v -> v |> real |> exprv |> Term
+            | :? nat as v -> v |> real |> exprv |> Term
+            | :? Term<real> as t -> t
+            | :? Expr<real> as e -> e |> Term
+            | x -> failwithf "Cannot convert %A of type %A to real Term." x (x.GetType())
+        t |> Array.map m
 
     let take n (s:seq<_>) = s |> Seq.take n |> Seq.toList
 
