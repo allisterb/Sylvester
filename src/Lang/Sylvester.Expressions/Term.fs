@@ -5,9 +5,7 @@ open System
 open FSharp.Quotations
 
 [<StructuredFormatDisplay("{Display}")>]
-type Term<'t when 't: equality> (e:Expr<'t>) =
-    let expr = expand_as<'t> e
-    
+type Term<'t when 't: equality> (expr:Expr<'t>) =
     member val Expr = expr
     //member val MathNetExpr = mnexpr
     member val Val = match expr with | Patterns.Value(v, _) -> v :?> 't |> Some | _ -> None
@@ -15,7 +13,7 @@ type Term<'t when 't: equality> (e:Expr<'t>) =
     member val Display = sprinte expr
     
     interface IEquatable<Term<'t>> with
-        member a.Equals b = true//a.Display = b.Display
+        member a.Equals b = a.Display = b.Display
 
     interface IComparable<Term<'t>> with
        member a.CompareTo b = match (a.Val, b.Val) with | (Some av, Some bv) -> 0 | _, _ -> failwith ""
@@ -166,12 +164,16 @@ type Term<'t when 't: equality> (e:Expr<'t>) =
 
     static member (/) (l:Term<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> Term<'t>
 
-    
+
+    static member Pow (l : Term<real>, r : Term<real>) = call_pow l.Expr r.Expr |> expand_as<'t> |> Term<'t>
+
     static member Pow (l : Term<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> Term<'t>
     
     static member Pow (l : Term<real>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> Term<'t>
 
     static member Pow (l : Term<real>, r : nat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> Term<'t>
+
+    static member Pow (l : Term<real>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> Term<'t>
 
     static member Pow (l : Term<rat>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> Term<'t>
 
@@ -212,8 +214,9 @@ module NumericLiteralR =
   let FromInt32 n = n |> real |> exprv |> Term
   let FromInt64 n = n |> real |> exprv |> Term
   
+[<AutoOpen>]
 module Term =
-    //let
+   
     let int_expr x = 
         match box x with
         | :? Term<int> as s -> s.Expr
@@ -241,8 +244,6 @@ module Term =
     let var6<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IFormattable> name = 
         Expr.Var(Var(name, typeof<'t>)) |> expand_as<'t> |> Term<'t>
 
-    let term n (s:seq<Term<_>>) = s |> Seq.item n
-
     let terms<'t when 't : equality> (t:obj[]) =
         let m:obj->Term<'t> = 
             function
@@ -263,8 +264,4 @@ module Term =
             | :? Expr<real> as e -> e |> Term
             | x -> failwithf "Cannot convert %A of type %A to real Term." x (x.GetType())
         t |> Array.map m
-
-    let take n (s:seq<_>) = s |> Seq.take n |> Seq.toList
-
-    let map f (s:seq<_>) = s |> Seq.map f 
   

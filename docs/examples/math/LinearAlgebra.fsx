@@ -7,7 +7,7 @@ open Vector
 
 let a = Term.var6<real> "a"
 
-let M = vec ``2`` [a + 2; 2]
+let M = vec ``4`` [a + 2; 2; 3.; a - 2.]
 
 let m = M * M
 

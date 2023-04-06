@@ -136,7 +136,7 @@ module Vector =
     
     let vexpr(v: Vector<'n, 't>) = v.Expr
 
-    let vec (dim:'n) (data:obj list) = Vector<'n, real> (data |> List.toArray |> Term.realterms)
+    let vec (dim:'n) (data:obj list) = Vector<'n, real> (data |> List.toArray |> realterms)
     
     let vecz (dim:'n) (data:Term<int> list) = Vector<'n, int> data
     

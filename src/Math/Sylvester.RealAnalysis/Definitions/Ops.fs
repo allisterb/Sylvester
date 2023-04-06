@@ -26,11 +26,11 @@ type IRealAnalysisSymbolicOps =
             let vars = param_vars f
             let b = f |> body  
             let i = Analysis.integrate x <@ %%b:real @> 
-            expand''<real->'b> (recombine_func vars i)
+            expand_as<real->'b> (recombine_func vars i)
         member __.DefiniteIntegral (f:Expr<'a->'b >) (l:Expr<'a>) (u:Expr<'a>) = 
              let vars = param_vars f
-             let var = vars |> List.exactlyOne |> Expr.Var |> expand''<'a> 
-             let body = f |> body |> expand''<'b> 
+             let var = vars |> List.exactlyOne |> Expr.Var |> expand_as<'a> 
+             let body = f |> body |> expand_as<'b> 
              Analysis.definite_integral var l u body
         member __.Sum (expr:Expr<'a>) (x:Expr<'b>) (l:Expr<int>) (u:Expr<int>) = 
              Analysis.sum x l u expr
