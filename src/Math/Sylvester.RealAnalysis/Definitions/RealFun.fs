@@ -2,8 +2,9 @@
 
 open FSharp.Quotations
 
-type RealFun = Function<real, real>
-
+type RealFun(f) = 
+    inherit Function<real, real, Scalar<real>>(Field.R, Field.R, f, Scalar<real>)
+    
 [<AutoOpen>]
 module RealFun =
-    let realfun f = RealFun(Field.R, Field.R, f)
+    let realfun f = RealFun f

@@ -235,9 +235,9 @@ with
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
 
-    static member (|?|) (l:Term<'t>, r:Set<'t>) : ScalarTerm<bool> = 
+    static member (|?|) (l:Term<'t>, r:Set<'t>) : Scalar<bool> = 
         let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, [| typeof<'t>; typeof<Set<'t>> |], [||]) in
-        binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<bool> |> ScalarTerm<bool>
+        binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<bool> |> Scalar<bool>
     
     /// Set 'is subset of' operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
@@ -380,9 +380,9 @@ type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
 
     static member (|*|) (l:ISet<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.intersection<'t>, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|?|) (l:Term<'t>, r:SetTerm<'t>) : ScalarTerm<bool> = binary_call(None, SetOps.elementOf<'t>, l.Expr, r.Expr) |> expand_as<bool> |> ScalarTerm<bool>
+    static member (|?|) (l:Term<'t>, r:SetTerm<'t>) : Scalar<bool> = binary_call(None, SetOps.elementOf<'t>, l.Expr, r.Expr) |> expand_as<bool> |> Scalar<bool>
 
-    static member (|?|) (l:'t, r:SetTerm<'t>) : ScalarTerm<bool> = binary_call(None, SetOps.elementOf<'t>, Expr.Value l, r.Expr) |> expand_as<bool> |> ScalarTerm<bool>
+    static member (|?|) (l:'t, r:SetTerm<'t>) : Scalar<bool> = binary_call(None, SetOps.elementOf<'t>, Expr.Value l, r.Expr) |> expand_as<bool> |> Scalar<bool>
     
     static member (|<|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.subsetOf<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
 
@@ -474,9 +474,9 @@ module Set =
         infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
                     <@ (%%b:'t) @>)) 
-        |> Seq.map ScalarTerm<'t>
+        |> Seq.map Scalar<'t>
         |> Seq.skip 1
-        |> infinite_seq_gen<ScalarTerm<'t>> 
+        |> infinite_seq_gen<Scalar<'t>> 
        
     let infinite_seq2 g = g |> cart
         

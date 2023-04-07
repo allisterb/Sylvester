@@ -12,7 +12,7 @@ type IRelation<'a, 'b when 'a : equality and 'b : equality> = IRelation<'a, 'b, 
 
 type IRelation<'t when 't: equality> = IRelation<'t, 't>
 
-type Function<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>) =
+type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and 'c: equality and 'd:equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>, term:Expr<'b>->'d) =
     let amapbody = body' amap
     let amaparg = param_var amap
     member x.Domain = domain.Set
@@ -24,26 +24,28 @@ type Function<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality>(d
     member x.Body = body' x.Map
     member x.Vars = get_vars x.Body
     member x.Arg = param_var x.Map
+    member x.Term = term
 
     interface IRelation<'a, 'b, 'c> with
         member x.Domain = x.Domain
         member x.CoDomain = x.CoDomain
         member x.Op = <@ fun a b -> x.Domain.HasElement a && x.CoDomain.HasElement b && b = x.EvMap a @> 
     member x.Item (arg:'c) = arg |> x.EvAMap |> x.EvMap
-    //member x.Item(value:Term<'c>) =
-    ///    let v = subst_var_value amaparg value.Expr amapbody in
-     //   subst_var_value x.Arg v x.Body |> expand_as<'b> |> Term
+    member x.Item(value:Term<'c>) =
+        let v = subst_var_value amaparg value.Expr amapbody in
+        subst_var_value x.Arg v x.Body |> expand_as<'b> |> x.Term
 
-    interface ISymbolic<Function<'a, 'b, 'c>, 'b> with
+    interface ISymbolic<Function<'a, 'b, 'c, 'd>, 'b> with
            member a.Expr = a.Body
            member a.Mutate(b:Expr<'b>) = 
                let map = expand_as<'a->'b> (recombine_func a.Vars b)
-               Function(a.Domain, a.CoDomain, map, a.AMap)
+               Function(a.Domain, a.CoDomain, map, a.AMap, a.Term)
 
     override x.ToString() = src x.Map
 
-type Function<'a, 'b when 'a : equality and 'b: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>) = inherit Function<'a, 'b, 'a>(domain, codomain, map, <@ id @>)
+type Function<'a, 'b, 'd when 'a : equality and 'b: equality and 'd: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, term:Expr<'b>->'d) = 
+    inherit Function<'a, 'b, 'a, 'd>(domain, codomain, map, <@ id @>, term)
 
-type Predicate<'a, 'c when 'a : equality and 'c: equality> = Function<'a, bool, 'c>
+type Predicate<'a, 'c when 'a : equality and 'c: equality> = Function<'a, bool, 'c, Scalar<bool>>
 
-type Predicate<'a when 'a : equality> = Function<'a, bool>
+type Predicate<'a when 'a : equality> = Function<'a, bool, Scalar<bool>>

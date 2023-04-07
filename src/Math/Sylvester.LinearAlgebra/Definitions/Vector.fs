@@ -40,7 +40,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     
-    member x.Item with get(i)  = e.[i] |> ScalarTerm<'t>
+    member x.Item with get(i)  = e.[i] |> Scalar<'t>
     
     interface IPartialShape<``1``> with
         member val Rank = Some 1 with get,set
@@ -94,9 +94,9 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
 
-    new([<ParamArray>] v:ScalarTerm<'t> array) = let expr = v |> Array.map sexpr in Vector<'dim0, 't>(expr)
+    new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map sexpr in Vector<'dim0, 't>(expr)
 
-    new(v:ScalarTerm<'t> list) = Vector<'dim0, 't>(v |> List.toArray)
+    new(v:Scalar<'t> list) = Vector<'dim0, 't>(v |> List.toArray)
     
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector<'dim0, 't>(expr)
     
@@ -120,7 +120,7 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
         let e = defaultLinearAlgebraSymbolicOps.Subtract l.Expr r.Expr in Vector<'dim0, 't>(e)
 
     static member (*) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
-        let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in ScalarTerm<'t> e
+        let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Scalar<'t> e
 
     static member (*) (l: Term<'t>, r: Vector<'dim0, 't>) = 
         r.Expr |> Array.map(fun e -> call_mul (l.Expr) e |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
@@ -128,9 +128,9 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     static member (*) (l: Vector<'dim0, 't>, r: Term<'t>) = 
         l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
 
-    static member (*) (l: Vector<'dim0, 't>, r: 't) : Vector<'dim0, 't> = let r' = ScalarTerm<'t>(exprv r) in l * r' 
+    static member (*) (l: Vector<'dim0, 't>, r: 't) : Vector<'dim0, 't> = let r' = Scalar<'t>(exprv r) in l * r' 
 
-    static member (*) (l: 't, r: Vector<'dim0, 't>) : Vector<'dim0, 't> = let l' = ScalarTerm<'t>(exprv l) in l' * r
+    static member (*) (l: 't, r: Vector<'dim0, 't>) : Vector<'dim0, 't> = let l' = Scalar<'t>(exprv l) in l' * r
 
     static member (~-) (l: Vector<'dim0, 't>) =
         l.Expr |> Array.map(call_neg >> expand_as<'t> >> simplifye) |> Vector<'n, 't>
@@ -164,6 +164,6 @@ module Vector =
     let inner_product (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) 
     
     let norm (l:Vector<'n, 't>) =
-        let p = l * l in p |> simplify |> call_sqrt |> expand_as<'t>  |> ScalarTerm
+        let p = l * l in p |> simplify |> call_sqrt |> expand_as<'t>  |> Scalar
 
-    let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> ScalarTerm
+    let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar

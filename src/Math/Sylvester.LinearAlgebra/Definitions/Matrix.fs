@@ -86,7 +86,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     
     member x.Item(i: int) = x.Rows.[i]
     
-    member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand_as<'t>(zero_val(typeof<'t>)) |> ScalarTerm
+    member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand_as<'t>(zero_val(typeof<'t>)) |> Scalar
     
     interface IMatrix<'dim0, 'dim1> with 
         member val Dim0 = dim0
@@ -134,9 +134,9 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: Term<'t>) = 
          let m = l.Rows |> Array.map (fun v -> v * r) in Matrix<'dim0, 'dim1, 't> m
 
-    static member (*) (l: 't, r: Matrix<'dim0, 'dim1, 't>) = (l |> exprv |> ScalarTerm) * r
+    static member (*) (l: 't, r: Matrix<'dim0, 'dim1, 't>) = (l |> exprv |> Scalar) * r
 
-    static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: 't) = l * (r |> exprv |> ScalarTerm)
+    static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: 't) = l * (r |> exprv |> Scalar)
     
     static member (~-) (l: Matrix<'dim0, 'dim1, 't>) = 
         let m = l.Rows |> Array.map (~-) in Matrix<'dim0, 'dim1, 't> m
@@ -211,7 +211,7 @@ module Matrix =
     let inline mrmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
         check (i +< l.Dim0)
         let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
-        let ri = ScalarTerm k * l.[int i]
+        let ri = Scalar k * l.[int i]
         rows.[int i] <- ri
         Matrix<'dim0, 'dim1, 't> rows
 
@@ -229,7 +229,7 @@ module Matrix =
          check (i +< l.Dim0)
          check (j +< l.Dim1)
          let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
-         let ri = l.[int i] + ScalarTerm k * l.[int j] 
+         let ri = l.[int i] + Scalar k * l.[int j] 
          rows.[int i] <- ri
          Matrix<'dim0, 'dim1, 't> rows
 
