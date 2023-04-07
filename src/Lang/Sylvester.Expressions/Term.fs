@@ -3,6 +3,7 @@
 open System
 
 open FSharp.Quotations
+open FSharp.Quotations.Patterns
 
 [<StructuredFormatDisplay("{Display}")>]
 type Term<'t when 't: equality> (expr:Expr<'t>) =
@@ -207,6 +208,8 @@ type intexpr = Term<int>
 
 type natexpr = Term<nat>
 
+//type VarTerm<'t when 't: equality>(n: string) = inherit Term<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
+
 [<RequireQualifiedAccess>]
 module NumericLiteralR = 
   let FromZero() = Term <@ 0.0 @>
@@ -216,7 +219,6 @@ module NumericLiteralR =
   
 [<AutoOpen>]
 module Term =
-   
     let int_expr x = 
         match box x with
         | :? Term<int> as s -> s.Expr
@@ -264,4 +266,10 @@ module Term =
             | :? Expr<real> as e -> e |> Term
             | x -> failwithf "Cannot convert %A of type %A to real Term." x (x.GetType())
         t |> Array.map m
+
+    let fail_if_not_var(t:Term<_>) =
+        match t.Expr with
+        | Var _ -> ()
+        | _ -> failwithf "The term %A is not a variable." t
+
   

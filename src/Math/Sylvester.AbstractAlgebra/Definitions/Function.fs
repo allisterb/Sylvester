@@ -12,19 +12,31 @@ type IRelation<'a, 'b when 'a : equality and 'b : equality> = IRelation<'a, 'b, 
 
 type IRelation<'t when 't: equality> = IRelation<'t, 't>
 
-type Function<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality>(domain:Set<'a>, codomain:Set<'b>, op: Expr<'a->'b->bool>, amap:'c->'a) =
-    member x.Domain = domain
-    member x.CoDomain = codomain
-    member x.Op = op
-    member x.EvOp = evaluate op
+type Function<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>) =
+    let amapbody = body' amap
+    let amaparg = param_var amap
+    member x.Domain = domain.Set
+    member x.CoDomain = codomain.Set
+    member x.Map = map
+    member x.EvMap = evaluate map
     member x.AMap = amap
+    member x.EvAMap = ev amap
+    member x.Body = body' x.Map
+    member x.Vars = get_vars x.Body
+    member x.Arg = param_var x.Map
+
     interface IRelation<'a, 'b, 'c> with
         member x.Domain = x.Domain
         member x.CoDomain = x.CoDomain
-        member x.Op = x.Op
-    member x.Exec (arg:'c) = arg |> x.AMap |> x.EvOp
+        member x.Op = <@ fun a b -> x.Domain.HasElement a && x.CoDomain.HasElement b && b = x.EvMap a @> 
+    member x.Item (arg:'c) = arg |> x.EvAMap |> x.EvMap
+    member x.Item(value:Term<'c>) =
+        let v = subst_var_value amaparg value.Expr amapbody in
+        subst_var_value x.Arg v x.Body |> expand_as<'b> |> Term
 
-type Function<'a, 'b when 'a : equality and 'b: equality>(domain:Set<'a>, codomain:Set<'b>, op: Expr<'a->'b->bool>) = inherit Function<'a, 'b, 'a>(domain, codomain, op, id)
+    override x.ToString() = src x.Map
+
+type Function<'a, 'b when 'a : equality and 'b: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>) = inherit Function<'a, 'b, 'a>(domain, codomain, map, <@ id @>)
 
 type Predicate<'a, 'c when 'a : equality and 'c: equality> = Function<'a, bool, 'c>
 

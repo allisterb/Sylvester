@@ -55,7 +55,7 @@ module Symbolic =
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (sprinte l) (sprinte r)
         
         | Call(None, Op "Exp", x::[]) -> sprintf("e^%s") (sprinte x)
-       
+        | Call(None, Op "Identity", x::[]) -> (sprinte x)
         | PropertyGet(None, Prop "e", []) -> "e"
         | PropertyGet(None, Prop "pi", []) -> "pi"
         

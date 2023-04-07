@@ -37,8 +37,15 @@ module R =
 
     let diff (x:Term<real>) (f:Term<real>) =  Ops.Diff 1 x.Expr f.Expr |> Term
 
-    let integrate f x = Ops.Integrate f x
+    let diff_fun (x:Term<real>) (f:RealFun) = 
+        fail_if_not_var x
+        fail_if_not_has_var (get_var x.Expr) f.Vars
+        let a = diff x (f.Body |> Term)
+        let d = recombine_func [f.Arg] a.Expr |> expand_as<real->real>
+        realfun d
+    
+    let integrate (x:Term<real>) (f:Term<real>)  = Ops.Integrate x.Expr f.Expr |> Term
 
-    let integrate_over l r f = Ops.DefiniteIntegral f (real_expr l) (real_expr r) |> Term
+    let integrate_over (x:Term<real>) l r (f:Term<real>) = Ops.DefiniteIntegral x.Expr (real_expr l) (real_expr r) f.Expr |> Term
 
-    let integrate_over_R f = Ops.DefiniteIntegral f minf'<real> inf'<real> |> Term
+    let integrate_over_R (x:Term<real>) f = integrate_over x minf'<real> inf'<real> f

@@ -369,6 +369,10 @@ module FsExpr =
     
     let get_var_name(v:Var) = v.Name
 
+    let has_var (v:Var) (vars:Var list) = vars |> List.tryFind(fun vf -> vf.Name = v.Name && vf.Type = v.Type) |> Option.isSome
+    
+    let fail_if_not_has_var (v:Var) (vars:Var list) = do if not <| has_var v vars then failwithf "The variables collection does not contain the variable %A." v
+
     let occurs (var:Var list) (expr:Expr) = 
         expr |> get_vars |> List.exists(fun v -> var |> List.exists(fun vv -> vequal v vv))
 
