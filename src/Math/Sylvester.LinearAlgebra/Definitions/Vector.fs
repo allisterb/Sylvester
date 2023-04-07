@@ -53,6 +53,15 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     interface IEquatable<Vector<'t>> with
           member a.Equals b = a.LinearDisplay = b.LinearDisplay
 
+    interface IHtmlDisplay with
+        member x.Html() =
+            let elems =
+                expr 
+                |> Array.skip 1 
+                |> Array.fold(fun s e -> sprintf "%s \\\\ %s" s (sprinte e)) (sprinte expr.[0]) 
+                |> sprintf "%s"
+            "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
+
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector(expr)
 
     new([<ParamArray>] v:Term<'t> array) = Vector(sexprs v)
@@ -152,35 +161,7 @@ module Vector =
     
     let smul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
 
-    let inner_product_val (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) 
-    
-    let norm (l:Vector<'n, 't>) =
-        let p = l * l in p |> simplify |> call_sqrt |> expand_as<'t>  |> Term
-
-    let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Term
-
-module VectorD =
-    let (|Vector|_|) (v: Vector<'t>) : Expr<'t> list option = Some(v.ExprList)
-    
-    let vec (data:Expr<real list>) = Vector<real> data
-    
-    let vecz (data:Expr<int list>) = Vector<int> data
-    
-    let vecq  (data:Expr<rat list>) = Vector<rat> data
-
-    let vecc (data:Expr<complex list>) = Vector<complex> data
-
-    let vvars<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> s n = vars<'t> s n |> Vector<'t> 
-    
-    let vexpr(l:Vector<'t>) = l.Expr
-
-    let add (l:Vector<'t>) (r:Vector<'t>) = l + r
-    
-    let sub (l:Vector<'n, 't>) (r:Vector<'n, 't>) = l - r
-    
-    let smul (l:'t) (r:Vector<'n, 't>) = Vector<'n, 't>.(*) (l, r)
-
-    //let inner_product_val (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) |> sval
+    let inner_product (l:Vector<'n,'t>) (r:Vector<'n,'t>) = (l * r) 
     
     let norm (l:Vector<'n, 't>) =
         let p = l * l in p |> simplify |> call_sqrt |> expand_as<'t>  |> Term

@@ -14,7 +14,8 @@ let f = realfun <@fun x -> (2.*x**3. + 1.) @>
 //f.Body
 //get_vars f.Body
 ///recombine_func f.Vars (Ops.Diff 1 x.Expr f.Body)
-let f' = diff x f
+//let f' = diff x f
 
-f'.[y]
+let rr = diff x x
 
+integrate x f

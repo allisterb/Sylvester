@@ -40,8 +40,14 @@ module R =
         fail_if_not_has_var (get_var x.Expr) s.Expr
         s.Mutate(Ops.Diff 1 x.Expr s.Expr)
 
-    let integrate (x:Term<real>) (f:Term<real>)  = Ops.Integrate x.Expr f.Expr |> Term
+    let integrate (x:Term<real>) (s:ISymbolic<_, real>) = 
+        fail_if_not_var x
+        fail_if_not_has_var (get_var x.Expr) s.Expr
+        s.Mutate(Ops.Integrate x.Expr s.Expr)
 
-    let integrate_over (x:Term<real>) l r (f:Term<real>) = Ops.DefiniteIntegral x.Expr (real_expr l) (real_expr r) f.Expr |> Term
+    let integrate_over (x:Term<real>) l r (s:ISymbolic<_, real>) = 
+        fail_if_not_var x
+        fail_if_not_has_var (get_var x.Expr) s.Expr
+        s.Mutate(Ops.DefiniteIntegral x.Expr (real_expr l) (real_expr r) s.Expr)
 
     let integrate_over_R (x:Term<real>) f = integrate_over x minf'<real> inf'<real> f
