@@ -357,6 +357,7 @@ module FsExpr =
         let rec rget_vars prev expr =
             match expr with
             | PropertyGet(None, p, []) -> prev @ []
+            | Call(_, _, exprs) -> List.map (rget_vars prev) exprs |> List.collect id
             | ShapeVar v -> prev @ [v]
             | ShapeLambda (v, body) -> rget_vars (prev @ [v]) body
             | ShapeCombination (_, exprs) ->  List.map (rget_vars prev) exprs |> List.collect id
@@ -371,7 +372,9 @@ module FsExpr =
 
     let has_var (v:Var) (vars:Var list) = vars |> List.tryFind(fun vf -> vf.Name = v.Name && vf.Type = v.Type) |> Option.isSome
     
-    let fail_if_not_has_var (v:Var) (vars:Var list) = do if not <| has_var v vars then failwithf "The variables collection does not contain the variable %A." v
+    let fail_if_not_has_var (v:Var) (expr:Expr) = 
+        let vars = get_vars expr
+        do if not <| has_var v vars then failwithf "The expression %A does not contain the variable %A." (src expr) v
 
     let occurs (var:Var list) (expr:Expr) = 
         expr |> get_vars |> List.exists(fun v -> var |> List.exists(fun vv -> vequal v vv))

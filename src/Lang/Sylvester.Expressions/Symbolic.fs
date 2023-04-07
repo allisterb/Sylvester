@@ -9,6 +9,10 @@ open MathNet.Symbolics
 
 open MathNetExpr
 
+type ISymbolic<'s, 't> = 
+    abstract member Expr:Expr<'t>
+    abstract member Mutate : Expr<'t> -> 's
+    
 [<AutoOpen>]
 module Symbolic =
     /// Create a symbolic variable   

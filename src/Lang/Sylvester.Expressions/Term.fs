@@ -25,6 +25,10 @@ type Term<'t when 't: equality> (expr:Expr<'t>) =
             | :? Term<'t> as bs -> (a :> IComparable<Term<'t>>).CompareTo bs
             | _ -> failwith "This object is not a term."
     
+    interface ISymbolic<Term<'t>, 't> with
+        member a.Expr = expr
+        member a.Mutate(e:Expr<'t>) = Term(e)
+        
     override a.Equals (_b:obj) = 
             match _b with 
             | :? Term<'t> as b -> (a :> IEquatable<Term<'t>>).Equals b

@@ -35,15 +35,11 @@ module R =
     let inline deriv_lim f x a = 
         lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
 
-    let diff (x:Term<real>) (f:Term<real>) =  Ops.Diff 1 x.Expr f.Expr |> Term
-
-    let diff_fun (x:Term<real>) (f:RealFun) = 
+    let diff (x:Term<real>) (s:ISymbolic<_, real>) =  
         fail_if_not_var x
-        fail_if_not_has_var (get_var x.Expr) f.Vars
-        let a = diff x (f.Body |> Term)
-        let d = recombine_func [f.Arg] a.Expr |> expand_as<real->real>
-        realfun d
-    
+        fail_if_not_has_var (get_var x.Expr) s.Expr
+        s.Mutate(Ops.Diff 1 x.Expr s.Expr)
+
     let integrate (x:Term<real>) (f:Term<real>)  = Ops.Integrate x.Expr f.Expr |> Term
 
     let integrate_over (x:Term<real>) l r (f:Term<real>) = Ops.DefiniteIntegral x.Expr (real_expr l) (real_expr r) f.Expr |> Term

@@ -34,6 +34,12 @@ type Function<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality>(d
         let v = subst_var_value amaparg value.Expr amapbody in
         subst_var_value x.Arg v x.Body |> expand_as<'b> |> Term
 
+    interface ISymbolic<Function<'a, 'b, 'c>, 'b> with
+           member a.Expr = a.Body
+           member a.Mutate(b:Expr<'b>) = 
+               let map = expand_as<'a->'b> (recombine_func a.Vars b)
+               Function(a.Domain, a.CoDomain, map, a.AMap)
+
     override x.ToString() = src x.Map
 
 type Function<'a, 'b when 'a : equality and 'b: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>) = inherit Function<'a, 'b, 'a>(domain, codomain, map, <@ id @>)
