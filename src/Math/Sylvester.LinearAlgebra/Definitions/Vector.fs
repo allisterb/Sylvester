@@ -123,17 +123,17 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
         let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Term<'t> e
 
     static member (*) (l: Term<'t>, r: Vector<'dim0, 't>) = 
-        r.Expr |> Array.map(fun e -> expand_as<'t> <| call_mul (l.Expr) e) |> Vector<'n, 't>
+        r.Expr |> Array.map(fun e -> call_mul (l.Expr) e |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
 
     static member (*) (l: Vector<'dim0, 't>, r: Term<'t>) = 
-        l.Expr |> Array.map(fun e -> expand_as<'t> <| call_mul e (r.Expr) ) |> Vector<'n, 't>
+        l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
 
     static member (*) (l: Vector<'dim0, 't>, r: 't) : Vector<'dim0, 't> = let r' = Term<'t>(exprv r) in l * r' 
 
     static member (*) (l: 't, r: Vector<'dim0, 't>) : Vector<'dim0, 't> = let l' = Term<'t>(exprv l) in l' * r
 
     static member (~-) (l: Vector<'dim0, 't>) =
-        l.Expr |> Array.map(call_neg >> expand_as<'t>) |> Vector<'n, 't>
+        l.Expr |> Array.map(call_neg >> expand_as<'t> >> simplifye) |> Vector<'n, 't>
 
 type Vec<'dim0 when 'dim0 :> Number> = Vector<'dim0, real>
 type VecC<'dim0 when 'dim0 :> Number> = Vector<'dim0, complex>

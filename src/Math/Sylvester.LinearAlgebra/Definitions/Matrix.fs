@@ -206,7 +206,7 @@ module Matrix =
     
     let msmul (l:'t) (r:Matrix<'dim0, 'dim1, 't>) = Matrix<'dim0, 'dim1, 't>.(*) (l, r)
 
-    let msimplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplify') |> Matrix<'dim0, 'dim1, 't>
+    let msimplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplifye) |> Matrix<'dim0, 'dim1, 't>
 
     let inline mrmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
         check (i +< l.Dim0)

@@ -94,12 +94,12 @@ module Symbolic =
 
     let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
-    let simplify' (x:Expr<'t>) = x |> callUnary<'t> id
+    let simplifye (x:Expr<'t>) = x |> callUnary<'t> id
 
-    let inline simplify expr = expr |> sexpr |> simplify'
+    let inline simplify expr = expr |> sexpr |> simplifye
        
     let subst (e:Expr<'t>) (v:Expr<'u>) (r:Expr<'u>) =
         let var = get_var v
-        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand_as<'t> |> simplify'
+        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand_as<'t> |> simplifye
 
     let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>

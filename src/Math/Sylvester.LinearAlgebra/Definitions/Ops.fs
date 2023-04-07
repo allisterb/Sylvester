@@ -53,13 +53,14 @@ module internal Ops =
 
 type DefaultLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with
-        member x.Add l r = Array.map2 call_add l r |> Array.map (expand_as)        
-        member x.Subtract l r = Array.map2 call_sub l r |> Array.map expand_as
+        member x.Add l r = Array.map2 call_add l r |> Array.map (expand_as >> simplifye)        
+        member x.Subtract l r = Array.map2 call_sub l r |> Array.map (expand_as >> simplifye)
         member x.InnerProduct l r =                     
             Array.zip l r 
             |> Array.map(fun(a, b) -> call_mul a b)
             |> Array.reduce (call_add)
             |> expand_as
+            |> simplifye
             
 [<AutoOpen>]
 module LinearAlgbra =
