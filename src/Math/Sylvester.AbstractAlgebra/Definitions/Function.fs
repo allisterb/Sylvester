@@ -30,9 +30,9 @@ type Function<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality>(d
         member x.CoDomain = x.CoDomain
         member x.Op = <@ fun a b -> x.Domain.HasElement a && x.CoDomain.HasElement b && b = x.EvMap a @> 
     member x.Item (arg:'c) = arg |> x.EvAMap |> x.EvMap
-    member x.Item(value:Term<'c>) =
-        let v = subst_var_value amaparg value.Expr amapbody in
-        subst_var_value x.Arg v x.Body |> expand_as<'b> |> Term
+    //member x.Item(value:Term<'c>) =
+    ///    let v = subst_var_value amaparg value.Expr amapbody in
+     //   subst_var_value x.Arg v x.Body |> expand_as<'b> |> Term
 
     interface ISymbolic<Function<'a, 'b, 'c>, 'b> with
            member a.Expr = a.Body

@@ -6,6 +6,10 @@ open Sylvester
 let j:Expr<Set<int>> = <@ Set.Empty |+| Set.Empty @>
 
 getFuncInfo j
-let A = SetTerm<int> <@ Set.Empty@>
+let A = setvar<int> "A"
 
-A + Set.Empty
+A |+| Set.Empty
+
+//let ss = setvar<int> "ss"
+
+//ss |+| Set.Empty

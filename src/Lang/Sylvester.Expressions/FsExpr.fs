@@ -486,7 +486,7 @@ module FsExpr =
         | None -> Expr.Call(m, [l])
         | Some o -> Expr.Call(o, m, [l])
 
-    let call_add (l:Expr) (r:Expr) = binary_call(None, addOp.[l.Type.Name], l, r)
+    let call_add (l:Expr) (r:Expr) = if addOp.ContainsKey l.Type.Name then binary_call(None, addOp.[l.Type.Name], l, r) else failwithf "The type %A does not support the addition operator." l.Type.Name
 
     let call_mul (l:Expr) (r:Expr) = binary_call(None, mulOp.[l.Type.Name], l, r)
 

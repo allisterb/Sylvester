@@ -6,6 +6,8 @@ open System.Collections.Generic
 open System.Linq
 open System.Reflection
 open FSharp.Quotations
+open FSharp.Quotations.Patterns
+open FSharp.Quotations.DerivedPatterns
 
 open Arithmetic
 open Sylvester.Collections
@@ -233,9 +235,9 @@ with
     ///Set 'is element of' operator
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
 
-    static member (|?|) (l:Term<'t>, r:Set<'t>) : Term<bool> = 
+    static member (|?|) (l:Term<'t>, r:Set<'t>) : ScalarTerm<bool> = 
         let m = typeof<Set<'t>>.GetMethod("op_BarQmarkBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, [| typeof<'t>; typeof<Set<'t>> |], [||]) in
-        binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<bool> |> Term<bool>
+        binary_call(None, m, l.Expr, Expr.Value r) |> expand_as<bool> |> ScalarTerm<bool>
     
     /// Set 'is subset of' operator.
     static member (|<|) (l:Set<'t>, r:Set<'t>) = r.HasSubset l
@@ -346,8 +348,18 @@ module SetOps =
     let filterSubsets<'t when 't: equality> = typeof<Set<'t>>.GetMethod("op_BarGreaterGreaterBar", (FSharp.Core.Operators.(|||) BindingFlags.Public BindingFlags.Static), System.Type.DefaultBinder, 
                                                 [| typeof<Set<'t>>; typeof<Expr<Set<'t> -> bool>> |], [||])
 
+    let rec sprintset<'t when 't: equality> (x:Expr<Set<'t>>) = 
+        match x with
+        | List list -> "[" + (list |>  List.map (sprintset<'t> << expand_as<Set<'t>>) |> List.reduce (fun l r -> l + ", " + r)) + "]"
+        //| NewUnionCase (s, b) when s.
+        | Call (_, m, [l; r]) when m.Name = union<'t>.Name -> sprintf("%s |+| %s") ((sprintset << expand_as<Set<'t>>) l) ((sprintset << expand_as<Set<'t>>) r)
+        | _ -> src x 
+
 type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
     inherit Term<Set<'t>>(expr) 
+    
+    override a.Display = SetOps.sprintset a.Expr
+
     static member (|+|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.union<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
 
     static member (|+|) (l:Set<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.union<'t>, Expr.Value l, r.Expr) |> expand_as<Set<'t>> |> SetTerm
@@ -368,9 +380,9 @@ type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
 
     static member (|*|) (l:ISet<'t>, r:SetTerm<'t>) = binary_call(None, SetOps.intersection<'t>, Expr.Value l.Set, r.Expr) |> expand_as<Set<'t>> |> SetTerm
 
-    static member (|?|) (l:Term<'t>, r:SetTerm<'t>) : Term<bool> = binary_call(None, SetOps.elementOf<'t>, l.Expr, r.Expr) |> expand_as<bool> |> Term<bool>
+    static member (|?|) (l:Term<'t>, r:SetTerm<'t>) : ScalarTerm<bool> = binary_call(None, SetOps.elementOf<'t>, l.Expr, r.Expr) |> expand_as<bool> |> ScalarTerm<bool>
 
-    static member (|?|) (l:'t, r:SetTerm<'t>) : Term<bool> = binary_call(None, SetOps.elementOf<'t>, Expr.Value l, r.Expr) |> expand_as<bool> |> Term<bool>
+    static member (|?|) (l:'t, r:SetTerm<'t>) : ScalarTerm<bool> = binary_call(None, SetOps.elementOf<'t>, Expr.Value l, r.Expr) |> expand_as<bool> |> ScalarTerm<bool>
     
     static member (|<|) (l:SetTerm<'t>, r:Set<'t>) = binary_call(None, SetOps.subsetOf<'t>, l.Expr, Expr.Value r) |> expand_as<Set<'t>> |> SetTerm
 
@@ -403,7 +415,18 @@ type SetTerm<'t when 't: equality>(expr:Expr<Set<'t>>) =
     static member (|>|) (l:SetTerm<'t>, r:Expr<'t->bool>) = binary_call(None, SetOps.createSubset<'t>, l.Expr, r) |> expand_as<Set<'t>> |> SetTerm
     
     static member (|>>|) (l:SetTerm<'t>, r:Expr<Set<'t>->bool>) = binary_call(None, SetOps.filterSubsets<'t>, l.Expr, r) |> expand_as<Set<Set<'t>>> |> SetTerm
-    
+
+and SetVar<'t when 't: equality>(n: string) = 
+    inherit SetTerm<'t>(Expr.Var(Var(n, typeof<Set<'t>>)) |> expand_as<Set<'t>>)
+    member x.Name = n
+    member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
+    member x.Item(i:IndexVar) = IndexedSetVar(x, i)
+    member x.Item(i:int) = SetVar(x.Name + i.ToString())
+
+and IndexedSetVar<'t when 't: equality>(var:SetVar<'t>, index:IndexVar) =
+    inherit SetVar<'t>(var.Name + "_" + index.Name)
+    member x.Item(i:int) = SetVar(x.Name.Replace("_" + index.Name, i.ToString()))
+
 [<AutoOpen>]
 module Set =
     let set_of<'t when 't : equality> (s:ISet<'t>) = s.Set
@@ -451,9 +474,9 @@ module Set =
         infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
                     <@ (%%b:'t) @>)) 
-        |> Seq.map Term<'t>
+        |> Seq.map ScalarTerm<'t>
         |> Seq.skip 1
-        |> infinite_seq_gen<Term<'t>> 
+        |> infinite_seq_gen<ScalarTerm<'t>> 
        
     let infinite_seq2 g = g |> cart
         
@@ -479,13 +502,13 @@ module Set =
 
     //let setvar<'t when 't : equality> n = var'<Set<'t>> n
     
-    let setvar<'t when 't: equality> name = Expr.Var(Var(name, typeof<Set<'t>>)) |> expand_as<Set<'t>> |> SetTerm
+    let setvar<'t when 't: equality> name = SetVar<'t> name
     
-    let setvar2<'t when 't : equality> n o = var2'<Set<'t>> n o
+    let setvar2<'t when 't : equality> n o = setvar n, setvar o
 
-    let setvar3<'t when 't : equality> n o p = var3'<Set<'t>> n o p
+    let setvar3<'t when 't : equality> n o p = setvar n, setvar o, setvar p
     
-    let setvar4<'t when 't : equality> n o p q = var4'<Set<'t>> n o p q
+    let setvar4<'t when 't : equality> n o p q = setvar n, setvar o, setvar p, setvar q
 
     let fail_if_set_not_eq (a:ISet<'t>) (b:ISet<'t>) = if not (a.Set = b.Set) then failwithf "The set %A is not equal to the set %A." a b
 

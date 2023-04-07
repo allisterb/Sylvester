@@ -37,7 +37,7 @@ type Struct<'t, 'n when 't: equality and 'n :> Number>(set: ISet<'t>, ops: Ops<'
 
     static member (|?|) (l:'t, r:Struct<'t, 'n>) = r.Set.HasElement l
 
-    static member (|?|) (l:Term<'t>, r:Struct<'t, 'n>) : Term<bool> = l |?| r.Set
+    static member (|?|) (l:Term<'t>, r:Struct<'t, 'n>) : ScalarTerm<bool> = l |?| r.Set
 
     static member (|<|) (l:Struct<'t, 'n>, r:ISet<'t>) = r.Set.HasSubset l.Set
    
