@@ -94,9 +94,9 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
 
-    new([<ParamArray>] v:Term<'t> array) = let expr = v |> Array.map sexpr in Vector<'dim0, 't>(expr)
+    new([<ParamArray>] v:ScalarTerm<'t> array) = let expr = v |> Array.map sexpr in Vector<'dim0, 't>(expr)
 
-    new(v:Term<'t> list) = Vector<'dim0, 't>(v |> List.toArray)
+    new(v:ScalarTerm<'t> list) = Vector<'dim0, 't>(v |> List.toArray)
     
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector<'dim0, 't>(expr)
     
@@ -145,7 +145,7 @@ module Vector =
     
     let vexpr(v: Vector<'n, 't>) = v.Expr
 
-    let vec (dim:'n) (data:obj list) = Vector<'n, real> (data |> List.toArray |> realterms)
+    let vec (dim:'n) (data:obj list) = data |> List.toArray |> realterms |> Vec<'n> 
     
     let vecz (dim:'n) (data:Term<int> list) = Vector<'n, int> data
     
