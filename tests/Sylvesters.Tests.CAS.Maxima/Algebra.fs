@@ -27,12 +27,12 @@ module Algebra =
     let ``Can get part frac``() =
         let a = LatinVars.a<int>
         let b = LatinVars.b<int>
-        let f = Algebra.partfrac <@ (2 * %a)/ (%a + 3) @> a
+        let f = Algebra.partfrac_of a <@ (2 * %a)/ (%a + 3) @>
         Assert.NotNull f
-        let f' = Algebra.partfrac <@ (1 + 2)/ %b @> b
+        let f' = Algebra.partfrac_of b <@ (1 + 2)/ %b @>
         Assert.NotNull f'
         let c = LatinVars.c<real>
-        let f'' = Algebra.partfrac <@ (2.5 + 1.) / %c @> c
+        let f'' = Algebra.partfrac_of c <@ (2.5 + 1.) / %c @>
         Assert.NotNull f''
 
         let x = LatinVars.x<real>
@@ -50,7 +50,7 @@ module Algebra =
     [<Fact>]
     let ``Can solve``() =
         let x, y = intvar2 "x" "y"
-        let soln = Algebra.solve y <@[3 * %x + 5 * %y = 120 ]@>
+        let soln = Algebra.solve_for y [ <@3 * %x + 5 * %y = 120 @> ]
         let xx = MathNet.Symbolics.Infix.parse "(3*x-120)/5"
         
         let r = xx |> function | Ok e -> Some <| MathNetExpr.toQuotation<int> (get_vars x) e | _ -> None

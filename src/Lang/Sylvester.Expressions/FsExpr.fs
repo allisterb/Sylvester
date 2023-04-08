@@ -2,6 +2,8 @@
 namespace Sylvester
 
 open System
+open System.Collections.Generic
+open System.Linq
 open System.Reflection
 open FSharp.Reflection
 open FSharp.Quotations
@@ -363,6 +365,11 @@ module FsExpr =
             | ShapeCombination (_, exprs) ->  List.map (rget_vars prev) exprs |> List.collect id
             
         rget_vars [] expr |> List.distinctBy (fun v -> v.Name)
+
+    let get_varsl<'t> (exprs: Expr<'t> list) =
+        let vars = List<Var>()
+        exprs |> List.iter(fun e -> e |> get_vars|> List.iter(fun v -> if not <| vars.Any(fun _v -> vequal v _v) then vars.Add v))
+        vars |> Seq.toList
 
     let get_var expr = get_vars expr |> Seq.exactlyOne
 

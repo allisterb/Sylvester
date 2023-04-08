@@ -26,6 +26,12 @@ type Term<'t when 't: equality> (expr:Expr<'t>) =
     override a.ToString() = a.Display
 
     static member op_Implicit (l:Term<'t>):Expr<'t> = l.Expr
+    
+    static member (==) (l:Term<'t>, r:Term<'t>) = <@ %l.Expr = %r.Expr @> |> Scalar<bool>
+
+    static member (==) (l:Term<'t>, r:'t) = let r' = exprv r in <@ %l.Expr = %r' @> |> Scalar<bool>
+    
+    static member (==) (l:'t, r:Term<'t>) = let l' = exprv l in <@ %l' = %r.Expr @> |> Scalar<bool>
 
 and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) = 
     inherit Term<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
@@ -35,7 +41,7 @@ and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) =
     
 and IndexVar(n: string) = inherit TermVar<int>(n)
 
-type Scalar<'t when 't: equality> (expr:Expr<'t>) =
+and Scalar<'t when 't: equality> (expr:Expr<'t>) =
     inherit Term<'t>(expr)
     
     override x.Display = sprinte expr
@@ -60,6 +66,9 @@ type Scalar<'t when 't: equality> (expr:Expr<'t>) =
            member a.Expr = expr
            member a.Mutate(e:Expr<'t>) = Scalar e
            
+    interface IHtmlDisplay with
+        member x.Html() = latex' x.Expr
+
     static member Zero = typeof<'t> |> zero_val |> expand_as<'t> |> Scalar<'t>
 
     static member One = typeof<'t> |> one_val |> expand_as<'t> |> Scalar<'t>
@@ -226,6 +235,8 @@ type Scalar<'t when 't: equality> (expr:Expr<'t>) =
     
     static member Pow (l : nat, r : Scalar<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> Scalar<'t>
 
+    //static member (==) (l:Scalar<'t>, r:Scalar<'t>) = <@ %l.Expr = %r.Expr @> |> Scalar<bool>
+
 and ScalarVar<'t when 't: equality>(n: string) = 
     inherit Scalar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
     override x.Display = sprintf "{%A}" n
@@ -255,6 +266,11 @@ module NumericLiteralR =
   
 [<AutoOpen>]
 module Scalar =
+    let (|ScalarVar|_|) : obj -> ScalarVar<_> option =
+        function
+        | :? ScalarVar<_> as v -> Some v
+        | _ -> None
+    
     let int_expr x = 
         match box x with
         | :? Scalar<int> as s -> s.Expr
@@ -311,6 +327,4 @@ module Scalar =
     let scalar_var<'t when 't : equality> n = ScalarVar<'t> n
     
     let index_var n = IndexVar n
-
-
   

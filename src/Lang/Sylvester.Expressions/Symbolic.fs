@@ -62,12 +62,21 @@ module Symbolic =
         | Call(None, Op "Identity", x::[]) -> (sprinte x)
         | PropertyGet(None, Prop "e", []) -> "e"
         | PropertyGet(None, Prop "pi", []) -> "pi"
+        | Bool false -> "false"
+        | Bool true -> "true"
         
         | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
         
         
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
+
+    let sprintel (exprs: Expr<'t> list) =
+        exprs 
+        |> List.toArray
+        |> Array.skip 1 
+        |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte exprs.[0]) 
+        |> sprintf "[%s]"
 
     let rec latex' (x:Expr) = 
         match x with
@@ -94,6 +103,7 @@ module Symbolic =
 
     let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
+    //let sprint (s:ISymbolic<_, _>) = s.
     let simplifye (x:Expr<'t>) = x |> callUnary<'t> id
 
     let inline simplify expr = expr |> sexpr |> simplifye

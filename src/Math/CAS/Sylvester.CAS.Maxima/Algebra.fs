@@ -21,6 +21,8 @@ module Algebra =
         | Ok s -> s
         | Error e -> failwith e
     
+    
+
     let algexpand (expr:Expr<'t>) = sprintf "expand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
     let ratexpand (expr:Expr<'t>) = sprintf "ratexpand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
@@ -29,20 +31,20 @@ module Algebra =
     
     let partfrac_of (frac:Expr<'t>) (expr:Expr<'t>) = sprintf "partfrac(%s, %s);" (sprint expr) (sprint frac) |> sendCmd<'t> (get_vars expr)
 
-    let solve_for (v:Expr<'t>) (system:Expr<bool list>) =
-        sprintf "solve(%s, %s);" (sprint system) (sprint v) 
+    let solve_for (v:Expr<'t>) (system:Expr<bool> list) =
+        sprintf "solve(%s, %s);" (system |> sprintel) (sprint v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
-        |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_vars system))) 
+        |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_varsl system))) 
         |> function
         | Ok s -> s
         | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
 
-    let solve_as_real_eqn_for (v:Expr<real>) (expr:Expr<real>) = solve_for v <@[ %expr = 0.0 ]@>
+    let solve_as_real_eqn_for (v:Expr<real>) (expr:Expr<real>) = solve_for v [ <@ %expr = 0.0 @> ]
 
-    let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool list>) = system |> solve_for v |> List.head |> as_func_of x
+    let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool> list) = system |> solve_for v |> List.head |> as_func_of x
 
     let solve_for2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool list>) =
         sprintf "solve(%s, [%s, %s]);" (sprint system) (sprint x) (sprint y) 

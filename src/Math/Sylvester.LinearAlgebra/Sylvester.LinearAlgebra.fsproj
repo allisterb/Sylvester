@@ -9,6 +9,7 @@
     <Compile Include="Definitions\Ops.fs" />
     <Compile Include="Definitions\Vector.fs" />
     <Compile Include="Definitions\Matrix.fs" />
+    <Compile Include="Definitions\LinearEquations.fs" />
     <Compile Include="Theories\VectorSpace.fs" />
     <Compile Include="Theories\Matrices.fs" />
   </ItemGroup>
@@ -25,6 +26,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\Base\Sylvester.Fs.Runtime\Sylvester.Fs.Runtime.fsproj" />
+    <ProjectReference Include="..\CAS\Sylvester.CAS.Maxima\Sylvester.CAS.Maxima.fsproj" />
     <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
   </ItemGroup>
 

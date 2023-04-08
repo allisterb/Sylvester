@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\..\ext\mathnet-symbolics\src\Symbolics\Symbolics.fsproj" />
     <ProjectReference Include="..\..\..\ext\TPTPParser\TPTPParser.csproj" />
     <ProjectReference Include="..\..\..\ext\unquote\Unquote.NetStandard\Unquote.NetStandard.fsproj" />
+    <ProjectReference Include="..\..\Base\Sylvester.Runtime\Sylvester.Runtime.csproj" />
   </ItemGroup>
 
   <ItemGroup>
