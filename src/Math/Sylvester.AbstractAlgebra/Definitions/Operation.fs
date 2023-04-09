@@ -16,6 +16,8 @@ type Map<'t, 'u when 't: equality and 'u : equality> = 't -> 'u
 /// Map or function between elements of types t->u->v.
 type Map<'t, 'u, 'v when 't: equality and 'u : equality and 'v: equality> = 't -> 'u -> 'v 
 
+type MapExpr<'t, 'u when 't: equality and 'u : equality> = Expr<Map<'t, 'u>>
+
 /// 0-ary operation between elements of type 't.
 type NullaryOp<'t when 't : equality> = 't
 

@@ -259,8 +259,8 @@ type natexpr = Scalar<nat>
 
 [<RequireQualifiedAccess>]
 module NumericLiteralR = 
-  let FromZero() = Scalar <@ 0.0 @>
-  let FromOne() = Scalar <@ 1.0 @>
+  let FromZero() = 0.0 |> real |> exprv |> Scalar
+  let FromOne() = 1.0 |> real |> exprv |> Scalar
   let FromInt32 n = n |> real |> exprv |> Scalar
   let FromInt64 n = n |> real |> exprv |> Scalar
   

@@ -1,7 +1,5 @@
 ﻿namespace Sylvester
 
-open FSharp.Quotations
-
 open Arithmetic
 open Vector
 
@@ -14,7 +12,7 @@ type R<'n when 'n :>Number>() =
 module R =
     let R<'n when 'n :> Number> =  R<'n>()
     
-    let sum expr x l u = Ops.Sum expr x (int_expr l) (int_expr u) |> Scalar
+    let sum x l u expr = Ops.Sum x (int_expr l) (int_expr u) expr |> Scalar
 
     let open_interval left right = Field.R |>| <@ fun x -> x > left && x < right @>
     
@@ -24,13 +22,13 @@ module R =
     
     let half_closed_interval left right = Field.R |>| <@ fun x -> x >= left && x < right @>
     
-    //let open_ball (x:Vec<_>) (r:real) : Region<_> = Field.R |>| <@ fun y -> (euclid_dist x y) < r @>
+    //let open_ball (x:Vec<_>) (r:real) : Region<_> = Field.R |>| <@ fun y -> (euclid_dist x y) < scalar r @>
     
-    let lim f x v = Ops.Limit f x v |> Scalar
+    let lim x v f = Ops.Limit x v f |> Scalar
        
-    let lim_right f x v = Ops.LimitRight f x v |> Scalar
+    let lim_right x v f = Ops.LimitRight x v f |> Scalar
 
-    let lim_left f x v = Ops.LimitLeft f x v |> Scalar
+    let lim_left x v f = Ops.LimitLeft x v f |> Scalar
 
     let inline deriv_lim f x a = 
         lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>

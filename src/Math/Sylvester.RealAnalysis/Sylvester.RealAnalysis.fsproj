@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Definitions\RealFun.fs" />
+    <Compile Include="Definitions\RealFunction.fs" />
     <Compile Include="Definitions\Ops.fs" />
     <Compile Include="Definitions\R.fs" />
     <Compile Include="Definitions\Measure.fs" />

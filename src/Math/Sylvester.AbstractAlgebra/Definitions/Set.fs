@@ -453,7 +453,7 @@ module Set =
 
     let set_from_pred<'t when 't: equality>(p:Expr<'t -> bool>) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
-    let singleton<'t when 't: equality> (e:'t) = Singleton e
+    let singleton<'t when 't: equality> (e:'t) = Singleton<'t> e
 
     let subset (sub:Expr<'t->bool>) (set: ISet<'t>) = set.Set.Subset sub
 
