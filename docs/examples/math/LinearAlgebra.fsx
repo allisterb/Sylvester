@@ -20,4 +20,4 @@ let Q = vec ``3`` [q.[0]; q.[1]; q.[2]]
 //P * Q
 
 //sprintel [(p + q == 5.).Expr; (p - q == 1.).Expr]
-//LinearEquations.solve_for p [(p + q == 5.)]
+LinearEquations.solve_for p [p + q == 5.]

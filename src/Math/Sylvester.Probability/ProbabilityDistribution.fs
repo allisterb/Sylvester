@@ -1,7 +1,6 @@
 ﻿namespace Sylvester
 
 open FSharp.Quotations
-open FSharp.Quotations.DerivedPatterns
 
 open Sylvester.Collections
 
@@ -15,6 +14,8 @@ type UnivariateDistribution =
             match x with
             | ProbabilityMass(d, _) -> d
             | ProbabilityDensity(d, _) -> d
+        member x.FuncArg = param_var x.Func
+        member x.FuncBody = body' x.Func
         member x.Support = 
             match x with
             | ProbabilityMass(_, s) -> s
@@ -31,9 +32,9 @@ type UnivariateDistribution =
                 let vd = param_var x.Func
                 let vt = param_var t
                 let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
-                let pd = integrate x.Func <@ %%Expr.Var(vd): real @>
-                let td = pd |> body |> subst_var_value vd bodyt 
-                let tpd = <@ %%td:real @> |> diff <@ %%Expr.Var(vd): real @> |> recombine_func [vd] |> expand''<real->real>
+                let pd = Ops.Integrate <@ %%Expr.Var(vd): real @> (x.Func |> body |> expand_as<real>) 
+                let td = pd |> subst_var_value vd bodyt |> expand_as<real>
+                let tpd = td |> Ops.Diff 1 <@ %%Expr.Var(vd): real @> |> recombine_func [vd] |> expand_as<real->real>
                 ProbabilityDensity(tpd, support)
 
 type MultivariateDistribution<'n when 'n :> Number> = 
@@ -60,14 +61,15 @@ type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option)
             let v = param_var x.Distribution.Func
             let b = x.Distribution.Func |> body |> subst_var_value v (Expr.Value a) 
             <@ %%b:real @>        
-    member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> Scalar<real> else scalar 0. 
+    member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> ev |> exprv |> Scalar<real> else 0R 
     member x.Cdf = 
         fun (i:real) -> seq {0. .. i} |> Seq.map x.Prob |> Seq.reduce (+) 
-    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else scalar 0. 
+    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
     member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+)
     member x.Transform(t, s, m) = Discrete(s, x.Distribution.Transform(t,s).Func, Some m)
+    member x.Item(a: real) = x.Prob a
+    member x.Item(a: Scalar<real>) = x.Distribution.FuncBody |> subst_var_value (x.Distribution.FuncArg) (Expr.Value a) |> expand_as<real> |> Scalar<real>
    
-    
     static member (-) (l:'a, r:Discrete) = let l' = real_expr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
     static member (-) (l:Discrete, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
 
@@ -85,18 +87,19 @@ type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> optio
     member x.ProbFunc = 
         fun (a:real) ->         
             let v = param_var x.Distribution.Func
-            let b = x.Distribution.Func |> integrate_over minf a |> sexpr |> subst_var_value v (Expr.Value a) 
+            let b = x.Distribution.Func |> body |> expand_as<real> |> Ops.DefiniteIntegral <@ %%Expr.Var(v): real @> (exprv minf) (exprv a) |> subst_var_value v (exprv a) 
             <@ %%b:real @>
     member x.Cdf = fun i -> Scalar<real>(x.ProbFunc i)
-    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else scalar 0. 
-    member x.ProbInterval = fun a b -> if a |?| x.Distribution.Support && b |?| x.Distribution.Support then (-) (Scalar<real>(x.ProbFunc b)) (Scalar<real>(x.ProbFunc a)) else scalar 0R
+    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
+    member x.ProbInterval = fun a b -> if a |?| x.Distribution.Support && b |?| x.Distribution.Support then (-) (Scalar<real>(x.ProbFunc b)) (Scalar<real>(x.ProbFunc a)) else 0R
     member x.Expectation = 
         if mean.IsSome then 
             mean.Value 
         else
             let v = param_var x.Distribution.Func
-            let i = recombine_func [v] <| call_mul (Expr.Var v) (body x.Distribution.Func)
-            integrate_over_R <@ %%i:real->real @>
+            let i = call_mul <@ %%Expr.Var(v): real @> (x.Distribution.Func |> body) |> expand_as<real>
+            Ops.DefiniteIntegral <@ %%Expr.Var(v): real @> (minf'<real>) (inf'<real>) i |> Scalar<real>
+
     member x.Transform(t, s, m) = Continuous(s, (x.Distribution.Transform(t,s)).Func, Some m)
     
     static member (-) (l:'a, r:Continuous) = let l' = real_expr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
@@ -123,7 +126,7 @@ module ProbabilityDistribution =
 
     let uniform s = let l = (Seq.length s) in discrete (finite_seq s) <@ fun x -> 1. / real l  @>
     
-    let poisson l = discrete_m (infinite_seq (fun i -> real i) |> Set.fromSeq) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (scalar l)
+    let poisson l = discrete_m (infinite_seq (fun i -> real i) |> Set.fromSeq) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
 
     let binomial p n = discrete ([0. .. real n] |> finite_seq) <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
     

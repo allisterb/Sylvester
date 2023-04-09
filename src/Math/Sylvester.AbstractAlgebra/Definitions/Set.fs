@@ -453,7 +453,7 @@ module Set =
 
     let set_from_pred<'t when 't: equality>(p:Expr<'t -> bool>) = SetComprehension<'t>(p, default_card<'t>) |> Set
 
-    let singleton<'t when 't: equality> (e:'t) = Singleton e
+    let singleton<'t when 't: equality> (e:'t) = Singleton<'t> e
 
     let subset (sub:Expr<'t->bool>) (set: ISet<'t>) = set.Set.Subset sub
 
@@ -469,7 +469,7 @@ module Set =
 
     let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t>
     
-    let infinite_seq'<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
+    let countable_infinite_set<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
         infinite_seq_gen(Seq.initInfinite (fun i -> 
                     let b = (body f).Substitute(fun v -> if v.Name = vf.Name && v.Type = vf.Type then Some(Expr.Value i) else None)
@@ -477,6 +477,7 @@ module Set =
         |> Seq.map Scalar<'t>
         |> Seq.skip 1
         |> infinite_seq_gen<Scalar<'t>> 
+        |> Seq
        
     let infinite_seq2 g = g |> cart
         
