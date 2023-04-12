@@ -59,9 +59,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     
-    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(fun e -> <@ e @>)) in Matrix<'t>(expr)
-    
-    new(v: Expr<'t list list>) = let expr = v |> expand_lists' |> List.map(List.toArray) |> List.toArray in Matrix<'t>(expr)
+    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'t>(expr)
     
     new(d:'t list list) = Matrix<'t>((List.map(List.toArray) >> List.toArray) d)
     
@@ -92,28 +90,25 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
         member val Dim0 = dim0
         member val Dim1 = dim1
     
-    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(fun e -> <@ e @>)) in Matrix<'dim0, 'dim1, 't>(expr)
+    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'dim0, 'dim1, 't>(expr)
     
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'dim0, 'dim1, 't> d'
     
-    new(v: Expr<'t list list>) = let expr = v |> expand_lists' |> List.map(List.toArray) |> List.toArray in Matrix<'dim0, 'dim1, 't>(expr)
-    
-    new(d:'t list list) = Matrix<'dim0, 'dim1, 't>((List.map(List.toArray) >> List.toArray) d)
+    new(d: Expr<'t> list) = Matrix<'dim0, 'dim1, 't>(d |> List.toArray |> Array.chunkBySize (number<'dim0>.IntVal))
+
+    new(d: Scalar<'t> []) = Matrix<'dim0, 'dim1, 't>(d |> Array.map sexpr |> Array.chunkBySize (number<'dim0>.IntVal)) 
+
+    new(d: Scalar<'t> list) = Matrix<'dim0, 'dim1, 't>(d |> List.map sexpr) 
+
+    new(d:'t list) = Matrix<'dim0, 'dim1, 't>(d |> List.toArray |> Array.map exprv |> Array.chunkBySize (number<'dim0>.IntVal))
     
     new(rows: Vector<'dim1, 't> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'dim0, 'dim1, 't>(e)
     
     new (v:Expr<'t>) = 
         let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) v) in 
             Matrix<'dim0, 'dim1, 't> e
-    new(data:Expr<'t list>) = 
-        let d = data |> expand_list' |> List.toArray |> Array.chunkBySize (number<'dim0>.IntVal)
-        Matrix<'dim0, 'dim1, 't> d
     new (_:'dim0, _:'dim1, data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
     
-    static member ofRows(data: Expr<'t list list>) = Matrix<'dim0, 'dim1,'t>(data)
-      
-    static member ofCols(data: Expr<'t list list>) = Matrix<'dim0, 'dim1,'t>(data |> expand_lists' |> Ops.mat_to_array |> Ops.transpose_mat)
-
     static member ofRows (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
     
     static member ofCols (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data |> Ops.transpose_mat)
@@ -162,27 +157,15 @@ module Matrix =
 
     let marrayi (m:Matrix<_,_,_>) = m.Expr |> Array.indexed
 
-    let marray' (m:Matrix<_,_,_>) = m.ExprT
+    let marray_t (m:Matrix<_,_,_>) = m.ExprT
 
-    let marrayi' (m:Matrix<_,_,_>) = m.ExprT |> Array.indexed
+    let marrayi_t (m:Matrix<_,_,_>) = m.ExprT |> Array.indexed
 
-    let _mat (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
+    let mat (l:'dim0) (r:'dim1) (data:obj list) = data |> List.toArray |> realterms |> Matrix<'dim0, 'dim1, real> //data
     
-    let _mat' (l:'dim0) (r:'dim1) (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
-
-    let mat (l:'dim0) (r:'dim1) (data:Expr<'t list>) = Matrix<'dim0, 'dim1, 't> data
+    let mata (l:'dim0) (r:'dim1) (data:Expr<'t>[] []) = Matrix<'dim0, 'dim1, 't> data
     
-    let mat' (l:'dim0) (r:'dim1) (data:Expr<'t list>) = 
-        let d = data |> expand_list' |> List.toArray |> Array.chunkBySize (number<'dim1>.IntVal)
-        Matrix<'dim0, 'dim1, 't>.ofCols d
-
-    let matl (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't> data
-    
-    let matl' (l:'dim0) (r:'dim1) (data:Expr<'t list list>) = Matrix<'dim0, 'dim1, 't>.ofCols data
-    
-    let mata (l:'dim0) (r:'dim1) (data:Expr<'t> array array) = Matrix<'dim0, 'dim1, 't> data
-    
-    let mata' (l:'dim0) (r:'dim1) (data:Expr<'t> array array) = Matrix<'dim0, 'dim1, 't>.ofCols data
+    let mata_cols (l:'dim0) (r:'dim1) (data:Expr<'t>[] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
         let data = Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged 
@@ -193,7 +176,7 @@ module Matrix =
         Matrix<_,_,'t> (l.Dim0, (pp (r.Dim1 + ``1``)), data)
 
     let inline (||+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim1, 't>) = 
-        Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.toJagged |> _mat (pp (l.Dim0 + ``1``)) l.Dim1 
+        Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.toJagged |> mata_cols (pp (l.Dim0 + ``1``)) l.Dim1 
 
     let mident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>
@@ -238,7 +221,7 @@ module Matrix =
         Array2D.init dim dim l.Kr
         |> Array2D.toJagged
         |> sexprs2
-        |> _mat' (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
+        |> mata_cols (min l.Dim0 l.Dim1) (min l.Dim0 l.Dim1)
 
     let inline mdelr n (m:Matrix<_,_,_>) =
         check (n +< m.Dim0)
@@ -246,7 +229,7 @@ module Matrix =
     
     let inline mdelc n (m:Matrix<_,_,_>) =
         check (n +< m.Dim1)
-        m |> marrayi' |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> mata' m.Dim0 (pp (m.Dim1 - ``1``))
+        m |> marrayi_t |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> mata_cols m.Dim0 (pp (m.Dim1 - ``1``))
     
     let det (l:SquareMatrix<'dim0, _>) =
         match l.Dim0.IntVal with

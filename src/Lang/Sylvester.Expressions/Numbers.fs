@@ -461,9 +461,9 @@ module Math =
 
     let ln (r:real) :real = log r
 
-    let factorial (n:int) = MathNet.Numerics.SpecialFunctions.Factorial n
+    let factorial (n:int) :real = MathNet.Numerics.SpecialFunctions.Factorial n
 
-    let binomial_coeff n r = (factorial n) / ((factorial r) * (factorial(n - r)))
+    let binomial_coeff n r :real = (factorial n) / ((factorial r) * (factorial(n - r)))
 
 [<AutoOpen>]
 module Numbers =
@@ -586,5 +586,12 @@ module Numbers =
         function
         | Patterns.Value(v, NaturalType _) -> Some (v :?> Natural)
         | _ -> None
+
+    let rec to_int:obj->int =
+        function
+        | :? real as r -> System.Convert.ToInt32(r)
+        | :? rat as q -> q |> real |> to_int
+        | :? nat as n -> (int) n
+        | x -> failwithf "Cannot convert %A to an integer." x
 
     let real_seq<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (s:seq<'t>) = s |> Seq.map real

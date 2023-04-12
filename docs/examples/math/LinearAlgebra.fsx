@@ -4,7 +4,7 @@ open Sylvester
 open Sylvester.CAS
 open Dimension
 open Vector
-
+open Matrix
 // Init Maxima CAS
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
@@ -21,3 +21,8 @@ let Q = vec ``3`` [q.[0]; q.[1]; q.[2]]
 
 //sprintel [(p + q == 5.).Expr; (p - q == 1.).Expr]
 LinearEquations.solve_for p [p + q == 5.]
+
+
+let J = mat ``2`` ``2``  [p.[0]; p.[1]; p.[2]; p.[1]]
+
+J * J

@@ -26,7 +26,7 @@ type ProbabilitySpace<'t when 't : equality>(event_space:SigmaAlgebra<'t>, prob_
         member val Set = event_space.Subsets.Set
         member a.Equals b = a.EventSpace.Subsets.Set = b
 
-    new (set:Set<'t>) = ProbabilitySpace<'t>(SigmaAlgebra<'t>(set), <@ fun s -> measure s / measure set @>)
+    new (set:ISet<'t>) = ProbabilitySpace<'t>(SigmaAlgebra<'t>(set), <@ fun s -> measure s / measure set @>)
     
 [<AutoOpen>]
 module ProbabilitySpace =
@@ -37,7 +37,9 @@ module ProbabilitySpace =
         | :? seq<'t> as se -> ProbabilityEvent<'t>(sample_space, se |> Seq)
         | _ -> failwith ""
     
-    let prob_space<'t when 't : equality> (s:ISet<'t>) (prob_function:MapExpr<Set<'t>, real>) = ProbabilitySpace (SigmaAlgebra<'t>(s), prob_function)
+    let prob_space<'t when 't : equality> (s:ISet<'t>) = ProbabilitySpace<'t> (s.Set)
+
+    let prob_space_f<'t when 't : equality> (s:ISet<'t>) (prob_function:MapExpr<Set<'t>, real>) = ProbabilitySpace (SigmaAlgebra<'t>(s), prob_function)
   
     let inline prob (p : ^T) x  =  (^T : (member Prob : (real->Scalar<real>)) (p)) <| (real) x
 
