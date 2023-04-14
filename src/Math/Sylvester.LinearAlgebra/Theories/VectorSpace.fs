@@ -11,7 +11,7 @@ open Descriptions
 
 open SetTheory
 
-type VectorSetExpr<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+type VectorSetExpr<'dim0, 't when 'dim0 :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
     Expr<Set<Vector<'dim0, 't>>>
 
 /// Theory of vector spaces, inner product spaces, and subspaces.
@@ -20,14 +20,14 @@ module VectorSpace =
     
     (* Axioms *)
     
-    let vector_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+    let vector_space_axioms<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
-        let one = one_val(typeof<'t>) |> expand_as |> Scalar
+        let one = one_val(typeof<'t>) |> expand_as |> Scalar<'t>
         function                            
         | Assoc <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
         | Commute <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) x
         | Identity <@(=)@> (<@ (+) @> :Expr<Vector<_,'t>->Vector<_,'t>->Vector<_,'t>>) <@ Vector<_,'t>.Zero @> x 
-        | Inverse <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) (expand_as <@ Vector.smul %%neg_one @>) <@ Vector<_, 't>.Zero @> x
+        //| Inverse <@(=)@> (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) (expand_as <@ Vector.smul %%neg_one @>) <@ Vector<_, 't>.Zero @> x
         | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Vector<_, 't>->Vector<_, 't>>) x -> Some (desc x)
         | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
         | Distrib'' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Vector<_, 't>->Vector<_, 't>>) (<@ (+) @> :Expr<Vector<_, 't>->Vector<_, 't>->Vector<_, 't>>) x  -> Some (desc x)
@@ -35,7 +35,7 @@ module VectorSpace =
         | Identity <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Scalar<'t>->Scalar<'t>>) (expand_as <@ one @>) x -> Some (desc x)
         | _ -> None
 
-    let inner_product_space_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+    let inner_product_space_axioms<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
         let one = one_val(typeof<'t>) |> expand_as |> Scalar<'t>
         function                            
@@ -43,10 +43,10 @@ module VectorSpace =
         | _ -> None
 
     (* Theory *)
-    type VectorSpace<'dim, 't when 'dim :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>() = 
-        inherit SetTheory<Vector<'dim,'t>>(vector_space_axioms)
+    type VectorSpace<'dim, 't when 'dim :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>() = 
+        inherit SetTheory<Vector<'dim,'t>>(vector_space_axioms<'t>)
 
-    let vector_space<'dim, 't when 'dim :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+    let vector_space<'dim, 't when 'dim :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         VectorSpace<'dim,'t>()
 
     (* Functions *)

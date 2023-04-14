@@ -26,15 +26,15 @@ type UnivariateDistribution =
                 let vd = param_var x.Func
                 let vt = param_var t
                 let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
-                let td = x.Func |> body |> subst_var_value vd bodyt |> recombine_func [vd] 
-                ProbabilityMass(<@ %%td:real->real @>, support)
+                let td = x.Func |> body |> subst_var_value vd bodyt |> recombine_func_as<real->real> [vd] 
+                ProbabilityMass(td, support)
             | ProbabilityDensity _ -> 
                 let vd = param_var x.Func
                 let vt = param_var t
                 let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
                 let pd = Ops.Integrate <@ %%Expr.Var(vd): real @> (x.Func |> body |> expand_as<real>) 
                 let td = pd |> subst_var_value vd bodyt |> expand_as<real>
-                let tpd = td |> Ops.Diff 1 <@ %%Expr.Var(vd): real @> |> recombine_func [vd] |> expand_as<real->real>
+                let tpd = td |> Ops.Diff 1 <@ %%Expr.Var(vd): real @> |> recombine_func_as<real->real> [vd]
                 ProbabilityDensity(tpd, support)
 
 type MultivariateDistribution<'n when 'n :> Number> = 
@@ -54,21 +54,21 @@ type RandomVariable(distr:UnivariateDistribution option, mean:Scalar<real> optio
         member x.Set = x.Distribution.Support
         member x.Equals b = x.Distribution.Support.Equals b
     
-type Discrete(support:Set<real>, cgen:int->seq<real>, pmf:Expr<real->real>, mean:Scalar<real> option) = 
+type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option) = 
     inherit RandomVariable(Some(ProbabilityMass(pmf, support)), mean)
-    member x.CGen = cgen
     member x.ProbFunc = 
         fun (a:real) ->
             let v = param_var x.Distribution.Func
             let b = x.Distribution.Func |> body |> subst_var_value v (Expr.Value a) 
             <@ %%b:real @>        
-    member x.Prob = fun a -> if a |> to_int |> cgen |> Seq.contains a  then x.ProbFunc a |> ev |> exprv |> Scalar<real> else 0R 
+    member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> ev |> exprv |> Scalar<real> else 0R 
     member x.Cdf = 
-        fun (i:real) -> i |> to_int |> cgen |> Seq.map x.Prob |> Seq.reduce (+) 
+        fun (i:real) -> [0.0 .. i] |> Seq.choose(fun e-> if x.Prob e > 0R then Some e else None) |> Seq.map x.Prob |> Seq.reduce (+) |> simplify |> Scalar<real>
     member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
-    member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+)
-    member x.Transform(t, s, m) = Discrete(s, x.CGen, x.Distribution.Transform(t,s).Func, Some m)
+    member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+) |> simplify |> Scalar<real>
+    member x.Transform(t, s, m) = Discrete(s, x.Distribution.Transform(t,s).Func, Some m)
     member x.Item(a: real) = x.Prob a
+    member x.Item(a: int) = x.Prob (real a)
     member x.Item(a: Scalar<real>) = x.Distribution.FuncBody |> subst_var_value (x.Distribution.FuncArg) (Expr.Value a) |> expand_as<real> |> Scalar<real>
    
     static member (-) (l:'a, r:Discrete) = let l' = real_expr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
@@ -119,23 +119,23 @@ type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> optio
    
 [<AutoOpen>]
 module ProbabilityDistribution =
-    let discrete s min d = Discrete(s, min, d, None)
+    let discrete s d = Discrete(s, d, None)
 
-    let discrete_m s min d m = Discrete(s, min, d, Some m)
+    let discrete_m s d m = Discrete(s, d, Some m)
 
     let continuous s d = Continuous(s, d, None)
 
-    let degenerate a = discrete (finite_seq [a]) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> 1. @>
+    let degenerate a = discrete (finite_seq [a]) <@ fun x -> 1. @>
 
-    let uniform s = let l = (Seq.length s) in discrete (finite_seq s) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> 1. / real l  @>
+    let uniform s = let l = (Seq.length s) in discrete (finite_seq s)  <@ fun x -> 1. / real l  @>
     
-    let poisson l = discrete_m (infinite_seq (fun r -> is_int r) (fun i -> real i) |> Set.fromSeq) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
+    let poisson l = discrete_m (infinite_seq (fun r -> is_int r) (fun i -> real i))  <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
 
-    let binomial p n = discrete ([0. .. real n] |> finite_seq) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
+    let binomial p n = discrete ([0. .. real n] |> finite_seq)  <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
     
     let bernoulli<'t when 't : equality> p = binomial p 1
 
-    let geometric<'t when 't : equality> p n = discrete ([0. .. real n] |> finite_seq) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
+    let geometric<'t when 't : equality> p n = discrete ([0. .. real n] |> finite_seq)  <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
     
     let uniform_continuous<'t when 't : equality> a b = 
         let a',b' = real_expr a, real_expr b

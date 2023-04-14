@@ -1,5 +1,6 @@
 ﻿namespace Sylvester
 
+open System
 open FSharp.Quotations
 
 // A binary relation between 2 sets
@@ -46,10 +47,10 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and 'c: equalit
 type Function<'a, 'b, 'd when 'a : equality and 'b: equality and 'd: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, term:Expr<'b>->'d) = 
     inherit Function<'a, 'b, 'a, 'd>(domain, codomain, map, <@ id @>, term)
 
-type ScalarFunction<'a, 'b, 'c when 'a : equality and 'b: equality and 'c: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>) = 
+type ScalarFunction<'a, 'b, 'c when 'a : equality and 'b: equality and 'b: comparison and 'b :> ValueType and 'b :> IEquatable<'b> and 'c: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>) = 
     inherit Function<'a, 'b, 'c, Scalar<'b>>(domain, codomain, map, amap, Scalar<'b>)
 
-type ScalarFunction<'a, 'b when 'a : equality and 'b: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>) =
+type ScalarFunction<'a, 'b when 'a : equality and 'b: equality and 'b: comparison and 'b :> ValueType and 'b :> IEquatable<'b>>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>) =
     inherit ScalarFunction<'a, 'b, 'a>(domain, codomain, map, <@ id @>)
 
 type Predicate<'a, 'c when 'a : equality and 'c: equality> = ScalarFunction<'a, bool, 'c>

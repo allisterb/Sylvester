@@ -9,19 +9,19 @@ open Sylvester.Arithmetic
 open Patterns
 open Descriptions
 
-type MatrixExpr<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+type MatrixExpr<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
     Expr<Matrix<'dim0, 'dim1, 't>>
 
 /// Theory of linear maps between vector spaces
 module MatrixAlgbra =      
     let desc = axiom_desc "Matrices"
 
-    let matrix_axioms<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
+    let matrix_axioms<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
         let neg_one = neg_one_val(typeof<'t>)
         function
         | Assoc <@(=)@> (<@ (+) @> :Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) x -> Some(desc x)
         | Identity <@(=)@> (<@ (+) @> : Expr<Matrix<_, _, 't>->Matrix<_, _, 't>->Matrix<_, _, 't>>) <@ Matrix<_, _, 't>.Zero @> x -> Some(desc x)
-        | Inverse <@(=)@> (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (expand_as <@ Matrix.msmul %%neg_one @>) <@ Matrix<_,_, 't>.Zero @> x
+        //| Inverse <@(=)@> (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (expand_as <@ Matrix.msmul %%neg_one @>) <@ Matrix<_,_, 't>.Zero @> x
         | LeftCancelNonZero (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) <@ Matrix<_,_, 't>.Zero @> x -> Some (desc x)
         | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Value(v, t)))) when vequal a a' && t = typeof<Matrix<_,_, 't>> && (v :?> Matrix<_,_, 't>) = Matrix<_,_, 't>.Zero -> Some (desc (pattern_desc' "Additive Inverse"))
         | Commute' <@(=)@> (<@ (*) @> :Expr<Term<'t>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x -> Some (desc x)

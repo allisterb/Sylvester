@@ -41,7 +41,8 @@ and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) =
     
 and IndexVar(n: string) = inherit TermVar<int>(n)
 
-and Scalar<'t when 't: equality> (expr:Expr<'t>) =
+
+and Scalar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) =
     inherit Term<'t>(expr)
     
     override x.Display = sprinte expr
@@ -54,13 +55,13 @@ and Scalar<'t when 't: equality> (expr:Expr<'t>) =
     override a.GetHashCode() = a.Expr.GetHashCode()
 
     interface IComparable<Scalar<'t>> with
-       member a.CompareTo b = match (a.Val, b.Val) with | (Some av, Some bv) -> 0 | _, _ -> failwith ""
+       member a.CompareTo b = match (a.Val, b.Val) with | (Some av, Some bv) -> (if av = bv then 0 else if av <  bv then -1 else 1) | _, _ -> failwith "Cannot evaluate comparison between scalar expressions."
     
     interface IComparable with
         member a.CompareTo b = 
             match b with
             | :? Scalar<'t> as bs -> (a :> IComparable<Scalar<'t>>).CompareTo bs
-            | _ -> failwith "This object is not a term."
+            | _ -> failwith "This object is not a scalar term."
     
     interface ISymbolic<Scalar<'t>, 't> with
            member a.Expr = expr
@@ -237,7 +238,7 @@ and Scalar<'t when 't: equality> (expr:Expr<'t>) =
 
     //static member (==) (l:Scalar<'t>, r:Scalar<'t>) = <@ %l.Expr = %r.Expr @> |> Scalar<bool>
 
-and ScalarVar<'t when 't: equality>(n: string) = 
+and ScalarVar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>>(n: string) = 
     inherit Scalar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
     override x.Display = sprintf "{%A}" n
     member x.Name = n
@@ -245,7 +246,7 @@ and ScalarVar<'t when 't: equality>(n: string) =
     member x.Item(i:IndexVar) = ScalarIndexedVar<'t>(x, i)
     member x.Item(i:int) = ScalarVar<'t>(x.Name + i.ToString())
 
-and ScalarIndexedVar<'t when 't: equality>(var:ScalarVar<'t>, index:IndexVar) =
+and ScalarIndexedVar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, index:IndexVar) =
     inherit ScalarVar<'t>(var.Name + "_" + index.Name)
     member x.Item(i:int) = ScalarVar<'t>(x.Name.Replace("_" + index.Name, i.ToString()))
 
@@ -295,10 +296,10 @@ module Scalar =
         | :? int as n -> Expr.Value (rat n) |> expand_as<rat>
         | _ -> failwithf "The expression %A is not a rational number expression." x
 
-    let var6<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IFormattable> name = 
+    let var6<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> name = 
         Expr.Var(Var(name, typeof<'t>)) |> expand_as<'t> |> Scalar<'t>
 
-    let scalar_terms<'t when 't : equality> (t:obj[]) =
+    let scalar_terms<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (t:obj[]) =
         let m:obj->Scalar<'t> = 
             function
             | :? 't as v -> v |> exprv |> Scalar
@@ -324,7 +325,7 @@ module Scalar =
         | Var _ -> ()
         | _ -> failwithf "The term %A is not a variable." t
 
-    let scalar_var<'t when 't : equality> n = ScalarVar<'t> n
+    let scalar_var<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> n = ScalarVar<'t> n
     
     let index_var n = IndexVar n
   

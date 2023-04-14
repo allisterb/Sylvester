@@ -1,6 +1,8 @@
 #load "Include.fsx"
 
 open Sylvester
+[0. .. real (1)]
+seq {0.0 .. 0.1 } |> Seq.toArray
 
 let dice = finite_seq [1..6]
 dice.Range
@@ -13,9 +15,11 @@ P(A) //+ P(comp A)
 
 let po = poisson 2.8
 
-po.[3.]
+po.[3]
 
-po </ 7. 
+po </ 0. 
 
-//let b = binomial
+let b = bernoulli 0.4
+
+cprob b 5
 //expectation b

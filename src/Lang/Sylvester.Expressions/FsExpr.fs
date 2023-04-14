@@ -602,6 +602,7 @@ module FsExpr =
         None) |> ignore
         dict |> List.ofSeq
 
+    let recombine_func_as<'t> vars body = recombine_func vars body |> expand_as<'t>
 
     let inline (%!) q = ev q
 

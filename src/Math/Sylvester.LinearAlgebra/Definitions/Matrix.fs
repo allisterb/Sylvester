@@ -11,7 +11,7 @@ open Dimension
 open Vector
 
 [<StructuredFormatDisplay("{Display}")>]
-type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
+type Matrix<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal(e: Expr<'t> array array) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand_as<'t>)
@@ -68,7 +68,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member create([<ParamArray>] data: 't array array) = Matrix<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
-type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
+type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal (e: Expr<'t> array array) =
     inherit Matrix<'t>(e)
     let dim0 = number<'dim0>
@@ -142,9 +142,8 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     static member (*) (l:Matrix<'dim0, 'dim1, 't>, r:Matrix<'dim1, 'dim2, 't> ) =             
         [| for i in 0..r.Dim1.IntVal - 1 -> l * r.Cols.[i] |] |> Array.map vexpr  |> Ops.transpose_mat |> Matrix<'dim0, 'dim2, 't>
 
-type SquareMatrix<'dim0, 't when 'dim0 :> Number  and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim0, 't>
+type SquareMatrix<'dim0, 't when 'dim0 :> Number  and 't : equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim0, 't>
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, real>
-type MatC<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, complex>
 type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, rat>
 type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, int>
 
@@ -178,7 +177,7 @@ module Matrix =
     let inline (||+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim1, 't>) = 
         Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.toJagged |> mata_cols (pp (l.Dim0 + ``1``)) l.Dim1 
 
-    let mident<'dim0, 't when 'dim0 :> Number and 't : equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
+    let mident<'dim0, 't when 'dim0 :> Number and 't : equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
         Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>
 
     let mtrans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose

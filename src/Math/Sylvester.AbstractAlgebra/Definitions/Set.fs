@@ -465,7 +465,7 @@ module Set =
 
     let finite_seq s = s |> finite_seq_gen |> Set.fromSeq
 
-    let infinite_seq<'t when 't:equality> c g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t> c
+    let infinite_seq<'t when 't:equality> c g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t> c |> Set.fromSeq
     
     let sseq (s:seq<'t>) = Seq s
 
