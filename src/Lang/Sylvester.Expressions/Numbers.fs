@@ -587,6 +587,14 @@ module Numbers =
         | Patterns.Value(v, NaturalType _) -> Some (v :?> Natural)
         | _ -> None
 
+    let is_int:obj->bool = 
+        function
+        | :? int -> true
+        | :? real as d -> d = Math.Floor(d + System.Double.Epsilon)
+        | :? nat -> true
+        | :? rat as r -> Rational.Normalize(r.Numerator, r.Denominator).Denominator = BigInteger.One
+        | _ -> failwithf "unsupported"
+
     let rec to_int:obj->int =
         function
         | :? real as r -> System.Convert.ToInt32(r)

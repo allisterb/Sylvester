@@ -11,6 +11,11 @@ module Set =
     open SetAlgebra
 
     [<Fact>]
+    let ``Can getZ``() =
+        Assert.True (5 |?| Z)
+
+    (*
+    [<Fact>]
     let ``Can has element term``() =
         let A = SetTerm<int> ((Expr.Var(Var.Global("A", typeof<Set<int>>))) |> expand''<Set<int>>)
         
@@ -18,7 +23,7 @@ module Set =
         
         
         Assert.NotNull (x |?| (A))
-    (*
+    
     [<Fact>]
     let ``Can display set symbols``() =
         let n,t = var2<int>

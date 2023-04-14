@@ -6,7 +6,7 @@ open System.Collections
 open FSharp.Quotations
 
 /// A statement that symbolically defines a set using bound variables, range predicate, body, cardinality, and an optional F# function for computing set membership.
-type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr<bool>,body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
+type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr<bool>, body: Expr<'t>, card:CardinalNumber, ?hasElement:SetComprehension<'t> ->'t -> bool) = 
     member val Bound = 
         match bound with
         | Patterns.BoundVars v -> bound
@@ -47,9 +47,14 @@ type SetComprehension<'t when 't: equality> internal (bound:Expr<'t>, range:Expr
         let v = pred |> param_vars |> vars_to_tuple
         SetComprehension(<@ %%v:'t @>, <@ %%b':bool @>, <@ %%v:'t @>, card, fun _ x -> p x)
 
-type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool) = 
+type internal SequenceGenerator<'t when 't: equality> (s:seq<'t>, isInfinite:bool, ?contains:'t->bool) = 
     member val Sequence = s
     member val IsInfinite = isInfinite
+    member val Contains = 
+        match isInfinite with
+        | false -> fun (e:'t) -> Seq.contains e s
+        | true -> if contains.IsNone then failwith "" else fun (e:'t) -> contains.Value e
+
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = x.Sequence.GetEnumerator()
     interface IEnumerable with
@@ -84,28 +89,28 @@ module internal SetInternal =
             | _ -> OtherSeq
         | _ -> OtherSeq
 
-    let (|FiniteSeq|_|) (x:Generic.IEnumerable<'t>) =
+    let (|FiniteSeq|_|) (x:seq<'t>) =
         match x with
         | ArraySeq
         | ListSeq
         | SetSeq 
-        | FiniteGenSeq -> Some x
+        | FiniteGenSeq -> Some (SequenceGenerator<'t>(x, false))
         | _ -> None
 
-    let (|InfiniteSeq|_|) (x:Generic.IEnumerable<'t>) =
+    let (|InfiniteSeq|_|) (x:seq<'t>) =
         match x with
-        | InfiniteGenSeq -> Some x
+        | InfiniteGenSeq -> Some (x :?> SequenceGenerator<'t>)
         | _ -> None
     
     let finite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, false) :> seq<'t>
 
-    let infinite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, true) :> seq<'t>
+    let infinite_seq_gen<'t when 't: equality> (c:'t->bool) s  = SequenceGenerator<'t>(s, true, c) :> seq<'t>
     
-    let cart_seq (xs:seq<'a>) (ys:seq<'b>) = 
+    let cart_seq (xc:'a->bool) (yc:'b->bool) (xs:seq<'a>) (ys:seq<'b>)  = 
         let s = xs |> Seq.collect (fun x -> ys |> Seq.map (fun y -> x, y)) 
         match xs, ys with
         | FiniteSeq _, FiniteSeq _ -> finite_seq_gen s
-        | _ -> infinite_seq_gen<'a * 'b> s
+        | _ -> infinite_seq_gen<'a * 'b> (fun(a, b)-> xc a && yc b) s 
         
     let rec cart_seq' ss =
         match ss with
@@ -129,7 +134,7 @@ module internal SetInternal =
                 //(Seq.fold (fun acc elem -> Seq.append(Seq.append([elem], celem), acc)) sSeq.empty h) @ cacc) Seq.empty (cart_seq'' t)
         | 0 -> Seq.empty
     *)
-    let cart s = cart_seq s s
+    let cart s c = cart_seq c c s s
 
     let cart2 a b = cart_seq a b
 

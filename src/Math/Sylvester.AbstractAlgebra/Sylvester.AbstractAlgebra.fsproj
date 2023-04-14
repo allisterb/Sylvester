@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Definitions\SetCardinality.fs" />
+    <Compile Include="Definitions\Cardinality.fs" />
     <Compile Include="Definitions\SetInternal.fs" />
     <Compile Include="Definitions\Set.fs" />
     <Compile Include="Definitions\MultiSet.fs" />

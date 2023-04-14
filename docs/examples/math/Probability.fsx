@@ -13,6 +13,7 @@ P(A) //+ P(comp A)
 
 let po = poisson 2.8
 
+po.[3.]
 
 po </ 7. 
 

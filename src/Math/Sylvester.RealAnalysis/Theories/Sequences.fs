@@ -47,7 +47,7 @@ module Sequences =
     (* Definitions *)
 
     let def_seq_n (f:Expr<int->_>) (n:Expr<int>) =
-        def sequences <@ infinite_seq %f = seq {(%f) %n} @>
+        def sequences <@ infinite_seq' %f = seq {(%f) %n} @>
 
     let def_series_n (f:Expr<int->real>) (n:Expr<int>) =
         def sequences <@ infinite_series %f = seq { partial_sum %n (seq {(%f) %n}) } @>
@@ -59,7 +59,7 @@ module Sequences =
         def sequences <@ subsequence (seq {(%a) %n}) (seq {((%a) << (%f)) %n}) = Functions.increasing %f @>
 
     let def_converges (a:Expr<int->_>) (Li:Expr<_>)  =      
-            def sequences <@ converges (infinite_seq %a) = (lim_seq inf<int> (infinite_seq %a) = %Li) @> 
+            def sequences <@ converges (infinite_seq' %a) = (lim_seq inf<int> (infinite_seq' %a) = %Li) @> 
     
     let def_bounded_above (d:Expr<seq<_>>) =
             def sequences <@ bounded %d = SetTheory.bounded_above (sseq %d) @>
@@ -119,6 +119,6 @@ module Sequences =
         proof sequences <@ lim_seq inf<int> (geometric_series %a %r)  = (%a / real 1 - %r) @> []
 
     let series_conv_implies_lim_seqit_zero (a:Expr<int->real>)  =
-        proof sequences <@ converges (infinite_series %a) ==> (lim_seq inf<int> (infinite_seq %a) = 0.) @>
+        proof sequences <@ converges (infinite_series %a) ==> (lim_seq inf<int> (infinite_seq' %a) = 0.) @>
 
    

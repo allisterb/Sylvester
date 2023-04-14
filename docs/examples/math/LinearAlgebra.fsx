@@ -1,10 +1,14 @@
 #load "Include.fsx"
 
+open FSharp.Quotations
+
 open Sylvester
 open Sylvester.CAS
 open Dimension
 open Vector
 open Matrix
+
+5 |?| Zpos
 // Init Maxima CAS
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 

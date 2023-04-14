@@ -45,7 +45,7 @@ type ICardinality =
     abstract member Cardinality:CardinalNumber
 
 [<AutoOpen>]
-module SetCardinality =
+module Cardinality =
     let default_card<'t> =
         let _default_card (t:System.Type) = 
             match t.Name with

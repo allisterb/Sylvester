@@ -16,16 +16,16 @@ type ISymbolic<'s, 't> =
 [<AutoOpen>]
 module Symbolic =
     /// Create a symbolic variable   
-    let symbolic_var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
+    let symbolic_var<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
 
     (* Create sequences of variables *)
+    let var'<'t> v = symbolic_var<'t> v
+    let var2'<'t> v1 v2 = symbolic_var<'t> v1, symbolic_var<'t> v2
+    let var3'<'t> v1 v2 v3 = symbolic_var<'t> v1, symbolic_var<'t> v2, symbolic_var<'t> v3
+    let var4'<'t> v1 v2 v3 v4 = symbolic_var<'t> v1, symbolic_var<'t> v2, symbolic_var<'t> v3, symbolic_var<'t> v4
     
-    let var'<'t> v = symbolic_var'<'t> v
-    let var2'<'t> v1 v2 = symbolic_var'<'t> v1, symbolic_var'<'t> v2
-    let var3'<'t> v1 v2 v3 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var'<'t> v3
-    let var4'<'t> v1 v2 v3 v4 = symbolic_var'<'t> v1, symbolic_var'<'t> v2, symbolic_var'<'t> v3, symbolic_var'<'t> v4
     
-    let var_seq<'t> (s:string) n = seq {for i in 0..n - 1-> var'<'t> <| sprintf "%s%i" s i }
+    let var_seq<'t> (s:string) n = seq {for i in 0..n - 1-> symbolic_var<'t> <| sprintf "%s%i" s i }
 
     let vars<'t> s n  = var_seq<'t> s n |> Seq.toArray
     

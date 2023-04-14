@@ -129,7 +129,9 @@ with
     member x.HasElement elem = 
         match x, elem with
         | Empty, _ -> false
-        | Seq _, e -> x.Contains e 
+        | Seq (FiniteSeq fs), e -> x.Contains e
+        | Seq (InfiniteSeq is), e -> is.Contains e
+        | Seq _, e -> failwith "Cannot test if an unknown sequence contains an element. Use a sequence generator instead."
         | Set s, e -> s.HasElement s e
     
     /// Indicator function for an element.
@@ -139,8 +141,11 @@ with
     member a.HasSubset b =
         match a, b with
         | Empty, _ -> false
+        | FiniteSeq _, InfiniteSeq _ -> false
         | _, Empty -> true
-        | _, Seq _ ->  b |> Seq.forall (fun x -> a.HasElement x)
+        | FiniteSeq _, FiniteSeq _ ->  b |> Seq.forall (fun x -> Seq.contains x a)
+        | InfiniteSeq ls, FiniteSeq rs ->  rs |> Seq.forall (fun x -> ls.Contains x)
+        | _, Seq _ -> failwith "Cannot test if a set contains an unknown sequence as a subset. Use a sequence generator."
         | Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set comprehension as a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
         | Set _, Set _ ->  failwith "Cannot test two sets defined by set comprehensions for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
 
@@ -152,7 +157,7 @@ with
         | Seq s -> 
             match s with
             | FiniteSeq _ -> x |> Seq.filter f |> finite_seq_gen |> Set.fromSeq
-            | InfiniteSeq _ -> x |> Seq.filter f |> infinite_seq_gen |> Set.fromSeq
+            | InfiniteSeq g -> x |> Seq.filter f |> infinite_seq_gen (fun e -> g.Contains e && f e) |> Set.fromSeq
             | _ -> failwithf "Cannot determine the cardinality of the sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
         | Set s -> 
             let r = s.Range'
@@ -164,14 +169,15 @@ with
         | _, Empty -> a
         | Empty, _ -> Empty
         | Seq (FiniteSeq s1), Seq s2 -> s1 |> Seq.except s2 |> finite_seq_gen |>Set.fromSeq
-        | Seq (InfiniteSeq s1), Seq s2 -> s1 |> Seq.except s2 |> infinite_seq_gen |>Set.fromSeq
+        | Seq (InfiniteSeq g), Seq s2 -> g |> Seq.except s2 |> infinite_seq_gen (fun e -> g.Contains e && not <| s2.Contains e) |>Set.fromSeq
         | _,_ -> a.Subset(<@ fun x -> b.HasElement x |> not @>)
         
     member a.ElementDifference b =
         match a with
         | Empty -> Empty
         | Seq (FiniteSeq s) -> s |> Seq.except [b] |> finite_seq_gen |> Set.fromSeq
-        | Seq s -> s |> Seq.except [b] |> infinite_seq_gen |> Set.fromSeq
+        | Seq (InfiniteSeq is) -> is |> Seq.except [b] |> infinite_seq_gen (fun e -> is.Contains e && not <| is.Contains b) |> Set.fromSeq
+        | Seq _ -> failwithf "Cannot find an element difference of an unknown sequence. Use a sequence generator."
         | Set s -> SetComprehension(s.Bound, s.Range', s.Body', (a.Cardinality - (Finite (lazy 1))), (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
@@ -275,13 +281,12 @@ with
         |(_, Empty) -> Empty
         |(Empty, _) -> Empty
         |(Seq x, Seq y) -> 
-            let a = cart_seq x y
-            let c =
-                match l.Cardinality, r.Cardinality with
-                | Finite _, _
-                | _, Finite _-> (finite_seq_gen a) |> Set.fromSeq
-                | Aleph _, Aleph _ -> infinite_seq_gen(Seq.initInfinite (fun n -> Seq.item n a) ) |> Set.fromSeq
-            c
+                match x, y with
+                | InfiniteSeq is, FiniteSeq fs -> cart_seq (is.Contains) (fun x -> Seq.contains x fs) x y |> Seq
+                | FiniteSeq fs, InfiniteSeq is -> cart_seq (fun x -> Seq.contains x fs) (is.Contains) x y |> Seq
+                | FiniteSeq fsl, FiniteSeq fsr -> cart_seq (fun x -> Seq.contains x fsl) (fun x -> Seq.contains x fsr) x y |> Seq
+                | InfiniteSeq isl, InfiniteSeq isr -> cart_seq (isl.Contains) (isr.Contains) x y |> Seq
+                | _ -> failwith "Cannot find the cartesian product of 2 unknown sequences. Use 2 sequence generators."
         |(_,_) -> let a, b = var'<'a> "a", var'<'b> "b" in SetComprehension<'a * 'b>(<@  (%a, %b) @>, <@ true @>, <@  (%a, %b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
 
     interface ISet<'t> with member x.Set = x
@@ -293,7 +298,6 @@ with
     /// A singleton set containing 0. 
     static member Zero = Singleton<int>(0)
 
-    
 and SetFamily<'t when 't : equality> = Set<Set<'t>> 
 
 and KnownSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
@@ -457,18 +461,16 @@ module Set =
 
     let subset (sub:Expr<'t->bool>) (set: ISet<'t>) = set.Set.Subset sub
 
-    let sseq(s:seq<'t>) = (Seq s)
-
-    let sseq2 (s: seq<'t>) = s |> cart |> Set.fromSeq
-
-    let sseqp2 (s: seq<'t>) = s |> pairwise |> Set.fromSeq
-    
     let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()
 
     let finite_seq s = s |> finite_seq_gen |> Set.fromSeq
 
-    let infinite_seq<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t>
+    let infinite_seq<'t when 't:equality> c g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t> c
     
+    let sseq (s:seq<'t>) = Seq s
+
+    let infinite_seq'<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1
+    (*
     let countable_infinite_set<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
         infinite_seq_gen(Seq.initInfinite (fun i -> 
@@ -478,29 +480,29 @@ module Set =
         |> Seq.skip 1
         |> infinite_seq_gen<Scalar<'t>> 
         |> Seq
-       
-    let infinite_seq2 g = g |> cart
+    *)
+    //let infinite_seq2 g = g |> cart
         
-    let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise
+    //let infinite_seqp2 g = g |> infinite_seq_gen |> pairwise
 
-    let infinite_seqp3 g = g |> infinite_seq_gen |> triplewise  
+    //let infinite_seqp3 g = g |> infinite_seq_gen |> triplewise  
 
-    let infinite_seqp4 g = g |> infinite_seq_gen |> quadwise 
+    //let infinite_seqp4 g = g |> infinite_seq_gen |> quadwise 
 
-    let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise 
+    //let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise 
 
     let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1 
 
     let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
     
-    let inline infinite_series g = g |> (infinite_seq >> series)
+    let inline infinite_series g = g |> (infinite_seq' >> series)
     
     //let inline series' s = Seq.scan (Term<'t>.add) (Term.zero()) s |> Seq.skip 1
 
     //let inline partial_sum' (n:int) s = s |> (series' >> Seq.item n)
     
     //let inline infinite_series' g = g |> (infinite_seq' >> series')
-
+    
     //let setvar<'t when 't : equality> n = var'<Set<'t>> n
     
     let setvar<'t when 't: equality> name = SetVar<'t> name

@@ -10,6 +10,10 @@ let A = setvar<int> "A"
 
 A |+| Set.Empty
 
+
+let dice = finite_seq [1..6]
+
+4 |?| dice
 //let ss = setvar<int> "ss"
 
 //ss |+| Set.Empty

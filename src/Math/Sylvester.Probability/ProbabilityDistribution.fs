@@ -129,7 +129,7 @@ module ProbabilityDistribution =
 
     let uniform s = let l = (Seq.length s) in discrete (finite_seq s) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> 1. / real l  @>
     
-    let poisson l = discrete_m (infinite_seq (fun i -> real i) |> Set.fromSeq) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
+    let poisson l = discrete_m (infinite_seq (fun r -> is_int r) (fun i -> real i) |> Set.fromSeq) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
 
     let binomial p n = discrete ([0. .. real n] |> finite_seq) (fun n -> seq {0..n} |> Seq.map real) <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
     

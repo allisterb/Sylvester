@@ -358,7 +358,7 @@ module FsExpr =
     let get_vars expr =
         let rec rget_vars prev expr =
             match expr with
-            | PropertyGet(None, p, []) -> prev @ []
+            | PropertyGet(None, _, []) -> prev @ []
             | Call(_, _, exprs) -> List.map (rget_vars prev) exprs |> List.collect id
             | ShapeVar v -> prev @ [v]
             | ShapeLambda (v, body) -> rget_vars (prev @ [v]) body
@@ -389,10 +389,10 @@ module FsExpr =
     let not_occurs (var:Var list) (expr:Expr) = not (occurs var expr)
 
     let vars_to_tuple (vars:Var list) = 
-        match vars with
-        | v::[] -> Expr.Var v
-        | v::[] when FSharpType.IsTuple v.Type -> Expr.Var v
-        | _ -> vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
+           match vars with
+           | v::[] -> Expr.Var v
+           | v::[] when FSharpType.IsTuple v.Type -> Expr.Var v
+           | _ -> vars |> List.map (fun v -> Expr.Var v) |> Expr.NewTuple
 
     let get_vars_to_tuple (x:Expr) = x |> get_vars |> vars_to_tuple 
             
