@@ -40,7 +40,7 @@ module ProbabilitySpace =
     let prob_space<'t when 't : equality> (s:ISet<'t>) = ProbabilitySpace<'t> (s.Set)
 
     let prob_space_f<'t when 't : equality> (s:ISet<'t>) (prob_function:MapExpr<Set<'t>, real>) = ProbabilitySpace (SigmaAlgebra<'t>(s), prob_function)
-  
+
     let inline prob (p : ^T) x  =  (^T : (member Prob : (real->Scalar<real>)) (p)) <| (real) x
 
     let inline probi (p : ^T) a b  =  (^T : (member ProbInterval : (real->real->Scalar<real>)) (p)) <| a <| b

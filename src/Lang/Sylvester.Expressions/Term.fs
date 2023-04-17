@@ -258,6 +258,11 @@ type intexpr = Scalar<int>
 
 type natexpr = Scalar<nat>
 
+type Prop (expr:Expr<bool>) =
+    inherit Term<bool>(expr)
+    
+    override x.Display = src expr
+
 [<RequireQualifiedAccess>]
 module NumericLiteralR = 
   let FromZero() = 0.0 |> real |> exprv |> Scalar

@@ -53,6 +53,6 @@ type ScalarFunction<'a, 'b, 'c when 'a : equality and 'b: equality and 'b: compa
 type ScalarFunction<'a, 'b when 'a : equality and 'b: equality and 'b: comparison and 'b :> ValueType and 'b :> IEquatable<'b>>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>) =
     inherit ScalarFunction<'a, 'b, 'a>(domain, codomain, map, <@ id @>)
 
-type Predicate<'a, 'c when 'a : equality and 'c: equality> = ScalarFunction<'a, bool, 'c>
+type Predicate<'a when 'a : equality> = Function<'a, bool, Prop>
 
-type Predicate<'a when 'a : equality> = ScalarFunction<'a, bool>
+//type Predicate<'a when 'a : equality> = ScalarFunction<'a, bool>

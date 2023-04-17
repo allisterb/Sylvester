@@ -445,6 +445,29 @@ module Set =
   
     let measure (s:ISet<'t>) = let c = (card s) in c.Measure()
 
+    let measure_ordered_selection_r (s:ISet<_>) r = 
+        let m = measure s
+        if not <| is_int m then failwithf "The measure %A is not an integer." m  
+        m  ** (real r)
+
+    let measure_ordered_selection_no_r (s:ISet<_>) r = 
+        let m = measure s
+        if not <| is_int m then failwithf "The measure %A is not an integer." m
+        let n = to_int m
+        (factorial n) / (factorial (n - r))
+
+    let measure_unordered_selection_no_r (s:ISet<_>) r = 
+        let m = measure s
+        if not <| is_int m then failwithf "The measure %A is not an integer." m  
+        let n = to_int m
+        binomial_coeff n r
+
+    let measure_unordered_selection_r (s:ISet<_>) r = 
+        let m = measure s
+        if not <| is_int m then failwithf "The measure %A is not an integer." m  
+        let n = to_int m
+        binomial_coeff (n + r - 1) r
+
     let set<'t when 't: equality> (range:Expr<bool>) (body:Expr<'t>) card = SetComprehension(range, body, card) |> Set :> ISet<'t>
 
     let finite_set (range:Expr<bool>) (body:Expr<'t>) n = SetComprehension(range, body, (lazy n) |> Finite) |> Set 
