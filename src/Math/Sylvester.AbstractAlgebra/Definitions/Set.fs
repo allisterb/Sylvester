@@ -80,7 +80,7 @@ with
             match s with
             | FiniteSeq _ -> lazy(x |> Seq.length) |> Finite 
             | InfiniteSeq _ -> Aleph 0 
-            | _ -> failwithf "Cannot determine the cardinality of this sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
+            | _ -> failwithf "Cannot determine the cardinality of the sequence expression of type %s. Use a list, array, or sequence generator." (s.GetType().Name)
         | Set sc -> sc.Cardinality
         
     member x.Range =
@@ -129,9 +129,9 @@ with
     member x.HasElement elem = 
         match x, elem with
         | Empty, _ -> false
-        | Seq (FiniteSeq fs), e -> x.Contains e
+        | Seq (FiniteSeq fs), e -> fs.Contains e
         | Seq (InfiniteSeq is), e -> is.Contains e
-        | Seq _, e -> failwith "Cannot test if an unknown sequence contains an element. Use a sequence generator instead."
+        | Seq _, e -> failwith "Cannot test if an unknown sequence type contains an element. Use a list, array, or sequence generator instead."
         | Set s, e -> s.HasElement s e
     
     /// Indicator function for an element.
@@ -210,6 +210,10 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
+        |(Seq (FiniteSeq s1), Seq (FiniteSeq s2)) -> Seq.concat[l; r] |> finite_seq_gen<'t> |> Set.fromSeq
+        |(Seq (InfiniteSeq s1), Seq (FiniteSeq s2)) -> Seq.concat[l; r] |> infinite_seq_gen<'t> (fun x -> s1.Contains x || s2.Contains x) |> Set.fromSeq
+        |(Seq (FiniteSeq s1), Seq (InfiniteSeq s2)) -> Seq.concat[l; r] |> infinite_seq_gen<'t> (fun x -> s1.Contains x || s2.Contains x) |> Set.fromSeq
+        |(Seq (InfiniteSeq s1), Seq (InfiniteSeq s2)) -> Seq.concat[l; r] |> infinite_seq_gen<'t> (fun x -> s1.Contains x || s2.Contains x) |> Set.fromSeq
         |(Seq _, Seq _) -> Seq.concat[l; r] |> Set.fromSeq //SetGenerator(Seq.concat[l; r], (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
         |Set a, _ -> 
             let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in

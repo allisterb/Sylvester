@@ -102,6 +102,12 @@ module internal SetInternal =
         | InfiniteGenSeq -> Some (x :?> SequenceGenerator<'t>)
         | _ -> None
     
+    let (|SeqGen|_|) (x:seq<'t>) =
+        match x with
+        | FiniteSeq s
+        | InfiniteSeq s -> Some s
+        | _ -> None
+
     let finite_seq_gen<'t when 't: equality> s = SequenceGenerator<'t>(s, false) :> seq<'t>
 
     let infinite_seq_gen<'t when 't: equality> (c:'t->bool) s  = SequenceGenerator<'t>(s, true, c) :> seq<'t>

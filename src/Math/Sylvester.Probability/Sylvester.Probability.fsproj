@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ProbabilityEvent.fs" />
     <Compile Include="ProbabilitySpace.fs" />
     <Compile Include="ProbabilityDistribution.fs" />
   </ItemGroup>

@@ -254,6 +254,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E6E1
 		..\docs\examples\math\Statistics.fsx = ..\docs\examples\math\Statistics.fsx
 	EndProjectSection
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Economics", "Math\Sylvester.Economics\Sylvester.Economics.fsproj", "{C7821C2A-CC7E-4170-99D0-81C47194083D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\ext\KaosCombinatorics\Source\KaosCombinatorics\KaosCombinatorics.projitems*{6852278f-1508-43ac-8b6f-3a3f83324940}*SharedItemsImports = 5
@@ -1531,6 +1533,24 @@ Global
 		{6571F0D7-90D4-4FF3-88DD-AC353644D9E3}.Release|x64.Build.0 = Release|Any CPU
 		{6571F0D7-90D4-4FF3-88DD-AC353644D9E3}.Release|x86.ActiveCfg = Release|Any CPU
 		{6571F0D7-90D4-4FF3-88DD-AC353644D9E3}.Release|x86.Build.0 = Release|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Debug|x64.Build.0 = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Debug|x86.Build.0 = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Nuget|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Nuget|Any CPU.Build.0 = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Nuget|x64.ActiveCfg = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Nuget|x64.Build.0 = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Nuget|x86.ActiveCfg = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Nuget|x86.Build.0 = Debug|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|x64.ActiveCfg = Release|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|x64.Build.0 = Release|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|x86.ActiveCfg = Release|Any CPU
+		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1628,6 +1648,7 @@ Global
 		{79D27ED0-ADD2-4729-B522-2B6553D16D73} = {299A0026-E614-4A7A-B21F-6A26F7342995}
 		{CC0C8932-A980-4BE2-8A1F-E0FD60FC9FB5} = {1EF4A0C4-252E-480B-959D-4012B88356A4}
 		{6571F0D7-90D4-4FF3-88DD-AC353644D9E3} = {6AF10FA0-9CAD-4048-BA33-E60D8D4C5653}
+		{C7821C2A-CC7E-4170-99D0-81C47194083D} = {6AF10FA0-9CAD-4048-BA33-E60D8D4C5653}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

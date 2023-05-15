@@ -2,16 +2,6 @@
 
 open FSharp.Quotations
 
-type ProbabilityEvent<'t when 't: equality>(sample_space:ISet<'t>, subset:ISet<'t>) =
-    member x.SampleSpace = sample_space.Set
-    member x.Subset = subset.Set
-    member x.Prob = 
-        if x.Subset |<| x.SampleSpace  then measure x.Subset / measure x.SampleSpace else 0.
-
-    interface ISet<'t> with 
-        member val Set = subset.Set
-        member a.Equals b = a.Subset = b
-
 type ProbabilityMeasure<'t when 't: equality>(event_space:SigmaAlgebra<'t>, prob_function:MapExpr<Set<'t>, real>) =
     inherit SetFunction<'t>(event_space.Subsets.Set, closed_interval 0. 1., prob_function)
     

@@ -68,10 +68,10 @@ module DescriptiveStatistics =
     let proportion_sampling_distrib prop (n:int) = normal_distrib prop (prop * (1. - prop) / real n)
 
     let dotplot(f:Map<'t, int>) =
-        let minx, maxx, miny, maxy = f |> Map.toSeq |> Seq.map fst |> Seq.min |> real |> expr_value<real>, 
-                                     f |> Map.toSeq |> Seq.map fst |> Seq.max |> real |> expr_value<real>,
-                                     f |> Map.toSeq |> Seq.map snd |> Seq.min |> real |> expr_value<real>, 
-                                     f |> Map.toSeq |> Seq.map snd |> Seq.max |> real |> expr_value<real>
+        let minx, maxx, miny, maxy = f |> Map.toSeq |> Seq.map fst |> Seq.min |> real |> exprv<real>, 
+                                     f |> Map.toSeq |> Seq.map fst |> Seq.max |> real |> exprv<real>,
+                                     f |> Map.toSeq |> Seq.map snd |> Seq.min |> real |> exprv<real>, 
+                                     f |> Map.toSeq |> Seq.map snd |> Seq.max |> real |> exprv<real>
         <@
         let board = board {|boundingbox = [|%minx - 1.; %maxy + 1.; %maxx + 1.; 0.|]; showNavigation = true; showCopyright = false; axis = false |}
         let _ = axis [|%minx;0.|] [|%maxx;0.|] {|lastArrow = false; strokeColor = "black"|} board
