@@ -17,20 +17,19 @@ open Sylvester.Collections
 type Set<'t when 't: equality> =
 /// The empty set.
 | Empty
-/// A set defined by the distinct unordered values of a sequence.
-| Seq of seq<'t>
+/// A set defined by the distinct unordered values of a finite sequence.
+| FiniteSeq of FiniteSequence<'t>
+/// A set defined by the distinct unordered values of an infinite sequence.
+| InfiniteSeq of InfiniteSequence<'t>
 /// A set symbolically defined by a bound variable, range and body expression. 
 | Set of SetComprehension<'t>
 with          
     interface IEnumerable<'t> with
         member x.GetEnumerator () = 
             match x with
-            |Empty -> Seq.empty.GetEnumerator()
-            |Seq s -> 
-                match s with
-                | FiniteSeq _ 
-                | InfiniteSeq _ -> let ds = Seq.distinct s in ds.GetEnumerator()
-                | _ -> failwithf "Cannot determine the cardinality of this sequence expression %A. Use a list, array, or sequence generator." s
+            | Empty -> Seq.empty.GetEnumerator()
+            | FiniteSeq fs -> fs.Seq.GetEnumerator()
+            | InfiniteSeq is -> is.Seq.GetEnumerator()
             | Set _ -> failwith "Cannot enumerate the members of a set comprehension. Use a sequence instead."
         member x.GetEnumerator () = (x :> IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
@@ -41,11 +40,11 @@ with
             | _, Empty -> false
             | Empty, _ -> false
             | Set expr1, Set expr2 ->  expr1 = expr2
-            | Seq (FiniteSeq _), Seq (InfiniteSeq _)
-            | Seq (InfiniteSeq _), Seq (FiniteSeq _)-> false
-            | Seq (FiniteSeq s1), Seq (FiniteSeq s2) ->  System.Linq.Enumerable.SequenceEqual(s1, s2)            
-            | Seq (InfiniteSeq s1), Seq (InfiniteSeq s2) -> s1.Equals s2 
-            |_,_ -> failwith "Cannot test a sequence and a set comprehension for equality. Use 2 sequences or 2 set comprehensions."
+            | FiniteSeq _, InfiniteSeq _
+            | InfiniteSeq _, FiniteSeq _-> false
+            | FiniteSeq s1, FiniteSeq s2 ->  s1.Equals s2           
+            | InfiniteSeq s1, InfiniteSeq s2 -> s1.Equals s2 
+            | _,_ -> failwith "Cannot test a sequence and a set comprehension for equality. Use 2 sequences or 2 set comprehensions."
     
     interface IComparable<Set<'t>> with
         member a.CompareTo b = if a = b then 0 else if b.HasSubset a then -1 else if a.HasSubset b then 1 else 0
@@ -64,36 +63,38 @@ with
     override a.GetHashCode() = 
         match a with
         | Empty -> "Empty".GetHashCode()
-        | Seq s -> s.GetHashCode()
+        | FiniteSeq s -> s.GetHashCode()
+        | InfiniteSeq s -> s.GetHashCode()
         | Set p -> p.GetHashCode()
 
     override x.ToString() =
         match x with
         | Empty -> "Empty"
-        | Seq s -> s.ToString()
+        | FiniteSeq s -> s.ToString()
+        | InfiniteSeq s -> s.ToString()
         | Set s -> s.ToString()
         
     member x.Cardinality =      
         match x with
         | Empty -> lazy 0 |> Finite 
-        | Seq s ->
-            match s with
-            | FiniteSeq _ -> lazy(x |> Seq.length) |> Finite 
-            | InfiniteSeq _ -> Aleph 0 
-            | _ -> failwithf "Cannot determine the cardinality of the sequence expression of type %s. Use a list, array, or sequence generator." (s.GetType().Name)
+        | FiniteSeq s -> lazy(s |> Seq.length) |> Finite 
+        | InfiniteSeq _ -> Aleph 0 
         | Set sc -> sc.Cardinality
         
     member x.Range =
         match x with
-        | Empty -> <@@ false @@>
-        | Seq _ -> let i = var'<int> "i" in <@ %i >= 0 @> |> expand
-        | Set set -> set.Range
-      
+        | Empty -> <@@ fun _ -> false @@>
+        | Set set -> expand set.Range
+        | FiniteSeq fs -> let l = exprv <| (Seq.length fs.Seq) in <@@ fun x -> x >= 0 && x < %l @@>
+        | InfiniteSeq is -> <@@ fun x -> x >= 0 @@>
+
     member x.Body = 
         match x with
-        | Empty -> failwith "The empty set does not have a body."
-        | Seq _ -> failwith "A sequence does not have a body expression. Use a set comprehension instead."  
+        | Empty -> failwith "The empty set does not have a body." 
         | Set s -> s.Body 
+        | FiniteSeq _ -> exprvar <| Var("x", typeof<'t>) |> expand_as<'t>
+        
+        | _ -> failwith "A sequence does not have a body expression. Use a set comprehension instead." 
     
     (*
     member x.Item([<ReflectedDefinition(true)>] e: Expr<'t>) : Expr<'t> =
@@ -110,7 +111,20 @@ with
     member x.Item(e: obj) : 't =
         match x with
         | Empty -> failwith "The empty set has no elements."
-        | Seq s -> 
+        | FiniteSeq s  -> 
+            match e with
+            | :? int as i -> Seq.item i s
+            | :? uint32 as i -> Seq.item ((int) i) s
+            | :? string as str ->
+                match Int32.TryParse str with
+                | true, i -> Seq.item i s
+                | _ -> failwith "A sequence must be indexed by an integer expression."
+            | :? char as c ->
+                match Int32.TryParse (String([|c|])) with
+                | true, i -> Seq.item i s
+                | _ -> failwith "A sequence must be indexed by an integer expression."
+            | _ -> failwith "A sequence must be indexed by an integer expression."
+        | InfiniteSeq s  -> 
             match e with
             | :? int as i -> Seq.item i s
             | :? uint32 as i -> Seq.item ((int) i) s
@@ -129,10 +143,9 @@ with
     member x.HasElement elem = 
         match x, elem with
         | Empty, _ -> false
-        | Seq (FiniteSeq fs), e -> fs.Contains e
-        | Seq (InfiniteSeq is), e -> is.Contains e
-        | Seq _, e -> failwith "Cannot test if an unknown sequence type contains an element. Use a list, array, or sequence generator instead."
-        | Set s, e -> s.HasElement s e
+        | FiniteSeq fs, e -> fs.Contains e
+        | InfiniteSeq is, e -> is.Contains e
+        | Set s, e -> s.Contains s e
     
     /// Indicator function for an element.
     member x.Indicate elem = if x.HasElement elem then 1 else 0
@@ -145,40 +158,39 @@ with
         | _, Empty -> true
         | FiniteSeq _, FiniteSeq _ ->  b |> Seq.forall (fun x -> Seq.contains x a)
         | InfiniteSeq ls, FiniteSeq rs ->  rs |> Seq.forall (fun x -> ls.Contains x)
-        | _, Seq _ -> failwith "Cannot test if a set contains an unknown sequence as a subset. Use a sequence generator."
-        | Seq _, Set _ ->  failwith "Cannot test if a sequence contains a set comprehension as a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
-        | Set _, Set _ ->  failwith "Cannot test two sets defined by set comprehensions for the subset relation. Use 2 finite sequences or a set comprehension with a finite sequence."
+        | InfiniteSeq _, Set _
+        | FiniteSeq _, Set _ ->  failwith "Cannot test if a sequence contains a set comprehension as a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
+        | InfiniteSeq _, InfiniteSeq _ -> failwith "Cannot test"
+        | Set _, _ ->  failwith "Cannot test if a set defined by set comprehension has a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
 
     /// Create a subset of a set using a filter predicate.
     member x.Subset(f':Expr<'t -> bool>) = 
         let f = evaluate f'
         match x with
         | Empty -> failwith "The empty set has no subsets."
-        | Seq s -> 
-            match s with
-            | FiniteSeq _ -> x |> Seq.filter f |> finite_seq_gen |> Set.fromSeq
-            | InfiniteSeq g -> x |> Seq.filter f |> infinite_seq_gen (fun e -> g.Contains e && f e) |> Set.fromSeq
-            | _ -> failwithf "Cannot determine the cardinality of the sequence expression %s. Use a list, array, or sequence generator." (s.GetType().Name)
+        | FiniteSeq _ -> x |> Seq.filter f |> FiniteSequence<'t> |> FiniteSeq
+        | InfiniteSeq is -> InfiniteSequence<'t>(is.MapExpr, (fun e -> is.Contains e && f e)) |> InfiniteSeq
         | Set s -> 
-            let r = s.Range'
+            let r = s.Range
             let nr = body f'
-            Set(SetComprehension(s.Bound, <@ %r |&| (%%nr:bool) @>, s.Body', s.Cardinality, fun _ e -> x.HasElement e && f e))
+            SetComprehension(<@ fun x -> (%r) x && (%f') x @>, s.MapExpr, (fun _ e -> x.Contains e && f e), s.Cardinality) |> Set
 
     member a.Difference b =
         match a, b with
         | _, Empty -> a
         | Empty, _ -> Empty
-        | Seq (FiniteSeq s1), Seq s2 -> s1 |> Seq.except s2 |> finite_seq_gen |>Set.fromSeq
-        | Seq (InfiniteSeq g), Seq s2 -> g |> Seq.except s2 |> infinite_seq_gen (fun e -> g.Contains e && not <| s2.Contains e) |>Set.fromSeq
+        | FiniteSeq s1, FiniteSeq s2 -> s1 |> Seq.except s2 |> FiniteSequence<'t> |> FiniteSeq
+        | FiniteSeq s1, InfiniteSeq s2 -> failwith "Cannot compute the difference between a finite sequence and infinite sequence."
+        | InfiniteSeq s1, InfiniteSeq s2 -> InfiniteSequence<'t>(s1.MapExpr, (fun e -> s1.Contains e && not <| s2.Contains e)) |> InfiniteSeq
+        | InfiniteSeq s1, FiniteSeq s2 -> InfiniteSequence<'t>(s1.MapExpr, (fun e -> s1.Contains e && not <| s2.Contains e)) |> InfiniteSeq
         | _,_ -> a.Subset(<@ fun x -> b.HasElement x |> not @>)
         
     member a.ElementDifference b =
         match a with
         | Empty -> Empty
-        | Seq (FiniteSeq s) -> s |> Seq.except [b] |> finite_seq_gen |> Set.fromSeq
-        | Seq (InfiniteSeq is) -> is |> Seq.except [b] |> infinite_seq_gen (fun e -> is.Contains e && not <| is.Contains b) |> Set.fromSeq
-        | Seq _ -> failwithf "Cannot find an element difference of an unknown sequence. Use a sequence generator."
-        | Set s -> SetComprehension(s.Bound, s.Range', s.Body', (a.Cardinality - (Finite (lazy 1))), (fun sc x -> s.HasElement sc x && not(x = b))) |> Set
+        | FiniteSeq s -> s |> Seq.except [b] |> FiniteSequence<'t> |> FiniteSeq
+        | InfiniteSeq is -> InfiniteSequence<'t>(is.MapExpr, (fun e -> is.Contains e && not <| is.Contains b)) |> InfiniteSeq
+        | Set s -> let bval = exprv b in SetComprehension(<@ fun x -> (%s.Range) x && (x <> %bval) @>, s.MapExpr, (fun sc x -> s.Contains sc x && not(x = b)), (a.Cardinality - (Finite (lazy 1)))) |> Set
         
     member a.Complement (b:Set<'t>) = b.Difference a
            
@@ -186,23 +198,23 @@ with
     member a.Powerset : Set<Set<'t>>=
         match a with
         | Empty -> Empty
-        | Seq _s ->
+        | FiniteSeq fs ->
             let subsets = 
                 let singleton e = Seq.singleton e
                 let append e se = Seq.append (singleton e) se
-                Seq.foldBack (fun x rest -> Seq.append rest (Seq.map (fun ys -> (append x ys)) rest)) _s (singleton Seq.empty)
-                |> Seq.map(fun s -> if Seq.isEmpty s then Empty else Seq(s))
-            Seq subsets
-
+                Seq.foldBack (fun x rest -> Seq.append rest (Seq.map (fun ys -> (append x ys)) rest)) fs (singleton Seq.empty)
+                |> Seq.map(fun s -> if Seq.isEmpty s then Empty else FiniteSequence<'t>(s) |> FiniteSeq)
+            subsets |> FiniteSequence<Set<'t>> |> FiniteSeq
+        | InfiniteSeq is -> SetComprehension<Set<'t>>(<@ fun x -> x.HasSubset a @>, (fun _ x -> x.HasSubset a), Aleph 1)  |> Set
         | _ -> failwith "Cannot enumerate the power set of a set comprehension. Use a sequence instead."
 
     member x.EnumAsSubsets() =
         match x with
         | Empty -> failwith "The empty set has no elements."
-        | Seq s -> s |> Seq.map(fun s -> Seq [s]) |> Seq
-        | Set _ -> failwith "Cannot enumerate elements of a set comprehension. Use a sequence instead."
+        | FiniteSeq fs -> fs |> Seq.map(fun s -> FiniteSeq <| FiniteSequence<'t> [s]) |> FiniteSequence<Set<'t>> |> FiniteSeq
+        | _ -> failwith "Cannot enumerate elements of a set comprehension. Use a sequence instead."
     
-    static member fromSeq(s: seq<'t>) = Seq s
+    //static member fromSeq(s: seq<'t>) = Seq s
     
     /// Set union opera
     [<Symbol "\u222A">]
@@ -210,18 +222,13 @@ with
         match (l, r) with
         |(Empty, x) -> x
         |(x, Empty) -> x
-        |(Seq (FiniteSeq s1), Seq (FiniteSeq s2)) -> Seq.concat[l; r] |> finite_seq_gen<'t> |> Set.fromSeq
-        |(Seq (InfiniteSeq s1), Seq (FiniteSeq s2)) -> Seq.concat[l; r] |> infinite_seq_gen<'t> (fun x -> s1.Contains x || s2.Contains x) |> Set.fromSeq
-        |(Seq (FiniteSeq s1), Seq (InfiniteSeq s2)) -> Seq.concat[l; r] |> infinite_seq_gen<'t> (fun x -> s1.Contains x || s2.Contains x) |> Set.fromSeq
-        |(Seq (InfiniteSeq s1), Seq (InfiniteSeq s2)) -> Seq.concat[l; r] |> infinite_seq_gen<'t> (fun x -> s1.Contains x || s2.Contains x) |> Set.fromSeq
-        |(Seq _, Seq _) -> Seq.concat[l; r] |> Set.fromSeq //SetGenerator(Seq.concat[l; r], (fun sg x -> l.HasElement x || r.HasElement x)) |> Set.fromGen
-        |Set a, _ -> 
-            let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(a.Bound, a.Range', <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
-        |_, Set b -> 
-            let set_union(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(b.Bound, b.Range', <@ set_union(l, r) @>, (l.Cardinality + r.Cardinality), (fun sg x -> l.HasElement x || r.HasElement x)) |> Set
-    
+        |FiniteSeq s1, FiniteSeq s2 -> Seq.concat[l; r] |> FiniteSequence<'t> |> FiniteSeq
+        |InfiniteSeq s1, FiniteSeq s2 -> InfiniteSequence<'t>(<@ fun n -> if n < s2.Length then s2.[n] else s1.[n - s2.Length] @>, (fun x -> s1.Contains x || s2.Contains x)) |> InfiniteSeq
+        |FiniteSeq s1, InfiniteSeq s2 -> InfiniteSequence<'t>(<@ fun n -> if n < s1.Length then s1.[n] else s2.[n - s1.Length] @>, (fun x -> s1.Contains x || s2.Contains x)) |> InfiniteSeq
+        |InfiniteSeq s1, InfiniteSeq s2 -> SetComprehension<'t>(<@ fun x -> l.HasElement x || r.HasElement x @>, Aleph 1) |> Set
+        |Set _, _       
+        |_, Set _ -> SetComprehension(<@ fun x -> l.HasElement x || r.HasElement x @>, (l.Cardinality + r.Cardinality)) |> Set
+            
     [<Symbol "\u222A">]
     static member (|+|) (l:ISet<'t>, r:Set<'t>) = l.Set |+| r 
 
@@ -232,17 +239,15 @@ with
     [<Symbol "\u2229">]
     static member (|*|) (l, r) = 
         match (l, r) with
-        |(Empty, _) -> Empty
-        |(_, Empty) -> Empty        
-        |(Seq a, Seq b) -> Seq(a.Intersect b) 
-        |(Set a, _) -> 
-            let set_intersect(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(a.Bound, a.Range', <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
-        |(_, Set b) -> 
-            let set_intersect(l:Set<'t>, r: Set<'t>) = formula<'t> in
-            SetComprehension(b.Bound, b.Range', <@ set_intersect(l,r) @>, (l.Cardinality / r.Cardinality), (fun sc x -> l.HasElement x && r.HasElement x)) |> Set
-
-    ///Set 'is element of' operator
+        |(Empty, x) -> x
+        |(x, Empty) -> x
+        |FiniteSeq s1, FiniteSeq s2 -> System.Linq.Enumerable.Intersect(s1.Seq, s2.Seq) |> FiniteSequence<'t> |> FiniteSeq
+        |InfiniteSeq s1, FiniteSeq s2 -> s2.Seq |> Seq.filter (fun e -> s1.Contains e) |> Seq.toArray |> FiniteSequence<'t> |> FiniteSeq
+        |FiniteSeq s1, InfiniteSeq s2 -> s1.Seq |> Seq.filter (fun e -> s2.Contains e) |> Seq.toArray |> FiniteSequence<'t> |> FiniteSeq
+        |InfiniteSeq s1, InfiniteSeq s2 -> SetComprehension<'t>(<@ fun x -> s1.Contains x && s2.Contains x @>, (fun _ x -> s1.Contains x || s2.Contains x), Aleph 1) |> Set
+        |Set _, _       
+        |_, Set _ -> SetComprehension(<@ fun x -> l.HasElement x && r.HasElement x @>, (l.Cardinality + r.Cardinality)) |> Set    ///Set 'is element of' operator
+    
     static member (|?|)(e:'t, l:Set<'t>) = l.HasElement e
 
     static member (|?|) (l:Term<'t>, r:Set<'t>) : Scalar<bool> = 
@@ -284,20 +289,18 @@ with
         match (l, r) with
         |(_, Empty) -> Empty
         |(Empty, _) -> Empty
-        |(Seq x, Seq y) -> 
-                match x, y with
-                | InfiniteSeq is, FiniteSeq fs -> cart_seq (is.Contains) (fun x -> Seq.contains x fs) x y |> Seq
-                | FiniteSeq fs, InfiniteSeq is -> cart_seq (fun x -> Seq.contains x fs) (is.Contains) x y |> Seq
-                | FiniteSeq fsl, FiniteSeq fsr -> cart_seq (fun x -> Seq.contains x fsl) (fun x -> Seq.contains x fsr) x y |> Seq
-                | InfiniteSeq isl, InfiniteSeq isr -> cart_seq (isl.Contains) (isr.Contains) x y |> Seq
-                | _ -> failwith "Cannot find the cartesian product of 2 unknown sequences. Use 2 sequence generators."
-        |(_,_) -> let a, b = var'<'a> "a", var'<'b> "b" in SetComprehension<'a * 'b>(<@  (%a, %b) @>, <@ true @>, <@  (%a, %b) @>, (l.Cardinality * r.Cardinality), (fun sc (x,y) -> (l.HasElement x) |&| (r.HasElement y))) |> Set
+        | InfiniteSeq is, FiniteSeq fs -> InfiniteSequence<'a*'b>(<@ fun n -> is.[n], fs.[n] @>, fun x -> is.Contains (fst x) && fs.Contains(snd x)) |> InfiniteSeq
+        //        | FiniteSeq fs, InfiniteSeq is -> cart_seq (fun x -> Seq.contains x fs) (is.Contains) x y |> Seq
+        //        | FiniteSeq fsl, FiniteSeq fsr -> cart_seq (fun x -> Seq.contains x fsl) (fun x -> Seq.contains x fsr) x y |> Seq
+        //        | InfiniteSeq isl, InfiniteSeq isr -> cart_seq (isl.Contains) (isr.Contains) x y |> Seq
+        //        | _ -> failwith "Cannot find the cartesian product of 2 unknown sequences. Use 2 sequence generators."
+        | Set _,_ 
+        | _, Set _ -> SetComprehension<'a * 'b>(<@ fun (a, b) -> l.HasElement a && r.HasElement b @>, (l.Cardinality * r.Cardinality)) |> Set
 
     interface ISet<'t> with member x.Set = x
 
     /// The universal set.
-    static member U = 
-        let x = var'<'t> "x" in Set(SetComprehension(<@ %x @>, <@ true @>, <@ %x @>, default_card<'t>, fun _ _ -> true)) 
+    static member U = SetComprehension<'t>(default_card<'t>) |> Set
     
     /// A singleton set containing 0. 
     static member Zero = Singleton<int>(0)
@@ -307,7 +310,7 @@ and SetFamily<'t when 't : equality> = Set<Set<'t>>
 and KnownSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
     member val Size = number<'n>
     member val Items = Array<'n, 't>(items)
-    member val Set = Seq items
+    member val Set = FiniteSeq <| FiniteSequence<'t> items
     interface IKnownSet<'n, 't> with
         member x.Set = x.Set
         member x.Equals y = x.Set.Equals y
@@ -472,31 +475,38 @@ module Set =
         let n = to_int m
         binomial_coeff (n + r - 1) r
 
-    let set<'t when 't: equality> (range:Expr<bool>) (body:Expr<'t>) card = SetComprehension(range, body, card) |> Set :> ISet<'t>
+    let set<'t when 't: equality> (range:Expr<'t->bool>) (body:Expr<'t->'t>) contains card = SetComprehension<'t>(range, body, contains, card) |> Set 
 
-    let finite_set (range:Expr<bool>) (body:Expr<'t>) n = SetComprehension(range, body, (lazy n) |> Finite) |> Set 
+    let set_pred<'t when 't: equality> (range:Expr<'t->bool>) card = SetComprehension<'t>(range, card) |> Set
+
+    let finite_set<'t when 't: equality> (range:Expr<'t->bool>) (body:Expr<'t->'t>) contains n = SetComprehension(range, body, contains, (lazy n) |> Finite) |> Set 
     
-    let infinite_set (range:Expr<bool>) (body:Expr<'t>) n = SetComprehension(range, body, Aleph n) |> Set  
+    let finite_set_pred<'t when 't: equality> (range:Expr<'t->bool>) n = SetComprehension(range, (lazy n) |> Finite) |> Set 
+    
+    let infinite_set (range:Expr<'t->bool>) (body:Expr<'t->'t>) contains n = SetComprehension(range, body, contains, Aleph n) |> Set  
 
-    let countable_set range (body:Expr<'t>) = infinite_set range body 0
+    let infinite_set_pred (range:Expr<'t->bool>) n = SetComprehension(range, Aleph n) |> Set  
 
-    let uncountable_set range (body:Expr<'t>) = infinite_set range body 1
+    let countable_set range body contains = infinite_set range body contains 0
 
-    let set_from_pred<'t when 't: equality>(p:Expr<'t -> bool>) = SetComprehension<'t>(p, default_card<'t>) |> Set
+    let countable_set_pred range = infinite_set_pred range 0
 
+    let uncountable_set range body contains = infinite_set range body contains 1
+
+    let uncountable_set_pred range = infinite_set_pred range 1
+
+    let finite_seq s  = s |> FiniteSequence<'t> |> FiniteSeq
+    
+    let infinite_seq<'t when 't:equality> f c = InfiniteSequence<'t>(f, c) |> InfiniteSeq 
+        
     let singleton<'t when 't: equality> (e:'t) = Singleton<'t> e
 
     let subset (sub:Expr<'t->bool>) (set: ISet<'t>) = set.Set.Subset sub
 
     let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()
 
-    let finite_seq s = s |> finite_seq_gen |> Set.fromSeq
-
-    let infinite_seq<'t when 't:equality> c g = Seq.initInfinite<'t> g  |> Seq.skip 1 |> infinite_seq_gen<'t> c |> Set.fromSeq
     
-    let sseq (s:seq<'t>) = Seq s
-
-    let infinite_seq'<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1
+    //let infinite_seq'<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1
     (*
     let countable_infinite_set<'t when 't:equality> (f: Expr<int ->'t ->'t>) =
         let vf = get_vars f |> List.head
@@ -518,11 +528,11 @@ module Set =
 
     //let infinite_seqp5 g = g |> infinite_seq_gen |> quintwise 
 
-    let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1 
+    //let inline series s = Seq.scan (+) LanguagePrimitives.GenericZero s |> Seq.skip 1 
 
-    let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
+    //let inline partial_sum (n:int) s = s |> (series >> Seq.item n)
     
-    let inline infinite_series g = g |> (infinite_seq' >> series)
+    //let inline infinite_series g = g |> (infinite_seq' >> series)
     
     //let inline series' s = Seq.scan (Term<'t>.add) (Term.zero()) s |> Seq.skip 1
 

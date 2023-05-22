@@ -5,4 +5,4 @@ type DemandFunction(map:MapExpr<real, real>) =
 
 [<AutoOpen>]
 module Demand =
-    let demand_fun map = DemandFunction map
+    let demand func = DemandFunction func

@@ -13,7 +13,8 @@ type IRelation<'a, 'b when 'a : equality and 'b : equality> = IRelation<'a, 'b, 
 
 type IRelation<'t when 't: equality> = IRelation<'t, 't>
 
-type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and 'c: equality and 'd:equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>, term:Expr<'b>->'d) =
+type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and 
+    'c: equality and 'd:equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>, term:Expr<'b>->'d) =
     let amapbody = body' amap
     let amaparg = param_var amap
     member x.Domain = domain.Set

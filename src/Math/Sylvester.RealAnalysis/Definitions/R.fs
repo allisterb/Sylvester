@@ -6,7 +6,7 @@ open Vector
 type Region<'n when 'n :> Number> = Set<Vec<'n>>
 
 type R<'n when 'n :>Number>() = 
-    inherit VectorSpace<'n, real, Vector<'n, real>>(Field.R, Vector.add, Vector.smul)
+    inherit VectorSpace<'n, real>(Field.R, Vector.add, Vector.smul)
     
 [<AutoOpen>]
 module R =
