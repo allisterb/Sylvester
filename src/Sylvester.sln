@@ -254,7 +254,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E6E1
 		..\docs\examples\math\Statistics.fsx = ..\docs\examples\math\Statistics.fsx
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Economics", "Math\Sylvester.Economics\Sylvester.Economics.fsproj", "{C7821C2A-CC7E-4170-99D0-81C47194083D}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Economics", "Math\Sylvester.Economics\Sylvester.Economics.fsproj", "{C7821C2A-CC7E-4170-99D0-81C47194083D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visalization", "Visalization", "{4D64AE81-29AB-4065-8FAE-3F78A5B17FE9}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Tests.Visualization.CLI", "..\tests\Sylvester.Tests.Visualization.CLI\Sylvester.Tests.Visualization.CLI.fsproj", "{46B488D2-E385-4AD2-8636-C53434DA6166}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -1551,6 +1555,24 @@ Global
 		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|x64.Build.0 = Release|Any CPU
 		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|x86.ActiveCfg = Release|Any CPU
 		{C7821C2A-CC7E-4170-99D0-81C47194083D}.Release|x86.Build.0 = Release|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Debug|x64.Build.0 = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Debug|x86.Build.0 = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Nuget|Any CPU.ActiveCfg = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Nuget|Any CPU.Build.0 = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Nuget|x64.ActiveCfg = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Nuget|x64.Build.0 = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Nuget|x86.ActiveCfg = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Nuget|x86.Build.0 = Debug|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|x64.ActiveCfg = Release|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|x64.Build.0 = Release|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|x86.ActiveCfg = Release|Any CPU
+		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1649,6 +1671,8 @@ Global
 		{CC0C8932-A980-4BE2-8A1F-E0FD60FC9FB5} = {1EF4A0C4-252E-480B-959D-4012B88356A4}
 		{6571F0D7-90D4-4FF3-88DD-AC353644D9E3} = {6AF10FA0-9CAD-4048-BA33-E60D8D4C5653}
 		{C7821C2A-CC7E-4170-99D0-81C47194083D} = {6AF10FA0-9CAD-4048-BA33-E60D8D4C5653}
+		{4D64AE81-29AB-4065-8FAE-3F78A5B17FE9} = {578D2618-B994-4B73-9838-9E05E0132C26}
+		{46B488D2-E385-4AD2-8636-C53434DA6166} = {4D64AE81-29AB-4065-8FAE-3F78A5B17FE9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

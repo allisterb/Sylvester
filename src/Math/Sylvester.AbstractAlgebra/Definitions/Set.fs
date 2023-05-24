@@ -141,11 +141,11 @@ with
 
     /// Determine if the set contains an element.
     member x.HasElement elem = 
-        match x, elem with
-        | Empty, _ -> false
-        | FiniteSeq fs, e -> fs.Contains e
-        | InfiniteSeq is, e -> is.Contains e
-        | Set s, e -> s.Contains s e
+        match x with
+        | Empty -> false
+        | FiniteSeq fs -> fs.Contains elem
+        | InfiniteSeq is -> is.Contains elem
+        | Set s -> s.Contains s elem
     
     /// Indicator function for an element.
     member x.Indicate elem = if x.HasElement elem then 1 else 0
@@ -160,7 +160,7 @@ with
         | InfiniteSeq ls, FiniteSeq rs ->  rs |> Seq.forall (fun x -> ls.Contains x)
         | InfiniteSeq _, Set _
         | FiniteSeq _, Set _ ->  failwith "Cannot test if a sequence contains a set comprehension as a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
-        | InfiniteSeq _, InfiniteSeq _ -> failwith "Cannot test"
+        | InfiniteSeq _, InfiniteSeq _ -> failwith "Cannot test if an infinite sequence contains another infinite sequence as a subset."
         | Set _, _ ->  failwith "Cannot test if a set defined by set comprehension has a subset. Use 2 finite sequences or a set comprehension with a finite sequence."
 
     /// Create a subset of a set using a filter predicate.
@@ -172,7 +172,6 @@ with
         | InfiniteSeq is -> InfiniteSequence<'t>(is.MapExpr, (fun e -> is.Contains e && f e)) |> InfiniteSeq
         | Set s -> 
             let r = s.Range
-            let nr = body f'
             SetComprehension(<@ fun x -> (%r) x && (%f') x @>, s.MapExpr, (fun _ e -> x.Contains e && f e), s.Cardinality) |> Set
 
     member a.Difference b =
@@ -307,26 +306,26 @@ with
 
 and SetFamily<'t when 't : equality> = Set<Set<'t>> 
 
-and KnownSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
+and FiniteSet<'n, 't when 'n :> Number and 't : equality>([<ParamArray>] items: 't[]) =
     member val Size = number<'n>
     member val Items = Array<'n, 't>(items)
     member val Set = FiniteSeq <| FiniteSequence<'t> items
-    interface IKnownSet<'n, 't> with
+    interface IFiniteSet<'n, 't> with
         member x.Set = x.Set
         member x.Equals y = x.Set.Equals y
         member x.Size = x.Size
     interface Generic.IEnumerable<'t> with
         member x.GetEnumerator():Generic.IEnumerator<'t> = (x.Set :> IEnumerable<'t>).GetEnumerator()
         member x.GetEnumerator():IEnumerator = (x.Set :> IEnumerable).GetEnumerator()
-    new (items:seq<'t>) = KnownSet(items |> Seq.toArray)
+    new (items:seq<'t>) = FiniteSet(items |> Seq.toArray)
 
-and Singleton<'t when 't: equality>(e:'t) = inherit KnownSet<dim<1>, 't>([|e|])
+and Singleton<'t when 't: equality>(e:'t) = inherit FiniteSet<dim<1>, 't>([|e|])
 
 and ISet<'t when 't: equality> = 
     inherit IEquatable<Set<'t>>
     abstract member Set:Set<'t>
 
-and IKnownSet<'n, 't when 'n :> Number and 't : equality> = 
+and IFiniteSet<'n, 't when 'n :> Number and 't : equality> = 
     inherit ISet<'t>
     abstract Size: 'n
 
@@ -478,9 +477,7 @@ module Set =
     let set<'t when 't: equality> (range:Expr<'t->bool>) (body:Expr<'t->'t>) contains card = SetComprehension<'t>(range, body, contains, card) |> Set 
 
     let set_pred<'t when 't: equality> (range:Expr<'t->bool>) card = SetComprehension<'t>(range, card) |> Set
-
-    let finite_set<'t when 't: equality> (range:Expr<'t->bool>) (body:Expr<'t->'t>) contains n = SetComprehension(range, body, contains, (lazy n) |> Finite) |> Set 
-    
+  
     let finite_set_pred<'t when 't: equality> (range:Expr<'t->bool>) n = SetComprehension(range, (lazy n) |> Finite) |> Set 
     
     let infinite_set (range:Expr<'t->bool>) (body:Expr<'t->'t>) contains n = SetComprehension(range, body, contains, Aleph n) |> Set  
@@ -499,6 +496,8 @@ module Set =
     
     let infinite_seq<'t when 't:equality> f c = InfiniteSequence<'t>(f, c) |> InfiniteSeq 
         
+    let finite_set<'n, 't when 'n :> Number and 't : equality> elems = FiniteSet<'n, 't>(elems)
+
     let singleton<'t when 't: equality> (e:'t) = Singleton<'t> e
 
     let subset (sub:Expr<'t->bool>) (set: ISet<'t>) = set.Set.Subset sub

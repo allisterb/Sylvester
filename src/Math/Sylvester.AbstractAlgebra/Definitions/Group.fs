@@ -88,13 +88,13 @@ type AbelianGroup<'t when 't: equality>(set:ISet<'t>, op: BinaryOp<'t>, id:'t, i
     interface IAbelianGroup<'t>
 
 /// Finite group of known order.
-type Group<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+type Group<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Group<'t>(set, op, ident, inv)
     member x.El0<'n when 'n :> ``1``>() = (x, GroupElement<'order>(0))
     member x.El1<'n when 'n :> ``2``>() = (x, GroupElement<'order>(0), GroupElement<'order>(1))
 
 /// Finite abelian group of known order.
-type AbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:KnownSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
+type AbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteSet<'order, 't>, op: BinaryOp<'t>, ident:'t, inv: UnaryOp<'t>) =
     inherit Group<'order, 't>(set, op, ident, inv)
     do op |> fail_if_not_commutative
     interface IAbelianGroup<'t>

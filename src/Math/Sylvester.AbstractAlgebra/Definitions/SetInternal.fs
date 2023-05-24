@@ -83,6 +83,8 @@ type InfiniteSequence<'t when 't: equality> internal (f:Expr<int->'t>, contains:
     interface IEnumerable with
         member x.GetEnumerator () = (x :> Generic.IEnumerable<'t>).GetEnumerator () :> IEnumerator
 
+type InfiniteSeries<'t when 't: equality and 't: (static member get_Zero:unit->'t) and 't: (static member (+):'t->'t->'t)> (f:Expr<int->'t>, contains:'t->bool) =
+    inherit InfiniteSequence<'t>(f, contains)
 
 [<AutoOpen>]
 module internal SetInternal =      
