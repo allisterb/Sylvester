@@ -33,41 +33,102 @@ module Board =
             script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + (src |> compile |> repbid) + "});"|> Text]
         ]
         
+    [<JS>]
     let defaults = {||}
 
-    [<Emit("{0}.setAttribute({0}, {1}])")>]
-    let set_attrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = stub<'a>
+    [<JS>]
+    let tuple_to_array (t:'a*'a) = let x, y = t in [|x; y|]
+
+    [<Emit("{0}.setAttribute({1})")>]
+    let with_attrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = stub<'a>
+
+    [<JS>]
+    let nolabel = {|name=""|}
 
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
     let board (attr:obj) = stub<Board>
 
+    [<JS>]
     let board_defaults = {| showNavigation = true; showCopyright = false; axis = true |}
     
     [<JS>]
-    let bbox x1 y1 x2 y2 = [|x1; y1; x2; y2|]
-
-    //let rr = board_defaults with {|Bo = 5|}
-
-    [<Emit("{0}")>]
-    let ge<'a when 'a :> GeometryElement> (_:Board->'a)  = stub<Board->GeometryElement>;
-
+    let bbox (o:float) (d:float) = [|o - d - 0.5; o + d + 0.5; o + d + 0.5; o - d - 0.5|]
+   
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
  
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let ticks (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Ticks> 
         
+    
+
+    
+    
+    
+
+    [<Emit("{4}.create('line', [[{0}, {1}], [{2}, {3}]], {4})")>]
+    let linexy (x1:float) (y1:float) (x2:float) (y2:float) board = stub<Line> 
+
+  
+    
+    [<Emit("{1}.create('polygon', {0})")>]
+    let polygonxy (points:float[][]) (board:Board) = stub<Polygon>
+
+    [<JS>]
+    let draw (board:Board) (elems: ((Board->#GeometryElement) array)) = 
+        for i = 0 to elems.Length - 1 do 
+            elems.[i] board |> ignore
+        board
+
+[<JS>]
+module color =
+    let red = "red"
+
+    let blue = "blue"
+
+    let green = "green"
+
+    let yellow = "yellow"
+
+    let black = "black"
+
+[<JS; RequireQualifiedAccess>]
+module rsum = 
+    let left = "left"
+
+    let right = "right"
+
+[<AutoOpen>]
+module GE =
     [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
     let point (x:float) (y:float) (attr:obj) (board:Board) = stub<Point> 
 
-    [<Emit("{2}.create('line', {0}, {1})")>]
-    let line (points:Point[]) (attr:obj) (board:Board) = stub<Line>
+    [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
+    let line (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<Line>
+        
+    [<Emit("{3}.create('segment', [{0}, {1}], {2})")>]
+    let segment (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<Segment>
 
     [<Emit("{2}.create('polygon', {0}, {1})")>]
-    let polygon (points:float[]) (attr:obj) (board:Board) = stub<Polygon>
-    
-    [<Emit("{2}.create('circle', {0}, {1})")>]
-    let circle (children:obj[]) (attr:obj) (board:Board) = stub<Circle> 
+    let polygon (points:obj[]) (attr:obj) (board:Board) = stub<Polygon>
+
+    [<Emit("{3}.create('circle', [{0}, {1}], {2})")>]
+    let circle (center:Point) (radius:obj) (attr:obj) (board:Board) = stub<Circle>  
+
+    [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
+    let angle_pts (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<Angle>
+
+    [<Emit("{5}.create('line', [{0}, {1}, {2}, {3], {4})")>]
+    let angle_lines (l1:Line) (l2:Line) (d1:int) (d2:int) (attr:obj) (board:Board) = stub<Angle>
+
+    [<Emit("{3}.create('midpoint', [{0}, {1}], {2})")>]
+    let midpoint_pts (p1:Point) (p2:Point) (attr:obj) (board:Board) = stub<Midpoint>
+
+    [<Emit("{2}.create('midpoint', [{0}], {1})")>]
+    let midpoint_line (l:Line) (attr:obj) (board:Board) = stub<Midpoint>
+        
+    [<Emit("{4}.create('intersection', [{0}, {1}, {2}], {3})")>]
+    let intersection (o1:obj) (o2:obj) (i:int) (attr:obj) (board:Board) = stub<Intersection>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
     let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<Functiongraph> 
@@ -75,10 +136,50 @@ module Board =
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
     let chart (x:real[]) (y:real[]) (attr:obj) board = stub<Chart> 
 
-    [<JS>]
-    let create_geom_elements (board:Board) (elems: ((Board->GeometryElement) array)) = 
-        let mutable b = board
-        for i = 0 to elems.Length - 1 do 
-            elems.[i] board |> ignore
-            b <- board
-        b
+    [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
+    let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<Riemannsum> 
+
+    
+[<RequireQualifiedAccess>]
+module el =
+    [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
+    let point (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement> 
+
+    [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
+    let line (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<GeometryElement>
+        
+    [<Emit("{3}.create('segment', [{0}, {1}], {2})")>]
+    let segment (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{2}.create('polygon', {0}, {1})")>]
+    let polygon (points:obj[]) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{3}.create('circle', [{0}, {1}], {2})")>]
+    let circle (center:Point) (radius:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
+
+    [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
+    let angle_pts (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{5}.create('line', [{0}, {1}, {2}, {3], {4})")>]
+    let angle_lines (l1:Line) (l2:Line) (d1:int) (d2:int) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{3}.create('midpoint', [{0}, {1}], {2})")>]
+    let midpoint_pts (p1:Point) (p2:Point) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{2}.create('midpoint', [{0}], {1})")>]
+    let midpoint_line (l:Line) (attr:obj) (board:Board) = stub<GeometryElement>
+        
+    [<Emit("{4}.create('intersection', [{0}, {1}, {2}], {3})")>]
+    let intersection (o1:obj) (o2:obj) (i:int) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
+    let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<GeometryElement> 
+
+    [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
+    let chart (x:real[]) (y:real[]) (attr:obj) board = stub<GeometryElement> 
+
+    [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
+    let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<GeometryElement> 
+        
+        
+   
