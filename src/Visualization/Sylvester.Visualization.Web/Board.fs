@@ -52,7 +52,7 @@ module Board =
     let board_defaults = {| showNavigation = true; showCopyright = false; axis = true |}
     
     [<JS>]
-    let bbox (o:float) (d:float) = [|o - d - 0.5; o + d + 0.5; o + d + 0.5; o - d - 0.5|]
+    let bbox o d = [|o - d - 0.5; o + d + 0.5; o + d + 0.5; o - d - 0.5|]
    
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
@@ -115,10 +115,10 @@ module GE =
     [<Emit("{3}.create('circle', [{0}, {1}], {2})")>]
     let circle (center:Point) (radius:obj) (attr:obj) (board:Board) = stub<Circle>  
 
-    [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
-    let angle_pts (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<Angle>
+    [<Emit("{4}.create('angle', [{0}, {1}, {2}], {3})")>]
+    let angle (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<Angle>
 
-    [<Emit("{5}.create('line', [{0}, {1}, {2}, {3], {4})")>]
+    [<Emit("{5}.create('angle', [{0}, {1}, {2}, {3}], {4})")>]
     let angle_lines (l1:Line) (l2:Line) (d1:int) (d2:int) (attr:obj) (board:Board) = stub<Angle>
 
     [<Emit("{3}.create('midpoint', [{0}, {1}], {2})")>]
@@ -129,6 +129,12 @@ module GE =
         
     [<Emit("{4}.create('intersection', [{0}, {1}, {2}], {3})")>]
     let intersection (o1:obj) (o2:obj) (i:int) (attr:obj) (board:Board) = stub<Intersection>
+    
+    [<Emit("{3}.create('normal', [{0}, {1}], {2})")>]
+    let normal (l:Line) (p:Point) (attr:obj) (board:Board) = stub<Normal>
+
+    [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
+    let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<Glider>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
     let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<Functiongraph> 
@@ -141,7 +147,7 @@ module GE =
 
     
 [<RequireQualifiedAccess>]
-module el =
+module ge =
     [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
     let point (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement> 
 
@@ -157,10 +163,10 @@ module el =
     [<Emit("{3}.create('circle', [{0}, {1}], {2})")>]
     let circle (center:Point) (radius:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
 
-    [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
-    let angle_pts (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<GeometryElement>
+    [<Emit("{4}.create('angle', [{0}, {1}, {2}], {3})")>]
+    let angle (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<GeometryElement>
 
-    [<Emit("{5}.create('line', [{0}, {1}, {2}, {3], {4})")>]
+    [<Emit("{5}.create('angle', [{0}, {1}, {2}, {3}], {4})")>]
     let angle_lines (l1:Line) (l2:Line) (d1:int) (d2:int) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{3}.create('midpoint', [{0}, {1}], {2})")>]
@@ -171,6 +177,9 @@ module el =
         
     [<Emit("{4}.create('intersection', [{0}, {1}, {2}], {3})")>]
     let intersection (o1:obj) (o2:obj) (i:int) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
+    let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
     let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<GeometryElement> 
