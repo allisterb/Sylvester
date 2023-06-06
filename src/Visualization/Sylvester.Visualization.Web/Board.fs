@@ -37,22 +37,22 @@ module Board =
     let defaults = {||}
 
     [<JS>]
+    let nolabel = {|name=""|}
+
+    [<JS>]
+    let invisible = {| size=0.; withLabel= false; label=""; strokeWidth = 0. |}
+
+    [<JS>]
     let tuple_to_array (t:'a*'a) = let x, y = t in [|x; y|]
 
     [<Emit("{0}.setAttribute({1})")>]
     let with_attrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = stub<'a>
 
-    [<JS>]
-    let nolabel = {|name=""|}
-
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
     let board (attr:obj) = stub<Board>
 
     [<JS>]
-    let board_defaults = {| showNavigation = true; showCopyright = false; axis = true |}
-    
-    [<JS>]
-    let bbox o d = [|o - d - 0.5; o + d + 0.5; o + d + 0.5; o - d - 0.5|]
+    let area d o = [|o - d - 0.5; o + d + 0.5; o + d + 0.5; o - d - 0.5|]
    
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
@@ -60,27 +60,13 @@ module Board =
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let ticks (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Ticks> 
         
-    
-
-    
-    
-    
-
-    [<Emit("{4}.create('line', [[{0}, {1}], [{2}, {3}]], {4})")>]
-    let linexy (x1:float) (y1:float) (x2:float) (y2:float) board = stub<Line> 
-
-  
-    
-    [<Emit("{1}.create('polygon', {0})")>]
-    let polygonxy (points:float[][]) (board:Board) = stub<Polygon>
-
     [<JS>]
-    let draw (board:Board) (elems: ((Board->#GeometryElement) array)) = 
+    let draw (board:Board) (elems: ((Board->#GeometryElement) list)) = 
         for i = 0 to elems.Length - 1 do 
             elems.[i] board |> ignore
         board
 
-[<JS>]
+[<JS; AutoOpen>]
 module color =
     let red = "red"
 
@@ -136,6 +122,9 @@ module GE =
     [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<Glider>
 
+    [<Emit("{8}.create('slider', [[{0}, {1}], [{2}, {3}], [{4}, {6}, {5}]], {7})")>]
+    let slider (x1:float) (y1:float) (x2:float) (y2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<Glider>
+
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
     let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<Functiongraph> 
 
@@ -145,7 +134,6 @@ module GE =
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
     let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<Riemannsum> 
 
-    
 [<RequireQualifiedAccess>]
 module ge =
     [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
@@ -180,6 +168,9 @@ module ge =
 
     [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{8}.create('slider', [[{0}, {1}], [{2}, {3}], [{4}, {6}, {5}]], {7})")>]
+    let slider (x1:float) (y1:float) (x2:float) (y2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
     let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<GeometryElement> 
