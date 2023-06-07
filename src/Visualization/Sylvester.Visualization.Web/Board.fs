@@ -29,10 +29,13 @@ module Board =
         let id = Guid.NewGuid().ToString()
         let repbid (s:string) = s.Replace("_bid", id)
         div [
-            div [attr "id" id; attr "class" "jxgbox"; attr "style" $"width:768px;height:200px"]
+            div [attr "id" id; attr "class" "jxgbox"; attr "style" "width:100%;height:512px"]
             script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + (src |> compile |> repbid) + "});"|> Text]
         ]
         
+    [<Emit("$('div.cell.selected').children('div.output_wrapper').height({0});\n$('div.cell.selected').children('div.jxgbox').height({0})")>]
+    let setCellHeight (h:int) = ()
+
     [<JS>]
     let defaults = {||}
 
@@ -46,13 +49,19 @@ module Board =
     let tuple_to_array (t:'a*'a) = let x, y = t in [|x; y|]
 
     [<Emit("{0}.setAttribute({1})")>]
-    let with_attrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = stub<'a>
+    let withAttrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = stub<'a>
+
+    [<JS>]
+    let setAttrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = withAttrs<'a> ge attrs |>  ignore
 
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
     let board (attr:obj) = stub<Board>
 
     [<JS>]
     let area d o = [|o - d - 0.5; o + d + 0.5; o + d + 0.5; o - d - 0.5|]
+
+    [<JS>]
+    let toFixed f n = JXG.toFixed(f, n)
    
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
@@ -61,7 +70,7 @@ module Board =
     let ticks (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Ticks> 
         
     [<JS>]
-    let draw (board:Board) (elems: ((Board->#GeometryElement) list)) = 
+    let draw (board:Board) (elems: ((Board->#GeometryElement) array)) = 
         for i = 0 to elems.Length - 1 do 
             elems.[i] board |> ignore
         board
@@ -83,6 +92,8 @@ module rsum =
     let left = "left"
 
     let right = "right"
+
+    let upper = "upper"
 
 [<AutoOpen>]
 module GE =
@@ -123,7 +134,7 @@ module GE =
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<Glider>
 
     [<Emit("{8}.create('slider', [[{0}, {1}], [{2}, {3}], [{4}, {6}, {5}]], {7})")>]
-    let slider (x1:float) (y1:float) (x2:float) (y2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<Glider>
+    let slider (x1:float) (y1:float) (x2:float) (y2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<Slider>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
     let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<Functiongraph> 
@@ -133,6 +144,9 @@ module GE =
 
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
     let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<Riemannsum> 
+
+    [<Emit("{4}.create('text', [{0}, {1}, {2}], {3})")>]
+    let text (x:obj) (y:obj) (s:obj) (attr:obj) (board:Board) = stub<Text>
 
 [<RequireQualifiedAccess>]
 module ge =
@@ -180,6 +194,8 @@ module ge =
 
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
     let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<GeometryElement> 
-        
+    
+    [<Emit("{4}.create('text', [{0}, {1}, {2}], {3})")>]
+    let text (x:obj) (y:obj) (s:obj) (attr:obj) (board:Board) = stub<GeometryElement>
         
    
