@@ -58,7 +58,13 @@ module Board =
     let board (attr:obj) = stub<Board>
 
     [<JS>]
-    let area d o = [|o - d - 0.5; o + d + 0.5; o + d + 0.5; o - d - 0.5|]
+    let area d h o = [|o - d - 0.5; o + h + 0.5; o + d + 0.5; o - h - 0.5|]
+
+    [<JS>]
+    let with_name (n:string) (ge:#GeometryElement) = setAttrs ge {| name = n |}
+
+    [<JS>]
+    let autoPosition = {|autoPosition = true|}
 
     [<JS>]
     let toFixed f n = JXG.toFixed(f, n)
@@ -142,6 +148,12 @@ module GE =
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
     let chart (x:real[]) (y:real[]) (attr:obj) board = stub<Chart> 
 
+    [<Emit("{2}.create('derivative', [{0}], {1})")>]
+    let derivative (c:Curve) (attr:obj) (board:Board) = stub<Derivative> 
+
+    [<Emit("{2}.create('integral', [{0}], {1})")>]
+    let integral (c:Curve) (attr:obj) (board:Board) = stub<Integral> 
+
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
     let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<Riemannsum> 
 
@@ -191,6 +203,12 @@ module ge =
 
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
     let chart (x:real[]) (y:real[]) (attr:obj) board = stub<GeometryElement> 
+
+    [<Emit("{2}.create('derivative', [{0}], {1})")>]
+    let derivative (c:Curve) (attr:obj) (board:Board) = stub<GeometryElement> 
+
+    [<Emit("{2}.create('integral', [{0}], {1})")>]
+    let integral (c:Curve) (attr:obj) (board:Board) = stub<GeometryElement> 
 
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
     let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<GeometryElement> 
