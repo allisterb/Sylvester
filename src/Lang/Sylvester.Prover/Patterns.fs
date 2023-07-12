@@ -30,22 +30,24 @@ module Patterns =
 
     let (|And|_|) =
         function
-        | SpecificCall <@@ (|&|) @@> (None,_,l::r::[]) -> Some (l, r)
+        | SpecificCall <@@ (|&|) @@> (None,_,l::r::[]) 
+        | SpecificCall <@@ (&&) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Or|_|) =
         function
-        | SpecificCall <@@ (|||) @@> (None,_,l::r::[]) -> Some (l, r)
+        | SpecificCall <@@ (|||) @@> (None,_,l::r::[])
+        | SpecificCall <@@ (||) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Implies|_|) =
         function
-        | SpecificCall <@@ (==>) @@> (None,_,l::r::[]) -> Some (l, r)
+        | SpecificCall <@@ (===>) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Conseq|_|) =
         function
-        | SpecificCall <@@ (<==) @@> (None,_,l::r::[]) -> Some (l, r)
+        | SpecificCall <@@ (<===) @@> (None,_,l::r::[]) -> Some (l, r)
         | _ -> None
 
     let (|Argument|_|) =
@@ -394,7 +396,7 @@ module Patterns =
     let (|LeftCancelNonZero|_|) (op:Expr<'t->'t->'t>) (zero:Expr<'t>)  =
         function
         | Implies(NotEquals(a, z), Equals (Equals(Binary op (a1, b), Binary op (a2, c)), Equals(b1, c1))) when sequal z zero && sequal a a1 && sequal a1 a2 && sequal b b1 && sequal c c1 
-            -> pattern_desc "Left Cancellation" <@ fun a b c -> (a <> %zero) ==> (((%op) a b = (%op) a c)) = ((b = c)) @> |> Some
+            -> pattern_desc "Left Cancellation" <@ fun a b c -> (a <> %zero) ===> (((%op) a b = (%op) a c)) = ((b = c)) @> |> Some
         | _ -> None
 
     let (|OnePoint|_|) =

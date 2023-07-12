@@ -6,22 +6,30 @@ open PropCalculus
 let p,q,r,s = boolvar4 "p" "q" "r" "s"
 let P,N,A,S = boolvar4 "P" "N" "A" "S"
 
-let ``3.52`` = theorem prop_calculus <@ (%p = %q) = (%p |&| %q) ||| (not %p |&| not %q) @> [
+let ``3.76a`` = theorem prop_calculus (p ==> (p + q))  [
+    def_implies |> apply
+    left_assoc |> apply_left
+    idemp_or p |> apply_left
+]
+
+(*
+let ``3.52`` = theorem prop_calculus ((p == q) == (p * q) + (!!p * !!q)) [
         collect |> apply_right
         commute |> apply_left |> after_left
         commute |> apply_left
         commute |> apply_right |> after_left
         golden_rule' p q |> LeftAssoc |> apply_left
 ]
+*)
 
-let ``3.59`` = theorem prop_calculus <@ %p ==> %q = (not %p ||| %q) @> [
+let ``3.59`` = theorem prop_calculus (p ==> q == (!!p + q) ) [
     def_implies |> apply_left
     ident_or_not_or q p |> CommuteL |> apply_right
     commute |> apply_right
     commute |> apply_left |> after_right
 ]
 
-let ``3.60`` = theorem prop_calculus <@ %p ==> %q = ((%p |&| %q) = %p) @> [
+let ``3.60`` = theorem prop_calculus (p ==> q == ((p * q) == p)) [
     def_implies |> apply_left
     commute |> apply
     right_assoc |> apply
@@ -29,7 +37,32 @@ let ``3.60`` = theorem prop_calculus <@ %p ==> %q = ((%p |&| %q) = %p) @> [
     left_assoc |> apply_right 
 ]
 
-let ``3.61`` = theorem prop_calculus <@ %p ==> %q = (not %q ==> not %p) @> [
+(*
+let ``3.76c`` = theorem prop_calculus <@ %p |&| %q ==> %p ||| %q @> [
+    def_implies |> apply_left
+    commute |> apply_left |> after_left
+    distrib |> apply_left |> after_left
+    commute |> apply
+    idemp_or p |> apply
+    distrib |> apply_left |> after_right
+    idemp_and p |> apply
+    distrib |> apply
+    distrib |> apply_right |> after_left
+    distrib |> apply_left
+    idemp_or p |> apply_left
+    distrib |> apply_left
+    commute_or q p |> apply_left
+    idemp_and <@ %p ||| %q @> |> apply_left
+    commute |> apply_left |> after_left
+    distrib |> apply_left |> after_left
+    idemp_and q |> apply_left
+    absorb_or q p |> CommuteL |> apply_left
+    commute |> apply_right |> after_left
+    left_assoc |> apply_left
+    idemp_or q |> apply_left
+] 
+
+let ``3.61`` = theorem prop_calculus (p ==> q == (!! q ==> !! p)) [
     def_implies |> apply_right
     commute |> apply_right
     commute |> apply_right |> after_right
@@ -49,11 +82,6 @@ let ``3.71`` = theorem prop_calculus <@ %p ==> %p @> [
 ]
 
 
-let ``3.76a`` = theorem prop_calculus <@ %p ==> (%p ||| %q) @> [
-    def_implies |> apply
-    left_assoc |> apply_left
-    idemp_or p |> apply_left
-]
 
 let ``3.76c`` = theorem prop_calculus <@ %p |&| %q ==> %p ||| %q @> [
     def_implies |> apply_left
@@ -225,3 +253,4 @@ let ``4.4b`` = theorem prop_calculus <@ (%p ==> %r) ==> ((%q ==> %s) ==> (%p |&|
     commute |> apply_left |> after_right
     strengthen_and <@ %r |&| %s @> <@ %p |&| %q @> |> Taut |> apply_right
 ]
+*)

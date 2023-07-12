@@ -26,12 +26,12 @@ type Term<'t when 't: equality> (expr:Expr<'t>) =
     override a.ToString() = a.Display
 
     static member op_Implicit (l:Term<'t>):Expr<'t> = l.Expr
-    
-    static member (==) (l:Term<'t>, r:Term<'t>) = <@ %l.Expr = %r.Expr @> |> Scalar<bool>
+ 
+    static member (==) (l:Term<'t>, r:Term<'t>) = <@ %l.Expr = %r.Expr @> |> Prop
 
-    static member (==) (l:Term<'t>, r:'t) = let r' = exprv r in <@ %l.Expr = %r' @> |> Scalar<bool>
+    static member (==) (l:Term<'t>, r:'t) = let r' = exprv r in <@ %l.Expr = %r' @> |> Prop
     
-    static member (==) (l:'t, r:Term<'t>) = let l' = exprv l in <@ %l' = %r.Expr @> |> Scalar<bool>
+    static member (==) (l:'t, r:Term<'t>) = let l' = exprv l in <@ %l' = %r.Expr @> |> Prop
 
 and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) = 
     inherit Term<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
@@ -40,7 +40,6 @@ and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) =
     member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
     
 and IndexVar(n: string) = inherit TermVar<int>(n)
-
 
 and Scalar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) =
     inherit Term<'t>(expr)
@@ -250,6 +249,34 @@ and ScalarIndexedVar<'t when 't: equality and 't: comparison and 't :> ValueType
     inherit ScalarVar<'t>(var.Name + "_" + index.Name)
     member x.Item(i:int) = ScalarVar<'t>(x.Name.Replace("_" + index.Name, i.ToString()))
 
+and Prop (expr:Expr<bool>) =
+    inherit Term<bool>(expr)
+    
+    static member (!!) (l:#Prop) = Prop <@ not %l.Expr @>
+
+    static member (*) (l:Prop, r:Prop) = Prop <@ %l.Expr |&| %r.Expr @>
+    
+    static member (+) (l:Prop, r:Prop) = Prop <@ %l.Expr ||| %r.Expr @>
+
+    static member (==) (l:Prop, r:Prop) = Prop <@ %l.Expr = %r.Expr @>
+
+    static member (!=) (l:Prop, r:Prop) = Prop <@ %l.Expr <> %r.Expr @>
+
+    static member (==>) (l:Prop, r:Prop) = Prop <@ %l.Expr ===> %r.Expr @>
+
+    static member (<==) (l:Prop, r:Prop) = Prop <@ %r.Expr <=== %l.Expr @>
+
+    override x.Display = src expr
+
+    static member op_Implicit(l:Prop) : Expr<bool> = l.Expr
+
+    static member op_Implicit (l:Expr<bool>):Prop = Prop l
+
+    static member op_Explicit(l:Prop) : Expr<bool> = l.Expr
+
+and PropVar(n: string) =
+    inherit Prop(Expr.Var(Var(n, typeof<bool>)) |> expand_as<bool>)
+    
 type realexpr = Scalar<real>
 
 type ratexpr = Scalar<rat>
@@ -258,10 +285,15 @@ type intexpr = Scalar<int>
 
 type natexpr = Scalar<nat>
 
-type Prop (expr:Expr<bool>) =
-    inherit Term<bool>(expr)
-    
-    override x.Display = src expr
+type realvar = ScalarVar<real>
+
+type ratvar = ScalarVar<rat>
+
+type intvar = ScalarVar<int>
+
+type natvar = ScalarVar<nat>
+
+type boolvar = PropVar
 
 [<RequireQualifiedAccess>]
 module NumericLiteralR = 
@@ -333,4 +365,18 @@ module Scalar =
     let scalar_var<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> n = ScalarVar<'t> n
     
     let index_var n = IndexVar n
+
+[<AutoOpen>]
+module Prop =
+    let prop e = Prop e
+
+    let T = Prop <@ true @>
+
+    let F = Prop <@ false @>
+
+    let boolvar2 p q = boolvar p, boolvar q
+
+    let boolvar3 p q r = boolvar p, boolvar q, boolvar r
+
+    let boolvar4 p q r s = boolvar p, boolvar q, boolvar r, boolvar s
   

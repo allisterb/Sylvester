@@ -33,14 +33,20 @@ module Board =
             script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + (src |> compile |> repbid) + "});"|> Text]
         ]
         
-    [<Emit("$('div.cell.selected').children('div.output_wrapper').height({0});\n$('div.cell.selected').children('div.jxgbox').height({0})")>]
+    [<Emit("$('div.cell.selected').children('div.output_wrapper').height({0})")>]
     let setCellHeight (h:int) = ()
+
+    [<Emit("{1}.renderer.container.style.backgroundColor = {0}")>]
+    let setBoardBgColor (s:string) (b:Board)= ()
+
+    [<Emit("{1}.renderer.container.style.height = {0};$('div.cell.selected').children('div.output_wrapper').height({0})")>]
+    let setBoardHeight (h:int) (b:Board)= ()
 
     [<JS>]
     let defaults = {||}
 
     [<JS>]
-    let nolabel = {|name=""|}
+    let nolabel = {|name=""; withLabel = false|}
 
     [<JS>]
     let invisible = {| size=0.; withLabel= false; label=""; strokeWidth = 0. |}
@@ -53,6 +59,9 @@ module Board =
 
     [<JS>]
     let setAttrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = withAttrs<'a> ge attrs |>  ignore
+
+    [<Emit("Math.random()")>]
+    let random() = stub<float>
 
     [<Emit("JXG.JSXGraph.initBoard(\"_bid\", {0})")>]
     let board (attr:obj) = stub<Board>
@@ -69,6 +78,9 @@ module Board =
     [<JS>]
     let toFixed f n = JXG.toFixed(f, n)
    
+    [<JS>]
+    let hsv2rgb h s v = JXG.hsv2rgb(h, s, v)
+
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
  
@@ -93,6 +105,12 @@ module color =
 
     let black = "black"
 
+    let darkblue = "darkblue"
+
+    let lightbue = "lightblue"
+
+    let pink = "pink"
+
 [<JS; RequireQualifiedAccess>]
 module rsum = 
     let left = "left"
@@ -100,6 +118,8 @@ module rsum =
     let right = "right"
 
     let upper = "upper"
+
+    let lower = "lower"
 
 [<AutoOpen>]
 module GE =
@@ -109,6 +129,9 @@ module GE =
     [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
     let line (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<Line>
         
+    [<Emit("{3}.create('arrow', [{0}, {1}], {2})")>]
+    let arrow (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<Arrow>
+
     [<Emit("{3}.create('segment', [{0}, {1}], {2})")>]
     let segment (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<Segment>
 
@@ -139,11 +162,11 @@ module GE =
     [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<Glider>
 
-    [<Emit("{8}.create('slider', [[{0}, {1}], [{2}, {3}], [{4}, {6}, {5}]], {7})")>]
-    let slider (x1:float) (y1:float) (x2:float) (y2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<Slider>
+    [<Emit("{7}.create('slider', [[{0}, {1}], [{0} + {2}, {1}], [{3}, {5}, {4}]], {6})")>]
+    let slider (x1:float) (y:float) (x2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<Slider>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
-    let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<Functiongraph> 
+    let functiongraph (f:real->real) (min:obj) (max:obj) (attr:obj) (board:Board) = stub<Functiongraph> 
 
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
     let chart (x:real[]) (y:real[]) (attr:obj) board = stub<Chart> 
@@ -155,10 +178,16 @@ module GE =
     let integral (c:Curve) (attr:obj) (board:Board) = stub<Integral> 
 
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
-    let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<Riemannsum> 
+    let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:obj) (b:obj) (attr:obj) (board:Board) = stub<Riemannsum> 
 
     [<Emit("{4}.create('text', [{0}, {1}, {2}], {3})")>]
     let text (x:obj) (y:obj) (s:obj) (attr:obj) (board:Board) = stub<Text>
+
+    [<Emit("{8}.create('view3d', [[{0}, {1}], [{2}, {3}], [{4}, {5}, {6}]], {7})")>]
+    let view3d (x:float) (y:float) (w:float) (h:float) (xbound:float[]) (ybound:float[]) (zbound:float[])  (attr:obj) (board:Board) = stub<View3D>
+
+    [<Emit("{3}.create('point3d', [{0}, {1}, {2}], {3})")>]
+    let point3d (x:obj) (y:obj) (z:obj) (attr:obj) (board:Board) = stub<Point3D> 
 
 [<RequireQualifiedAccess>]
 module ge =
@@ -195,11 +224,11 @@ module ge =
     [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement>
 
-    [<Emit("{8}.create('slider', [[{0}, {1}], [{2}, {3}], [{4}, {6}, {5}]], {7})")>]
-    let slider (x1:float) (y1:float) (x2:float) (y2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<GeometryElement>
+    [<Emit("{7}.create('slider', [[{0}, {1}], [{0} + {2}, {1}], [{3}, {5}, {4}]], {6})")>]
+    let slider (x1:float) (y:float) (x2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
-    let functiongraph (f:real->real) (min:real) (max:real) (attr:obj) (board:Board) = stub<GeometryElement> 
+    let functiongraph (f:real->real) (min:obj) (max:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
 
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
     let chart (x:real[]) (y:real[]) (attr:obj) board = stub<GeometryElement> 
@@ -211,9 +240,13 @@ module ge =
     let integral (c:Curve) (attr:obj) (board:Board) = stub<GeometryElement> 
 
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
-    let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:float) (b:float) (attr:obj) (board:Board) = stub<GeometryElement> 
+    let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:obj) (b:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
     
     [<Emit("{4}.create('text', [{0}, {1}, {2}], {3})")>]
     let text (x:obj) (y:obj) (s:obj) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{8}.create('view3d', [[{0}, {1}], [{2}, {3}], [{4}, {5}, {6}]], {7})")>]
+    let view3d (x:float) (y:float) (w:float) (h:float) (xbound:float[]) (ybound:float[]) (zbound:float[])  (attr:obj) (board:Board) = stub<GeometryElement>
         
-   
+    [<Emit("{3}.create('point3d', [{0}, {1}, {2}], {3})")>]
+    let point3d (x:obj) (y:obj) (z:obj) (attr:obj) (board:Board) = stub<GeometryElement> 

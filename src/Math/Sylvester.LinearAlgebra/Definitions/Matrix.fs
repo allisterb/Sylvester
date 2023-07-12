@@ -11,7 +11,7 @@ open Dimension
 open Vector
 
 [<StructuredFormatDisplay("{Display}")>]
-type Matrix<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
+type Matrix<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
     internal(e: Expr<'t> array array) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand_as<'t>)
@@ -52,7 +52,7 @@ type Matrix<'t when 't: equality and 't: comparison and 't:> ValueType and 't : 
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
-        | LinearAlgebraNumericOpType -> expr |> Array.map (Array.map evaluate) |> LinearAlgebra.DenseMatrix.ofRowArrays
+        | LinearAlgebraNumericOpType -> expr |> Array.map (Array.map (evaluate >> Convert.ToDouble)) |> LinearAlgebra.DenseMatrix.ofRowArrays
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     
     interface IPartialShape<``2``> with

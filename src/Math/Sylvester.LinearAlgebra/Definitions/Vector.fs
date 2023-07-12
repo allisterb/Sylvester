@@ -11,7 +11,7 @@ open Arithmetic
 open Dimension
 
 [<StructuredFormatDisplay("{Display}")>]
-type Vector<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
+type Vector<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
     internal(e: Expr<'t> array) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand_as<'t>
@@ -37,7 +37,7 @@ type Vector<'t when 't: equality and 't: comparison and 't:> ValueType and 't : 
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
-        | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> LinearAlgebra.DenseVector.raw
+        | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> Array.map (Convert.ToSingle) |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     
     member x.Item with get(i)  = e.[i] |> Scalar<'t>

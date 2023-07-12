@@ -6,7 +6,7 @@ open Sylvester.Arithmetic
 
 
 open Vector
-open Sequences
+//open Sequences
 
 type RealExpr<'n when 'n :> Number> = Expr<R<'n>>
 

@@ -517,41 +517,42 @@ module LogicalRules =
         | Equals(l, r) -> Rule.Define(sprintf "Substitute definition of %s \u2261 %s into (expression)" (theory.PrintFormula l) (theory.PrintFormula r), subst(l, r))
         | _ -> failwithf "The formula %A is not an identity." (theory.PrintFormula expr)
 
+
 [<AutoOpen>]
 module Proof = 
-    let proof (theory:Theory) (e:Expr<'t>) steps =         
-        let f = e |> expand
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
-        Proof(f, theory, steps)
-    let theorem (theory:Theory) (e:Expr<'t>) steps  = 
-        let f = e |> expand
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
-        Theorem(f, Proof(f, theory, steps))
-    let lemma (theory:Theory) (e:Expr<'t>) steps =
-        let f = e |> expand 
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
-        Theorem(f, Proof(f, theory, steps, true))
-    let axiom (theory:Theory) (e:Expr<'t>) = lemma theory e []
+    let proof<'t> (theory:Theory) (e:Prop) steps =         
+        let f = e.Expr |> expand in Proof(f, theory, steps)
+    
+    let theorem (theory:Theory) (e:Prop) steps  = 
+        let f = e.Expr |> expand in Theorem(f, Proof(f, theory, steps))
+    
+    let lemma (theory:Theory) (e:Prop) steps =
+        let f = e.Expr |> expand in Theorem(f, Proof(f, theory, steps, true))
+    
+    let axiom (theory:Theory) (e:Prop) = lemma theory e []
 
     (* Identities *)
-    let ident (theory:Theory) (e:Expr<'t>) steps =
-        let f = e |> expand 
-        do if not (range_type typeof<'t> = typeof<bool>) then failwithf "The formula %A does not have a truth value." (theory.PrintFormula f)
+    let ident (theory:Theory) (e:Prop) steps =
+        let f = e.Expr |> expand in
         match f with
         | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
         | _ -> failwithf "The expression %s is not an identity." (theory.PrintFormula f)
-    let ident' steps e = ident Proof.Logic e steps
-    let id_ax theory e = ident theory e []
-    let id_ax' e = id_ax Proof.Logic e
+    
+    let logical_ident steps (e:Prop) = ident Proof.Logic e steps
+    
+    let id_ax theory (e:Prop) = ident theory e []
+    
+    let log_id_ax (e:Prop) = id_ax Proof.Logic e
+    
     
     (* Deductions *)
     let deduce (p:Theorem) = p|> Deduce
     let deduce' p = p |> Deduce'
     let deduce_ident p = deduce' p
-
+    
     (* Definitions *)
-    let def (theory:Theory) (e:Expr<bool>) = 
-        let f = e |> expand
+    let def (theory:Theory) (e:Prop) = 
+        let f = e.Expr |> expand
         match f with
         | Equals(_, _) -> Define theory f
         | _ -> failwithf "The expression %s is not an identity." (theory.PrintFormula f)

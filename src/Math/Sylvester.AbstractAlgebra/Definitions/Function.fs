@@ -24,7 +24,7 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
     member x.AMapExpr = amap
     member x.AMap = ev amap
     member x.Body = body' x.MapExpr
-    member x.Vars = get_vars x.Body
+    member x.Vars = get_vars x.Body |> List.map Expr.Var
     member x.Arg = param_var x.MapExpr
     member x.TermMap = term
     member x.Item (arg:'c) = arg |> x.AMap |> x.Map |> exprv |> x.TermMap
@@ -40,7 +40,7 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
     interface ISymbolic<Function<'a, 'b, 'c, 'd>, 'b> with
            member a.Expr = a.Body
            member a.Mutate(b:Expr<'b>) = 
-               let map = expand_as<'a->'b> (recombine_func a.Vars b)
+               let map = expand_as<'a->'b> (recombine_func (get_vars a.Body) b)
                Function(a.Domain, a.CoDomain, map, a.AMapExpr, a.TermMap)
 
     override x.ToString() = src x.MapExpr
@@ -50,7 +50,7 @@ type Function<'a, 'b, 'd when 'a : equality and 'b: equality and 'd: equality>(d
 
 type ScalarFunction<'a, 'b, 'c when 'a : equality and 'b: equality and 'b: comparison and 'b :> ValueType and 'b :> IEquatable<'b> and 'c: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, amap:Expr<'c->'a>) = 
     inherit Function<'a, 'b, 'c, Scalar<'b>>(domain, codomain, map, amap, Scalar<'b>)
-
+    
 type ScalarFunction<'a, 'b when 'a : equality and 'b: equality and 'b: comparison and 'b :> ValueType and 'b :> IEquatable<'b>>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>) =
     inherit ScalarFunction<'a, 'b, 'a>(domain, codomain, map, <@ id @>)
 

@@ -47,29 +47,29 @@ module EquationalLogic =
                                                                 pattern_desc "the Golden Rule" <@fun x y -> x |&| y = (x = y) = (x ||| y) @> |> Some
         | _ -> None
 
-    /// p ==> q = ((p ||| q) = q)
+    /// p ===> q = ((p ||| q) = q)
     let (|Implication|_|) =
         function
         | Equals(Implies(a1, a2), Equals(Or(a3, a4), a5)) when sequal a1 a3 && sequal a2 a4 && sequal a4 a5 -> 
-                                                                pattern_desc "Implication" <@fun x y-> (x ==> y) = ((x ||| y) = y)@> |> Some
+                                                                pattern_desc "Implication" <@fun x y-> (x ===> y) = ((x ||| y) = y)@> |> Some
         | Equals(Conseq(a1, a2), Implies(a3, a4)) when sequal2 a1 a2 a4 a3 -> 
-                                                                pattern_desc "Consequence" <@fun x y -> (x <== y) = (y ==> x) @> |> Some
+                                                                pattern_desc "Consequence" <@fun x y -> (x <=== y) = (y ===> x) @> |> Some
         
         // The following two axioms aren't in the original axioms for E but are included in S for convenience
-        /// p ==> true
-        | Implies(_, Bool true) -> pattern_desc "Implication" <@fun x -> x ==> true @> |> Some
-        /// p ==> p
-        | Implies(E, E') when sequal E E' -> pattern_desc "Implication" <@fun x -> x ==> x @> |> Some
+        /// p ===> true
+        | Implies(_, Bool true) -> pattern_desc "Implication" <@fun x -> x ===> true @> |> Some
+        /// p ===> p
+        | Implies(E, E') when sequal E E' -> pattern_desc "Implication" <@fun x -> x ===> x @> |> Some
         | _ -> None
 
-    /// (e = f) ==> E(e) = E(f) 
+    /// (e = f) ===> E(e) = E(f) 
     let (|Leibniz|_|) =
         function
-        | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var_var e f Ee) Ef -> pattern_desc "Leibniz" <@fun e f E -> (e = f) ==> E(e) = E(f)@> |> Some
+        | Implies(Equals(Var e, Var f), Equals(Ee, Ef)) when sequal (replace_var_var e f Ee) Ef -> pattern_desc "Leibniz" <@fun e f E -> (e = f) ===> E(e) = E(f)@> |> Some
         | Implies(Equals(Var p, Var q), Equals(Quantifier(_, _, R, P), Quantifier(_, _, R', P'))) when sequal (replace_var_var p q R) R' && sequal (replace_var_var p q P) P' -> 
-            pattern_desc "Leibniz" <@fun p q E  -> (p = q) ==> E(p) = E(q) @> |> Some
+            pattern_desc "Leibniz" <@fun p q E  -> (p = q) ===> E(p) = E(q) @> |> Some
         | Implies(Implies(R , Equals(Var p, Var q)), Equals(Quantifier(_, _, R1, P), Quantifier(_, _, R2, P'))) when sequal R R1 && sequal R1 R2 && sequal (replace_var_var p q P) P' -> 
-            pattern_desc "Leibniz" <@fun p q R E  -> (R ==> (p = q)) ==> E(p) = E(q) @> |> Some
+            pattern_desc "Leibniz" <@fun p q R E  -> (R ===> (p = q)) ===> E(p) = E(q) @> |> Some
         | _ -> None
     
     let (|EmptyRange|_|) =
@@ -181,7 +181,7 @@ module EquationalLogic =
         | Not(Bool l) -> Expr.Value(not l)
         | Or(Bool l, Bool r) -> Expr.Value(l ||| r)                
         | And(Bool l, Bool r) -> Expr.Value(l |&| r)
-        | Implies(Bool l, Bool r) -> Expr.Value(l ==> r)
+        | Implies(Bool l, Bool r) -> Expr.Value(l ===> r)
         | expr -> expr
     
     /// Binary logical operators are right associative.
@@ -257,17 +257,17 @@ module EquationalLogic =
 
     let _shunt =
         function
-        | Implies(And(p, q), r) -> <@@ (%%p:bool) ==> ((%%q:bool) ==> (%%r:bool)) @@>
+        | Implies(And(p, q), r) -> <@@ (%%p:bool) ===> ((%%q:bool) ===> (%%r:bool)) @@>
         | expr -> expr
 
     let _rshunt =
         function
-        | Implies(p, Implies(q, r)) -> <@@ ((%%p:bool) |&| (%%q:bool)) ==> (%%r:bool) @@>
+        | Implies(p, Implies(q, r)) -> <@@ ((%%p:bool) |&| (%%q:bool)) ===> (%%r:bool) @@>
         | expr -> expr
 
     let _mutual_implication = 
         function
-        | Equals(p, q) -> <@@ (%%p:bool) ==> (%%q:bool) |&| ((%%q:bool) ==> (%%p:bool)) @@>
+        | Equals(p, q) -> <@@ (%%p:bool) ===> (%%q:bool) |&| ((%%q:bool) ===> (%%p:bool)) @@>
         | expr -> expr
 
     let _subst_and =
@@ -285,7 +285,7 @@ module EquationalLogic =
             let E' = replace_var_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
-            <@@ ((%%e':bool) = (%%f':bool)) ==> %%E' @@>
+            <@@ ((%%e':bool) = (%%f':bool)) ===> %%E' @@>
         | expr -> expr
 
     let _subst_and_implies =
@@ -294,7 +294,7 @@ module EquationalLogic =
             let E' = replace_var_var e f E 
             let e' = Expr.Var e
             let f' = Expr.Var f
-            <@@ ((%%q:bool) |&| ((%%e':bool) = %%f':bool)) ==> %%E' @@>
+            <@@ ((%%q:bool) |&| ((%%e':bool) = %%f':bool)) ===> %%E' @@>
         | expr -> expr
 
     let _subst_true =
@@ -302,12 +302,12 @@ module EquationalLogic =
         | Implies(Var p,  E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
-            <@@ (%%p':bool) ==> %%E' @@>
+            <@@ (%%p':bool) ===> %%E' @@>
         | Implies(And(Var q, Var p),  E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
-            <@@ ((%%q':bool) |&| (%%p':bool)) ==> %%E' @@>
+            <@@ ((%%q':bool) |&| (%%p':bool)) ===> %%E' @@>
         | And(Var p, E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ true @> E in 
             let p' = Expr.Var p
@@ -319,12 +319,12 @@ module EquationalLogic =
         | Implies(E, Var p) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
-            <@@ (%%E':bool) ==> (%%p':bool) @@>
+            <@@ (%%E':bool) ===> (%%p':bool) @@>
         | Implies(E, Or(Var p, Var q)) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
             let q' = Expr.Var q
-            <@@ ((%%p':bool) ||| (%%q':bool)) ==> %%E' @@>
+            <@@ ((%%p':bool) ||| (%%q':bool)) ===> %%E' @@>
         | Or(Var p, E) when E |> occurs [p] -> 
             let E' = replace_var_expr p <@ false @> E in 
             let p' = Expr.Var p
@@ -359,10 +359,10 @@ module EquationalLogic =
         | Bool false -> <@@ not true @@>
         | Equals(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) <> (%%_q:bool)) @@>
         | Not(NotEquals(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) = (%%_q:bool) @@>
-        | Implies(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) <== (%%_q:bool)) @@>
-        | Not(Conseq(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) ==> (%%_q:bool) @@>
-        | Conseq(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) ==> (%%_q:bool)) @@>
-        | Not(Implies(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) <== (%%_q:bool) @@>
+        | Implies(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) <=== (%%_q:bool)) @@>
+        | Not(Conseq(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) ===> (%%_q:bool) @@>
+        | Conseq(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not ((%%_p:bool) ===> (%%_q:bool)) @@>
+        | Not(Implies(p, q)) -> let _p = _double_neg p in let _q = _double_neg q in <@@ (%%_p:bool) <=== (%%_q:bool) @@>
         | And(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not (not(%%_p:bool) ||| (not(%%_q:bool))) @@>
         | Or(p, q) -> let _p = _double_neg p in let _q = _double_neg q in <@@ not (not(%%_p:bool) |&| not (%%_q:bool)) @@>
         | ForAll(_, bound, range, body) -> let v = vars_to_tuple bound in let q = call <@ exists @> (v::range::(<@@ not (%%body:bool) @@>)::[]) in call <@ not @> (q::[])
@@ -374,7 +374,7 @@ module EquationalLogic =
         | And(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ (%%p1:bool) |&| (%%q:bool) @@>
         | And(p1, Implies(_, p2)) when sequal p1 p2 -> <@@ (%%p1:bool) @@>
         | Or(p1, Implies(p2, q)) when sequal p1 p2 -> <@@ true @@>
-        | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ==> (%%p1:bool) @@>
+        | Or(p1, Implies(q, p2)) when sequal p1 p2 -> <@@ (%%q:bool) ===> (%%p1:bool) @@>
         | Implies(Or(p1,  q1), And(p2,  q2)) when sequal2 p1 q1 p2 q2 -> <@@ (%%p1:bool) = (%%q1:bool) @@>
         | expr -> expr
         
@@ -398,7 +398,7 @@ module EquationalLogic =
 
     let _trade_body = 
         function
-        | ForAll(_, x, R, P) -> let v = vars_to_tuple x in call <@ forall @> (v::(<@@ true @@>)::(<@@ (%%R:bool) ==> (%%P:bool)@@>)::[])
+        | ForAll(_, x, R, P) -> let v = vars_to_tuple x in call <@ forall @> (v::(<@@ true @@>)::(<@@ (%%R:bool) ===> (%%P:bool)@@>)::[])
         | Exists(_, x, R, P) -> let v = vars_to_tuple x in call <@ exists @> (v::(<@@ true @@>)::(<@@ (%%R:bool) |&| (%%P:bool)@@>)::[])
         | expr -> expr
 

@@ -2,8 +2,8 @@
 
 open Sylvester.Arithmetic
 
-type KnownCombination<'k, 't when 'k :> Number and 't : equality>(parent:Set<'t>, items:seq<'t>) =
-    inherit KnownSet<'k, 't>(items)
+type FiniteCombination<'k, 't when 'k :> Number and 't : equality>(parent:Set<'t>, items:seq<'t>) =
+    inherit FiniteSet<'k, 't>(items)
     member val Parent = parent
     member val Items = Seq.toList items
 

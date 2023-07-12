@@ -9,11 +9,8 @@
     <Compile Include="Definitions\Ops.fs" />
     <Compile Include="Definitions\R.fs" />
     <Compile Include="Definitions\Measure.fs" />
-    <Compile Include="Definitions\Series.fs" />
-    <Compile Include="Theories\Sequences.fs" />
     <Compile Include="Theories\EuclideanSpace.fs" />
     <Compile Include="Theories\Functions.fs" />
-    <Compile Include="Theories\Topology.fs" />
   </ItemGroup>
 
   <ItemGroup>

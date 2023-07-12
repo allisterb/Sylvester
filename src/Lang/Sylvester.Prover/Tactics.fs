@@ -12,7 +12,7 @@ module Tactics =
             | Equals(l, r) when sequal r <@ true @> -> l
             | _ -> failwith "This theorem is not an identity with the constant true."
         let theory = proof.Theory
-        let true_id = ident theory <@(true = true) = true@> [LR commute]
+        let true_id = ident theory (prop <@(true = true) = true@>) [LR commute]
         let stmt = <@@ (%%l:bool) = (true = true) @@>
         let p = Proof(stmt, proof.Theory, R true_id :: proof.Steps, true) in 
         Theorem(stmt, p) |> Ident
@@ -174,19 +174,19 @@ module Tactics =
             | _ -> failwith "This statement is not an identity."
 
         let lhs steps =
-            let s = <@@ %%l ==> %%r @@>
+            let s = <@@ %%l ===> %%r @@>
             let p = Proof(s, theory, steps, true) in
             Theorem(s, p)
 
         let rhs steps =
-            let s = <@@ %%r ==> %%l @@>
+            let s = <@@ %%r ===> %%l @@>
             let p = Proof(s, theory, steps, true) in
             Theorem(s, p)
 
-        let p lhs rhs = proof theory stmt [
+        let p lhs rhs = Proof(stmt, theory,  [
             ident |> LR
             lhs |> taut |> L
             rhs |> taut |> R
-        ]
+        ])
 
         lhs, rhs, p

@@ -55,7 +55,7 @@ module VectorSpace =
 
     let span (_:Set<Vector<'t>>) = formula<Set<Vector<_,'t>>>
 
-    let direct_sum (_:VectorSpace<_,_,'v>) (_:VectorSpace<_,_,'v>) = formula<(VectorSpace<_,_,'v>)>
+    //let direct_sum (_:VectorSpace<_,_,'v>) (_:VectorSpace<_,_,'v>) = formula<(VectorSpace<_,_,'v>)>
 
     (* Predicates *)
 
@@ -63,9 +63,9 @@ module VectorSpace =
 
     let linearly_independent = pred<Set<Vector<_,_>>>
 
-    let basis (_:VectorSpace<_,_,'v>) = pred<Set<'v>>
+    //let basis (_:VectorSpace<_,_,'v>) = pred<Set<'v>>
 
-    let subspace (_:VectorSpace<_,_,'v>) = pred<Set<'v>>
+    //let subspace (_:VectorSpace<_,_,'v>) = pred<Set<'v>>
 
     
 

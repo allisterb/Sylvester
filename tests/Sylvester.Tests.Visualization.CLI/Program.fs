@@ -24,4 +24,10 @@ let main argv =
         @>
     printfn "%s" (compile j)
     printfn "%s" (compile <@ let x = sin 0.45 in x @>)
+    let x = 
+        board <|
+        {|
+            x = true
+            y = 1
+        |}
     0 // return an integer exit code

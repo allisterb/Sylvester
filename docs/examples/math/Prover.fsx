@@ -1,66 +1,31 @@
-#load "MathInclude.fsx"
+#nowarn "3391"
+#load "Include.fsx"
 
-open Sylph
 open Sylvester
-open IntegerArithmetic
+open Patterns
+open FSharp.Quotations
+open PropCalculus
 
-[<ReflectedDefinition;AutoOpen>]
-module Formulae =
-    let f x = 2 * x + 8 
-    let g x = 2 * x + 3 + 5    
-    let h x = 3 * x + 6 + 2 * x + 4
-    let i x = 5 * x + 10    
-    let j x = x * x + 4 * x
-    let sum n = Seq.sum (seq {1..n})
-    let sum1 n = Seq.sum (seq {1..n + 1})
 
-let F1 = F f
-let F2 = F g
-let F3 = F h
-let F4 = F i 
-let F6 = F j
-let p = proof (F1 <=> F2) integer_arithmetic [right_assoc_b; equal_constants_a_b]
-p |- (F1 <=> F2)
-let j = theorem (F1 <=> F2) p 
+let ident (theory:Theory) (e:Prop) steps =
+       let f = e.Expr |> expand in
+       match f with
+       | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
+       | _ -> failwithf "The expression %s is not an identity." (theory.PrintFormula f)
+   
+let logical_ident steps (e:Prop) = ident Proof.Logic e steps
+   
+let id_ax theory (e:Prop) = ident theory e []
+   
+let log_id_ax (e:Prop) = id_ax Proof.Logic e
 
-let F5 = F(fun x -> x * 2 + 4 * x)
-let p5 = axiomatic' F5.Body (commute F5.Body) integer_arithmetic 
-  
-let p6 = proof (F3 <=> F4) integer_arithmetic [
-    right_assoc_a 
-    commute_a_right
-    right_assoc_a 
-    left_assoc_a_right
-    equal_constants_a_b
-    commute_a_right
-    left_assoc_a
-    collect_a_left
-    equal_constants_a_b
-    commute_a_left
-    ]
-p6 |- (F3 <=> F4)
+let def_true (p:Prop) = id_ax prop_calculus (true == (p == p))  
 
-let p7 = proof (F6 <=> F(fun x -> x *(x + 4))) integer_arithmetic [
-    commute_a_right
-    //collect_a
-    ]
-let p8 = proof (F3 <=> F4) integer_arithmetic [
-    right_assoc_a 
-    commute_a_right
-    right_assoc_a 
-    left_assoc_a_right
-    equal_constants_a_b
+proof prop_calculus (-F == T).Expr [
+    LR commute
+    def_true F  |> L
+    LR right_assoc
+    apply_right commute
+    apply_right collect
+    def_true F |> Commute |> apply_right  
 ]
-
-let p9 = proof (F(fun x -> 3 * x + (10 + 2 * x)) <=> F4) integer_arithmetic [
-    commute_a_right
-    left_assoc_a
-    collect_a_left
-    equal_constants_a_b
-    commute_a_left
-]
-
-let p10 = p8 + p9
-
-let F11 = F (fun (x:int) -> seq {0..x} |> Seq.sum)
-F11.Expr

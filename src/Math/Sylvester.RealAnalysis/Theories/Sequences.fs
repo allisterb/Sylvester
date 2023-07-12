@@ -119,6 +119,6 @@ module Sequences =
         proof sequences <@ lim_seq inf<int> (geometric_series %a %r)  = (%a / real 1 - %r) @> []
 
     let series_conv_implies_lim_seqit_zero (a:Expr<int->real>)  =
-        proof sequences <@ converges (infinite_series %a) ==> (lim_seq inf<int> (infinite_seq' %a) = 0.) @>
+        proof sequences (prop <@ converges (infinite_series %a) ==> (lim_seq inf<int> (infinite_seq' %a) = 0.) @>)
 
    
