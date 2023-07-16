@@ -108,4 +108,4 @@ module RealNumbers =
 
     (* Definitions *)
 
-    let lub (S:Expr<ITotalOrder<real>>) (E:Expr<ITotalOrder<real>>) = def real_numbers <| prop <@ forall %E ((%E).Set |<| set_of %S) (not_empty %E |&| bounded_above %E ==> (sup %E |?| set_of %S)) @>
+    let lub (S:Expr<ITotalOrder<real>>) (E:Expr<ITotalOrder<real>>) = def real_numbers <| prop <@ forall %E ((%E).Set |<| set_of %S) (not_empty %E |&| bounded_above %E ===> (sup %E |?| set_of %S)) @>

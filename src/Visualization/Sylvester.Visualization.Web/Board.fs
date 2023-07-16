@@ -67,10 +67,13 @@ module Board =
     let board (attr:obj) = stub<Board>
 
     [<JS>]
+    let bbox (x1:float) (y1:float) (x2:float) (y2:float) = [|x1; y2; x2; y2|]
+    
+    [<JS>]
     let area d h o = [|o - d - 0.5; o + h + 0.5; o + d + 0.5; o - h - 0.5|]
 
     [<JS>]
-    let with_name (n:string) (ge:#GeometryElement) = setAttrs ge {| name = n |}
+    let withName (n:string) (ge:#GeometryElement) = setAttrs ge {| name = n |}
 
     [<JS>]
     let autoPosition = {|autoPosition = true|}
@@ -80,6 +83,9 @@ module Board =
    
     [<JS>]
     let hsv2rgb h s v = JXG.hsv2rgb(h, s, v)
+
+    [<JS>]
+    let deepCopy h o = JXG.deepCopy(h, o)
 
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
@@ -111,6 +117,8 @@ module color =
 
     let pink = "pink"
 
+    let orange = "orange"
+
 [<JS; RequireQualifiedAccess>]
 module rsum = 
     let left = "left"
@@ -141,6 +149,9 @@ module GE =
     [<Emit("{3}.create('circle', [{0}, {1}], {2})")>]
     let circle (center:Point) (radius:obj) (attr:obj) (board:Board) = stub<Circle>  
 
+    [<Emit("{4}.create('circumcircle', [{0}, {1}, {2}], {3})")>]
+    let circumcircle (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<Circumcircle>  
+
     [<Emit("{4}.create('angle', [{0}, {1}, {2}], {3})")>]
     let angle (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<Angle>
 
@@ -148,7 +159,7 @@ module GE =
     let angle_lines (l1:Line) (l2:Line) (d1:int) (d2:int) (attr:obj) (board:Board) = stub<Angle>
 
     [<Emit("{3}.create('midpoint', [{0}, {1}], {2})")>]
-    let midpoint_pts (p1:Point) (p2:Point) (attr:obj) (board:Board) = stub<Midpoint>
+    let midpoint (p1:Point) (p2:Point) (attr:obj) (board:Board) = stub<Midpoint>
 
     [<Emit("{2}.create('midpoint', [{0}], {1})")>]
     let midpoint_line (l:Line) (attr:obj) (board:Board) = stub<Midpoint>
@@ -156,6 +167,9 @@ module GE =
     [<Emit("{4}.create('intersection', [{0}, {1}, {2}], {3})")>]
     let intersection (o1:obj) (o2:obj) (i:int) (attr:obj) (board:Board) = stub<Intersection>
     
+    [<Emit("{3}.create('perpendicular', [{0}, {1}], {2})")>]
+    let perpendicular (l:Line) (p:Point) (attr:obj) (board:Board) = stub<Perpendicular>
+
     [<Emit("{3}.create('normal', [{0}, {1}], {2})")>]
     let normal (l:Line) (p:Point) (attr:obj) (board:Board) = stub<Normal>
 
@@ -206,6 +220,9 @@ module ge =
     [<Emit("{3}.create('circle', [{0}, {1}], {2})")>]
     let circle (center:Point) (radius:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
 
+    [<Emit("{4}.create('circumcircle', [{0}, {1}, {2}], {3})")>]
+    let circumcircle (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<GeometryElement>
+
     [<Emit("{4}.create('angle', [{0}, {1}, {2}], {3})")>]
     let angle (p1:Point) (p2:Point) (p3:Point) (attr:obj) (board:Board) = stub<GeometryElement>
 
@@ -213,13 +230,16 @@ module ge =
     let angle_lines (l1:Line) (l2:Line) (d1:int) (d2:int) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{3}.create('midpoint', [{0}, {1}], {2})")>]
-    let midpoint_pts (p1:Point) (p2:Point) (attr:obj) (board:Board) = stub<GeometryElement>
+    let midpoint (p1:Point) (p2:Point) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{2}.create('midpoint', [{0}], {1})")>]
     let midpoint_line (l:Line) (attr:obj) (board:Board) = stub<GeometryElement>
         
     [<Emit("{4}.create('intersection', [{0}, {1}, {2}], {3})")>]
     let intersection (o1:obj) (o2:obj) (i:int) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{3}.create('perpendicular', [{0}, {1}], {2})")>]
+    let perpendicular (l:Line) (p:Point) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement>

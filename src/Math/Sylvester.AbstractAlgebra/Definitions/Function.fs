@@ -31,7 +31,7 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
     member x.Item (value:Term<'c>) =
         let v = subst_var_value amaparg value.Expr amapbody in
         subst_var_value x.Arg v x.Body |> expand_as<'d> 
-
+    static member (|>>) (arg: 'c, f:Function<_,_,'c,_>) = f.[arg]
     interface IRelation<'a, 'b, 'c> with
         member x.Domain = x.Domain
         member x.CoDomain = x.CoDomain
@@ -57,3 +57,9 @@ type ScalarFunction<'a, 'b when 'a : equality and 'b: equality and 'b: compariso
 type Predicate<'a when 'a : equality> = Function<'a, bool, Prop>
 
 //type Predicate<'a when 'a : equality> = ScalarFunction<'a, bool>
+
+[<AutoOpen>]
+module Function =
+    let farg (f:Function<'a,_,_,_>) = f.Arg |> Expr.Var |> expand_as<'a>
+
+    let fexpr (f:Function<_,'b,_,_>) = f.Body |> expand_as<'b>

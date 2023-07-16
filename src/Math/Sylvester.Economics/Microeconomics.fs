@@ -20,3 +20,5 @@ module MicroEconomics =
     let cost func = EconomicFunction func
 
     let revenue func = EconomicFunction func
+
+    let plot_name (func:EconomicFunction) = Expr.Value((sprintf "q_D(%A) = %s" (farg func) (sprinte <| fexpr func)) :> obj)

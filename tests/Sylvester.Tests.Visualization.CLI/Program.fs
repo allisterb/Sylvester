@@ -22,12 +22,7 @@ let main argv =
             |]//r
             
         @>
-    printfn "%s" (compile j)
-    printfn "%s" (compile <@ let x = sin 0.45 in x @>)
-    let x = 
-        board <|
-        {|
-            x = true
-            y = 1
-        |}
+    //printfn "%s" (compile j)
+    //printfn "%s" (compile <@ let x = sin 0.45 in x @>)
+    printfn "%s" (compile <@ let ff = fun (a:real, b:real) -> a * b + 2.0 in ff(4., 5.) @>)
     0 // return an integer exit code
