@@ -67,13 +67,13 @@ module Board =
     let board (attr:obj) = stub<Board>
 
     [<JS>]
-    let bbox (x1:float) (y1:float) (x2:float) (y2:float) = [|x1; y2; x2; y2|]
+    let bbox (x1:float) (y1:float) (x2:float) (y2:float) = [|x1; y1; x2; y2|]
     
     [<JS>]
     let area d h o = [|o - d - 0.5; o + h + 0.5; o + d + 0.5; o - h - 0.5|]
 
     [<JS>]
-    let withName (n:string) (ge:#GeometryElement) = setAttrs ge {| name = n |}
+    let withName (n:string) (ge:#GeometryElement) = withAttrs ge {| name = n |}
 
     [<JS>]
     let autoPosition = {|autoPosition = true|}
