@@ -49,6 +49,9 @@ module Board =
     let nolabel = {|name=""; withLabel = false|}
 
     [<JS>]
+    let noface = {|size=0|}
+
+    [<JS>]
     let invisible = {| size=0.; withLabel= false; label=""; strokeWidth = 0. |}
 
     [<JS>]
@@ -59,6 +62,9 @@ module Board =
 
     [<JS>]
     let setAttrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = withAttrs<'a> ge attrs |>  ignore
+
+    [<JS>]
+    let toString (o:obj) = o.ToString()
 
     [<Emit("Math.random()")>]
     let random() = stub<float>
@@ -76,16 +82,34 @@ module Board =
     let withName (n:string) (ge:#GeometryElement) = withAttrs ge {| name = n |}
 
     [<JS>]
+    let withStrokeColor (n:string) (ge:#GeometryElement) = withAttrs ge {|strokeColor = n|}
+
+    [<JS>]
+    let withFillColor (n:string) (ge:#GeometryElement) = withAttrs ge {|fillColor = n|}
+
+    [<JS>]
+    let withVal (s:Slider) (v:float) = s.setValue(v)
+
+    [<JS>]
     let autoPosition = {|autoPosition = true|}
 
     [<JS>]
-    let toFixed f n = JXG.toFixed(f, n)
+    let toFixed n f  = JXG.toFixed(f, n)
    
     [<JS>]
     let hsv2rgb h s v = JXG.hsv2rgb(h, s, v)
 
     [<JS>]
     let deepCopy h o = JXG.deepCopy(h, o)
+
+    [<JS>]
+    let length (l:Line) = l.L()
+
+    [<JS>]
+    let border n (p:Polygon) = p.borders.[n]
+
+    [<JS>]
+    let defaultAxis n (b:Board) = b.defaultAxes.[n]
 
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
@@ -177,7 +201,7 @@ module GE =
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<Glider>
 
     [<Emit("{7}.create('slider', [[{0}, {1}], [{0} + {2}, {1}], [{3}, {5}, {4}]], {6})")>]
-    let slider (x1:float) (y:float) (x2:float) (min:float) (max:float) (step:float) (attr:obj) (board:Board) = stub<Slider>
+    let slider (x1:float) (y:float) (x2:float) (min:float) (max:float) (start:float) (attr:obj) (board:Board) = stub<Slider>
 
     [<Emit("{4}.create('functiongraph', [{0}, {1}, {2}], {3})")>]
     let functiongraph (f:real->real) (min:obj) (max:obj) (attr:obj) (board:Board) = stub<Functiongraph> 
@@ -193,6 +217,9 @@ module GE =
 
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
     let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:obj) (b:obj) (attr:obj) (board:Board) = stub<Riemannsum> 
+
+    [<Emit("{3}.create('curve', [{0}, {1}], {2})")>]
+    let curve (x:float[]) (y:float) (attr:obj) (board:Board) = stub<Curve> 
 
     [<Emit("{4}.create('text', [{0}, {1}, {2}], {3})")>]
     let text (x:obj) (y:obj) (s:obj) (attr:obj) (board:Board) = stub<Text>
@@ -262,6 +289,9 @@ module ge =
     [<Emit("{6}.create('riemannsum', [{0}, {1}, {2}, {3}, {4}], {5})")>]
     let riemannsum (f:float->float) (n:obj) (sumtype:string) (a:obj) (b:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
     
+    [<Emit("{3}.create('curve', [{0}, {1}], {2})")>]
+    let curve (x:float[]) (y:float) (attr:obj) (board:Board) = stub<GeometryElement> 
+
     [<Emit("{4}.create('text', [{0}, {1}, {2}], {3})")>]
     let text (x:obj) (y:obj) (s:obj) (attr:obj) (board:Board) = stub<GeometryElement>
 
