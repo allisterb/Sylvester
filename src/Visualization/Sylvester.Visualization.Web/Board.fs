@@ -108,9 +108,6 @@ module Board =
     [<JS>]
     let border n (p:Polygon) = p.borders.[n]
 
-    [<JS>]
-    let defaultAxis n (b:Board) = b.defaultAxes.[n]
-
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
  
@@ -194,6 +191,9 @@ module GE =
     [<Emit("{3}.create('perpendicular', [{0}, {1}], {2})")>]
     let perpendicular (l:Line) (p:Point) (attr:obj) (board:Board) = stub<Perpendicular>
 
+    [<Emit("{3}.create('perpendicularsegment', [{0}, {1}], {2})")>]
+    let perp_segment (l:Line) (p:Point) (attr:obj) (board:Board) = stub<PerpendicularSegment>
+
     [<Emit("{3}.create('normal', [{0}, {1}], {2})")>]
     let normal (l:Line) (p:Point) (attr:obj) (board:Board) = stub<Normal>
 
@@ -267,6 +267,9 @@ module ge =
 
     [<Emit("{3}.create('perpendicular', [{0}, {1}], {2})")>]
     let perpendicular (l:Line) (p:Point) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{3}.create('perpendicularsegment', [{0}, {1}], {2})")>]
+    let perp_segment (l:Line) (p:Point) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement>
