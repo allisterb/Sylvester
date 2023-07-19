@@ -41,7 +41,7 @@ and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) =
     
 and IndexVar(n: string) = inherit TermVar<int>(n)
 
-and Scalar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) =
+and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) =
     inherit Term<'t>(expr)
     
     override x.Display = sprinte expr
@@ -53,15 +53,6 @@ and Scalar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :>
     
     override a.GetHashCode() = a.Expr.GetHashCode()
 
-    interface IComparable<Scalar<'t>> with
-       member a.CompareTo b = match (a.Val, b.Val) with | (Some av, Some bv) -> (if av = bv then 0 else if av <  bv then -1 else 1) | _, _ -> failwith "Cannot evaluate comparison between scalar expressions."
-    
-    interface IComparable with
-        member a.CompareTo b = 
-            match b with
-            | :? Scalar<'t> as bs -> (a :> IComparable<Scalar<'t>>).CompareTo bs
-            | _ -> failwith "This object is not a scalar term."
-    
     interface ISymbolic<Scalar<'t>, 't> with
            member a.Expr = expr
            member a.Mutate(e:Expr<'t>) = Scalar e
@@ -309,7 +300,7 @@ module Scalar =
         | :? ScalarVar<_> as v -> Some v
         | _ -> None
     
-    let int_expr x = 
+    let intexpr x = 
         match box x with
         | :? Scalar<int> as s -> s.Expr
         | :? Expr<int> as e -> e
@@ -317,7 +308,7 @@ module Scalar =
         | :? real as n -> Expr.Value ((int) n) |> expand_as<int>
         | _ -> failwithf "The expression %A is not an integer expression." x
 
-    let real_expr x = 
+    let realexpr x = 
         match box x with
         | :? Scalar<real> as s -> s.Expr
         | :? Expr<real> as e -> e
@@ -325,7 +316,7 @@ module Scalar =
         | :? int as n -> Expr.Value (real n) |> expand_as<real>
         | _ -> failwithf "The expression %A is not a real number expression." x
 
-    let rat_expr x = 
+    let ratexpr x = 
         match box x with
         | :? Scalar<rat> as s -> s.Expr
         | :? Expr<rat> as e -> e
@@ -333,20 +324,17 @@ module Scalar =
         | :? int as n -> Expr.Value (rat n) |> expand_as<rat>
         | _ -> failwithf "The expression %A is not a rational number expression." x
 
-    let var6<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> name = 
-        Expr.Var(Var(name, typeof<'t>)) |> expand_as<'t> |> Scalar<'t>
-
-    let scalar_terms<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (t:obj[]) =
-        let m:obj->Scalar<'t> = 
+    let scalar_terms<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> (t:obj[]) =
+        t |> Array.map(
             function
             | :? 't as v -> v |> exprv |> Scalar
             | :? Scalar<'t> as t -> t
             | :? Expr<'t> as e -> e |> Scalar
             | x -> failwithf "Cannot convert %A of type %A to Scalar of type %A." x (x.GetType()) (typeof<'t>)
-        t |> Array.map m
+        )
 
     let realterms (t:obj[]) =
-        let m:obj->Scalar<real> = 
+        t |> Array.map(
             function
             | :? real as v -> v |> exprv |> Scalar
             | :? int as v -> v |> real |> exprv |> Scalar
@@ -355,7 +343,7 @@ module Scalar =
             | :? Scalar<real> as t -> t
             | :? Expr<real> as e -> e |> Scalar
             | x -> failwithf "Cannot convert %A of type %A to real Scalar." x (x.GetType())
-        t |> Array.map m
+        )
 
     let fail_if_not_var(t:Scalar<_>) =
         match t.Expr with

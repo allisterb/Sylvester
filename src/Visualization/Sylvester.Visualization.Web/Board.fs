@@ -64,6 +64,9 @@ module Board =
     let setAttrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = withAttrs<'a> ge attrs |>  ignore
 
     [<JS>]
+    let withAttr<'a when 'a :> GeometryElement> (ge:'a) x y = withAttrs ge {|x = y|}
+
+    [<JS>]
     let toString (o:obj) = o.ToString()
 
     [<Emit("Math.random()")>]
@@ -88,6 +91,12 @@ module Board =
     let withFillColor (n:string) (ge:#GeometryElement) = withAttrs ge {|fillColor = n|}
 
     [<JS>]
+    let withStrokeWidth (w:float) (ge:#GeometryElement) = withAttrs ge {|strokeWidth = w|}
+
+    [<JS>]
+    let withSmallDash (l:#Line) = withAttrs l {|dash=2|}
+
+    [<JS>]
     let withVal (s:Slider) (v:float) = s.setValue(v)
 
     [<JS>]
@@ -107,6 +116,12 @@ module Board =
 
     [<JS>]
     let border n (p:Polygon) = p.borders.[n]
+
+    [<JS>]
+    let xaxis (b:Board) = b.defaultAxes.x
+
+    [<JS>]
+    let yaxis (b:Board) = b.defaultAxes.y
 
     [<Emit("{3}.create('axis', [{0}, {1}], {2})")>]
     let axis (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Axis>
@@ -139,6 +154,10 @@ module color =
     let pink = "pink"
 
     let orange = "orange"
+
+    let gray = "gray"
+
+    let white = "white"
 
 [<JS; RequireQualifiedAccess>]
 module rsum = 

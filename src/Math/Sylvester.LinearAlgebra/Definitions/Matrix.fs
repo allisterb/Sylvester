@@ -11,7 +11,7 @@ open Dimension
 open Vector
 
 [<StructuredFormatDisplay("{Display}")>]
-type Matrix<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
+type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
     internal(e: Expr<'t> array array) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand_as<'t>)
@@ -68,7 +68,7 @@ type Matrix<'t when 't: equality and 't: comparison and 't:> ValueType and 't : 
     static member create([<ParamArray>] data: 't array array) = Matrix<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
-type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
+type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal (e: Expr<'t> array array) =
     inherit Matrix<'t>(e)
     let dim0 = number<'dim0>

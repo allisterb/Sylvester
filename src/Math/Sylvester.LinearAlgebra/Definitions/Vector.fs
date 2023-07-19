@@ -11,7 +11,7 @@ open Arithmetic
 open Dimension
 
 [<StructuredFormatDisplay("{Display}")>]
-type Vector<'t when 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
+type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
     internal(e: Expr<'t> array) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand_as<'t>
@@ -80,7 +80,7 @@ type Vector<'t when 't: equality and 't: comparison and 't:> ValueType and 't : 
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
-type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
+type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal (e: Expr<'t> array) =
     inherit Vector<'t>(e)
     let dim0 = number<'dim0>
@@ -136,6 +136,7 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't: comparison a
         l.Expr |> Array.map(call_neg >> expand_as<'t> >> simplifye) |> Vector<'n, 't>
 
 type Vec<'dim0 when 'dim0 :> Number> = Vector<'dim0, real>
+type VecC<'dim0 when 'dim0 :> Number> = Vector<'dim0, complex>
 type VecQ<'dim0 when 'dim0 :> Number> = Vector<'dim0, rat>
 type VecZ<'dim0 when 'dim0 :> Number> = Vector<'dim0, int>
 
@@ -164,3 +165,12 @@ module Vector =
         let p = l * l in p |> simplify |> call_sqrt |> expand_as<'t>  |> Scalar
 
     let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar
+
+[<AutoOpen>]
+module Vectors =
+    
+    open Vector
+    
+    let vec2 x y = vec ``2`` [x; y]
+    
+    let vec3 x y z = vec ``3`` [x; y; z] 
