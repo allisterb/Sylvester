@@ -12,7 +12,7 @@ open Dimension
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
-    internal(e: Expr<'t> array) = 
+    internal(e: Expr<'t> array, h:TermHistory option) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand_as<'t>
     let exprmn = Array.map MathNetExpr.fromQuotation expr
@@ -62,6 +62,9 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
                 |> sprintf "%s"
             "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
 
+    interface IHistory with
+        member val History = h
+
     new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector(expr)
 
     new([<ParamArray>] v:Term<'t> array) = Vector(sexprs v)
@@ -81,8 +84,8 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
-    internal (e: Expr<'t> array) =
-    inherit Vector<'t>(e)
+    internal (e: Expr<'t> array, h:TermHistory option) =
+    inherit Vector<'t>(e, h)
     let dim0 = number<'dim0>
     do if e.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of %i." e.Length dim0.IntVal
     
@@ -114,13 +117,13 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     static member One:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (one_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
 
     static member (+) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
-        let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'dim0, 't>(e)
+        let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'dim0, 't>(e, BinaryOp("+", l, r))
     
     static member (-) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
-        let e = defaultLinearAlgebraSymbolicOps.Subtract l.Expr r.Expr in Vector<'dim0, 't>(e)
+        let e = defaultLinearAlgebraSymbolicOps.Subtract l.Expr r.Expr in Vector<'dim0, 't>(e, BinaryOp("-", l, r))
 
     static member (*) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
-        let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Scalar<'t> e
+        let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Scalar<'t>(e, BinaryOp("-", l, r))
 
     static member (*) (l: Term<'t>, r: Vector<'dim0, 't>) = 
         r.Expr |> Array.map(fun e -> call_mul (l.Expr) e |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
@@ -174,3 +177,9 @@ module Vectors =
     let vec2 x y = vec ``2`` [x; y]
     
     let vec3 x y z = vec ``3`` [x; y; z] 
+
+    let vec4 x y z a = vec ``4`` [x; y; z; a]
+
+    let vec5 x y z a b = vec ``5`` [x; y; z; a; b]
+    
+    let vec6 x y z a b c = vec ``6`` [x; y; z; a; b; c]

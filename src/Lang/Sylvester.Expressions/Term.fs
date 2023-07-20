@@ -6,11 +6,13 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 
 [<AbstractClass; StructuredFormatDisplay("{Display}")>]
-type Term<'t when 't: equality> (expr:Expr<'t>) =
+type Term<'t when 't: equality> (expr:Expr<'t>, ?h:TermHistory) =
     member val Expr = expr
 
     member val Val = match expr with | Patterns.Value(v, _) -> v :?> 't |> Some | _ -> None
     
+    member val History = h
+
     abstract member Display: string
     
     interface IEquatable<Term<'t>> with
@@ -41,8 +43,8 @@ and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) =
     
 and IndexVar(n: string) = inherit TermVar<int>(n)
 
-and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) =
-    inherit Term<'t>(expr)
+and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>, ?h:TermHistory) =
+    inherit Term<'t>(expr, ?h=h)
     
     override x.Display = sprinte expr
 
@@ -268,6 +270,20 @@ and Prop (expr:Expr<bool>) =
 and PropVar(n: string) =
     inherit Prop(Expr.Var(Var(n, typeof<bool>)) |> expand_as<bool>)
     
+and TermHistory =
+| UnaryOp of string * obj
+| BinaryOp of string * obj * obj
+
+and IHistory = 
+    abstract member History:TermHistory option
+
+[<RequireQualifiedAccess>]
+module NumericLiteralR = 
+  let FromZero() = 0.0 |> real |> exprv |> Scalar
+  let FromOne() = 1.0 |> real |> exprv |> Scalar
+  let FromInt32 n = n |> real |> exprv |> Scalar
+  let FromInt64 n = n |> real |> exprv |> Scalar
+  
 type realexpr = Scalar<real>
 
 type ratexpr = Scalar<rat>
@@ -286,13 +302,6 @@ type natvar = ScalarVar<nat>
 
 type boolvar = PropVar
 
-[<RequireQualifiedAccess>]
-module NumericLiteralR = 
-  let FromZero() = 0.0 |> real |> exprv |> Scalar
-  let FromOne() = 1.0 |> real |> exprv |> Scalar
-  let FromInt32 n = n |> real |> exprv |> Scalar
-  let FromInt64 n = n |> real |> exprv |> Scalar
-  
 [<AutoOpen>]
 module Scalar =
     let (|ScalarVar|_|) : obj -> ScalarVar<_> option =

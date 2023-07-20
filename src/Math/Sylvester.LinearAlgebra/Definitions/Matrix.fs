@@ -236,5 +236,12 @@ module Matrix =
         | 2 -> l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
         | _ -> failwith "Not supported" 
 
+[<AutoOpen>]
+module Matrices =
+    
+    open Matrix
+
+    let mat21 e0 e1 e2 = mat ``2`` ``1`` [e0; e1; e2] 
+
 
     

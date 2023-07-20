@@ -18,10 +18,11 @@ let p, q = realvar "p", realvar "q"
 
 let P = vec3 p.[0] p.[1] p.[2]
 
-let Q = vec3 q.[0] q.[1] q.[2]
+let Q = vec3 q.[0] 4 5
 
-P * Q
+P + Q
 
+sprinte Q.[2].Expr
 //sprintel [(p + q == 5.).Expr; (p - q == 1.).Expr]
 //LinearEquations.solve_for p [p + q == 5.]
 
