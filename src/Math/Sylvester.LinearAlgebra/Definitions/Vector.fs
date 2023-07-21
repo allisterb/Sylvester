@@ -12,7 +12,7 @@ open Dimension
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
-    internal(e: Expr<'t> array, h:TermHistory option) = 
+    internal(e: Expr<'t> array, ?h:TermHistory) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
     let expr = e  |> Array.map expand_as<'t>
     let exprmn = Array.map MathNetExpr.fromQuotation expr
@@ -62,6 +62,10 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
                 |> sprintf "%s"
             "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
 
+    interface IWebVisualization with
+        member x.Draw(attrs:obj) =
+            <@ 4 @> |> draw_board
+
     interface IHistory with
         member val History = h
 
@@ -84,7 +88,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
-    internal (e: Expr<'t> array, h:TermHistory option) =
+    internal (e: Expr<'t> array, ?h:TermHistory) =
     inherit Vector<'t>(e, h)
     let dim0 = number<'dim0>
     do if e.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of %i." e.Length dim0.IntVal
@@ -103,7 +107,7 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector<'dim0, 't>(expr)
     
-    new([<ParamArray>] v:obj array) = let expr = v |> scalar_terms<'t> in Vector<'dim0, 't>(expr)
+    
 
     new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
     
