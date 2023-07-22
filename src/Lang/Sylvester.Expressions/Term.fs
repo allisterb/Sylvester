@@ -230,7 +230,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     //static member (==) (l:Scalar<'t>, r:Scalar<'t>) = <@ %l.Expr = %r.Expr @> |> Scalar<bool>
 
-and ScalarVar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>>(n: string) = 
+and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(n: string) = 
     inherit Scalar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
     override x.Display = sprintf "{%A}" n
     member x.Name = n
@@ -238,7 +238,7 @@ and ScalarVar<'t when 't: equality and 't: comparison and 't :> ValueType and 't
     member x.Item(i:IndexVar) = ScalarIndexedVar<'t>(x, i)
     member x.Item(i:int) = ScalarVar<'t>(x.Name + i.ToString())
 
-and ScalarIndexedVar<'t when 't: equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, index:IndexVar) =
+and ScalarIndexedVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, index:IndexVar) =
     inherit ScalarVar<'t>(var.Name + "_" + index.Name)
     member x.Item(i:int) = ScalarVar<'t>(x.Name.Replace("_" + index.Name, i.ToString()))
 
@@ -292,6 +292,8 @@ type intexpr = Scalar<int>
 
 type natexpr = Scalar<nat>
 
+type complexexpr = Scalar<complex>
+
 type realvar = ScalarVar<real>
 
 type ratvar = ScalarVar<rat>
@@ -299,6 +301,8 @@ type ratvar = ScalarVar<rat>
 type intvar = ScalarVar<int>
 
 type natvar = ScalarVar<nat>
+
+type complexvar = ScalarVar<complex>
 
 type boolvar = PropVar
 

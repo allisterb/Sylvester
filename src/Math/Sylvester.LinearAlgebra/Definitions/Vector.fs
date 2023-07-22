@@ -77,8 +77,6 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector(expr)
     
-    new([<ParamArray>] v:obj array) = let expr = v |> scalar_terms<'t> in Vector(expr)
-
     new(d:'t list) = Vector(List.toArray d)
     
     static member (+) (l: Vector<'t>, r: Vector<'t>) = 
@@ -89,7 +87,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 [<StructuredFormatDisplay("{Display}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal (e: Expr<'t> array, ?h:TermHistory) =
-    inherit Vector<'t>(e, h)
+    inherit Vector<'t>(e, ?h=h)
     let dim0 = number<'dim0>
     do if e.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of %i." e.Length dim0.IntVal
     
@@ -107,8 +105,6 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector<'dim0, 't>(expr)
     
-    
-
     new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
     
     interface IVector<'dim0> with member val Dim0 = dim0
@@ -154,9 +150,9 @@ module Vector =
 
     let vec (dim:'n) (data:obj list) = data |> List.toArray |> realterms |> Vec<'n> 
     
-    let vecz (dim:'n) (data:Term<int> list) = Vector<'n, int> data
+    //let vecz (dim:'n) (data:Term<int> list) = Vector<'n, int> data
     
-    let vecq  (dim:'n) (data:Term<rat> list) = Vector<'n, rat> data
+    //let vecq  (dim:'n) (data:Term<rat> list) = Vector<'n, rat> data
 
     let vvars<'n, 't when 'n :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> s = vars<'t> s (number<'n>.IntVal) |> Vector<'n, 't> 
     

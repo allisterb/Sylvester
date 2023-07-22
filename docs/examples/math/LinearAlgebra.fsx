@@ -22,11 +22,11 @@ let Q = vec3 q.[0] 4 5
 
 P + Q
 
-sprinte Q.[2].Expr
+//sprinte Q.[2].Expr
 //sprintel [(p + q == 5.).Expr; (p - q == 1.).Expr]
 //LinearEquations.solve_for p [p + q == 5.]
 
 
 let J = mat ``2`` ``2``  [p.[0]; p.[1]; p.[2]; p.[1]]
 
-J * J
+J + J
