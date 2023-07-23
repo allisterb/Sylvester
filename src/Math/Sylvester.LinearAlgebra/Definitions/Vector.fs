@@ -69,15 +69,9 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     interface IHistory with
         member val History = h
 
-    new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector(expr)
-
-    new([<ParamArray>] v:Term<'t> array) = Vector(sexprs v)
-
-    new(v:Term<'t> list) = Vector(v |> List.toArray)
+    new([<ParamArray>] v:Scalar<'t> array) = Vector(sexprs v)
 
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector(expr)
-    
-    new(d:'t list) = Vector(List.toArray d)
     
     static member (+) (l: Vector<'t>, r: Vector<'t>) = 
         let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'t>(e)
@@ -96,16 +90,10 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     member val Display = base.Display
     
     member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand_as<'t>
-    
-    new(v: Expr<'t list>) = let expr = v |> expand_list' |> List.toArray in Vector<'dim0, 't>(expr)
-
+        
     new([<ParamArray>] v:Scalar<'t> array) = let expr = v |> Array.map sexpr in Vector<'dim0, 't>(expr)
 
-    new(v:Scalar<'t> list) = Vector<'dim0, 't>(v |> List.toArray)
-    
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector<'dim0, 't>(expr)
-    
-    new(d:'t list) = Vector<'dim0, 't>(List.toArray d)
     
     interface IVector<'dim0> with member val Dim0 = dim0
 

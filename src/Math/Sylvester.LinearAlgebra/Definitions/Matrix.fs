@@ -12,7 +12,7 @@ open Vector
 
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
-    internal(e: Expr<'t> array array) = 
+    internal(e: Expr<'t> array array, ?h:TermHistory) = 
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand_as<'t>)
     let exprmn = Array.map (Array.map MathNetExpr.fromQuotation) expr
@@ -59,18 +59,16 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     
-    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'t>(expr)
-    
-    new(d:'t list list) = Matrix<'t>((List.map(List.toArray) >> List.toArray) d)
-    
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'t> d'
     
+    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'t>(expr)
+
     static member create([<ParamArray>] data: 't array array) = Matrix<'t>(data)
 
 [<StructuredFormatDisplay("{Display}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
-    internal (e: Expr<'t> array array) =
-    inherit Matrix<'t>(e)
+    internal (e: Expr<'t> array array, ?h:TermHistory) =
+    inherit Matrix<'t>(e,?h=h)
     let dim0 = number<'dim0>
     let dim1 = number<'dim1>
     do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
@@ -94,19 +92,14 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'dim0, 'dim1, 't> d'
     
-    new(d: Expr<'t> list) = Matrix<'dim0, 'dim1, 't>(d |> List.toArray |> Array.chunkBySize (number<'dim0>.IntVal))
-
     new(d: Scalar<'t> []) = Matrix<'dim0, 'dim1, 't>(d |> Array.map sexpr |> Array.chunkBySize (number<'dim0>.IntVal)) 
 
-    new(d: Scalar<'t> list) = Matrix<'dim0, 'dim1, 't>(d |> List.map sexpr) 
-
-    new(d:'t list) = Matrix<'dim0, 'dim1, 't>(d |> List.toArray |> Array.map exprv |> Array.chunkBySize (number<'dim0>.IntVal))
-    
     new(rows: Vector<'dim1, 't> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'dim0, 'dim1, 't>(e)
     
     new (v:Expr<'t>) = 
         let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) v) in 
             Matrix<'dim0, 'dim1, 't> e
+    
     new (_:'dim0, _:'dim1, data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
     
     static member ofRows (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)

@@ -416,7 +416,7 @@ module FsExpr =
           let expanded = 
             match expr with
             | WithValue(_, _, e) -> rexpand vars e
-            | ValueWithName(o,t,_) -> Expr.Value(o, t)
+            //| ValueWithName(o,t,_) -> Expr.Value(o, t)
             | SpecificCall <@@ List.toArray @@>(None,t::[], l::[]) -> 
                 match l with
                 | List el -> rexpand vars (Expr.NewArray(t, el))
