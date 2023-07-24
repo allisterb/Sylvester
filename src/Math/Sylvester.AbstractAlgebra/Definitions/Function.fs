@@ -27,10 +27,13 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
     member x.Vars = get_vars x.Body |> List.map Expr.Var
     member x.Arg = param_var x.MapExpr
     member x.TermMap = term
-    member x.Item (arg:'c) = arg |> x.AMap |> x.Map |> exprv |> x.TermMap
+    member x.Item (value:'c) = 
+        let v = subst_var_value amaparg (exprv value) amapbody in
+        subst_var_value x.Arg v x.Body |> expand_as<'b> |> term
+        //arg |> x.AMap |> x.Map |> exprv |> x.TermMap
     member x.Item (value:Term<'c>) =
         let v = subst_var_value amaparg value.Expr amapbody in
-        subst_var_value x.Arg v x.Body |> expand_as<'d> 
+        subst_var_value x.Arg v x.Body |> expand_as<'b> |> term
     static member (|>>) (arg: 'c, f:Function<_,_,'c,_>) = f.[arg]
     interface IRelation<'a, 'b, 'c> with
         member x.Domain = x.Domain

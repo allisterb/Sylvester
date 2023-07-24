@@ -43,6 +43,9 @@ and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) =
     
 and IndexVar(n: string) = inherit TermVar<int>(n)
 
+and [<AbstractClass>] TermConst<'t when 't: equality>(n: string) = 
+    inherit Term<'t>(Expr.ValueWithName(Unchecked.defaultof<'t>, n) |> expand_as<'t>)
+
 and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>, ?h:TermHistory) =
     inherit Term<'t>(expr, ?h=h)
     
@@ -232,7 +235,6 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
 and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(n: string) = 
     inherit Scalar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
-    override x.Display = sprintf "{%A}" n
     member x.Name = n
     member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
     member x.Item(i:IndexVar) = ScalarIndexedVar<'t>(x, i)
@@ -241,6 +243,11 @@ and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>
 and ScalarIndexedVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, index:IndexVar) =
     inherit ScalarVar<'t>(var.Name + "_" + index.Name)
     member x.Item(i:int) = ScalarVar<'t>(x.Name.Replace("_" + index.Name, i.ToString()))
+
+and ScalarConst<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(n: string, ?v:'t) = 
+    inherit Scalar<'t>(Expr.ValueWithName((defaultArg v Unchecked.defaultof<'t>), n) |> expand_as<'t>)
+    member val Name = n
+    member val Val = defaultArg v Unchecked.defaultof<'t>
 
 and Prop (expr:Expr<bool>) =
     inherit Term<bool>(expr)
@@ -270,6 +277,11 @@ and Prop (expr:Expr<bool>) =
 and PropVar(n: string) =
     inherit Prop(Expr.Var(Var(n, typeof<bool>)) |> expand_as<bool>)
     
+and PropConst(n: string, ?v:bool) = 
+    inherit Prop(Expr.ValueWithName(v, n) |> expand_as<bool>)
+    member val Name = n
+    member val Val = defaultArg v false
+
 and TermHistory =
 | UnaryOp of string * obj
 | BinaryOp of string * obj * obj
@@ -305,6 +317,16 @@ type natvar = ScalarVar<nat>
 type complexvar = ScalarVar<complex>
 
 type boolvar = PropVar
+
+type realconst = ScalarConst<real>
+
+type ratconst = ScalarConst<rat>
+
+type intconst = ScalarConst<int>
+
+type natconst = ScalarConst<nat>
+
+type complexconst = ScalarConst<complex>
 
 [<AutoOpen>]
 module Scalar =

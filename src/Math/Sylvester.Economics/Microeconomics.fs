@@ -2,12 +2,11 @@
 
 open FSharp.Quotations
 
-type EconomicFunction(map:MapExpr<real, real>) = 
-    inherit RealFunction(map)
+type EconomicFunction(e:Scalar<real>) = 
+    inherit RealFunction(e)
     interface ISymbolic<EconomicFunction, real> with
         member a.Expr = a.Body
-        member a.Mutate(b:Expr<real>) = 
-            let mmap = expand_as<real->real> (recombine_func (get_vars a.Body) b) in EconomicFunction mmap 
+        member a.Mutate(b:Expr<real>) = EconomicFunction <| Scalar<real> b 
             
 [<AutoOpen>]
 module MicroEconomics =

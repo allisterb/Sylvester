@@ -8,18 +8,21 @@ open FSharp.Quotations
 
 let x = realvar "x"
 let y = realvar "y"
+let A = realconst "A"
 
-let a = Unchecked.defaultof<real>
+//let f = realfun <@fun x -> (2.*x**3. + a) @>
 
-let f = realfun <@fun x -> (2.*x**3. + a) @>
+//fexpr f
 
-fexpr f
+let b = x + A + 2
+let v = List.head <| get_vars b.Expr
+let ff = recombine_func_as<real->real> [v] (b.Expr)
+ff
 
-let vv = Expr.ValueWithName(0., "d") |> expand_as<real>
-vv
-let vvv = Scalar<real> vv
-let ff = x + 2 - vvv
-get_vars ff.Expr
+
+let f = realfun (x + A + 2)
+
+f.[0.]
 //f.Body
 //get_vars f.Body
 ///recombine_func f.Vars (Ops.Diff 1 x.Expr f.Body)

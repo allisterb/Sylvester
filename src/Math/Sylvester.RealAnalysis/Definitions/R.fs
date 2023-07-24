@@ -12,7 +12,7 @@ type R<'n when 'n :>Number>() =
 module R =
     let R<'n when 'n :> Number> =  R<'n>()
     
-    let sum x l u expr = Ops.Sum x (int_expr l) (int_expr u) expr |> Scalar
+    let sum x l u expr = Ops.Sum x (intexpr l) (intexpr u) expr |> Scalar
 
     let open_interval left right = Field.R |>| <@ fun x -> x > left && x < right @>
     
@@ -46,6 +46,6 @@ module R =
     let integrate_over (x:Scalar<real>) l r (s:ISymbolic<_, real>) = 
         fail_if_not_var x
         fail_if_not_has_var (get_var x.Expr) s.Expr
-        s.Mutate(Ops.DefiniteIntegral x.Expr (real_expr l) (real_expr r) s.Expr)
+        s.Mutate(Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr)
 
     let integrate_over_R (x:Scalar<real>) f = integrate_over x minf'<real> inf'<real> f
