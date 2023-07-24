@@ -232,6 +232,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
     static member Pow (l : nat, r : Scalar<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> Scalar<'t>
 
     //static member (==) (l:Scalar<'t>, r:Scalar<'t>) = <@ %l.Expr = %r.Expr @> |> Scalar<bool>
+    static member (==) (l:ScalarVar<'t>, r:Scalar<'t>) = ScalarAssignment<'t>(l, r)
 
 and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(n: string) = 
     inherit Scalar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
@@ -248,6 +249,16 @@ and ScalarConst<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t
     inherit Scalar<'t>(Expr.ValueWithName((defaultArg v Unchecked.defaultof<'t>), n) |> expand_as<'t>)
     member val Name = n
     member val Val = defaultArg v Unchecked.defaultof<'t>
+
+and ScalarEquation<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(lhs:Scalar<'t>, rhs:Scalar<'t>) =
+    inherit Prop(<@ %lhs.Expr = %rhs.Expr@>)
+    member val Lhs = lhs
+    member val Rhs = rhs
+
+and ScalarAssignment<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(arg:ScalarVar<'t>, body:Scalar<'t>) =
+    inherit ScalarEquation<'t>(arg, body)
+    member val Arg = arg
+    member val Body = body
 
 and Prop (expr:Expr<bool>) =
     inherit Term<bool>(expr)

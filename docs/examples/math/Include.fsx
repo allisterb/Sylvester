@@ -19,6 +19,7 @@
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.Probability\\bin\\Debug\\netstandard2.0\\Sylvester.Probability.dll"
 #r ".\\..\\..\\..\\src\\Math\\Sylvester.Statistics\\bin\\Debug\\netstandard2.0\\Sylvester.Statistics.dll"
+#r ".\\..\\..\\..\\src\\Math\\Sylvester.Economics\\bin\\Debug\\netstandard2.0\\Sylvester.Economics.dll"
 
 
 #r "C:\\Projects\\Sylvester.git\\src\\Visualization\\Sylvester.Visualization.Web\\bin\\Debug\\netstandard2.0\\Sylvester.Visualization.Web.dll"

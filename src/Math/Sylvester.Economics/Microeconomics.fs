@@ -2,11 +2,12 @@
 
 open FSharp.Quotations
 
-type EconomicFunction(e:Scalar<real>) = 
-    inherit RealFunction(e)
+type EconomicFunction(a:ScalarAssignment<real>) = 
+    inherit RealFunction(a.Body)
+    member val Assignment = a
     interface ISymbolic<EconomicFunction, real> with
         member a.Expr = a.Body
-        member a.Mutate(b:Expr<real>) = EconomicFunction <| Scalar<real> b 
+        member a.Mutate(b:Expr<real>) = EconomicFunction <| ScalarAssignment<real>(a.Assignment.Arg, Scalar<real> b) 
             
 [<AutoOpen>]
 module MicroEconomics =
