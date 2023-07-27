@@ -42,18 +42,30 @@ module Algebra =
         | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
 
+    let solve_for_n (v:Expr<'t> list) (system:Expr<bool> list) =
+        sprintf "solve(%s, %s);" (system |> sprintel) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> v.ToString()) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
+        |> send 
+        |> Result.mapError(fun e -> e.Message)
+        |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
+        |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_varsl system))) 
+        |> function
+        | Ok s -> s
+        | Error "" -> []
+        | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+
+
     let solve_as_real_eqn_for (v:Expr<real>) (expr:Expr<real>) = solve_for v [ <@ %expr = 0.0 @> ]
 
     let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool> list) = system |> solve_for v |> List.head |> as_func_of x
 
-    let solve_for2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool list>) =
-        sprintf "solve(%s, [%s, %s]);" (sprint system) (sprint x) (sprint y) 
+    let solve_for2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool> list) =
+        sprintf "solve(%s, [%s, %s]);" (sprintel system) (sprint x) (sprint y) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun e -> if e = "" then Error "" else Ok e)
         |> Result.map (fun e -> e.TrimStart('[').TrimEnd(']').Split(',') |> Array.map(fun v -> v.Split('=').[1])|> Array.reduce(fun r1 r2 -> r1 + "," + r2))
         |> Result.bind(fun r -> "[" + r + "]" |> MathNet.Symbolics.Infix.parseList)
-        |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_vars system))) 
+        |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (system |> List.collect get_vars))) 
         |> function
         | Ok s -> s
         | Error "" -> []

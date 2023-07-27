@@ -231,11 +231,11 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
     
     static member Pow (l : nat, r : Scalar<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (==) (l:Scalar<'t>, r:Scalar<'t>) = ScalarRelation<'t>(l, r, <@ (=) @>)
+    static member (==) (l:Scalar<'t>, r:Scalar<'t>) = ScalarEquation<'t>(l, r)
 
-    static member (==) (l:Scalar<'t>, r:'t) = ScalarRelation<'t>(l, r |> exprv |> Scalar<'t>, <@ (=) @>)
+    static member (==) (l:Scalar<'t>, r:'t) = ScalarEquation<'t>(l, r |> exprv |> Scalar<'t>)
 
-    static member (==) (l:'t, r:Scalar<'t>) = ScalarRelation<'t>(l |> exprv |> Scalar<'t>, r, <@ (=) @>)
+    static member (==) (l:'t, r:Scalar<'t>) = ScalarEquation<'t>(l |> exprv |> Scalar<'t>, r)
 
     static member (==) (l:ScalarVar<'t>, r:Scalar<'t>) = ScalarVarMap<'t>(l, r)
 
@@ -255,7 +255,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (+>) (l:Scalar<real>, r:real)  = ScalarRelation<real>(l, r |> exprv |> Scalar<real>, <@ (>) @>)
 
-     static member (+>) (l:real, r:Scalar<real>)  = ScalarRelation<real>(l |> exprv |> Scalar<real>, r, <@ (>) @>)
+    static member (+>) (l:real, r:Scalar<real>)  = ScalarRelation<real>(l |> exprv |> Scalar<real>, r, <@ (>) @>)
 
     static member (+>) (l:ScalarVar<real>, r:Scalar<real>)  = ScalarVarRelation<real>(l, r, <@ (>) @>)
     
