@@ -11,32 +11,31 @@ type SymbolAttribute(symbol:string) =
 
 [<RequireQualifiedAccess>]
 module LatinVars =
-    let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
-    let A<'t> = var'<'t> "A"
-    let a<'t> = var'<'t> "a"
-    let B<'t> = var'<'t> "B"
-    let b<'t> = var'<'t> "b"
-    let C<'t> = var'<'t> "C"
-    let c<'t> = var'<'t> "c"
-    let D<'t> = var'<'t> "D"
-    let d<'t> = var'<'t> "d"
-    let E<'t> = var'<'t> "E"
-    let e<'t> = var'<'t> "e"
-    let F<'t> = var'<'t> "F"
-    let f<'t> = var'<'t> "f"
-    let N<'t> = var'<'t> "N"
-    let n<'t> = var'<'t> "n"
-    let X<'t> = var'<'t> "X"
-    let x<'t> = var'<'t> "x"
-    let Y<'t> = var'<'t> "Y"
-    let y<'t> = var'<'t> "y"
+    let A = "A"
+    let a = "a"
+    let B = "B"
+    let b = "b"
+    let C =  "C"
+    let c =  "c"
+    let D =  "D"
+    let d =  "d"
+    let E =  "E"
+    let e =  "e"
+    let F =  "F"
+    let f =  "f"
+    let N =  "N"
+    let n =  "n"
+    let X =  "X"
+    let x =  "x"
+    let Y =  "Y"
+    let y =  "y"
+    let Z =  "Z"
+    let z =  "z"
 
-[<RequireQualifiedAccess>]
-module GreekVars =
-    let private var'<'t> n = let v = Expr.Var(Var(n, typeof<'t>)) in <@ %%v:'t @>
-        
-    let epsilon<'t> = var'<'t> "epsilon"
-    let theta<'t> = var'<'t> "theta"
+[<AutoOpen>]
+module GreekVars =        
+    let epsilon = "epsilon"
+    let theta = "theta"
     
 [<RequireQualifiedAccess>]
 module LatinDiffs =

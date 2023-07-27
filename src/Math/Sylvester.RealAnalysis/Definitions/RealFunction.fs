@@ -10,7 +10,7 @@ type RealFunction(f) =
     inherit RealFunction<real>(Field.R, Field.R, f)
     new (e:Scalar<real>) =
         let v = get_vars e.Expr
-        do if v.Length <> 1 then failwith ""
+        do if v.Length <> 1 then failwith "The number of independent variables in this function is not 1."
         let f = recombine_func_as<real->real> v e.Expr in
         RealFunction f
  
