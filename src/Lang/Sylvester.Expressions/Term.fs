@@ -41,7 +41,17 @@ and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) =
     member x.Name = n
     member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
     
-and IndexVar(n: string) = inherit TermVar<int>(n)
+and IndexVar(expr: Expr<int>) = 
+    inherit Term<int>(expr)
+    member val Name = src expr
+    new (n: string) = IndexVar(Expr.Var(Var(n, typeof<int>)) |> expand_as<int>)
+    override x.Display = src expr
+    static member (+) (l:IndexVar, r:int) = let v = exprv r in IndexVar(<@ %l.Expr + %v @>)
+    static member (+) (l:int, r:IndexVar) = let v = exprv l in IndexVar(<@ %v + %r.Expr @>)
+    static member (+) (l:IndexVar, r:IndexVar) = IndexVar(<@ %l.Expr + %r.Expr @>)
+    static member (-) (l:IndexVar, r:int) = let v = exprv r in IndexVar(<@ %l.Expr - %v @>)
+    static member (-) (l:int, r:IndexVar) = let v = exprv l in IndexVar(<@ %v - %r.Expr @>)
+    static member (-) (l:IndexVar, r:IndexVar) = IndexVar(<@ %l.Expr - %r.Expr @>)
 
 and [<AbstractClass>] TermConst<'t when 't: equality>(n: string) = 
     inherit Term<'t>(Expr.ValueWithName(Unchecked.defaultof<'t>, n) |> expand_as<'t>)
@@ -365,6 +375,8 @@ type complexvar = ScalarVar<complex>
 
 type boolvar = PropVar
 
+type indexvar = IndexVar
+
 type realconst = ScalarConst<real>
 
 type ratconst = ScalarConst<rat>
@@ -434,8 +446,6 @@ module Scalar =
 
     let scalar_var<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> n = ScalarVar<'t> n
     
-    let index_var n = IndexVar n
-
 [<AutoOpen>]
 module Prop =
     let prop e = Prop e

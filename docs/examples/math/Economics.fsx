@@ -26,6 +26,12 @@ let p = ppf [
     P + Q +> 4.
     P == 7.
 ]
+
+let y = realvar "y"
+
+let i = indexvar "i"
+
+y.[i + 1] == A * y.[i] + 2
 //sys |> List.map sexpr
 
 
