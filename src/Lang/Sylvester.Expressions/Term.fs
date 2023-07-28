@@ -273,17 +273,18 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     new (v: 't) = Scalar<'t>(exprv v)
 
-and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(n: string) = 
-    inherit Scalar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
-    member x.Name = n
+and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) = 
+    inherit Scalar<'t>(expr)
+    new(n:string) = ScalarVar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
+    member x.Name = src expr
     member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
     member x.Item(i:IndexVar) = ScalarIndexedVar<'t>(x, i)
     member x.Item(i:int) = ScalarVar<'t>(x.Name + i.ToString())
+    member internal x.Item(e:Expr<int>) = Unchecked.defaultof<'t>
 
 and ScalarIndexedVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, index:IndexVar) =
-    inherit ScalarVar<'t>(var.Name + "_" + index.Name)
-    member x.Item(i:int) = ScalarVar<'t>(x.Name.Replace("_" + index.Name, i.ToString()))
-
+    inherit ScalarVar<'t>(<@ var.[index.Expr] @>)
+    
 and ScalarConst<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(n: string, ?v:'t) = 
     inherit Scalar<'t>(Expr.ValueWithName((defaultArg v Unchecked.defaultof<'t>), n) |> expand_as<'t>)
     member val Name = n
@@ -444,7 +445,7 @@ module Scalar =
         | Var _ -> ()
         | _ -> failwithf "The term %A is not a variable." t
 
-    let scalar_var<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> n = ScalarVar<'t> n
+    let scalarvar<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (n:string) = ScalarVar<'t> n
     
 [<AutoOpen>]
 module Prop =

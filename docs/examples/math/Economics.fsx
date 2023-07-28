@@ -31,7 +31,7 @@ let y = realvar "y"
 
 let i = indexvar "i"
 
-y.[i + 1] == A * y.[i] + 2
+y.[i + 1].Expr// == A * y.[i] + 2
 //sys |> List.map sexpr
 
 
