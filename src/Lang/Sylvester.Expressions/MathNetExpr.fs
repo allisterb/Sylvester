@@ -40,7 +40,8 @@ module MathNetExpr =
         | Call(None, Op "ToInt", e::[]) -> fromQuotation e
         | Call(None, Op "FromZero", _) when q.Type = typeof<Rational> -> Number(BigRational.Zero)
         | Call(None, Op "FromOne", _) when q.Type = typeof<Rational> -> Number(BigRational.One)
-        
+        | Call(None, Op "Identity", e::[]) -> fromQuotation e
+
         | Call(None, Op "Sin", v::[]) -> Expression.Sin(fromQuotation v)
         | Call(None, Op "Cos", v::[]) -> Expression.Cos(fromQuotation v)
         | Call(None, Op "Tan", v::[]) -> Expression.Tan(fromQuotation v)
@@ -61,7 +62,7 @@ module MathNetExpr =
             (Expression.Factorial n') / (Expression.Factorial(r') * (Expression.Factorial(n' - r')))
         
         | PropertyGet(None, Prop "pi", []) -> Expression.Pi
-         | PropertyGet(None, Prop "e", []) -> Expression.E
+        | PropertyGet(None, Prop "e", []) -> Expression.E
 
         | ValueWithName(_, _, n) -> Identifier (Symbol n) 
         | Var x -> Identifier (Symbol x.Name)

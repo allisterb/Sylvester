@@ -68,7 +68,7 @@ do
 
     let print_expr expr = 
         try
-            let html = "$" + latex' expr + "$" in
+            let html = "$" + latexe expr + "$" in
             html
         with
         | _ -> expr.ToString()

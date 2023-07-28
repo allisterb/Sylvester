@@ -6,20 +6,26 @@ open MicroEconomics
 open LinearEquations
 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
-let P, Q = realvar "P", realvar "Q"
+let P, Q, J = realvar "P", realvar "Q", realvar "J"
 let A = realconst "A"
 //P + Q == 5. |> sexpr
-let Qs = demand (P == 2 * Q + 4 + A)
+let Qs = demand (P .= 2 * Q + 4 + A)
 
 //Qs.[0.]
 
  
 let sys = [
-    P + Q == 4.
-    P - Q == 0.
+    P + 2 * Q == 4.
+    P - Q == 12.
+    J == 6.
 ]
 
 solve sys
+
+let p = ppf [
+    P + Q +> 4.
+    P == 7.
+]
 //sys |> List.map sexpr
 
 

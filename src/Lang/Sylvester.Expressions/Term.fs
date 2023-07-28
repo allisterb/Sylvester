@@ -63,7 +63,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
            member a.Mutate(e:Expr<'t>) = Scalar e
            
     interface IHtmlDisplay with
-        member x.Html() = latex' x.Expr
+        member x.Html() = latexe x.Expr
 
     static member Zero = typeof<'t> |> zero_val |> expand_as<'t> |> Scalar<'t>
 
@@ -237,9 +237,9 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (==) (l:'t, r:Scalar<'t>) = ScalarEquation<'t>(l |> exprv |> Scalar<'t>, r)
 
-    static member (==) (l:ScalarVar<'t>, r:Scalar<'t>) = ScalarVarMap<'t>(l, r)
+    static member (.=) (l:ScalarVar<'t>, r:Scalar<'t>) = ScalarVarMap<'t>(l, r)
 
-    static member (==) (l:ScalarVar<'t>, r:'t) = ScalarVarMap<'t>(l, r |> exprv |> Scalar<'t>)
+    static member (.=) (l:ScalarVar<'t>, r:'t) = ScalarVarMap<'t>(l, r |> exprv |> Scalar<'t>)
     
     static member (<+) (l:Scalar<real>, r:Scalar<real>)  = ScalarRelation<real>(l, r, <@ (<) @>)
 

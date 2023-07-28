@@ -228,6 +228,9 @@ module GE =
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
     let chart (x:real[]) (y:real[]) (attr:obj) board = stub<Chart> 
 
+    [<Emit("{2}.create('inequality', [{0}], {1})")>]
+    let inequality (l:Line) (attr:obj) board = stub<Inequality>
+
     [<Emit("{2}.create('derivative', [{0}], {1})")>]
     let derivative (c:Curve) (attr:obj) (board:Board) = stub<Derivative> 
 
@@ -301,6 +304,9 @@ module ge =
 
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
     let chart (x:real[]) (y:real[]) (attr:obj) board = stub<GeometryElement> 
+
+    [<Emit("{2}.create('inequality', [{0}], {1})")>]
+    let inequality (l:Line) (attr:obj) board = stub<GeometryElement>
 
     [<Emit("{2}.create('derivative', [{0}], {1})")>]
     let derivative (c:Curve) (attr:obj) (board:Board) = stub<GeometryElement> 

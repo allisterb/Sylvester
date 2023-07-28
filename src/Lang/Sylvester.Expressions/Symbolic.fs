@@ -77,26 +77,26 @@ module Symbolic =
         |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte exprs.[0]) 
         |> sprintf "[%s]"
 
-    let rec latex' (x:Expr) = 
+    let rec latexe (x:Expr) = 
         match x with
-        | List list -> "[" + (list |>  List.map latex' |> List.reduce (fun l r -> l + ", " + r)) + "]"
-        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (latex' l) (latex' r)
-        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (latex' l) (latex' r)
-        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (latex' l) (latex' r)
-        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (latex' l) (latex' r)
-        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latex' l) (latex' r)
+        | List list -> "[" + (list |>  List.map latexe |> List.reduce (fun l r -> l + ", " + r)) + "]"
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latexe l) (latexe r)
 
-        | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latex' l) (latex' r)
-        | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latex' l) (latex' r)
-        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (latex' l) (latex' r)
-        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (latex' l) (latex' r)
-        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (latex' l) (latex' r)
+        | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (latexe l) (latexe r)
 
-        | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latex' x)
+        | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latexe x)
 
         | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
         
-        | Double d when d = Math.Floor(d + 0.00001) ->  latex' <| Expr.Value (Convert.ToInt32(d))
+        | Double d when d = Math.Floor(d + 0.00001) ->  latexe <| Expr.Value (Convert.ToInt32(d))
 
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
 
