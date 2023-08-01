@@ -57,14 +57,17 @@ module Board =
     [<JS>]
     let tuple_to_array (t:'a*'a) = let x, y = t in [|x; y|]
 
-    [<Emit("{0}.setAttribute({1})")>]
-    let withAttrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = stub<'a>
+    [<JS>]
+    let transparent = {|fillOpacity = 0.0|}
 
     [<JS>]
-    let setAttrs<'a when 'a :> GeometryElement> (ge:'a) (attrs:obj) = withAttrs<'a> ge attrs |>  ignore
+    let inverse = {|inverse = true|}
+
+    [<Emit("{1}.setAttribute({0})")>]
+    let withAttrs<'a when 'a :> GeometryElement> (attrs:obj) (ge:'a) = stub<'a>
 
     [<JS>]
-    let withAttr<'a when 'a :> GeometryElement> (ge:'a) x y = withAttrs ge {|x = y|}
+    let setAttrs<'a when 'a :> GeometryElement> (attrs:obj) (ge:'a)  = withAttrs<'a> attrs ge |>  ignore
 
     [<JS>]
     let toString (o:obj) = o.ToString()
@@ -82,19 +85,19 @@ module Board =
     let area d h o = [|o - d - 0.5; o + h + 0.5; o + d + 0.5; o - h - 0.5|]
 
     [<JS>]
-    let withName (n:string) (ge:#GeometryElement) = withAttrs ge {| name = n |}
+    let withName (n:string) (ge:#GeometryElement) = withAttrs {| name = n |} ge 
 
     [<JS>]
-    let withStrokeColor (n:string) (ge:#GeometryElement) = withAttrs ge {|strokeColor = n|}
+    let withStrokeColor (n:string) (ge:#GeometryElement) = withAttrs {|strokeColor = n|} ge
 
     [<JS>]
-    let withFillColor (n:string) (ge:#GeometryElement) = withAttrs ge {|fillColor = n|}
+    let withFillColor (n:string) (ge:#GeometryElement) = withAttrs {|fillColor = n|} ge
 
     [<JS>]
-    let withStrokeWidth (w:float) (ge:#GeometryElement) = withAttrs ge {|strokeWidth = w|}
+    let withStrokeWidth (w:float) (ge:#GeometryElement) = withAttrs {|strokeWidth = w|} ge 
 
     [<JS>]
-    let withSmallDash (l:#Line) = withAttrs l {|dash=2|}
+    let withSmallDash (l:#Line) = withAttrs {|dash=2|} l 
 
     [<JS>]
     let withVal (s:Slider) (v:float) = s.setValue(v)
@@ -231,6 +234,15 @@ module GE =
     [<Emit("{2}.create('inequality', [{0}], {1})")>]
     let inequality (l:Line) (attr:obj) board = stub<Inequality>
 
+    [<Emit("{3}.create('curveintersection', [{0}, {1}], {2})")>]
+    let curve_intersection (c1:obj) (c2:obj) (attr:obj) (board:Board) = stub<Curve>
+
+    [<Emit("{3}.create('curvedifference', [{0}, {1}], {2})")>]
+    let difference (c1:obj) (c2:obj) (attr:obj) (board:Board) = stub<Curve>
+
+    [<Emit("{3}.create('curveunion', [{0}, {1}], {2})")>]
+    let union (c1:obj) (c2:obj) (attr:obj) (board:Board) = stub<Curve>
+
     [<Emit("{2}.create('derivative', [{0}], {1})")>]
     let derivative (c:Curve) (attr:obj) (board:Board) = stub<Derivative> 
 
@@ -303,10 +315,19 @@ module ge =
     let functiongraph (f:real->real) (min:obj) (max:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
 
     [<Emit("{3}.create('chart', [{0}, {1}], {2})")>]
-    let chart (x:real[]) (y:real[]) (attr:obj) board = stub<GeometryElement> 
+    let chart (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<GeometryElement> 
 
     [<Emit("{2}.create('inequality', [{0}], {1})")>]
-    let inequality (l:Line) (attr:obj) board = stub<GeometryElement>
+    let inequality (l:Line) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{3}.create('curveintersection', [{0}, {1}], {2})")>]
+    let curve_intersection (c1:obj) (c2:obj) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{3}.create('curvedifference', [{0}, {1}], {2})")>]
+    let difference (c1:obj) (c2:obj) (attr:obj) (board:Board) = stub<GeometryElement>
+
+    [<Emit("{3}.create('curveunion', [{0}, {1}], {2})")>]
+    let union (c1:obj) (c2:obj) (attr:obj) (board:Board) = stub<GeometryElement>
 
     [<Emit("{2}.create('derivative', [{0}], {1})")>]
     let derivative (c:Curve) (attr:obj) (board:Board) = stub<GeometryElement> 
