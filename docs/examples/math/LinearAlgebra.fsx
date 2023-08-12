@@ -27,6 +27,5 @@ P + Q
 //LinearEquations.solve_for p [p + q == 5.]
 
 
-let J = mat ``2`` ``2``  [p.[0]; p.[1]; p.[2]; 4]
-
-J + J
+let J = mat ``2`` ``2``  [p.[0]; p.[2]; 4; p.[1]]
+J * zero<dim<2>, dim<2>, _>

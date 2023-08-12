@@ -10,7 +10,7 @@ open MathNet.Numerics
 open Arithmetic
 open Dimension
 
-[<StructuredFormatDisplay("{Display}")>]
+[<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
     internal(e: Expr<'t> array, ?h:TermHistory) = 
     do if e.Length = 0 then failwith "The length of a vector must one or greater."
@@ -21,26 +21,20 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val ExprList = expr |> Array.toList
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
     member val ExprMathNet = exprmn
-    
-    member val Display = 
-        expr 
-        |> Array.skip 1 
-        |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte expr.[0]) 
-        |> sprintf "(%s)"
-    
-    member val LinearDisplay =
-        expr 
-        |> Array.skip 1 
-        |> Array.fold(fun s e -> sprintf "%s %s" s (sprinte e)) (sprinte expr.[0]) 
-        |> sprintf "%s"
-    
+
+    member val UnicodeDisplay =
+           expr 
+           |> Array.skip 1 
+           |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte expr.[0]) 
+           |> sprintf "(%s)"
+
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
         | LinearAlgebraNumericOpType -> expr |> Array.map evaluate |> Array.map (Convert.ToSingle) |> LinearAlgebra.DenseVector.raw
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     
-    member x.Item with get(i)  = e.[i] |> Scalar<'t>
+    member x.Item with get i = e.[i] |> Scalar<'t>
     
     interface IPartialShape<``1``> with
         member val Rank = Some 1 with get,set
@@ -51,7 +45,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member x.GetEnumerator () = (x :> IEnumerable<Expr<'t>>).GetEnumerator () :> IEnumerator
     
     interface IEquatable<Vector<'t>> with
-          member a.Equals b = a.LinearDisplay = b.LinearDisplay
+          member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
 
     interface IHtmlDisplay with
         member x.Html() =
@@ -74,11 +68,15 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector(expr)
     
     static member (+) (l: Vector<'t>, r: Vector<'t>) = 
-        let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'t>(e)
+        Array.map2 call_add l.Expr r.Expr |> Array.map (expand_as >> simplifye) |> Vector<'t>
+
+    static member (-) (l: Vector<'t>, r: Vector<'t>) = 
+        Array.map2 call_sub l.Expr r.Expr |> Array.map (expand_as >> simplifye) |> Vector<'t>
+
 
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
 
-[<StructuredFormatDisplay("{Display}")>]
+[<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
     internal (e: Expr<'t> array, ?h:TermHistory) =
     inherit Vector<'t>(e, ?h=h)
@@ -86,8 +84,6 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     do if e.Length <> dim0.IntVal then failwithf "The initializing array has length %i instead of %i." e.Length dim0.IntVal
     
     member val Dim0:'dim0 = dim0
-    
-    member val Display = base.Display
     
     member x.Norm = let p = x * x in p |> simplify |> call_sqrt |> expand_as<'t>
         
@@ -98,25 +94,31 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     interface IVector<'dim0> with member val Dim0 = dim0
 
     interface IEquatable<Vector<'dim0, 't>> with
-        member a.Equals b = a.LinearDisplay = b.LinearDisplay
+        member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
      
     static member Zero:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (zero_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
 
     static member One:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (one_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
 
     static member (+) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
-        let e = defaultLinearAlgebraSymbolicOps.Add l.Expr r.Expr in Vector<'dim0, 't>(e, BinaryOp("+", l, r))
+        let e = Array.map2 call_add l.Expr r.Expr |> Array.map (expand_as >> simplifye) in Vector<'dim0, 't>(e, BinaryOp("+", l, r))
     
     static member (-) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
-        let e = defaultLinearAlgebraSymbolicOps.Subtract l.Expr r.Expr in Vector<'dim0, 't>(e, BinaryOp("-", l, r))
+        let e = Array.map2 call_sub l.Expr r.Expr |> Array.map (expand_as >> simplifye) in Vector<'dim0, 't>(e, BinaryOp("-", l, r))
 
     static member (*) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
-        let e = defaultLinearAlgebraSymbolicOps.InnerProduct l.Expr r.Expr in Scalar<'t>(e, BinaryOp("-", l, r))
+        let e = 
+            Array.zip l.Expr r.Expr 
+            |> Array.map(fun(a, b) -> call_mul a b)
+            |> Array.reduce (call_add)
+            |> expand_as
+            |> simplifye 
+        in Scalar<'t>(e, BinaryOp("*", l, r))
 
-    static member (*) (l: Term<'t>, r: Vector<'dim0, 't>) = 
+    static member (*) (l: Scalar<'t>, r: Vector<'dim0, 't>) = 
         r.Expr |> Array.map(fun e -> call_mul (l.Expr) e |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
 
-    static member (*) (l: Vector<'dim0, 't>, r: Term<'t>) = 
+    static member (*) (l: Vector<'dim0, 't>, r: Scalar<'t>) = 
         l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
 
     static member (*) (l: Vector<'dim0, 't>, r: 't) : Vector<'dim0, 't> = let r' = Scalar<'t>(exprv r) in l * r' 

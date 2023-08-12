@@ -24,8 +24,8 @@ module MatrixAlgbra =
         //| Inverse <@(=)@> (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (expand_as <@ Matrix.msmul %%neg_one @>) <@ Matrix<_,_, 't>.Zero @> x
         | LeftCancelNonZero (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) <@ Matrix<_,_, 't>.Zero @> x -> Some (desc x)
         | Exists(_, a::[], Bool true, (Equals(Add(Var _, Var a'), Value(v, t)))) when vequal a a' && t = typeof<Matrix<_,_, 't>> && (v :?> Matrix<_,_, 't>) = Matrix<_,_, 't>.Zero -> Some (desc (pattern_desc' "Additive Inverse"))
-        | Commute' <@(=)@> (<@ (*) @> :Expr<Term<'t>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x -> Some (desc x)
-        | Distrib' <@(=)@> (<@ (*) @> :Expr<Term<'t>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x  -> Some (desc x)
+        | Commute' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x -> Some (desc x)
+        | Distrib' <@(=)@> (<@ (*) @> :Expr<Scalar<'t>->Matrix<_,_, 't>->Matrix<_,_, 't>>) (<@ (+) @> :Expr<Matrix<_,_, 't>->Matrix<_,_, 't>->Matrix<_,_, 't>>) x  -> Some (desc x)
 
         | _ -> None
     
