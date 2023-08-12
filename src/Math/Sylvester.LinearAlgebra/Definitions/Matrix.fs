@@ -73,7 +73,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     inherit Matrix<'t>(e,?h=h)
     let dim0 = number<'dim0>
     let dim1 = number<'dim1>
-    do if e.Length <> dim1.IntVal || e.[0].Length <> dim0.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
+    do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
     member val Dim0:'dim0 = dim0
     member val Dim1:'dim1 = dim1
     member x.Cols = x.ExprT |> Array.map Vector<'dim0, 't>
@@ -118,6 +118,12 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
 
     static member (*) (l: 't, r: Matrix<'dim0, 'dim1, 't>) = (l |> exprv |> Scalar) * r
 
+    static member (*) (l: int, r: Matrix<'dim0, 'dim1, real>) = (realterm l) * r
+
+    static member (*) (l: rat, r: Matrix<'dim0, 'dim1, real>) = (realterm l) * r
+
+    static member (*) (l: nat, r: Matrix<'dim0, 'dim1, real>) = (realterm l) * r
+
     static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: 't) = l * (r |> exprv |> Scalar)
     
     static member (~-) (l: Matrix<'dim0, 'dim1, 't>) = 
@@ -147,7 +153,7 @@ module Matrix =
 
     let mexprit (m:Matrix<_,_,_>) = m.ExprT |> Array.indexed
 
-    let mat (l:'dim0) (r:'dim1) (data:obj list) = data |> List.toArray |> realterms |> Array.map sexpr |> Array.chunkBySize (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim1, real> //data
+    let mat (l:'dim0) (r:'dim1) (data:obj list) = data |> List.toArray |> realterms |> Array.map sexpr |> Array.chunkBySize (number<'dim1>.IntVal) |> Matrix<'dim0, 'dim1, real> //data
     
     let mata (l:'dim0) (r:'dim1) (data:Expr<'t>[] []) = Matrix<'dim0, 'dim1, 't> data
     

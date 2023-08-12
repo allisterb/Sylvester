@@ -428,18 +428,18 @@ module Scalar =
             | x -> failwithf "Cannot convert %A of type %A to Scalar of type %A." x (x.GetType()) (typeof<'t>)
         )
 
-    let realterms (t:obj[]) =
-        t |> Array.map(
-            function
-            | :? real as v -> v |> exprv |> Scalar
-            | :? int as v -> v |> real |> exprv |> Scalar
-            | :? rat as v -> v |> real |> exprv |> Scalar
-            | :? nat as v -> v |> real |> exprv |> Scalar
-            | :? Scalar<real> as t -> t
-            | :? Expr<real> as e -> e |> Scalar
-            | x -> failwithf "Cannot convert %A of type %A to real Scalar." x (x.GetType())
-        )
+    let realterm:obj->Scalar<real> =
+        function
+        | :? real as v -> v |> exprv |> Scalar
+        | :? int as v -> v |> real |> exprv |> Scalar
+        | :? rat as v -> v |> real |> exprv |> Scalar
+        | :? nat as v -> v |> real |> exprv |> Scalar
+        | :? Scalar<real> as t -> t
+        | :? Expr<real> as e -> e |> Scalar
+        | x -> failwithf "Cannot convert %A of type %A to real Scalar." x (x.GetType())
 
+    let realterms (t:obj[]) = t |> Array.map realterm
+           
     let fail_if_not_var(t:Scalar<_>) =
         match t.Expr with
         | Var _ -> ()
