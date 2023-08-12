@@ -122,7 +122,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
 
     static member (*) (l: rat, r: Matrix<'dim0, 'dim1, real>) = (realterm l) * r
 
-    static member (*) (l: nat, r: Matrix<'dim0, 'dim1, real>) = (realterm l) * r
+    static member (*) (l: Natural, r: Matrix<'dim0, 'dim1, real>) = (realterm l) * r
 
     static member (*) (l: Matrix<'dim0, 'dim1, 't>, r: 't) = l * (r |> exprv |> Scalar)
     
