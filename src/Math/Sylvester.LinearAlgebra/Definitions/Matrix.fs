@@ -73,7 +73,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     inherit Matrix<'t>(e,?h=h)
     let dim0 = number<'dim0>
     let dim1 = number<'dim1>
-    do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
+    do if e.Length <> dim1.IntVal || e.[0].Length <> dim0.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
     member val Dim0:'dim0 = dim0
     member val Dim1:'dim1 = dim1
     member x.Cols = x.ExprT |> Array.map Vector<'dim0, 't>

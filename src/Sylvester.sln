@@ -268,6 +268,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "proofs", "proofs", "{40232E
 		..\docs\examples\proofs\PropCalculus.fsx = ..\docs\examples\proofs\PropCalculus.fsx
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "school", "school", "{0AD6845D-3881-4503-9B96-091D2BEBD570}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\examples\school\mt1183.fsx = ..\docs\examples\school\mt1183.fsx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\ext\KaosCombinatorics\Source\KaosCombinatorics\KaosCombinatorics.projitems*{6852278f-1508-43ac-8b6f-3a3f83324940}*SharedItemsImports = 5
@@ -1682,6 +1687,7 @@ Global
 		{4D64AE81-29AB-4065-8FAE-3F78A5B17FE9} = {578D2618-B994-4B73-9838-9E05E0132C26}
 		{46B488D2-E385-4AD2-8636-C53434DA6166} = {4D64AE81-29AB-4065-8FAE-3F78A5B17FE9}
 		{40232E1D-01C5-426B-9ED9-E7EE58C1B6C0} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
+		{0AD6845D-3881-4503-9B96-091D2BEBD570} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

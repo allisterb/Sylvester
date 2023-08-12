@@ -116,7 +116,7 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
         in Scalar<'t>(e, BinaryOp("*", l, r))
 
     static member (*) (l: Scalar<'t>, r: Vector<'dim0, 't>) = 
-        r.Expr |> Array.map(fun e -> call_mul (l.Expr) e |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
+        r.Expr |> Array.map(fun e -> call_mul (l.Expr) e  |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
 
     static member (*) (l: Vector<'dim0, 't>, r: Scalar<'t>) = 
         l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'n, 't>
