@@ -52,6 +52,15 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     
+    interface IHtmlDisplay with
+           member x.Html() =
+               let elems =
+                   x.Rows 
+                   |> Array.map (fun v -> v.Expr  |> Array.skip 1 |> Array.fold(fun s e -> sprintf "%s & %s" s (sprinte e)) (sprinte v.Expr.[0])) 
+                   |> Array.reduce(fun s e -> sprintf "%s \\\\ %s" s e) 
+                   |> sprintf "%s"
+               "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
+
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'t> d'
     
     new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'t>(expr)
