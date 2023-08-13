@@ -109,7 +109,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
 
     static member Zero:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (zero_val(typeof<'t>) |> expand_as<'t>)) in Matrix<'dim0, 'dim1, 't> e
 
-    static member One:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (one_val(typeof<'t>) |> expand_as<'t>)) in Matrix<'dim0, 'dim1, 't> e
+    static member One:Matrix<'dim1, 'dim1, 't> = Ops.identity_mat number<'dim1>.IntVal |> Matrix<'dim1, 'dim1, 't>
 
     static member (+) (l: Matrix<'dim0, 'dim1, 't>, r: Matrix<'dim0, 'dim1, 't>) = 
         let m = Array.map2 (+) l.Rows r.Rows in Matrix<'dim0, 'dim1, 't> m
@@ -183,7 +183,7 @@ module Matrix =
 
     let mzero (l:'dim0) (r:'dim1)= Matrix<'dim0, 'dim1, real>.Zero
 
-    let mident (l:'dim0) (r:'dim1)= Matrix<'dim0, 'dim1, real>.One
+    let mident (l:'dim0) = Matrix<'dim0, 'dim0, real>.One
 
     let mtrans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose
 

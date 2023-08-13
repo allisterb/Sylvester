@@ -38,6 +38,12 @@ module LinearAlgebra =
         Assert.Equal(A - A, zero)
         Assert.Equal(A * mzero ``3`` ``4``, zero)
         Assert.Equal(zero, A * mzero ``3`` ``4``)
+
+    [<Fact>]
+    let ``Identity matrix behaves as expected``() =
+        let A = mat ``4`` ``3`` [1; 1; 1; 2; 0; 1; 1; 2; 4; 2; 2; -1] 
+        Assert.Equal(A * mident ``3``, A)
+        Assert.Equal(mident ``4`` * A, A)
     
 
 
