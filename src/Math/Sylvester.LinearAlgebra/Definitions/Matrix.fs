@@ -181,8 +181,9 @@ module Matrix =
     let inline (||+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim1, 't>) = 
         Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.toJagged |> mata_cols (pp (l.Dim0 + ``1``)) l.Dim1 
 
-    let mident<'dim0, 't when 'dim0 :> Number and 't : equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
-        Ops.identity_mat<'t> (number<'dim0>.IntVal) |> Matrix<'dim0, 'dim0, 't>
+    let mzero (l:'dim0) (r:'dim1)= Matrix<'dim0, 'dim1, real>.Zero
+
+    let mident (l:'dim0) (r:'dim1)= Matrix<'dim0, 'dim1, real>.One
 
     let mtrans (m:Matrix<'dim0, 'dim1, 't>) = m.Transpose
 
@@ -240,6 +241,7 @@ module Matrix =
         | 2 -> l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
         | _ -> failwith "Not supported" 
 
+    
     let zero<'dim0,'dim1,'t when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim1, 't>.Zero
 
     let identity<'dim0,'dim1,'t when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim1, 't>.One
