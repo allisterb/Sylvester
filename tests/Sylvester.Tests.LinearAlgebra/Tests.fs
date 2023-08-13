@@ -44,6 +44,19 @@ module LinearAlgebra =
         let A = mat ``4`` ``3`` [1; 1; 1; 2; 0; 1; 1; 2; 4; 2; 2; -1] 
         Assert.Equal(A * mident ``3``, A)
         Assert.Equal(mident ``4`` * A, A)
+
+    [<Fact>]
+    let ``Matrix powers behave as expected``() =
+        let A = mat ``2`` ``2`` [-2; 4; 6; -8]
+        Assert.Equal(A ^^ 3, A * A * A)
+
+    [<Fact>]
+    let ``Matrix algebra behaves as expected``() =
+        let A = mat ``4`` ``3`` [1; 1; 1; 2; 0; 1; 1; 2; 4; 2; 2; -1] 
+        let B = mat ``4`` ``3`` [1; 2; 1; 4; 0; 1; 1; 6; 4; 2; 2; -8]
+        Assert.Equal(3 * A + 2 * B,  2 * A + B + B + A) 
+
+   
     
 
 
