@@ -1,34 +1,30 @@
 namespace Sylvester.Tests
 
 module LinearAlgebra = 
-
-    open System
     open Xunit
 
     open Sylvester
-    open Sylvester.Arithmetic
+    open Arithmetic
 
-    let x,y,z = var3<float>
+    
+    let x,y,z = realvar3 "x" "y" "z"
 
     [<Fact>]
     let ``Can construct matrices`` () =
-        let m1 = Mat<one, three>([4.;5.;6.])
+        let m1 = Mat<dim<1>, dim<3>>([| [|4.;5.;6. |] |])
         Assert.NotNull m1
+
+        let m2 = MatZ<dim<2>, dim<3>> [| [|4; 5; 6|]; [|7;8;9|] |]
+        Assert.NotNull m2
         ()
 
     [<Fact>]
     let ``Can add int matrices``() =
-        let Ar = Matrix<two, three, int> <@[ [4; 5; 6]; [7;8;9] ]@> 
+        let Ar = Matrix<dim<2>, dim<3>, int> [| [|4; 5; 6|]; [|7;8;9|] |] 
         Assert.NotNull(Ar + Ar)
+        Assert.Equal(Ar + Ar, Matrix<dim<2>, dim<3>, int> [| [|8; 10; 12|]; [|14; 16; 18|] |] )
 
-        let Ar2 = Mat<two, three> <@[ [x; y; 8.]; [7.;8.;9.] ]@>
-        Assert.NotNull (Ar2.ToString())
-
-    [<Fact>]
-    let ``Can get numeric values for symbolic matrix``() =
-        let Ar2 = Mat<two, three> <@[ [x; y; 8.]; [7.;8.;z] ]@>
-        Assert.NotEmpty Ar2._Array
-
+    
 
 
         

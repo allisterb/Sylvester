@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\src\Math\Sylvester.LinearAlgebra\Sylvester.LinearAlgebra.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.2" />
+  </ItemGroup>
+
 </Project>

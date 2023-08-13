@@ -17,20 +17,18 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     let expr = e  |> Array.map (Array.map expand_as<'t>)
     let exprmn = Array.map (Array.map MathNetExpr.fromQuotation) expr
     let exprlist = expr |> Array.map Array.toList |> Array.toList
-    let exprt = expr  |> Ops.transpose_mat
+    let exprt = expr |> Ops.transpose_mat
   
     member val Expr = expr
     member val ExprMathNet = exprmn
     member val ExprT = exprt
-    member val ExprList = exprlist
-    member val ExprArray = expr |> array2D
+    member val ExprArray2D = expr |> array2D
     member val ExprVars = expr |> Array.map (Array.map(get_vars >> List.toArray)) |> Array.concat
-    
     member val Rows = expr |> Array.map Vector<'t>
-    member val Cols = exprt |> Array.map Vector<'t>
-    member val RowsList = expr |> Array.map Vector<'t> |> Array.toList
-    member val ColsList = exprt |> Array.map Vector<'t> |> Array.toList
+    member val Columns = exprt |> Array.map Vector<'t>
     
+    member x.Transpose = Matrix<'t> expr
+
     member x.UnicodeDisplay = 
         let replace (o:string) n (s:string) = s.Replace(o, n) 
         x.Rows
@@ -52,6 +50,9 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
     
+    interface IEquatable<Matrix<'t>> with
+        member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
+
     interface IHtmlDisplay with
            member x.Html() =
                let elems =
@@ -69,16 +70,19 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
-    internal (e: Expr<'t> array array, ?h:TermHistory) =
-    inherit Matrix<'t>(e,?h=h)
+    internal (expr: Expr<'t> array array, ?h:TermHistory) =
+    inherit Matrix<'t>(expr,?h=h)
     let dim0 = number<'dim0>
     let dim1 = number<'dim1>
-    do if e.Length <> dim0.IntVal || e.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." e.Length e.[0].Length dim0.IntVal dim1.IntVal
+    let exprt = expr |> Ops.transpose_mat
+    do if expr.Length <> dim0.IntVal || expr.[0].Length <> dim1.IntVal then failwithf "The initializing array has dimensions [%i][%i] instead of [%i][%i]." expr.Length expr.[0].Length dim0.IntVal dim1.IntVal
+    
     member val Dim0:'dim0 = dim0
     member val Dim1:'dim1 = dim1
-    member x.Cols = x.ExprT |> Array.map Vector<'dim0, 't>
-    member x.Rows = x.Expr |> Array.map Vector<'dim1, 't>  
-    member x.Transpose = Matrix<'dim1, 'dim0, 't>(x.ExprT)
+    member val Rows = expr |> Array.map Vector<'dim1, 't>  
+    member val Columns = exprt |> Array.map Vector<'dim0, 't>
+    
+    member x.Transpose = Matrix<'dim1, 'dim0, 't> exprt
    
     member x.Item(i: int) = x.Rows.[i]
     
@@ -88,6 +92,9 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
         member val Dim0 = dim0
         member val Dim1 = dim1
     
+    interface IEquatable<Matrix<'dim0, 'dim1, 't>> with
+        member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
+
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'dim0, 'dim1, 't> d'
     
     new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'dim0, 'dim1, 't>(expr)
@@ -133,7 +140,7 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
         [| for i in 0..l.Dim0.IntVal - 1 -> l.Rows.[i] * r |] |> Array.map sexpr |> Vector<'dim0, 't>
 
     static member (*) (l:Matrix<'dim0, 'dim1, 't>, r:Matrix<'dim1, 'dim2, 't> ) =             
-        [| for i in 0..r.Dim1.IntVal - 1 -> l * r.Cols.[i] |] |> Array.map vexpr  |> Ops.transpose_mat |> Matrix<'dim0, 'dim2, 't>
+        [| for i in 0..r.Dim1.IntVal - 1 -> l * r.Columns.[i] |] |> Array.map vexpr  |> Ops.transpose_mat |> Matrix<'dim0, 'dim2, 't>
 
 type SquareMatrix<'dim0, 't when 'dim0 :> Number  and 't : equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim0, 't>
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, real>
@@ -141,9 +148,9 @@ type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 
 type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, int>
 
 module Matrix =
-    let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.RowsList |> Some
+    let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.Rows |> Array.toList |> Some
 
-    let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.ColsList |> Some
+    let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.Columns |> Array.toList |> Some
 
     let mexpr (m:Matrix<_,_,_>) = m.Expr
 
@@ -164,11 +171,11 @@ module Matrix =
     let mata_cols (l:'dim0) (r:'dim1) (data:Expr<'t>[] []) = Matrix<'dim0, 'dim1, 't>.ofCols data
 
     let inline (|+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim0, 't>) = 
-        let data = Array.append l.Cols [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged 
+        let data = Array.append l.Columns [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged 
         Matrix<_,_,'t> (l.Dim0, (pp (l.Dim1 + ``1``)), data)
 
     let inline (||+|) (l:Vector<'dim0, 't>) (r:Matrix<'dim0, 'dim1, 't>)  = 
-        let data = Array.append [|l|] r.Cols |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged 
+        let data = Array.append [|l|] r.Columns |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged 
         Matrix<_,_,'t> (l.Dim0, (pp (r.Dim1 + ``1``)), data)
 
     let inline (||+||) (l:Matrix<'dim0, 'dim1, 't>) (r:Vector<'dim1, 't>) = 
