@@ -2,9 +2,14 @@
 
 open Sylvester
 open Sylvester.CAS
+
+open System.Reflection
+
 open MicroEconomics
 open LinearEquations
 
+
+//typeof<Vec<dim<2>>>.GetMethod("get_Item")
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 let P, Q, J = realvar "P", realvar "Q", realvar "J"
 let A = realconst "A"
@@ -31,9 +36,14 @@ let y = realvar "y"
 
 let i = indexvar "i"
 
-y.[i + 1] == A * y.[i] + 2 |> sexpr
+//y.[i + 1] == A * y.[i] + 2 |> sexpr
 //sys |> List.map sexpr
 
+J == (P ^^ 2) + Q - A
 
+let JF = RealFunction2((P ^^ 2) + Q - A)
 
+let uvv = <@ fun (v:Vec<dim<2>>) -> v.[0] + v.[1] @>
+uvv
+//JF.[0., 5.]
 //Sylvester.CAS.Algebra.solve_for_n [(P.Expr); (Q.Expr)] (sys |> List.map sexpr)

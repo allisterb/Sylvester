@@ -7,10 +7,10 @@ type Region<'n when 'n :> Number> = Set<Vec<'n>>
 
 type R<'n when 'n :>Number>() = 
     inherit VectorSpace<'n, real>(Field.R, Vector.add, Vector.smul)
-    
+    interface ICardinality with member val Cardinality = Aleph 1
 [<AutoOpen>]
 module R =
-    let R<'n when 'n :> Number> =  R<'n>()
+    //let R (dim:'n when 'n :> Number) =  R<'n>()
     
     let sum x l u expr = Ops.Sum x (intexpr l) (intexpr u) expr |> Scalar
 

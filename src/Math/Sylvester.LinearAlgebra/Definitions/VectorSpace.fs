@@ -29,7 +29,7 @@ type VectorSpace<'n, 't when 'n :> Number and 't: equality and 't: comparison an
         member val Op2 = op2
 
 type InnerProductSpace<'n, 't when 'n :> Number and 't: equality and 't: comparison and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable>
-    (field: IField<'t>, op: BinaryOp<Vector<'n, 't>>, op2: BinaryOp<'t, 'v>, op3: BinaryOp<'v, 't>) = 
+    (field: IField<'t>, op: BinaryOp<Vector<'n, 't>>, op2: BinaryOp<'t, Vector<'n, 't>>, op3: BinaryOp<Vector<'n, 't>, 't>) = 
     inherit VectorSpace<'n, 't>(field, op, op2)
     interface IInnerProductSpace<'n, 't, Vector<'n, 't>> with
         member val Op3 = op3

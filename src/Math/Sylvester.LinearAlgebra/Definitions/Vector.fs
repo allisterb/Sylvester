@@ -36,6 +36,8 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     
     member x.Item with get i = e.[i] |> Scalar<'t>
     
+    member x.ItemE with get i = e.[i] |> ev
+
     interface IPartialShape<``1``> with
         member val Rank = Some 1 with get,set
         member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set

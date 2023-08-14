@@ -526,10 +526,6 @@ module Numbers =
         | Double (Double.MinValue) -> Some()
         | _ -> None
 
-    let (^) (l:'t) (r:'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IConvertible) =
-        let l', r' = System.Convert.ToDouble l, System.Convert.ToDouble r in
-        System.Convert.ChangeType(l' ** r', typeof<'t>) :?> 't
-
     let inline inv n = n ** - 1.
      
     let inline zero (x : ^T) = (^T : (member Zero : 't) (x))
