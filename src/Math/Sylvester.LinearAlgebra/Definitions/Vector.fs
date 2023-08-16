@@ -75,7 +75,6 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member (-) (l: Vector<'t>, r: Vector<'t>) = 
         Array.map2 call_sub l.Expr r.Expr |> Array.map (expand_as >> simplifye) |> Vector<'t>
 
-
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
@@ -101,6 +100,8 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     static member Zero:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (zero_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
 
     static member One:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (one_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
+
+    static member create([<ParamArray>] data: 't array) = Vector<'dim0, 't> data
 
     static member (+) (l: Vector<'dim0, 't>, r: Vector<'dim0, 't>) = 
         let e = Array.map2 call_add l.Expr r.Expr |> Array.map (expand_as >> simplifye) in Vector<'dim0, 't>(e, BinaryOp("+", l, r))

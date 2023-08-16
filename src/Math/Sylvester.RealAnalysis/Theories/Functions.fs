@@ -8,7 +8,7 @@ open Sylvester.Arithmetic
 open Vector
 //open Sequences
 
-type RealExpr<'n when 'n :> Number> = Expr<R<'n>>
+type RealExpr<'n when 'n :> Number> = Expr<RealVectorSpace<'n>>
 
 
 

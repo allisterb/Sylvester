@@ -16,7 +16,6 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand_as<'t>)
     let exprmn = Array.map (Array.map MathNetExpr.fromQuotation) expr
-    let exprlist = expr |> Array.map Array.toList |> Array.toList
     let exprt = expr |> Ops.transpose_mat
   
     member val Expr = expr
@@ -97,15 +96,15 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
 
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'dim0, 'dim1, 't> d'
     
-    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'dim0, 'dim1, 't>(expr)
+    new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'dim0, 'dim1, 't> expr
 
     new (_:'dim0, _:'dim1, data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
     
-    new(rows: Vector<'dim1, 't> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'dim0, 'dim1, 't>(e)
+    new(rows: Vector<'dim1, 't> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'dim0, 'dim1, 't> e
     
-    static member ofRows (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data)
+    static member ofRows (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't> data
     
-    static member ofCols (data:Expr<'t> [] []) = Matrix<'dim0, 'dim1, 't>(data |> Ops.transpose_mat)
+    static member ofCols (data:Expr<'t> [][]) = data |> Ops.transpose_mat |> Matrix<'dim0, 'dim1, 't>
 
     static member Zero:Matrix<'dim0, 'dim1, 't> = let e = Array.create (number<'dim0>.IntVal) (Array.create (number<'dim1>.IntVal) (zero_val(typeof<'t>) |> expand_as<'t>)) in Matrix<'dim0, 'dim1, 't> e
 
@@ -165,7 +164,7 @@ module Matrix =
 
     let mexprit (m:Matrix<_,_,_>) = m.ExprT |> Array.indexed
 
-    let mat (l:'dim0) (r:'dim1) (data:obj list) = data |> List.toArray |> realterms |> Array.map sexpr |> Array.chunkBySize (number<'dim1>.IntVal) |> Matrix<'dim0, 'dim1, real> //data
+    let mat (l:'dim0) (r:'dim1) (data:obj list) = data |> List.toArray |> realterms |> Array.map sexpr |> Array.chunkBySize (number<'dim1>.IntVal) |> Matrix<'dim0, 'dim1, real>
     
     let mata (l:'dim0) (r:'dim1) (data:Expr<'t>[] []) = Matrix<'dim0, 'dim1, 't> data
     
@@ -246,7 +245,6 @@ module Matrix =
         | 2 -> l.[0].[0] * l.[1].[1] - l.[0].[1] * l.[1].[0]
         | _ -> failwith "Not supported" 
 
-    
     let zero<'dim0,'dim1,'t when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim1, 't>.Zero
 
     let identity<'dim0,'dim1,'t when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = Matrix<'dim0, 'dim1, 't>.One

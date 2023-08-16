@@ -24,8 +24,10 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
     member x.AMapExpr = amap
     member x.AMap = ev amap
     member x.Body = body' x.MapExpr
-    member x.Vars = get_vars x.Body |> List.map Expr.Var
+    abstract Vars: Expr list
+    default x.Vars = get_vars x.Body |> List.map Expr.Var
     member x.Arg = param_var x.MapExpr
+    member x.ArgExpr = x.Arg |> Expr.Var |> expand_as<'a>
     member x.TermMap = term
     member x.Item (value:'c) = 
         let v = subst_var_value amaparg (exprv value) amapbody in
