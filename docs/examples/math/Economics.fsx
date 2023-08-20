@@ -6,6 +6,7 @@ open Sylvester.CAS
 open System.Reflection
 open FSharp.Quotations
 
+open Dimension
 open MicroEconomics
 open LinearEquations
 
@@ -17,7 +18,7 @@ let A = realconst "A"
 //P + Q == 5. |> sexpr
 let Qs = demand (P .= 2 * Q + 4 + A)
 
-//Qs.[0.]
+Qs.[A]
 
  
 let sys = [
@@ -33,7 +34,7 @@ let p = ppf [
     P == 7.
 ]
 
-let y = realvar "y"
+let x, y = realvar2 "x" "y"
 
 let i = indexvar "i"
 
@@ -42,10 +43,9 @@ let i = indexvar "i"
 
 J == (P ^^ 2) + Q - A
 
-let JF = RealFunction2((P ^^ 2) + Q - A)
+let JF = RealFunction2((P ^^ 2) + J - A)
 
-JF.[(6., 2.)]
-
+JF.[y, x]
 //open FSharp.Quotations.Patterns
 
 //let gg = <@ fun (A,B) -> A ** 2. + B - 3. @>

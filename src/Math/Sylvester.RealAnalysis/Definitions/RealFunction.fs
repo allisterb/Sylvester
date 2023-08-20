@@ -5,6 +5,7 @@ open Dimension
 
 open System.Reflection
 open FSharp.Quotations
+open FSharp.Quotations.Patterns
 
 type RealFunction<'t when 't : equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>) = 
     inherit ScalarFunction<'t, real>(domain, codomain, map)
@@ -24,19 +25,27 @@ type RealFunction(f) =
  
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>)
-     //member x.Vars = [for i in 0 .. dim<2>().IntVal do ]
+     override x.SubstArg(v:Expr) = 
+        match v with
+        | NewTuple(a::b::[] as vars) ->
+            let mutable me = x.Body.Raw
+            let vv = x.Arg |> Expr.Var |> expand_as<Vec<dim<2>>>
+            let m = typeof<Vec<dim<2>>>.GetProperty("ItemE")
+            vars |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
+            me |> expand_as<real>
+        | _ -> failwithf "%s is not a valid expression for argument substitution." (sprinte v)
+     member x.Item(a:_, b:_) = 
+        let _a, _b = realexpr a, realexpr b in
+        x.SubstArg <@ %_a, %_b @> |> Scalar<real>
      new (e:Scalar<real>) =
-         let vars = e |> sexpr |> get_vars
+         let vars = e |> sexpr |> get_vars |> List.sortBy(fun v -> v.Name)
          do if vars.Length <> 2 then failwith "The number of independent variables in this function is not 2."
-         //let m = typedefof<Vec<dim<2>>>.GetConstructor()
          let m = typeof<Vec<dim<2>>>.GetMethod("create")
          let tupledArg = Var("tupledArg", typeof<real*real>) 
          let af = Expr.Lambda(tupledArg, Expr.Let(vars.[0], Expr.TupleGet(Expr.Var(tupledArg), 0), Expr.Let(vars.[1], Expr.TupleGet(Expr.Var(tupledArg), 1), Expr.Call(m, Expr.NewArray(typeof<real>, vars |> List.map Expr.Var)::[]))))
                     |> expand_as<real*real->Vec<dim<2>>>
          let vvec = Var("v", typeof<Vec<dim<2>>>)
          let vv = vvec |> Expr.Var |> expand_as<Vec<dim<2>>>
-        
-       
          let mutable me = e.Expr.Raw
          let m = typeof<Vec<dim<2>>>.GetProperty("ItemE")
          vars |> List.iteri(fun i v -> me <- subst_var_value v (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) me )
