@@ -23,8 +23,22 @@ type RealFunction(f) =
         let f = recombine_func_as<real->real> v e.Expr in
         RealFunction f
  
- type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>) = 
+ type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>)
+     member val ScalarMapExpr = 
+        match sf with
+        | Some f -> f
+        | None ->
+            let vars = Var("x", typeof<real>)::Var("y", typeof<real>)::[]  in
+            let vv = base.Arg |> Expr.Var |> expand_as<Vec<dim<2>>>
+            let m = typeof<Vec<dim<2>>>.GetProperty("ItemE") in
+            let mutable me = base.Body.Raw
+            do vars |> List.map Expr.Var |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
+            let nb = expand_as<real> me
+            let tupledArg = Var("tupledArg", typeof<real*real>)
+            Expr.Lambda(tupledArg, Expr.Let(vars.[0], Expr.TupleGet(Expr.Var(tupledArg), 0), Expr.Let(vars.[1], Expr.TupleGet(Expr.Var(tupledArg), 1), nb)))
+                |> expand_as<(real*real)->real>
+
      override x.SubstArg(v:Expr) = 
         match v with
         | NewTuple(a::b::[] as vars) ->
@@ -44,16 +58,20 @@ type RealFunction(f) =
          let tupledArg = Var("tupledArg", typeof<real*real>) 
          let af = Expr.Lambda(tupledArg, Expr.Let(vars.[0], Expr.TupleGet(Expr.Var(tupledArg), 0), Expr.Let(vars.[1], Expr.TupleGet(Expr.Var(tupledArg), 1), Expr.Call(m, Expr.NewArray(typeof<real>, vars |> List.map Expr.Var)::[]))))
                     |> expand_as<real*real->Vec<dim<2>>>
+         let sf = Expr.Lambda(tupledArg, Expr.Let(vars.[0], Expr.TupleGet(Expr.Var(tupledArg), 0), Expr.Let(vars.[1], Expr.TupleGet(Expr.Var(tupledArg), 1), e.Expr)))
+                            |> expand_as<(real*real)->real>
          let vvec = Var("v", typeof<Vec<dim<2>>>)
          let vv = vvec |> Expr.Var |> expand_as<Vec<dim<2>>>
          let mutable me = e.Expr.Raw
          let m = typeof<Vec<dim<2>>>.GetProperty("ItemE")
          vars |> List.iteri(fun i v -> me <- subst_var_value v (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) me )
          let f = recombine_func_as<Vec<dim<2>>->real> [vvec] me in
-         RealFunction2 (f, af)
+         RealFunction2 (f, af, sf)
 
 type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>) = inherit RealFunction<Set<'t>>(domain, codomain, map)
 
 [<AutoOpen>]
 module RealFunction =
     let realfun (e:Scalar<real>) = RealFunction e
+
+    let realfun2 (e:Scalar<real>) = RealFunction2 e

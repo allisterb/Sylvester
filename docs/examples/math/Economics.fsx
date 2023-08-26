@@ -38,14 +38,15 @@ let x, y = realvar2 "x" "y"
 
 let i = indexvar "i"
 
+//<@ fun (a,b) -> a + b @>
 //y.[i + 1] == A * y.[i] + 2 |> sexpr
 //sys |> List.map sexpr
 
 J == (P ^^ 2) + Q - A
 
-let JF = RealFunction2((P ^^ 2) + J - A)
+let JF = realfun2 ((P ^^ 2) + J - A)
 
-JF.[y, x]
+JF.SubstArg <@ (%x.Expr,%x.Expr) @>
 //open FSharp.Quotations.Patterns
 
 //let gg = <@ fun (A,B) -> A ** 2. + B - 3. @>
