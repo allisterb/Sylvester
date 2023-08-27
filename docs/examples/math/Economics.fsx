@@ -14,6 +14,7 @@ open LinearEquations
 //typeof<Vec<dim<2>>>.GetMethod("get_Item")
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 let P, Q, J = realvar "P", realvar "Q", realvar "J"
+let U = realvar "U"
 let A = realconst "A"
 //P + Q == 5. |> sexpr
 let Qs = demand (P .= 2 * Q + 4 + A)
@@ -34,6 +35,7 @@ let p = ppf [
     P == 7.
 ]
 
+let a, b = realconst2 "a" "b"
 let x, y = realvar2 "x" "y"
 
 let i = indexvar "i"
@@ -44,16 +46,6 @@ let i = indexvar "i"
 
 J == (P ^^ 2) + Q - A
 
-let JF = realfun2 ((P ^^ 2) + J - A)
+let U1 = utilfun2 (U .= a * x ^^ 4 + b * y ^^ 3) 
 
-JF.SubstArg <@ (%x.Expr,%x.Expr) @>
-//open FSharp.Quotations.Patterns
-
-//let gg = <@ fun (A,B) -> A ** 2. + B - 3. @>
-//match gg with | Lambda (e, _) -> e.Type | _ -> failwith ""
-
-//typeof<Vec<dim<2>>>.GetConstructor("create")
-//let uvv = <@ fun (v:Vec<dim<2>>) -> v.[0] + v.[1] @>
-//uvv
-//JF.[0., 5.]
-//Sylvester.CAS.Algebra.solve_for_n [(P.Expr); (Q.Expr)] (sys |> List.map sexpr)
+U1.Body

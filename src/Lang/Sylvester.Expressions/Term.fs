@@ -454,6 +454,12 @@ module Scalar =
     let realvar3 (p:string) (q:string) (r:string) = realvar p, realvar q, realvar r
 
     let realvar4 (p:string) (q:string) (r:string) (s:string) = realvar p, realvar q, realvar r, realvar s
+
+    let realconst2 (p:string) (q:string) = realconst p, realconst q
+
+    let realconst3 (p:string) (q:string) (r:string) = realconst p, realconst q, realconst r
+
+    let realconst4 (p:string) (q:string) (r:string) (s:string) = realconst p, realconst q, realconst r, realconst s
     
 [<AutoOpen>]
 module Prop =

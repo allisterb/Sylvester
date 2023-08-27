@@ -11,6 +11,13 @@ type EconomicFunction(a:ScalarVarMap<real>) =
         member a.Expr = a.Body
         member a.Mutate(b:Expr<real>) = EconomicFunction <| ScalarVarMap<real>(a.VarMap.Var, Scalar<real> b) 
     
+type EconomicFunction2(a:ScalarVarMap<real>) = 
+    inherit RealFunction2(a.Rhs)
+    member val VarMap = a
+    interface ISymbolic<EconomicFunction2, real> with
+        member a.Expr = a.Body
+        member a.Mutate(b:Expr<real>) = EconomicFunction2 <| ScalarVarMap<real>(a.VarMap.Var, Scalar<real> b)
+        
 type EconomicConstraint(a:ScalarRelation<real>) = 
     do 
         match a.Expr with
@@ -28,6 +35,9 @@ type SupplyFunction(a: ScalarVarMap<real>) =
 type CostFunction(a: ScalarVarMap<real>) = 
     inherit EconomicFunction(a)
 
+type UtilityFunction2(a: ScalarVarMap<real>) = 
+    inherit EconomicFunction2(a)
+
 type PPF(c: EconomicConstraint list) =
     member val Constraints = c
 
@@ -44,5 +54,7 @@ module MicroEconomics =
     let revenue func = EconomicFunction func
 
     let plot_name (func:EconomicFunction) = Expr.Value((sprintf "q_D(%A) = %s" (farg func) (sprinte <| fexpr func)) :> obj)
+
+    let utilfun2 func = UtilityFunction2 func
 
     let ppf (c:ScalarRelation<real> list) = c |> List.map EconomicConstraint |> PPF

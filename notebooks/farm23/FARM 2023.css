@@ -6,20 +6,20 @@
  *
  */
 
-div.myheader:not(section#slide-0-0) {
+div.myheader {
     position: absolute;
     margin: 30px;
     left: 8%;
     font-size: xx-large;
 }
 
-div.myfooter:not(section#slide-0-0) {
+div.myfooter {
     position: absolute;
     margin: 30px;
     right: 8%;
 	font-size: xx-large;
 }
 
-section#slide-0-0.div.myheader:not() {
+section#slide-0-0.div.myheader {
 visibility:hidden
 }
