@@ -526,7 +526,8 @@ module Numbers =
         | Double (Double.MinValue) -> Some()
         | _ -> None
 
-    let inline inv n = n ** - 1.
+    [<ReflectedDefinition>]
+    let inv n = n ** - 1.
      
     let inline zero (x : ^T) = (^T : (member Zero : 't) (x))
 

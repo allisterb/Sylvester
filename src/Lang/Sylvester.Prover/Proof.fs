@@ -11,6 +11,7 @@ type Theory(axioms: Axioms, rules: Rules, ?formula_printer:Expr->string) =
     member val PrintFormula = defaultArg formula_printer Display.print_formula
     member x.AxEquiv a  = a |> expand |> x.Axioms |> Option.isSome  
     static member (|-) ((c:Theory), a) = c.AxEquiv a
+    static member (|-) ((c:Theory), a:Term<_>) = c.AxEquiv a.Expr
     /// The default logical theory used in Sylph proofs.
     static member val S =     
         let reduce = Admit("Reduce logical constants in (expression)", EquationalLogic._reduce_constants)

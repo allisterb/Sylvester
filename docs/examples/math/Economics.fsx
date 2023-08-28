@@ -10,7 +10,14 @@ open Dimension
 open MicroEconomics
 open LinearEquations
 
+let get_props (o:'a) = typeof<'a>.GetProperties()
+   
 
+let draw (o:'a) =
+    let p = get_props o
+    p
+
+draw {|x="foo"; y = 5|} 
 //typeof<Vec<dim<2>>>.GetMethod("get_Item")
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 let P, Q, J = realvar "P", realvar "Q", realvar "J"

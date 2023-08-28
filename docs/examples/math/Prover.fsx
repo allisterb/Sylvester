@@ -5,27 +5,14 @@ open Sylvester
 open Patterns
 open FSharp.Quotations
 open PropCalculus
+open Integers
+open RealNumbers
 
 
-let ident (theory:Theory) (e:Prop) steps =
-       let f = e.Expr |> expand in
-       match f with
-       | Equals(_, _) -> Theorem(f, Proof (f, theory, steps, true)) |> Ident
-       | _ -> failwithf "The expression %s is not an identity." (theory.PrintFormula f)
-   
-let logical_ident steps (e:Prop) = ident Proof.Logic e steps
-   
-let id_ax theory (e:Prop) = ident theory e []
-   
-let log_id_ax (e:Prop) = id_ax Proof.Logic e
+let r, s = realvar2 "r" "s"
 
-let def_true (p:Prop) = id_ax prop_calculus (true == (p == p))  
-
-proof prop_calculus (-F == T).Expr [
-    LR commute
-    def_true F  |> L
-    LR right_assoc
-    apply_right commute
-    apply_right collect
-    def_true F |> Commute |> apply_right  
+real_numbers |- (r + s == s + r)
+// Theorem can't be constructed from incomplete proof
+proof real_numbers (2 * (r + s) + 3 * s == (2 * r + 5 * s)) [
+    apply_left distrib_mul_add
 ]
