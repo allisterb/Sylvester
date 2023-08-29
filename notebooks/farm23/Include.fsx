@@ -14,6 +14,7 @@
 #r "C:\\Projects\\Sylvester.git\\src\\Lang\\Sylvester.Prover\\bin\\Debug\\netstandard2.0\\Sylvester.Prover.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.AbstractAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.AbstractAlgebra.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.LinearAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.LinearAlgebra.dll"
+#r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.Statistics\\bin\\Debug\\netstandard2.0\\Sylvester.Statistics.dll"
 
 #load "XPlot.Plotly.fsx"

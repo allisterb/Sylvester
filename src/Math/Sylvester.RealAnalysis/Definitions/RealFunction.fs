@@ -6,6 +6,7 @@ open Dimension
 open System.Reflection
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
+open FSharp.Quotations.DerivedPatterns
 
 type RealFunction<'t when 't : equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>) = 
     inherit ScalarFunction<'t, real>(domain, codomain, map)
@@ -22,6 +23,9 @@ type RealFunction(f) =
         do if v.Length <> 1 then failwith "The number of independent variables in this function is not 1."
         let f = recombine_func_as<real->real> v e.Expr in
         RealFunction f
+    //interface IWebVisualization with
+    //    member x.Draw(attrs:obj) = 
+    //    ()
  
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>)
@@ -70,8 +74,19 @@ type RealFunction(f) =
 
 type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>) = inherit RealFunction<Set<'t>>(domain, codomain, map)
 
+type RealFunctionDiagram = {
+    xmin:float
+    xmax:float
+}
 [<AutoOpen>]
 module RealFunction =
     let realfun (e:Scalar<real>) = RealFunction e
 
     let realfun2 (e:Scalar<real>) = RealFunction2 e
+
+    let rec make_JS_compat    = 
+        function
+        | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt])  -> 
+            let xxt, yyt = make_JS_compat xt, make_JS_compat yt
+            <@@ FunScript.Arithmetic.MathJS.Pow((%%xxt:float), (%%yyt:float)) @@>
+        | expr -> traverse expr make_JS_compat

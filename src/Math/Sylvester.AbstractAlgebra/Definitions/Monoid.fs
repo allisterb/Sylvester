@@ -34,7 +34,7 @@ type CommutativeMonoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, id:'
     do op |> fail_if_not_commutative
 
 /// Category of monoids with n structure-preserving morphisms.
-type Monoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Monoid<'ut>, r:Monoid<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
+type Monoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Monoid<'ut>, r:Monoid<'vt>, maps: Array<'n, 'ut->'vt>) = 
     inherit Category<'ut, 'vt, ``2``, ``2``,'n>(l, r, maps)
 
 [<AutoOpen>]

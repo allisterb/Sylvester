@@ -7,7 +7,7 @@ open Sylvester.Collections
 type Morph<'ut, 'vt, 'un, 'vn when 'ut : equality and 'vt : equality and 'un :> Number and 'vn :> Number> = 
 
 /// Morphism defined by a map from elements of the set of one structure to another.
-|Morph of Struct<'ut, 'un> * Struct<'vt, 'vn> * Map<'ut, 'vt> 
+|Morph of Struct<'ut, 'un> * Struct<'vt, 'vn> * ('ut->'vt) 
 
 /// hom-set of all morphisms between 2 structures.
 |Hom of Struct<'ut, 'un> * Struct<'vt, 'vn>
@@ -46,7 +46,7 @@ type Category<'ut, 'vt, 'un, 'vn, 'n when 'ut : equality and 'vt : equality and 
     member inline x.Item(n, e:'ut) = x.Morphisms.[n].Map e
     member inline x.Item(e:'ut) = x.Morphisms._Array.[0].Map e
 
-    new (l:Struct<'ut, 'un>, r:Struct<'vt, 'vn>, maps: Array<'n, Map<'ut, 'vt>>) = Category(maps.Map(fun m -> Morph(l, r, m)))
+    new (l:Struct<'ut, 'un>, r:Struct<'vt, 'vn>, maps: Array<'n, 'ut->'vt>) = Category(maps.Map(fun m -> Morph(l, r, m)))
 
 [<AutoOpen>]
 module Category =

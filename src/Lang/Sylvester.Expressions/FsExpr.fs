@@ -604,6 +604,15 @@ module FsExpr =
 
     let recombine_func_as<'t> vars body = recombine_func vars body |> expand_as<'t>
 
+    let has_prop<'a> n t (_:'a) = typeof<'a>.GetProperties().Any(fun p -> p.Name = n && p.PropertyType = t)
+    
+    let get_prop<'a> n t (o:'a) = typeof<'a>.GetProperties().First(fun p -> p.Name = n && p.PropertyType = t).GetValue(o)
+
+    let get_consts expr =
+            let dict = new System.Collections.Generic.List<Type*string>()
+            expr |> traverse' (function | ValueWithName(_, t, n) -> dict.Add(t, n); None | _ -> None) |> ignore
+            dict |> List.ofSeq
+
     let inline (%!) q = ev q
 
 

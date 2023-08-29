@@ -100,7 +100,7 @@ type AbelianGroup<'order, 't when 'order :> Number and 't: equality>(set:FiniteS
     interface IAbelianGroup<'t>
 
 /// Category of groups with n structure-preserving morphisms.
-type Groups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Group<'ut>, r:Group<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
+type Groups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Group<'ut>, r:Group<'vt>, maps: Array<'n, 'ut->'vt>) = 
     inherit Category<'ut, 'vt, ``3``, ``3``, 'n>(l, r, maps) 
 
 [<AutoOpen>]

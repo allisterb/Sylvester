@@ -23,6 +23,6 @@ type CommutativeSemigroup<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
     //static member toLattice (set: ISet<'t>, join: CommutativeSemigroup<'t>, meet: CommutativeSemigroup<'t>) = Lattice(set, join.Op, meet.Op)
 
 /// Category of semigroups with an n structure-preserving morphism.
-type Semigroups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Semigroup<'ut>, r:Semigroup<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
+type Semigroups<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Semigroup<'ut>, r:Semigroup<'vt>, maps: Array<'n, 'ut->'vt>) = 
     inherit Category<'ut, 'vt, ``1``, ``1``, 'n>(l, r, maps)
 

@@ -27,6 +27,6 @@ type Groupoid<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>) =
         member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
 
 /// Category of groupoids with n structure-preserving morphisms.
-type Groupoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Groupoid<'ut>, r:Groupoid<'vt>, maps: Array<'n, Map<'ut, 'vt>>) = 
+type Groupoids<'ut, 'vt, 'n when 'ut : equality and 'vt: equality and 'n :> Number>(l:Groupoid<'ut>, r:Groupoid<'vt>, maps: Array<'n, 'ut->'vt>) = 
     inherit Category<'ut, 'vt, ``1``, ``1``, 'n>(l, r, maps)
 

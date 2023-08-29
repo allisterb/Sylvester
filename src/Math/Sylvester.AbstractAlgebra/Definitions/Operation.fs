@@ -7,30 +7,21 @@ open FSharp.Quotations
 open Sylvester.Arithmetic
 open Sylvester.Collections
 
-/// Map or function between 2 elements of type t.
-type Map<'t when 't: equality> = 't -> 't  
-
-/// Map or function between 2 elements of types t and u.
-type Map<'t, 'u when 't: equality and 'u : equality> = 't -> 'u 
-
-/// Map or function between elements of types t->u->v.
-type Map<'t, 'u, 'v when 't: equality and 'u : equality and 'v: equality> = 't -> 'u -> 'v 
-
-type MapExpr<'t, 'u when 't: equality and 'u : equality> = Expr<Map<'t, 'u>>
+type MapExpr<'t, 'u when 't: equality and 'u : equality> = Expr<'t->'u>
 
 /// 0-ary operation between elements of type 't.
 type NullaryOp<'t when 't : equality> = 't
 
 /// Unary operation between elements of type t.
-type UnaryOp<'t when 't: equality> = Map<'t, 't>
+type UnaryOp<'t when 't: equality> = 't->'t
 
 // Binary operation between elements of type t.
-type BinaryOp<'t when 't: equality> = Map<'t, 't, 't>
+type BinaryOp<'t when 't: equality> = 't->'t->'t
 
-type BinaryOp<'t, 'd when 't: equality and 'd: equality> = Map<'t, 'd, 'd>
+type BinaryOp<'t, 'd when 't: equality and 'd: equality> = 't->'d->'d
 
 // Order operation on elements of type t. true indicates less-than-or equal, false indicates greater than.
-type Order<'t when 't: equality> = Expr<Map<'t, 't, bool>>
+type Order<'t when 't: equality> = Expr<'t->'t->bool>
 
 /// Union of operations between elements of type t.
 type Op<'t when 't: equality> = 
