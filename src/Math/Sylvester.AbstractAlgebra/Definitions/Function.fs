@@ -63,6 +63,6 @@ type Predicate<'a when 'a : equality> = Function<'a, bool, Prop>
 
 [<AutoOpen>]
 module Function =
-    let farg (f:Function<'a,_,_,_>) = f.Arg |> Expr.Var |> expand_as<'a>
+    let farg (f:Function<'a,_,_,_>) = f.Arg |> Expr.Var |> expand_as<'a> |> Scalar<'a>
 
-    let fexpr (f:Function<_,'b,_,_>) = f.Body |> expand_as<'b>
+    let fexpr (f:Function<_,'b,_,_>) = f.Body |> expand_as<'b> |> Scalar<'b>

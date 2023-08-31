@@ -13,6 +13,12 @@ type RealVectorSpace<'n when 'n :>Number>() =
 module R =
     let R (dim:'n when 'n :> Number) = new RealVectorSpace<'n>()
              
+    let algexpand (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.AlgExpand)
+
+    let ratexpand (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.RatExpand)
+    
+    let ratsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.RatSimp)
+
     let sum x l u expr = Ops.Sum x (intexpr l) (intexpr u) expr |> Scalar
 
     let open_interval left right = Field.R |>| <@ fun x -> x > left && x < right @>

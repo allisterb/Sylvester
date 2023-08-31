@@ -43,7 +43,7 @@ type PPF(c: EconomicConstraint list) =
 
 [<AutoOpen>]
 module MicroEconomics =
-    let marginal (func:EconomicFunction) :EconomicFunction = diff func.Arg func
+    let marginal (func:EconomicFunction) :EconomicFunction = diff (farg func) func
     
     let demand func = DemandFunction func
 
@@ -53,7 +53,7 @@ module MicroEconomics =
 
     let revenue func = EconomicFunction func
 
-    let plot_name (func:EconomicFunction) = Expr.Value((sprintf "q_D(%A) = %s" (farg func) (sprinte <| fexpr func)) :> obj)
+    let plot_name (func:EconomicFunction) = Expr.Value((sprintf "q_D(%A) = %A" (farg func) (fexpr func)) :> obj)
 
     let utilfun2 func = UtilityFunction2 func
 

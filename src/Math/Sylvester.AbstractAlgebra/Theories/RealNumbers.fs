@@ -37,40 +37,72 @@ module RealNumbers =
     let rec _reduce_constants  =
          function
          | Divide(Double l, Double r) -> <@@ l / r @@>
-         | expr -> traverse expr _reduce_constants
+         | expr -> traverse expr (Integers._reduce_constants >> _reduce_constants)
 
-    let rec _distrib_divide_add =
+    let rec _distrib_div_add =
         function
-        | Divide(a1, Add(a2, a3)) -> call_add (call_mul a1 a2)  (call_mul a1 a3) 
-        | expr -> traverse expr _distrib_divide_add
+        | Divide(a1, Add(a2, a3)) -> call_add (call_div a1 a2)  (call_div a1 a3) 
+        | expr -> traverse expr _distrib_div_add
 
-    let rec _collect =
+    let rec _collect_div_add =
         function
-        | Add(Multiply(a1, a2), Multiply(a1', a3)) when sequal a1 a1' -> call_mul a1 (call_add a2 a3) 
-        | Subtract(Multiply(a1, a2), Multiply(a1', a3)) when sequal a1 a1' -> call_mul a1 (call_sub a2 a3) 
-        | expr -> traverse expr _collect
+        | Add(Divide(a1, a2), Divide(a1', a3)) when sequal a1 a1' -> call_div a1 (call_add a2 a3) 
+        | expr -> traverse expr _collect_div_add
 
-    let rec _ident =
+    
+    let rec _distrib_div_sub =
         function
-        | Add(x, Double 0.) -> x
-        | Multiply(x, Double 1.) -> x
-        | expr -> traverse expr _ident
+        | Divide(a1, Subtract(a2, a3)) -> call_sub (call_div a1 a2)  (call_div a1 a3) 
+        | expr -> traverse expr _distrib_div_sub
 
+    let rec _collect_div_sub =
+        function
+        | Subtract(Divide(a1, a2), Divide(a1', a3)) when sequal a1 a1' -> call_div a1 (call_sub a2 a3) 
+        | expr -> traverse expr _collect_div_sub
+
+    let rec _ident_div =
+        function
+        | Divide(x, Double 1.) -> x
+        | expr -> traverse expr _ident_div
+
+    let right_assoc_add = Integers.right_assoc_add
+    
+    let right_assoc_mul = Integers.right_assoc_mul
+    
+    let left_assoc_add = Integers.left_assoc_add
+    
+    let left_assoc_mul = Integers.left_assoc_mul
+    
+    let commute_add = Integers.commute_add
+    
+    let commute_mul = Integers.commute_mul
+    
+    let distrib_mul_add = Integers.distrib_mul_add
+    
+    let distrib_mul_sub = Integers.distrib_mul_sub
+    
+    let collect_mul_add = Integers.collect_mul_add
+    
+    let collect_mul_sub = Integers.collect_mul_sub
+    
+    let ident_add = Integers.ident_add
+    
+    let ident_mul = Integers.ident_mul
+    
     /// Reduce equal constants in expression. 
     let reduce = Admit("Reduce real number constants in (expression)", _reduce_constants)
 
-    /// Expression is distributive.
-    let distrib = Admit("(expression) is distributive", _distrib_divide_add)
+    /// Division is distributive over addition.
+    let distrib_div_add = Admit("(expression) is distributive", _distrib_div_add)
 
     /// Collect multiplication terms distributed over addition.
-    let collect = Admit("Collect multiplication terms distributed over addition in (expression)", _collect)
+    let collect_div_add = Admit("Collect multiplication terms distributed over addition in (expression)", _collect_div_add)
 
-    /// Zero is the identity of the addition operation.
-    let zero_ident = Admit("Zero is the identity of the addition operation in (expression)", _collect)
-
+    /// One is the identity of the addition operation.
+    let ident_div = Admit("1 is the identity of the division operation in (expression)", _ident_div)
+    
     (* Theory *)
     type RealNumbers() = inherit Theory(real_numbers_axioms, [
-        Integers.reduce
         Integers.right_assoc_add
         Integers.right_assoc_mul
         Integers.left_assoc_add
@@ -84,13 +116,14 @@ module RealNumbers =
         Integers.ident_add
         Integers.ident_mul
         reduce
-        distrib
-        collect
-        zero_ident
+        distrib_div_add
+        collect_div_add
+        ident_div
     ])
     
     let real_numbers = RealNumbers()
 
+    
     (* Functions *)
 
     let sup (s:ITotalOrder<real>) = formula<real>

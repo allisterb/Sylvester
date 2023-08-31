@@ -25,17 +25,17 @@ module Algebra =
 
     [<Fact>]
     let ``Can get part frac``() =
-        let a = LatinVars.a<int>
-        let b = LatinVars.b<int>
-        let f = Algebra.partfrac_of a <@ (2 * %a)/ (%a + 3) @>
+        let a = intvar "a"
+        let b = intvar "b"
+        let f = Algebra.partfrac_of a.Expr <@ (2 * %a.Expr)/ (%a.Expr + 3) @>
         Assert.NotNull f
-        let f' = Algebra.partfrac_of b <@ (1 + 2)/ %b @>
+        let f' = Algebra.partfrac_of b.Expr <@ (1 + 2)/ %b.Expr @>
         Assert.NotNull f'
-        let c = LatinVars.c<real>
+        let c = realvar "c"
         let f'' = Algebra.partfrac_of c <@ (2.5 + 1.) / %c @>
         Assert.NotNull f''
 
-        let x = LatinVars.x<real>
+        let x = LatinVars.x<real
         let a = LatinVars.a<real>
         
         let f''' = Analysis.limit a <@ 0. @> <@ (fo(%x + %a) - fo %x) / %a @>

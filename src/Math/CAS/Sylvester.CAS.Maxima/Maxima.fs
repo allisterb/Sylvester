@@ -64,18 +64,18 @@ module Maxima =
         match x with
         | List list -> "[" + (list |>  List.map sprint |> List.reduce (fun l r -> l + ", " + r)) + "]"
         
-        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("%s < %s") (sprint l) (sprint r)
-        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("%s <= %s") (sprint l) (sprint r)
-        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("%s > %s") (sprint l) (sprint r)
-        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (sprint l) (sprint r)
-        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (<) @@> (_, _, [l; r]) -> sprintf("(%s) < (%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ (<=) @@> (_, _, [l; r]) -> sprintf("(%s) <= (%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ (>) @@> (_, _, [l; r]) -> sprintf("(%s) > (%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("(%s) >= (%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("(%s) = (%s)") (sprint l) (sprint r)
         
-        | SpecificCall <@@ (~-) @@> (_, _, [l]) -> sprintf("-%s") (sprint l)
-        | SpecificCall <@@ (~+) @@> (_, _, [l]) -> sprintf("+%s") (sprint l)
-        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (sprint l) (sprint r)
-        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (sprint l) (sprint r)
-        | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (sprint l) (sprint r)
-        | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (sprint l) (sprint r)
+        | SpecificCall <@@ (~-) @@> (_, _, [l]) -> sprintf("-(%s)") (sprint l)
+        | SpecificCall <@@ (~+) @@> (_, _, [l]) -> sprintf("+(%s)") (sprint l)
+        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("(%s) / (%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("(%s) * (%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("(%s) + (%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("(%s) - (%s)") (sprint l) (sprint r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^(%s)") (sprint l) (sprint r)
         
         | SpecificCall <@@ sin @@> (_, _, [l]) -> sprintf("sin(%s)") (sprint l) 
@@ -130,5 +130,10 @@ module Maxima =
         match defaultInt with
         | Some m -> m.ConsoleSession.LastOutput n
         | None -> failwith "The default Maxima interpreter is not initialzed."
+
+    let set_stardisp()  =
+        match send' "stardisp:true;" with
+        | Ok r -> if r.Trim() <> "true" then failwithf "Could not set stardisp variable. Maxima returned %s." r
+        | Error e -> failwithf "Could not set stardisp variable. Maxima returned %s." e.Message
 
 

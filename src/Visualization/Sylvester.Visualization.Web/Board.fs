@@ -264,6 +264,9 @@ module GE =
     [<Emit("{3}.create('point3d', [{0}, {1}, {2}], {3})")>]
     let point3d (x:obj) (y:obj) (z:obj) (attr:obj) (board:Board) = stub<Point3D> 
 
+    //[<Emit("{3}.create('point3d', [{0}, {1}, {2}], {3})")>]
+    //let functiongraph3d (f:(float*float)->float) (xrange:obj) (yrange:obj) (attr:obj) (board:Board) = stub<Parametr>
+
 [<RequireQualifiedAccess>]
 module ge =
     [<Emit("{3}.create('point', [{0}, {1}], {2})")>]

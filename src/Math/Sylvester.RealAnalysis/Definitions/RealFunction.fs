@@ -10,12 +10,10 @@ open FSharp.Quotations.DerivedPatterns
 
 type RealFunction<'t when 't : equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>) = 
     inherit ScalarFunction<'t, real>(domain, codomain, map)
-    member x.Arg = Scalar<real> (expand_as<real> x.Vars.[0])
     
 type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, amap:Expr<'a->'t>) = 
     inherit ScalarFunction<'t, real, 'a>(domain, codomain, map, amap)
-    //member x.Arg = Scalar<real> (expand_as<real> x.Vars.[0])
-
+   
 type RealFunction(f) = 
     inherit RealFunction<real>(Field.R, Field.R, f)
     new (e:Scalar<real>) =
