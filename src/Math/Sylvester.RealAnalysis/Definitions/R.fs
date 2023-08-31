@@ -19,6 +19,8 @@ module R =
     
     let ratsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.RatSimp)
 
+    let simplify (x:ISymbolic<_, real>) = x.Mutate(x |> simplify)
+
     let sum x l u expr = Ops.Sum x (intexpr l) (intexpr u) expr |> Scalar
 
     let open_interval left right = Field.R |>| <@ fun x -> x > left && x < right @>
@@ -31,28 +33,19 @@ module R =
     
     //let open_ball (x:Vec<_>) (r:real) : Region<_> = Field.R |>| <@ fun y -> (euclid_dist x y) < scalar r @>
     
-    let lim x v f = Ops.Limit x v f |> Scalar
+    let lim (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.Limit (x.Expr) (v.Expr) f.Expr |> f.Mutate
        
-    let lim_right x v f = Ops.LimitRight x v f |> Scalar
+    let lim_right (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.LimitRight (x.Expr) (v.Expr) f.Expr |> f.Mutate
 
-    let lim_left x v f = Ops.LimitLeft x v f |> Scalar
+    let lim_left (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.LimitLeft (x.Expr) (v.Expr) f.Expr |> f.Mutate
 
     let inline deriv_lim f x a = 
-        lim <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
+        Ops.Limit <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
 
-    let diff (x:Scalar<real>) (s:ISymbolic<_, real>) =  
-        fail_if_not_var x
-        fail_if_not_has_var (get_var x.Expr) s.Expr
-        s.Mutate(Ops.Diff 1 x.Expr s.Expr)
+    let diff (x:ScalarVar<real>) (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Mutate(Ops.Diff 1 x.Expr s.Expr)
 
-    let integrate (x:Scalar<real>) (s:ISymbolic<_, real>) = 
-        fail_if_not_var x
-        fail_if_not_has_var (get_var x.Expr) s.Expr
-        s.Mutate(Ops.Integrate x.Expr s.Expr)
+    let integrate (x:ScalarVar<real>) (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Mutate(Ops.Integrate x.Expr s.Expr)
 
-    let integrate_over (x:Scalar<real>) l r (s:ISymbolic<_, real>) = 
-        fail_if_not_var x
-        fail_if_not_has_var (get_var x.Expr) s.Expr
-        s.Mutate(Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr)
+    let integrate_over (x:ScalarVar<real>) l r (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Mutate(Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr)
 
-    let integrate_over_R (x:Scalar<real>) f = integrate_over x minf'<real> inf'<real> f
+    let integrate_over_R (x:ScalarVar<real>) f = integrate_over x minf'<real> inf'<real> f

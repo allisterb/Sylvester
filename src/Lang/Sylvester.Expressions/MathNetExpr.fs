@@ -149,7 +149,7 @@ module MathNetExpr =
         let rec convertExpr : Expression -> Expr option = 
             function 
             | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
-            | Identifier(sym) -> (getParam sym) |> Option.map (fun x -> Expr.Var(x))
+            | Identifier(Symbol s) -> match getParam (Symbol s) with | Some v -> Expr.Var v |> Some | None -> Expr.ValueWithName(Unchecked.defaultof<'t>, typeof<'t>, s) |> Some 
             | Values.Value v -> value v
             | Constant (Constant.Pi) -> let p = getPropertyInfo <@ pi @> in Expr.PropertyGet p |> Some
             | Constant (Constant.E) -> let p = getPropertyInfo <@ e @> in Expr.PropertyGet p |> Some

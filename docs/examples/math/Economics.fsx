@@ -14,20 +14,21 @@ open Dimension
 open MicroEconomics
 open LinearEquations
 open FunScript
-let get_props (o:'a) = typeof<'a>.GetProperties()
-   
 
-
-let draw (o:'a) =
-    let p = get_props o
-    p
-
-draw {|x="foo"; y = 5|} 
-//typeof<Vec<dim<2>>>.GetMethod("get_Item")
+MathNet.Symbolics.Infix.parse "2.0*r+a" 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+
+let r, s = realvar2 "r" "s"
+let a, b = realconst2 "a" "b"
+let f = realfun (r***2 + r*a + a)
+
+(diff r f).Body 
+   
+Maxima.last_output 10
+
 let P, Q, J = realvar "P", realvar "Q", realvar "J"
 
-ratexpand( P * (Q + Q))
+simplify ( P * (Q + Q))
 
 Maxima.last_output(50)
 let U = realvar "U"
@@ -51,7 +52,7 @@ let p = ppf [
     P == 7.
 ]
 
-let a, b = realconst2 "a" "b"
+
 let x, y = realvar2 "x" "y"
 
 let i = indexvar "i"
@@ -60,9 +61,9 @@ let i = indexvar "i"
 //y.[i + 1] == A * y.[i] + 2 |> sexpr
 //sys |> List.map sexpr
 
-J == (P ^^ 2) + Q - A
+J == P *** 2 + Q - A
 
-let U1 = utilfun2 (U .= a * (x ^^ 4) + 4 * (y ^^ 3)) 
+let U1 = utilfun2 (U .= a * x *** 4 + 4 * y *** 3) 
 
 U1.ScalarMapExpr
 

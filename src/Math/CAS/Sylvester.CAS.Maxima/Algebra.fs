@@ -21,8 +21,6 @@ module Algebra =
         | Ok s -> s
         | Error e -> failwith e
     
-    
-
     let algexpand (expr:Expr<'t>) = sprintf "expand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
     let ratexpand (expr:Expr<'t>) = sprintf "ratexpand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
@@ -52,7 +50,6 @@ module Algebra =
         | Ok s -> s
         | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
-
 
     let solve_as_real_eqn_for (v:Expr<real>) (expr:Expr<real>) = solve_for v [ <@ %expr = 0.0 @> ]
 

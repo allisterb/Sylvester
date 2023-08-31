@@ -43,7 +43,7 @@ type PPF(c: EconomicConstraint list) =
 
 [<AutoOpen>]
 module MicroEconomics =
-    let marginal (func:EconomicFunction) :EconomicFunction = diff (farg func) func
+    let marginal (func:EconomicFunction) :EconomicFunction = diff (func.VarMap.Var) func
     
     let demand func = DemandFunction func
 
