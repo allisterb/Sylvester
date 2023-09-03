@@ -177,6 +177,9 @@ module GE =
     [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
     let point (x:float) (y:float) (attr:obj) (board:Board) = stub<Point> 
 
+    [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
+    let pointf (x:obj) (y:obj) (attr:obj) (board:Board) = stub<Point> 
+
     [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
     let line (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<Line>
         
@@ -271,6 +274,9 @@ module GE =
 module ge =
     [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
     let point (x:float) (y:float) (attr:obj) (board:Board) = stub<GeometryElement> 
+
+    [<Emit("{3}.create('point', [{0}, {1}], {2})")>]
+    let pointf (x:obj) (y:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
 
     [<Emit("{3}.create('line', [{0}, {1}], {2})")>]
     let line (p1:obj) (p2:obj) (attr:obj) (board:Board) = stub<GeometryElement>
