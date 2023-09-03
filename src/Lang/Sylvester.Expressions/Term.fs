@@ -75,7 +75,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
            member a.Mutate(e:Expr<'t>) = Scalar e
            
     interface IHtmlDisplay with
-        member x.Html() = latexe x.Expr
+        member x.Html() = "$$" + latexe x.Expr + "$$"
 
     static member Zero = typeof<'t> |> zero_val |> expand_as<'t> |> Scalar<'t>
 
@@ -91,6 +91,15 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member op_Implicit (l:nat):Scalar<real> = let v = real l in Scalar (exprv v)
 
+    (* Unary operators *)
+
+    static member (~-) (l:Scalar<'t>) = call_neg l.Expr |> expand_as<'t> |> Scalar<'t>
+
+    static member Sin(l:Scalar<'t>) = call_sin l.Expr |> expand_as<'t> |> Scalar<'t>
+
+    static member Cos (l:Scalar<'t>) = call_cos l.Expr |> expand_as<'t> |> Scalar<'t>
+
+    static member Sqrt (l:Scalar<'t>) = call_sqrt l.Expr |> expand_as<'t> |> Scalar<'t>
     (* Binary operators *)
 
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
@@ -272,8 +281,6 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
     static member (+>) (l:ScalarVar<real>, r:Scalar<real>)  = ScalarVarRelation<real>(l, r, <@ (>) @>)
     
     static member (+>) (l:ScalarVar<real>, r:real)  = ScalarVarRelation<real>(l, r |> exprv |> Scalar<real>, <@ (>) @>)
-
-    
 
 and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) = 
     inherit Scalar<'t>(expr)

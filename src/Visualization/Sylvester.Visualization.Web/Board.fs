@@ -20,7 +20,7 @@ type BoardLayout(src:Expr) =
             let repbid (s:string) = s.Replace("_bid", id)
             div [
                 div [attr "id" id; attr "class" "jxgbox"; attr "style" $"width:{x.Width}px;height:{x.Height}px"]
-                script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + (src |> compile |> repbid) + "});"|> Text]
+                script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + "JXG.Options.text.useMathJax = true;" + "\n" + (src |> compile |> repbid) + "});"|> Text]
             ] |> Html.toString
             
 [<AutoOpen>]
@@ -103,7 +103,7 @@ module Board =
     let withVal (s:Slider) (v:float) = s.setValue(v)
 
     [<JS>]
-    let autoPosition = {|autoPosition = true|}
+    let autoPosition = {|useMathJax = true; display = "html"; autoPosition = true|}
 
     [<JS>]
     let toFixed n f  = JXG.toFixed(f, n)

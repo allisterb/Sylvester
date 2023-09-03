@@ -39,7 +39,14 @@ module Symbolic =
     
     let inline sexprs2(a:'t [] []) = a |> Array.map(Array.map sexpr)
 
-    
+    (* Term patterns *)
+    let (|Atom|_|) expr =
+        match expr with
+        | Var _ 
+        | Value(_, _) 
+        | ValueWithName(_,_,_) -> Some expr
+        | _ -> None
+
     (* Print quotation as string *)
 
     let rec sprinte (x:Expr) = 
@@ -88,14 +95,16 @@ module Symbolic =
 
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
-        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (latexe l) (latexe r)
-        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s \cdot %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (latexe l) (latexe r)
 
         | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latexe x)
 
+        | Lambda(v, x) -> sprintf "%s \mapto %s" (latexe (Expr.Var v)) (latexe x)
         | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
-        
+        | ValueWithName(_, _, n) -> n
+
         | Double d when d = Math.Floor(d + 0.00001) ->  latexe <| Expr.Value (Convert.ToInt32(d))
 
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format

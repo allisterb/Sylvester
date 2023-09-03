@@ -511,6 +511,10 @@ module FsExpr =
 
     let call_pow (l:Expr) (r:Expr) = binary_call(None, powOp.[l.Type.Name], l, r)
 
+    let call_sin (l:Expr) = unary_call(None, sinOp.[l.Type.Name], l)
+
+    let call_cos (l:Expr) = unary_call(None, cosOp.[l.Type.Name], l)
+
     let call_pown (l:Expr) (r:Expr) = binary_call(None, pownOp.[l.Type.Name], l, r)
 
     let zero_val(t:Type) = zeroVal.[t.Name]
@@ -612,6 +616,10 @@ module FsExpr =
             let dict = new System.Collections.Generic.List<Type*string>()
             expr |> traverse' (function | ValueWithName(_, t, n) -> dict.Add(t, n); None | _ -> None) |> ignore
             dict |> List.ofSeq
+
+    let get_symbols e = get_vars e |> List.map(fun v -> v.Type, v.Name) |> List.append(get_consts e)
+
+    let nullv = <@ %%Expr.Value(null, typeof<obj>):obj @>
 
     let inline (%!) q = ev q
 

@@ -46,6 +46,7 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
                let map = expand_as<'a->'b> (recombine_func (get_vars a.Body) b)
                Function(a.Domain, a.CoDomain, map, a.AMapExpr, a.TermMap)
 
+    interface IHtmlDisplay with member x.Html() = sprintf "$$ %s \mapsto %s $$" (latexe x.ArgExpr) (latexe x.Body)
     override x.ToString() = src x.MapExpr
 
 type Function<'a, 'b, 'd when 'a : equality and 'b: equality and 'd: equality>(domain:ISet<'a>, codomain:ISet<'b>, map: Expr<'a->'b>, term:Expr<'b>->'d) = 

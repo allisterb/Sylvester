@@ -56,7 +56,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
            member x.Html() =
                let elems =
                    x.Rows 
-                   |> Array.map (fun v -> v.Expr  |> Array.skip 1 |> Array.fold(fun s e -> sprintf "%s & %s" s (sprinte e)) (sprinte v.Expr.[0])) 
+                   |> Array.map (fun v -> v.Expr  |> Array.skip 1 |> Array.fold(fun s e -> sprintf "%s & %s" s (latexe e)) (latexe v.Expr.[0])) 
                    |> Array.reduce(fun s e -> sprintf "%s \\\\ %s" s e) 
                    |> sprintf "%s"
                "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
