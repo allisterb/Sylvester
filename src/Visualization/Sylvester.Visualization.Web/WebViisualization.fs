@@ -1,9 +1,9 @@
 ﻿namespace Sylvester
 
 type IWebVisualization =
-    abstract Draw:obj->Html
+    abstract Draw:'a->Html
 
 [<AutoOpenAttribute>]
 module WebVisualization =
-    let draw (attrs:obj) (v:IWebVisualization) = v.Draw attrs
+    let draw (attrs:'a) (v:IWebVisualization) = v.Draw attrs
 

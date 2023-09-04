@@ -3,10 +3,11 @@
 open System
 open System.Collections
 open System.Collections.Generic
-
+open System.Linq
 open FSharp.Quotations
 open MathNet.Numerics
 
+open FunScript.Bindings.JSXGraph
 open Arithmetic
 open Dimension
 
@@ -59,9 +60,12 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
             "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
 
     interface IWebVisualization with
-        member x.Draw(attrs:obj) =
-            <@ 4 @> |> draw_board
-
+        member x.Draw(attrs:_) =
+            let rt = typeof<real>
+            match e.Length, typeof<'t> with
+            | 2, rt -> WebVisualization.draw_vec2 attrs e.[0].Raw e.[1].Raw |> draw_board
+            | _ -> failwith "unsupported"
+            
     interface IHistory with
         member val History = h
 
@@ -97,6 +101,13 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     interface IEquatable<Vector<'dim0, 't>> with
         member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
      
+    interface IWebVisualization with
+        member x.Draw(attrs:'a) =
+            let rt = typeof<real>
+            match e.Length, typeof<'t> with
+            | 2, rt -> WebVisualization.draw_vec2 attrs x.Expr.[0] x.Expr.[1] |> draw_board
+            | _ -> failwith "unsupported"
+
     static member Zero:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (zero_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e
 
     static member One:Vector<'dim0, 't> = let e = Array.create number<'dim0>.IntVal (one_val(typeof<'t>) |> expand_as<'t>) in Vector<'dim0, 't> e

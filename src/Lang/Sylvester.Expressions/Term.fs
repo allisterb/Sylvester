@@ -95,11 +95,6 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (~-) (l:Scalar<'t>) = call_neg l.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member Sin(l:Scalar<'t>) = call_sin l.Expr |> expand_as<'t> |> Scalar<'t>
-
-    static member Cos (l:Scalar<'t>) = call_cos l.Expr |> expand_as<'t> |> Scalar<'t>
-
-    static member Sqrt (l:Scalar<'t>) = call_sqrt l.Expr |> expand_as<'t> |> Scalar<'t>
     (* Binary operators *)
 
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
@@ -467,6 +462,12 @@ module Scalar =
     let realconst3 (p:string) (q:string) (r:string) = realconst p, realconst q, realconst r
 
     let realconst4 (p:string) (q:string) (r:string) (s:string) = realconst p, realconst q, realconst r, realconst s
+
+    let sin (s:Scalar<'t>) = call_sin s.Expr |> expand_as<'t> |> Scalar<'t>
+
+    let cos (s:Scalar<'t>) = call_cos s.Expr |> expand_as<'t> |> Scalar<'t>
+
+    let sqrt (s:Scalar<'t>) = call_sqrt s.Expr |> expand_as<'t> |> Scalar<'t>
     
 [<AutoOpen>]
 module Prop =

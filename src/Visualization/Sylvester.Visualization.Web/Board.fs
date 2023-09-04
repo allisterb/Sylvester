@@ -29,8 +29,8 @@ module Board =
         let id = Guid.NewGuid().ToString()
         let repbid (s:string) = s.Replace("_bid", id)
         div [
-            div [attr "id" id; attr "class" "jxgbox"; attr "style" "width:100%;height:512px"]
-            script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + (src |> compile |> repbid) + "});"|> Text]
+            div [attr "id" id; attr "class" "jxgbox"; attr "style" "width:100%;height:768px"]
+            script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n"  + "JXG.Options.text.useMathJax = true;" + "\n" + (src |> compile |> repbid) + "});"|> Text]
         ]
         
     [<Emit("$('div.cell.selected').children('div.output_wrapper').height({0})")>]
@@ -133,7 +133,7 @@ module Board =
     let ticks (x:real[]) (y:real[]) (attr:obj) (board:Board) = stub<Ticks> 
         
     [<JS>]
-    let draw (board:Board) (elems: ((Board->#GeometryElement) array)) = 
+    let draw_ge (board:Board) (elems: ((Board->#GeometryElement) array)) = 
         for i = 0 to elems.Length - 1 do 
             elems.[i] board |> ignore
         board

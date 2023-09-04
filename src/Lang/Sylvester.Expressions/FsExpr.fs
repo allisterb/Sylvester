@@ -474,6 +474,8 @@ module FsExpr =
 
     let exprvar<'t>(v:Var) = v |> Expr.Var |> expand_as<'t>
 
+    let expr_var<'t>(n:string) = expand_as<'t>(Expr.Var(Var(n, typeof<'t>)))
+
     let body'(expr:Expr<'a->'b>) = expr |> body |> expand_as<'b>
     
     let binary_operands op (e:Expr) =

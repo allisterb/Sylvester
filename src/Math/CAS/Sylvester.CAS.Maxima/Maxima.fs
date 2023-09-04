@@ -78,11 +78,11 @@ module Maxima =
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("(%s) - (%s)") (sprint l) (sprint r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^(%s)") (sprint l) (sprint r)
         
-        | SpecificCall <@@ sin @@> (_, _, [l]) -> sprintf("sin(%s)") (sprint l) 
-        | SpecificCall <@@ cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l)
-        | SpecificCall <@@ tan @@> (_, _, [l]) -> sprintf("tan(%s)") (sprint l)
+        | SpecificCall <@@ Microsoft.FSharp.Core.Operators.sin @@> (_, _, [l]) -> sprintf("sin(%s)") (sprint l) 
+        | SpecificCall <@@ Microsoft.FSharp.Core.Operators.cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l)
+        | SpecificCall <@@ Microsoft.FSharp.Core.Operators.tan @@> (_, _, [l]) -> sprintf("tan(%s)") (sprint l)
 
-        | SpecificCall <@@ log @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
+        | SpecificCall <@@ Microsoft.FSharp.Core.Operators.log @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
         | SpecificCall <@@ ln @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
 
         | PropertyGet(None, Prop "pi", []) -> "%pi"
