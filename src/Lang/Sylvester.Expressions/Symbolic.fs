@@ -9,8 +9,17 @@ open MathNet.Symbolics
 
 open MathNetExpr
 
-type ISymbolic<'s, 't> = 
+type IExpr<'t> =
     abstract member Expr:Expr<'t>
+
+type IExprs<'t> =
+    abstract member Exprs: Expr<'t> []
+
+type IExprs2<'t> =
+    abstract member Exprs: Expr<'t> [][]
+
+type ISymbolic<'s, 't> = 
+    inherit IExpr<'t>
     abstract member Mutate : Expr<'t> -> 's
     
 [<AutoOpen>]
@@ -28,7 +37,12 @@ module Symbolic =
 
     let vars<'t> s n  = var_seq<'t> s n |> Seq.toArray
     
-    
+    (* Patterns *)
+    let (|NumericExpr|_|):obj->option<unit> =
+        function
+        | :? IExprs<_> as e when exprs_all_numeric e.Exprs -> Some ()
+        | _ -> None
+
     (* Get quotation from type *)
 
     let inline sexpr (x : ^T) = (^T : (member Expr : Expr<'t>) (x))

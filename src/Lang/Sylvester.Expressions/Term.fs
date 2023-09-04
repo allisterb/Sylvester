@@ -227,7 +227,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member ( ***) (l : Scalar<rat>, r : rat) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> Scalar<'t>
 
-    static member ( ***) (l : Scalar<rat>, r : int) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> Scalar<'t>
+    static member ( ***) (l : Scalar<rat>, r : int) = call_pow l.Expr (Expr.Value (Rational(r, 1))) |> expand_as<'t> |> Scalar<'t>
          
     static member ( ***) (l : Scalar<int>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> Scalar<'t>
          

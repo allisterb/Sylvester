@@ -52,12 +52,18 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
     interface IHtmlDisplay with
         member x.Html() =
-            let elems =
-                expr 
-                |> Array.skip 1 
-                |> Array.fold(fun s e -> sprintf "%s \\\\ %s" s (sprinte e)) (sprinte expr.[0]) 
-                |> sprintf "%s"
-            "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
+            match h with
+            | Some(BinaryOp(op, l, r)) when l.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) && r.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) ->
+                let lv = l :?> IHtmlDisplay
+                let rv = r :?> IHtmlDisplay
+                "$$" + lv.Html().Replace("$$", "") + " " + op + " " + rv.Html().Replace("$$", "") + "$$"
+            | _ ->
+                let elems =
+                    expr 
+                    |> Array.skip 1 
+                    |> Array.fold(fun s e -> sprintf "%s \\\\ %s" s (sprinte e)) (sprinte expr.[0]) 
+                    |> sprintf "%s"
+                "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
 
     interface IWebVisualization with
         member x.Draw(attrs:_) =
@@ -101,8 +107,23 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     interface IEquatable<Vector<'dim0, 't>> with
         member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
      
+    interface IHtmlDisplay with
+        member x.Html() =
+            match h with
+            | Some(BinaryOp(op, l, r)) when l.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) && r.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) ->
+                let lv = l :?> IHtmlDisplay
+                let rv = r :?> IHtmlDisplay
+                "$$" + lv.Html().Replace("$$", "") + " " + op.Replace("*", "\cdot") + " " + rv.Html().Replace("$$", "") + "$$"
+            | _ ->
+                let elems =
+                    e 
+                    |> Array.skip 1 
+                    |> Array.fold(fun s e -> sprintf "%s \\\\ %s" s (sprinte e)) (sprinte e.[0]) 
+                    |> sprintf "%s"
+                "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
+
     interface IWebVisualization with
-        member x.Draw(attrs:'a) =
+        member x.Draw(attrs:_) =
             let rt = typeof<real>
             match e.Length, typeof<'t> with
             | 2, rt -> WebVisualization.draw_vec2 attrs x.Expr.[0] x.Expr.[1] |> draw_board
@@ -150,6 +171,8 @@ type VecZ<'dim0 when 'dim0 :> Number> = Vector<'dim0, int>
 module Vector =
     let (|Vector|_|) (v: Vector<'n, 't>) : Expr<'t> list option = Some(v.ExprList)
     
+    let (|NumericVector|_|) :obj->option<Vector<_,_>> = function | :? Vector<_,_> as v when exprs_all_numeric v.Expr -> Some v | _ -> None
+
     let vexpr(v: Vector<'n, 't>) = v.Expr
 
     let vec (dim:'n) (data:obj list) = data |> List.toArray |> realterms |> Vec<'n> 

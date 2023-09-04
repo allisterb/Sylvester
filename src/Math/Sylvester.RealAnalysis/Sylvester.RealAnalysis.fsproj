@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Definitions\WebVisualization.fs" />
     <Compile Include="Definitions\Ops.fs" />
     <Compile Include="Definitions\R.fs" />
     <Compile Include="Definitions\RealFunction.fs" />
@@ -19,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Lang\Solvers\Sylvester.Solver.Z3\Sylvester.Solver.Z3.fsproj" />
     <ProjectReference Include="..\CAS\Sylvester.CAS.Maxima\Sylvester.CAS.Maxima.fsproj" />
     <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
     <ProjectReference Include="..\Sylvester.LinearAlgebra\Sylvester.LinearAlgebra.fsproj" />

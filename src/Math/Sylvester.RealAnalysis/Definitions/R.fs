@@ -1,6 +1,7 @@
 ﻿namespace Sylvester
 
 open Arithmetic
+open Z3
 open Vector
 
 type Region<'n when 'n :> Number> = Set<Vec<'n>>
@@ -19,7 +20,22 @@ module R =
     
     let ratsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.RatSimp)
 
+    let trigsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigSimp)
+
+    let trigexpand (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigExpand)
+       
+    let trigreduce (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigReduce)
+
     let simplify (x:ISymbolic<_, real>) = x.Mutate(x |> simplify)
+
+    let maximize (s:Z3Solver) (c:ScalarRelation<real> list) (x:ISymbolic<_, real>)  = 
+        c |> List.map sexpr |> opt_assert_hard s
+        let _ = opt_maximize s (x.Expr)
+        if opt_check_sat s then 
+            let sols = opt_get_rat_var_model s
+            sols |> Option.map(fun s -> s |> List.map (fun sol -> let v = ratvar (fst sol) in ScalarVarMap(v, (sol |> snd |> exprv |> Scalar<rat>))))
+        else None
+
 
     let sum x l u expr = Ops.Sum x (intexpr l) (intexpr u) expr |> Scalar
 
@@ -49,3 +65,5 @@ module R =
     let integrate_over (x:ScalarVar<real>) l r (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Mutate(Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr)
 
     let integrate_over_R (x:ScalarVar<real>) f = integrate_over x minf'<real> inf'<real> f
+
+

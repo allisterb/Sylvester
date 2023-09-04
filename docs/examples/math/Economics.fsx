@@ -18,14 +18,14 @@ open FunScript
 MathNet.Symbolics.Infix.parse "2.0*r+a" 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
-<@
-let b = board {||}
-let s = slider 0. 1. 2. 3. 4. 5. {||} b
-b
-@>
+let z3sol = new Z3Solver()
+
+
 
 
 let r, s = realvar2 "r" "s"
+
+maximize z3sol [(2*r + s) == 100.] (r*s)
 let a, b = realconst2 "a" "b"
 let f = realfun (r***2 + r*a + a)
 

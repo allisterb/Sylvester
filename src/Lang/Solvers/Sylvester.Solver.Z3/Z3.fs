@@ -337,8 +337,8 @@ module Z3 =
 
     let opt_set_param (s:Z3Solver) (k:string) (v:string) = s.OptimizerParams.Add(s.Ctx.MkSymbol k, s.Ctx.MkSymbol v)
 
-    let opt_assert_hard (s:Z3Solver) (a:Expr<bool list >) = 
-        let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Optimizer.Assert constraints
+    let opt_assert_hard (s:Z3Solver) (a:Expr<bool> list) = 
+        let constraints = a |> List.map(create_bool_expr s) |> List.toArray in s.Optimizer.Assert constraints
 
     let opt_assert_at_most (s:Z3Solver) (a:Expr<bool list >) k = 
         let constraints = a |> expand_list |> List.map(create_bool_expr s) |> List.toArray in s.Ctx.MkAtMost(constraints, k) |> s.Optimizer.Assert
@@ -348,6 +348,9 @@ module Z3 =
 
     let opt_maximize (s:Z3Solver) (a:FSharp.Quotations.Expr) = 
         a |> create_arith_expr  s |> s.Optimizer.MkMaximize
+
+    let opt_minimize (s:Z3Solver) (a:FSharp.Quotations.Expr) = 
+        a |> create_arith_expr  s |> s.Optimizer.MkMinimize
 
     let opt_check_sat (s:Z3Solver)  = 
         let sol = s.Optimizer.Check()

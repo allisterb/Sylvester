@@ -81,10 +81,3 @@ module RealFunction =
     let realfun (e:Scalar<real>) = RealFunction e
 
     let realfun2 (e:Scalar<real>) = RealFunction2 e
-
-    let rec make_JS_compat    = 
-        function
-        | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt])  -> 
-            let xxt, yyt = make_JS_compat xt, make_JS_compat yt
-            <@@ FunScript.Arithmetic.MathJS.Pow((%%xxt:float), (%%yyt:float)) @@>
-        | expr -> traverse expr make_JS_compat
