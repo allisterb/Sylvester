@@ -20,6 +20,8 @@ module R =
     
     let ratsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.RatSimp)
 
+    let partfrac_of (f:Scalar<real>) (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.PartFracOf f.Expr)
+
     let trigsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigSimp)
 
     let trigexpand (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigExpand)
@@ -33,9 +35,16 @@ module R =
         let _ = opt_maximize s (x.Expr)
         if opt_check_sat s then 
             let sols = opt_get_rat_var_model s
-            sols |> Option.map(fun s -> s |> List.map (fun sol -> let v = ratvar (fst sol) in ScalarVarMap(v, (sol |> snd |> exprv |> Scalar<rat>))))
+            sols |> Option.map(fun s -> s |> List.map (fun sol -> let v = realvar (fst sol) in ScalarVarMap(v, (sol |> snd |> real |> exprv |> Scalar<real>))))
         else None
 
+    let minimize (s:Z3Solver) (c:ScalarRelation<real> list) (x:ISymbolic<_, real>)  = 
+        c |> List.map sexpr |> opt_assert_hard s
+        let _ = opt_minimize s (x.Expr)
+        if opt_check_sat s then 
+            let sols = opt_get_rat_var_model s
+            sols |> Option.map(fun s -> s |> List.map (fun sol -> let v = realvar (fst sol) in ScalarVarMap(v, (sol |> snd |> real |> exprv |> Scalar<real>))))
+        else None
 
     let sum x l u expr = Ops.Sum x (intexpr l) (intexpr u) expr |> Scalar
 

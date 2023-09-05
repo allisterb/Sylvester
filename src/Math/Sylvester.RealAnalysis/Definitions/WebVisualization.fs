@@ -29,8 +29,9 @@ module WebVisualization =
         let originx, originy = exprv <| fst origin, exprv <| snd origin
         let xmin = exprv (fst xrange)
         let xmax = exprv (snd xrange)
-        let ymin = if fst yrange <> 0.0 then exprv(fst yrange) else expr_var<real> "ymin"
-        let ymax = if snd yrange <> 0.0 then exprv(snd yrange) else expr_var<real> "ymax"
+        let __ymin, __ymax = Var("ymin", typeof<real>), Var("ymax", typeof<real>)
+        let ymin = if fst yrange <> 0.0 then exprv(fst yrange) else exprvar __ymin
+        let ymax = if snd yrange <> 0.0 then exprv(snd yrange) else exprvar __ymax
         let widthx, widthy = <@ (%xmax - %originx) @>, <@ (%ymax - %originy) @>
         let intervalx = <@ %widthx / 10. @>
         let intervaly = <@ %widthy / 10. @>
@@ -56,6 +57,7 @@ module WebVisualization =
         
         get_symbols m |> List.iter(fun (t, n) -> 
             if has_prop n typeof<real*real> attrs then 
+                if (yrange = (0.,0.)) then failwith "You must specify the yrange if using intervals for parameters"
                 let s = get_prop n typeof<real*real> attrs :?> real*real in 
                 let min = exprv (fst s) in 
                 let max = exprv (snd s) in 
@@ -74,7 +76,7 @@ module WebVisualization =
         
         let _jsf = recombine_func [farg] ( m)
         let jsf = <@ %%_jsf:real->real @>
-        let ejsf = ev jsf
+        let ejsf = ev jsf    
         let _nsf = recombine_func [farg] (m |> make_JS_compat)
         let nsf = <@ %%_nsf:real->real @>
 
@@ -87,7 +89,8 @@ module WebVisualization =
 
         ll <- replace_expr nullv fg ll
         ll <- replace_expr nullv t ll
-        ll <- replace_expr nullv bv ll   
+        ll <- replace_expr nullv bv ll
+
         let grid = 
             <@ {| 
                     boundingbox = [|(%originx - %intervalx); (%ymax + %intervaly); (%xmax + (%xmax / 10.)); (%originy - (%ymax / 10.));|]
@@ -98,5 +101,11 @@ module WebVisualization =
                 |} 
             @>
         ll <- Expr.Let(_bv, <@ board %grid @>, ll)  
+
+        if yrange = (0.,0.) then
+            let _ymin,_ymax = ejsf (fst xrange), ejsf (snd xrange)
+            ll <- ll.Substitute(fun v -> if v = __ymin then Some(exprv(_ymin).Raw) else None)
+            ll <- ll.Substitute(fun v -> if v = __ymax then Some(exprv(_ymax).Raw) else None)
+
         let lll = ll
         <@ (%%lll:Board) @>

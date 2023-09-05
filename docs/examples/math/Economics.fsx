@@ -20,18 +20,36 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let z3sol = new Z3Solver()
 
-
+let x,y,z = intvar "x", intvar "Y", intvar "z"
 
 
 let r, s = realvar2 "r" "s"
+let t = realvar "t"
+-3.*r <+ 5. |> sexpr
 
-maximize z3sol [(2*r + s) == 100.] (r*s)
+maximize z3sol [2*(r + s) == 100.; r == 5.; s <+ 50.] (r*s)
+
+open LinearEquations
+
+
+solve [
+    -3.*r + 2.*s - 5.*t == -14.
+    2.*r - 3.*s + 4.*t == 10.
+    r + s + t == 4.
+]
+
+
+trigreduce (2* sin (r) * cos r)
+
+(Maxima.last_output 10).ToUpper()
+partfrac_of (r) (3 / (4 * (1 + r)))
+maximize z3sol [2*(r + s) == 100.] (r*s)
 let a, b = realconst2 "a" "b"
 let f = realfun (r***2 + r*a + a)
 
 (diff r f).Body 
    
-Maxima.last_output 10
+(Maxima.last_output 10
 
 let P, Q, J = realvar "P", realvar "Q", realvar "J"
 

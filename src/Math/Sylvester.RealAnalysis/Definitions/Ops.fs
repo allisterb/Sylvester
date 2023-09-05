@@ -10,6 +10,7 @@ type IRealAnalysisSymbolicOps =
     abstract AlgExpand: Expr<'a> -> Expr<'a>
     abstract RatExpand: Expr<'a> -> Expr<'a>
     abstract RatSimp: Expr<'a> -> Expr<'a>
+    abstract PartFracOf: Expr<'a> -> Expr<'a>->Expr<'a>
     abstract TrigSimp: Expr<'a> -> Expr<'a>
     abstract TrigExpand: Expr<'a> -> Expr<'a>
     abstract TrigReduce: Expr<'a> -> Expr<'a>
@@ -26,6 +27,7 @@ type IRealAnalysisSymbolicOps =
         member __.AlgExpand x = Algebra.algexpand x
         member __.RatExpand x = Algebra.ratexpand x
         member __.RatSimp x = Algebra.ratsimp x
+        member __.PartFracOf f x = Algebra.partfrac_of f x
         member __.TrigSimp x = Analysis.trigsimp x
         member __.TrigExpand x = Analysis.trigexpand x
         member __.TrigReduce x = Analysis.trigreduce x
