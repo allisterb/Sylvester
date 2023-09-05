@@ -13,11 +13,17 @@ let exprvar2<'t>(n:string) = expand_as<'t>(Expr.Var(Var(n, typeof<'t>)))
 [<EntryPoint>]
 let main argv =
         
-    
+    let a = realconst "a"
     let r, s = realvar2 "r" "s"
     let rr = vec2 r (r + s)
     //let ggg = draw_v {|r = 6.,7. |} rr
-    let gggg= WebVisualization.draw {|s = 6.,10.|} rr
+    //let gggg= WebVisualization.draw {|s = 6.,10.|} rr
+    
+    
     //printfn "%s" (compile (gggg.ToString()))
     //printfn "%s" (compile jj)
+
+    let f   = realfun (r*2. + r*5. + a)
+    let gg = WebVisualization.draw_realfun {|xrange = 0.,15.;yrange=0.,300.; a=0.,150.|} f.MapExpr |> draw_board
+
     0 // return an integer exit code

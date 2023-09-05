@@ -352,7 +352,7 @@ module FsExpr =
         
     let rec replace_expr (o:Expr) (n:Expr)  = 
             function
-            | l when sequal l o -> n
+            | l when sequal l o && l.Type = o.Type -> n
             | expr -> traverse expr (replace_expr o n)
             
     let get_vars expr =

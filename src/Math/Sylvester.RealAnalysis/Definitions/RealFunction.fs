@@ -21,9 +21,8 @@ type RealFunction(f) =
         do if v.Length <> 1 then failwith "The number of independent variables in this function is not 1."
         let f = recombine_func_as<real->real> v e.Expr in
         RealFunction f
-    //interface IWebVisualization with
-    //    member x.Draw(attrs:obj) = 
-    //    ()
+    interface IWebVisualization with
+        member x.Draw(attrs:_) = WebVisualization.draw_realfun attrs x.MapExpr |> draw_board
  
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>)
