@@ -23,13 +23,18 @@ type BoardLayout(src:Expr) =
                 script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n" + "JXG.Options.text.useMathJax = true;" + "\n" + (src |> compile |> repbid) + "});"|> Text]
             ] |> Html.toString
             
+[<RequireQualifiedAccess>]
+module BoardOptions =
+    let mutable Height = 640
+
 [<AutoOpen>]
 module Board =
+    
     let draw_board (src:Expr) =
         let id = Guid.NewGuid().ToString()
         let repbid (s:string) = s.Replace("_bid", id)
         div [
-            div [attr "id" id; attr "class" "jxgbox"; attr "style" "width:100%;height:768px"]
+            div [attr "id" id; attr "class" "jxgbox"; attr "style" ("width:100%;height:" + BoardOptions.Height.ToString() + "px")]
             script ["require(['https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js'], function(JXG) {\n"  + "JXG.Options.text.useMathJax = true;" + "\n" + (src |> compile |> repbid) + "});"|> Text]
         ]
         
@@ -264,11 +269,14 @@ module GE =
     [<Emit("{8}.create('view3d', [[{0}, {1}], [{2}, {3}], [{4}, {5}, {6}]], {7})")>]
     let view3d (x:float) (y:float) (w:float) (h:float) (xbound:float[]) (ybound:float[]) (zbound:float[])  (attr:obj) (board:Board) = stub<View3D>
 
-    [<Emit("{3}.create('point3d', [{0}, {1}, {2}], {3})")>]
-    let point3d (x:obj) (y:obj) (z:obj) (attr:obj) (board:Board) = stub<Point3D> 
+    [<Emit("{4}.create('point3d', [{0}, {1}, {2}], {3})")>]
+    let point3d (x:obj) (y:obj) (z:obj) (attr:obj) (board:View3D) = stub<Point3D> 
 
-    //[<Emit("{3}.create('point3d', [{0}, {1}, {2}], {3})")>]
-    //let functiongraph3d (f:(float*float)->float) (xrange:obj) (yrange:obj) (attr:obj) (board:Board) = stub<Parametr>
+    [<Emit("{3}.create('line3d', [{0}, {1}], {2})")>]
+    let line3d (x:Point3D) (y:Point3D) (attr:obj) (view:View3D) = stub<Line3D> 
+
+    [<Emit("{4}.create('functiongraph3d', [{0}, {1}, {2}], {3})")>]
+    let functiongraph3d (f:(float*float)->float) (xrange:obj) (yrange:obj) (attr:obj) (v:View3D) = stub<Functiongraph3D>
 
 [<RequireQualifiedAccess>]
 module ge =
@@ -356,5 +364,8 @@ module ge =
     [<Emit("{8}.create('view3d', [[{0}, {1}], [{2}, {3}], [{4}, {5}, {6}]], {7})")>]
     let view3d (x:float) (y:float) (w:float) (h:float) (xbound:float[]) (ybound:float[]) (zbound:float[])  (attr:obj) (board:Board) = stub<GeometryElement>
         
-    [<Emit("{3}.create('point3d', [{0}, {1}, {2}], {3})")>]
-    let point3d (x:obj) (y:obj) (z:obj) (attr:obj) (board:Board) = stub<GeometryElement> 
+    [<Emit("{4}.create('point3d', [{0}, {1}, {2}], {3})")>]
+    let point3d (x:obj) (y:obj) (z:obj) (attr:obj) (board:View3D) = stub<GeometryElement>
+    
+    [<Emit("{3}.create('line3d', [{0}, {1}], {2})")>]
+    let line3d (x:Point3D) (y:Point3D) (attr:obj) (view:View3D) = stub<GeometryElement>

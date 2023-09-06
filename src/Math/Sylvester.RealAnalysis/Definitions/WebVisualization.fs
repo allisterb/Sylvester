@@ -36,7 +36,7 @@ module WebVisualization =
        let intervalx = <@ %widthx / 10. @>
        let intervaly = <@ %widthy / 10. @>
    
-       let strokeColor = if has_prop "strokeColor" typeof<string> attrs then exprv (get_prop "strokeColor" typeof<string> attrs :?> string) else exprv "black"
+       let strokeColor = if has_prop "strokeColor" typeof<string> attrs then exprv (get_prop "strokeColor" typeof<string> attrs :?> string) else exprv "blue"
        let strokeWidth = if has_prop "strokeWidth" typeof<int> attrs then exprv (get_prop "strokeWidth" typeof<int> attrs :?> int) else exprv 1
        let farg = param_var e
        let fbody = body' e
@@ -77,7 +77,7 @@ module WebVisualization =
    
        let _fgv = Var("fg", typeof<Functiongraph>)
        let fgv = Expr.Var _fgv
-       let fg = Expr.Let(_fgv, <@ functiongraph %nsf %xmin %xmax defaults %bv @>, nullv)
+       let fg = Expr.Let(_fgv, <@ functiongraph %nsf %xmin %xmax {|strokeColor=(%strokeColor);strokeWidth=(%strokeWidth)|} %bv @>, nullv)
        let _tv = Var("t", typeof<Text>)
        let tv = <@ %%(Expr.Var(_tv)):Text @>
        let t = Expr.Let(_tv, <@ text (%widthx * 0.5) (%ymax - %intervaly) %n invisible %bv @>, nullv)

@@ -199,30 +199,31 @@ module Matrix =
 
     let msimplify (l:Matrix<'dim0, 'dim1, 't>) = l.Expr |> Array.map (Array.map simplifye) |> Matrix<'dim0, 'dim1, 't>
 
-    let inline mrmul (l:Matrix<'dim0, 'dim1, 't>) i (k:Expr<'t>) =
-        check (i +< l.Dim0)
+    let inline mrmul i (k:Scalar<'t>) (l:Matrix<'dim0, 'dim1, 't>)=
+        if i >= l.Dim0.IntVal then failwith "row index"
         let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
-        let ri = Scalar k * l.[int i]
-        rows.[int i] <- ri
+        let ri = k * l.[i]
+        rows.[i] <- ri
         Matrix<'dim0, 'dim1, 't> rows
 
-    let inline mrswitch (l:Matrix<'dim0, 'dim1, 't>) i j =
-        check (i +< l.Dim0)
-        check (j +< l.Dim1)
-        let ri = l.[int i] 
-        let rj = l.[int j]
+    let inline mrswitch i j (l:Matrix<'dim0, 'dim1, 't>) =
+        if i >= l.Dim0.IntVal then failwith "row index"
+        if j >= l.Dim1.IntVal then failwith "row index"
+        let ri = l.[i] 
+        let rj = l.[j]
         let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
-        rows.[(int) i] <- rj
-        rows.[(int) j] <- ri
+        rows.[i] <- rj
+        rows.[j] <- ri
         Matrix<'dim0, 'dim1, 't> rows
     
-    let inline mraddmul (l:Matrix<'dim0, 'dim1, 't>) i j (k:Expr<'t>) =
-         check (i +< l.Dim0)
-         check (j +< l.Dim1)
-         let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
-         let ri = l.[int i] + Scalar k * l.[int j] 
-         rows.[int i] <- ri
-         Matrix<'dim0, 'dim1, 't> rows
+    let inline mraddmul i j (k:Scalar<'t>) (l:Matrix<'dim0, 'dim1, 't>) =
+        if i >= l.Dim0.IntVal then failwith "row index"
+        if j >= l.Dim1.IntVal then failwith "row index"
+
+        let rows = l.Rows.Clone() :?> Vector<'dim1, 't> array
+        let ri = l.[i] + k * l.[j] 
+        rows.[i] <- ri
+        Matrix<'dim0, 'dim1, 't> rows
 
     let inline mdiag (l:Matrix<'dim0,'dim1,'t>) = 
         let dim = Math.Min(l.Dim0.IntVal, l.Dim1.IntVal)
