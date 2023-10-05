@@ -1,6 +1,7 @@
 ﻿namespace Sylvester
 
 open System
+open System.Collections.Generic
 
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
@@ -13,6 +14,8 @@ type Term<'t when 't: equality> (expr:Expr<'t>, ?h:TermHistory) =
     
     member val History = h
 
+    member val Attrs:Dictionary<string, obj> = new Dictionary<string, obj>()
+    
     abstract member Display: string
     
     interface IEquatable<Term<'t>> with
@@ -71,8 +74,15 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
     override a.GetHashCode() = a.Expr.GetHashCode()
 
     interface ISymbolic<Scalar<'t>, 't> with
+           member a.Term = a
            member a.Expr = expr
-           member a.Mutate(e:Expr<'t>) = Scalar e
+           member a.Attrs = a.Attrs
+           member a.Symbol = None
+           member a.Transform(e:Expr<'t>, ?attrs, ?s) = 
+                let s = Scalar e
+                do s.Attrs.Replace(defaultArg attrs null) |> ignore
+                s
+           member a.TransformWithSymbol(e, _) = Scalar e
            
     interface IHtmlDisplay with
         member x.Html() = "$$" + latexe x.Expr + "$$"

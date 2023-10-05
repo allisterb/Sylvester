@@ -15,7 +15,6 @@ open MicroEconomics
 open LinearEquations
 open FunScript
 
-MathNet.Symbolics.Infix.parse "2.0*r+a" 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let z3sol = new Z3Solver()
@@ -25,18 +24,17 @@ let x,y,z = intvar "x", intvar "Y", intvar "z"
 
 let r, s = realvar2 "r" "s"
 let t = realvar "t"
--3.*r <+ 5. |> sexpr
 
-maximize z3sol [2*(r + s) == 100.; r == 5.; s <+ 50.] (r*s)
+let f = realfun "f" (r *** 3 + 2)
+let q = realvar "q"
+let C = costfun "C" (100 * q - 4 * q *** 2 + 0.2 * q *** 3 + 450)
 
-open LinearEquations
+let MC = marginal C
+MC.Symbol
+let AC = realfun "AC" (C.[q] / q)
 
-
-solve [
-    -3.*r + 2.*s - 5.*t == -14.
-    2.*r - 3.*s + 4.*t == 10.
-    r + s + t == 4.
-]
+let g = realfun2 "g" (r***3 + s)
+g.
 
 
 trigreduce (2* sin (r) * cos r)

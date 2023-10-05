@@ -14,21 +14,21 @@ type RealVectorSpace<'n when 'n :>Number>() =
 module R =
     let R (dim:'n when 'n :> Number) = new RealVectorSpace<'n>()
              
-    let algexpand (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.AlgExpand)
+    let algexpand (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.AlgExpand)
 
-    let ratexpand (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.RatExpand)
+    let ratexpand (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.RatExpand)
     
-    let ratsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.RatSimp)
+    let ratsimp (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.RatSimp)
 
-    let partfrac_of (f:Scalar<real>) (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.PartFracOf f.Expr)
+    let partfrac_of (f:Scalar<real>) (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.PartFracOf f.Expr)
 
-    let trigsimp (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigSimp)
+    let trigsimp (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.TrigSimp)
 
-    let trigexpand (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigExpand)
+    let trigexpand (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.TrigExpand)
        
-    let trigreduce (x:ISymbolic<_, real>) = x.Mutate(x |> sexpr |> Ops.TrigReduce)
+    let trigreduce (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.TrigReduce)
 
-    let simplify (x:ISymbolic<_, real>) = x.Mutate(x |> simplify)
+    let simplify (x:ISymbolic<_, real>) = x.Transform(x |> simplify)
 
     let maximize (s:Z3Solver) (c:ScalarRelation<real> list) (x:ISymbolic<_, real>)  = 
         c |> List.map sexpr |> opt_assert_hard s
@@ -58,20 +58,24 @@ module R =
     
     //let open_ball (x:Vec<_>) (r:real) : Region<_> = Field.R |>| <@ fun y -> (euclid_dist x y) < scalar r @>
     
-    let lim (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.Limit (x.Expr) (v.Expr) f.Expr |> f.Mutate
+    let lim (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.Limit (x.Expr) (v.Expr) f.Expr |> f.Transform
        
-    let lim_right (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.LimitRight (x.Expr) (v.Expr) f.Expr |> f.Mutate
+    let lim_right (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.LimitRight (x.Expr) (v.Expr) f.Expr |> f.Transform
 
-    let lim_left (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.LimitLeft (x.Expr) (v.Expr) f.Expr |> f.Mutate
+    let lim_left (x:ScalarVar<real>) (v:Scalar<real>) (f:ISymbolic<_, real>) = fail_if_not_has_var x.Var f.Expr; Ops.LimitLeft (x.Expr) (v.Expr) f.Expr |> f.Transform
 
     let inline deriv_lim f x a = 
         Ops.Limit <@ ((%f)(%x + %a) - (%f) %x) / %a @> a <@ 0. @>
 
-    let diff (x:ScalarVar<real>) (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Mutate(Ops.Diff 1 x.Expr s.Expr)
+    let diff (x:ScalarVar<real>) (s:ISymbolic<'a, real>) = 
+        do fail_if_not_has_var x.Var s.Expr
+        match s.Symbol with
+        | None -> s.Transform(Ops.Diff 1 x.Expr s.Expr, newattrs [("Derivative", box true)])
+        | Some sym ->  s.Transform(Ops.Diff 1 x.Expr s.Expr, newattrs [("Derivative", box true)], sym + "'")
 
-    let integrate (x:ScalarVar<real>) (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Mutate(Ops.Integrate x.Expr s.Expr)
+    let integrate (x:ScalarVar<real>) (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Transform(Ops.Integrate x.Expr s.Expr)
 
-    let integrate_over (x:ScalarVar<real>) l r (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Mutate(Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr)
+    let integrate_over (x:ScalarVar<real>) l r (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Transform(Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr)
 
     let integrate_over_R (x:ScalarVar<real>) f = integrate_over x minf'<real> inf'<real> f
 

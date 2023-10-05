@@ -18,9 +18,16 @@ type IExprs<'t> =
 type IExprs2<'t> =
     abstract member Exprs: Expr<'t> [][]
 
+type IAttrs =
+    abstract member Attrs: System.Collections.Generic.Dictionary<string, obj>
+
 type ISymbolic<'s, 't> = 
     inherit IExpr<'t>
-    abstract member Mutate : Expr<'t> -> 's
+    inherit IAttrs
+    abstract member Term: 's
+    abstract member Symbol: string option
+    abstract member Transform : e:Expr<'t> * ?a:System.Collections.Generic.Dictionary<string, obj> * ?s:string-> 's
+    abstract member TransformWithSymbol: e:Expr<'t>*s:string -> 's
     
 [<AutoOpen>]
 module Symbolic =
@@ -52,6 +59,16 @@ module Symbolic =
     let inline sexprs(a:'t[]) = a |> Array.map sexpr
     
     let inline sexprs2(a:'t [] []) = a |> Array.map(Array.map sexpr)
+
+    let newattrs ((p:(string*obj) list)) =
+        let a = new System.Collections.Generic.Dictionary<string, obj>()
+        p |> List.iter(fun (k,v) -> a.[k] <- v)
+        a
+    let with_attr n o (s:ISymbolic<_,_>) = s.Attrs.[n] <- o; s.Term
+
+    let with_symbol n (s:ISymbolic<_,_>) = s.TransformWithSymbol(s.Expr, n)
+
+    let inline with_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).[n] <- true; x
 
     (* Term patterns *)
     let (|Atom|_|) expr =
