@@ -8,11 +8,17 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
+type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, amap:Expr<'a->'t>, ?symbol:string) = 
+    inherit ScalarFunction<'t, real, 'a>(domain, codomain, map, amap, ?symbol=symbol)
+
 type RealFunction<'t when 't : equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, ?symbol:string) = 
     inherit ScalarFunction<'t, real>(domain, codomain, map, ?symbol=symbol)
     
-type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, amap:Expr<'a->'t>, ?symbol:string) = 
-    inherit ScalarFunction<'t, real, 'a>(domain, codomain, map, amap, ?symbol=symbol)
+type IRealFunction<'a> = 
+    inherit ISymbolic<'a, real>
+    inherit IHtmlDisplay
+    //inherit IWebVisualization
+    abstract member Vars:ScalarVar<real> list
    
 type RealFunction(f, ?symbol:string) = 
     inherit RealFunction<real>(Field.R, Field.R, f, ?symbol=symbol)
@@ -22,7 +28,7 @@ type RealFunction(f, ?symbol:string) =
         let f = recombine_func_as<real->real> v e.Expr in
         RealFunction(f, ?symbol=symbol)
     
-    interface ISymbolic<RealFunction, real> with
+    interface IRealFunction<RealFunction> with
         member x.Term = x
         member x.Expr = x.Body
         member x.Attrs = x.Attrs
@@ -32,12 +38,31 @@ type RealFunction(f, ?symbol:string) =
             do f.Attrs.Replace(defaultArg attrs null) |> ignore
             f
         member a.TransformWithSymbol(b:Expr<real>, s:string) = RealFunction(Scalar<real> b, s)
+        member x.Html() = 
+            let v = x.Vars.[0] |> exprvar<real> |> latexe
+            match x.Symbol with
+            | None -> "$$" + latexe x.Body + "$$"
+            | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$$"
+        member a.Vars = a.Vars |> List.map (exprvar >> ScalarVar<real>)
+
 
     interface IWebVisualization with
         member x.Draw(attrs:_) = WebVisualization.draw_realfun attrs x.MapExpr |> draw_board
  
- type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?symbol:string) = 
+ type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>, ?symbol=symbol)
+     member val ScalarExpr = 
+        match s with
+        | Some e -> e
+        | None ->
+            let vars = Var("x", typeof<real>)::Var("y", typeof<real>)::[]  in
+            let vv = base.ArgExpr
+            let m = typeof<Vec<dim<2>>>.GetProperty("ItemE") in
+            let mutable me = base.Body.Raw
+            do vars |> List.map Expr.Var |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
+            let nb = expand_as<real> me
+            nb
+     member x.ScalarVars = get_vars x.ScalarExpr 
      member val ScalarMapExpr = 
         match sf with
         | Some f -> f
@@ -65,7 +90,7 @@ type RealFunction(f, ?symbol:string) =
         let _a, _b = realexpr a, realexpr b in
         x.SubstArg <@ %_a, %_b @> |> Scalar<real>
      new (e:Scalar<real>, ?symbol:string) =
-         let vars = e |> sexpr |> get_vars |> List.sortBy(fun v -> v.Name)
+         let vars = e |> sexpr |> get_vars
          do if vars.Length <> 2 then failwith "The number of independent variables in this function is not 2."
          let m = typeof<Vec<dim<2>>>.GetMethod("create")
          let tupledArg = Var("tupledArg", typeof<real*real>) 
@@ -79,9 +104,9 @@ type RealFunction(f, ?symbol:string) =
          let m = typeof<Vec<dim<2>>>.GetProperty("ItemE")
          vars |> List.iteri(fun i v -> me <- subst_var_value v (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) me )
          let f = recombine_func_as<Vec<dim<2>>->real> [vvec] me in
-         RealFunction2 (f, af, sf, ?symbol=symbol)
+         RealFunction2 (f, af, sf, e.Expr, ?symbol=symbol)
 
-     interface ISymbolic<RealFunction2, real> with
+     interface IRealFunction<RealFunction2> with
         member x.Term = x
         member x.Expr = x.Body
         member x.Attrs = x.Attrs
@@ -91,6 +116,12 @@ type RealFunction(f, ?symbol:string) =
             do f.Attrs.AddAll(defaultArg attrs null) |> ignore
             f
         member a.TransformWithSymbol(b:Expr<real>, s:string) = RealFunction2(Scalar<real> b, s)
+        member a.Vars = a.Vars |> List.map (exprvar >> ScalarVar<real>)
+        member x.Html() = 
+            let v = x.ScalarVars |> List.map exprvar<real> |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n)) (x.ScalarVars |> List.head |> exprvar<real> |> latexe)
+            match x.Symbol with
+            | None -> "$$" + latexe x.MapExpr + "$$"
+            | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr)) + "$$"
 
 type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>, ?symbol:string) = inherit RealFunction<Set<'t>>(domain, codomain, map,?symbol=symbol)
 

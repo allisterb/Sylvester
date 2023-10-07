@@ -76,7 +76,7 @@ module Tactics =
             | _ -> failwith "The LHS of this theorem is not an identity."
 
         let stmt = <@@ ((%%l1:bool)) = (%%r:bool) @@>
-        let p = Proof(stmt, proof.Theory, L commute :: proof.Steps, true) in 
+        let p = Proof(stmt, proof.Theory, ApplyLeft commute :: proof.Steps, true) in 
         Theorem(stmt, p) |> Ident
 
     /// If X = (L = R) is a theorem then so is X = (R = L).
@@ -125,7 +125,7 @@ module Tactics =
              match l with 
              | Equals(Equals(l1, l2), r2) -> <@@ ((%%l1:bool) = ((%%l2:bool) = (%%r2:bool))) = (%%r:bool) @@>
              | _ -> failwith "This theorem is not an identity."
-         let p = Proof(stmt, proof.Theory, L lassoc :: proof.Steps, true) in 
+         let p = Proof(stmt, proof.Theory, ApplyLeft lassoc :: proof.Steps, true) in 
          Theorem(stmt, p) |> Ident
 
     let RightAssocR lassoc rule =
@@ -151,7 +151,7 @@ module Tactics =
              match l with 
              | Equals(l1, Equals(r1, r2)) -> <@@ (((%%l1:bool) = (%%r1:bool)) = (%%r2:bool)) = (%%r:bool) @@>
              | _ -> failwith "The LHS of this theorem is not an identity."
-         let p = Proof(stmt, proof.Theory, L rassoc :: proof.Steps, true) in 
+         let p = Proof(stmt, proof.Theory, ApplyLeft rassoc :: proof.Steps, true) in 
          Theorem(stmt, p) |> Ident
 
     let LeftAssocR rassoc rule =
@@ -185,7 +185,7 @@ module Tactics =
 
         let p lhs rhs = Proof(stmt, theory,  [
             ident |> LR
-            lhs |> taut |> L
+            lhs |> taut |> ApplyLeft
             rhs |> taut |> R
         ])
 

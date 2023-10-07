@@ -24,7 +24,7 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
     member x.AMapExpr = amap
     member x.AMap = ev amap
     member x.Body = body' x.MapExpr
-    member x.Vars = get_vars x.Body |> List.map Expr.Var
+    member x.Vars = get_vars x.Body
     member x.ArgVar = param_var x.MapExpr
     member x.ArgExpr = x.ArgVar |> Expr.Var |> expand_as<'a>
     member x.TermMap = term

@@ -21,18 +21,23 @@ let z3sol = new Z3Solver()
 
 let x,y,z = intvar "x", intvar "Y", intvar "z"
 
-
+let A = realconst "A"
+let a, b = realconst2 "a" "b"
 let r, s = realvar2 "r" "s"
-let t = realvar "t"
-
-let f = realfun "f" (r *** 3 + 2)
 let q = realvar "q"
+
+let L, K = realvar2 "L" "K"
 let C = costfun "C" (100 * q - 4 * q *** 2 + 0.2 * q *** 3 + 450)
 
-let MC = marginal C
+let MC = marginal q C
 MC.Symbol
 let AC = realfun "AC" (C.[q] / q)
 
+let P = prodfun2 "Q" (A * L *** a * K *** b)
+
+P.Body
+
+(MC :> IHtmlDisplay).Html()
 let g = realfun2 "g" (r***3 + s)
 g.
 

@@ -220,7 +220,7 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
                 if conjs |> List.forall(fun v -> List.exists(fun v' -> sequal v v') current_conjuncts.Value) |> not then
                     failwithf "The conjunct %s in deduction rule at step %i (%s) is not in the antecedent of %s." 
                         (conjs |> List.find(fun v -> List.exists(fun v' -> not (sequal v v')) current_conjuncts.Value) |> print_formula) stepId n (print_formula a)
-                if not step.ApplyRight then failwith "A deduction rule can only be applied to the consequent of a logical implication."
+                if not step.RightApplication then failwith "A deduction rule can only be applied to the consequent of a logical implication."
             | _ -> ()
         let _a = step.Apply _state
 
@@ -303,12 +303,12 @@ and Proof(a:Expr, theory: Theory, steps: RuleApplication list, ?lemma:bool) =
         else Proof(l.Stmt, l.Theory, l.Steps @ r)
 
 and RuleApplication =
-    | L  of Rule
+    | ApplyLeft  of Rule
     | R of Rule
     | LR of Rule
     | QR of Rule
     | QB of Rule
-    | L' of RuleApplication
+    | NextLeft of RuleApplication
     | R' of RuleApplication
     | LR' of RuleApplication
     | QR' of RuleApplication
@@ -317,11 +317,11 @@ with
     member x.Rule = 
         match x with
         | LR rule
-        | L rule
+        | ApplyLeft rule
         | R rule
         | QR rule
         | QB rule -> rule
-        | L' ra 
+        | NextLeft ra 
         | R' ra 
         | LR' ra 
         | QR' ra
@@ -331,7 +331,7 @@ with
         let print_formula = Proof.Logic.PrintFormula
         match x with
         | LR rule -> rule.Apply expr
-        | L rule -> 
+        | ApplyLeft rule -> 
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = rule.Apply l in binary_call(o, m, s, r)
             | _ -> failwithf "%s is not a binary operation." (print_formula expr)
@@ -347,7 +347,7 @@ with
             match expr with
             | Quantifier(op, x, range, body) -> let s = rule.Apply body in let v = vars_to_tuple x in call op (v::range::s::[])
             | _ -> failwithf "%s is not a binary operation." (print_formula expr)
-        | L' ra ->
+        | NextLeft ra ->
             match expr with
             | Patterns.Call(o, m, l::r::[]) -> let s = ra.Apply l in binary_call(o, m, s, r)
             | _ -> failwithf "%s is not a binary operation." (print_formula expr)
@@ -370,20 +370,20 @@ with
     member x.Pos =
         match x with
         | LR _ -> "expression"
-        | L _ -> "left of expression"
+        | ApplyLeft _ -> "left of expression"
         | R _ -> "right of expression"
         | QR _ -> "quantifier range"
         | QB _ -> "quantifier body"
-        | L' ra -> sprintf "left>%s of expression" (ra.Pos.Replace(" of expression", ""))
+        | NextLeft ra -> sprintf "left>%s of expression" (ra.Pos.Replace(" of expression", ""))
         | R' ra -> sprintf "right>%s of expression" (ra.Pos.Replace(" of expression", ""))
         | LR' ra -> sprintf "left-right>%s of expression" (ra.Pos.Replace(" of expression", ""))
         | QR' ra -> sprintf "quantifier-range>%s of expression" (ra.Pos.Replace(" of expression", ""))
         | QB' ra -> sprintf "quantifier-body>%s of expression" (ra.Pos.Replace(" of expression", ""))
 
-    member x.ApplyLeft = 
+    member x.LeftApplication = 
         x.Pos = "left of expression" || System.Text.RegularExpressions.Regex.IsMatch(x.Pos, "left>(\\S)+\\s+of expression")
     
-    member x.ApplyRight =
+    member x.RightApplication =
         x.Pos = "right of expression" || System.Text.RegularExpressions.Regex.IsMatch(x.Pos, "right>(\\S)+\\s+of expression")
 
 and Theorem (expr: Expr, proof:Proof) = 
@@ -405,7 +405,7 @@ and Theorem (expr: Expr, proof:Proof) =
 module ProofOps =
     type Apply = RuleApplication
     
-    let apply_left = Apply.L
+    let apply_left = ApplyLeft
     
     let apply_right = Apply.R
     
@@ -415,7 +415,7 @@ module ProofOps =
 
     let apply_range = Apply.QR
 
-    let after_left = Apply.L'
+    let after_left = NextLeft
 
     let after_right = Apply.R'
     

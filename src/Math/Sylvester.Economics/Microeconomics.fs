@@ -53,16 +53,23 @@ type PPF(c: EconomicConstraint list) =
 
 [<AutoOpen>]
 module MicroEconomics =
-    let marginal (func:ISymbolic<RealFunction, real>) = 
+    let inline marginal (x:ScalarVar<real>) (func:IRealFunction<'a>)  = 
         match func.Symbol with
-        | None -> diff (farg func.Term) func |> with_attr_tag "Marginal"
-        | Some s -> (diff (farg func.Term) func) |> with_attr_tag "Marginal" |> with_symbol ("M" + s)
+        | None -> diff x func |> with_attr_tag "Marginal"
+        | Some s -> diff x func |> with_attr_tag "Marginal" |> with_symbol ("M" + s + "_" + x.Name)
+
+    let average (func:RealFunction) = 
+        match func.Symbol with
+        | None -> RealFunction((fexpr func / farg func)) |> with_attr_tag "Average"
+        | Some s -> diff (farg func) func |> with_attr_tag "Average" |> with_symbol ("A" + s)
 
     let demandfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "DemandFunction"
 
     let supplyfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "SupplyFunction"
 
     let prodfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "ProductionFunction"
+
+    let prodfun2 s (func:Scalar<real>) :RealFunction2 = RealFunction2(func, s) |> with_attr_tag "ProductionFunction"
 
     let costfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "CostFunction"
 
