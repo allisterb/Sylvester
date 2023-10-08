@@ -134,7 +134,18 @@ module Symbolic =
         | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latexe x)
 
         | Lambda(v, x) -> sprintf "%s \mapto %s" (latexe (Expr.Var v)) (latexe x)
+        | Var x when x.Name.EndsWith "_bar" -> 
+            if Symbols.TransliterateGreek && Symbols.isGreek (x.Name.Delete("_bar")) then 
+                sprintf "\\bar{%s}" Symbols.GreekLatex.[x.Name.Delete("_bar")] 
+            else
+                sprintf "\\bar{%s}" (x.Name.Delete("_bar"))
         | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
+        
+        | ValueWithName(_,_,n) when n.EndsWith "_bar" -> 
+            if Symbols.TransliterateGreek && Symbols.isGreek (n.Delete("_bar")) then 
+                sprintf "\\bar{%s}" Symbols.GreekLatex.[n.Delete("_bar")] 
+            else
+                sprintf "\\bar{%s}" (n.Delete("_bar"))
         | ValueWithName(_, _, n) -> if Symbols.TransliterateGreek && Symbols.isGreek n then Symbols.GreekLatex.[n] else n
 
         | Double d when d = Math.Floor(d + 0.00001) ->  latexe <| Expr.Value (Convert.ToInt32(d))
