@@ -35,11 +35,7 @@ let AC = realfun "AC" (C.[q] / q)
 
 let P = prodfun2 "Q" (A * L *** a * K *** b)
 
-P.Body
-
-(MC :> IHtmlDisplay).Html()
-let g = realfun2 "g" (r***3 + s)
-g.
+marginal L P
 
 
 trigreduce (2* sin (r) * cos r)

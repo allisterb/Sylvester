@@ -22,7 +22,7 @@ module WebVisualization =
             <@@ FunScript.Arithmetic.MathJS.Pow((%%xxt:float), (%%yyt:float)) @@>
         | expr -> traverse expr make_JS_compat
 
-    let draw_realfun<'a> (attrs:'a) (e:Expr<real->real>)  = 
+    let draw_realfun<'a> (attrs:'a) (name:string) (e:Expr<real->real>)  = 
        let xrange = if has_prop "xrange" typeof<real*real> attrs then get_prop "xrange" typeof<real*real> attrs :?> real*real else 0. ,10.
        let  has_yrange = has_prop "yrange" typeof<real*real> attrs
        let yrange = if has_yrange  then get_prop "yrange" typeof<real*real> attrs :?> real*real else 0. ,0.
@@ -41,7 +41,8 @@ module WebVisualization =
        let farg = param_var e
        let fbody = body' e
        let mutable m = fbody.Raw
-       let n = sprintf "$$ %s \mapsto %s $$" (latexe (Expr.Var(farg))) (latexe fbody) |> exprv
+       let n = exprv name
+       //let n = sprintf "$$ %s \mapsto %s $$" (latexe (Expr.Var(farg))) (latexe fbody) |> exprv
        let sliders = new List<Var>()
        let _bv = Var("b", typeof<Board>) 
        let bv = Expr.Var(_bv) |> expand_as<Board> 

@@ -124,17 +124,18 @@ module Symbolic =
         | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (latexe l) (latexe r)
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latexe l) (latexe r)
 
+        | SpecificCall <@@ (+) @@> (_, _, [Double -1.0; r]) -> sprintf("%s - %s") (latexe r) (latexe <@ 1.0 @>)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
-        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s \cdot %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s%s") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
-        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
 
         | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latexe x)
 
         | Lambda(v, x) -> sprintf "%s \mapto %s" (latexe (Expr.Var v)) (latexe x)
         | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
-        | ValueWithName(_, _, n) -> n
+        | ValueWithName(_, _, n) -> if Symbols.TransliterateGreek && Symbols.isGreek n then Symbols.GreekLatex.[n] else n
 
         | Double d when d = Math.Floor(d + 0.00001) ->  latexe <| Expr.Value (Convert.ToInt32(d))
 

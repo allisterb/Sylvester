@@ -50,13 +50,16 @@ module Symbols =
         b
 
     let GreekUnicode = Map.ofList [
+        "alpha", "\u03b1"
+        "beta", "\u03b2"
         "epsilon", "\u03f5"
         "theta", "\u03b8"
     ]
     
     let GreekLatex = Map.ofList [
            "epsilon", "\\epsilon"
-           "theta", "foo"
+           "alpha", "\\alpha"
+           "beta", "\\beta"
     ]
     let isGreek s = GreekUnicode.ContainsKey s
 

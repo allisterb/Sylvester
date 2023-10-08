@@ -47,7 +47,7 @@ type RealFunction(f, ?symbol:string) =
 
 
     interface IWebVisualization with
-        member x.Draw(attrs:_) = WebVisualization.draw_realfun attrs x.MapExpr |> draw_board
+        member x.Draw(attrs:_) = WebVisualization.draw_realfun attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
  
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>, ?symbol=symbol)
@@ -108,7 +108,7 @@ type RealFunction(f, ?symbol:string) =
 
      interface IRealFunction<RealFunction2> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member a.Transform(b:Expr<real>, ?attrs, ?s) = 
@@ -120,7 +120,7 @@ type RealFunction(f, ?symbol:string) =
         member x.Html() = 
             let v = x.ScalarVars |> List.map exprvar<real> |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n)) (x.ScalarVars |> List.head |> exprvar<real> |> latexe)
             match x.Symbol with
-            | None -> "$$" + latexe x.MapExpr + "$$"
+            | None -> "$$" + latexe x.ScalarExpr + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr)) + "$$"
 
 type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>, ?symbol:string) = inherit RealFunction<Set<'t>>(domain, codomain, map,?symbol=symbol)
