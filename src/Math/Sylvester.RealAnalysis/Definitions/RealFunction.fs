@@ -27,7 +27,7 @@ type RealFunction(f, ?symbol:string) =
         do if v.Length <> 1 then failwith "The number of independent variables in this function is not 1."
         let f = recombine_func_as<real->real> v e.Expr in
         RealFunction(f, ?symbol=symbol)
-    
+
     interface IRealFunction<RealFunction> with
         member x.Term = x
         member x.Expr = x.Body
@@ -134,5 +134,9 @@ module RealFunction =
     let realfun s (e:Scalar<real>) :RealFunction = (RealFunction(e, s) |> with_attr_tag "kk")
 
     let realfun2 (e:Scalar<real>) (s:string) = RealFunction2(e, s)
+
+    let realfun_im (s:string) (x:ScalarVar<real>) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr e.Expr in realfun s (Scalar<real> l) 
+
+    let realfun_im_pos_vars (s:string) (x:ScalarVar<real>) (e:ScalarEquation<real>) = let l = Ops.SolveForPosVars x.Expr e.Expr in realfun s (Scalar<real> l) 
 
     let realfungrp g = RealFunctionGroupVisualization g

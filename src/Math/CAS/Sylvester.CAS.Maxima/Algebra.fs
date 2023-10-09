@@ -21,6 +21,11 @@ module Algebra =
         | Ok s -> s
         | Error e -> failwith e
     
+    let assume_pos(x:Expr<'a>)  =
+           match send' <| sprintf "assume(%s > 0);" (sprinte x) with
+           | Ok r -> if r.Trim() <> (sprintf "[%s > 0]" (sprinte x)) then failwithf "Could not make assumption. Maxima returned %s." r
+           | Error e -> failwithf "Could not make assumption. Maxima returned %s." e.Message
+
     let algexpand (expr:Expr<'t>) = sprintf "expand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
     let ratexpand (expr:Expr<'t>) = sprintf "ratexpand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
@@ -35,6 +40,18 @@ module Algebra =
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
         |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_varsl system))) 
+        |> function
+        | Ok s -> s
+        | Error "" -> []
+        | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+
+    let solve_for_pos_vars (v:Expr<'t>) (e:Expr<bool>) =
+        e |> get_vars |> List.map exprvar<real> |> List.iter assume_pos
+        sprintf "solve(%s, %s);" ([e] |> sprintel) (sprint v) 
+        |> send 
+        |> Result.mapError(fun e -> e.Message)
+        |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
+        |> Result.map(fun exp -> exp |> List.map (MathNetExpr.toQuotation<'t> (get_vars e))) 
         |> function
         | Ok s -> s
         | Error "" -> []

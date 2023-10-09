@@ -11,7 +11,7 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 open Dimension
-open MicroEconomics
+open Microeconomics
 open LinearEquations
 open FunScript
 
@@ -29,6 +29,8 @@ let q = realvar "q"
 let L, K = realvar2 "L" "K"
 let C = costfun "C" (100 * q - 4 * q *** 2 + 0.2 * q *** 3 + 450)
 
+let C2 = realfun_im_pos_vars "C2" K (6. ==  (L *** 0.5 * K *** 0.5))
+C2
 let MC = marginal q C
 MC.Symbol
 let AC = realfun "AC" (C.[q] / q)
