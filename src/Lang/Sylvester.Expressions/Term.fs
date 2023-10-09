@@ -463,6 +463,8 @@ module Scalar =
 
     let scalarvar<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (n:string) = ScalarVar<'t> n
 
+    let (!%) (q:Scalar<'t>) = q |> sexpr |> ev 
+
     let realvar2 (p:string) (q:string) = realvar p, realvar q
 
     let realvar3 (p:string) (q:string) (r:string) = realvar p, realvar q, realvar r

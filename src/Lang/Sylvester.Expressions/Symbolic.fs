@@ -127,6 +127,7 @@ module Symbolic =
         | SpecificCall <@@ (+) @@> (_, _, [Double -1.0; r]) -> sprintf("%s - %s") (latexe r) (latexe <@ 1.0 @>)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [Double l; Double r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe <|  exprv r)
         | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s%s") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)

@@ -24,7 +24,7 @@ let x,y,z = intvar "x", intvar "Y", intvar "z"
 let A = realconst "A"
 let a, b = realconst2 "a" "b"
 let r, s = realvar2 "r" "s"
-let q = realvar "q"
+let p,q = realvar2 "p" "q"
 
 let L, K = realvar2 "L" "K"
 let C = costfun "C" (100 * q - 4 * q *** 2 + 0.2 * q *** 3 + 450)
@@ -33,6 +33,12 @@ let C2 = realfun_im_pos_vars "C2" K (6. ==  (L *** 0.5 * K *** 0.5))
 C2
 let MC = marginal q C
 MC.Symbol
+
+let U1 = utilfun2 "U" (p *** 0.5 * q *** 0.5)
+
+U1.[4, 5]
+let ic = utilfun_im "U" p (U1.[p, q] == 11.)
+
 let AC = realfun "AC" (C.[q] / q)
 
 let P = prodfun2 "Q" (A * L *** a * K *** b)

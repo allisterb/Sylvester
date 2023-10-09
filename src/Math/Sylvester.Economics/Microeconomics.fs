@@ -30,10 +30,24 @@ module Microeconomics =
 
     let supplyfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "SupplyFunction"
 
+    let utilfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "UtilityFunction"
+    
+    let utilfun2 s (func:Scalar<real>) :RealFunction2 = RealFunction2(func, s) |> with_attr_tag "UtilityFunction"
+
     let prodfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "ProductionFunction"
 
     let prodfun2 s (func:Scalar<real>) :RealFunction2 = RealFunction2(func, s) |> with_attr_tag "ProductionFunction"
 
     let costfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "CostFunction"
 
+    let demandfun_im s (x:ScalarVar<real>) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "DemandFunction"
+
+    let supplyfun_im s (x:ScalarVar<real>) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "SupplyFunction"
+
+    let utilfun_im s (x:ScalarVar<real>) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "UtilityFunction"
+
+    let prodfun_im s (x:ScalarVar<real>) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "ProductionFunction"
+
     let ppf (c:ScalarRelation<real> list) = c |> List.map EconomicConstraint |> PPF
+
+    let solve_for_econ_var (x:ScalarVar<real>) (e:ScalarEquation<real>) = Ops.SolveForPosVars x.Expr e.Expr

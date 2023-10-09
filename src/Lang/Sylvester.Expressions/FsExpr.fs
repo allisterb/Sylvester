@@ -624,6 +624,6 @@ module FsExpr =
     let nullv = <@ %%Expr.Value(null, typeof<obj>):obj @>
 
     let exprs_all_numeric(s:seq<Expr<_>>) = s |> Seq.tryFind(function | Value _ -> false | _ -> true) |> Option.isSome
-    let inline (%!) q = ev q
+    
 
 

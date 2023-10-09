@@ -14,7 +14,7 @@ namespace Sylvester
         {
             if (s.Contains("_"))
             {
-                return "{" + s + r + "}";
+                return s.Insert(s.IndexOf("_") + 1, "{") + s + r + "}";
             }
             else
             {

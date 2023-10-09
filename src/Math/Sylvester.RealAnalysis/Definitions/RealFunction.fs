@@ -45,10 +45,11 @@ type RealFunction(f, ?symbol:string) =
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$$"
         member a.Vars = a.Vars |> List.map (exprvar >> ScalarVar<real>)
 
-
     interface IWebVisualization with
         member x.Draw(attrs:_) = WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
- 
+    
+    static member (==) (l:RealFunction, r:RealFunction) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real> r.Body) 
+
  type RealFunctionGroupVisualization(grp:RealFunction[]) =
     interface IWebVisualization with
            member x.Draw(attrs:_) = WebVisualization.draw_realfuns attrs (grp |> Array.map(fun x->(x :> IRealFunction<RealFunction>).Html())) (grp |> Array.map(fun x ->x.MapExpr)) |> draw_board
@@ -126,6 +127,8 @@ type RealFunction(f, ?symbol:string) =
             match x.Symbol with
             | None -> "$$" + latexe x.ScalarExpr + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr)) + "$$"
+
+     static member (==) (l:RealFunction2, r:RealFunction2) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real> r.Body) 
 
 type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>, ?symbol:string) = inherit RealFunction<Set<'t>>(domain, codomain, map,?symbol=symbol)
 
