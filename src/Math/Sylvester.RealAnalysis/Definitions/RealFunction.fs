@@ -47,8 +47,12 @@ type RealFunction(f, ?symbol:string) =
 
 
     interface IWebVisualization with
-        member x.Draw(attrs:_) = WebVisualization.draw_realfun attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
+        member x.Draw(attrs:_) = WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
  
+ type RealFunctionGroupVisualization(grp:RealFunction[]) =
+    interface IWebVisualization with
+           member x.Draw(attrs:_) = WebVisualization.draw_realfuns attrs (grp |> Array.map(fun x->(x :> IRealFunction<RealFunction>).Html())) (grp |> Array.map(fun x ->x.MapExpr)) |> draw_board
+
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>, ?symbol=symbol)
      member val ScalarExpr = 
@@ -130,3 +134,5 @@ module RealFunction =
     let realfun s (e:Scalar<real>) :RealFunction = (RealFunction(e, s) |> with_attr_tag "kk")
 
     let realfun2 (e:Scalar<real>) (s:string) = RealFunction2(e, s)
+
+    let realfungrp g = RealFunctionGroupVisualization g
