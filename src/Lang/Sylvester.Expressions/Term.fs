@@ -105,6 +105,8 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (~-) (l:Scalar<'t>) = call_neg l.Expr |> expand_as<'t> |> Scalar<'t>
 
+    static member (!) (l:Scalar<'t>) = l |> sexpr |> ev
+
     (* Binary operators *)
 
     static member (+) (l:Scalar<'t>, r:Scalar<'t>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>

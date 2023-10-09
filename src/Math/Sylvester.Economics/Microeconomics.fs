@@ -3,25 +3,6 @@
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
-
-(*
-type EconomicFunction(a:Scalar<real>, ?symbol:string) = 
-    inherit RealFunction(a, ?symbol=symbol)
-    member val VarMap = a
-    interface ISymbolic<EconomicFunction, real> with
-        member a.Expr = a.Body
-        member a.Symbol = a.Symbol
-        member a.Transform(b:Expr<real>) = EconomicFunction(Scalar<real> b) 
-        member a.TransformWithSymbol(b:Expr<real>, s:string) = EconomicFunction(Scalar<real> b, s)
-type EconomicFunction2(a:Scalar<real>, ?symbol:string) = 
-    inherit RealFunction2(a, ?symbol=symbol)
-    member val VarMap = a
-    interface ISymbolic<EconomicFunction2, real> with
-       member a.Expr = a.Body
-       member a.Symbol = a.Symbol
-       member a.Transform(b:Expr<real>) = EconomicFunction2(Scalar<real> b) 
-       member a.TransformWithSymbol(b:Expr<real>, s:string) = EconomicFunction2(Scalar<real> b, s)
- *)
  
 type EconomicConstraint(a:ScalarRelation<real>) = 
     do 
@@ -31,32 +12,14 @@ type EconomicConstraint(a:ScalarRelation<real>) =
         | SpecificCall <@@ (<) @@> (_,_,lhs::rhs::[]) -> ()
         | _ -> failwithf "The expression %s is not a valid constraint expression." (src a.Expr)
 
-(*
-type DemandFunction(a: Scalar<real>, ?symbol:string) = 
-    inherit EconomicFunction(a)
-
-type SupplyFunction(a: Scalar<real>, ?symbol:string) = 
-    inherit EconomicFunction(a)
-
-type CostFunction(a: Scalar<real>, ?symbol:string) = 
-    inherit EconomicFunction(a)
-
-type UtilityFunction2(a: Scalar<real>, ?symbol:string) = 
-    inherit EconomicFunction2(a)
-
-type PPF(c: EconomicConstraint list) =
-    member val Constraints = c
-*)
-
 type PPF(c: EconomicConstraint list) =
     member val Constraints = c
 
-[<AutoOpen>]
-module MicroEconomics =
+module Microeconomics =
     let inline marginal (x:ScalarVar<real>) (func:IRealFunction<'a>)  = 
         match func.Symbol with
-        | None -> diff x func |> with_attr_tag "Marginal"
-        | Some s -> diff x func |> with_attr_tag "Marginal" |> with_symbol ("M" + s + "_" + x.Name)
+        | None -> diff x func |> with_attr_tag "Marginal" 
+        | Some s -> diff x func |> with_attr_tag "Marginal" |> with_symbol ("M" + s.JoinSuperscript(x.Name))
 
     let average (func:RealFunction) = 
         match func.Symbol with

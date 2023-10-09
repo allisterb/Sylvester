@@ -71,7 +71,9 @@ module R =
         do fail_if_not_has_var x.Var s.Expr
         match s.Symbol with
         | None -> s.Transform(Ops.Diff 1 x.Expr s.Expr, newattrs [("Derivative", box true)])
-        | Some sym ->  s.Transform(Ops.Diff 1 x.Expr s.Expr, newattrs [("Derivative", box true)], sym + "'")
+        | Some sym ->  
+            let n = if s.Expr |> get_vars |> List.length > 1 then sym.JoinSuperscript(x.Name) else sym + "'"
+            s.Transform(Ops.Diff 1 x.Expr s.Expr, newattrs [("Derivative", box true)], n)
 
     let integrate (x:ScalarVar<real>) (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Transform(Ops.Integrate x.Expr s.Expr)
 

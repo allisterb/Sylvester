@@ -9,5 +9,17 @@ namespace Sylvester
     public static class Strings
     {
         public static string Delete(this string s, string r) => s.Replace(r, string.Empty);
+
+        public static string JoinSuperscript(this string s, string r)
+        {
+            if (s.Contains("_"))
+            {
+                return "{" + s + r + "}";
+            }
+            else
+            {
+                return s + "_" + r;
+            }
+        }
     }
 }
