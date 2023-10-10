@@ -28,7 +28,12 @@ let p,q = realvar2 "p" "q"
 
 let L, K = realvar2 "L" "K"
 let C = costfun "C" (100 * q - 4 * q *** 2 + 0.2 * q *** 3 + 450)
+let C3 = costfun "C3" (q***2 + 2 * q)
 
+let Qd1 = realfun "Q_d" (12 - p)
+let Qs1 = realfun "Q_s" (9 + 0.5 * p)
+
+Qs1 == Qd1 |> solve_for_econ_var p
 let C2 = realfun_im_pos_vars "C2" K (6. ==  (L *** 0.5 * K *** 0.5))
 C2
 let MC = marginal q C
@@ -36,13 +41,18 @@ MC.Symbol
 
 let U1 = utilfun2 "U" (p *** 0.5 * q *** 0.5)
 
+
+
 U1.[4, 5]
 let ic = utilfun_im "U" p (U1.[p, q] == 11.)
 
-let AC = realfun "AC" (C.[q] / q)
+//let AC = realfun "AC" (C.[q] / q)
 
 let P = prodfun2 "Q" (A * L *** a * K *** b)
+fixconst {|a=7.; b=6.5|} P
 
+let P3 = realfun "P" (L + 4 * 5)
+(P3 :> IHtmlDisplay).Html()
 marginal L P
 
 

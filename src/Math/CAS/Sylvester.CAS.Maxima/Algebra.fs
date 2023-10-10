@@ -23,7 +23,7 @@ module Algebra =
     
     let assume_pos(x:Expr<'a>)  =
            match send' <| sprintf "assume(%s > 0);" (sprinte x) with
-           | Ok r -> if r.Trim() <> (sprintf "[%s > 0]" (sprinte x)) then failwithf "Could not make assumption. Maxima returned %s." r
+           | Ok r -> if r.Trim() <> (sprintf "[%s > 0]" (sprinte x)) && r.Trim() <> "[redundant]" then failwithf "Could not make assumption. Maxima returned %s." r
            | Error e -> failwithf "Could not make assumption. Maxima returned %s." e.Message
 
     let algexpand (expr:Expr<'t>) = sprintf "expand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)

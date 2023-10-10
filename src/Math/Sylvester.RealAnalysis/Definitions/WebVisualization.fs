@@ -226,14 +226,15 @@ module WebVisualization =
     
         if not has_yrange then
             let ejsf = ev jsf
-            let _ymin,_ymax = ejsf (fst xrange), ejsf (snd xrange)
+            let _ymin_,_ymax_ = ejsf (fst xrange), ejsf (snd xrange)
+            let _ymin, _ymax = if _ymin_ > _ymax_ then _ymax_, _ymin_ else _ymin_, _ymax_
+            
             ll <- ll.Substitute(fun v -> if v = __ymin then Some(exprv(_ymin).Raw) else None)
             ll <- ll.Substitute(fun v -> if v = __ymax then Some(exprv(_ymax).Raw) else None)
         else
             ll <- ll.Substitute(fun v -> if v = __ymin then Some(ymin.Raw) else None)
             ll <- ll.Substitute(fun v -> if v = __ymax then Some(ymax.Raw) else None)
         let lll = ll
-        //fvpoints
         <@ (%%lll:Board) @>
   
     let draw_realfuns<'a> (attrs:'a) (names:string[]) (exprs:Expr<real->real>[])  = 
@@ -300,9 +301,12 @@ module WebVisualization =
             let jsf = <@ %%_jsf:real->real @>
             let ejsf = ev jsf
 
+            let sc = if has_prop ("strokeColor" + (i+1).ToString()) typeof<string> attrs then get_prop ("strokeColor" + (i+1).ToString()) typeof<string> attrs :?> string |> exprv else strokeColor
+            let sw = if has_prop ("strokeWidth" + (i+1).ToString()) typeof<int> attrs then get_prop ("strokeWidth" + (i+1).ToString()) typeof<int> attrs :?> int |> exprv else strokeWidth
+            let namev = if has_prop ("name" + (i+1).ToString()) typeof<string> attrs then get_prop ("name" + (i+1).ToString()) typeof<string> attrs :?> string |> exprv else namesv.[i]
             let _fgv = Var("fg" + i.ToString(), typeof<Functiongraph>)
             let fgv = Expr.Var _fgv
-            let fg = Expr.Let(_fgv, <@ functiongraph %nsf %xmin %xmax {|strokeColor=(%strokeColor);strokeWidth=(%strokeWidth); withLabel=true; name=(%(namesv.[i])) |} %bv @>, nullv)
+            let fg = Expr.Let(_fgv, <@ functiongraph %nsf %xmin %xmax {|strokeColor=(%sc);strokeWidth=(%sw); withLabel=true; name=(%namev) |} %bv @>, nullv)
             ll <- replace_expr nullv fg ll
             
             let vpoints = points |> List.map exprv<real>
@@ -313,7 +317,7 @@ module WebVisualization =
                 let l = sprintf "%s(%A, %A)" points_labels.[j] (points.[j]) (ejsf points.[j])
                 let pt = Expr.Let(_ppvar, <@ point %vpoints.[j] %fvpoints.[j] {| name=(%(exprv l)) |} %bv @>, nullv)
                 ll <- replace_expr nullv pt ll
-            
+                (*
                 let _ppsxvar = Var("ptsx" + i.ToString() + "_j" + j.ToString(), typeof<PerpendicularSegment>)
                 let ex = Expr.Let(_ppsxvar, <@ perp_segment (%bv).defaultAxes.x %(exprvar<Point> _ppvar) {|size = 0; dash = 1; strokeColor=(%strokeColor)|} %bv @>, nullv)
                 ll <- replace_expr nullv ex ll
@@ -321,6 +325,7 @@ module WebVisualization =
                 let _ppsyvar = Var("ptsy" + i.ToString() + "_j" + j.ToString(), typeof<PerpendicularSegment>)
                 let ey = Expr.Let(_ppsyvar, <@ perp_segment (%bv).defaultAxes.y %(exprvar<Point> _ppvar) {|size = 0; dash = 1; strokeColor=(%strokeColor)|} %bv @>, nullv)
                 ll <- replace_expr nullv ey ll
+                *)
             )
         )
         
@@ -329,8 +334,6 @@ module WebVisualization =
         let t = Expr.Let(_tv, <@ text (%widthx * 0.5) (%ymax - %intervaly) %n invisible %bv @>, nullv)
         ll <- replace_expr nullv t ll
         
-        
-       
         ll <- replace_expr nullv bv ll
     
         let grid = 

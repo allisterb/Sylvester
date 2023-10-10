@@ -50,4 +50,5 @@ module Microeconomics =
 
     let ppf (c:ScalarRelation<real> list) = c |> List.map EconomicConstraint |> PPF
 
-    let solve_for_econ_var (x:ScalarVar<real>) (e:ScalarEquation<real>) = Ops.SolveForPosVars x.Expr e.Expr
+    let solve_for_econ_var (x:ScalarVar<real>) (e:ScalarEquation<real>) = 
+        Ops.SolveForPosVars x.Expr e.Expr |> List.map(fun v -> ScalarVarMap<real>(x, Scalar<real> v))

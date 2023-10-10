@@ -70,6 +70,19 @@ module Symbolic =
 
     let inline with_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).[n] <- true; x
 
+    let fixconst (attrs:'a) (s:ISymbolic<_,'b>) =
+        let mutable m = s.Expr.Raw
+        get_consts m |> List.iter(fun (t, n) -> 
+            if has_prop n typeof<'b> attrs then 
+                let s = get_prop n typeof<'b> attrs :?> 'b in 
+                let v = exprv s in 
+                m <- replace_expr (Expr.ValueWithName(Unchecked.defaultof<'b>, n)) v m
+                m <- replace_expr (expr_var<'b> n) v m
+        )
+        match s.Symbol with
+        | None -> s.Transform(expand_as<'b> m)
+        | Some sym -> s.TransformWithSymbol(expand_as<'b> m, sym)
+
     (* Term patterns *)
     let (|Atom|_|) expr =
         match expr with
@@ -127,8 +140,9 @@ module Symbolic =
         | SpecificCall <@@ (+) @@> (_, _, [Double -1.0; r]) -> sprintf("%s - %s") (latexe r) (latexe <@ 1.0 @>)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [ValueWithName(_,_, l); r]) -> sprintf("%s%s") (l) (latexe <| r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; ValueWithName(_,_, r)]) -> sprintf("%s%s") (latexe l) (r)
         | SpecificCall <@@ (*) @@> (_, _, [Double l; Double r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe <|  exprv r)
-        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s%s") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
 

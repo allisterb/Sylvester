@@ -24,7 +24,7 @@ type RealFunction(f, ?symbol:string) =
     inherit RealFunction<real>(Field.R, Field.R, f, ?symbol=symbol)
     new (e:Scalar<real>, ?symbol:string) =
         let v = get_vars e.Expr
-        do if v.Length <> 1 then failwith "The number of independent variables in this function is not 1."
+        do if v.Length > 1 then failwith "The number of independent variables in this function is > 1."
         let f = recombine_func_as<real->real> v e.Expr in
         RealFunction(f, ?symbol=symbol)
 
@@ -96,7 +96,7 @@ type RealFunction(f, ?symbol:string) =
         x.SubstArg <@ %_a, %_b @> |> Scalar<real>
      new (e:Scalar<real>, ?symbol:string) =
          let vars = e |> sexpr |> get_vars
-         do if vars.Length <> 2 then failwith "The number of independent variables in this function is not 2."
+         do if vars.Length > 2 then failwith "The number of independent variables in this function is more than 2."
          let m = typeof<Vec<dim<2>>>.GetMethod("create")
          let tupledArg = Var("tupledArg", typeof<real*real>) 
          let af = Expr.Lambda(tupledArg, Expr.Let(vars.[0], Expr.TupleGet(Expr.Var(tupledArg), 0), Expr.Let(vars.[1], Expr.TupleGet(Expr.Var(tupledArg), 1), Expr.Call(m, Expr.NewArray(typeof<real>, vars |> List.map Expr.Var)::[]))))
@@ -134,12 +134,14 @@ type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, 
 
 [<AutoOpen>]
 module RealFunction =
-    let realfun s (e:Scalar<real>) :RealFunction = (RealFunction(e, s) |> with_attr_tag "kk")
+    let realfun s (e:Scalar<real>) = RealFunction(e, s)
 
-    let realfun2 (e:Scalar<real>) (s:string) = RealFunction2(e, s)
+    let realfun2 (s:string) (e:Scalar<real>) = RealFunction2(e, s)
 
     let realfun_im (s:string) (x:ScalarVar<real>) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr e.Expr in realfun s (Scalar<real> l) 
 
-    let realfun_im_pos_vars (s:string) (x:ScalarVar<real>) (e:ScalarEquation<real>) = let l = Ops.SolveForPosVars x.Expr e.Expr in realfun s (Scalar<real> l) 
+    let realfun_im_pos_vars (s:string) (x:ScalarVar<real>) (e:ScalarEquation<real>) = 
+        let l = Ops.SolveForPosVars x.Expr e.Expr in 
+        if l.Length = 1 then realfun s (Scalar<real> l.[0]) else failwithf "More than one solution was returned for %A. Cannot create a function with this as the dependent variable." x 
 
     let realfungrp g = RealFunctionGroupVisualization g
