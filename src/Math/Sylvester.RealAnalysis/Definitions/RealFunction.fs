@@ -46,7 +46,15 @@ type RealFunction(f, ?symbol:string) =
         member a.Vars = a.Vars |> List.map (exprvar >> ScalarVar<real>)
 
     interface IWebVisualization with
-        member x.Draw(attrs:_) = WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
+        member x.Draw(attrs:_) = 
+            if x.Attrs.ContainsKey("SupplyFunction") || x.Attrs.ContainsKey("DemandFunction") then
+                let xxqxx = ScalarVar<real> "xxqxx"
+                let eq = xxqxx == Scalar<real> x.Body
+                let e = Ops.SolveForPosVars x.ArgExpr eq.Expr
+                let fe = recombine_func_as<real->real> [xxqxx.Var] e.Head
+                WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) fe |> draw_board
+            else
+                WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
     
     static member (==) (l:RealFunction, r:RealFunction) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real> r.Body) 
 

@@ -126,7 +126,7 @@ module WebVisualization =
     
         let xaxis_title = if has_prop "xtitle" typeof<string> attrs then get_prop "xtitle" typeof<string> attrs :?> string else "X"
         let yaxis_title = if has_prop "ytitle" typeof<string> attrs then get_prop "ytitle" typeof<string> attrs :?> string else "Y"
-        let title = if has_prop "title" typeof<string> attrs then get_prop "title" typeof<string> attrs :?> string else name
+        let title = if has_prop "title" typeof<string> attrs then get_prop "title" typeof<string> attrs :?> string else ""
         let _name = if has_prop "name" typeof<string> attrs then get_prop "name" typeof<string> attrs :?> string else name
         let namev = _name |> exprv
         let strokeColor = if has_prop "strokeColor" typeof<string> attrs then exprv (get_prop "strokeColor" typeof<string> attrs :?> string) else exprv "blue"
