@@ -181,7 +181,7 @@ module WebVisualization =
         let fg = Expr.Let(_fgv, <@ functiongraph %nsf %xmin %xmax {|strokeColor=(%strokeColor);strokeWidth=(%strokeWidth); withLabel=true; name=(%namev)|} %bv @>, nullv)
         let _tv = Var("t", typeof<Text>)
         let tv = <@ %%(Expr.Var(_tv)):Text @>
-        let t = Expr.Let(_tv, <@ text (%widthx * 0.5) (%ymax - %intervaly) %n invisible %bv @>, nullv)
+        let t = Expr.Let(_tv, <@ text (%widthx * 0.5) (%ymax - %intervaly) %n {|fontSize=24|} %bv @>, nullv)
     
         ll <- replace_expr nullv fg ll
         ll <- replace_expr nullv t ll

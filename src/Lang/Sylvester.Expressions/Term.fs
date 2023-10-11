@@ -311,6 +311,9 @@ and ScalarRelation<'t when 't: equality and 't :> ValueType and 't :> IEquatable
     member val Rhs = rhs
     member val Op = op
 
+    interface IHtmlDisplay with
+        member x.Html() = "$$" + latexe x.Expr + "$$"
+
 and ScalarEquation<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(lhs:Scalar<'t>, rhs:Scalar<'t>) =
     inherit ScalarRelation<'t>(lhs, rhs, <@ (=) @>)
     

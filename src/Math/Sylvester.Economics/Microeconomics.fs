@@ -53,8 +53,12 @@ module Microeconomics =
     let solve_for_econ_var (x:ScalarVar<real>) (e:ScalarEquation<real>) = 
         Ops.SolveForPosVars x.Expr e.Expr |> List.map(fun v -> ScalarVarMap<real>(x, Scalar<real> v))
 
-    let isoquant (attrs:'a) (dv:ScalarVar<real>) (f:RealFunction2) (vals:real[]) =
+    let isoquants (attrs:'a) (dv:ScalarVar<real>) (f:RealFunction2) (vals:real[]) =
         let fs = vals |> Array.map(fun v -> prodfun_im "" dv (f == v)) 
+        draw attrs <| realfungrp fs
+
+    let indifference_curves (attrs:'a) (dv:ScalarVar<real>) (f:RealFunction2) (vals:real[]) =
+        let fs = vals |> Array.map(fun v -> utilfun_im "" dv (f == v)) 
         draw attrs <| realfungrp fs
 
     let mrts (f:RealFunction2) =
