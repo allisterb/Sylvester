@@ -27,7 +27,6 @@ type ISymbolic<'s, 't> =
     abstract member Term: 's
     abstract member Symbol: string option
     abstract member Transform : e:Expr<'t> * ?a:System.Collections.Generic.Dictionary<string, obj> * ?s:string-> 's
-    abstract member TransformWithSymbol: e:Expr<'t>*s:string -> 's
     
 [<AutoOpen>]
 module Symbolic =
@@ -66,7 +65,7 @@ module Symbolic =
         a
     let with_attr n o (s:ISymbolic<_,_>) = s.Attrs.[n] <- o; s.Term
 
-    let with_symbol n (s:ISymbolic<_,_>) = s.TransformWithSymbol(s.Expr, n)
+    let with_symbol n (s:ISymbolic<_,_>) = s.Transform(s.Expr, null, n)
 
     let inline with_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).[n] <- true; x
 
@@ -81,7 +80,7 @@ module Symbolic =
         )
         match s.Symbol with
         | None -> s.Transform(expand_as<'b> m)
-        | Some sym -> s.TransformWithSymbol(expand_as<'b> m, sym)
+        | Some sym -> s.Transform(expand_as<'b> m, null, sym)
 
     (* Term patterns *)
     let (|Atom|_|) expr =
@@ -128,6 +127,7 @@ module Symbolic =
         |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte exprs.[0]) 
         |> sprintf "[%s]"
 
+    let print_latexbar(s:string) = if s.EndsWith("_bar") then sprintf "\\bar{%s}" (s.Delete("bar")) else s
     let rec latexe (x:Expr) = 
         match x with
         | List list -> "[" + (list |>  List.map latexe |> List.reduce (fun l r -> l + ", " + r)) + "]"
@@ -139,10 +139,12 @@ module Symbolic =
 
         | SpecificCall <@@ (+) @@> (_, _, [Double -1.0; r]) -> sprintf("%s - %s") (latexe r) (latexe <@ 1.0 @>)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (+) @@> (_, _, [l; (SpecificCall <@@ (*) @@> (_, _, [Double 1.0; r]))]) -> sprintf("%s - %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
-        | SpecificCall <@@ (*) @@> (_, _, [ValueWithName(_,_, l); r]) -> sprintf("%s%s") (l) (latexe <| r)
-        | SpecificCall <@@ (*) @@> (_, _, [l; ValueWithName(_,_, r)]) -> sprintf("%s%s") (latexe l) (r)
+        | SpecificCall <@@ (*) @@> (_, _, [ValueWithName(_,_, _) as l; r]) -> sprintf("{%s}{%s}") (latexe l) (latexe <| r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; ValueWithName(_,_, _) as r]) -> sprintf("{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [Double l; Double r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe <|  exprv r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s%s") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
 

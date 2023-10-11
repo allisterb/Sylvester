@@ -35,9 +35,8 @@ type RealFunction(f, ?symbol:string) =
         member x.Symbol = x.Symbol
         member a.Transform(b:Expr<real>, ?attrs, ?s) = 
             let f = RealFunction(Scalar<real> b, ?symbol=s)
-            do f.Attrs.Replace(defaultArg attrs null) |> ignore
+            do f.Attrs.AddAll(defaultArg attrs null) |> ignore
             f
-        member a.TransformWithSymbol(b:Expr<real>, s:string) = RealFunction(Scalar<real> b, s)
         member x.Html() = 
             let v = x.Vars.[0] |> exprvar<real> |> latexe
             match x.Symbol with
@@ -57,6 +56,10 @@ type RealFunction(f, ?symbol:string) =
                 WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
     
     static member (==) (l:RealFunction, r:RealFunction) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real> r.Body) 
+
+    static member (==) (l:RealFunction, r:Scalar<real>) = ScalarEquation<real>(Scalar<real> l.Body, r)
+    
+    static member (==) (l:RealFunction, r:real) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real>(exprv r))
 
  type RealFunctionGroupVisualization(grp:RealFunction[]) =
     interface IWebVisualization with
@@ -128,7 +131,6 @@ type RealFunction(f, ?symbol:string) =
             let f = RealFunction2(Scalar<real> b, ?symbol=s)
             do f.Attrs.AddAll(defaultArg attrs null) |> ignore
             f
-        member a.TransformWithSymbol(b:Expr<real>, s:string) = RealFunction2(Scalar<real> b, s)
         member a.Vars = a.Vars |> List.map (exprvar >> ScalarVar<real>)
         member x.Html() = 
             let v = x.ScalarVars |> List.map exprvar<real> |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n)) (x.ScalarVars |> List.head |> exprvar<real> |> latexe)
@@ -136,7 +138,11 @@ type RealFunction(f, ?symbol:string) =
             | None -> "$$" + latexe x.ScalarExpr + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr)) + "$$"
 
-     static member (==) (l:RealFunction2, r:RealFunction2) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real> r.Body) 
+     static member (==) (l:RealFunction2, r:RealFunction2) = ScalarEquation<real>(Scalar<real> l.ScalarExpr, Scalar<real> r.Body)
+     
+     static member (==) (l:RealFunction2, r:Scalar<real>) = ScalarEquation<real>(Scalar<real> l.ScalarExpr, r)
+     
+     static member (==) (l:RealFunction2, r:real) = ScalarEquation<real>(Scalar<real> l.ScalarExpr, Scalar<real>(exprv r))
 
 type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>, ?symbol:string) = inherit RealFunction<Set<'t>>(domain, codomain, map,?symbol=symbol)
 

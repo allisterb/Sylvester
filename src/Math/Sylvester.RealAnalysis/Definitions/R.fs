@@ -28,8 +28,8 @@ module R =
        
     let trigreduce (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.TrigReduce)
 
-    let simplify (x:ISymbolic<_, real>) = x.Transform(x |> simplify)
-
+    let simplify (x:ISymbolic<_, real>) = x.Transform(x |> simplify, null, ?s=x.Symbol)
+       
     let maximize (s:Z3Solver) (c:ScalarRelation<real> list) (x:ISymbolic<_, real>)  = 
         c |> List.map sexpr |> opt_assert_hard s
         let _ = opt_maximize s (x.Expr)

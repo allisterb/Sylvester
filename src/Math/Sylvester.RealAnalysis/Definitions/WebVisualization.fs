@@ -283,6 +283,7 @@ module WebVisualization =
             get_symbols m |> List.iter(fun (t, n) -> 
                 if has_prop n typeof<real*real> attrs then 
                     if (yrange = (0.,0.)) then failwith "You must specify the yrange if using intervals for parameters"
+                    do if has_prop "points" typeof<(real*string) list> attrs then failwith "Cannot use a range for a parameter if drawing points on the curve."
                     let s = get_prop n typeof<real*real> attrs :?> real*real in 
                     let min = exprv (fst s) in 
                     let max = exprv (snd s) in 

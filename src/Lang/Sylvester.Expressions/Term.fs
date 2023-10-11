@@ -82,7 +82,6 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
                 let s = Scalar e
                 do s.Attrs.Replace(defaultArg attrs null) |> ignore
                 s
-           member a.TransformWithSymbol(e, _) = Scalar e
            
     interface IHtmlDisplay with
         member x.Html() = "$$" + latexe x.Expr + "$$"
