@@ -10,7 +10,7 @@ open FSharp.Quotations.DerivedPatterns
 
 type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, amap:Expr<'a->'t>, ?symbol:string) = 
     inherit ScalarFunction<'t, real, 'a>(domain, codomain, map, amap, ?symbol=symbol)
-
+     
 type RealFunction<'t when 't : equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, ?symbol:string) = 
     inherit ScalarFunction<'t, real>(domain, codomain, map, ?symbol=symbol)
     
@@ -18,14 +18,16 @@ type IRealFunction<'a> =
     inherit ISymbolic<'a, real>
     inherit IHtmlDisplay
     //inherit IWebVisualization
-    abstract member Vars:ScalarVar<real> list
+    abstract member Vars:realvar list
+    abstract member ScalarExpr:Scalar<real>
    
 type RealFunction(f, ?symbol:string) = 
     inherit RealFunction<real>(Field.R, Field.R, f, ?symbol=symbol)
     new (e:Scalar<real>, ?symbol:string) =
         let v = get_vars e.Expr
+        
         do if v.Length > 1 then failwith "The number of independent variables in this function is > 1."
-        let f = recombine_func_as<real->real> v e.Expr in
+        let f = recombine_func_as<real->real> (if v.Length = 0 then [Var("_", typeof<real>)] else v) e.Expr in
         RealFunction(f, ?symbol=symbol)
 
     interface IRealFunction<RealFunction> with
@@ -42,14 +44,15 @@ type RealFunction(f, ?symbol:string) =
             match x.Symbol with
             | None -> "$$" + latexe x.Body + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$$"
-        member a.Vars = a.Vars |> List.map (exprvar >> ScalarVar<real>)
-
+        member a.Vars = a.Vars |> List.map (exprvar >> realvar)
+        member a.ScalarExpr = Scalar<real> a.Body
+    
     interface IWebVisualization with
         member x.Draw(attrs:_) = 
             if x.Attrs.ContainsKey("SupplyFunction") || x.Attrs.ContainsKey("DemandFunction") then
-                let xxqxx = ScalarVar<real> "xxqxx"
+                let xxqxx = realvar "xxqxx"
                 let eq = xxqxx == Scalar<real> x.Body
-                let e = Ops.SolveForPosVars x.ArgExpr eq.Expr
+                let e = Ops.SolveForPosVars x.ArgExpr [eq.Expr]
                 let fe = recombine_func_as<real->real> [xxqxx.Var] e.Head
                 WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) fe |> draw_board
             else
@@ -131,7 +134,8 @@ type RealFunction(f, ?symbol:string) =
             let f = RealFunction2(Scalar<real> b, ?symbol=s)
             do f.Attrs.AddAll(defaultArg attrs null) |> ignore
             f
-        member a.Vars = a.Vars |> List.map (exprvar >> ScalarVar<real>)
+        member a.Vars = a.Vars |> List.map (exprvar >> realvar)
+        member a.ScalarExpr = Scalar<real> a.ScalarExpr
         member x.Html() = 
             let v = x.ScalarVars |> List.map exprvar<real> |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n)) (x.ScalarVars |> List.head |> exprvar<real> |> latexe)
             match x.Symbol with
@@ -152,10 +156,14 @@ module RealFunction =
 
     let realfun2 (s:string) (e:Scalar<real>) = RealFunction2(e, s)
 
-    let realfun_im (s:string) (x:ScalarVar<real>) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr e.Expr in realfun s (Scalar<real> l) 
+    let realfun_im (s:string) (x:realvar) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr [e.Expr] in realfun s (Scalar<real> l) 
 
-    let realfun_im_pos_vars (s:string) (x:ScalarVar<real>) (e:ScalarEquation<real>) = 
-        let l = Ops.SolveForPosVars x.Expr e.Expr in 
+    let realfun_im_pos_vars (s:string) (x:realvar) (e:ScalarEquation<real>) = 
+        let l = Ops.SolveForPosVars x.Expr [e.Expr] in 
         if l.Length = 1 then realfun s (Scalar<real> l.[0]) else failwithf "More than one solution was returned for %A. Cannot create a function with this as the dependent variable." x 
 
     let realfungrp g = RealFunctionGroupVisualization g
+
+    let fsv n (f:IRealFunction<_>) = f.Vars.[n]
+
+    let partdiffn n (f:IRealFunction<_>) = diffs (fsv n f) f

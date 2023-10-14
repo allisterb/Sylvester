@@ -38,20 +38,20 @@ module Algebra =
         sprintf "solve(%s, %s);" (system |> sprintel) (sprint v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
+        |> Result.bind(fun o -> if o = "" then Error "" else if o = "[]" then Ok [] else Infix.parseList o)
         |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_varsl system))) 
         |> function
         | Ok s -> s
         | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
 
-    let solve_for_pos_vars (v:Expr<'t>) (e:Expr<bool>) =
-        e |> get_vars |> List.map exprvar<real> |> List.iter assume_pos
-        sprintf "solve(%s, %s);" ([e] |> sprintel) (sprint v) 
+    let solve_for_pos_vars (v:Expr<'t>) (e:Expr<bool> list) =
+        e |> get_varsl |> List.map exprvar<real> |> List.iter assume_pos
+        sprintf "solve(%s, %s);" (sprintel e) (sprint v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
-        |> Result.map(fun exp -> exp |> List.map (MathNetExpr.toQuotation<'t> (get_vars e))) 
+        |> Result.bind(fun o -> if o = "" then Error ""  else if o = "[]" then Ok [] else Infix.parseList o)
+        |> Result.map(fun exp -> exp |> List.map (MathNetExpr.toQuotation<'t> (get_varsl e))) 
         |> function
         | Ok s -> s
         | Error "" -> []
@@ -61,7 +61,7 @@ module Algebra =
         sprintf "solve(%s, %s);" (system |> sprintel) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> v.ToString()) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
         |> send 
         |> Result.mapError(fun e -> e.Message)
-        |> Result.bind(fun o -> if o = "" then Error "" else Infix.parseList o)
+        |> Result.bind(fun o -> if o = "" then Error "" else if o = "[]" then Ok [] else Infix.parseList o)
         |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> (get_varsl system))) 
         |> function
         | Ok s -> s

@@ -59,6 +59,8 @@ module Symbolic =
     
     let inline sexprs2(a:'t [] []) = a |> Array.map(Array.map sexpr)
 
+    let simplifye (x:Expr<'t>) = x |> callUnary<'t> id
+    
     let newattrs ((p:(string*obj) list)) =
         let a = new System.Collections.Generic.Dictionary<string, obj>()
         p |> List.iter(fun (k,v) -> a.[k] <- v)
@@ -69,7 +71,9 @@ module Symbolic =
 
     let inline with_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).[n] <- true; x
 
-    let fixconst (attrs:'a) (s:ISymbolic<_,'b>) =
+    let inline has_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).ContainsKey(n)
+
+    let fix (attrs:'a) (s:ISymbolic<_,'b>) =
         let mutable m = s.Expr.Raw
         get_consts m |> List.iter(fun (t, n) -> 
             if has_prop n typeof<'b> attrs then 
@@ -78,10 +82,8 @@ module Symbolic =
                 m <- replace_expr (Expr.ValueWithName(Unchecked.defaultof<'b>, n)) v m
                 m <- replace_expr (expr_var<'b> n) v m
         )
-        match s.Symbol with
-        | None -> s.Transform(expand_as<'b> m)
-        | Some sym -> s.Transform(expand_as<'b> m, null, sym)
-
+        s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
+        
     (* Term patterns *)
     let (|Atom|_|) expr =
         match expr with
@@ -127,7 +129,6 @@ module Symbolic =
         |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte exprs.[0]) 
         |> sprintf "[%s]"
 
-    let print_latexbar(s:string) = if s.EndsWith("_bar") then sprintf "\\bar{%s}" (s.Delete("bar")) else s
     let rec latexe (x:Expr) = 
         match x with
         | List list -> "[" + (list |>  List.map latexe |> List.reduce (fun l r -> l + ", " + r)) + "]"
@@ -144,6 +145,8 @@ module Symbolic =
         | SpecificCall <@@ (*) @@> (_, _, [ValueWithName(_,_, _) as l; r]) -> sprintf("{%s}{%s}") (latexe l) (latexe <| r)
         | SpecificCall <@@ (*) @@> (_, _, [l; ValueWithName(_,_, _) as r]) -> sprintf("{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [Double l; Double r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe <|  exprv r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; Call(None, Op "Identity", Double r::[])]) -> sprintf("%s\cdot%s") (latexe l) (latexe <|  exprv r)
+        | SpecificCall <@@ (*) @@> (_, _, [Call(None, Op "Identity", Double l::[]); r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s%s") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
@@ -171,9 +174,7 @@ module Symbolic =
 
     let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
-    //let sprint (s:ISymbolic<_, _>) = s.
-    let simplifye (x:Expr<'t>) = x |> callUnary<'t> id
-
+    
     let inline simplify expr = expr |> sexpr |> simplifye
        
     let subst (e:Expr<'t>) (v:Expr<'u>) (r:Expr<'u>) =

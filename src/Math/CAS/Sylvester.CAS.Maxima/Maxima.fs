@@ -88,6 +88,8 @@ module Maxima =
         | PropertyGet(None, Prop "pi", []) -> "%pi"
         | PropertyGet(None, Prop "e", []) -> "%e"
 
+        | Var v -> v.Name
+        | ValueWithName(_,_,n) -> n
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
 

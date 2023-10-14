@@ -54,12 +54,14 @@ module Symbols =
         "beta", "\u03b2"
         "epsilon", "\u03f5"
         "theta", "\u03b8"
+        "lambda", "\u03bb"
     ]
     
     let GreekLatex = Map.ofList [
            "epsilon", "\\epsilon"
            "alpha", "\\alpha"
            "beta", "\\beta"
+           "lambda", "\\lambda"
     ]
     let isGreek s = GreekUnicode.ContainsKey s
 

@@ -21,8 +21,8 @@ type IRealAnalysisSymbolicOps =
     abstract Integrate:Expr<real> -> Expr<real> -> Expr<real>
     abstract DefiniteIntegral:Expr<real> -> Expr<'a> -> Expr<'a> -> Expr<real> -> Expr<real> when 'a : comparison
     abstract Sum:Expr<'b>->Expr<int>->Expr<int>->Expr<'a>->Expr<'a>
-    abstract SolveFor:Expr<real>->Expr<bool>->Expr<real>
-    abstract SolveForPosVars:Expr<real>->Expr<bool>->Expr<real> list
+    abstract SolveFor:Expr<real>->Expr<bool> list->Expr<real>
+    abstract SolveForPosVars:Expr<real>->Expr<bool> list->Expr<real> list
   
  type MaximaRealAnalysisOps() = 
     interface IRealAnalysisSymbolicOps with
@@ -42,8 +42,8 @@ type IRealAnalysisSymbolicOps =
              Analysis.definite_integral x l u f
         member __.Sum (x:Expr<'b>) (l:Expr<int>) (u:Expr<int>) (expr:Expr<'a>) = 
              Analysis.sum x l u expr
-        member __.SolveFor (x:Expr<real>) (e:Expr<bool>) = let s = Algebra.solve_for x [e] in if s.Length = 0 then failwith "no solutions" else List.head s
-        member __.SolveForPosVars (x:Expr<real>) (e:Expr<bool>) = Algebra.solve_for_pos_vars x e
+        member __.SolveFor (x:Expr<real>) (e:Expr<bool> list) = let s = Algebra.solve_for x e in if s.Length = 0 then failwith "no solutions" else List.head s
+        member __.SolveForPosVars (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for_pos_vars x e
              
 [<AutoOpen>]    
 module RealAnalysis =
