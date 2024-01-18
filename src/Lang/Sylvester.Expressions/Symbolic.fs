@@ -108,9 +108,14 @@ module Symbolic =
         | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s * %s") (sprinte l) (sprinte r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("%s / %s") (sprinte l) (sprinte r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^%s") (sprinte l) (sprinte r)
-        
+
+        | SpecificCall <@@ (<|) @@> (_, _, [l; r]) when src l = "real" -> (sprinte r)
+        | SpecificCall <@@ (|>) @@> (_, _, [l;  Lambda (n1, Call (None, real, [n2]))]) -> (sprinte l)
+
         | Call(None, Op "Exp", x::[]) -> sprintf("e^%s") (sprinte x)
         | Call(None, Op "Identity", x::[]) -> (sprinte x)
+        | Call(None, Op "real", x::[]) -> (sprinte x)
+ 
         | PropertyGet(None, Prop "e", []) -> "e"
         | PropertyGet(None, Prop "pi", []) -> "pi"
         | Bool false -> "false"
@@ -119,7 +124,8 @@ module Symbolic =
         | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
         
-        
+        | Double d when d = Math.Floor(d + 0.00001) ->  sprinte <| Expr.Value (Convert.ToInt32(d))
+
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
     let sprintel (exprs: Expr<'t> list) =

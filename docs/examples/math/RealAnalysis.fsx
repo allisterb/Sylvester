@@ -10,24 +10,9 @@ let x = realvar "x"
 let y = realvar "y"
 let A = realconst "A"
 
-//let f = realfun <@fun x -> (2.*x**3. + a) @>
 
-//fexpr f
+sprinte <@ real <| 1 + 2 @>
 
-let b = x + A + 2
-let v = List.head <| get_vars b.Expr
-let ff = recombine_func_as<real->real> [v] (b.Expr)
-ff
+let a = realseq "S" "n" <@ fun n -> 1 + 1 / n |> real @> 
 
-
-let f = realfun (x + A + 2)
-
-f.[0.]
-//f.Body
-//get_vars f.Body
-///recombine_func f.Vars (Ops.Diff 1 x.Expr f.Body)
-//let f' = diff x f
-
-//let rr = diff x x
-
-//integrate x f
+a

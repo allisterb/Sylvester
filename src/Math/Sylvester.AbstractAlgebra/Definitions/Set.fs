@@ -495,7 +495,9 @@ module Set =
     let finite_seq s  = s |> FiniteSequence<'t> |> FiniteSeq
     
     let infinite_seq<'t when 't:equality> f c = InfiniteSequence<'t>(f, c) |> InfiniteSeq 
-        
+    
+    let nocontainsimpl<'t> : 't->bool = (fun _-> failwith "no contains function is implemented for this set")
+    
     let finite_set<'n, 't when 'n :> Number and 't : equality> elems = FiniteSet<'n, 't>(elems)
 
     let singleton<'t when 't: equality> (e:'t) = Singleton<'t> e
@@ -503,6 +505,7 @@ module Set =
     let subset (sub:Expr<'t->bool>) (set: ISet<'t>) = set.Set.Subset sub
 
     let enum_as_subsets (set:Set<'t>) = set.EnumAsSubsets()
+
 
     
     //let infinite_seq'<'t when 't:equality> g = Seq.initInfinite<'t> g  |> Seq.skip 1

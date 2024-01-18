@@ -134,7 +134,7 @@ type RealFunction(f, ?symbol:string) =
             let f = RealFunction2(Scalar<real> b, ?symbol=s)
             do f.Attrs.AddAll(defaultArg attrs null) |> ignore
             f
-        member a.Vars = a.Vars |> List.map (exprvar >> realvar)
+        member a.Vars = a.ScalarVars |> List.map (exprvar >> realvar)
         member a.ScalarExpr = Scalar<real> a.ScalarExpr
         member x.Html() = 
             let v = x.ScalarVars |> List.map exprvar<real> |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n)) (x.ScalarVars |> List.head |> exprvar<real> |> latexe)

@@ -252,6 +252,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E6E1
 		..\docs\examples\math\Prover.fsx = ..\docs\examples\math\Prover.fsx
 		..\docs\examples\math\RealAnalysis.fsx = ..\docs\examples\math\RealAnalysis.fsx
 		..\docs\examples\math\Scalar.fsx = ..\docs\examples\math\Scalar.fsx
+		..\docs\examples\math\Sequences.fsx = ..\docs\examples\math\Sequences.fsx
 		..\docs\examples\math\SetTheory.fsx = ..\docs\examples\math\SetTheory.fsx
 		..\docs\examples\math\Statistics.fsx = ..\docs\examples\math\Statistics.fsx
 	EndProjectSection
