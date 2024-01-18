@@ -154,6 +154,8 @@ module MathNetExpr =
             | Constant (Constant.Pi) -> let p = getPropertyInfo <@ pi @> in Expr.PropertyGet p |> Some
             | Constant (Constant.E) -> let p = getPropertyInfo <@ e @> in Expr.PropertyGet p |> Some
             | Constant c -> constant c
+            | Sum(l::Product(NegativeExpr l2::r::[])::[]) -> sub (convertExpr l).Value (mul (convertExpr l2).Value (convertExpr r).Value) |> Some
+            | Sum(Product(NegativeExpr l2::r2::[])::r::[]) -> sub (convertExpr r).Value (mul (convertExpr l2).Value (convertExpr r2).Value) |> Some
             | Sum(xs) ->
                 let summands = List.map convertExpr xs
                 summands.Tail |> List.fold (Option.map2 add) summands.Head 

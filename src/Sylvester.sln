@@ -274,6 +274,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "school", "school", "{0AD684
 		..\docs\examples\school\mt1183.fsx = ..\docs\examples\school\mt1183.fsx
 	EndProjectSection
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Tests.Economics", "..\tests\Sylvester.Tests.Economics\Sylvester.Tests.Economics.fsproj", "{15CB0DA8-823A-4265-A926-A01505B3A682}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\ext\KaosCombinatorics\Source\KaosCombinatorics\KaosCombinatorics.projitems*{6852278f-1508-43ac-8b6f-3a3f83324940}*SharedItemsImports = 5
@@ -1587,6 +1589,24 @@ Global
 		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|x64.Build.0 = Release|Any CPU
 		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|x86.ActiveCfg = Release|Any CPU
 		{46B488D2-E385-4AD2-8636-C53434DA6166}.Release|x86.Build.0 = Release|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Debug|x64.Build.0 = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Debug|x86.Build.0 = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Nuget|Any CPU.ActiveCfg = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Nuget|Any CPU.Build.0 = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Nuget|x64.ActiveCfg = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Nuget|x64.Build.0 = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Nuget|x86.ActiveCfg = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Nuget|x86.Build.0 = Debug|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|x64.ActiveCfg = Release|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|x64.Build.0 = Release|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|x86.ActiveCfg = Release|Any CPU
+		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1689,6 +1709,7 @@ Global
 		{46B488D2-E385-4AD2-8636-C53434DA6166} = {4D64AE81-29AB-4065-8FAE-3F78A5B17FE9}
 		{40232E1D-01C5-426B-9ED9-E7EE58C1B6C0} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
 		{0AD6845D-3881-4503-9B96-091D2BEBD570} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
+		{15CB0DA8-823A-4265-A926-A01505B3A682} = {921C2A48-62E1-4433-9CD4-BDBAAD7DA19D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}

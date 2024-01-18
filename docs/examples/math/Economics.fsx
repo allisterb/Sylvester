@@ -17,8 +17,17 @@ open FunScript
 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
+//Declare 2 real variables
+let p,q = realvar2 "p" "q"
+//Declare 3 real constants representing the price of sugar, price of chocolate, and consumer income respectively
+let ps, pc, Y = realconst3 "p_s" "p_c" "Y"
 
+let QD = demandfun "Q_d" (8.56 - p - 0.3 * ps + 0.1 * Y)
 
+let QD1 = fix {|p_s=0.2; Y=35.|} QD
+QD1
+
+(*
 let A = realconst "A"
 let a, b = realconst2 "a" "b"
 let r, s = realvar2 "r" "s"
@@ -41,6 +50,7 @@ let Qs1 = realfun "Q_s" (9 + 0.5 * p)
 let C2 = realfun_im_pos_vars "C2" K (6. ==  (L *** 0.5 * K *** 0.5))
 
 let MC = marginal q C
+MC
 
 let U1 = utilfun2 "U" (q1 *** a * q2 *** (1-a))
 
@@ -55,3 +65,4 @@ let s1 = solve_for_econ_var_unique lambda [lc1]
 let s2 = solve_for_econ_var_unique lambda [lc2]
 solve_for_econ_var_unique q1 [lambda == s1; lambda == s2; (Y == p1 * q1 - p2 * q2)] 
 //s1 == s2
+*)
