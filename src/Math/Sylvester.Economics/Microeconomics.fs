@@ -97,19 +97,19 @@ module Microeconomics =
 
     let ppf (c:ScalarRelation<real> list) = c |> List.map EconomicConstraint |> PPF
 
-    let isoquants (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:real[]) =
+    let isoquants (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:seq<real>) =
         do fail_if_not_demandfun f
-        let fs = vals |> Array.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
-        draw attrs <| realfungrp fs
+        let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
+        draw attrs <| realfungrpv fs
 
-    let indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:real[]) =
-        let fs = vals |> Array.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
-        draw attrs <| realfungrp fs
+    let indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:seq<real>) =
+        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
+        draw attrs <| realfungrpv fs
 
-    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:EconomicConstraint) (vals:real[]) =
+    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:EconomicConstraint) (vals:seq<real>) =
         fail_if_not_equality_constraint c
-        let fs = vals |> Array.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) |> Array.append([|realfun_im "" dv (c.Lhs == c.Rhs)|])
-        draw attrs <| realfungrp fs
+        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) |> Seq.append([|realfun_im "" dv (c.Lhs == c.Rhs)|])
+        draw attrs <| realfungrpv fs
 
     let mrs (f:RealFunction2) =
         let M1 = partdiffn 0 f

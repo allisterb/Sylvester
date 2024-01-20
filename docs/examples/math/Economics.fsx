@@ -22,10 +22,20 @@ let p,q = realvar2 "p" "q"
 //Declare 3 real constants representing the price of sugar, price of chocolate, and consumer income respectively
 let ps, pc, Y = realconst3 "p_s" "p_c" "Y"
 
+// Declare 2more real symbolic variables
+let L, K = realvar2 "L" "K"
+// Declare 4 more real symbolic constamts
+let alpha, beta, A, Kbar  = realconst4 "alpha" "beta" "A" "K_bar"
+
 let QD = demandfun "Q_d" (8.56 - p - 0.3 * ps + 0.1 * Y)
 
 let QD1 = fix {|p_s=0.2; Y=35.|} QD
 QD1
+// let q1 be a short-run production function holding K constant
+//let QP = prodfun "q" (0.1 * L * Kbar + 3 * L *** 2 * Kbar - 0.1 * L *** 3 * Kbar)
+
+//let QP1 = fix {|K_bar=10.|} QP |> simplify
+//QP1
 
 (*
 let A = realconst "A"

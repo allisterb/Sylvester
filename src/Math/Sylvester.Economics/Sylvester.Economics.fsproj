@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <WarnOn>3390;$(WarnOn)</WarnOn>
+    <NoWarn>MSB3270</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

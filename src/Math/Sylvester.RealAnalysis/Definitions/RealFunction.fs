@@ -64,9 +64,11 @@ type RealFunction(f, ?symbol:string) =
     
     static member (==) (l:RealFunction, r:real) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real>(exprv r))
 
- type RealFunctionGroupVisualization(grp:RealFunction[]) =
+ type RealFunctionGroupVisualization(_grp:seq<RealFunction>) =
     interface IWebVisualization with
-           member x.Draw(attrs:_) = WebVisualization.draw_realfuns attrs (grp |> Array.map(fun x->(x :> IRealFunction<RealFunction>).Html())) (grp |> Array.map(fun x ->x.MapExpr)) |> draw_board
+           member x.Draw(attrs:_) = 
+              let grp = Seq.toArray _grp in
+              WebVisualization.draw_realfuns attrs (grp |> Array.map(fun x->(x :> IRealFunction<RealFunction>).Html())) (grp |> Array.map(fun x ->x.MapExpr)) |> draw_board
 
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>, ?symbol=symbol)
@@ -162,7 +164,7 @@ module RealFunction =
         let l = Ops.SolveForPosVars x.Expr [e.Expr] in 
         if l.Length = 1 then realfun s (Scalar<real> l.[0]) else failwithf "More than one solution was returned for %A. Cannot create a function with this as the dependent variable." x 
 
-    let realfungrp g = RealFunctionGroupVisualization g
+    let realfungrpv g = RealFunctionGroupVisualization g
 
     let fsv n (f:IRealFunction<_>) = f.Vars.[n]
 
