@@ -46,17 +46,10 @@ type RealFunction(f, ?symbol:string) =
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$$"
         member a.Vars = a.Vars |> List.map (exprvar >> realvar)
         member a.ScalarExpr = Scalar<real> a.Body
-    
+        
     interface IWebVisualization with
         member x.Draw(attrs:_) = 
-            if x.Attrs.ContainsKey("SupplyFunction") || x.Attrs.ContainsKey("DemandFunction") then
-                let xxqxx = realvar "xxqxx"
-                let eq = xxqxx == Scalar<real> x.Body
-                let e = Ops.SolveForPosVars x.ArgExpr [eq.Expr]
-                let fe = recombine_func_as<real->real> [xxqxx.Var] e.Head
-                WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) fe |> draw_board
-            else
-                WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
+            WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
     
     static member (==) (l:RealFunction, r:RealFunction) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real> r.Body) 
 
@@ -64,11 +57,11 @@ type RealFunction(f, ?symbol:string) =
     
     static member (==) (l:RealFunction, r:real) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real>(exprv r))
 
- type RealFunctionGroupVisualization(_grp:seq<RealFunction>) =
+ type RealFunctionGroupVisualization(_grp:seq<IRealFunction<RealFunction>>) =
     interface IWebVisualization with
            member x.Draw(attrs:_) = 
-              let grp = Seq.toArray _grp in
-              WebVisualization.draw_realfuns attrs (grp |> Array.map(fun x->(x :> IRealFunction<RealFunction>).Html())) (grp |> Array.map(fun x ->x.MapExpr)) |> draw_board
+              //let grp = Seq.toArray _grp in
+              WebVisualization.draw_realfuns attrs (_grp |> Seq.map(fun x->(x :> IRealFunction<_>).Html()) |> Seq.toArray) (_grp |> Seq.map(fun x ->x.Term.MapExpr) |> Seq.toArray) |> draw_board
 
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>, ?symbol=symbol)
@@ -143,6 +136,7 @@ type RealFunction(f, ?symbol:string) =
             match x.Symbol with
             | None -> "$$" + latexe x.ScalarExpr + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr)) + "$$"
+        //member x.Item(o:obj) =
 
      static member (==) (l:RealFunction2, r:RealFunction2) = ScalarEquation<real>(Scalar<real> l.ScalarExpr, Scalar<real> r.Body)
      

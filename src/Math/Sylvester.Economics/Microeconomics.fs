@@ -14,7 +14,172 @@ type EconomicConstraint(lhs, rhs, op) =
         | _ -> failwithf "The expression %s is not a valid constraint expression." (src base.Expr) 
     new(r:ScalarRelation<real>) = 
         EconomicConstraint(r.Lhs, r.Rhs, r.Op)
-         
+
+type UtilityFunction(f:RealFunction) =
+    inherit RealFunction(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction>
+    interface IRealFunction<UtilityFunction> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
+type UtilityFunction2(f:RealFunction2) =
+    inherit RealFunction2(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction2>
+    interface IRealFunction<UtilityFunction2> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction2
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
+type DemandFunction(f:RealFunction) =
+    inherit RealFunction(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction>
+    interface IRealFunction<DemandFunction> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+    interface IWebVisualization with
+        member x.Draw(attrs:_) =             
+            failwith "gg"
+            (*
+            let xxqxx = realvar "xxqxx"
+            let eq = xxqxx == Scalar<real> x.Body
+            let e = Ops.SolveForPosVars x.ArgExpr [eq.Expr]
+            let fe = recombine_func_as<real->real> [xxqxx.Var] e.Head
+            WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<DemandFunction>).Html()) fe |> draw_board
+            *)
+type InverseDemandFunction(f:RealFunction) =
+    inherit RealFunction(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction>
+    interface IRealFunction<InverseDemandFunction> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> InverseDemandFunction
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
+type DemandFunction2(f:RealFunction2) =
+    inherit RealFunction2(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction2>
+    interface IRealFunction<DemandFunction2> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction2
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
+type SupplyFunction(f:RealFunction) =
+    inherit RealFunction(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction>
+    interface IRealFunction<SupplyFunction> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+  
+type SupplyFunction2(f:RealFunction2) =
+    inherit RealFunction2(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction2>
+    interface IRealFunction<SupplyFunction2> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction2
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
+type ProductionFunction(f:RealFunction) =
+    inherit RealFunction(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction>
+    interface IRealFunction<ProductionFunction> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+        
+type ProductionFunction2(f:RealFunction2) =
+    inherit RealFunction2(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction2>
+    interface IRealFunction<ProductionFunction2> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction2
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
+type CostFunction(f:RealFunction) =
+    inherit RealFunction(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction>
+    interface IRealFunction<CostFunction> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+        
+type CostFunction2(f:RealFunction2) =
+    inherit RealFunction2(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction2>
+    interface IRealFunction<CostFunction2> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction2
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
+type RevenueFunction(f:RealFunction) =
+    inherit RealFunction(f.MapExpr)
+    let _rf = f :> IRealFunction<RealFunction>
+    interface IRealFunction<RevenueFunction> with
+        member x.Term = x
+        member x.Expr = x.Body
+        member x.Attrs = x.Attrs
+        member x.Symbol = x.Symbol
+        member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> RevenueFunction
+        member x.ScalarExpr = Scalar<real> x.Body
+        member x.Vars = _rf.Vars
+        member x.Html() = _rf.Html()
+
 type PPF(c: EconomicConstraint list) =
     member val Constraints = c
 
@@ -43,72 +208,57 @@ module Microeconomics =
         | None -> RealFunction(fexpr func / farg func) |> with_attr_tag "Average"
         | Some s -> diff (farg func) func |> with_attr_tag "Average" |> with_symbol ("A" + s)
 
-    let demandfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "DemandFunction"
+    let demandfun s (func:Scalar<real>) = RealFunction(func, s) |> DemandFunction
 
-    let supplyfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "SupplyFunction"
+    let supplyfun s (func:Scalar<real>) = RealFunction(func, s) |> SupplyFunction
 
-    let utilfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "UtilityFunction"
+    let utilfun s (func:Scalar<real>) = RealFunction(func, s) |> UtilityFunction
     
-    let utilfun2 s (func:Scalar<real>) :RealFunction2 = RealFunction2(func, s) |> with_attr_tag "UtilityFunction"
+    let utilfun2 s (func:Scalar<real>) = RealFunction2(func, s) |> UtilityFunction2
 
-    let prodfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "ProductionFunction"
+    let prodfun s (func:Scalar<real>) = RealFunction(func, s) |> ProductionFunction
 
-    let prodfun2 s (func:Scalar<real>) :RealFunction2 = RealFunction2(func, s) |> with_attr_tag "ProductionFunction"
+    let prodfun2 s (func:Scalar<real>) = RealFunction2(func, s) |> ProductionFunction2
 
-    let costfun s (func:Scalar<real>) :RealFunction = RealFunction(func, s) |> with_attr_tag "CostFunction"
+    let costfun s (func:Scalar<real>) = RealFunction(func, s) |> CostFunction
 
-    let demandfun_im s (x:realvar) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "DemandFunction"
+    let demandfun_im s (x:realvar) (e:ScalarEquation<real>) = realfun_im_pos_vars s x e |> DemandFunction
 
-    let supplyfun_im s (x:realvar) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "SupplyFunction"
+    let supplyfun_im s (x:realvar) (e:ScalarEquation<real>) = realfun_im_pos_vars s x e |> SupplyFunction
 
-    let utilfun_im s (x:realvar) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "UtilityFunction"
+    let utilfun_im s (x:realvar) (e:ScalarEquation<real>) = realfun_im_pos_vars s x e |> UtilityFunction
 
-    let prodfun_im s (x:realvar) (e:ScalarEquation<real>) :RealFunction = realfun_im_pos_vars s x e |> with_attr_tag "ProductionFunction"
-
-    let fail_if_not_demandfun (f:IRealFunction<_>) =  if not <| has_attr_tag "DemandFunction" f then failwithf "The function %A is not a demand function." f
-    
-    let fail_if_not_supplyfun (f:IRealFunction<_>) =  if not <| has_attr_tag "SupplyFunction" f then failwithf "The function %A is not a supply function." f
-
-    let fail_if_not_utilfun (f:IRealFunction<_>) =  if not <| has_attr_tag "UtilityFunction" f then failwithf "The function %A is not a utility function." f
-
-    let fail_if_not_prodfun (f:IRealFunction<_>) =  if not <| has_attr_tag "ProductionFunction" f then failwithf "The function %A is not a production function." f
-    
-    let fail_if_not_costfun (f:IRealFunction<_>) =  if not <| has_attr_tag "CostFunction" f then failwithf "The function %A is not a cost function." f
-
-    let fail_if_not_inv_demandfun (f:IRealFunction<_>) =  if not <| has_attr_tag "InverseDemandFunction" f then failwithf "The function %A is not an inverse demand function." f
+    let prodfun_im s (x:realvar) (e:ScalarEquation<real>) = realfun_im_pos_vars s x e |> ProductionFunction
 
     let fail_if_not_equality_constraint (c:EconomicConstraint) = 
         match c.Expr with
         | SpecificCall <@@ (=) @@> (_,_,_::_::[]) -> ()  
         | _ -> failwith "Thi" 
 
-    let inv_demandfun (sym:string) (q:realvar) (f:RealFunction) =
-        do fail_if_not_demandfun f
+    let inv_demandfun (sym:string) (q:realvar) (f:DemandFunction) =
         let p = farg f
         let s = solve_for_econ_var_unique p [(q == f.[p])] 
-        realfun sym s |> with_attr_tag "InverseDemandFunction"
+        realfun sym s |> InverseDemandFunction
 
-    let revenuefun (s: string) (f:RealFunction) =
-        do fail_if_not_inv_demandfun f
+    let revenuefun (s: string) (f:InverseDemandFunction) =
         let q = farg f
-        realfun s (q * f.[q]) |> with_attr_tag "RevenueFunction"
+        realfun s (q * f.[q]) |> RevenueFunction
 
     let budget_constraint (r:ScalarEquation<real>) = EconomicConstraint r |> with_attr_tag "BudgetConstraint"
 
     let ppf (c:ScalarRelation<real> list) = c |> List.map EconomicConstraint |> PPF
 
-    let isoquants (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:seq<real>) =
-        do fail_if_not_demandfun f
-        let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
+    let isoquants (attrs:'a) (dv:realvar) (f:DemandFunction2) (vals:seq<real>) =
+        let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
         draw attrs <| realfungrpv fs
 
     let indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:seq<real>) =
-        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
+        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
         draw attrs <| realfungrpv fs
 
     let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:EconomicConstraint) (vals:seq<real>) =
         fail_if_not_equality_constraint c
-        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) |> Seq.append([|realfun_im "" dv (c.Lhs == c.Rhs)|])
+        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) |> Seq.append([|realfun_im "" dv (c.Lhs == c.Rhs) |> UtilityFunction|]) |> Seq.cast<IRealFunction<RealFunction>>
         draw attrs <| realfungrpv fs
 
     let mrs (f:RealFunction2) =
@@ -117,5 +267,4 @@ module Microeconomics =
         -1 * (M1 / M2) |> ratsimp
 
     let price_elasticity_demand (f:RealFunction) =
-        do fail_if_not_demandfun f
         let p = farg f in elasticity p f

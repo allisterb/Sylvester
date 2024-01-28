@@ -73,7 +73,7 @@ module Symbolic =
 
     let inline has_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).ContainsKey(n)
 
-    let fix (attrs:'a) (s:ISymbolic<_,'b>) =
+    let fix (attrs:'a) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
         let mutable m = s.Expr.Raw
         get_consts m |> List.iter(fun (t, n) -> 
             if has_prop n typeof<'b> attrs then 
