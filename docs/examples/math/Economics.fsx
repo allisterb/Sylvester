@@ -30,11 +30,12 @@ let alpha, beta, A, Kbar  = realconst4 "alpha" "beta" "A" "K_bar"
 let QD = demandfun "Q_d" (8.56 - p - 0.3 * ps + 0.1 * Y)
 
 let QD1 = fix {|p_s=0.2; Y=35.|} QD
-(QD1 :> IWebVisualization).Draw()
 
-let u = utilfun "Q_u" (8.56 - p - 0.3 * ps + 0.1 * Y)
+marginal p QD1
+
+//let u = utilfun "Q_u" (8.56 - p - 0.3 * ps + 0.1 * Y)
 //let u2 = u :> IRealFunction<RealFunction>
-let u2 = fix {|Y=4.; p_s=3.|} u
+//let u2 = fix {|Y=4.; p_s=3.|} u
 //u2 
 // let q1 be a short-run production function holding K constant
 //let QP = prodfun "q" (0.1 * L * Kbar + 3 * L *** 2 * Kbar - 0.1 * L *** 3 * Kbar)

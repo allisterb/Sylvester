@@ -7,15 +7,18 @@ open Arithmetic
 /// A mathematical structure consisting of a set together with a collection of n closed operations on elements of type t.
 type IStruct<'t, 'n when 't: equality and 'n :> Number> = 
     inherit ISet<'t>
+    inherit IAttrs
     abstract Ops: Ops<'n, 't>
      
 /// Base implementation of a mathematical structure consisting of a set together with a collection of n closed operations on elements of type t.
 /// This type is inherited by all other mathematical structure types.
 type Struct<'t, 'n when 't: equality and 'n :> Number>(set: ISet<'t>, ops: Ops<'n, 't>) =  
     member val Set = set.Set
+    member val Attrs = new System.Collections.Generic.Dictionary<string, obj>()
     member val Ops = ops    
     interface IStruct<'t, 'n> with
         member val Set = set.Set
+        member x.Attrs = x.Attrs
         member x.Equals y = x.Set.Equals y
         member val Ops = ops
 

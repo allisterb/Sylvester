@@ -49,6 +49,7 @@ type Ops<'n, 't when 'n :> Number and 't: equality> = Array<'n, Op<'t>>
 
 [<AutoOpen>]
 module Op =
+    let binary_op (op:'t->'t->'t)  = Binary(op).DestructureBinary
     let is_commutative (op:BinaryOp<'t>) = Op<'t>.IsCommutative op
     let fail_if_not_commutative (op:BinaryOp<'t>) = Op<'t>.FailIfNotCommutative op
     let is_left_associative (op:BinaryOp<'t>) = Op<'t>.IsLeftAssociative (op.ToString())

@@ -21,6 +21,8 @@ type Term<'t when 't: equality> (expr:Expr<'t>, ?h:TermHistory) =
     interface IEquatable<Term<'t>> with
         member a.Equals b = a.Display = b.Display
 
+    interface IAttrs with member x.Attrs = x.Attrs
+
     override a.Equals (_b:obj) = 
             match _b with 
             | :? Term<'t> as b -> (a :> IEquatable<Term<'t>>).Equals b

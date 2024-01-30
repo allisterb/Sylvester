@@ -71,6 +71,7 @@ type Group<'t when 't: equality>(set:ISet<'t>, op:BinaryOp<'t>, ident:'t, inv: U
             new ISubGroup<'t> with 
                 member a.Parent = x :> IGroup<'t>
                 member a.Set = x.Set.Subset p
+                member x.Attrs = new System.Collections.Generic.Dictionary<string, obj>()
                 member a.Equals b = x.Set.Equals b
                 member a.Op = x.Op
                 member a.Identity = x.Identity
@@ -109,10 +110,11 @@ module Group =
     let inline additive_group<'t when 't : equality and 't : (static member Zero:'t) and 't: (static member (+) :'t -> 't -> 't) and 't: (static member (~-) :'t -> 't)> 
         (set: ISet<'t>) =
         let zero = LanguagePrimitives.GenericZero<'t>
-        let op = Binary(+).DestructureBinary
+        let op = binary_op (+)
         { 
             new IAdditiveGroup<'t> with
                 member x.Set = set.Set
+                member x.Attrs = new System.Collections.Generic.Dictionary<string, obj>()
                 member x.Equals y = x.Set.Equals y
                 member x.Op = op
                 member x.Identity = zero
@@ -131,6 +133,7 @@ module Group =
         {
             new IMultiplicativeGroup<'t> with
                     member x.Set = set.Set
+                    member x.Attrs = new System.Collections.Generic.Dictionary<string, obj>()
                     member x.Equals y = x.Set.Equals y
                     member x.Op = FSharpPlus.Math.Generic.(*)
                     member x.Identity = one
@@ -139,5 +142,7 @@ module Group =
                         (let s = x.Set :> Generic.IEnumerable<'t> in s |> Seq.pairwise |> Seq.map (fun(a, b) -> (a, b, (op) a b))).GetEnumerator()
                     member x.GetEnumerator(): IEnumerator = (x :> Generic.IEnumerable<'t * 't * 't>).GetEnumerator () :> IEnumerator
         } 
+
+    let with_op_sym (s:string) (g:IGroup<_>) = g |> with_attr "GroupOpSymbol" s
 
     let Zero = AbelianGroup<dim<1>, int>(Set.Zero, (*), 0, fun _ -> 0)

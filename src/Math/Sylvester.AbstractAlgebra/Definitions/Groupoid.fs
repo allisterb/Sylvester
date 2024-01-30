@@ -10,6 +10,7 @@ open Sylvester.Collections
 /// Set of elements closed under some binary operation.
 type IGroupoid<'t when 't: equality> = 
     inherit ISet<'t>
+    inherit IAttrs
     inherit Generic.IEnumerable<'t * 't * 't>
     abstract member Op: BinaryOp<'t>
     

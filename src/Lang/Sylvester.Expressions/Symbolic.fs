@@ -65,13 +65,13 @@ module Symbolic =
         let a = new System.Collections.Generic.Dictionary<string, obj>()
         p |> List.iter(fun (k,v) -> a.[k] <- v)
         a
-    let with_attr n o (s:ISymbolic<_,_>) = s.Attrs.[n] <- o; s.Term
+    let with_attr n o (x:'a when 'a :> IAttrs) = (x :> IAttrs).Attrs.[n] <- o; x
 
     let with_symbol n (s:ISymbolic<_,_>) = s.Transform(s.Expr, null, n)
 
-    let inline with_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).[n] <- true; x
+    let with_attr_tag n (x : 'a when 'a :> IAttrs) = (x :> IAttrs).Attrs.[n] <- true; x
 
-    let inline has_attr_tag n (x : ^T)  = (^T : (member Attrs : System.Collections.Generic.Dictionary<string, obj>) (x)).ContainsKey(n)
+    let has_attr_tag n (x : 'a when 'a :> IAttrs)  = (x :> IAttrs).Attrs.ContainsKey(n)
 
     let fix (attrs:'a) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
         let mutable m = s.Expr.Raw

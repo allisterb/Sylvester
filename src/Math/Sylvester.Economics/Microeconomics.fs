@@ -55,14 +55,12 @@ type DemandFunction(f:RealFunction) =
         member x.Html() = _rf.Html()
     interface IWebVisualization with
         member x.Draw(attrs:_) =             
-            failwith "gg"
-            (*
             let xxqxx = realvar "xxqxx"
             let eq = xxqxx == Scalar<real> x.Body
             let e = Ops.SolveForPosVars x.ArgExpr [eq.Expr]
             let fe = recombine_func_as<real->real> [xxqxx.Var] e.Head
             WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<DemandFunction>).Html()) fe |> draw_board
-            *)
+            
 type InverseDemandFunction(f:RealFunction) =
     inherit RealFunction(f.MapExpr)
     let _rf = f :> IRealFunction<RealFunction>
@@ -192,7 +190,7 @@ module Microeconomics =
         if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
         s.[0].Rhs
 
-    let inline marginal (x:realvar) (func:IRealFunction<'a>)  = 
+    let marginal (x:realvar) (func:IRealFunction<'a>)  = 
         match func.Symbol with
         | None -> diff x func |> with_attr_tag "Marginal" 
         | Some s -> diff x func |> with_attr_tag "Marginal" |> with_symbol ("M" + s.JoinSuperscript(x.Name))
