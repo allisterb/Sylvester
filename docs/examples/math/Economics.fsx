@@ -11,7 +11,7 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 open Dimension
-open Microeconomics
+open Economics
 open LinearEquations
 open FunScript
 
@@ -29,10 +29,14 @@ let alpha, beta, A, Kbar  = realconst4 "alpha" "beta" "A" "K_bar"
 
 let QD = demandfun "Q_d" (8.56 - p - 0.3 * ps + 0.1 * Y)
 
-let QD1 = fix {|p_s=0.2; Y=35.|} QD
+let QD1 = fix {|``p++s``=0.2; Y=35.|} QD
 
 marginal p QD1
 
+let me = create_econ_model<MarketEquilibrium>()
+me.Qd <- demandfun "Qd" (me.p + 0.5)
+me.Qs <- supplyfun "Qs" (2 * me.p + 2.5)
+solve_for_econ_var me.p [me.MarketEquilibrium]
 //let u = utilfun "Q_u" (8.56 - p - 0.3 * ps + 0.1 * Y)
 //let u2 = u :> IRealFunction<RealFunction>
 //let u2 = fix {|Y=4.; p_s=3.|} u

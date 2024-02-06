@@ -57,6 +57,8 @@ type RealFunction(f, ?symbol:string) =
     
     static member (==) (l:RealFunction, r:real) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real>(exprv r))
 
+    static member (+) (l:RealFunction, r:RealFunction) = Scalar<real> <@ RealFunction.Default(defaultArg l.Symbol "", l.Vars) + RealFunction.Default(defaultArg r.Symbol "", r.Vars) @>
+ 
  type RealFunctionGroupVisualization(_grp:seq<IRealFunction<RealFunction>>) =
     interface IWebVisualization with
            member x.Draw(attrs:_) = 

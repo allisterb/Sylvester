@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Microeconomics.fs" />
+    <Compile Include="Common.fs" />
+    <Compile Include="Microeconomics\MarketEquilibrium.fs" />
+    <Compile Include="Macroeconomics\StaticConsumerLeisure.fs" />
   </ItemGroup>
 
   <ItemGroup>

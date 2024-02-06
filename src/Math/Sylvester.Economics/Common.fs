@@ -4,17 +4,6 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
  
-type EconomicConstraint(lhs, rhs, op) = 
-    inherit ScalarRelation<real>(lhs, rhs, op) 
-    do 
-        match base.Expr with
-        | SpecificCall <@@ (=) @@> (_,_,lhs::rhs::[]) 
-        | SpecificCall <@@ (>) @@> (_,_,lhs::rhs::[])
-        | SpecificCall <@@ (<) @@> (_,_,lhs::rhs::[]) -> ()
-        | _ -> failwithf "The expression %s is not a valid constraint expression." (src base.Expr) 
-    new(r:ScalarRelation<real>) = 
-        EconomicConstraint(r.Lhs, r.Rhs, r.Op)
-
 type UtilityFunction(f:RealFunction) =
     inherit RealFunction(f.MapExpr)
     let _rf = f :> IRealFunction<RealFunction>
@@ -178,33 +167,71 @@ type RevenueFunction(f:RealFunction) =
         member x.Vars = _rf.Vars
         member x.Html() = _rf.Html()
 
-type PPF(c: EconomicConstraint list) =
-    member val Constraints = c
+type IEconomicConstraint =
+    inherit IExpr<bool>
+    abstract member Relation:ScalarRelation<real>
 
-module Microeconomics =
-    let solve_for_econ_var (x:realvar) (e:ScalarEquation<real> list) = 
-           Ops.SolveForPosVars x.Expr (e |> List.map sexpr) |> List.map(fun v -> ScalarVarMap<real>(x, Scalar<real> v))
+type EqualityConstraint(e:ScalarEquation<real>) =
+    inherit ScalarEquation<real>(e.Lhs, e.Rhs)
+    
+    interface IEconomicConstraint with
+        member x.Expr = x.Expr
+        member x.Relation = x :> ScalarRelation<real>
+
+type EconomicModel() = 
+    member val Attrs = new System.Collections.Generic.Dictionary<string, obj>()
+    member val Vars = new System.Collections.Generic.Dictionary<string, realvar>()
+    member val Functions = new System.Collections.Generic.Dictionary<string, RealFunction>()
+    member val Functions2 = new System.Collections.Generic.Dictionary<string, RealFunction2>()
+    member val Constraints = new System.Collections.Generic.Dictionary<string, IEconomicConstraint>()
+    member internal x.GetVar n = if x.Vars.ContainsKey n then x.Vars.[n] else failwithf "The model does not contain the real variable %A." n
+    member internal x.SetVar(n, v) = x.Vars.[n] <- v
+    member internal x.GetFun<'a when 'a :> RealFunction> n = x.Functions.[n] :?> 'a
+    member internal x.SetFun<'a when 'a :> RealFunction> (n, f:'a)= 
+        let mvars = x.Vars.Values |> Seq.map(fun v -> v.Var) in
+        let vars = f.Vars in
+        let mv = Seq.tryFind(fun v -> not <| Seq.contains v mvars) vars in
+        if mv.IsSome then failwithf "The function %A contains variables %A not in the model" f mv.Value
+        x.Functions.[n] <- f
+    member internal x.GetFun2<'a when 'a :> RealFunction2> n = x.Functions2.[n] :?> 'a
+    member internal x.SetFun2<'a when 'a :> RealFunction2> (n, f:'a)= 
+        let mvars = x.Vars.Values |> Seq.map(fun v -> v.Var) in
+        let vars = f.Vars in
+        let mv = Seq.tryFind(fun v -> not <| Seq.contains v mvars) vars in
+        if mv.IsSome then failwithf "The function %A contains variables %A not in the model" f mv.Value
+        x.Functions2.[n] <- f
+    member internal x.GetCon<'a when 'a :> IEconomicConstraint> n = if x.Constraints.ContainsKey n then x.Constraints.[n] :?> 'a else failwithf "The model does not contain the equation %A." n
+    member internal x.SetCon<'a when 'a :> IEconomicConstraint> (n, v:'a) = x.Constraints.[n] <- v
+    member internal x.GetEqn n = x.GetCon<EqualityConstraint> n
+    member internal x.SetEqn (n, e:ScalarEquation<real>) = x.SetCon(n, EqualityConstraint e)
+  
+    interface IAttrs with member x.Attrs = x.Attrs
+
+module Economics =
+    let solve_for_econ_var (x:realvar) (e:#ScalarEquation<real> list) = 
+        Ops.SolveForPosVars x.Expr (e |> List.map sexpr) |> List.map(fun v -> ScalarVarMap<real>(x, Scalar<real> v))
 
     let solve_for_econ_var_unique (x:realvar) (e:ScalarEquation<real> list) =
         let s = solve_for_econ_var x e
         if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
         s.[0].Rhs
 
+    let equality_con e = EqualityConstraint e
+
     let marginal (x:realvar) (func:IRealFunction<'a>)  = 
-        match func.Symbol with
-        | None -> diff x func |> with_attr_tag "Marginal" 
-        | Some s -> diff x func |> with_attr_tag "Marginal" |> with_symbol ("M" + s.JoinSuperscript(x.Name))
+     match func.Symbol with
+     | None -> diff x func |> with_attr_tag "Marginal" 
+     | Some s -> diff x func |> with_attr_tag "Marginal" |> with_symbol ("M" + s.JoinSuperscript(x.Name))
 
     let elasticity (x:realvar) (func:IRealFunction<'a>) =
-        let d = diffs x func
-        let s = d * (x / func.ScalarExpr)
-        let f = func.Transform(s.Expr)
-        f
-
+     let d = diffs x func
+     let s = d * (x / func.ScalarExpr)
+     func.Transform(s.Expr) |> with_attr_tag "Elasticity"
+     
     let average (func:RealFunction) = 
-        match func.Symbol with
-        | None -> RealFunction(fexpr func / farg func) |> with_attr_tag "Average"
-        | Some s -> diff (farg func) func |> with_attr_tag "Average" |> with_symbol ("A" + s)
+     match func.Symbol with
+     | None -> RealFunction(fexpr func / farg func) |> with_attr_tag "Average"
+     | Some s -> diff (farg func) func |> with_attr_tag "Average" |> with_symbol ("A" + s)
 
     let demandfun s (func:Scalar<real>) = RealFunction(func, s) |> DemandFunction
 
@@ -228,41 +255,61 @@ module Microeconomics =
 
     let prodfun_im s (x:realvar) (e:ScalarEquation<real>) = realfun_im_pos_vars s x e |> ProductionFunction
 
-    let fail_if_not_equality_constraint (c:EconomicConstraint) = 
-        match c.Expr with
-        | SpecificCall <@@ (=) @@> (_,_,_::_::[]) -> ()  
-        | _ -> failwith "Thi" 
-
     let inv_demandfun (sym:string) (q:realvar) (f:DemandFunction) =
-        let p = farg f
-        let s = solve_for_econ_var_unique p [(q == f.[p])] 
-        realfun sym s |> InverseDemandFunction
+     let p = farg f
+     let s = solve_for_econ_var_unique p [(q == f.[p])] 
+     realfun sym s |> InverseDemandFunction
 
     let revenuefun (s: string) (f:InverseDemandFunction) =
-        let q = farg f
-        realfun s (q * f.[q]) |> RevenueFunction
+     let q = farg f
+     realfun s (q * f.[q]) |> RevenueFunction
 
-    let budget_constraint (r:ScalarEquation<real>) = EconomicConstraint r |> with_attr_tag "BudgetConstraint"
-
-    let ppf (c:ScalarRelation<real> list) = c |> List.map EconomicConstraint |> PPF
+    let budget_constraint (r:ScalarEquation<real>) = EqualityConstraint r |> with_attr_tag "BudgetConstraint"
 
     let isoquants (attrs:'a) (dv:realvar) (f:DemandFunction2) (vals:seq<real>) =
-        let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
-        draw attrs <| realfungrpv fs
+     let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
+     draw attrs <| realfungrpv fs
 
     let indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:seq<real>) =
-        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
-        draw attrs <| realfungrpv fs
+     let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
+     draw attrs <| realfungrpv fs
 
-    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:EconomicConstraint) (vals:seq<real>) =
-        fail_if_not_equality_constraint c
-        let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) |> Seq.append([|realfun_im "" dv (c.Lhs == c.Rhs) |> UtilityFunction|]) |> Seq.cast<IRealFunction<RealFunction>>
-        draw attrs <| realfungrpv fs
+    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:EqualityConstraint) (vals:seq<real>) =
+     let fs = 
+        vals 
+        |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
+        |> Seq.append([|realfun_im "" dv (c.Lhs == c.Rhs) |> UtilityFunction|]) 
+        |> Seq.cast<IRealFunction<RealFunction>>
+     draw attrs <| realfungrpv fs
 
     let mrs (f:RealFunction2) =
-        let M1 = partdiffn 0 f
-        let M2 = partdiffn 1 f
-        -1 * (M1 / M2) |> ratsimp
+     let M1 = partdiffn 0 f
+     let M2 = partdiffn 1 f
+     -1 * (M1 / M2) |> ratsimp
 
     let price_elasticity_demand (f:RealFunction) =
         let p = farg f in elasticity p f
+    
+    let create_econ_model<'m when 'm :> EconomicModel and 'm: (new : unit -> 'm)>()  = new 'm()
+    
+    let get_model_var (m:EconomicModel) v = m.GetVar v
+    
+    let set_model_var (m:EconomicModel) n v = m.SetVar(n, v)
+    
+    let get_model_fun<'f when 'f :> RealFunction> (m:EconomicModel) f :'f = m.GetFun<'f> f
+    
+    let set_model_fun (m:EconomicModel) n (f:'f when 'f :> RealFunction) = m.SetFun(n, f)
+    
+    let with_model_fun n f m = set_model_fun m n f ; m
+    
+    let get_model_fun2<'f when 'f :> RealFunction2> (m:EconomicModel) f :'f = m.Functions2.[f] :?> 'f
+
+    let set_model_fun2 (m:EconomicModel) n (f:'f when 'f :> RealFunction2) = m.SetFun2(n, f)
+
+    let with_model_fun2 n f m = set_model_fun2 m n f ; m
+
+    let get_model_eqn (m:EconomicModel) n = m.GetEqn n
+
+    let set_model_eqn (m:EconomicModel) n e = m.SetEqn(n, e)
+
+    let with_model_eqn n e m = set_model_eqn m n e ; m
