@@ -121,6 +121,7 @@ module Symbolic =
         | Bool false -> "false"
         | Bool true -> "true"
         
+        | ValueWithName(_,_,n) -> n
         | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
         

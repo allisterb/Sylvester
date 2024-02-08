@@ -307,11 +307,14 @@ and ScalarConst<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t
     member val Name = n
     member val Val = defaultArg v Unchecked.defaultof<'t>
 
+    //static member (~%!) (l:ScalarConst<'t>) = ScalarVar<'t> (l.Name)
+
 and ScalarRelation<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(lhs:Scalar<'t>, rhs:Scalar<'t>, op:Expr<'t->'t->bool>) =
     inherit Prop(expand_as<bool> <@ (%op) %lhs.Expr %rhs.Expr @>)
     member val Lhs = lhs
     member val Rhs = rhs
     member val Op = op
+    override x.Display = sprintf "%s %s %s" (sprinte x.Lhs.Expr) ((src op).Replace("(", "").Replace(")", "")) (sprinte x.Rhs.Expr)
 
     interface IHtmlDisplay with
         member x.Html() = "$$" + latexe x.Expr + "$$"
@@ -480,6 +483,8 @@ module Scalar =
     let realconst3 (p:string) (q:string) (r:string) = realconst p, realconst q, realconst r
 
     let realconst4 (p:string) (q:string) (r:string) (s:string) = realconst p, realconst q, realconst r, realconst s
+
+    let const_to_var (c:ScalarConst<'a>) = ScalarVar<'a>(c.Name)
 
     let sin (s:Scalar<'t>) = call_sin s.Expr |> expand_as<'t> |> Scalar<'t>
 

@@ -1,6 +1,6 @@
 ﻿namespace Sylvester
 
-type StaticConsmerLeisure() =
+type ConsumerLeisure() =
     inherit EconomicModel() 
     do
         let c,l,W,t = realvar4 "c" "l" "W" "t"

@@ -51,6 +51,9 @@ type Maxima(?maximaCmd:string) =
 
     member x.Output = failIfNotInitialized output
 
+    member val Input = new StringBuilder()
+
+    
     member val ProcessTimeOut = 2000 with get, set
 
     member val CurrentInputLine = 1 with get, set
@@ -105,6 +108,7 @@ module Maxima =
     let stop (m:Maxima) = m.ConsoleProcess.Stop()
     
     let send (m:Maxima) (input:string) = 
+        m.Input.AppendLine input |> ignore
         !> m.ConsoleSession.Send.Line input 
         >>|> (m.ConsoleSession.Expect.Regex(outputPattern, Nullable(m.ProcessTimeOut))) |> wrap_result'
         >>>= extract_output
@@ -131,6 +135,11 @@ module Maxima =
     let last_output n =
         match defaultInt with
         | Some m -> m.ConsoleSession.LastOutput n
+        | None -> failwith "The default Maxima interpreter is not initialzed."
+
+    let last_input n =
+        match defaultInt with
+        | Some m -> m.ConsoleSession.LastInput n
         | None -> failwith "The default Maxima interpreter is not initialzed."
 
     let set_stardisp()  =

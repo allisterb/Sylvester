@@ -169,14 +169,17 @@ type RevenueFunction(f:RealFunction) =
 
 type IEconomicConstraint =
     inherit IExpr<bool>
-    abstract member Relation:ScalarRelation<real>
-
+    
 type EqualityConstraint(e:ScalarEquation<real>) =
     inherit ScalarEquation<real>(e.Lhs, e.Rhs)
     
     interface IEconomicConstraint with
         member x.Expr = x.Expr
-        member x.Relation = x :> ScalarRelation<real>
+        
+type Tax =
+| NoTax
+| AdValorem
+| Excise
 
 type EconomicModel() = 
     member val Attrs = new System.Collections.Generic.Dictionary<string, obj>()
@@ -208,15 +211,7 @@ type EconomicModel() =
     interface IAttrs with member x.Attrs = x.Attrs
 
 module Economics =
-    let solve_for_econ_var (x:realvar) (e:#ScalarEquation<real> list) = 
-        Ops.SolveForPosVars x.Expr (e |> List.map sexpr) |> List.map(fun v -> ScalarVarMap<real>(x, Scalar<real> v))
-
-    let solve_for_econ_var_unique (x:realvar) (e:ScalarEquation<real> list) =
-        let s = solve_for_econ_var x e
-        if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
-        s.[0].Rhs
-
-    let equality_con e = EqualityConstraint e
+    let eq_con e = EqualityConstraint e
 
     let marginal (x:realvar) (func:IRealFunction<'a>)  = 
      match func.Symbol with
@@ -257,7 +252,7 @@ module Economics =
 
     let inv_demandfun (sym:string) (q:realvar) (f:DemandFunction) =
      let p = farg f
-     let s = solve_for_econ_var_unique p [(q == f.[p])] 
+     let s = solve_for_pos_vars_unique p [(q == f.[p])] 
      realfun sym s |> InverseDemandFunction
 
     let revenuefun (s: string) (f:InverseDemandFunction) =
@@ -282,12 +277,12 @@ module Economics =
         |> Seq.cast<IRealFunction<RealFunction>>
      draw attrs <| realfungrpv fs
 
-    let mrs (f:RealFunction2) =
+    let mrs (f:IRealFunction<RealFunction2>) =
      let M1 = partdiffn 0 f
      let M2 = partdiffn 1 f
      -1 * (M1 / M2) |> ratsimp
 
-    let price_elasticity_demand (f:RealFunction) =
+    let price_elasticity_demand (f:DemandFunction) =
         let p = farg f in elasticity p f
     
     let create_econ_model<'m when 'm :> EconomicModel and 'm: (new : unit -> 'm)>()  = new 'm()

@@ -3,13 +3,6 @@
 open Sylvester
 open Sylvester.CAS
 
-open System
-open System.Collections.Generic
-open System.Linq
-open System.Reflection
-open FSharp.Quotations
-open FSharp.Quotations.Patterns
-open FSharp.Quotations.DerivedPatterns
 open Dimension
 open Economics
 open LinearEquations
@@ -22,6 +15,7 @@ let p,q = realvar2 "p" "q"
 //Declare 3 real constants representing the price of sugar, price of chocolate, and consumer income respectively
 let ps, pc, Y = realconst3 "p_s" "p_c" "Y"
 
+let pb = realconst "p_b"
 // Declare 2more real symbolic variables
 let L, K = realvar2 "L" "K"
 // Declare 4 more real symbolic constamts
@@ -32,11 +26,21 @@ let QD = demandfun "Q_d" (8.56 - p - 0.3 * ps + 0.1 * Y)
 let QD1 = fix {|``p++s``=0.2; Y=35.|} QD
 
 marginal p QD1
+let QD2 = demandfun "Q_d" (171 - 20 * p + 20 * pb + 3 * pc - 2 * Y)
+let QS2 = supplyfun "Q_s" (178 + 40 * p - 60 * pb)
 
+QD2.[p] == QS2.[p]
+//LinearEquations.solve_for [const_to_var pb] [QD2.[p] == QS2.[p]]
+
+
+Maxima.last_output 10
 let me = create_econ_model<MarketEquilibrium>()
 me.Qd <- demandfun "Qd" (me.p + 0.5)
 me.Qs <- supplyfun "Qs" (2 * me.p + 2.5)
-solve_for_econ_var me.p [me.MarketEquilibrium]
+solve_for_pos_vars me.p [
+    me.p + 2 * pb == 3.
+] 
+
 //let u = utilfun "Q_u" (8.56 - p - 0.3 * ps + 0.1 * Y)
 //let u2 = u :> IRealFunction<RealFunction>
 //let u2 = fix {|Y=4.; p_s=3.|} u

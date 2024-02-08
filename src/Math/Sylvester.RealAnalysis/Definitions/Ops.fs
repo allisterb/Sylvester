@@ -48,3 +48,30 @@ type IRealAnalysisSymbolicOps =
 [<AutoOpen>]    
 module RealAnalysis =
     let mutable Ops = MaximaRealAnalysisOps() :> IRealAnalysisSymbolicOps 
+
+    (*
+    let solve_for (vars:ScalarVar<'t>) (eqns: ScalarEquation<'t> list) =
+        Algebra.solve_for_n (vars |>List.map sexpr) (eqns |> List.map sexpr) 
+        |> List.map Scalar<'t> 
+        |> List.zip vars
+        |> List.map(fun (v, e) -> ScalarVarMap<'t> (v, e))
+        *)
+    let solve (eqns: ScalarEquation<'t> list) =
+        let vars = 
+            eqns 
+            |> List.map sexpr 
+            |> List.collect get_vars 
+            |> List.distinct
+            |> List.map (fun v -> ScalarVar<'t> v.Name)
+        Algebra.solve_for_n (vars |> List.map sexpr) (eqns |> List.map sexpr) 
+        |> List.map Scalar<'t> 
+        |> List.zip vars
+        |> List.map(fun (v, e) -> ScalarVarMap<'t> (v, e))
+
+    let solve_for_pos_vars (x:realvar) (e:ScalarEquation<real> list) = 
+        Ops.SolveForPosVars x.Expr (e |> List.map sexpr) |> List.map(fun v -> ScalarVarMap<real>(x, Scalar<real> v))
+
+    let solve_for_pos_vars_unique (x:realvar) (e:ScalarEquation<real> list) =
+        let s = solve_for_pos_vars x e
+        if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
+        s.[0].Rhs
