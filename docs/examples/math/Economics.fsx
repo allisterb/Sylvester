@@ -38,8 +38,10 @@ let me = create_econ_model<MarketEquilibrium>()
 me.Qd <- demandfun "Qd" (me.p + 0.5)
 me.Qs <- supplyfun "Qs" (2 * me.p + 2.5)
 solve_for_pos_vars me.p [
-    me.p + 2 * pb == 3.
+    me.p - 2 * pb == 3.
+    //pb == 0.
 ] 
+Maxima.last_output 5
 
 //let u = utilfun "Q_u" (8.56 - p - 0.3 * ps + 0.1 * Y)
 //let u2 = u :> IRealFunction<RealFunction>

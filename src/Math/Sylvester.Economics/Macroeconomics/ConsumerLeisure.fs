@@ -8,7 +8,6 @@ type ConsumerLeisure() =
         base.Vars.["l"] <- l
         base.Vars.["W"] <- W
         base.Vars.["t"] <- t
-        base.Constraints.["real"] <- EqualityConstraint (t == W)
     member x.c 
         with get() = x.GetVar "c"
         and set(value) = x.SetVar("c", value)

@@ -21,5 +21,7 @@ type MarketEquilibrium() =
     member x.Qd
            with get() = x.GetFun<DemandFunction> "Qd"
            and set(value:DemandFunction) = x.SetFun("Qd", value)
-    member val Tax = NoTax with get,set
-    member x.MarketEquilibrium = EqualityConstraint (if x.Tax = NoTax then x.Qs.[x.p] == x.Qd.[x.p] else x.Qs.[x.p - x.T] == x.Qd.[x.p])
+    member val Tax: Tax option = None with get,set
+    member x.MarketEquilibrium = EqualityConstraint (if x.Tax = None then x.Qs.[x.p] == x.Qd.[x.p] else x.Qs.[x.p - x.T] == x.Qd.[x.p])
+
+    override x.Constraints = [x.MarketEquilibrium]

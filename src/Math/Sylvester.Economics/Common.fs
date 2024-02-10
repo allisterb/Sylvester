@@ -177,16 +177,17 @@ type EqualityConstraint(e:ScalarEquation<real>) =
         member x.Expr = x.Expr
         
 type Tax =
-| NoTax
 | AdValorem
 | Excise
+| LumpSum
 
 type EconomicModel() = 
     member val Attrs = new System.Collections.Generic.Dictionary<string, obj>()
     member val Vars = new System.Collections.Generic.Dictionary<string, realvar>()
     member val Functions = new System.Collections.Generic.Dictionary<string, RealFunction>()
     member val Functions2 = new System.Collections.Generic.Dictionary<string, RealFunction2>()
-    member val Constraints = new System.Collections.Generic.Dictionary<string, IEconomicConstraint>()
+    abstract Constraints:IEconomicConstraint list
+    default x.Constraints = List.empty
     member internal x.GetVar n = if x.Vars.ContainsKey n then x.Vars.[n] else failwithf "The model does not contain the real variable %A." n
     member internal x.SetVar(n, v) = x.Vars.[n] <- v
     member internal x.GetFun<'a when 'a :> RealFunction> n = x.Functions.[n] :?> 'a
@@ -203,11 +204,7 @@ type EconomicModel() =
         let mv = Seq.tryFind(fun v -> not <| Seq.contains v mvars) vars in
         if mv.IsSome then failwithf "The function %A contains variables %A not in the model" f mv.Value
         x.Functions2.[n] <- f
-    member internal x.GetCon<'a when 'a :> IEconomicConstraint> n = if x.Constraints.ContainsKey n then x.Constraints.[n] :?> 'a else failwithf "The model does not contain the equation %A." n
-    member internal x.SetCon<'a when 'a :> IEconomicConstraint> (n, v:'a) = x.Constraints.[n] <- v
-    member internal x.GetEqn n = x.GetCon<EqualityConstraint> n
-    member internal x.SetEqn (n, e:ScalarEquation<real>) = x.SetCon(n, EqualityConstraint e)
-  
+    
     interface IAttrs with member x.Attrs = x.Attrs
 
 module Economics =
@@ -302,9 +299,3 @@ module Economics =
     let set_model_fun2 (m:EconomicModel) n (f:'f when 'f :> RealFunction2) = m.SetFun2(n, f)
 
     let with_model_fun2 n f m = set_model_fun2 m n f ; m
-
-    let get_model_eqn (m:EconomicModel) n = m.GetEqn n
-
-    let set_model_eqn (m:EconomicModel) n e = m.SetEqn(n, e)
-
-    let with_model_eqn n e m = set_model_eqn m n e ; m
