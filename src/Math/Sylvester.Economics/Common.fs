@@ -14,7 +14,7 @@ type UtilityFunction(f:RealFunction) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type UtilityFunction2(f:RealFunction2) =
@@ -27,7 +27,7 @@ type UtilityFunction2(f:RealFunction2) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction2
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type DemandFunction(f:RealFunction) =
@@ -40,7 +40,7 @@ type DemandFunction(f:RealFunction) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
     interface IWebVisualization with
         member x.Draw(attrs:_) =             
@@ -60,7 +60,7 @@ type InverseDemandFunction(f:RealFunction) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> InverseDemandFunction
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type DemandFunction2(f:RealFunction2) =
@@ -73,7 +73,7 @@ type DemandFunction2(f:RealFunction2) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction2
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type SupplyFunction(f:RealFunction) =
@@ -86,7 +86,7 @@ type SupplyFunction(f:RealFunction) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
   
 type SupplyFunction2(f:RealFunction2) =
@@ -99,7 +99,7 @@ type SupplyFunction2(f:RealFunction2) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction2
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type ProductionFunction(f:RealFunction) =
@@ -112,7 +112,7 @@ type ProductionFunction(f:RealFunction) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
         
 type ProductionFunction2(f:RealFunction2) =
@@ -125,7 +125,7 @@ type ProductionFunction2(f:RealFunction2) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction2
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type CostFunction(f:RealFunction) =
@@ -138,7 +138,7 @@ type CostFunction(f:RealFunction) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
         
 type CostFunction2(f:RealFunction2) =
@@ -151,7 +151,7 @@ type CostFunction2(f:RealFunction2) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction2
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type RevenueFunction(f:RealFunction) =
@@ -164,17 +164,8 @@ type RevenueFunction(f:RealFunction) =
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> RevenueFunction
         member x.ScalarExpr = Scalar<real> x.Body
-        member x.Vars = _rf.Vars
+        member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
-
-type IEconomicConstraint =
-    inherit IExpr<bool>
-    
-type EqualityConstraint(e:ScalarEquation<real>) =
-    inherit ScalarEquation<real>(e.Lhs, e.Rhs)
-    
-    interface IEconomicConstraint with
-        member x.Expr = x.Expr
         
 type Tax =
 | AdValorem
@@ -186,8 +177,9 @@ type EconomicModel() =
     member val Vars = new System.Collections.Generic.Dictionary<string, realvar>()
     member val Functions = new System.Collections.Generic.Dictionary<string, RealFunction>()
     member val Functions2 = new System.Collections.Generic.Dictionary<string, RealFunction2>()
-    abstract Constraints:IEconomicConstraint list
+    abstract Constraints:ScalarRelation<real> list
     default x.Constraints = List.empty
+    member x.Equations = x.Constraints |> List.choose(fun c -> if c :? ScalarEquation<real> then c :?> ScalarEquation<real> |> Some else None) 
     member internal x.GetVar n = if x.Vars.ContainsKey n then x.Vars.[n] else failwithf "The model does not contain the real variable %A." n
     member internal x.SetVar(n, v) = x.Vars.[n] <- v
     member internal x.GetFun<'a when 'a :> RealFunction> n = x.Functions.[n] :?> 'a
@@ -199,26 +191,30 @@ type EconomicModel() =
         x.Functions.[n] <- f
     member internal x.GetFun2<'a when 'a :> RealFunction2> n = x.Functions2.[n] :?> 'a
     member internal x.SetFun2<'a when 'a :> RealFunction2> (n, f:'a)= 
+        (*
         let mvars = x.Vars.Values |> Seq.map(fun v -> v.Var) in
         let vars = f.Vars in
         let mv = Seq.tryFind(fun v -> not <| Seq.contains v mvars) vars in
         if mv.IsSome then failwithf "The function %A contains variables %A not in the model" f mv.Value
+        *)
         x.Functions2.[n] <- f
     
     interface IAttrs with member x.Attrs = x.Attrs
 
 module Economics =
-    let eq_con e = EqualityConstraint e
-
     let marginal (x:realvar) (func:IRealFunction<'a>)  = 
      match func.Symbol with
      | None -> diff x func |> with_attr_tag "Marginal" 
      | Some s -> diff x func |> with_attr_tag "Marginal" |> with_symbol ("M" + s.JoinSuperscript(x.Name))
 
+    let marginal_e x func  = marginal x func |> fexpr
+
     let elasticity (x:realvar) (func:IRealFunction<'a>) =
-     let d = diffs x func
+     let d = diffe x func
      let s = d * (x / func.ScalarExpr)
      func.Transform(s.Expr) |> with_attr_tag "Elasticity"
+
+    let elasticity_e x func = elasticity x func |> fexpr
      
     let average (func:RealFunction) = 
      match func.Symbol with
@@ -256,7 +252,7 @@ module Economics =
      let q = farg f
      realfun s (q * f.[q]) |> RevenueFunction
 
-    let budget_constraint (r:ScalarEquation<real>) = EqualityConstraint r |> with_attr_tag "BudgetConstraint"
+    let budget_constraint (r:ScalarEquation<real>) = r |> with_attr_tag "BudgetConstraint"
 
     let isoquants (attrs:'a) (dv:realvar) (f:DemandFunction2) (vals:seq<real>) =
      let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
@@ -266,7 +262,7 @@ module Economics =
      let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
      draw attrs <| realfungrpv fs
 
-    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:EqualityConstraint) (vals:seq<real>) =
+    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:ScalarEquation<real>) (vals:seq<real>) =
      let fs = 
         vals 
         |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 
@@ -275,14 +271,14 @@ module Economics =
      draw attrs <| realfungrpv fs
 
     let mrs (f:IRealFunction<RealFunction2>) =
-     let M1 = partdiffn 0 f
-     let M2 = partdiffn 1 f
+     let M1 = partdiffn_e 0 f
+     let M2 = partdiffn_e 1 f
      -1 * (M1 / M2) |> ratsimp
 
     let price_elasticity_demand (f:DemandFunction) =
         let p = farg f in elasticity p f
     
-    let create_econ_model<'m when 'm :> EconomicModel and 'm: (new : unit -> 'm)>()  = new 'm()
+    let econ_model<'m when 'm :> EconomicModel and 'm: (new : unit -> 'm)>()  = new 'm()
     
     let get_model_var (m:EconomicModel) v = m.GetVar v
     

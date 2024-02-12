@@ -47,6 +47,20 @@ module Board =
     [<Emit("{1}.renderer.container.style.height = {0};$('div.cell.selected').children('div.output_wrapper').height({0})")>]
     let setBoardHeight (h:int) (b:Board)= ()
 
+    let to_json(x:'a) = Newtonsoft.Json.JsonConvert.SerializeObject x |> Expr.Value |> expand_as<string>
+    
+    [<Emit("JSON.parse({0});")>]
+    let parseJson (x:string) = stub<obj>
+
+    [<Emit("return {0}[{1}] !== undefined;")>]
+    let hasProperty (x : obj) (prop : string) = stub<bool>
+    
+    [<Emit("return {0}[{1}];")>]
+    let getProperty<'a> (x : obj) (prop : string) = stub<'a>
+    
+    [<Emit("{0}[{1}] = {2};")>]
+    let setProperty (x : obj) (prop : string) (value : obj) = stub<unit>
+
     [<JS>]
     let defaults = {||}
 

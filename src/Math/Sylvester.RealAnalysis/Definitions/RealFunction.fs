@@ -18,7 +18,7 @@ type IRealFunction<'a> =
     inherit ISymbolic<'a, real>
     inherit IHtmlDisplay
     //inherit IWebVisualization
-    abstract member Vars:realvar list
+    abstract member ScalarVars:realvar list
     abstract member ScalarExpr:Scalar<real>
    
 type RealFunction(f, ?symbol:string) = 
@@ -44,7 +44,7 @@ type RealFunction(f, ?symbol:string) =
             match x.Symbol with
             | None -> "$$" + latexe x.Body + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$$"
-        member a.Vars = a.Vars |> List.map (exprvar >> realvar)
+        member a.ScalarVars = a.Vars |> List.map (exprvar >> realvar)
         member a.ScalarExpr = Scalar<real> a.Body
         
     interface IWebVisualization with
@@ -78,7 +78,7 @@ type RealFunction(f, ?symbol:string) =
             do vars |> List.map Expr.Var |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
             let nb = expand_as<real> me
             nb
-     member x.ScalarVars = get_vars x.ScalarExpr 
+     member x.ScalarVars = get_vars x.ScalarExpr |> List.map (exprvar >> realvar)
      member val ScalarMapExpr = 
         match sf with
         | Some f -> f
@@ -131,10 +131,10 @@ type RealFunction(f, ?symbol:string) =
             let f = RealFunction2(Scalar<real> b, ?symbol=s)
             do f.Attrs.AddAll(defaultArg attrs null) |> ignore
             f
-        member a.Vars = a.ScalarVars |> List.map (exprvar >> realvar)
+        member a.ScalarVars = a.ScalarVars 
         member a.ScalarExpr = Scalar<real> a.ScalarExpr
         member x.Html() = 
-            let v = x.ScalarVars |> List.map exprvar<real> |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n)) (x.ScalarVars |> List.head |> exprvar<real> |> latexe)
+            let v = x.ScalarVars |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n.Expr)) (x.ScalarVars |> List.head |> sexpr |> latexe)
             match x.Symbol with
             | None -> "$$" + latexe x.ScalarExpr + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr)) + "$$"
@@ -162,6 +162,6 @@ module RealFunction =
 
     let realfungrpv g = RealFunctionGroupVisualization g
 
-    let fsv n (f:IRealFunction<_>) = f.Vars.[n]
+    let fvar n (f:IRealFunction<_>) = f.ScalarVars.[n]
 
-    let partdiffn n (f:IRealFunction<_>) = diffs (fsv n f) f
+    let partdiffn_e n (f:IRealFunction<_>) = diffe (fvar n f) f

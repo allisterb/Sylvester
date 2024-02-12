@@ -10,6 +10,7 @@
     <Compile Include="Microeconomics\MarketEquilibrium.fs" />
     <Compile Include="Macroeconomics\ConsumerLeisure.fs" />
     <Compile Include="Macroeconomics\FirmProfit.fs" />
+    <Compile Include="Macroeconomics\GrowthModel.fs" />
   </ItemGroup>
 
   <ItemGroup>

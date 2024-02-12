@@ -75,7 +75,7 @@ module R =
             let n = if s.Expr |> get_vars |> List.length > 1 then sym.JoinSuperscript(x.Name) else sym + "'"
             s.Transform(Ops.Diff 1 x.Expr s.Expr, newattrs [("Derivative", box true)], n)
 
-    let diffs (x:ScalarVar<real>) (s:ISymbolic<'a, real>) =
+    let diffe (x:ScalarVar<real>) (s:ISymbolic<'a, real>) =
         do fail_if_not_has_var x.Var s.Expr
         Ops.Diff 1 x.Expr s.Expr |> Scalar<real> |> with_attr_tag "Derivative"
 
