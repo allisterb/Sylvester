@@ -245,7 +245,7 @@ module Economics =
 
     let inv_demandfun (sym:string) (q:realvar) (f:DemandFunction) =
      let p = farg f
-     let s = solve_for_pos_vars_unique p [(q == f.[p])] 
+     let s = solve_unique {|posvars=true|} p [(q == f.[p])] 
      realfun sym s |> InverseDemandFunction
 
     let revenuefun (s: string) (f:InverseDemandFunction) =
@@ -295,3 +295,4 @@ module Economics =
     let set_model_fun2 (m:EconomicModel) n (f:'f when 'f :> RealFunction2) = m.SetFun2(n, f)
 
     let with_model_fun2 n f m = set_model_fun2 m n f ; m
+

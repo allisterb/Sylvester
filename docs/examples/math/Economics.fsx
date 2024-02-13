@@ -7,7 +7,13 @@ open Dimension
 open Economics
 open LinearEquations
 open FunScript
+open System.Linq
 
+
+let has_prop2<'t> n (o:obj) = o.GetType().GetProperties().Any(fun p -> p.Name = n && p.PropertyType = typeof<'t>)
+
+let get
+has_prop2<bool> "foo2" {|foo=false|}
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 //Declare 2 real variables

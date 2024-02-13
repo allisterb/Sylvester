@@ -314,14 +314,22 @@ and ScalarRelation<'t when 't: equality and 't :> ValueType and 't :> IEquatable
     member val Lhs = lhs
     member val Rhs = rhs
     member val Op = op
+    member x.Fix<'a>(o:'a) = 
+        let lhs = fix o x.Lhs in
+        let rhs = fix o x.Rhs in
+        ScalarRelation<'t>(lhs, rhs, x.Op)
     override x.Display = sprintf "%s %s %s" (sprinte x.Lhs.Expr) ((src op).Replace("(", "").Replace(")", "")) (sprinte x.Rhs.Expr)
-
+    
     interface IHtmlDisplay with
         member x.Html() = "$$" + latexe x.Expr + "$$"
 
 and ScalarEquation<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(lhs:Scalar<'t>, rhs:Scalar<'t>) =
     inherit ScalarRelation<'t>(lhs, rhs, <@ (=) @>)
-    
+    member x.Fix<'a>(o:'a) = 
+        let lhs = fix o x.Lhs in
+        let rhs = fix o x.Rhs in
+        ScalarEquation<'t>(lhs, rhs)
+
 and ScalarVarMap<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, expr:Scalar<'t>) =
     inherit ScalarEquation<'t>(var, expr)
     member val Var = var
@@ -492,6 +500,8 @@ module Scalar =
 
     let sqrt (s:Scalar<'t>) = call_sqrt s.Expr |> expand_as<'t> |> Scalar<'t>
     
+    let fix_eqn (o:'a) (e:ScalarEquation<'t>) = e.Fix o
+
 [<AutoOpen>]
 module Prop =
     let prop e = Prop e

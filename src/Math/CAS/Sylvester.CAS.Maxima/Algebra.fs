@@ -57,7 +57,9 @@ module Algebra =
         | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
 
-    let solve_for_n (v:Expr<'t> list) (system:Expr<bool> list) =
+    let solve_for_n (options:'a) (v:Expr<'t> list) (system:Expr<bool> list) =
+        do if get_prop_else<bool> "posvars" false options  then v |> List.iter assume_pos
+
         sprintf "solve(%s, %s);" (system |> sprintel) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> v.ToString()) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
         |> send 
         |> Result.mapError(fun e -> e.Message)

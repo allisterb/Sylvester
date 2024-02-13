@@ -76,8 +76,8 @@ module Symbolic =
     let fix (attrs:'a) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
         let mutable m = s.Expr.Raw
         get_consts m |> List.iter(fun (t, n) -> 
-            if has_prop n typeof<'b> attrs then 
-                let s = get_prop n typeof<'b> attrs :?> 'b in 
+            if has_prop<'b> n attrs then 
+                let s = get_prop<'b> n attrs in 
                 let v = exprv s in 
                 m <- replace_expr (Expr.ValueWithName(Unchecked.defaultof<'b>, n)) v m
                 m <- replace_expr (expr_var<'b> n) v m

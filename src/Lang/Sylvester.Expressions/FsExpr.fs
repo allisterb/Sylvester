@@ -610,10 +610,12 @@ module FsExpr =
 
     let recombine_func_as<'t> vars body = recombine_func vars body |> expand_as<'t>
 
-    let has_prop<'a> n t (_:'a) = typeof<'a>.GetProperties().Any(fun p -> p.Name = n && p.PropertyType = t)
+    let has_prop<'t> n (o:obj) = o.GetType().GetProperties().Any(fun p -> p.Name = n && p.PropertyType = typeof<'t>)
     
-    let get_prop<'a> n t (o:'a) = typeof<'a>.GetProperties().First(fun p -> p.Name = n && p.PropertyType = t).GetValue(o)
+    let get_prop<'t> n (o:obj) = o.GetType().GetProperties().First(fun p -> p.Name = n && p.PropertyType = typeof<'t>).GetValue(o) :?> 't
 
+    let get_prop_else<'t> n (e:'t) (o:obj) = if has_prop<bool> n o then o.GetType().GetProperties().First(fun p -> p.Name = n && p.PropertyType = typeof<'t>).GetValue(o) :?> 't else e
+    
     let get_consts expr =
             let dict = new System.Collections.Generic.List<Type*string>()
             expr |> traverse' (function | ValueWithName(_, t, n) -> dict.Add(t, n); None | _ -> None) |> ignore

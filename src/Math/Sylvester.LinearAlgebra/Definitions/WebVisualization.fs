@@ -14,8 +14,8 @@ open FunScript.Bindings.JSXGraph
 
 module WebVisualization =
     let draw_vec2<'a> (attrs:'a) (e0:Expr) (e1:Expr) = 
-        let origin = if has_prop "origin" typeof<real*real> attrs then get_prop "origin" typeof<real*real> attrs :?> real*real else 0. ,0.
-        let range = if has_prop "range" typeof<real*real> attrs then get_prop "range" typeof<real*real> attrs :?> real*real else 10. ,10.
+        let origin = get_prop_else<real*real> "origin" (0. ,0.) attrs
+        let range = get_prop_else<real*real> "range" (10. ,10.) attrs
         let originx, originy = exprv <| fst origin, exprv <| snd origin
         let rangex, rangey = exprv <| fst range, exprv <| snd range
         let widthx, widthy = <@ (%rangex - %originx) @>, <@ (%rangey - %originy) @>
@@ -31,24 +31,24 @@ module WebVisualization =
         let mutable ll = nullv.Raw
 
         get_symbols m0 |> List.iter(fun (t, n) -> 
-            if has_prop n typeof<real> attrs then 
-                let s = get_prop n typeof<real> attrs :?> real in 
+            if has_prop<real> n attrs then 
+                let s = get_prop<real> n attrs in 
                 let v = exprv s in 
                 m0 <- replace_expr (Expr.ValueWithName(0., n)) v m0
                 m0 <- replace_expr (expr_var<real> n) v m0
         )
 
         get_symbols m1 |> List.iter(fun (t, n) -> 
-            if has_prop n typeof<real> attrs then 
-                let s = get_prop n typeof<real> attrs :?> real in 
+            if has_prop<real> n attrs then 
+                let s = get_prop<real> n attrs in 
                 let v = exprv s in 
                 m1 <- replace_expr (Expr.ValueWithName(0., n)) v m1
                 m1 <- replace_expr (expr_var<real> n) v m1
         )
     
         get_symbols m0 |> List.iter(fun (t, n) -> 
-            if has_prop n typeof<real*real> attrs then 
-                let s = get_prop n typeof<real*real> attrs :?> real*real in 
+            if has_prop<real*real> n attrs then 
+                let s = get_prop<real*real> n attrs in 
                 let min = exprv (fst s) in 
                 let max = exprv (snd s) in 
                 if not <| sliders.Any(fun s -> s.Name = n) then 
@@ -65,8 +65,8 @@ module WebVisualization =
         )
     
         get_symbols m1 |> List.iter(fun (t, n) -> 
-            if has_prop n typeof<real*real> attrs then 
-                let s = get_prop n typeof<real*real> attrs :?> real*real in 
+            if has_prop<real*real> n attrs then 
+                let s = get_prop<real*real> n attrs in 
                 let min = exprv (fst s) in 
                 let max = exprv (snd s) in 
                 if not <| sliders.Any(fun s -> s.Name = n) then 

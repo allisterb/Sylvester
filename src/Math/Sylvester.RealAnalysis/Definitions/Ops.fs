@@ -49,29 +49,15 @@ type IRealAnalysisSymbolicOps =
 module RealAnalysis =
     let mutable Ops = MaximaRealAnalysisOps() :> IRealAnalysisSymbolicOps 
 
-    (*
-    let solve_for (vars:ScalarVar<'t>) (eqns: ScalarEquation<'t> list) =
-        Algebra.solve_for_n (vars |>List.map sexpr) (eqns |> List.map sexpr) 
-        |> List.map Scalar<'t> 
-        |> List.zip vars
-        |> List.map(fun (v, e) -> ScalarVarMap<'t> (v, e))
-        *)
-    let solve (eqns: ScalarEquation<'t> list) =
-        let vars = 
-            eqns 
-            |> List.map sexpr 
-            |> List.collect get_vars 
-            |> List.distinct
-            |> List.map (fun v -> ScalarVar<'t> v.Name)
-        Algebra.solve_for_n (vars |> List.map sexpr) (eqns |> List.map sexpr) 
-        |> List.map Scalar<'t> 
-        |> List.zip vars
-        |> List.map(fun (v, e) -> ScalarVarMap<'t> (v, e))
-
-    let solve_for_pos_vars (x:realvar) (e:ScalarEquation<real> list) = 
-        Ops.SolveForPosVars x.Expr (e |> List.map sexpr) |> List.map(fun v -> ScalarVarMap<real>(x, Scalar<real> v))
-
-    let solve_for_pos_vars_unique (x:realvar) (e:ScalarEquation<real> list) =
-        let s = solve_for_pos_vars x e
+    let solve (o:'a) (v:seq<realvar>)  (eqns: ScalarEquation<real> list) =
+        let _eqns = eqns |> List.map(fix_eqn o)
+        let vars = v |> Seq.map(fun _v -> _v.Var |> exprvar<real>) |> Seq.toList
+        Algebra.solve_for_n o vars  (_eqns |> List.map sexpr) 
+        |> List.map Scalar<real>
+        |> List.zip (vars |> List.map realvar)
+        |> List.map(fun (v, e) -> ScalarVarMap<real> (v, e))
+    
+    let solve_unique (o:'a) (x:realvar) (e:ScalarEquation<real> list) =
+        let s = solve o [x] e
         if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
         s.[0].Rhs
