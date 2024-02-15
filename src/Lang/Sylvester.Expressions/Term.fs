@@ -507,6 +507,11 @@ module Scalar =
     
     let fix_eqn (o:'a) (e:ScalarEquation<'t>) = e.Fix o
 
+    let lhs (s:#ScalarRelation<'t>) = s.Lhs
+
+    let rhs (s:#ScalarRelation<'t>) = s.Rhs
+
+
 [<AutoOpen>]
 module Prop =
     let prop e = Prop e

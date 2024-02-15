@@ -1,10 +1,14 @@
 ﻿namespace Sylvester
 
+open Economics
+
 type ConsumerPreference() =
     inherit EconomicModel()
     do
         base.Vars.["q1"] <- realvar "q1"
         base.Vars.["q2"] <- realvar "q2"
+        base.Vars.["p1"] <- realvar "p1"
+        base.Vars.["p2"] <- realvar "p2"
         base.Vars.["Y"] <- realvar "Y"
     member x.q1
         with get() = x.GetVar "q1"
@@ -25,3 +29,5 @@ type ConsumerPreference() =
         with get() = x.GetFun2<UtilityFunction2> "U" 
         and set(value:UtilityFunction2) = x.SetFun2("U", value)
     member x.BudgetConstraint = x.Y == x.p1 * x.q1 + x.p2 * x.q2
+    member x.UtilityMaximization = mrs x.U == x.p1 / x.p2
+    override x.Constraints = [x.BudgetConstraint; x.UtilityMaximization]

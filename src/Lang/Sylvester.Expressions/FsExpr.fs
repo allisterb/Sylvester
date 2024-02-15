@@ -645,3 +645,6 @@ module FsExpr =
     
     let end_with = ignore
 
+    let head (l:seq<_>) = Seq.head l
+
+    let tail (l:seq<_>) = Seq.tail l

@@ -9,21 +9,23 @@ open LinearEquations
 open FunScript
 open System.Linq
 open RealNumbers
+
+fsi.PrintWidth <- 500
+
+
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 //Declare 2 real variables
 let p,q = realvar2 "p" "q"
-
+let Y = realvar "Y"
 let x, y = realvar2 "x" "y"
-
 let cp = econ_model<ConsumerPreference>()
 do
-    cp.q1 <- p
-    cp.q2 <- q
-    cp.U <- utilfun2 "U" (ln x + ln y)
+    cp.q1 <- x
+    cp.q2 <- y
+    cp.U <- utilfun2 "U" (ln cp.q1 + cp.q2)
 
-cp.U <- utilfun2 "U" (x *** 2 + y *** 2)
-solve_for {|posvars=true|} [x] [cp.U.[x, y] == 1.]
+solve_model_for [cp.q1;cp.q2] cp
 //Declare 3 real constants representing the price of sugar, price of chocolate, and consumer income respectively
 let ps, pc, Y = realconst3 "p_s" "p_c" "Y"
 

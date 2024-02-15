@@ -8,7 +8,7 @@ open FunScript
 open FunScript.Bindings.JSXGraph
 
 open Sylvester
-
+open RealNumbers
 let exprvar2<'t>(n:string) = expand_as<'t>(Expr.Var(Var(n, typeof<'t>)))
 [<EntryPoint>]
 let main argv =
@@ -16,21 +16,17 @@ let main argv =
     let a = realconst "a"
     let r, s = realvar2 "r" "s"
     let rr = vec2 r (r + s)
-    //let ggg = draw_v {|r = 6.,7. |} rr
-    //let gggg= WebVisualization.draw {|s = 6.,10.|} rr
-    
-    
-    //printfn "%s" (compile (gggg.ToString()))
-    //printfn "%s" (compile jj)
 
-    let f   = realfun ";" (r*2. + r*5. + a)
-    let z = Math.Min
-    let e = <@ 
-                let en = %f.MapExpr
-                en(2.)
-    @>
-    printfn "%s" (compile e)
+    let fs = realfun "f" (min 2R 3R)
     
+  
+    let e = 
+        <@ 
+            let m = %fs.MapExpr
+            m(0.)
+        @>
+    printf "%s" (compile e)
+    0
     //let gg = WebVisualization.draw_realfun {|xrange = 0.,15.;yrange=0.,300.; a=0.,150.|} "kk" f.MapExpr |> draw_board
 
-    0 // return an integer exit code
+    //0 // return an integer exit code

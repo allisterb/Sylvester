@@ -273,7 +273,7 @@ module Economics =
     let mrs (f:IRealFunction<RealFunction2>) =
      let M1 = partdiffn_e 0 f
      let M2 = partdiffn_e 1 f
-     -1 * (M1 / M2) |> ratsimp
+     (M1 / M2) |> ratsimp
 
     let price_elasticity_demand (f:DemandFunction) =
         let p = farg f in elasticity p f
@@ -296,3 +296,4 @@ module Economics =
 
     let with_model_fun2 n f m = set_model_fun2 m n f ; m
 
+    let solve_model_for (x:realvar list) (m:EconomicModel) = solve {|posvars=true|} x m.Equations
