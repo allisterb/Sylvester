@@ -8,12 +8,20 @@ open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
 
+[<AbstractClass>]
 type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, amap:Expr<'a->'t>, ?symbol:string) = 
     inherit ScalarFunction<'t, real, 'a>(domain, codomain, map, amap, ?symbol=symbol)
-     
-type RealFunction<'t when 't : equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, ?symbol:string) = 
-    inherit ScalarFunction<'t, real>(domain, codomain, map, ?symbol=symbol)
-    
+    abstract ScalarExpr:Scalar<real>
+    abstract ScalarVars: realvar list
+
+    static member (==) (l:RealFunction<'t, 'a>, r:RealFunction<'t, 'a>) = l.ScalarExpr == r.ScalarExpr 
+
+    static member (==) (l:RealFunction<'t, 'a>, r:Scalar<real>) = l.ScalarExpr == r
+       
+    static member (==) (l:RealFunction<'t, 'a>, r:real) = l.ScalarExpr == r
+
+    static member (+) (l:RealFunction<'t, 'a>, r:RealFunction<'t, 'a>) = l.ScalarExpr + r.ScalarExpr 
+
 type IRealFunction<'a> = 
     inherit ISymbolic<'a, real>
     inherit IHtmlDisplay
@@ -22,8 +30,9 @@ type IRealFunction<'a> =
     abstract member ScalarExpr:Scalar<real>
    
 type RealFunction(f, ?symbol:string) = 
-    inherit RealFunction<real>(Field.R, Field.R, f, ?symbol=symbol)
-    member a.ScalarExpr = Scalar<real> a.Body
+    inherit RealFunction<real, real>(Field.R, Field.R, f, <@ id @>, ?symbol=symbol)
+    override a.ScalarExpr = Scalar<real> a.Body
+    override a.ScalarVars = a.Vars |> List.map (exprvar >> realvar)
     new (e:Scalar<real>, ?symbol:string) =
         let v = get_vars e.Expr
         
@@ -45,21 +54,14 @@ type RealFunction(f, ?symbol:string) =
             match x.Symbol with
             | None -> "$$" + latexe x.Body + "$$"
             | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$$"
-        member a.ScalarVars = a.Vars |> List.map (exprvar >> realvar)
-        member a.ScalarExpr = Scalar<real> a.Body
+        member a.ScalarVars = a.ScalarVars
+        member a.ScalarExpr = a.ScalarExpr
         
     interface IWebVisualization with
         member x.Draw(attrs:_) = 
             WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
     
-    static member (==) (l:RealFunction, r:RealFunction) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real> r.Body) 
-
-    static member (==) (l:RealFunction, r:Scalar<real>) = ScalarEquation<real>(Scalar<real> l.Body, r)
-    
-    static member (==) (l:RealFunction, r:real) = ScalarEquation<real>(Scalar<real> l.Body, Scalar<real>(exprv r))
-
-    static member (+) (l:RealFunction, r:RealFunction) = Scalar<real> <@ RealFunction.Default(defaultArg l.Symbol "", l.Vars) + RealFunction.Default(defaultArg r.Symbol "", r.Vars) @>
- 
+   
  type RealFunctionGroupVisualization(_grp:seq<IRealFunction<RealFunction>>) =
     interface IWebVisualization with
            member x.Draw(attrs:_) = 
@@ -68,7 +70,7 @@ type RealFunction(f, ?symbol:string) =
 
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>, ?symbol=symbol)
-     member val ScalarExpr = 
+     override x.ScalarExpr = 
         match s with
         | Some e -> e |> Scalar<real>
         | None ->
@@ -79,7 +81,7 @@ type RealFunction(f, ?symbol:string) =
             do vars |> List.map Expr.Var |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
             let nb = expand_as<real> me
             nb |> Scalar<real>
-     member x.ScalarVars = get_vars x.ScalarExpr.Expr |> List.map (exprvar >> realvar)
+     override x.ScalarVars = get_vars x.ScalarExpr.Expr |> List.map (exprvar >> realvar)
      member val ScalarMapExpr = 
         match sf with
         | Some f -> f
@@ -147,7 +149,9 @@ type RealFunction(f, ?symbol:string) =
      
      static member (==) (l:RealFunction2, r:real) = ScalarEquation<real>(l.ScalarExpr, Scalar<real>(exprv r))
 
-type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>, ?symbol:string) = inherit RealFunction<Set<'t>>(domain, codomain, map,?symbol=symbol)
+[<AbstractClass>]
+type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, map:MapExpr<Set<'t>, real>, ?symbol:string) = 
+    inherit RealFunction<Set<'t>, Set<'t>>(domain, codomain, map, <@ id @>, ?symbol=symbol)
 
 [<AutoOpen>]
 module RealFunction =
@@ -155,11 +159,11 @@ module RealFunction =
 
     let realfun2 (s:string) (e:Scalar<real>) = RealFunction2(e, s)
 
-    let realfun_im (s:string) (x:realvar) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr [e.Expr] in realfun s (Scalar<real> l) 
+    let realfun_im (s:string) (x:realvar) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr [e.Expr] in realfun s (scalar_varmap<real> l.Head).Rhs 
 
     let realfun_im_pos_vars (s:string) (x:realvar) (e:ScalarEquation<real>) = 
         let l = Ops.SolveForPosVars x.Expr [e.Expr] in 
-        if l.Length = 1 then realfun s (Scalar<real> l.[0]) else failwithf "More than one solution was returned for %A. Cannot create a function with this as the dependent variable." x 
+        if l.Length = 1 then realfun s (scalar_varmap<real> l.[0]).Rhs else failwithf "More than one solution was returned for %A. Cannot create a function with this as the dependent variable." x 
 
     let realfungrpv g = RealFunctionGroupVisualization g
 

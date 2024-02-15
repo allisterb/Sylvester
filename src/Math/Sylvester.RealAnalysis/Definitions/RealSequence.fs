@@ -4,7 +4,9 @@ open FSharp.Quotations
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type RealSequence(f:Expr<int->real>, ?c:real->bool, ?symbol:string, ?indexvar:IndexVar) =
-    inherit RealFunction<int>(Ring.N, Field.R, f, ?symbol=symbol)
+    inherit RealFunction<int, int>(Ring.N, Field.R, f, <@ id @>, ?symbol=symbol)
+    override x.ScalarVars  = [realvar (get_var f).Name]
+    override x.ScalarExpr = Scalar<real> x.Body
     member val Set = infinite_seq f (defaultArg c nocontainsimpl)
     member val IndexVar = defaultArg indexvar (new IndexVar("n"))
     member x.UnicodeDisplay =

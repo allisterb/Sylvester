@@ -22,8 +22,8 @@ type IRealAnalysisSymbolicOps =
     abstract Integrate:Expr<real> -> Expr<real> -> Expr<real>
     abstract DefiniteIntegral:Expr<real> -> Expr<'a> -> Expr<'a> -> Expr<real> -> Expr<real> when 'a : comparison
     abstract Sum:Expr<'b>->Expr<int>->Expr<int>->Expr<'a>->Expr<'a>
-    abstract SolveFor:Expr<real>->Expr<bool> list->Expr<real>
-    abstract SolveForPosVars:Expr<real>->Expr<bool> list->Expr<real> list
+    abstract SolveFor:Expr<real>->Expr<bool> list->Expr<bool> list
+    abstract SolveForPosVars:Expr<real>->Expr<bool> list->Expr<bool> list
   
  type MaximaRealAnalysisOps() = 
     interface IRealAnalysisSymbolicOps with
@@ -43,8 +43,8 @@ type IRealAnalysisSymbolicOps =
              Analysis.definite_integral x l u f
         member __.Sum (x:Expr<'b>) (l:Expr<int>) (u:Expr<int>) (expr:Expr<'a>) = 
              Analysis.sum x l u expr
-        member __.SolveFor (x:Expr<real>) (e:Expr<bool> list) = let s = Algebra.solve_for x e in if s.Length = 0 then failwith "no solutions" else List.head s
-        member __.SolveForPosVars (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for_pos_vars x e
+        member __.SolveFor (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for {||} [x] e
+        member __.SolveForPosVars (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for {||} [x] e
              
 [<AutoOpen>]    
 module RealAnalysisOps =
@@ -53,11 +53,8 @@ module RealAnalysisOps =
     let solve (o:'a) (v:seq<realvar>)  (eqns: ScalarEquation<real> list) =
         let _eqns = eqns |> List.map(fix_eqn o)
         let vars = v |> Seq.map(fun _v -> _v.Var |> exprvar<real>) |> Seq.toList
-        Algebra.solve_for_n o vars  (_eqns |> List.map sexpr) 
-        |> List.map Scalar<real>
-        |> List.zip (vars |> List.map realvar)
-        |> List.map(fun (v, e) -> ScalarVarMap<real> (v, e))
-    
+        Algebra.solve_for o vars (_eqns |> List.map sexpr) |> List.map scalar_varmap<real>
+        
     let solve_unique (o:'a) (x:realvar) (e:ScalarEquation<real> list) =
         let s = solve o [x] e
         if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x

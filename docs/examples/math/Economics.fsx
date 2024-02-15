@@ -22,7 +22,8 @@ do
     cp.q2 <- q
     cp.U <- utilfun2 "U" (ln x + ln y)
 
-mrs cp.U
+cp.U <- utilfun2 "U" (x *** 2 + y *** 2)
+solve_for {|posvars=true|} [x] [cp.U.[x, y] == 1.]
 //Declare 3 real constants representing the price of sugar, price of chocolate, and consumer income respectively
 let ps, pc, Y = realconst3 "p_s" "p_c" "Y"
 

@@ -5,6 +5,7 @@ open System.Collections.Generic
 
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
+open FSharp.Quotations.DerivedPatterns
 
 [<AbstractClass; StructuredFormatDisplay("{Display}")>]
 type Term<'t when 't: equality> (expr:Expr<'t>, ?h:TermHistory) =
@@ -329,7 +330,7 @@ and ScalarEquation<'t when 't: equality and 't :> ValueType and 't :> IEquatable
         let lhs = fix o x.Lhs in
         let rhs = fix o x.Rhs in
         ScalarEquation<'t>(lhs, rhs)
-
+   
 and ScalarVarMap<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, expr:Scalar<'t>) =
     inherit ScalarEquation<'t>(var, expr)
     member val Var = var
@@ -494,6 +495,16 @@ module Scalar =
 
     let const_to_var (c:ScalarConst<'a>) = ScalarVar<'a>(c.Name)
 
+    let scalar_eqn<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (e:Expr<bool>) =
+        match e with
+        | SpecificCall <@@ (=) @@> (_,_,l::r::[]) -> ScalarEquation<'t> ((l |> expand_as<'t> |> Scalar<'t>), (l |> expand_as<'t> |> Scalar<'t>))
+        | _ -> failwithf "The expression %s is not an equation" (src e)
+    
+    let scalar_varmap<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (e:Expr<bool>) =
+        match e with
+        | SpecificCall <@@ (=) @@> (_,_,Var v::r::[]) when v.Type = typeof<'t> -> ScalarVarMap<'t> (v |> exprvar |> ScalarVar<'t>, (r |> expand_as<'t> |> Scalar<'t>))
+        | _ -> failwithf "The expression %s is not an equation" (src e)
+    
     let fix_eqn (o:'a) (e:ScalarEquation<'t>) = e.Fix o
 
 [<AutoOpen>]
