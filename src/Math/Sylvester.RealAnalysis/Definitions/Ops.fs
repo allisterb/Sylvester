@@ -62,14 +62,3 @@ module RealAnalysisOps =
         let s = solve o [x] e
         if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
         s.[0].Rhs
-
-module RealAnalysis =
-    let sin (s:Scalar<'t>) = call_sin s.Expr |> expand_as<'t> |> Scalar<'t>
-    
-    let cos (s:Scalar<'t>) = call_cos s.Expr |> expand_as<'t> |> Scalar<'t>
-    
-    let sqrt (s:Scalar<'t>) = call_sqrt s.Expr |> expand_as<'t> |> Scalar<'t>
-        
-    let min<'t when 't:equality and 't :> ValueType and 't :> IEquatable<'t> and 't:comparison> (x:Scalar<'t>) (y:Scalar<'t>)  = 
-        <@ min %x.Expr %y.Expr @> |> Scalar<'t>
-    

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Definitions\RealNumbers.fs" />
     <Compile Include="Definitions\WebVisualization.fs" />
     <Compile Include="Definitions\Ops.fs" />
     <Compile Include="Definitions\R.fs" />

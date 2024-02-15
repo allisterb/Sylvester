@@ -258,11 +258,11 @@ module Economics =
      let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
      draw attrs <| realfungrpv fs
 
-    let indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (vals:seq<real>) =
+    let indifference_curves (attrs:'a) (dv:realvar) (f:UtilityFunction2) (vals:seq<real>) =
      let fs = vals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
      draw attrs <| realfungrpv fs
 
-    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:RealFunction2) (c:ScalarEquation<real>) (vals:seq<real>) =
+    let constrained_indifference_curves (attrs:'a) (dv:realvar) (f:UtilityFunction2) (c:ScalarEquation<real>) (vals:seq<real>) =
      let fs = 
         vals 
         |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" dv.Name v) dv (f == v)) 

@@ -87,8 +87,7 @@ module Maxima =
 
         | SpecificCall <@@ Microsoft.FSharp.Core.Operators.log @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
         | SpecificCall <@@ Microsoft.FSharp.Core.Operators.min @@> (_, _, [l;r]) -> sprintf("min(%s,%s)") (sprint l) (sprint r)
-        | SpecificCall <@@ ln @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
-
+    
         | PropertyGet(None, Prop "pi", []) -> "%pi"
         | PropertyGet(None, Prop "e", []) -> "%e"
 

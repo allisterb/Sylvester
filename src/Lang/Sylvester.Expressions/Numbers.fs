@@ -459,8 +459,6 @@ module Math =
     
     let (pi:real) = Math.PI
 
-    let ln (r:real) :real = log r
-
     let factorial (n:int) :real = MathNet.Numerics.SpecialFunctions.Factorial n
 
     let binomial_coeff n r :real = (factorial n) / ((factorial r) * (factorial(n - r)))

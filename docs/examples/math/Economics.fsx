@@ -8,7 +8,7 @@ open Economics
 open LinearEquations
 open FunScript
 open System.Linq
-open RealAnalysis
+open RealNumbers
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 //Declare 2 real variables
@@ -20,7 +20,7 @@ let cp = econ_model<ConsumerPreference>()
 do
     cp.q1 <- p
     cp.q2 <- q
-    cp.U <- utilfun2 "U" (sqrt (cp.q1 * cp.q2))
+    cp.U <- utilfun2 "U" (ln x + ln y)
 
 mrs cp.U
 //Declare 3 real constants representing the price of sugar, price of chocolate, and consumer income respectively

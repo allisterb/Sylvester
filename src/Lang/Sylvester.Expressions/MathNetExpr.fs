@@ -53,7 +53,7 @@ module MathNetExpr =
         | Call(None, Op "Sqrt", v::[]) -> Expression.Root(Number(BigRational.FromInt 2), (fromQuotation v))
         | Call(None, Op "Exp", v::[]) -> Expression.Exp(fromQuotation v)
         | Call(None, Op "Log", v::[]) -> Expression.Ln(fromQuotation v)
-        | Call(None, Op "ln", v::[]) -> Expression.Ln(fromQuotation v)
+        | Call(None, Op "log", v::[]) -> Expression.Ln(fromQuotation v)
 
         | Call(None, Op "factorial", v::[]) -> Expression.Factorial (fromQuotation v)
         | Call(None, Op "Factorial", v::[]) -> Expression.Factorial (fromQuotation v)

@@ -252,7 +252,7 @@ module WebVisualization =
     
         let xaxis_title = get_prop_else<string> "xtitle" "X" attrs
         let yaxis_title = get_prop_else<string> "ytitle" "Y" attrs
-        let title = get_prop_else "title" attrs
+        let title = get_prop_else "title" "" attrs
         let _names = get_prop_else<string []> "names" names attrs
         let namesv = _names |> Array.map exprv
         let strokeColor = exprv (get_prop_else<string> "strokeColor" "blue" attrs)
