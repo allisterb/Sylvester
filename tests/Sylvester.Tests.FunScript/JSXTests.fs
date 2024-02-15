@@ -16,6 +16,13 @@ type Foo = {
 
 module JSXGraphTests = 
     [<Fact>]
+    let ``can create fun``() =
+       let f = <@ fun x -> x + 2. @>
+       let ss = compile <@ (%f)(3.) @>
+       Assert.NotNull ss
+    
+    
+    [<Fact>]
     let ``can create obj``() =
        let ss = compile <@ {|origin = 2; length = 1 |} @>
        Assert.NotNull ss

@@ -60,7 +60,8 @@ module MathNetExpr =
         | Call(None, Op "binomial_coeff", n::r::[]) -> 
             let n',r' = fromQuotation n, fromQuotation r in
             (Expression.Factorial n') / (Expression.Factorial(r') * (Expression.Factorial(n' - r')))
-        
+        | Call(None, Op "min", x::y::[]) -> Expression.Min (fromQuotation x, fromQuotation y)
+
         | PropertyGet(None, Prop "pi", []) -> Expression.Pi
         | PropertyGet(None, Prop "e", []) -> Expression.E
 

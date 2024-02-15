@@ -8,16 +8,21 @@ open Economics
 open LinearEquations
 open FunScript
 open System.Linq
-
-
-let has_prop2<'t> n (o:obj) = o.GetType().GetProperties().Any(fun p -> p.Name = n && p.PropertyType = typeof<'t>)
-
-let get
-has_prop2<bool> "foo2" {|foo=false|}
+open RealAnalysis
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 //Declare 2 real variables
 let p,q = realvar2 "p" "q"
+
+let x, y = realvar2 "x" "y"
+
+let cp = econ_model<ConsumerPreference>()
+do
+    cp.q1 <- p
+    cp.q2 <- q
+    cp.U <- utilfun2 "U" (sqrt (cp.q1 * cp.q2))
+
+mrs cp.U
 //Declare 3 real constants representing the price of sugar, price of chocolate, and consumer income respectively
 let ps, pc, Y = realconst3 "p_s" "p_c" "Y"
 

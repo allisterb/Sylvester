@@ -5,165 +5,165 @@ open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
  
 type UtilityFunction(f:RealFunction) =
-    inherit RealFunction(f.MapExpr)
+    inherit RealFunction(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction>
     interface IRealFunction<UtilityFunction> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type UtilityFunction2(f:RealFunction2) =
-    inherit RealFunction2(f.MapExpr)
+    inherit RealFunction2(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction2>
     interface IRealFunction<UtilityFunction2> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction2
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type DemandFunction(f:RealFunction) =
-    inherit RealFunction(f.MapExpr)
+    inherit RealFunction(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction>
     interface IRealFunction<DemandFunction> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
     interface IWebVisualization with
         member x.Draw(attrs:_) =             
             let xxqxx = realvar "xxqxx"
-            let eq = xxqxx == Scalar<real> x.Body
+            let eq = xxqxx == x.ScalarExpr
             let e = Ops.SolveForPosVars x.ArgExpr [eq.Expr]
             let fe = recombine_func_as<real->real> [xxqxx.Var] e.Head
             WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<DemandFunction>).Html()) fe |> draw_board
             
 type InverseDemandFunction(f:RealFunction) =
-    inherit RealFunction(f.MapExpr)
+    inherit RealFunction(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction>
     interface IRealFunction<InverseDemandFunction> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> InverseDemandFunction
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type DemandFunction2(f:RealFunction2) =
-    inherit RealFunction2(f.MapExpr)
+    inherit RealFunction2(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction2>
     interface IRealFunction<DemandFunction2> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction2
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type SupplyFunction(f:RealFunction) =
-    inherit RealFunction(f.MapExpr)
+    inherit RealFunction(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction>
     interface IRealFunction<SupplyFunction> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
   
 type SupplyFunction2(f:RealFunction2) =
-    inherit RealFunction2(f.MapExpr)
+    inherit RealFunction2(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction2>
     interface IRealFunction<SupplyFunction2> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction2
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type ProductionFunction(f:RealFunction) =
-    inherit RealFunction(f.MapExpr)
+    inherit RealFunction(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction>
     interface IRealFunction<ProductionFunction> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
         
 type ProductionFunction2(f:RealFunction2) =
-    inherit RealFunction2(f.MapExpr)
+    inherit RealFunction2(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction2>
     interface IRealFunction<ProductionFunction2> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction2
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type CostFunction(f:RealFunction) =
-    inherit RealFunction(f.MapExpr)
+    inherit RealFunction(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction>
     interface IRealFunction<CostFunction> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
         
 type CostFunction2(f:RealFunction2) =
-    inherit RealFunction2(f.MapExpr)
+    inherit RealFunction2(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction2>
     interface IRealFunction<CostFunction2> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction2
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
 
 type RevenueFunction(f:RealFunction) =
-    inherit RealFunction(f.MapExpr)
+    inherit RealFunction(f.ScalarExpr, ?symbol=f.Symbol)
     let _rf = f :> IRealFunction<RealFunction>
     interface IRealFunction<RevenueFunction> with
         member x.Term = x
-        member x.Expr = x.Body
+        member x.Expr = x.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> RevenueFunction
-        member x.ScalarExpr = Scalar<real> x.Body
+        member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
         

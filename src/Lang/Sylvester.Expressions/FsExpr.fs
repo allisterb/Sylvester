@@ -169,6 +169,20 @@ module FsExpr =
             .Add("Single", <@ log 0.0f @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log))
             .Add("Double", <@ log 0. @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log))
 
+    let minOp = 
+           Map.empty
+               .Add("UInt16", <@ Math.Min(0us, 0us) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+               .Add("Int16", <@ Math.Min(0s, 0s) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+               .Add("UInt32", <@ Math.Min(0u, 0u) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (pown))
+               .Add("Int32", <@ Math.Min(0, 0) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for for %A" (pown))
+               .Add("UInt64", <@ Math.Min(0UL, 0UL) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (pown))
+               .Add("Int64", <@ Math.Min(0L, 0L) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op infor for %A" (pown))
+               .Add("Single", <@ Math.Min(0.0f, 0.0f) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+               .Add("Double", <@ Math.Min(0., 0.) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+               .Add("Decimal", <@ Math.Min(0m, 0m) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+               //.Add("Rational", <@ Math.Min(0Q, 0) @> |> function |FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
+
+
     let zeroVal = 
         Map.empty
             .Add("UInt16", <@ (+) 0us 0us @> |> function |FSharp.Quotations.Patterns.Call(_, _, l::_) -> l | _ -> failwithf "Could not get info for zerp.")
@@ -518,6 +532,8 @@ module FsExpr =
     let call_cos (l:Expr) = unary_call(None, cosOp.[l.Type.Name], l)
 
     let call_pown (l:Expr) (r:Expr) = binary_call(None, pownOp.[l.Type.Name], l, r)
+
+    let call_min (l:Expr) (r:Expr) = binary_call(None, minOp.[l.Type.Name], l, r)
 
     let zero_val(t:Type) = zeroVal.[t.Name]
     

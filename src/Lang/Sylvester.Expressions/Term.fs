@@ -494,12 +494,6 @@ module Scalar =
 
     let const_to_var (c:ScalarConst<'a>) = ScalarVar<'a>(c.Name)
 
-    let sin (s:Scalar<'t>) = call_sin s.Expr |> expand_as<'t> |> Scalar<'t>
-
-    let cos (s:Scalar<'t>) = call_cos s.Expr |> expand_as<'t> |> Scalar<'t>
-
-    let sqrt (s:Scalar<'t>) = call_sqrt s.Expr |> expand_as<'t> |> Scalar<'t>
-    
     let fix_eqn (o:'a) (e:ScalarEquation<'t>) = e.Fix o
 
 [<AutoOpen>]

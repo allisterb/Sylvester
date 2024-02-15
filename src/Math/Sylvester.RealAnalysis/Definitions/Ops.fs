@@ -1,5 +1,6 @@
 ﻿namespace Sylvester
 
+open System
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
@@ -46,7 +47,7 @@ type IRealAnalysisSymbolicOps =
         member __.SolveForPosVars (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for_pos_vars x e
              
 [<AutoOpen>]    
-module RealAnalysis =
+module RealAnalysisOps =
     let mutable Ops = MaximaRealAnalysisOps() :> IRealAnalysisSymbolicOps 
 
     let solve (o:'a) (v:seq<realvar>)  (eqns: ScalarEquation<real> list) =
@@ -61,3 +62,14 @@ module RealAnalysis =
         let s = solve o [x] e
         if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
         s.[0].Rhs
+
+module RealAnalysis =
+    let sin (s:Scalar<'t>) = call_sin s.Expr |> expand_as<'t> |> Scalar<'t>
+    
+    let cos (s:Scalar<'t>) = call_cos s.Expr |> expand_as<'t> |> Scalar<'t>
+    
+    let sqrt (s:Scalar<'t>) = call_sqrt s.Expr |> expand_as<'t> |> Scalar<'t>
+        
+    let min<'t when 't:equality and 't :> ValueType and 't :> IEquatable<'t> and 't:comparison> (x:Scalar<'t>) (y:Scalar<'t>)  = 
+        <@ min %x.Expr %y.Expr @> |> Scalar<'t>
+    

@@ -86,6 +86,7 @@ module Maxima =
         | SpecificCall <@@ Microsoft.FSharp.Core.Operators.tan @@> (_, _, [l]) -> sprintf("tan(%s)") (sprint l)
 
         | SpecificCall <@@ Microsoft.FSharp.Core.Operators.log @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
+        | SpecificCall <@@ Microsoft.FSharp.Core.Operators.min @@> (_, _, [l;r]) -> sprintf("min(%s,%s)") (sprint l) (sprint r)
         | SpecificCall <@@ ln @@> (_, _, [l]) -> sprintf("log(%s)") (sprint l)
 
         | PropertyGet(None, Prop "pi", []) -> "%pi"
@@ -95,6 +96,13 @@ module Maxima =
         | ValueWithName(_,_,n) -> n
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
+
+    let sprintl (exprs: Expr<'t> list) =
+        exprs 
+        |> List.toArray
+        |> Array.skip 1 
+        |> Array.fold(fun s e -> sprintf "%s, %s" s (sprint e)) (sprint exprs.[0]) 
+        |> sprintf "[%s]"
 
     let extract_output text =
         let m = outputRegex.Match text 

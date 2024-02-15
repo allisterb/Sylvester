@@ -35,7 +35,7 @@ module Algebra =
     let partfrac_of (frac:Expr<'t>) (expr:Expr<'t>) = sprintf "partfrac(%s, %s);" (sprint expr) (sprint frac) |> sendCmd<'t> (get_vars expr)
 
     let solve_for (v:Expr<'t>) (system:Expr<bool> list) =
-        sprintf "solve(%s, %s);" (system |> sprintel) (sprint v) 
+        sprintf "solve(%s, %s);" (system |> sprintl) (sprint v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> if o = "" then Error "" else if o = "[]" then Ok [] else Infix.parseList o)
@@ -47,7 +47,7 @@ module Algebra =
 
     let solve_for_pos_vars (v:Expr<'t>) (e:Expr<bool> list) =
         e |> get_varsl |> List.map exprvar<real> |> List.iter assume_pos
-        sprintf "solve(%s, %s);" (sprintel e) (sprint v) 
+        sprintf "solve(%s, %s);" (sprintl e) (sprint v) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> if o = "" then Error ""  else if o = "[]" then Ok [] else Infix.parseList o)
@@ -60,7 +60,7 @@ module Algebra =
     let solve_for_n (options:'a) (v:Expr<'t> list) (system:Expr<bool> list) =
         do if get_prop_else<bool> "posvars" false options  then v |> List.iter assume_pos
 
-        sprintf "solve(%s, %s);" (system |> sprintel) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> v.ToString()) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
+        sprintf "solve(%s, %s);" (system |> sprintl) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> v.ToString()) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> if o = "" then Error "" else if o = "[]" then Ok [] else Infix.parseList o)
@@ -75,7 +75,7 @@ module Algebra =
     let solve_for_as_func_of (x:Expr<'b>) (v:Expr<'a>) (system:Expr<bool> list) = system |> solve_for v |> List.head |> as_func_of x
 
     let solve_for2 (x:Expr<'t>) (y:Expr<'t>) (system:Expr<bool> list) =
-        sprintf "solve(%s, [%s, %s]);" (sprintel system) (sprint x) (sprint y) 
+        sprintf "solve(%s, [%s, %s]);" (sprintl system) (sprint x) (sprint y) 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun e -> if e = "" then Error "" else Ok e)

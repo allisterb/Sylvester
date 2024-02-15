@@ -115,6 +115,7 @@ module Symbolic =
         | Call(None, Op "Exp", x::[]) -> sprintf("e^%s") (sprinte x)
         | Call(None, Op "Identity", x::[]) -> (sprinte x)
         | Call(None, Op "real", x::[]) -> (sprinte x)
+        | Call(None, Op "min", l::r::[]) -> sprintf("min(%s,%s)") (sprinte l) (sprinte r)
  
         | PropertyGet(None, Prop "e", []) -> "e"
         | PropertyGet(None, Prop "pi", []) -> "pi"

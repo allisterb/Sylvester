@@ -23,7 +23,14 @@ let main argv =
     //printfn "%s" (compile (gggg.ToString()))
     //printfn "%s" (compile jj)
 
-    let f   = realfun (r*2. + r*5. + a)
-    let gg = WebVisualization.draw_realfun {|xrange = 0.,15.;yrange=0.,300.; a=0.,150.|} f.MapExpr |> draw_board
+    let f   = realfun ";" (r*2. + r*5. + a)
+    let z = Math.Min
+    let e = <@ 
+                let en = %f.MapExpr
+                en(2.)
+    @>
+    printfn "%s" (compile e)
+    
+    //let gg = WebVisualization.draw_realfun {|xrange = 0.,15.;yrange=0.,300.; a=0.,150.|} "kk" f.MapExpr |> draw_board
 
     0 // return an integer exit code
