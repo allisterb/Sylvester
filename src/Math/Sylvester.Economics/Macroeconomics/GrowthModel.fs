@@ -4,27 +4,40 @@
 type GrowthModel() =
     inherit EconomicModel()
     do
-        base.Vars.["g"] <- realvar "g"
         base.Vars.["N"] <- realvar "N"
         base.Vars.["N'"] <- realvar "N'"
-        base.Vars.["C"] <- realvar "C"
-        base.Vars.["Y"] <- realvar "Y"
-        base.Vars.["s"] <- realvar "s"
-        base.Vars.["K"] <- realvar "K"
         base.Vars.["L"] <- realvar "L"
+        base.Vars.["K"] <- realvar "K"
+        base.Vars.["C"] <- realvar "C"
+        base.Vars.["c"] <- realvar "c"
+        base.Vars.["Y"] <- realvar "Y"
+        base.Vars.["z"] <- realvar "z"
     member x.N 
         with get() = x.GetVar "N"
         and set(value) = x.SetVar("N", value)
     member x.N' 
         with get() = x.GetVar "N'"
         and set(value) = x.SetVar("N'", value)
+    member x.L 
+           with get() = x.GetVar "L"
+           and set(value) = x.SetVar("L", value)
+    member x.K 
+           with get() = x.GetVar "K"
+           and set(value) = x.SetVar("K", value)
     member x.C 
         with get() = x.GetVar "C"
         and set(value) = x.SetVar("C", value)
     member x.c 
         with get() = x.GetVar "c"
         and set(value) = x.SetVar("c", value)
-    member x.g
-        with get() = x.GetFun<RealFunction> "g"
-        and set(value:RealFunction) = x.SetFun("g", value)
-    abstract PopulationGrowth:RealFunction
+    member x.Y 
+           with get() = x.GetVar "Y"
+           and set(value) = x.SetVar("Y", value)
+    member x.z 
+        with get() = x.GetVar "z"
+        and set(value) = x.SetVar("z", value)
+    member x.F
+        with get() = x.GetFun2<ProductionFunction2> "F"
+        and set(value:ProductionFunction2) = x.SetFun2("F", value)
+    member x.PerWorkerConsumption = x.c == x.C / x.N
+    override x.Constraints = [x.PerWorkerConsumption]

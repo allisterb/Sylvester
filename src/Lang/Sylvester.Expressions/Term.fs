@@ -315,6 +315,7 @@ and ScalarRelation<'t when 't: equality and 't :> ValueType and 't :> IEquatable
     member val Lhs = lhs
     member val Rhs = rhs
     member val Op = op
+    member val ScalarVars = (lhs.Expr |> get_vars |> List.map (exprvar<'t> >> ScalarVar<'t>)) @ (rhs.Expr |> get_vars |> List.map (exprvar<'t> >> ScalarVar<'t>))
     member x.Fix<'a>(o:'a) = 
         let lhs = fix o x.Lhs in
         let rhs = fix o x.Rhs in
@@ -495,6 +496,10 @@ module Scalar =
 
     let const_to_var (c:ScalarConst<'a>) = ScalarVar<'a>(c.Name)
 
+    let inline get_scalar_vars (x : ^T) = (^T : (member Expr : Expr<'t>) (x)) |> get_vars |> List.map (exprvar<'t> >> ScalarVar<'t>)
+    
+    let inline get_real_vars (x : ^T) = (^T : (member Expr : Expr<real>) (x)) |> get_vars |> List.map (exprvar<real> >> realvar)
+
     let scalar_eqn<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (e:Expr<bool>) =
         match e with
         | SpecificCall <@@ (=) @@> (_,_,l::r::[]) -> ScalarEquation<'t> ((l |> expand_as<'t> |> Scalar<'t>), (l |> expand_as<'t> |> Scalar<'t>))
@@ -511,6 +516,7 @@ module Scalar =
 
     let rhs (s:#ScalarRelation<'t>) = s.Rhs
 
+    let fixvar (c:seq<ScalarVar<'b>>) (s:'s when 's :> #ISymbolic<'s,'b>) = fixvarconst (c |> Seq.map(fun _c -> _c.Name)) s
 
 [<AutoOpen>]
 module Prop =

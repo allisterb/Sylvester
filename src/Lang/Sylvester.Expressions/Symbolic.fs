@@ -84,6 +84,14 @@ module Symbolic =
         )
         s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
         
+    let fixvarconst (c:seq<string>) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
+        let mutable m = s.Expr.Raw
+        get_vars m |> List.iter(fun v -> 
+            if Seq.contains v.Name c then  
+                let co = Expr.ValueWithName(Unchecked.defaultof<'b>, v.Name) in 
+                m <- replace_expr (Expr.Var v) co m
+        )
+        s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
     (* Term patterns *)
     let (|Atom|_|) expr =
         match expr with

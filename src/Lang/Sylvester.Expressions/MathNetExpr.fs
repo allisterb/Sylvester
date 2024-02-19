@@ -61,7 +61,7 @@ module MathNetExpr =
             let n',r' = fromQuotation n, fromQuotation r in
             (Expression.Factorial n') / (Expression.Factorial(r') * (Expression.Factorial(n' - r')))
         | Call(None, Op "min", x::y::[]) -> Expression.Min (fromQuotation x, fromQuotation y)
-
+        | Call(None, Op "Min", x::y::[]) -> Expression.Min (fromQuotation x, fromQuotation y)
         | PropertyGet(None, Prop "pi", []) -> Expression.Pi
         | PropertyGet(None, Prop "e", []) -> Expression.E
 
@@ -126,11 +126,16 @@ module MathNetExpr =
             | c -> failwithf "Could not convert the constant %A to an Expr." c
         let argName = function |Symbol(n) -> n
         
+        let recover_symbol (symbol:string) =
+            match symbol with
+            | s when s.EndsWith("__dash__") -> s.Replace("__dash__", "'")
+            | s -> s
+
         let getParam p =
             List.fold(
                     fun x (y : Var) ->
                         match x with
-                        | None when y.Name = (argName p) -> Some y
+                        | None when y.Name = (argName p) -> Some (Var(recover_symbol y.Name, y.Type))
                         | Some v -> Some v
                         | None -> None //failwithf "Did not find a matching var for %A." p
                     ) None vars
@@ -146,7 +151,9 @@ module MathNetExpr =
         let sub (a:Expr) (b:Expr) = let op = subOp.[a.Type.Name] in Expr.Call(op, a::b::[])
         
         let div (a:Expr) (b:Expr) = let op = divOp.[a.Type.Name] in Expr.Call(op, a::b::[])
-       
+        
+        
+
         let rec convertExpr : Expression -> Expr option = 
             function 
             | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
@@ -202,6 +209,9 @@ module MathNetExpr =
                     //| AiryBi -> Some (mathCall1 "AiryBi")
                     //| AiryBiPrime -> Some (mathCall1 "AiryBiPrime")
                     | Ln   -> logOp.[typeof<'t>.Name]  |> Some
+                    
+
+
                     //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | e    -> failwithf "Could not convert function %A to quotation." e
                 let f = convertFunc func
@@ -240,6 +250,9 @@ module MathNetExpr =
                 let b = convertExpr y
                 let t = a.Value.Type
                 Option.map2 (fun j k -> if t = typeof<int> then call_pown j k else call_pow j k) a b
+            | FunctionN(Min, y) -> 
+                let b = y |> List.map (convertExpr >> Option.map expand_as<real> >> Option.get)
+                <@ FSharp.Core.Operators.min (%b.[0]) (%b.[1]) @>.Raw |> Some
             | expr -> failwithf "Did not convert %A." expr
         and compileFraction = 
             function

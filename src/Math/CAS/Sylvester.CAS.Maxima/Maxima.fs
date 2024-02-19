@@ -63,6 +63,11 @@ module Maxima =
     let private outputPattern = """\(%o(\d)+\)\s+(.+)\s+\(%i(\d)+\)\s?"""
     let private outputRegex = new Regex(outputPattern, RegexOptions.Compiled |||| RegexOptions.Multiline)
 
+    let sanitize_symbol (symbol:string) =
+        match symbol with
+        | s when s.EndsWith("'") -> s.Replace("'", "__dash__")
+        | s -> s
+
     let rec sprint (x:Expr) = 
         match x with
         | List list -> "[" + (list |>  List.map sprint |> List.reduce (fun l r -> l + ", " + r)) + "]"
@@ -91,8 +96,8 @@ module Maxima =
         | PropertyGet(None, Prop "pi", []) -> "%pi"
         | PropertyGet(None, Prop "e", []) -> "%e"
 
-        | Var v -> v.Name
-        | ValueWithName(_,_,n) -> n
+        | Var v -> sanitize_symbol v.Name
+        | ValueWithName(_,_,n) -> sanitize_symbol n
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
 

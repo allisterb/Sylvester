@@ -296,4 +296,7 @@ module Economics =
 
     let with_model_fun2 n f m = set_model_fun2 m n f ; m
 
+    let solve_model (options:'a) (m:EconomicModel) =
+        let vars = m.Equations |> List.collect (fun e -> e.ScalarVars)
+        solve options vars m.Equations
     let solve_model_for (x:realvar list) (m:EconomicModel) = solve {|posvars=true|} x m.Equations

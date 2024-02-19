@@ -22,8 +22,8 @@ module Algebra =
         | Error e -> failwith e
     
     let assume_pos(x:Expr<'a>)  =
-           match send' <| sprintf "assume(%s > 0);" (sprinte x) with
-           | Ok r -> if r.Trim() <> (sprintf "[%s > 0]" (sprinte x)) && r.Trim() <> "[redundant]" then failwithf "Could not make assumption. Maxima returned %s." r
+           match send' <| sprintf "assume(%s > 0);" (sprint x) with
+           | Ok r -> if r.Trim() <> (sprintf "[%s > 0]" (sprint x)) && r.Trim() <> "[redundant]" then failwithf "Could not make assumption. Maxima returned %s." r
            | Error e -> failwithf "Could not make assumption. Maxima returned %s." e.Message
 
     let algexpand (expr:Expr<'t>) = sprintf "expand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
@@ -37,7 +37,7 @@ module Algebra =
     let solve_for (options:'a) (v:Expr<'t> list) (system:Expr<bool> list) =
         do if get_prop_else<bool> "posvars" false options  then system |> List.collect get_vars |> List.distinct |> List.map exprvar<real> |> List.iter assume_pos
 
-        sprintf "solve(%s, %s);" (system |> sprintl) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> v.ToString()) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
+        sprintf "solve(%s, %s);" (system |> sprintl) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> sanitize_symbol v.Name) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
         |> send 
         |> Result.mapError(fun e -> e.Message)
         |> Result.bind(fun o -> if o = "" then Error "" else if o = "[]" then Ok [] else Infix.parseEqnList o)

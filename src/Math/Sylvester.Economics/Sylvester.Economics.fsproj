@@ -12,6 +12,7 @@
     <Compile Include="Macroeconomics\ConsumerLeisure.fs" />
     <Compile Include="Macroeconomics\FirmProfit.fs" />
     <Compile Include="Macroeconomics\GrowthModel.fs" />
+    <Compile Include="Macroeconomics\MalthusianGrowth.fs" />
   </ItemGroup>
 
   <ItemGroup>
