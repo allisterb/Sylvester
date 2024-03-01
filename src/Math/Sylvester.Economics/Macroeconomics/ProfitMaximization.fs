@@ -2,7 +2,7 @@
 
 open Economics
 
-type FirmProfit() =
+type ProfitMaximization() =
     inherit EconomicModel()
     do
         base.Vars.["K"] <- realvar "K"

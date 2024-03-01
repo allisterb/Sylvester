@@ -4,7 +4,9 @@ open FSharp.Quotations
 
 type ProbabilityMeasure<'t when 't: equality>(event_space:SigmaAlgebra<'t>, prob_function:MapExpr<Set<'t>, real>) =
     inherit SetFunction<'t>(event_space.Subsets.Set, closed_interval 0. 1., prob_function)
-    
+    override x.ScalarExpr = 0R
+    override x.ScalarVars = []
+
 type ProbabilitySpace<'t when 't : equality>(event_space:SigmaAlgebra<'t>, prob_function:MapExpr<Set<'t>, real>) =
     member val SampleSpace = event_space.Set
     member val EventSpace = event_space
@@ -24,7 +26,7 @@ module ProbabilitySpace =
         match evt with
         | :? 't as e ->  ProbabilityEvent<'t>(sample_space, finite_seq [e])
         | :? Set<'t> as s -> ProbabilityEvent<'t>(sample_space, s)
-        | :? seq<'t> as se -> ProbabilityEvent<'t>(sample_space, se |> Seq)
+        | :? seq<'t> as se -> ProbabilityEvent<'t>(sample_space, se |> finite_seq)
         | _ -> failwith ""
     
     let prob_space<'t when 't : equality> (s:ISet<'t>) = ProbabilitySpace<'t> (s.Set)

@@ -63,25 +63,25 @@ type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option)
             <@ %%b:real @>        
     member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> ev |> exprv |> Scalar<real> else 0R 
     member x.Cdf = 
-        fun (i:real) -> [0.0 .. i] |> Seq.choose(fun e-> if x.Prob e > 0R then Some e else None) |> Seq.map x.Prob |> Seq.reduce (+) |> simplify |> Scalar<real>
+        fun (i:real) -> [0.0 .. i] |> Seq.choose(fun e-> if x.Prob e = 0R then Some e else None) |> Seq.map x.Prob |> Seq.reduce (+) |> simplify
     member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
-    member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+) |> simplify |> Scalar<real>
+    member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+) |> simplify
     member x.Transform(t, s, m) = Discrete(s, x.Distribution.Transform(t,s).Func, Some m)
     member x.Item(a: real) = x.Prob a
     member x.Item(a: int) = x.Prob (real a)
     member x.Item(a: Scalar<real>) = x.Distribution.FuncBody |> subst_var_value (x.Distribution.FuncArg) (Expr.Value a) |> expand_as<real> |> Scalar<real>
    
-    static member (-) (l:'a, r:Discrete) = let l' = real_expr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
-    static member (-) (l:Discrete, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
+    static member (-) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
+    static member (-) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
 
-    static member (+) (l:'a, r:Discrete) = let l' = real_expr l in r.Transform(<@ fun x -> %l' + x @>, (r.Distribution.Support |>| <@ fun x -> (%l' + x) |?| r.Distribution.Support @>), Scalar l' + r.Expectation)
-    static member (+) (l:Discrete, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x + %r' @>, (l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), Scalar r' + l.Expectation)
+    static member (+) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' + x @>, (r.Distribution.Support |>| <@ fun x -> (%l' + x) |?| r.Distribution.Support @>), Scalar l' + r.Expectation)
+    static member (+) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x + %r' @>, (l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), Scalar r' + l.Expectation)
 
-    static member (*) (l:'a, r:Discrete) = let l' = real_expr l in r.Transform(<@ fun x -> %l' * x @>, (r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), Scalar l' * r.Expectation)
-    static member (*) (l:Discrete, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x * %r' @>, (l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), Scalar r' * l.Expectation)
+    static member (*) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' * x @>, (r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), Scalar l' * r.Expectation)
+    static member (*) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x * %r' @>, (l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), Scalar r' * l.Expectation)
 
-    static member (/) (l:'a, r:Discrete) = let l' = real_expr l in r.Transform(<@ fun x -> %l' / x @>, (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), Scalar l' / r.Expectation)
-    static member (/) (l:Discrete, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x / %r' @>, (l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), Scalar r' / l.Expectation)
+    static member (/) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' / x @>, (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), Scalar l' / r.Expectation)
+    static member (/) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x / %r' @>, (l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), Scalar r' / l.Expectation)
 
     static member (</) (l:Discrete, r:real) = l.Cdf r
     
@@ -105,17 +105,17 @@ type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> optio
 
     member x.Transform(t, s, m) = Continuous(s, (x.Distribution.Transform(t,s)).Func, Some m)
     
-    static member (-) (l:'a, r:Continuous) = let l' = real_expr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
-    static member (-) (l:Continuous, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
+    static member (-) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
+    static member (-) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
 
-    static member (+) (l:'a, r:Continuous) = let l' = real_expr l in r.Transform(<@ fun x -> %l' + x @>, (r.Distribution.Support |>| <@ fun x -> (%l' + x) |?| r.Distribution.Support @>), Scalar l' + r.Expectation)
-    static member (+) (l:Continuous, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x + %r' @>, (l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), Scalar r' + l.Expectation)
+    static member (+) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' + x @>, (r.Distribution.Support |>| <@ fun x -> (%l' + x) |?| r.Distribution.Support @>), Scalar l' + r.Expectation)
+    static member (+) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x + %r' @>, (l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), Scalar r' + l.Expectation)
 
-    static member (*) (l:'a, r:Continuous) = let l' = real_expr l in r.Transform(<@ fun x -> %l' * x @>, (r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), Scalar l' * r.Expectation)
-    static member (*) (l:Continuous, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x * %r' @>, (l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), Scalar r' * l.Expectation)
+    static member (*) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' * x @>, (r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), Scalar l' * r.Expectation)
+    static member (*) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x * %r' @>, (l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), Scalar r' * l.Expectation)
 
-    static member (/) (l:'a, r:Continuous) = let l' = real_expr l in r.Transform(<@ fun x -> %l' / x @>, (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), Scalar l' / r.Expectation)
-    static member (/) (l:Continuous, r:'a) = let r' = real_expr r in l.Transform(<@ fun x -> x / %r' @>, (l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), Scalar r' / l.Expectation)
+    static member (/) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' / x @>, (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), Scalar l' / r.Expectation)
+    static member (/) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x / %r' @>, (l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), Scalar r' / l.Expectation)
    
 [<AutoOpen>]
 module ProbabilityDistribution =
@@ -129,7 +129,7 @@ module ProbabilityDistribution =
 
     let uniform s = let l = (Seq.length s) in discrete (finite_seq s)  <@ fun x -> 1. / real l  @>
     
-    let poisson l = discrete_m (infinite_seq (fun r -> is_int r) (fun i -> real i))  <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
+    let poisson l = discrete_m (infinite_seq <@ fun i -> real i @> (fun r -> is_int r))  <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
 
     let binomial p n = discrete ([0. .. real n] |> finite_seq)  <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
     
@@ -138,5 +138,5 @@ module ProbabilityDistribution =
     let geometric<'t when 't : equality> p n = discrete ([0. .. real n] |> finite_seq)  <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
     
     let uniform_continuous<'t when 't : equality> a b = 
-        let a',b' = real_expr a, real_expr b
+        let a',b' = realexpr a, realexpr b
         continuous (open_interval a b) <@ fun x -> 1. / (%b' - %a') @> 

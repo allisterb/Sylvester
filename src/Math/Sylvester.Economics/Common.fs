@@ -166,7 +166,15 @@ type RevenueFunction(f:RealFunction) =
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
-        
+      
+type Gamble(distr:seq<real*real>) =
+    do if distr |> Seq.map snd |> Seq.reduce (+) <> 1.0 then failwith "The probabilities in the gamble must add up to 1."
+    member val Distr = distr |> Map.ofSeq
+    member val Outcomes = distr |> Seq.map (fst >> Scalar<real>) |> Seq.toList
+    member val Probabilities = distr |> Seq.map (snd >> Scalar<real>) |> Seq.toList
+    member x.Prob(v) = x.Distr.[v] |> Scalar<real>
+    member val Expectation = distr |> Seq.map(fun (v, p) -> v * p) |> Seq.reduce (+) |> Scalar<real>
+
 type Tax =
 | AdValorem
 | Excise
@@ -278,6 +286,8 @@ module Economics =
     let price_elasticity_demand (f:DemandFunction) =
         let p = farg f in elasticity p f
     
+    let gamble distr = Gamble distr
+
     let econ_model<'m when 'm :> EconomicModel and 'm: (new : unit -> 'm)>()  = new 'm()
     
     let get_model_var (m:EconomicModel) v = m.GetVar v
@@ -299,4 +309,5 @@ module Economics =
     let solve_model (options:'a) (m:EconomicModel) =
         let vars = m.Equations |> List.collect (fun e -> e.ScalarVars)
         solve options vars m.Equations
+    
     let solve_model_for (x:realvar list) (m:EconomicModel) = solve {|posvars=true|} x m.Equations

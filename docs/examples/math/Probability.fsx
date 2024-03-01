@@ -1,12 +1,11 @@
 #load "Include.fsx"
 
 open Sylvester
-[0. .. real (1)]
-seq {0.0 .. 0.1 } |> Seq.toArray
+
 
 let dice = finite_seq [1..6]
-dice.Range
 
+(dice * dice)
 let S = prob_space (dice * dice)
 let P = S.Measure
 //let comp = S.Set.Difference  

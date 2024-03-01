@@ -12,7 +12,11 @@ module Set =
 
     [<Fact>]
     let ``Can getZ``() =
-        Assert.True (5 |?| Z)
+        
+        let dice = finite_seq [1..6]
+        
+        let p = (dice * dice).Powerset
+        Assert.NotEmpty p
 
     (*
     [<Fact>]

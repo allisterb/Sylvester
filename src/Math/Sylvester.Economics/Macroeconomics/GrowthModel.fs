@@ -10,6 +10,7 @@ type GrowthModel() =
         base.Vars.["K"] <- realvar "K"
         base.Vars.["C"] <- realvar "C"
         base.Vars.["c"] <- realvar "c"
+        base.Vars.["l"] <- realvar "l"
         base.Vars.["Y"] <- realvar "Y"
         base.Vars.["z"] <- realvar "z"
     member x.N 
@@ -30,6 +31,9 @@ type GrowthModel() =
     member x.c 
         with get() = x.GetVar "c"
         and set(value) = x.SetVar("c", value)
+    member x.l 
+        with get() = x.GetVar "l"
+        and set(value) = x.SetVar("l", value)
     member x.Y 
            with get() = x.GetVar "Y"
            and set(value) = x.SetVar("Y", value)
@@ -40,4 +44,5 @@ type GrowthModel() =
         with get() = x.GetFun2<ProductionFunction2> "F"
         and set(value:ProductionFunction2) = x.SetFun2("F", value)
     member x.PerWorkerConsumption = x.c == x.C / x.N
+    member x.PerWorkerLand = x.l == x.L / x.N
     override x.Constraints = [x.PerWorkerConsumption]

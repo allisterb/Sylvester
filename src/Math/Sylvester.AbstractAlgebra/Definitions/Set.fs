@@ -201,8 +201,8 @@ with
             let subsets = 
                 let singleton e = Seq.singleton e
                 let append e se = Seq.append (singleton e) se
-                Seq.foldBack (fun x rest -> Seq.append rest (Seq.map (fun ys -> (append x ys)) rest)) fs (singleton Seq.empty)
-                |> Seq.map(fun s -> if Seq.isEmpty s then Empty else FiniteSequence<'t>(s) |> FiniteSeq)
+                Seq.foldBack (fun x rest -> Seq.append rest (Seq.map (fun ys -> (append x ys)) rest)) (fs.Seq) (singleton Seq.empty)
+                               |> Seq.map(fun s -> if Seq.isEmpty s then Empty else s |> FiniteSequence<'t> |> FiniteSeq)
             subsets |> FiniteSequence<Set<'t>> |> FiniteSeq
         | InfiniteSeq is -> SetComprehension<Set<'t>>(<@ fun x -> x.HasSubset a @>, (fun _ x -> x.HasSubset a), Aleph 1)  |> Set
         | _ -> failwith "Cannot enumerate the power set of a set comprehension. Use a sequence instead."
@@ -288,8 +288,10 @@ with
         match (l, r) with
         |(_, Empty) -> Empty
         |(Empty, _) -> Empty
+        | FiniteSeq fs1, FiniteSeq fs2 -> (Seq.allPairs fs1.Seq fs2.Seq) |> FiniteSequence<'a*'b> |> FiniteSeq//(Seq.toArray <| Seq.allPairs fs1.Seq fs2.Seq) |> FiniteSeq
+        
         | InfiniteSeq is, FiniteSeq fs -> InfiniteSequence<'a*'b>(<@ fun n -> is.[n], fs.[n] @>, fun x -> is.Contains (fst x) && fs.Contains(snd x)) |> InfiniteSeq
-        //        | FiniteSeq fs, InfiniteSeq is -> cart_seq (fun x -> Seq.contains x fs) (is.Contains) x y |> Seq
+                //| FiniteSeq fs, InfiniteSeq is -> cart_seq fs is |> FiniteSeq
         //        | FiniteSeq fsl, FiniteSeq fsr -> cart_seq (fun x -> Seq.contains x fsl) (fun x -> Seq.contains x fsr) x y |> Seq
         //        | InfiniteSeq isl, InfiniteSeq isr -> cart_seq (isl.Contains) (isr.Contains) x y |> Seq
         //        | _ -> failwith "Cannot find the cartesian product of 2 unknown sequences. Use 2 sequence generators."

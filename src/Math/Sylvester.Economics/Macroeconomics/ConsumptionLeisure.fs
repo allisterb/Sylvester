@@ -1,6 +1,6 @@
 ﻿namespace Sylvester
 
-type ConsumerLeisure() =
+type ConsumptionLeisure() =
     inherit EconomicModel() 
     do
         base.Vars.["n"] <- realvar "n"

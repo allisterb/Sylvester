@@ -9,8 +9,10 @@
     <Compile Include="Common.fs" />
     <Compile Include="Microeconomics\ConsumerPreference.fs" />
     <Compile Include="Microeconomics\MarketEquilibrium.fs" />
-    <Compile Include="Macroeconomics\ConsumerLeisure.fs" />
-    <Compile Include="Macroeconomics\FirmProfit.fs" />
+    <Compile Include="Microeconomics\Insurance.fs" />
+    <Compile Include="Macroeconomics\ConsumptionLeisure.fs" />
+    <Compile Include="Macroeconomics\ProfitMaximization.fs" />
+    <Compile Include="Macroeconomics\ClosedEconomy.fs" />
     <Compile Include="Macroeconomics\GrowthModel.fs" />
     <Compile Include="Macroeconomics\MalthusianGrowth.fs" />
   </ItemGroup>

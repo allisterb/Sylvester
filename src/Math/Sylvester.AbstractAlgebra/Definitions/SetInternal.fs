@@ -34,20 +34,22 @@ type SetComprehension<'t when 't: equality> internal (range:Expr<'t->bool>, mape
     internal new(card:CardinalNumber) = SetComprehension<'t>(<@ fun _ -> true @>, <@ fun x -> x @>, (fun _ _ -> true), card)
   
 type FiniteSequence<'t when 't: equality> internal (s:seq<'t>) = 
+    (*
     do match s with
         | :? array<'t> -> ()
         | :? list<'t> ->  ()
         | o when o.GetType().IsGenericType && o.GetType().Name.StartsWith "FSharpSet" -> ()
-        | _ -> failwith "This sequence is not a finite sequence."
-    
+        | _ -> failwithf "The sequence of type %A is not a finite sequence." (s.GetType())
+    *)
     member val Seq = s
     member val Length = Seq.length s
     member x.Item(n:int) = Seq.item n s
     override a.Equals (_b:obj) = 
         match _b with 
         | :? FiniteSequence<'t> as b -> System.Linq.Enumerable.SequenceEqual(a.Seq, b.Seq)
-        | :? array<'t> as b -> System.Linq.Enumerable.SequenceEqual(a.Seq, b)
-        | :? list<'t> as b -> System.Linq.Enumerable.SequenceEqual(a.Seq, b)
+        //| :? FiniteSequence<'t> as b -> System.Linq.Enumerable.SequenceEqual(a.Seq, b.Seq)
+        //| :? array<'t> as b -> System.Linq.Enumerable.SequenceEqual(a.Seq, b)
+        //| :? list<'t> as b -> System.Linq.Enumerable.SequenceEqual(a.Seq, b)
         | _ -> false
 
     override a.GetHashCode() = a.Seq.GetHashCode()
