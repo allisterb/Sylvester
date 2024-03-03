@@ -34,7 +34,7 @@ type Function<'a, 'b, 'c, 'd when 'a : equality and 'b: equality and
     abstract SubstArg:Expr->Expr<'b>
     default x.SubstArg(expr:Expr) = 
         let v = subst_var_value amaparg expr amapbody in subst_var_value x.ArgVar v x.Body |> expand_as<'b>        
-    static member Default(sym:string, v: Var list) = Unchecked.defaultof<'b>
+    static member Symbolic(sym:string, v: string array) = Unchecked.defaultof<'b>
     member x.Item (value:'c) = value |> exprv |> x.SubstArg |> term
         //arg |> x.AMap |> x.Map |> exprv |> x.TermMap
     member x.Item (value:Term<'c>) = value.Expr |> x.SubstArg |> term

@@ -14,6 +14,8 @@ type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, c
     abstract ScalarExpr:Scalar<real>
     abstract ScalarVars: realvar list
 
+    //member x.Symbolic(symbol:string, vars:string list) = 0R
+
     static member (==) (l:RealFunction<'t, 'a>, r:RealFunction<'t, 'a>) = l.ScalarExpr == r.ScalarExpr 
 
     static member (==) (l:RealFunction<'t, 'a>, r:Scalar<real>) = l.ScalarExpr == r
@@ -39,6 +41,14 @@ type RealFunction(f, ?symbol:string) =
         do if v.Length > 1 then failwith "The number of independent variables in this function is > 1."
         let f = recombine_func_as<real->real> (if v.Length = 0 then [Var("_", typeof<real>)] else v) e.Expr in
         RealFunction(f, ?symbol=symbol)
+
+    new (symbol:string, v:string) =
+        let var = Var(v, typeof<real>)
+        let ev = exprv v
+        let eva = Expr.NewArray(typeof<string>, [ev])
+        let vv = Expr.Let(var, <@ RealFunction.Symbolic(symbol,  (%%eva:string[])) @>, Expr.Var(var))
+        let vvv = Scalar<real> <@ %%vv:real @>
+        RealFunction(vvv, symbol)
 
     interface IRealFunction<RealFunction> with
         member x.Term = x
@@ -156,6 +166,8 @@ type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, 
 [<AutoOpen>]
 module RealFunction =
     let realfun s (e:Scalar<real>) = RealFunction(e, s)
+
+    let realfun_s (s:string) (v:string)= RealFunction(s, v)
 
     let realfun2 (s:string) (e:Scalar<real>) = RealFunction2(e, s)
 
