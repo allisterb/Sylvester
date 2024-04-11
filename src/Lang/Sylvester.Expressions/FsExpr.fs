@@ -648,3 +648,6 @@ module FsExpr =
     let head (l:seq<_>) = Seq.head l
 
     let tail (l:seq<_>) = Seq.tail l
+
+    [<ReflectedDefinition>]
+    let symbolic_fn<'t> (sym:string) (v: string array) = Unchecked.defaultof<'t>

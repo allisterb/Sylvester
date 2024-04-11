@@ -11,6 +11,10 @@ type ProfitMaximization() =
         base.Vars.["w"] <- realvar "w"
         base.Vars.["Y"] <- realvar "Y"
         base.Vars.["Pi"] <- realvar "Pi"
+
+        base.SetFun2("F", (prodfun2_s "F" "K" "N_d"))
+        
+        
     member x.K
            with get() = x.GetVar "K"
            and set(value) = x.SetVar ("K", value)
@@ -23,7 +27,7 @@ type ProfitMaximization() =
     member x.w
         with get() = x.GetVar "w"
         and set(value) = x.SetVar ("w", value)
-    member x.F
+    member x.F 
         with get() = x.GetFun2<ProductionFunction2> "F"
         and set(value:ProductionFunction2) = x.SetFun2("F", value)
     member x.Y

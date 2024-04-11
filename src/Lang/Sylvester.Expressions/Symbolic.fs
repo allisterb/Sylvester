@@ -133,6 +133,7 @@ module Symbolic =
         | Call(None, Op "real", x::[]) -> (sprinte x)
         | Call(None, Op "min", l::r::[]) -> sprintf("min(%s,%s)") (sprinte l) (sprinte r)
         | Call(None, Op "log", x::[]) -> sprintf "ln(%s)"(sprinte x)
+        | Call(None, Op "SymbolicExpr", x::[]) -> sprintf "ln(%s)"(sprinte x)
  
         | PropertyGet(None, Prop "e", []) -> "e"
         | PropertyGet(None, Prop "pi", []) -> "pi"
@@ -207,3 +208,4 @@ module Symbolic =
         e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand_as<'t> |> simplifye
 
     let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>
+

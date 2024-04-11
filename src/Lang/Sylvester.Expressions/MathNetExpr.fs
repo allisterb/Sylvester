@@ -253,6 +253,11 @@ module MathNetExpr =
             | FunctionN(Min, y) -> 
                 let b = y |> List.map (convertExpr >> Option.map expand_as<real> >> Option.get)
                 <@ FSharp.Core.Operators.min (%b.[0]) (%b.[1]) @>.Raw |> Some
+            | FunctionDef(f, args) -> 
+                let _f = exprv<string> (f.ToString()) in
+                let __args = args |> List.map(fun s -> (exprv<string> (s.ToString())).Raw) in
+                let _args = Expr.NewArray(typeof<string>, __args) in
+                <@ symbolic_fn %_f %%_args:string[] @>.Raw |> Some
             | expr -> failwithf "Did not convert %A." expr
         and compileFraction = 
             function

@@ -139,7 +139,10 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (+) (l:Scalar<int>, r:nat) = call_add (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> Scalar<'t>
 
-    
+    static member (+) (l:Scalar<real>, r:ISymbolic<_, real>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
+
+    static member (+) (l:ISymbolic<_, real>, r:Scalar<real>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
+
     static member (-) (l:Scalar<'t>, r:Scalar<'t>) = call_sub (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
 
     static member (-) (l:Scalar<'t>, r:'t) = call_sub (l.Expr) (Expr.Value r) |> expand_as<'t> |> Scalar<'t>

@@ -13,6 +13,7 @@ type UtilityFunction(f:RealFunction) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction
+        member x.SymbolicFn = RealFunction(defaultArg x.Symbol "f", x.ScalarVars.[0].Name) |> UtilityFunction
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -28,6 +29,7 @@ type UtilityFunction2(f:RealFunction2) =
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction2
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
+        member x.SymbolicFn = RealFunction2(defaultArg x.Symbol "f", x.ScalarVars.[0].Name, x.ScalarVars.[1].Name) |> UtilityFunction2
         member x.Html() = _rf.Html()
 
 type DemandFunction(f:RealFunction) =
@@ -39,6 +41,7 @@ type DemandFunction(f:RealFunction) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction
+        member x.SymbolicFn = RealFunction(defaultArg x.Symbol "f", x.ScalarVars.[0].Name) |> DemandFunction
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -59,6 +62,7 @@ type InverseDemandFunction(f:RealFunction) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> InverseDemandFunction
+        member x.SymbolicFn = RealFunction(defaultArg x.Symbol "f", x.ScalarVars.[0].Name) |> InverseDemandFunction
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -72,6 +76,7 @@ type DemandFunction2(f:RealFunction2) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction2
+        member x.SymbolicFn = RealFunction2(defaultArg x.Symbol "f", x.ScalarVars.[0].Name, x.ScalarVars.[1].Name) |> DemandFunction2
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -85,6 +90,7 @@ type SupplyFunction(f:RealFunction) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction
+        member x.SymbolicFn = RealFunction(defaultArg x.Symbol "f", x.ScalarVars.[0].Name) |> SupplyFunction
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -98,6 +104,7 @@ type SupplyFunction2(f:RealFunction2) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction2
+        member x.SymbolicFn = RealFunction2(defaultArg x.Symbol "f", x.ScalarVars.[0].Name, x.ScalarVars.[1].Name) |> SupplyFunction2
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -111,6 +118,7 @@ type ProductionFunction(f:RealFunction) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction
+         member x.SymbolicFn = RealFunction(defaultArg x.Symbol "f", x.ScalarVars.[0].Name) |> ProductionFunction
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -124,6 +132,7 @@ type ProductionFunction2(f:RealFunction2) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction2
+        member x.SymbolicFn = RealFunction2(defaultArg x.Symbol "f", x.ScalarVars.[0].Name, x.ScalarVars.[1].Name) |> ProductionFunction2
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -137,6 +146,7 @@ type CostFunction(f:RealFunction) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction
+        member x.SymbolicFn = RealFunction(defaultArg x.Symbol "f", x.ScalarVars.[0].Name) |> CostFunction
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -150,6 +160,7 @@ type CostFunction2(f:RealFunction2) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction2
+        member x.SymbolicFn = RealFunction2(defaultArg x.Symbol "f", x.ScalarVars.[0].Name, x.ScalarVars.[1].Name) |> CostFunction2
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -163,6 +174,7 @@ type RevenueFunction(f:RealFunction) =
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> RevenueFunction
+        member x.SymbolicFn = RealFunction(defaultArg x.Symbol "f", x.ScalarVars.[0].Name) |> RevenueFunction
         member x.ScalarExpr = x.ScalarExpr
         member x.ScalarVars = _rf.ScalarVars
         member x.Html() = _rf.Html()
@@ -250,7 +262,19 @@ module Economics =
     let utilfun_im s (x:realvar) (e:ScalarEquation<real>) = realfun_im_pos_vars s x e |> UtilityFunction
 
     let prodfun_im s (x:realvar) (e:ScalarEquation<real>) = realfun_im_pos_vars s x e |> ProductionFunction
+    
+    let demandfun_s (s:string) (v:string) = RealFunction(s, v) |> DemandFunction
 
+    let supplyfun_s (s:string) (v:string) = RealFunction(s, v) |> SupplyFunction
+
+    let utilfun_s (s:string) (v:string) = RealFunction(s, v) |> UtilityFunction
+       
+    let utilfun2_s (s:string) (v1:string) (v2:string) = RealFunction2(s, v1, v2) |> UtilityFunction2
+
+    let prodfun_s (s:string) (v:string)  = RealFunction(s, v) |> ProductionFunction
+
+    let prodfun2_s s (v1:string) (v2:string) = RealFunction2(s, v1, v2) |> ProductionFunction2
+    
     let inv_demandfun (sym:string) (q:realvar) (f:DemandFunction) =
      let p = farg f
      let s = solve_unique {|posvars=true|} p [(q == f.[p])] 
