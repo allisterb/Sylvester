@@ -12,4 +12,7 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let m = econ_model<ProfitMaximization>()
 
-sprints m.F.ScalarExpr
+let x = realvar "x"
+let f = realfun "f" (x *** 3 + 1)
+
+f.SymbolicFn.ScalarExpr.Expr

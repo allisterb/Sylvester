@@ -24,6 +24,7 @@ type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, c
 
 type IRealFunction<'a> = 
     inherit ISymbolic<'a, real>
+    inherit ISymbolicExpr<'a, real>
     inherit IHtmlDisplay
     //inherit IWebVisualization
     abstract member ScalarVars:realvar list
@@ -45,7 +46,8 @@ type RealFunction(f, ?symbol:string) =
         let var = Var(v, typeof<real>)
         let ev = exprv v
         let eva = Expr.NewArray(typeof<string>, [ev])
-        let vv = Expr.Let(var, <@ symbolic_fn symbol %%eva:string[] @>, Expr.Var(var))
+        let sv = exprv symbol
+        let vv = Expr.Let(var, <@ symbolic_fn<real> (%sv) (%%eva:string[]) @>, Expr.Var(var))
         let vvv = Scalar<real> <@ %%vv:real @>
         RealFunction(vvv, symbol)
 
@@ -54,13 +56,15 @@ type RealFunction(f, ?symbol:string) =
         let ev = exprv var.Name
         let eva = Expr.NewArray(typeof<string>, [ev])
         let symbol = defaultArg x.Symbol "f"
-        let vv = Expr.Let(var, <@ symbolic_fn symbol %%eva:string[] @>, Expr.Var(var))
+        let sv = exprv (symbol.ToString())
+        let vv = Expr.Let(var, <@ symbolic_fn<real> (%sv) (%%eva:string[]) @>, Expr.Var(var))
         let vvv = Scalar<real> <@ %%vv:real @>
         RealFunction(vvv, symbol)
 
     interface IRealFunction<RealFunction> with
         member x.Term = x
         member x.Expr = x.Body
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member a.Transform(b:Expr<real>, ?attrs, ?s) = 
@@ -134,9 +138,9 @@ type RealFunction(f, ?symbol:string) =
          let ev2 = exprv var2.Name
          let eva = Expr.NewArray(typeof<string>, [ev1;ev2])
          let symbol = defaultArg x.Symbol "f"
-
-         let expr2 = Expr.Let(var2, <@ symbolic_fn symbol (%%eva:string[]) @>, Expr.Var(var2))
-         let vv = Expr.Let(var1, <@ symbolic_fn symbol (%%eva:string[]) @>, expr2)
+         let sv = exprv symbol
+         let expr2 = Expr.Let(var2, <@ symbolic_fn (%sv) (%%eva:string[]) @>, Expr.Var(var2))
+         let vv = Expr.Let(var1, <@ symbolic_fn (%sv) (%%eva:string[]) @>, expr2)
          let vvv = Scalar<real> <@ %%vv:real @>
          RealFunction2(vvv, symbol)
 
@@ -163,15 +167,17 @@ type RealFunction(f, ?symbol:string) =
         let var2 = Var(y, typeof<real>)
         let ev1 = exprv var1.Name
         let ev2 = exprv var2.Name
+        let sv = exprv symbol
         let eva = Expr.NewArray(typeof<string>, [ev1;ev2])
-        let expr2 = Expr.Let(var2, <@ symbolic_fn symbol (%%eva:string[]) @>, Expr.Var(var2))
-        let vv = Expr.Let(var1, <@ symbolic_fn symbol (%%eva:string[]) @>, expr2)
+        let expr2 = Expr.Let(var2, <@ symbolic_fn<real> %sv (%%eva:string[]) @>, Expr.Var(var2))
+        let vv = Expr.Let(var1, <@ symbolic_fn<real> %sv (%%eva:string[]) @>, expr2)
         let vvv = Scalar<real> <@ %%vv:real @>
         RealFunction2(vvv, symbol)
 
      interface IRealFunction<RealFunction2> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member a.Transform(b:Expr<real>, ?attrs, ?s) = 

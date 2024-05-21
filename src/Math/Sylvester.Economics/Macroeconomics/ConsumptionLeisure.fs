@@ -9,7 +9,7 @@ type ConsumptionLeisure() =
         base.Vars.["W"] <- realvar "W"
         base.Vars.["t"] <- realvar "t"
         base.Vars.["h"] <- realvar "h"
-        base.Vars.["Ns"] <- realvar "N^s"
+        base.Vars.["Ns"] <- realvar("Ns", "N^s")
         base.Vars.["T"] <- realvar "T"
     member x.n 
         with get() = x.GetVar("n")
@@ -30,8 +30,8 @@ type ConsumptionLeisure() =
         with get() = x.GetVar("h")
         and set(value) = x.SetVar("h", value)
     member x.Ns
-        with get() = x.GetVar("N^s")
-        and set(value) = x.SetVar("N^s", value)
+        with get() = x.GetVar("Ns")
+        and set(value) = x.SetVar("Ns", value)
     member x.T
         with get() = x.GetVar("T")
         and set(value) = x.SetVar("T", value)

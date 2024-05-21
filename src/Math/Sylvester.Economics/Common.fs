@@ -10,6 +10,7 @@ type UtilityFunction(f:RealFunction) =
     interface IRealFunction<UtilityFunction> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction
@@ -24,6 +25,7 @@ type UtilityFunction2(f:RealFunction2) =
     interface IRealFunction<UtilityFunction2> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> UtilityFunction2
@@ -38,6 +40,7 @@ type DemandFunction(f:RealFunction) =
     interface IRealFunction<DemandFunction> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction
@@ -59,6 +62,7 @@ type InverseDemandFunction(f:RealFunction) =
     interface IRealFunction<InverseDemandFunction> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> InverseDemandFunction
@@ -73,6 +77,7 @@ type DemandFunction2(f:RealFunction2) =
     interface IRealFunction<DemandFunction2> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> DemandFunction2
@@ -87,6 +92,7 @@ type SupplyFunction(f:RealFunction) =
     interface IRealFunction<SupplyFunction> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction
@@ -101,6 +107,7 @@ type SupplyFunction2(f:RealFunction2) =
     interface IRealFunction<SupplyFunction2> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> SupplyFunction2
@@ -115,6 +122,7 @@ type ProductionFunction(f:RealFunction) =
     interface IRealFunction<ProductionFunction> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction
@@ -129,6 +137,7 @@ type ProductionFunction2(f:RealFunction2) =
     interface IRealFunction<ProductionFunction2> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> ProductionFunction2
@@ -143,6 +152,7 @@ type CostFunction(f:RealFunction) =
     interface IRealFunction<CostFunction> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction
@@ -157,6 +167,7 @@ type CostFunction2(f:RealFunction2) =
     interface IRealFunction<CostFunction2> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> CostFunction2
@@ -171,6 +182,7 @@ type RevenueFunction(f:RealFunction) =
     interface IRealFunction<RevenueFunction> with
         member x.Term = x
         member x.Expr = x.ScalarExpr.Expr
+        member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
         member x.Attrs = x.Attrs
         member x.Symbol = x.Symbol
         member x.Transform(b:Expr<real>, ?attrs, ?s) = _rf.Transform(b, ?a=attrs, ?s=s) |> RevenueFunction
@@ -218,6 +230,13 @@ type EconomicModel() =
         if mv.IsSome then failwithf "The function %A contains variables %A not in the model" f mv.Value
         *)
         x.Functions2.[n] <- f
+    member internal x.AddRealVar(name:string, ?nt:string) = x.Vars.[name] <- realvar (defaultArg nt name)
+    
+    member internal x.AddRealFun(name:string, v:realvar) = x.SetFun<RealFunction>(name, realfun_s name v)
+
+    member internal x.AddProdFun(name:string, v:realvar) = x.SetFun<ProductionFunction>(name, realfun_s name v |> ProductionFunction)
+
+    member internal x.AddProdFun2(name:string, v1:realvar, v2:realvar) = x.SetFun2<ProductionFunction2>(name, realfun2_s name v1 v2 |> ProductionFunction2)
     
     interface IAttrs with member x.Attrs = x.Attrs
 

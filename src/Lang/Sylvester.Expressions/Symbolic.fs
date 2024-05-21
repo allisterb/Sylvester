@@ -28,6 +28,9 @@ type ISymbolic<'s, 't> =
     abstract member Symbol: string option
     abstract member Transform : e:Expr<'t> * ?a:System.Collections.Generic.Dictionary<string, obj> * ?s:string-> 's
     
+type ISymbolicExpr<'s, 't> =
+    abstract member SymbolicExpr:Expr<'t>
+
 [<AutoOpen>]
 module Symbolic =
     /// Create a symbolic variable   

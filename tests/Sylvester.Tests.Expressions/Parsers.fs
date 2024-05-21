@@ -9,5 +9,5 @@ module Parsers =
 
     [<Fact>]
      let ``Can parse function def``() =
-        let R = Infix.parse("sin(x)")
+        let R = Infix.parse("BAR(x) + 1")
         Assert.Equal (R, Infix.parse("BAR()"))

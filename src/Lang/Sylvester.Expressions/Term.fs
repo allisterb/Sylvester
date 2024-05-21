@@ -294,10 +294,11 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
     
     static member (+>) (l:ScalarVar<real>, r:real)  = ScalarVarRelation<real>(l, r |> exprv |> Scalar<real>, <@ (>) @>)
 
-and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>) = 
+and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>, ?label:string) = 
     inherit Scalar<'t>(expr)
-    new(n:string) = ScalarVar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
+    new(n:string, ?label:string) = ScalarVar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>, ?label=label)
     member x.Name = src expr
+    member val Label = (defaultArg label (src expr)) with get,set 
     member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
     member x.Item(i:IndexVar) = ScalarIndexedVar<'t>(x, i)
     member x.Item(i:int) = ScalarVar<'t>(x.Name + i.ToString())

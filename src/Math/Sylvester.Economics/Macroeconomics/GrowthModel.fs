@@ -4,15 +4,18 @@
 type GrowthModel() =
     inherit EconomicModel()
     do
-        base.Vars.["N"] <- realvar "N"
-        base.Vars.["N'"] <- realvar "N'"
-        base.Vars.["L"] <- realvar "L"
-        base.Vars.["K"] <- realvar "K"
-        base.Vars.["C"] <- realvar "C"
-        base.Vars.["c"] <- realvar "c"
-        base.Vars.["l"] <- realvar "l"
-        base.Vars.["Y"] <- realvar "Y"
-        base.Vars.["z"] <- realvar "z"
+        base.AddRealVar "N"
+        base.AddRealVar "N'"
+        base.AddRealVar "K"
+        base.AddRealVar "K'"
+        base.AddRealVar "L"
+        base.AddRealVar "C"
+        base.AddRealVar "Y"
+        base.AddRealVar "c"
+        base.AddRealVar "l"
+        base.AddRealVar "z"
+        base.AddRealVar "y"
+
     member x.N 
         with get() = x.GetVar "N"
         and set(value) = x.SetVar("N", value)
@@ -37,12 +40,16 @@ type GrowthModel() =
     member x.Y 
            with get() = x.GetVar "Y"
            and set(value) = x.SetVar("Y", value)
+    member x.y 
+        with get() = x.GetVar "y"
+        and set(value) = x.SetVar("y", value)
     member x.z 
         with get() = x.GetVar "z"
         and set(value) = x.SetVar("z", value)
     member x.F
         with get() = x.GetFun2<ProductionFunction2> "F"
         and set(value:ProductionFunction2) = x.SetFun2("F", value)
+    member x.PerWorkerOutput = x.y == x.Y / x.N
     member x.PerWorkerConsumption = x.c == x.C / x.N
     member x.PerWorkerLand = x.l == x.L / x.N
     override x.Constraints = [x.PerWorkerConsumption]
