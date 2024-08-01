@@ -53,7 +53,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     interface IHtmlDisplay with
         member x.Html() =
             match h with
-            | Some(BinaryOp(op, l, r)) when l.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) && r.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) ->
+            | Some(TermHistory.BinaryOp(op, l, r)) when l.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) && r.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) ->
                 let lv = l :?> IHtmlDisplay
                 let rv = r :?> IHtmlDisplay
                 "$$" + lv.Html().Replace("$$", "") + " " + op + " " + rv.Html().Replace("$$", "") + "$$"
@@ -110,7 +110,7 @@ type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType a
     interface IHtmlDisplay with
         member x.Html() =
             match h with
-            | Some(BinaryOp(op, l, r)) when l.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) && r.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) ->
+            | Some(TermHistory.BinaryOp(op, l, r)) when l.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) && r.GetType().IsAssignableFrom(typeof<IHtmlDisplay>) ->
                 let lv = l :?> IHtmlDisplay
                 let rv = r :?> IHtmlDisplay
                 "$$" + lv.Html().Replace("$$", "") + " " + op.Replace("*", "\cdot") + " " + rv.Html().Replace("$$", "") + "$$"

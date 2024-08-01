@@ -166,6 +166,18 @@ module Matrix =
 
     let mat (l:'dim0) (r:'dim1) (data:obj list) = data |> List.toArray |> realterms |> Array.map sexpr |> Array.chunkBySize (number<'dim1>.IntVal) |> Matrix<'dim0, 'dim1, real>
     
+    let sqmat (l:'dim0) (data:obj seq) = data |> realterms |> Array.map sexpr |> Array.chunkBySize (number<'dim0>.IntVal) |> SquareMatrix<'dim0, real>
+
+    let sqmat2 (data:obj seq) = data |> realterms |> Array.map sexpr |> Array.chunkBySize 2 |> SquareMatrix<``2``, real>
+
+    let sqmat3 (data:obj seq) = data |> realterms |> Array.map sexpr |> Array.chunkBySize 3 |> SquareMatrix<``3``, real>
+
+    let sqmat4 (data:obj seq) = data |> realterms |> Array.map sexpr |> Array.chunkBySize 4 |> SquareMatrix<``4``, real>
+
+    let sqmat5 (data:obj seq) = data |> realterms |> Array.map sexpr |> Array.chunkBySize 5 |> SquareMatrix<``5``, real>
+
+    let sqmat6 (data:obj seq) = data |> realterms |> Array.map sexpr |> Array.chunkBySize 6 |> SquareMatrix<``6``, real>
+
     let mata (l:'dim0) (r:'dim1) (data:Expr<'t>[] []) = Matrix<'dim0, 'dim1, 't> data
     
     let matv (v:Expr<'t>) = 

@@ -95,13 +95,6 @@ module Symbolic =
                 m <- replace_expr (Expr.Var v) co m
         )
         s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
-    (* Term patterns *)
-    let (|Atom|_|) expr =
-        match expr with
-        | Var _ 
-        | Value(_, _) 
-        | ValueWithName(_,_,_) -> Some expr
-        | _ -> None
 
     (* Print quotation as string *)
 

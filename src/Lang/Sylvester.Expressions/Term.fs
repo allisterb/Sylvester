@@ -475,7 +475,7 @@ module Scalar =
         | :? Expr<real> as e -> e |> Scalar
         | x -> failwithf "Cannot convert %A of type %A to real Scalar." x (x.GetType())
 
-    let realterms (t:obj[]) = t |> Array.map realterm
+    let realterms (t:seq<_>) = t |> Seq.toArray |> Array.map realterm
            
     let fail_if_not_var(t:Scalar<_>) =
         match t.Expr with
@@ -521,6 +521,10 @@ module Scalar =
     let rhs (s:#ScalarRelation<'t>) = s.Rhs
 
     let fixvar (c:seq<ScalarVar<'b>>) (s:'s when 's :> #ISymbolic<'s,'b>) = fixvarconst (c |> Seq.map(fun _c -> _c.Name)) s
+
+    let collect_linear_terms (e:realexpr) = ()
+        //match e.Expr with
+
 
 [<AutoOpen>]
 module Prop =

@@ -1,8 +1,13 @@
 ﻿namespace Sylvester
 
-open FSharp.Quotations
-
+open Sylvester
+open Arithmetic
+open Dimension
 open Sylvester.CAS
+
+type LinearSystem<'rank when 'rank :> Number>(eqns: seq<ScalarEquation<real>>) = 
+    member val Equations = eqns
+
 
 module LinearEquations =
     let solve_for (options:'a) (vars:ScalarVar<'t> list) (eqns: ScalarEquation<'t> list) =
