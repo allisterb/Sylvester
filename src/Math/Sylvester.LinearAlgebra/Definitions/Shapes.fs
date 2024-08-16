@@ -1,5 +1,8 @@
 ﻿namespace Sylvester
 
+open System
+open FSharp.Quotations
+
 open Arithmetic
 
 module Dimension = 
@@ -117,7 +120,7 @@ type IUnknownShape =
  
 /// A linear algebra object whose rank is known at compile time
 type IPartialShape<'n when 'n :> Number> = 
-    inherit IUnknownShape
+    abstract Dims:Option<int64[]> with get
     
 /// A linear algebra object whose rank and dimensions are known at compile time    
 type IFullShape<'n when 'n :> Number> = 
@@ -125,12 +128,3 @@ type IFullShape<'n when 'n :> Number> =
 
 type IScalar =
     inherit IFullShape<dim<0>>
-
-type IVector<'n> = 
-    inherit IFullShape<dim<1>>
-    abstract Dim0: 'n
-
-type IMatrix<'r, 'c when 'r :> Number and 'c :> Number> = 
-    inherit IFullShape<dim<2>>
-    abstract Dim0:'r
-    abstract Dim1:'c

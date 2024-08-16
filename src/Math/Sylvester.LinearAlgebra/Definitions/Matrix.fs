@@ -16,18 +16,18 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     do if e |> Array.forall (fun a -> a.Length = e.[0].Length) |> not then failwith "The length of each column in a matrix must be the same."
     let expr = e  |> Array.map (Array.map expand_as<'t>)
     let exprmn = Array.map (Array.map MathNetExpr.fromQuotation) expr
-    let exprt = expr |> Ops.transpose_mat
-  
+    let exprt = expr |> Array.transpose
+    let expr2d = expr |> array2D
+
     member val Expr = expr
-    member val ExprMathNet = exprmn
     member val ExprT = exprt
-    member val ExprArray2D = expr |> array2D
+    member val Expr2D = expr2d
+    member val ExprMathNet = exprmn
     member val ExprVars = expr |> Array.map (Array.map(get_vars >> List.toArray)) |> Array.concat
     member val Rows = expr |> Array.map Vector<'t>
     member val Columns = exprt |> Array.map Vector<'t>
+    member x.Transpose = exprt |> Matrix<'t> 
     
-    member x.Transpose = Matrix<'t> expr
-
     member x.UnicodeDisplay = 
         let replace (o:string) n (s:string) = s.Replace(o, n) 
         x.Rows
@@ -45,10 +45,6 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         | LinearAlgebraNumericOpType -> expr |> Array.map (Array.map (evaluate >> Convert.ToDouble)) |> LinearAlgebra.DenseMatrix.ofRowArrays
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     
-    interface IPartialShape<``2``> with
-        member val Rank = Some 1 with get,set
-        member val Dims = [| Convert.ToInt64(e.Length) |] |> Some with get,set
-    
     interface IEquatable<Matrix<'t>> with
         member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
 
@@ -60,12 +56,45 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
                    |> Array.reduce(fun s e -> sprintf "%s \\\\ %s" s e) 
                    |> sprintf "%s"
                "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
+    
+    interface IMatrix<'t> with
+        member val Dims = [| Convert.ToInt64(e.Length) |] |> Some 
+        member val Expr = expr
+        member val ExprT = exprt
+        member val Expr2D = expr2d
+        member val ExprMathNet = exprmn
+        member val ExprVars = expr |> Array.map (Array.map(get_vars >> List.toArray)) |> Array.concat |> Array.concat
+        member val Rows = expr |> Array.map Vector<'t> 
+        member val Columns = exprt |> Array.map Vector<'t>
+        member x.Transpose = exprt |> Matrix<'t> 
+        member x.Item(i:int, j:int) = expr2d.[i, j] |> Scalar<'t>
 
     new(d: Expr<'t> [,]) = let d' = d |> Array2D.toJagged in Matrix<'t> d'
     
     new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'t>(expr)
 
+    new (s:Scalar<'t> [][]) = let expr = s |> Array.map(Array.map sexpr) in Matrix<'t> expr
+
     static member create([<ParamArray>] data: 't array array) = Matrix<'t>(data)
+
+and IMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> = 
+    inherit IPartialShape<dim<2>>
+    abstract Expr: Expr<'t>[][]
+    abstract ExprT: Expr<'t>[][]
+    abstract Expr2D: Expr<'t>[,]
+    abstract ExprMathNet:MathNetExpr[][]
+    abstract ExprVars: Var[]
+    abstract Rows: Vector<'t>[]
+    abstract Columns: Vector<'t>[]
+    abstract Transpose: Matrix<'t>
+    abstract Item:int*int->Scalar<'t>
+    
+type Mat = Matrix<real>
+type MatQ = Matrix<rat>
+type MatZ = Matrix<int>
+
+module Matrix =
+    let mat (data:obj list list) = data |>  List.map (List.map realterm >> List.toArray) |> List.toArray  |> Matrix<real>
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
@@ -86,10 +115,6 @@ type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: eq
     member x.Item(i: int) = x.Rows.[i]
     
     member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand_as<'t>(zero_val(typeof<'t>)) |> Scalar
-    
-    interface IMatrix<'dim0, 'dim1> with 
-        member val Dim0 = dim0
-        member val Dim1 = dim1
     
     interface IEquatable<Matrix<'dim0, 'dim1, 't>> with
         member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
@@ -151,7 +176,7 @@ type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, '
 type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, rat>
 type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, int>
 
-module Matrix =
+module MatrixT =
     let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.Rows |> Array.toList |> Some
 
     let (|MatrixC|_|) (m:Matrix<_,_,_>) = m.Columns |> Array.toList |> Some
@@ -267,7 +292,7 @@ module Matrices =
     
     open Matrix
 
-    let mat21 e0 e1 e2 = mat ``2`` ``1`` [e0; e1; e2] 
+    //let mat21 e0 e1 e2 = mat ``2`` ``1`` [e0; e1; e2] 
 
 
     

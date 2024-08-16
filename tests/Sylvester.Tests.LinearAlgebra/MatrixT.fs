@@ -1,11 +1,11 @@
 namespace Sylvester.Tests
 
-module LinearAlgebra = 
+module MatrixT = 
     open Xunit
 
     open Sylvester
     open Dimension
-    open Matrix
+    open MatrixT
 
     
     let x,y,z = realvar3 "x" "y" "z"

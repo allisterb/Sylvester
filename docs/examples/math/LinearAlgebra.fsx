@@ -16,6 +16,8 @@ fsi.PrintWidth <- 500
 let p, q = realvar "p", realvar "q"
 
 
+let A = mat [[p; q]; [2; 4]]
+A
 let P = vec3 p.[0] p.[1] p.[2]
 
 let Q = vec3 q.[0] 4 5
@@ -35,13 +37,19 @@ let rec collect_linear_terms (expr:Expr) : Expr list=
     | Multiplication(Variable v, r) -> [v] @ collect_linear_terms r
     | Multiplication(l, r) 
     | Addition(l, r) -> collect_linear_terms l @ collect_linear_terms r
-    | Subtraction(l, Multiplication(Constant c, Variable v)) -> collect_linear_terms l @ collect_linear_terms (call_mul (call_neg c) v)
-
-    | Multiplication(Variable _, Variable _) -> failwithf "%A is not a linear expression." (sprinte expr)
+    | Subtraction(l, Variable r) 
+    | Subtraction(l, Constant r) -> collect_linear_terms l @ [call_neg r]
+    | Subtraction(l, Multiplication(Constant c, Variable v)) -> collect_linear_terms l @ [call_mul (call_neg c) v]
+    | Subtraction(l, r) -> collect_linear_terms l @ (List.map call_neg (collect_linear_terms r))
+    | Multiplication(Variable _, Variable _) 
+    | Exp(Variable _, _)
+    | Exp(Variable _, _) -> failwithf "%A is not a linear expression." (sprinte expr)
     | _ -> failwithf "Could not collect linear terms from expression %A" expr
     
-let eq  = p  - (7 * q***3)
-eq.Expr.ToString()
+let eq  = p  - (7 * q***3 + q)
+
+simplify eq
+//eq.Expr.ToString()
 //collect_linear_terms eq.Expr
 //mprint (J + J)
 //sprinte Q.[2].Expr
