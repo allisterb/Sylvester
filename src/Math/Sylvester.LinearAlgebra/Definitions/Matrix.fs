@@ -58,7 +58,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
                "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
     
     interface IMatrix<'t> with
-        member val Dims = [| Convert.ToInt64(e.Length) |] |> Some 
+        member val Dims = [| expr2d.GetLength 0; expr2d.GetLength 1 |]
         member val Expr = expr
         member val ExprT = exprt
         member val Expr2D = expr2d
@@ -74,6 +74,8 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     new([<ParamArray>] v:'t array array) = let expr = v |> Array.map(Array.map(exprv)) in Matrix<'t>(expr)
 
     new (s:Scalar<'t> [][]) = let expr = s |> Array.map(Array.map sexpr) in Matrix<'t> expr
+
+    new(rows: Vector<'t> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'t> e
 
     static member create([<ParamArray>] data: 't array array) = Matrix<'t>(data)
 
@@ -92,9 +94,6 @@ and IMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (ne
 type Mat = Matrix<real>
 type MatQ = Matrix<rat>
 type MatZ = Matrix<int>
-
-module Matrix =
-    let mat (data:obj list list) = data |>  List.map (List.map realterm >> List.toArray) |> List.toArray  |> Matrix<real>
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Matrix<'dim0, 'dim1, 't when 'dim0 :> Number and 'dim1 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
@@ -175,6 +174,23 @@ type SquareMatrix<'dim0, 't when 'dim0 :> Number  and 't : equality and 't: comp
 type Mat<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, real>
 type MatQ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, rat>
 type MatZ<'dim0, 'dim1 when 'dim0 :> Number and 'dim1:> Number> = Matrix<'dim0, 'dim1, int>
+
+module Matrix =
+    let mat (data:obj list list) = data |>  List.map (List.map realterm >> List.toArray) |> List.toArray  |> Mat
+
+    let madd (l:IMatrix<'t>) (r:IMatrix<'t>) = 
+        do if l.Dims.[0] <> r.Dims.[0] || l.Dims.[1] <> r.Dims.[1] then failwithf "Two matrices must have the same dimensions to be conformable for addition."
+        Array.map2 (+) l.Rows r.Rows |> Matrix<'t> 
+
+    let msub (l:IMatrix<'t>) (r:IMatrix<'t>) = 
+        do if l.Dims.[0] <> r.Dims.[0] || l.Dims.[1] <> r.Dims.[1] then failwithf "Two matrices must have the same dimensions to be conformable for subtraction."
+        Array.map2 (-) l.Rows r.Rows |> Matrix<'t> 
+    
+    let mvmul (l:IMatrix<'t>) (r:IVector<'t>) =
+        [| for i in 0..l.Dims.[0] - 1 -> vdot l.Rows.[i]  r |] |> Array.map sexpr |> Vector<'t>
+    
+    let mmul (l:IMatrix<'t>) (r:IMatrix<'t>) = 
+        [| for i in 0..r.Dims.[1] - 1 -> mvmul l  r.Columns.[i] |] |> Array.map vexpr  |> Ops.transpose_mat |> Matrix<'t>
 
 module MatrixT =
     let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.Rows |> Array.toList |> Some

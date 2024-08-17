@@ -13,6 +13,7 @@ open Dimension
 
 type IVector<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> = 
     inherit IPartialShape<dim<1>>
+    abstract Expr: Expr<'t>[]
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
@@ -43,7 +44,8 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member x.ItemE with get i = e.[i] |> ev
 
     interface IVector<'t> with
-        member val Dims = [| Convert.ToInt64(e.Length) |] |> Some 
+        member val Expr = e
+        member val Dims = [| e.Length |]
     
     interface IEnumerable<Expr<'t>> with
         member x.GetEnumerator ()  = (x.Expr |> Array.toSeq).GetEnumerator()
@@ -169,6 +171,23 @@ type VecQ<'dim0 when 'dim0 :> Number> = Vector<'dim0, rat>
 type VecZ<'dim0 when 'dim0 :> Number> = Vector<'dim0, int>
 
 module Vector =
+    let vec (data:obj list) = data |> List.toArray |> realterms |> Vec 
+    
+    let vexpr(v: Vector<'t>) = v.Expr
+
+    let vdot (l:IVector<'t>) (r:IVector<'t>) =
+        do if l.Dims.[0] <> r.Dims.[0] then failwithf "Cannot find dot product of two vectors of different lengths: %A and %A." l.Dims.[0] r.Dims.[0]
+        let e = 
+            Array.map2 call_mul l.Expr r.Expr 
+            |> Array.reduce call_add
+            |> expand_as<'t>
+            |> simplifye
+        in Scalar<'t>(e, BinaryOp("*", l, r))
+    
+    let vsmul (l:IVector<'t>) (r:Scalar<'t>) =
+         l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
+
+module VectorT =
     let (|Vector|_|) (v: Vector<'n, 't>) : Expr<'t> list option = Some(v.ExprList)
     
     let (|NumericVector|_|) :obj->option<Vector<_,_>> = function | :? Vector<_,_> as v when exprs_all_numeric v.Expr -> Some v | _ -> None
@@ -197,10 +216,9 @@ module Vector =
     let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar
 
 [<AutoOpen>]
-module Vectors =
-    
-    open Vector
-    
+module VectorsT =
+    open VectorT
+
     let vec2 x y = vec ``2`` [x; y]
     
     let vec3 x y z = vec ``3`` [x; y; z] 

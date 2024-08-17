@@ -116,11 +116,11 @@ module Dimension =
 /// A linear algebra object whose rank and dimensions may be unknown until runtime
 type IUnknownShape =
     abstract Rank:Option<int> with get,set
-    abstract Dims:Option<int64[]> with get,set
+    abstract Dims:Option<int[]> with get,set
  
 /// A linear algebra object whose rank is known at compile time
 type IPartialShape<'n when 'n :> Number> = 
-    abstract Dims:Option<int64[]> with get
+    abstract Dims:int[]with get
     
 /// A linear algebra object whose rank and dimensions are known at compile time    
 type IFullShape<'n when 'n :> Number> = 
