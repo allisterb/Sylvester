@@ -215,7 +215,6 @@ module VectorT =
 
     let euclid_dist (l:Vector<'n, 't>) (r:Vector<'n, 't>) = (l - r) |> norm |> simplify |> Scalar
 
-[<AutoOpen>]
 module VectorsT =
     open VectorT
 

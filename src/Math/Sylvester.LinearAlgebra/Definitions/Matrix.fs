@@ -190,7 +190,8 @@ module Matrix =
         [| for i in 0..l.Dims.[0] - 1 -> vdot l.Rows.[i]  r |] |> Array.map sexpr |> Vector<'t>
     
     let mmul (l:IMatrix<'t>) (r:IMatrix<'t>) = 
-        [| for i in 0..r.Dims.[1] - 1 -> mvmul l  r.Columns.[i] |] |> Array.map vexpr  |> Ops.transpose_mat |> Matrix<'t>
+        do if l.Dims.[1] <> r.Dims.[0] then failwith "The two matrices are not conformable for matrix multiplication."
+        [| for i in 0..r.Dims.[1] - 1 -> mvmul l r.Columns.[i] |] |> Array.map vexpr  |> Ops.transpose_mat |> Matrix<'t>
 
 module MatrixT =
     let (|MatrixR|_|) (m:Matrix<_,_,_>) = m.Rows |> Array.toList |> Some

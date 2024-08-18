@@ -20,11 +20,11 @@ let A = mat [[p; q]; [2; 4]]
 
 mmul A A
 
-let P = vec3 p.[0] p.[1] p.[2]
+//let P = vec3 p.[0] p.[1] p.[2]
 
-let Q = vec3 q.[0] 4 5
+//let Q = vec3 q.[0] 4 5
 
-P + Q
+//P + Q
 
 let J = sqmat ``3``  [0; 0; p; 1; 0; -3; 0; 1; 3 + p]
 

@@ -274,7 +274,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "school", "school", "{0AD684
 		..\docs\examples\school\mt1183.fsx = ..\docs\examples\school\mt1183.fsx
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.Tests.Economics", "..\tests\Sylvester.Tests.Economics\Sylvester.Tests.Economics.fsproj", "{15CB0DA8-823A-4265-A926-A01505B3A682}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Economics", "..\tests\Sylvester.Tests.Economics\Sylvester.Tests.Economics.fsproj", "{15CB0DA8-823A-4265-A926-A01505B3A682}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

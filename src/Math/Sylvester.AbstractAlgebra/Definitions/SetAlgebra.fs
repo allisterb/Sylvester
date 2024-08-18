@@ -9,5 +9,5 @@ type SetAlgebra<'t when 't: equality>(set:ISet<'t>, subsets: ISet<Set<'t>>, leas
 
 type SigmaAlgebra<'t when 't: equality>(set: ISet<'t>, subsets: ISet<Set<'t>>, least:Set<'t>, greatest:Set<'t>) =
     inherit SetAlgebra<'t>(set, subsets, least, greatest)
-    new(set: ISet<'t>) = SigmaAlgebra(set, set.Set.Powerset, Empty, set.Set)
+    new(set: ISet<'t>) = SigmaAlgebra(set, set.Set.EnumAsSubsets(), Empty, set.Set)
 

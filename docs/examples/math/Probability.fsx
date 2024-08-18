@@ -7,10 +7,11 @@ let dice = finite_seq [1..6]
 
 (dice * dice)
 let S = prob_space (dice * dice)
+S.EventSpace.Subsets
 let P = S.Measure
 //let comp = S.Set.Difference  
 let A = finite_seq [for i in 1..6 -> (1, i)] 
-P(A) //+ P(comp A)
+let j = P(A)
 
 let po = poisson 2.8
 

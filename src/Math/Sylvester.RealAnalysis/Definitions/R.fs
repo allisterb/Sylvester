@@ -7,7 +7,7 @@ open Vector
 type Region<'n when 'n :> Number> = Set<Vec<'n>>
 
 type RealVectorSpace<'n when 'n :>Number>() = 
-    inherit VectorSpace<'n, real>(Field.R, Vector.add, Vector.smul)
+    inherit VectorSpace<'n, real>(Field.R, VectorT.add, VectorT.smul)
     interface ICardinality with member val Cardinality = Aleph 1
 
 [<AutoOpen>]

@@ -92,7 +92,7 @@ type RealFunction(f, ?symbol:string) =
               WebVisualization.draw_realfuns attrs (_grp |> Seq.map(fun x->(x :> IRealFunction<_>).Html()) |> Seq.toArray) (_grp |> Seq.map(fun x ->x.Term.MapExpr) |> Seq.toArray) |> draw_board
 
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
-     inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> vec2 x y @>, ?symbol=symbol)
+     inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> VectorsT.vec2 x y @>, ?symbol=symbol)
      override x.ScalarExpr = 
         match s with
         | Some e -> e |> Scalar<real>

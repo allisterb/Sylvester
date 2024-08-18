@@ -11,7 +11,7 @@ type ProbabilitySpace<'t when 't : equality>(event_space:SigmaAlgebra<'t>, prob_
     member val SampleSpace = event_space.Set
     member val EventSpace = event_space
     member val ProbMeasure = ProbabilityMeasure<'t>(event_space, prob_function)
-    member x.Measure(v:Set<'t>) = x.ProbMeasure.[v]
+    member x.Measure(v:Set<'t>) = ev x.ProbMeasure.[v].Expr
     member x.Item(v:Set<'t>)  = x.Measure(v)
    
     interface ISet<Set<'t>> with 
