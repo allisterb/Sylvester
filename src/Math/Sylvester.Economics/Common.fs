@@ -1,5 +1,7 @@
 ﻿namespace Sylvester
 
+open System
+open System.Collections.Generic
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
@@ -205,24 +207,26 @@ type Tax =
 | LumpSum
 
 type EconomicModel() = 
-    member val Attrs = new System.Collections.Generic.Dictionary<string, obj>()
-    member val Vars = new System.Collections.Generic.Dictionary<string, realvar>()
-    member val Functions = new System.Collections.Generic.Dictionary<string, RealFunction>()
-    member val Functions2 = new System.Collections.Generic.Dictionary<string, RealFunction2>()
+    member val Attrs = new Dictionary<string, obj>()
+    member val Vars = new Dictionary<string, realvar>()
+    member val Functions = new Dictionary<string, RealFunction>()
+    member val Functions2 = new Dictionary<string, RealFunction2>()
     abstract Constraints:ScalarRelation<real> list
     default x.Constraints = List.empty
     member x.Equations = x.Constraints |> List.choose(fun c -> if c :? ScalarEquation<real> then c :?> ScalarEquation<real> |> Some else None) 
-    member internal x.GetVar n = if x.Vars.ContainsKey n then x.Vars.[n] else failwithf "The model does not contain the real variable %A." n
-    member internal x.SetVar(n, v) = x.Vars.[n] <- v
-    member internal x.GetFun<'a when 'a :> RealFunction> n = x.Functions.[n] :?> 'a
-    member internal x.SetFun<'a when 'a :> RealFunction> (n, f:'a)= 
+    member internal x.CreateVar(name:string, ?nt:string) = x.Vars.[name] <- realvar (defaultArg nt name)    
+    member x.CreateVars([<ParamArray>] n:string[]) = n |> Array.iter x.CreateVar
+    member x.GetVar n = if x.Vars.ContainsKey n then x.Vars.[n] else failwithf "The model does not contain the real variable %A." n
+    member x.SetVar(n, v) = x.Vars.[n] <- v
+    member x.GetFun<'a when 'a :> RealFunction> n = x.Functions.[n] :?> 'a
+    member x.SetFun<'a when 'a :> RealFunction> (n, f:'a)= 
         let mvars = x.Vars.Values |> Seq.map(fun v -> v.Var) in
         let vars = f.Vars in
         let mv = Seq.tryFind(fun v -> not <| Seq.contains v mvars) vars in
         if mv.IsSome then failwithf "The function %A contains variables %A not in the model" f mv.Value
         x.Functions.[n] <- f
-    member internal x.GetFun2<'a when 'a :> RealFunction2> n = x.Functions2.[n] :?> 'a
-    member internal x.SetFun2<'a when 'a :> RealFunction2> (n, f:'a)= 
+    member x.GetFun2<'a when 'a :> RealFunction2> n = x.Functions2.[n] :?> 'a
+    member x.SetFun2<'a when 'a :> RealFunction2> (n, f:'a)= 
         (*
         let mvars = x.Vars.Values |> Seq.map(fun v -> v.Var) in
         let vars = f.Vars in
@@ -230,14 +234,11 @@ type EconomicModel() =
         if mv.IsSome then failwithf "The function %A contains variables %A not in the model" f mv.Value
         *)
         x.Functions2.[n] <- f
-    member internal x.AddRealVar(name:string, ?nt:string) = x.Vars.[name] <- realvar (defaultArg nt name)
-    
-    member internal x.AddRealFun(name:string, v:realvar) = x.SetFun<RealFunction>(name, realfun_s name v)
-
-    member internal x.AddProdFun(name:string, v:realvar) = x.SetFun<ProductionFunction>(name, realfun_s name v |> ProductionFunction)
-
-    member internal x.AddProdFun2(name:string, v1:realvar, v2:realvar) = x.SetFun2<ProductionFunction2>(name, realfun2_s name v1 v2 |> ProductionFunction2)
-    
+    member x.CreateFun(name:string, v:realvar) = x.SetFun<RealFunction>(name, realfun_s name v)
+    member x.CreateProdFun(name:string, v:realvar) = x.SetFun<ProductionFunction>(name, realfun_s name v |> ProductionFunction)
+    member x.CreateUtilFun(name:string, v:realvar) = x.SetFun<UtilityFunction>(name, realfun_s name v |> UtilityFunction)
+    member x.CreateProdFun2(name:string, v1:realvar, v2:realvar) = x.SetFun2<ProductionFunction2>(name, realfun2_s name v1 v2 |> ProductionFunction2)
+    member x.CreateUtilFun2(name:string, v1:realvar, v2:realvar) = x.SetFun2<UtilityFunction2>(name, realfun2_s name v1 v2 |> UtilityFunction2)
     interface IAttrs with member x.Attrs = x.Attrs
 
 module Economics =

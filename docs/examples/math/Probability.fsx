@@ -6,7 +6,7 @@ open Sylvester
 let dice = finite_seq [1..6]
 
 (dice * dice)
-let S = prob_space (dice * dice)
+let S = prob_space <| dice * dice
 S.EventSpace.Subsets
 let P = S.Measure
 //let comp = S.Set.Difference  
@@ -21,5 +21,6 @@ po </ 0.
 
 let b = bernoulli 0.4
 
+prob b 4
 cprob b 5
 //expectation b

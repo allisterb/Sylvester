@@ -3,7 +3,7 @@
 type SolowGrowth() =
     inherit GrowthModel()
     do  
-        base.AddProdFun2("F", base.GetVar "K", base.GetVar "N")
+        base.CreateProdFun2("F", base.GetVar "K", base.GetVar "N")
 
     member x.F
         with get() = x.GetFun2<ProductionFunction2> "F"

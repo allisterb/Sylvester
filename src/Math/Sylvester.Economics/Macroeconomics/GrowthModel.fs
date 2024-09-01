@@ -4,17 +4,17 @@
 type GrowthModel() =
     inherit EconomicModel()
     do
-        base.AddRealVar "N"
-        base.AddRealVar "N'"
-        base.AddRealVar "K"
-        base.AddRealVar "K'"
-        base.AddRealVar "L"
-        base.AddRealVar "C"
-        base.AddRealVar "Y"
-        base.AddRealVar "c"
-        base.AddRealVar "l"
-        base.AddRealVar "z"
-        base.AddRealVar "y"
+        base.CreateVar "N"
+        base.CreateVar "N'"
+        base.CreateVar "K"
+        base.CreateVar "K'"
+        base.CreateVar "L"
+        base.CreateVar "C"
+        base.CreateVar "Y"
+        base.CreateVar "c"
+        base.CreateVar "l"
+        base.CreateVar "z"
+        base.CreateVar "y"
 
     member x.N 
         with get() = x.GetVar "N"

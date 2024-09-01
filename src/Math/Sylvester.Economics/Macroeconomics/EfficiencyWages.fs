@@ -6,13 +6,13 @@ open Economics
 type EfficiencyWages() =
     inherit EconomicModel()
     do
-        base.AddRealVar("N")
-        base.AddRealVar("E")
-        base.AddRealVar("w")
-        base.AddRealVar("Pi")
+        base.CreateVar("N")
+        base.CreateVar("E")
+        base.CreateVar("w")
+        base.CreateVar("Pi")
 
-        base.AddRealFun("e", base.Vars.["w"])
-        base.AddProdFun("F", base.Vars.["E"])
+        base.CreateFun("e", base.Vars.["w"])
+        base.CreateProdFun("F", base.Vars.["E"])
 
     member x.N 
            with get() = x.GetVar "N"

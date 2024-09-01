@@ -47,15 +47,15 @@ type ProbabilityDistribution<'n when 'n :> Number> =
 type IRandomElement<'n, 'd when 'n :> Number> = 
     abstract ProbabilityDistribution: ProbabilityDistribution<'n>
 
-type RandomVariable(distr:UnivariateDistribution option, mean:Scalar<real> option) = 
+type RandomVariable(?distr:UnivariateDistribution, ?mean:Scalar<real>) = 
     member val Distribution = defaultArg distr (ProbabilityMass(<@ fun _ -> 0. @>, Set.Empty))
     interface IRandomElement<dim<1>, real> with member x.ProbabilityDistribution = UnivariateDistribution(x.Distribution)
     interface ISet<real> with 
         member x.Set = x.Distribution.Support
         member x.Equals b = x.Distribution.Support.Equals b
     
-type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option) = 
-    inherit RandomVariable(Some(ProbabilityMass(pmf, support)), mean)
+type Discrete(support:Set<real>, pmf:Expr<real->real>, ?mean:Scalar<real>) = 
+    inherit RandomVariable(ProbabilityMass(pmf, support), ?mean=mean)
     member x.ProbFunc = 
         fun (a:real) ->
             let v = param_var x.Distribution.Func
@@ -66,7 +66,7 @@ type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option)
         fun (i:real) -> [0.0 .. i] |> Seq.choose(fun e-> if x.Prob e = 0R then Some e else None) |> Seq.map x.Prob |> Seq.reduce (+) |> simplify
     member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
     member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+) |> simplify
-    member x.Transform(t, s, m) = Discrete(s, x.Distribution.Transform(t,s).Func, Some m)
+    member x.Transform(t, s, m) = Discrete(s, x.Distribution.Transform(t,s).Func, m)
     member x.Item(a: real) = x.Prob a
     member x.Item(a: int) = x.Prob (real a)
     member x.Item(a: Scalar<real>) = x.Distribution.FuncBody |> subst_var_value (x.Distribution.FuncArg) (Expr.Value a) |> expand_as<real> |> Scalar<real>
@@ -85,8 +85,8 @@ type Discrete(support:Set<real>, pmf:Expr<real->real>, mean:Scalar<real> option)
 
     static member (</) (l:Discrete, r:real) = l.Cdf r
     
-type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> option) = 
-    inherit RandomVariable(Some(ProbabilityDensity(pdf, support)), mean)
+type Continuous(support:Set<real>, pdf:Expr<real->real>, ?mean:Scalar<real>) = 
+    inherit RandomVariable(ProbabilityDensity(pdf, support), ?mean=mean)
     member x.ProbFunc = 
         fun (a:real) ->         
             let v = param_var x.Distribution.Func
@@ -103,7 +103,7 @@ type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> optio
             let i = call_mul <@ %%Expr.Var(v): real @> (x.Distribution.Func |> body) |> expand_as<real>
             Ops.DefiniteIntegral <@ %%Expr.Var(v): real @> (minf'<real>) (inf'<real>) i |> Scalar<real>
 
-    member x.Transform(t, s, m) = Continuous(s, (x.Distribution.Transform(t,s)).Func, Some m)
+    member x.Transform(t, s, m) = Continuous(s, (x.Distribution.Transform(t,s)).Func, m)
     
     static member (-) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
     static member (-) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
@@ -119,11 +119,11 @@ type Continuous(support:Set<real>, pdf:Expr<real->real>, mean:Scalar<real> optio
    
 [<AutoOpen>]
 module ProbabilityDistribution =
-    let discrete s d = Discrete(s, d, None)
+    let discrete s d = Discrete(s, d)
 
-    let discrete_m s d m = Discrete(s, d, Some m)
+    let discrete_m s d m = Discrete(s, d, m)
 
-    let continuous s d = Continuous(s, d, None)
+    let continuous s d = Continuous(s, d)
 
     let degenerate a = discrete (finite_seq [a]) <@ fun x -> 1. @>
 

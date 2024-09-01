@@ -5,17 +5,11 @@ open Economics
 type ConsumerPreference() =
     inherit EconomicModel()
     do
-        base.Vars.["q1"] <- realvar "q1"
-        base.Vars.["q2"] <- realvar "q2"
-        base.Vars.["p1"] <- realvar "p1"
-        base.Vars.["p2"] <- realvar "p2"
-        base.Vars.["Y"] <- realvar "Y"
+        base.CreateVars("q1", "q2", "p1", "p2", "Y")
     member x.q1
-        with get() = x.GetVar "q1"
-        and set(value) = x.SetVar ("q1", value)
+        with get() = x.GetVar "q1" and set(value) = x.SetVar ("q1", value)
     member x.q2
-        with get() = x.GetVar "q2"
-        and set(value) = x.SetVar ("q2", value)
+        with get() = x.GetVar "q2" and set(value) = x.SetVar ("q2", value)
     member x.p1
         with get() = x.GetVar "p1"
         and set(value) = x.SetVar ("p1", value)
