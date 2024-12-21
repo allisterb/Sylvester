@@ -62,7 +62,7 @@ and IndexVar(expr: Expr<int>) =
 and [<AbstractClass>] TermConst<'t when 't: equality>(n: string) = 
     inherit Term<'t>(Expr.ValueWithName(Unchecked.defaultof<'t>, n) |> expand_as<'t>)
 
-and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>, ?h:TermHistory) =
+and [<TypeFormatterSource(typedefof<IHtmlDisplayFormatterSource>)>]  Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>, ?h:TermHistory) =
     inherit Term<'t>(expr, ?h=h)
     
     new (v: 't) = Scalar<'t>(exprv v)

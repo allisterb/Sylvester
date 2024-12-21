@@ -1,6 +1,7 @@
 ﻿namespace Sylvester
 
 open System 
+open System.IO
 
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
@@ -205,3 +206,13 @@ module Symbolic =
 
     let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>
 
+    type IHtmlDisplayFormatterSource() =
+        member x.CreateTypeFormatters() = seq { yield new IHtmlDisplayFormatter() }
+
+    and IHtmlDisplayFormatter() = 
+        member val MimeType:string = "text/html"
+
+        member x.Format(instance:obj, writer:TextWriter) = 
+            match instance with
+            | :? IHtmlDisplay as hd -> writer.Write(hd.Html()); true
+            | _ -> false
