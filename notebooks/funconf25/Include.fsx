@@ -15,6 +15,12 @@
 #r "C:\\Projects\\Sylvester.git\\src\\Lang\\Sylvester.Expressions\\bin\\Debug\\netstandard2.0\\Sylvester.Expressions.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Lang\\Sylvester.Prover\\bin\\Debug\\netstandard2.0\\Sylvester.Prover.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Visualization\\Sylvester.Visualization.Web\\bin\\Debug\\netstandard2.0\\Sylvester.Visualization.Web.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.Interop.NETStandard.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.Util.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.Base.dll"
+#r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.JSXGraph.dll"
+
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.AbstractAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.AbstractAlgebra.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.LinearAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.LinearAlgebra.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"
