@@ -690,7 +690,7 @@ module FsExpr =
     
     let get_prop<'t> n (o:obj) = o.GetType().GetProperties().First(fun p -> p.Name = n && p.PropertyType = typeof<'t>).GetValue(o) :?> 't
 
-    let get_prop_else<'t> n (e:'t) (o:obj) = if has_prop<bool> n o then o.GetType().GetProperties().First(fun p -> p.Name = n && p.PropertyType = typeof<'t>).GetValue(o) :?> 't else e
+    let get_prop_else<'t> n (e:'t) (o:obj) = if has_prop<'t> n o then o.GetType().GetProperties().First(fun p -> p.Name = n && p.PropertyType = typeof<'t>).GetValue(o) :?> 't else e
     
     let get_consts expr =
             let dict = new System.Collections.Generic.List<Type*string>()
