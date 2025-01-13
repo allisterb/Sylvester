@@ -23,6 +23,7 @@
 #r "C:\\Users\Allister\\.nuget\\packages\\cppsharp.runtime\\1.1.5.3168\\lib\\netstandard2.0\\CppSharp.Runtime.dll"
 #r "C:\\Projects\\SharpGambit\\src\\SharpGambit.Api\\bin\\Debug\\net8.0\\SharpGambit.Bindings.dll"
 #r "C:\\Projects\\SharpGambit\\src\\SharpGambit.Api\\bin\\Debug\\net8.0\\SharpGambit.Api.dll"
+#r "C:\\Projects\\SharpGambit\\src\\SharpGambit.Api.Fs\\bin\\Debug\\net8.0\\SharpGambit.Api.Fs.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.AbstractAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.AbstractAlgebra.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.LinearAlgebra\\bin\\Debug\\netstandard2.0\\Sylvester.LinearAlgebra.dll"
 #r "C:\\Projects\\Sylvester.git\\src\\Math\\Sylvester.RealAnalysis\\bin\\Debug\\netstandard2.0\\Sylvester.RealAnalysis.dll"

@@ -9,18 +9,21 @@ open RealNumbers
 open MathNet.Symbolics
 fsi.PrintWidth <- 500
 
-Infix.parseList("[4,5,6]")
-//do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+//Infix.parseList("[4,5,6]")
+do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 
 //em.GetVar "foo"
 //let m = econ_model<ProfitMaximization>(
 
-//let x = realvar "x"
-//let f = realfun "f" (x *** 3 + 1)
+let x = realvar "x"
+let f = realfun "f" (x *** 3 + 1)
 
+let a = realconst "a"
 
+(f.[a] + 1 + a + 6) |> fix {|a=6.|}
 
+f |> fix {|x=6.|} |> sexpr |> latexe
 
 //f.SymbolicFn.ScalarExpr.Expr
 

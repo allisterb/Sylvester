@@ -20,10 +20,15 @@ div.myfooter {
 	font-size: xx-large;
 }
 
-section#slide-0-0.div.myheader {
-visibility:hidden
+section#slide-1-0.div.myheader {
+    margin-top:100%
 }
 
 section#slide-0-0.present {
 	background-color: "red"
+}
+
+td.nfg_2p {
+    border: 1px solid black;
+    border-collapse: collapse;
 }

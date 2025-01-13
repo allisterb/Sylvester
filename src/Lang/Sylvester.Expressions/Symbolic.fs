@@ -86,9 +86,15 @@ module Symbolic =
                 m <- replace_expr (Expr.ValueWithName(Unchecked.defaultof<'b>, n)) v m
                 m <- replace_expr (expr_var<'b> n) v m
         )
+        get_vars m |> List.iter(fun v -> 
+            if has_prop<'b> v.Name attrs then  
+                let s = get_prop<'b> v.Name attrs in 
+                let co = exprv s in  
+                m <- replace_expr (Expr.Var v) co m
+        )
         s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
         
-    let fixvarconst (c:seq<string>) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
+    let fixconst (c:seq<string>) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
         let mutable m = s.Expr.Raw
         get_vars m |> List.iter(fun v -> 
             if Seq.contains v.Name c then  

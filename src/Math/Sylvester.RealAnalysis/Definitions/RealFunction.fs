@@ -61,6 +61,8 @@ type RealFunction(f, ?symbol:string) =
         let vvv = Scalar<real> <@ %%vv:real @>
         RealFunction(vvv, symbol)
 
+    member x.Expr = x.ScalarExpr.Expr
+
     interface IRealFunction<RealFunction> with
         member x.Term = x
         member x.Expr = x.Body
@@ -84,7 +86,6 @@ type RealFunction(f, ?symbol:string) =
         member x.Draw(attrs:_) = 
             WebVisualization.draw_realfun2 attrs ((x :> IRealFunction<RealFunction>).Html()) x.MapExpr |> draw_board
     
-   
  type RealFunctionGroupVisualization(_grp:seq<IRealFunction<RealFunction>>) =
     interface IWebVisualization with
            member x.Draw(attrs:_) = 
@@ -93,6 +94,7 @@ type RealFunction(f, ?symbol:string) =
 
  type RealFunction2(f:Expr<Vector<dim<2>, real>->real>, ?af:Expr<real*real->Vec<dim<2>>>, ?sf:Expr<(real*real)->real>, ?s:Expr<real>, ?symbol:string) = 
      inherit RealFunction<Vec<dim<2>>, real*real>(R ``2``, Field.R, f, defaultArg af <@ fun (x, y) -> VectorsT.vec2 x y @>, ?symbol=symbol)
+     
      override x.ScalarExpr = 
         match s with
         | Some e -> e |> Scalar<real>
@@ -104,7 +106,19 @@ type RealFunction(f, ?symbol:string) =
             do vars |> List.map Expr.Var |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
             let nb = expand_as<real> me
             nb |> Scalar<real>
+     
      override x.ScalarVars = get_vars x.ScalarExpr.Expr |> List.map (exprvar >> realvar)
+
+     override x.SubstArg(v:Expr) = 
+        match v with
+        | NewTuple(a::b::[] as vars) ->
+            let mutable me = x.Body.Raw
+            let vv = x.ArgExpr
+            let m = typeof<Vec<dim<2>>>.GetProperty("ItemE")
+            vars |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
+            me |> expand_as<real>
+        | _ -> failwithf "%s is not a valid expression for argument substitution." (sprinte v)
+     
      member val ScalarMapExpr = 
         match sf with
         | Some f -> f
@@ -118,15 +132,7 @@ type RealFunction(f, ?symbol:string) =
             let tupledArg = Var("tupledArg", typeof<real*real>)
             Expr.Lambda(tupledArg, Expr.Let(vars.[0], Expr.TupleGet(Expr.Var(tupledArg), 0), Expr.Let(vars.[1], Expr.TupleGet(Expr.Var(tupledArg), 1), nb)))
                 |> expand_as<(real*real)->real>
-     override x.SubstArg(v:Expr) = 
-        match v with
-        | NewTuple(a::b::[] as vars) ->
-            let mutable me = x.Body.Raw
-            let vv = x.ArgExpr
-            let m = typeof<Vec<dim<2>>>.GetProperty("ItemE")
-            vars |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
-            me |> expand_as<real>
-        | _ -> failwithf "%s is not a valid expression for argument substitution." (sprinte v)
+
      member x.Item(a:_, b:_) = 
         let _a, _b = realexpr a, realexpr b in
         x.SubstArg <@ %_a, %_b @> |> Scalar<real>
@@ -143,6 +149,8 @@ type RealFunction(f, ?symbol:string) =
          let vv = Expr.Let(var1, <@ symbolic_fn (%sv) (%%eva:string[]) @>, expr2)
          let vvv = Scalar<real> <@ %%vv:real @>
          RealFunction2(vvv, symbol)
+
+     member x.Expr = x.ScalarExpr.Expr
 
      new (e:Scalar<real>, ?symbol:string) =
          let vars = e |> sexpr |> get_vars
