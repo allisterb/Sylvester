@@ -23,7 +23,7 @@ let a = realconst "a"
 
 (f.[a] + 1 + a + 6) |> fix {|a=6.|}
 
-f |> fix {|x=6.|} |> sexpr |> latexe
+f.[a] + f.[3]
 
 //f.SymbolicFn.ScalarExpr.Expr
 

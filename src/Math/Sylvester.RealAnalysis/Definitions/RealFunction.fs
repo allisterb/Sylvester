@@ -11,7 +11,9 @@ open FSharp.Quotations.DerivedPatterns
 [<AbstractClass>]
 type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, amap:Expr<'a->'t>, ?symbol:string) = 
     inherit ScalarFunction<'t, real, 'a>(domain, codomain, map, amap, ?symbol=symbol)
+
     abstract ScalarExpr:Scalar<real>
+   
     abstract ScalarVars: realvar list
 
     static member (==) (l:RealFunction<'t, 'a>, r:RealFunction<'t, 'a>) = l.ScalarExpr == r.ScalarExpr 
@@ -35,6 +37,7 @@ type RealFunction(f, ?symbol:string) =
     inherit RealFunction<real, real>(Field.R, Field.R, f, <@ id @>, ?symbol=symbol)
     override a.ScalarExpr = Scalar<real> a.Body
     override a.ScalarVars = a.Vars |> List.map (exprvar >> realvar)
+    override a.SubstArg x = base.SubstArg x |> simplifye
     new (e:Scalar<real>, ?symbol:string) =
         let v = get_vars e.Expr
         
@@ -62,6 +65,8 @@ type RealFunction(f, ?symbol:string) =
         RealFunction(vvv, symbol)
 
     member x.Expr = x.ScalarExpr.Expr
+
+    //member x.Item(i:obj) = i |> realterm  |> sexpr |> x.SubstArg |> simplifye |> x.TermMap
 
     interface IRealFunction<RealFunction> with
         member x.Term = x
@@ -116,7 +121,7 @@ type RealFunction(f, ?symbol:string) =
             let vv = x.ArgExpr
             let m = typeof<Vec<dim<2>>>.GetProperty("ItemE")
             vars |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
-            me |> expand_as<real>
+            me |> expand_as<real> |> simplifye
         | _ -> failwithf "%s is not a valid expression for argument substitution." (sprinte v)
      
      member val ScalarMapExpr = 
