@@ -23,7 +23,10 @@ let a = realconst "a"
 
 (f.[a] + 1 + a + 6) |> fix {|a=6.|}
 
-f.[a] + f.[3]
+
+maximize x [
+    f.[x] == 0R
+]
 
 //f.SymbolicFn.ScalarExpr.Expr
 

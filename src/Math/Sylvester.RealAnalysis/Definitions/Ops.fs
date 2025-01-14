@@ -50,6 +50,8 @@ type IRealAnalysisSymbolicOps =
 module RealAnalysisOps =
     let mutable Ops = MaximaRealAnalysisOps() :> IRealAnalysisSymbolicOps 
 
+    let DefaultZ3Solver = new Z3Solver()
+
     let solve (o:'a) (v:seq<realvar>)  (eqns: ScalarEquation<real> list) =
         let _eqns = eqns |> List.map(fix_eqn o)
         let vars = v |> Seq.map(fun _v -> _v.Var |> exprvar<real>) |> Seq.toList
