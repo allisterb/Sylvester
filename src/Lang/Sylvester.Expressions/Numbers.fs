@@ -486,32 +486,6 @@ module Numbers =
         | :? Natural as n -> Rational(n.IntVal)
         | _ -> failwithf "Cannot convert type %s to type Rational." typeof<'t>.Name
 
-    let inf<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
-        match typeof<'t>.Name with
-        | "Int32" -> box Int32.MaxValue :?> 't
-        | "Double" -> box Double.MaxValue :?> 't
-        | "Single" -> box Single.MaxValue :?> 't
-        | "Rational" -> box <| Rational(Double.MaxValue) :?> 't
-        | "BigRational" -> box <| MathNet.Numerics.BigRational.FromInt(Int32.MaxValue) :?> 't
-        | "BigInteger" -> box <| bigint(Double.MaxValue) :?> 't
-        | _ -> failwithf "The type %A is not supported by the pos_inf operator." typeof<'t>
-
-    let minf<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> =
-        match typeof<'t>.Name with
-        | "Int32" -> box Int32.MinValue :?> 't
-        | "Double" -> box Double.MinValue :?> 't
-        | "Single" -> box Single.MinValue :?> 't
-        | "Rational" -> box <| Rational(Double.MinValue) :?> 't
-        | "BigRational" -> box <| MathNet.Numerics.BigRational.FromInt(Int32.MinValue) :?> 't
-        | "BigInteger" -> box <| bigint(Double.MinValue) :?> 't
-        | _ -> failwithf "The type %A is not supported by the neg_inf operator." typeof<'t>
-
-    let inf'<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
-        let v = Expr.Value inf<'t> in <@ %%v:'t @>
-
-    let minf'<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> = 
-        let v = Expr.Value minf<'t> in <@ %%v:'t @> 
-    
     let (|PosInf|_|) (e:Expr<'t>) =
         match e with
         | Int32 (Int32.MaxValue) -> Some()

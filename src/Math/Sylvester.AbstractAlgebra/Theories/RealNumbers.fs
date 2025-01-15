@@ -126,9 +126,9 @@ module RealNumbers =
     
     (* Functions *)
 
-    let sup (s:ITotalOrder<real>) = formula<real>
+    let supremum (s:ITotalOrder<real>) = formula<real>
 
-    let inf (s:ITotalOrder<real>) = formula<real>
+    let infimum (s:ITotalOrder<real>) = formula<real>
 
     (* Predicates *)
 
@@ -141,4 +141,4 @@ module RealNumbers =
 
     (* Definitions *)
 
-    let lub (S:Expr<ITotalOrder<real>>) (E:Expr<ITotalOrder<real>>) = def real_numbers <| prop <@ forall %E ((%E).Set |<| set_of %S) (not_empty %E |&| bounded_above %E ===> (sup %E |?| set_of %S)) @>
+    let lub (S:Expr<ITotalOrder<real>>) (E:Expr<ITotalOrder<real>>) = def real_numbers <| prop <@ forall %E ((%E).Set |<| set_of %S) (not_empty %E |&| bounded_above %E ===> (supremum %E |?| set_of %S)) @>

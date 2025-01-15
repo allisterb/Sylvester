@@ -99,6 +99,10 @@ module Maxima =
         | Var v -> sanitize_symbol v.Name
         | ValueWithName(_,_,n) -> sanitize_symbol n
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)
+        | Double (Double.MaxValue) -> "inf"
+        | Int32 (Int32.MaxValue) -> "inf"
+        | Double (Double.MinValue) -> "minf"
+        | Int32 (Int32.MinValue) -> "minf"
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
 
     let sprintl (exprs: Expr<'t> list) =

@@ -167,6 +167,9 @@ module MathNetExpr =
             | Sum(xs) ->
                 let summands = List.map convertExpr xs
                 summands.Tail |> List.fold (Option.map2 add) summands.Head 
+            | Product(One(_)::r::[]) 
+            | Product(r::One(_)::[]) -> convertExpr r
+            | Product(Identifier(Symbol a) as x::Identifier(Symbol b)::[]) when a = b -> pow x (Expression.Two) |> convertExpr
             | Product(_) as p ->
                 let n = numerator p
                 let d = denominator p
@@ -217,6 +220,7 @@ module MathNetExpr =
                 let f = convertFunc func
                 let e = convertExpr par
                 Option.map2 (fun x y -> Expr.Call(x, [y])) f e
+            (*
             | PosIntPower(x, Number(y)) ->
                 let basis = convertExpr x
                 let rec exponentiate (power : BigRational) exp  =
@@ -229,6 +233,7 @@ module MathNetExpr =
                         let newBasis = exponentiate (power - BigRational.One) exp
                         mul exp newBasis
                 Option.map (exponentiate y) basis
+            *)
             | Power(x, minusOne) when minusOne = Expression.MinusOne ->
                 let a = convertExpr x
                 Option.map2 div (value Value.one) a

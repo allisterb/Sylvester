@@ -24,10 +24,9 @@ let a = realconst "a"
 (f.[a] + 1 + a + 6) |> fix {|a=6.|}
 
 
-maximize x [
-    f.[x] == 0R
-]
+lim x inf (1 / x) 
 
+//Maxima.last_output 10
 //f.SymbolicFn.ScalarExpr.Expr
 
 //let cp = econ_model<ConsumerPreference>()
