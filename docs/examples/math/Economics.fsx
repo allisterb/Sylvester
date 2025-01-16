@@ -29,12 +29,17 @@ let f = realfun "f" (x *** 3 + 1)
 //(f.[a] + 1 + a + 6) |> fix {|a=6.|}
 
 
-solve defaults [x;y;z] [
+//solve_for_elim x [y;z] [
+let eqns = [
     x - 6 *x + y == 30.
     x - y == 5.
     z == 5 * y + 2 * x
 ]
 
+solve_for y [z] eqns 
+List.map (sexpr >> get_vars) eqns |> List.concat |> List.map (exprvar<real> >> ScalarVar<real>) |> List.distinct
+       //let evars = List.except (e@[v]) allvars
+       //let vars = evars@[v] |> Seq.map sexpr |> Seq.toList
 type ConsumptionLeisure2() =
     inherit EconomicModel() 
     do 
@@ -74,11 +79,11 @@ type ConsumptionLeisure2() =
     member val Tax:Tax option = Some LumpSum with get,set 
     member x.UtilityConstraints = x.U.ScalarVars
     member x.TimeConstraint = x.l + x.Ns == x.h 
-    member x.BudgetConstraint = x.C == x.W * x.Ns + x.pi - x.T
+    member x.BudgetConstraint = x.C == match x.Tax with Some _ -> x.W * x.Ns + x.pi - x.T | None -> x.W * x.Ns + x.pi 
 
 let m = econ_model<ConsumptionLeisure2>()
 
-eliminate defaults [m.Ns; m.C] [m.BudgetConstraint; m.TimeConstraint] 
+solve_for_elim m.C [m.W] [m.BudgetConstraint; m.TimeConstraint] 
 //Maxima.last_output 10
 //f.SymbolicFn.ScalarExpr.Expr
 

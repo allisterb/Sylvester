@@ -70,3 +70,13 @@ module RealAnalysisOps =
         let _eqns = eqns |> List.map(fix_eqn o)
         let vars = v |> Seq.map(fun _v -> _v.Var |> exprvar<real>) |> Seq.toList
         Algebra.eliminate o vars (_eqns |> List.map sexpr) |> List.map Scalar
+
+    let solve_for_elim (v:realvar) (e:realvar list) (eqns: ScalarEquation<real> list) =
+         let vars = e@[v] |> Seq.map(fun _v -> _v.Var |> exprvar<real>) |> Seq.toList
+         Algebra.eliminate defaults vars (eqns |> List.map sexpr) |> List.map Scalar |> List.exactlyOne
+
+    let solve_for (v:realvar) (e:realvar list) (eqns: ScalarEquation<real> list) =
+        let allvars = List.map (sexpr >> get_vars) eqns |> List.concat |> List.map (exprvar<real> >> ScalarVar<real>) |> List.distinct
+        let evars = List.except (e@[v]) allvars
+        let vars = evars@[v] |> Seq.map sexpr |> Seq.toList
+        Algebra.eliminate (defaults) vars (eqns |> List.map sexpr) |> List.map Scalar |> List.exactlyOne

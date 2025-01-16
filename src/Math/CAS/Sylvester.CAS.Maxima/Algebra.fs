@@ -64,4 +64,5 @@ module Algebra =
         |> function
         | Ok s -> s
         | Error "" -> []
+        | Error e when e.Contains "last: empty argument" -> []
         | Error e -> failwithf "Error executing Maxima eliminate command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)

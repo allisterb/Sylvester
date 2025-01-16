@@ -74,7 +74,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
         | :? Scalar<'t> as b -> (a :> IEquatable<Term<'t>>).Equals b
         | _ -> false
     
-    override a.GetHashCode() = a.Expr.GetHashCode()
+    override a.GetHashCode() = a.Display.GetHashCode()
 
     interface ISymbolic<Scalar<'t>, 't> with
            member a.Term = a
