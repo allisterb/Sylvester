@@ -25,6 +25,10 @@ module R =
     
     let ratsimp (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.RatSimp)
 
+    let factor (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.Factor)
+
+    let factor_for (p:Scalar<real>) (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.FactorFor p.Expr)
+
     let partfrac_of (f:Scalar<real>) (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.PartFracOf f.Expr)
 
     let trigsimp (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.TrigSimp)

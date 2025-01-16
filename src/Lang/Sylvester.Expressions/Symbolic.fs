@@ -177,19 +177,22 @@ module Symbolic =
         | SpecificCall <@@ (*) @@> (_, _, [Double l; Double r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe <|  exprv r)
         | SpecificCall <@@ (*) @@> (_, _, [l; Call(None, Op "Identity", Double r::[])]) -> sprintf("%s\cdot%s") (latexe l) (latexe <|  exprv r)
         | SpecificCall <@@ (*) @@> (_, _, [Call(None, Op "Identity", Double l::[]); r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe r)
-        
-        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s%s") (latexe l) (latexe r)
-        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
-        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [Atom l; Atom r]) -> sprintf("%s%s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s(%s)") (latexe l) (latexe r)
+        | SpecificCall <@@ (/) @@> (_, _, [l; Atom r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
+        | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{(%s)}") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [Atom l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("(%s)^{%s}") (latexe l) (latexe r)
 
         | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latexe x)
 
         | Lambda(v, x) -> sprintf "%s \mapto %s" (latexe (Expr.Var v)) (latexe x)
         | Var x when x.Name.EndsWith "_bar" -> 
-            if Symbols.TransliterateGreek && Symbols.isGreek (x.Name.Delete("_bar")) then 
-                sprintf "\\bar{%s}" Symbols.GreekLatex.[x.Name.Delete("_bar")] 
+            let n = x.Name.Delete("_bar") in
+            if Symbols.TransliterateGreek && Symbols.isGreek n then 
+                sprintf "\\bar{%s}" Symbols.GreekLatex.[n] 
             else
-                sprintf "\\bar{%s}" (x.Name.Delete("_bar"))
+                sprintf "\\bar{%s}" n
         | Var x -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekLatex.[x.Name] else x.Name
         
         | ValueWithName(_,_,n) when n.EndsWith "_bar" -> 
@@ -197,7 +200,7 @@ module Symbolic =
                 sprintf "\\bar{%s}" Symbols.GreekLatex.[n.Delete("_bar")] 
             else
                 sprintf "\\bar{%s}" (n.Delete("_bar"))
-        | ValueWithName(_, _, n) -> if Symbols.TransliterateGreek && Symbols.isGreek n then Symbols.GreekLatex.[n] else n
+        | ValueWithName(_,_,n) -> if Symbols.TransliterateGreek && Symbols.isGreek n then Symbols.GreekLatex.[n] else n
 
         | Double d when d = Math.Floor(d + 0.00001) ->  latexe <| Expr.Value (Convert.ToInt32(d))
 
@@ -207,9 +210,10 @@ module Symbolic =
 
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
 
+    let inline latex x = x |> sexpr |> latexe 
+    
     let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
 
-    
     let inline simplify expr = expr |> sexpr |> simplifye
        
     let subst (e:Expr<'t>) (v:Expr<'u>) (r:Expr<'u>) =

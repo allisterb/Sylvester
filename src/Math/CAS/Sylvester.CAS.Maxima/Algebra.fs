@@ -30,8 +30,12 @@ module Algebra =
 
     let ratexpand (expr:Expr<'t>) = sprintf "ratexpand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
     
-    let ratsimp (expr:Expr<'t>) = sprintf "ratsimp(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
+    let ratsimp (expr:Expr<'t>) = sprintf "fullratsimp(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
     
+    let factor (expr:Expr<'t>) = sprintf "factor(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
+
+    let factor_for (p:Expr<'t>) (expr:Expr<'t>) = sprintf "factor(%s, %s);" (sprint expr) (sprint p) |> sendCmd<'t> (get_vars expr)
+
     let partfrac_of (frac:Expr<'t>) (expr:Expr<'t>) = sprintf "partfrac(%s, %s);" (sprint expr) (sprint frac) |> sendCmd<'t> (get_vars expr)
 
     let solve_for (options:'a) (v:Expr<'t> list) (system:Expr<bool> list) =

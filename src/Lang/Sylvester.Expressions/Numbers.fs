@@ -19,11 +19,14 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
         new(p:int64, q:int64) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:float, q:float) = {Numerator = BigInteger p; Denominator = BigInteger q}
         new(p:float32, q:float32) = {Numerator = BigInteger p; Denominator = BigInteger q}
-        new(x: float) = // From: http://www.fssnip.net/kV/title/Convert-a-Float-to-a-Mixed-Number
+        new(x: float) =
+            let n,d = x.ToRational().ToTuple() in {Numerator= BigInteger n; Denominator = BigInteger d}
+            // From: http://www.fssnip.net/kV/title/Convert-a-Float-to-a-Mixed-Number
+            (*
             let wholePart = int x     // whole part of x
             let decimalPt = x % 1.0   // decimal part of x
             let rec cF(Z : float, i : int, Dm : float, Do : float) =
-                match Z % 1.0 > 1e-6, i < 1 with
+                match Z % 1.0 > Double.Epsilon, i < 1 with
                 //  First case terminates after 14 iterations
                 | _    , true  -> (wholePart, (int64 (System.Math.Round(decimalPt * Do)), int64 Do))
                 //  Second case executes next cF (continuing fraction)
@@ -33,6 +36,8 @@ type Rational = // Inspired by: https://github.com/mathnet/mathnet-numerics/blob
             let w, (n, d) = decimalPt |> fun x -> cF(x, 14, 0.0, 1.0)
             let n' = ((w |> int64) * d) + n
             { Numerator = n' |> BigInteger; Denominator = d |> BigInteger }
+            (Num
+    *)
     end 
     member x.Tuple: ValueTuple<BigInteger, BigInteger> = x.Numerator, x.Denominator
     member x.Equals(y: Rational) = x.Tuple.Equals y.Tuple
