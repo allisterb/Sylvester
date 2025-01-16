@@ -2,15 +2,10 @@
 
 type ConsumptionLeisure() =
     inherit EconomicModel() 
-    do
-        base.Vars.["n"] <- realvar "n"
-        base.Vars.["C"] <- realvar "C"
-        base.Vars.["l"] <- realvar "l"
-        base.Vars.["W"] <- realvar "W"
-        base.Vars.["t"] <- realvar "t"
-        base.Vars.["h"] <- realvar "h"
-        base.Vars.["Ns"] <- realvar("Ns", "N^s")
-        base.Vars.["T"] <- realvar "T"
+    do 
+        base.CreateVars("n", "C", "l", "W", "t", "h", "T", "pi")
+        base.CreateVar("Ns", "N^s")
+        
     member x.n 
         with get() = x.GetVar("n")
         and set(value) = x.SetVar("n", value)
@@ -41,6 +36,7 @@ type ConsumptionLeisure() =
     member x.U
         with get() = x.GetFun2<UtilityFunction2> "U" 
         and set(value:UtilityFunction2) = x.SetFun2("U", value)
+    
     member val Tax:Tax option = Some LumpSum with get,set 
     member x.UtilityConstraints = x.U.ScalarVars
     member x.TimeConstraint = x.l + x.Ns == x.h 

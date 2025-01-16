@@ -3,19 +3,8 @@
 [<AbstractClass>]
 type GrowthModel() =
     inherit EconomicModel()
-    do
-        base.CreateVar "N"
-        base.CreateVar "N'"
-        base.CreateVar "K"
-        base.CreateVar "K'"
-        base.CreateVar "L"
-        base.CreateVar "C"
-        base.CreateVar "Y"
-        base.CreateVar "c"
-        base.CreateVar "l"
-        base.CreateVar "z"
-        base.CreateVar "y"
-
+    do base.CreateVars ("N", "N'", "K", "K'", "L", "C", "Y", "l", "c", "y", "z")
+        
     member x.N 
         with get() = x.GetVar "N"
         and set(value) = x.SetVar("N", value)

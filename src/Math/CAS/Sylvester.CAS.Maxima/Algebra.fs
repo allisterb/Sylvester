@@ -51,3 +51,17 @@ module Algebra =
         | Ok s -> s
         | Error "" -> []
         | Error e -> failwithf "Error executing Maxima solve command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+
+    let eliminate (options:'a) (v:Expr<'t> list) (system:Expr<bool> list) =
+        do if get_prop_else<bool> "posvars" false options  then system |> List.collect get_vars |> List.distinct |> List.map exprvar<real> |> List.iter assume_pos
+        let vars = get_varsl system
+        sprintf "eliminate(%s, %s);" (system |> sprintl) ("[" + (v |> List.collect get_vars |> List.distinct |> List.map (fun v -> sanitize_symbol v.Name) |> List.reduce(fun v1 v2 -> v1 + "," + v2)) + "]") 
+        |> send 
+        |> Result.mapError(fun e -> e.Message)
+        |> Result.bind(fun o -> if o = "" then Error "" else if o = "[]" then Ok [] else Infix.parseList o)
+        |> Result.map(fun e -> e |> List.map (MathNetExpr.toQuotation<'t> vars)) 
+        
+        |> function
+        | Ok s -> s
+        | Error "" -> []
+        | Error e -> failwithf "Error executing Maxima eliminate command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)

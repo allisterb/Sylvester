@@ -65,3 +65,8 @@ module RealAnalysisOps =
         let s = solve o [x] e
         if s.Length > 1 then failwithf "The equation %A has more than 1 solution for %A." e x
         s.[0].Rhs
+
+    let eliminate (o:'a) (v:seq<realvar>)  (eqns: ScalarEquation<real> list) =
+        let _eqns = eqns |> List.map(fix_eqn o)
+        let vars = v |> Seq.map(fun _v -> _v.Var |> exprvar<real>) |> Seq.toList
+        Algebra.eliminate o vars (_eqns |> List.map sexpr) |> List.map Scalar
