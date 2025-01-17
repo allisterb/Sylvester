@@ -84,7 +84,7 @@ module Maxima =
         | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("(%s) * (%s)") (sprint l) (sprint r)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("(%s) + (%s)") (sprint l) (sprint r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("(%s) - (%s)") (sprint l) (sprint r)
-        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("%s^(%s)") (sprint l) (sprint r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("(%s)^(%s)") (sprint l) (sprint r)
         
         | SpecificCall <@@ Microsoft.FSharp.Core.Operators.sin @@> (_, _, [l]) -> sprintf("sin(%s)") (sprint l) 
         | SpecificCall <@@ Microsoft.FSharp.Core.Operators.cos @@> (_, _, [l]) -> sprintf("cos(%s)") (sprint l)

@@ -6,6 +6,8 @@ type ConsumerPreference() =
     inherit EconomicModel()
     do
         base.CreateVars("q1", "q2", "p1", "p2", "Y")
+        base.CreateUtilFun2("U", "q1", "q2")
+
     member x.q1
         with get() = x.GetVar "q1" and set(value) = x.SetVar ("q1", value)
     member x.q2

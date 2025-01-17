@@ -16,6 +16,7 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 //em.GetVar "foo"
 //let m = econ_model<ProfitMaximization>(
 
+let a = realvar "a"
 let x = realvar "x"
 let y = realvar "y"
 let z = realvar "z"
@@ -31,12 +32,12 @@ let f = realfun "f" (x *** 3 + 1)
 
 //solve_for_elim x [y;z] [
 let eqns = [
-    x - 6 *x + y == 30.
-    x - y == 5.
+    x - 6 *x + y == 30. - 2 * a
+    x - y == 5. + a
     z == 5 * y + 2 * x
 ]
 
-solve_for y [z] eqns 
+
 List.map (sexpr >> get_vars) eqns |> List.concat |> List.map (exprvar<real> >> ScalarVar<real>) |> List.distinct
        //let evars = List.except (e@[v]) allvars
        //let vars = evars@[v] |> Seq.map sexpr |> Seq.toList
@@ -76,14 +77,17 @@ type ConsumptionLeisure2() =
         with get() = x.GetFun2<UtilityFunction2> "U" 
         and set(value:UtilityFunction2) = x.SetFun2("U", value)
     
-    member val Tax:Tax option = Some LumpSum with get,set 
-    member x.UtilityConstraints = x.U.ScalarVars
+    member val Tax:Tax option = None with get,set 
+    member x.UtilityConstraints  = x.U.ScalarVars
     member x.TimeConstraint = x.l + x.Ns == x.h 
     member x.BudgetConstraint = x.C == match x.Tax with Some _ -> x.W * x.Ns + x.pi - x.T | None -> x.W * x.Ns + x.pi 
 
 let m = econ_model<ConsumptionLeisure2>()
 
-solve_for_elim m.C [m.W] [m.BudgetConstraint; m.TimeConstraint] 
+solve_for_fun_elim m.C [m.Ns] m.W [m.BudgetConstraint; m.TimeConstraint] 
+
+let m2 = econ_model<ConsumerPreference>() 
+m2.U.ScalarExpr
 //Maxima.last_output 10
 //f.SymbolicFn.ScalarExpr.Expr
 

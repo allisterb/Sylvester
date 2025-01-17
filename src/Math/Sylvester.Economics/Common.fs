@@ -237,8 +237,10 @@ type EconomicModel() =
     member x.CreateFun(name:string, v:realvar) = x.SetFun<RealFunction>(name, realfun_s name v)
     member x.CreateProdFun(name:string, v:realvar) = x.SetFun<ProductionFunction>(name, realfun_s name v |> ProductionFunction)
     member x.CreateUtilFun(name:string, v:realvar) = x.SetFun<UtilityFunction>(name, realfun_s name v |> UtilityFunction)
+    member x.CreateUtilFun(name:string, v:string) = x.SetFun<UtilityFunction>(name, realfun_s name (x.GetVar v) |> UtilityFunction)
     member x.CreateProdFun2(name:string, v1:realvar, v2:realvar) = x.SetFun2<ProductionFunction2>(name, realfun2_s name v1 v2 |> ProductionFunction2)
     member x.CreateUtilFun2(name:string, v1:realvar, v2:realvar) = x.SetFun2<UtilityFunction2>(name, realfun2_s name v1 v2 |> UtilityFunction2)
+    member x.CreateUtilFun2(name:string, v1:string, v2:string) = x.SetFun2<UtilityFunction2>(name, realfun2_s name (x.GetVar v1) (x.GetVar v2) |> UtilityFunction2)
     interface IAttrs with member x.Attrs = x.Attrs
 
 module Economics =

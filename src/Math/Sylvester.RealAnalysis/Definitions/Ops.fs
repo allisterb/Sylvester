@@ -73,10 +73,24 @@ module RealAnalysisOps =
 
     let solve_for_elim (v:realvar) (e:realvar list) (eqns: ScalarEquation<real> list) =
          let vars = e@[v] |> Seq.map(fun _v -> _v.Var |> exprvar<real>) |> Seq.toList
-         Algebra.eliminate defaults vars (eqns |> List.map sexpr) |> List.map Scalar |> List.exactlyOne
+         Algebra.eliminate defaults vars (eqns |> List.map sexpr) |> List.map Scalar 
+
+    let solve_for_elim_single (v:realvar) (e:realvar list) (eqns: ScalarEquation<real> list) =
+        match solve_for_elim v e eqns with
+        | s::[] -> s
+        | [] -> failwithf "Could not solve the specified equation system for %A by eliminating %A" v e
+        | l -> failwithf "Multiple expressions returned attemting to solve the specified equation system for %A by eliminating %A: %A" v e l
 
     let solve_for (v:realvar) (e:realvar list) (eqns: ScalarEquation<real> list) =
         let allvars = List.map (sexpr >> get_vars) eqns |> List.concat |> List.map (exprvar<real> >> ScalarVar<real>) |> List.distinct
         let evars = List.except (e@[v]) allvars
         let vars = evars@[v] |> Seq.map sexpr |> Seq.toList
-        Algebra.eliminate (defaults) vars (eqns |> List.map sexpr) |> List.map Scalar |> List.exactlyOne
+        Algebra.eliminate (defaults) vars (eqns |> List.map sexpr) |> List.map Scalar 
+
+    let solve_for_single (v:realvar) (e:realvar list) (eqns: ScalarEquation<real> list) =
+           match solve_for v e eqns with
+           | s::[] -> s
+           | [] -> failwithf "Could not solve the specified equation system for %A in terms of %A" v e
+           | l -> failwithf "Multiple expressions returned attempting to solve the specified equation system for %A in terms of %A: %A" v e l
+    
+    let collect_terms (term:Scalar<real>) (expr:Scalar<real>) = Algebra.collectterms term.Expr expr.Expr |> Scalar

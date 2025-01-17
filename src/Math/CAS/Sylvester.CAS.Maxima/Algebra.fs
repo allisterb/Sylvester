@@ -30,7 +30,7 @@ module Algebra =
 
     let ratexpand (expr:Expr<'t>) = sprintf "ratexpand(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
     
-    let ratsimp (expr:Expr<'t>) = sprintf "fullratsimp(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
+    let ratsimp (expr:Expr<'t>) = sprintf "ratsimp(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
     
     let factor (expr:Expr<'t>) = sprintf "factor(%s);" (sprint expr) |> sendCmd<'t> (get_vars expr)
 
@@ -66,3 +66,5 @@ module Algebra =
         | Error "" -> []
         | Error e when e.Contains "last: empty argument" -> []
         | Error e -> failwithf "Error executing Maxima eliminate command: %s.\n. Session output:%s." e (Maxima.defaultInt.Value.ConsoleSession.Last10Output)
+
+    let collectterms (term:Expr<'t>) (expr:Expr<'t>) = sprintf "collectterms(%s, %s);" (sprint expr) (sprint term) |> sendCmd<'t> (get_vars expr)
