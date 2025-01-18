@@ -692,6 +692,27 @@ module FsExpr =
 
     let get_prop_else<'t> n (e:'t) (o:obj) = if has_prop<'t> n o then o.GetType().GetProperties().First(fun p -> p.Name = n && p.PropertyType = typeof<'t>).GetValue(o) :?> 't else e
     
+    let has_dict_prop<'t> n (o:IDictionary<string, obj>) = o.Any(fun p -> p.Key = n && p.Value.GetType() = typeof<'t>)
+       
+    let get_dict_prop<'t> n (o:IDictionary<string, obj>) = o.First(fun p -> p.Key = n && p.Value.GetType()= typeof<'t>).Value :?> 't
+
+    let get_dict_prop_else<'t> n (e:'t) (o:IDictionary<string, obj>) = if has_dict_prop<'t> n o then get_dict_prop<'t> n o else e
+       
+    let to_dict (o:obj) = 
+        let dict = new Dictionary<string, obj>()
+        for p in o.GetType().GetProperties() do
+            let k = p.Name
+            let v = p.GetValue(o)
+            if not (dict.ContainsKey k) then dict.Add(k, v) else dict.[k] <- v
+        dict
+
+    let merge_dict(dict:IDictionary<string, obj>) (o:obj) =
+        for p in o.GetType().GetProperties() do
+            let k = p.Name
+            let v = p.GetValue(o)
+            dict.[k] <- v
+        dict
+
     let get_consts expr =
             let dict = new System.Collections.Generic.List<Type*string>()
             expr |> traverse' (function | ValueWithName(_, t, n) -> dict.Add(t, n); None | _ -> None) |> ignore

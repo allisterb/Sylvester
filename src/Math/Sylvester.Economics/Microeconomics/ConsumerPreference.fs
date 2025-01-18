@@ -36,14 +36,19 @@ type ConsumerPreference() =
     interface IWebVisualization with
         member x.Draw(attrs:_) = 
             let view = if has_prop<ConsumerPreferenceView> "View" attrs then get_prop<ConsumerPreferenceView> "View" attrs else failwith "A view must be specified for this consumer preference diagram"
+            
             match view with
             | UtililtyMaximization ->
-                let Y = get_prop_else<real*real> "p1" (0.,10.) attrs 
-                let p1 = get_prop_else<real*real> "p1" (0.,10.) attrs
-                let p2 = get_prop_else<real*real> "p1" (0.,10.) attrs
-                let dict = readOnlyDict[ ("Y", box Y); ("p1", box p1); ("p2", box p2)]
-                to_json dict |> ignore
-            Html.Text "kk"    
+                let uvals = if has_prop<seq<real>> "U" attrs then get_prop<seq<real>> "U" attrs else failwith "You must specify some utility values to plot indifference curves." 
+                let fs = uvals |> Seq.map(fun v -> utilfun_im (sprintf "%s = %A" x.q2.Name v) x.q2 (x.U == v) :> IRealFunction<RealFunction>)
+                //let Y = get_prop_else<real*real> "Y" (0.,10.) attrs 
+                //let p1 = get_prop_else<real*real> "p1" (0.,10.) attrs
+                //let p2 = get_prop_else<real*real> "p2" (0.,10.) attrs
+
+                WebVisualization.draw_realfuns attrs (fs |> Seq.map(fun x->x.Html()) |> Seq.toArray) (fs |> Seq.map(fun x ->x.Term.MapExpr) |> Seq.toArray) |> draw_board
+                
+                //to_json dict |> ignore
+            //Html.Text "kk"    
             
 and ConsumerPreferenceView =
 | UtililtyMaximization
