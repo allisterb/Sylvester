@@ -334,7 +334,7 @@ module Economics =
     
     let gamble distr = Gamble distr
 
-    let econ_model<'m when 'm :> EconomicModel and 'm: (new : unit -> 'm)>()  = new 'm()
+    let econ_model<'m when 'm :> EconomicModel and 'm: (new : unit -> 'm)>  = new 'm()
     
     let get_model_var (m:EconomicModel) v = m.GetVar v
     

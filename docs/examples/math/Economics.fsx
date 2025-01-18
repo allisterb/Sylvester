@@ -82,12 +82,13 @@ type ConsumptionLeisure2() =
     member x.TimeConstraint = x.l + x.Ns == x.h 
     member x.BudgetConstraint = x.C == match x.Tax with Some _ -> x.W * x.Ns + x.pi - x.T | None -> x.W * x.Ns + x.pi 
 
-let m = econ_model<ConsumptionLeisure2>()
+let m = econ_model<ConsumptionLeisure2>
 
 solve_for_fun_elim m.C [m.Ns] m.W [m.BudgetConstraint; m.TimeConstraint] 
 
-let m2 = econ_model<ConsumerPreference>() 
-m2.U.ScalarExpr
+let m2 = econ_model<ConsumerPreference>
+m2.U <- utilfun2 "U" ((m2.q1 *** 0.4) * (m2.q2 *** 0.6))
+m2.DemandFunctions
 //Maxima.last_output 10
 //f.SymbolicFn.ScalarExpr.Expr
 

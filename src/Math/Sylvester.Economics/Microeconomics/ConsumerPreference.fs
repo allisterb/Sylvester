@@ -27,7 +27,25 @@ type ConsumerPreference() =
     member x.BudgetConstraint = x.Y == x.p1 * x.q1 + x.p2 * x.q2
     member x.UtilityMaximization = mrs x.U == x.p1 / x.p2
     override x.Constraints = [x.BudgetConstraint; x.UtilityMaximization]
+    
     member x.DemandFunctions =
         let q = solve {|posvars=true|} [x.q1;x.q2] x.Equations
         do if q.Length <> 2 then failwithf "Could not solve constraints for %A and %A." x.q1 x.q2
         [demandfun "q1" (fixvar [x.p2; x.Y] (rhs q.[0])); demandfun "q2" (fixvar [x.p1; x.Y] (rhs q.[1]))]
+
+    interface IWebVisualization with
+        member x.Draw(attrs:_) = 
+            let view = if has_prop<ConsumerPreferenceView> "View" attrs then get_prop<ConsumerPreferenceView> "View" attrs else failwith "A view must be specified for this consumer preference diagram"
+            match view with
+            | UtililtyMaximization ->
+                let Y = get_prop_else<real*real> "p1" (0.,10.) attrs 
+                let p1 = get_prop_else<real*real> "p1" (0.,10.) attrs
+                let p2 = get_prop_else<real*real> "p1" (0.,10.) attrs
+                let dict = readOnlyDict[ ("Y", box Y); ("p1", box p1); ("p2", box p2)]
+                to_json dict |> ignore
+            Html.Text "kk"    
+            
+and ConsumerPreferenceView =
+| UtililtyMaximization
+            
+   
