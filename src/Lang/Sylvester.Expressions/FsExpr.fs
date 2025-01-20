@@ -710,8 +710,15 @@ module FsExpr =
         for p in o.GetType().GetProperties() do
             let k = p.Name
             let v = p.GetValue(o)
-            dict.[k] <- v
+            if not (dict.ContainsKey k) then dict.[k] <- v
         dict
+
+    let merge_overwrite_dict(dict:IDictionary<string, obj>) (o:obj) =
+           for p in o.GetType().GetProperties() do
+               let k = p.Name
+               let v = p.GetValue(o)
+               dict.[k] <- v
+           dict
 
     let get_consts expr =
             let dict = new System.Collections.Generic.List<Type*string>()

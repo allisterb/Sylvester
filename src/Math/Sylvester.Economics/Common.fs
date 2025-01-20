@@ -216,6 +216,7 @@ type EconomicModel() =
     member x.Equations = x.Constraints |> List.choose(fun c -> if c :? ScalarEquation<real> then c :?> ScalarEquation<real> |> Some else None) 
     member internal x.CreateVar(name:string, ?nt:string) = x.Vars.[name] <- realvar (defaultArg nt name)    
     member x.CreateVars([<ParamArray>] n:string[]) = n |> Array.iter x.CreateVar
+    member x.CreateVars([<ParamArray>] n:(string*string)[]) = n |> Array.iter (fun (v,l) -> x.CreateVar(v, l))
     member x.GetVar n = if x.Vars.ContainsKey n then x.Vars.[n] else failwithf "The model does not contain the real variable %A." n
     member x.SetVar(n, v) = x.Vars.[n] <- v
     member x.GetFun<'a when 'a :> RealFunction> n = x.Functions.[n] :?> 'a

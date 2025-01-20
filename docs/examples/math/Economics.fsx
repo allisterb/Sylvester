@@ -18,9 +18,14 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let a = realvar "a"
 let x = realvar "x"
-let y = realvar "y"
+//let y = realvar "y"
 let z = realvar "z"
 let f = realfun "f" (x *** 3 + 1)
+
+let m = econ_model<ConsumerPreference>
+(m.BudgetConstraint.Fix({|Y=4.|}))
+let y = realfun_im "Y" m.p1 ((m.BudgetConstraint.Fix({|Y=4.|})))
+
 
 //factor (x***2 + x***4) |> latex
 //partfrac_of x (4 / ((x+2)*(x*6))) |> latex
