@@ -167,10 +167,9 @@ module Symbolic =
         | SpecificCall <@@ (>=) @@> (_, _, [l; r]) -> sprintf("%s >= %s") (latexe l) (latexe r)
         | SpecificCall <@@ (=) @@> (_, _, [l; r]) -> sprintf("%s = %s") (latexe l) (latexe r)
 
-        | SpecificCall <@@ (+) @@> (_, _, [Double -1.0; r]) -> sprintf("%s - %s") (latexe r) (latexe <@ 1.0 @>)
         | SpecificCall <@@ (*) @@> (_, _, [Double 1.0; r]) -> latexe r 
+        | SpecificCall <@@ (+) @@> (_, _, [l;SpecificCall <@@ (*) @@> (_, _, [Double -1.0; Atom r])]) -> sprintf("%s - %s") (latexe l) (latexe r)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
-        | SpecificCall <@@ (+) @@> (_, _, [l; (SpecificCall <@@ (*) @@> (_, _, [Double -1.0; r]))]) -> sprintf("%s - %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [ValueWithName(_,_, _) as l; r]) -> sprintf("{%s}{%s}") (latexe l) (latexe <| r)
         | SpecificCall <@@ (*) @@> (_, _, [l; ValueWithName(_,_, _) as r]) -> sprintf("{%s}{%s}") (latexe l) (latexe r)
@@ -181,8 +180,9 @@ module Symbolic =
         | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s(%s)") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; Atom r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{(%s)}") (latexe l) (latexe r)
-        | SpecificCall <@@ ( ** ) @@> (_, _, [Atom l; r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
-        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("(%s)^{%s}") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [Atom l; Atom r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; Atom r]) -> sprintf("(%s)^{%s}") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("(%s)^{(%s)}") (latexe l) (latexe r)
 
         | Call(None, Op "Exp", x::[]) -> sprintf("exp(%s)") (latexe x)
 
