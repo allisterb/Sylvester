@@ -8,27 +8,7 @@
 
 div.myheader {
     position: absolute;
-    margin: 30px;
-    left: 8%;
-    font-size: xx-large;
-}
-
-div.myfooter {
-    position: absolute;
-    margin: 30px;
-    right: 8%;
-	font-size: xx-large;
-}
-
-section#slide-1-0.div.myheader {
-    margin-top:100%
-}
-
-section#slide-0-0.present {
-	background-color: "red"
-}
-
-td.nfg_2p {
-    border: 1px solid black;
-    border-collapse: collapse;
+    margin-top: 10px;
+    left: 4%;
+    font-size: 20pt;
 }
