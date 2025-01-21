@@ -34,9 +34,12 @@ type Z3Solver(?nonLinear:bool, ?logic:string) =
     member x.Check(constraints: seq<BoolExpr>) = solver.Check constraints
     member x.Model() = let m = solver.Model in if isNull m then failwith "No model exists." else m
     member x.OptModel() = let m = optimizer.Model in if isNull m then failwith "No model exists." else m
-    member x.Reset() = solver.Reset()
+    member x.Reset() = solver.Reset(); optimizer
 
-    interface IDisposable with member x.Dispose() = solver.Dispose()
+    interface IDisposable with 
+        member x.Dispose() = 
+            solver.Dispose()
+            ctx.Dispose()
    
     static member val SolverTacticsHelp = 
         let ctx = new Context() in 
