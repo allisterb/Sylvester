@@ -80,8 +80,9 @@ module Symbolic =
     let fix (attrs:'a) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
         let mutable m = s.Expr.Raw
         get_consts m |> List.iter(fun (t, n) -> 
-            if has_prop<'b> n attrs then 
-                let s = get_prop<'b> n attrs in 
+            let name = n.Replace("_", "").Replace("^", "")
+            if has_prop<'b> name attrs then 
+                let s = get_prop<'b> name attrs in 
                 let v = exprv s in 
                 m <- replace_expr (Expr.ValueWithName(Unchecked.defaultof<'b>, n)) v m
                 m <- replace_expr (expr_var<'b> n) v m
@@ -169,6 +170,8 @@ module Symbolic =
 
         | SpecificCall <@@ (*) @@> (_, _, [Double 1.0; r]) -> latexe r 
         | SpecificCall <@@ (+) @@> (_, _, [l;SpecificCall <@@ (*) @@> (_, _, [Double -1.0; Atom r])]) -> sprintf("%s - %s") (latexe l) (latexe r)
+        | SpecificCall <@@ (+) @@> (_, _, [l;SpecificCall <@@ (*) @@> (_, _, [Double -1.0; r])]) -> sprintf("%s - (%s)") (latexe l) (latexe r)
+        | SpecificCall <@@ (+) @@> (_, _, [Double l as d; r]) when l < 0. -> sprintf("%s - %s") (latexe r) (latexe d)
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [ValueWithName(_,_, _) as l; r]) -> sprintf("{%s}{%s}") (latexe l) (latexe <| r)
@@ -177,10 +180,13 @@ module Symbolic =
         | SpecificCall <@@ (*) @@> (_, _, [l; Call(None, Op "Identity", Double r::[])]) -> sprintf("%s\cdot%s") (latexe l) (latexe <|  exprv r)
         | SpecificCall <@@ (*) @@> (_, _, [Call(None, Op "Identity", Double l::[]); r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [Atom l; Atom r]) -> sprintf("%s%s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; Atom r]) -> sprintf("%s%s") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; SpecificCall <@@ ( ** ) @@> (_, _, [Atom b; e])]) -> sprintf("%s%s^%s") (latexe l) (latexe b) (latexe e)
         | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s(%s)") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; Atom r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{(%s)}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [Atom l; Atom r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)
+        | SpecificCall <@@ ( ** ) @@> (_, _, [Atom l; r]) -> sprintf("%s^{(%s)}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; Atom r]) -> sprintf("(%s)^{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [l; r]) -> sprintf("(%s)^{(%s)}") (latexe l) (latexe r)
 
@@ -206,7 +212,7 @@ module Symbolic =
 
         | Double d ->
             let r = Rational d
-            if r.Numerator.IsOne then sprintf "\\frac{%A}{%A}" r.Numerator r.Denominator else d.ToString()
+            if r.Numerator.IsOne || (-r.Numerator).IsOne then sprintf "\\frac{%A}{%A}" r.Numerator r.Denominator else d.ToString()
 
         | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
 

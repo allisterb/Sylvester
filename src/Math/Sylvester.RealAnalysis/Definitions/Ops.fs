@@ -48,7 +48,7 @@ type IRealAnalysisSymbolicOps =
         member __.Sum (x:Expr<'b>) (l:Expr<int>) (u:Expr<int>) (expr:Expr<'a>) = 
              Analysis.sum x l u expr
         member __.SolveFor (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for {||} [x] e
-        member __.SolveForPosVars (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for {||} [x] e
+        member __.SolveForPosVars (x:Expr<real>) (e:Expr<bool> list) = Algebra.solve_for {|posvars=true|} [x] e
              
 [<AutoOpen>]    
 module RealAnalysisOps =

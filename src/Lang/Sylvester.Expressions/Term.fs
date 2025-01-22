@@ -42,7 +42,7 @@ type Term<'t when 't: equality> (expr:Expr<'t>, ?h:TermHistory) =
     static member (==) (l:'t, r:Term<'t>) = let l' = exprv l in <@ %l' = %r.Expr @> |> Prop
 
 and [<AbstractClass>] TermVar<'t when 't: equality>(n: string) = 
-    inherit Term<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t> |> simplifye)
+    inherit Term<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>)
     override x.Display = sprintf "{%A}" n
     member x.Name = n
     member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
@@ -60,7 +60,7 @@ and IndexVar(expr: Expr<int>) =
     static member (-) (l:IndexVar, r:IndexVar) = IndexVar(<@ %l.Expr - %r.Expr @>)
 
 and [<AbstractClass>] TermConst<'t when 't: equality>(n: string) = 
-    inherit Term<'t>(Expr.ValueWithName(Unchecked.defaultof<'t>, n) |> expand_as<'t> |> simplifye)
+    inherit Term<'t>(Expr.ValueWithName(Unchecked.defaultof<'t>, n) |> expand_as<'t>)
 
 and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>, ?h:TermHistory) =
     inherit Term<'t>(expr, ?h=h)
@@ -89,9 +89,9 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
     interface IHtmlDisplay with
         member x.Html() = "$$" + latexe x.Expr + "$$"
 
-    static member Zero = typeof<'t> |> zero_val |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member Zero = typeof<'t> |> zero_val |> expand_as<'t> |> Scalar<'t>
 
-    static member One = typeof<'t> |> one_val |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member One = typeof<'t> |> one_val |> expand_as<'t> |> Scalar<'t>
 
     static member op_Implicit (l:Scalar<'t>):Expr<'t> = l.Expr
 
@@ -105,164 +105,164 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     (* Unary operators *)
 
-    static member (~-) (l:Scalar<'t>) = call_neg l.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (~-) (l:Scalar<'t>) = call_neg l.Expr |> expand_as<'t> |> Scalar<'t>
 
     static member (!) (l:Scalar<'t>) = l |> sexpr |> ev
 
     (* Binary operators *)
 
-    static member (+) (l:Scalar<'t>, r:Scalar<'t>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<'t>, r:Scalar<'t>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
     
-    static member (+) (l:Scalar<'t>, r:'t) = call_add (l.Expr) (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<'t>, r:'t) = call_add (l.Expr) (Expr.Value r) |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:'t, r:Scalar<'t>) = call_add (Expr.Value l) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:'t, r:Scalar<'t>) = call_add (Expr.Value l) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:Expr<'t>, r:Scalar<'t>) = call_add l r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Expr<'t>, r:Scalar<'t>) = call_add l r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (+) (l:Scalar<'t>, r:Expr<'t>) = call_add (l.Expr) r |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<'t>, r:Expr<'t>) = call_add (l.Expr) r |> expand_as<'t> |> Scalar<'t>
     
-    static member (+) (l:Scalar<real>, r:int) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<real>, r:int) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:Scalar<real>, r:rat) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<real>, r:rat) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
     
-    static member (+) (l:Scalar<real>, r:nat) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<real>, r:nat) = let r' = (real) r in call_add (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:int, r:Scalar<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:int, r:Scalar<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:rat, r:Scalar<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:rat, r:Scalar<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (+) (l:nat, r:Scalar<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:nat, r:Scalar<real>) = let l' = (real) l in call_add (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (+) (l:Scalar<rat>, r:int) = call_add (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<rat>, r:int) = call_add (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:int, r:Scalar<rat>) = call_add (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:int, r:Scalar<rat>) = call_add (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:Scalar<int>, r:nat) = call_add (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<int>, r:nat) = call_add (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:Scalar<real>, r:ISymbolic<_, real>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:Scalar<real>, r:ISymbolic<_, real>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
 
-    static member (+) (l:ISymbolic<_, real>, r:Scalar<real>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (+) (l:ISymbolic<_, real>, r:Scalar<real>) = call_add (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<'t>, r:Scalar<'t>) = call_sub (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<'t>, r:Scalar<'t>) = call_sub (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<'t>, r:'t) = call_sub (l.Expr) (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<'t>, r:'t) = call_sub (l.Expr) (Expr.Value r) |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:'t, r:Scalar<'t>) = call_sub (Expr.Value l) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:'t, r:Scalar<'t>) = call_sub (Expr.Value l) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Expr<'t>, r:Scalar<'t>) = call_sub l r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Expr<'t>, r:Scalar<'t>) = call_sub l r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<'t>, r:Expr<'t>) = call_sub (l.Expr) r |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<'t>, r:Expr<'t>) = call_sub (l.Expr) r |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<real>, r:int) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<real>, r:int) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<real>, r:rat) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<real>, r:rat) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<real>, r:nat) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<real>, r:nat) = let r' = (real) r in call_sub (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:int, r:Scalar<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:int, r:Scalar<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:rat, r:Scalar<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:rat, r:Scalar<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:nat, r:Scalar<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:nat, r:Scalar<real>) = let l' = (real) l in call_sub (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<rat>, r:int) = call_sub (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<rat>, r:int) = call_sub (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:int, r:Scalar<rat>) = call_sub (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:int, r:Scalar<rat>) = call_sub (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (-) (l:Scalar<int>, r:nat) = call_sub (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (-) (l:Scalar<int>, r:nat) = call_sub (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> Scalar<'t>
 
 
-    static member (*) (l:Scalar<'t>, r:Scalar<'t>) = call_mul (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<'t>, r:Scalar<'t>) = call_mul (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
     
-    static member (*) (l:Scalar<'t>, r:'t) = call_mul (l.Expr) (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<'t>, r:'t) = call_mul (l.Expr) (Expr.Value r) |> expand_as<'t> |> Scalar<'t>
 
-    static member (*) (l:'t, r:Scalar<'t>) = call_mul (Expr.Value l) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:'t, r:Scalar<'t>) = call_mul (Expr.Value l) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (*) (l:Expr<'t>, r:Scalar<'t>) = call_mul l r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Expr<'t>, r:Scalar<'t>) = call_mul l r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (*) (l:Scalar<'t>, r:Expr<'t>) = call_mul (l.Expr) r |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<'t>, r:Expr<'t>) = call_mul (l.Expr) r |> expand_as<'t> |> Scalar<'t>
     
-    static member (*) (l:Scalar<real>, r:int) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<real>, r:int) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (*) (l:Scalar<real>, r:rat) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<real>, r:rat) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
     
-    static member (*) (l:Scalar<real>, r:nat) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<real>, r:nat) = let r' = (real) r in call_mul (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (*) (l:int, r:Scalar<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:int, r:Scalar<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (*) (l:rat, r:Scalar<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:rat, r:Scalar<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (*) (l:nat, r:Scalar<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:nat, r:Scalar<real>) = let l' = (real) l in call_mul (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (*) (l:Scalar<rat>, r:int) = call_mul (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<rat>, r:int) = call_mul (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> Scalar<'t>
 
-    static member (*) (l:int, r:Scalar<rat>) = call_mul (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:int, r:Scalar<rat>) = call_mul (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (*) (l:Scalar<int>, r:nat) = call_mul (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (*) (l:Scalar<int>, r:nat) = call_mul (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> Scalar<'t>
 
 
-    static member (/) (l:Scalar<'t>, r:Scalar<'t>) = call_div (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<'t>, r:Scalar<'t>) = call_div (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
     
-    static member (/) (l:Scalar<'t>, r:'t) = call_div (l.Expr) (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<'t>, r:'t) = call_div (l.Expr) (Expr.Value r) |> expand_as<'t> |> Scalar<'t>
 
-    static member (/) (l:'t, r:Scalar<'t>) = call_div (Expr.Value l) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:'t, r:Scalar<'t>) = call_div (Expr.Value l) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (/) (l:Expr<'t>, r:Scalar<'t>) = call_div l r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Expr<'t>, r:Scalar<'t>) = call_div l r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (/) (l:Scalar<'t>, r:Expr<'t>) = call_div (l.Expr) r |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<'t>, r:Expr<'t>) = call_div (l.Expr) r |> expand_as<'t> |> Scalar<'t>
     
-    static member (/) (l:Scalar<real>, r:int) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<real>, r:int) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (/) (l:Scalar<real>, r:rat) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<real>, r:rat) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
     
-    static member (/) (l:Scalar<real>, r:nat) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<real>, r:nat) = let r' = (real) r in call_div (l.Expr) (Expr.Value r') |> expand_as<'t> |> Scalar<'t>
 
-    static member (/) (l:int, r:Scalar<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:int, r:Scalar<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (/) (l:rat, r:Scalar<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:rat, r:Scalar<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (/) (l:nat, r:Scalar<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:nat, r:Scalar<real>) = let l' = (real) l in call_div (Expr.Value l') r.Expr |> expand_as<'t> |> Scalar<'t>
     
-    static member (/) (l:Scalar<rat>, r:int) = call_div (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<rat>, r:int) = call_div (l.Expr) (Expr.Value (rat r)) |> expand_as<'t> |> Scalar<'t>
 
-    static member (/) (l:int, r:Scalar<rat>) = call_div (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:int, r:Scalar<rat>) = call_div (Expr.Value (rat l)) r.Expr |> expand_as<'t> |> Scalar<'t>
 
-    static member (/) (l:Scalar<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member (/) (l:Scalar<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> Scalar<'t>
 
 
-    static member ( ***) (l : Scalar<real>, r : Scalar<real>) = call_pow l.Expr r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<real>, r : Scalar<real>) = call_pow l.Expr r.Expr |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : Scalar<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t>  |> Scalar<'t>
     
-    static member ( ***) (l : Scalar<real>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<real>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : Scalar<real>, r : nat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<real>, r : nat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : Scalar<real>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<real>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : Scalar<rat>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<rat>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : Scalar<rat>, r : rat) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<rat>, r : rat) = call_pow l.Expr (Expr.Value r) |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : Scalar<rat>, r : int) = call_pow l.Expr (Expr.Value (Rational(r, 1))) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<rat>, r : int) = call_pow l.Expr (Expr.Value (Rational(r, 1))) |> expand_as<'t>  |> Scalar<'t>
          
-    static member ( ***) (l : Scalar<int>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<int>, r : int) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t>  |> Scalar<'t>
          
-    static member ( ***) (l : Scalar<nat>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<nat>, r : rat) = call_pow l.Expr (Expr.Value(real r)) |> expand_as<'t>  |> Scalar<'t>
     
-    static member ( ***) (l : real, r : Scalar<real>) = call_pow (Expr.Value l) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : real, r : Scalar<real>) = call_pow (Expr.Value l) r.Expr |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : int, r : Scalar<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : int, r : Scalar<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : rat, r : Scalar<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : rat, r : Scalar<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : nat, r : Scalar<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : nat, r : Scalar<real>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t>  |> Scalar<'t>
 
-    static member ( ***) (l : int, r : Scalar<int>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : int, r : Scalar<int>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t>  |> Scalar<'t>
     
-    static member ( ***) (l : rat, r : Scalar<rat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : rat, r : Scalar<rat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t>  |> Scalar<'t>
     
-    static member ( ***) (l : nat, r : Scalar<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : nat, r : Scalar<nat>) = call_pow (Expr.Value(real l)) r.Expr |> expand_as<'t>  |> Scalar<'t>
 
     static member (==) (l:Scalar<'t>, r:Scalar<'t>) = ScalarEquation<'t>(l, r)
 
@@ -296,7 +296,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
 and ScalarVar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (expr:Expr<'t>, ?label:string) = 
     inherit Scalar<'t>(expr)
-    new(n:string, ?label:string) = ScalarVar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t> |> simplifye, ?label=label)
+    new(n:string, ?label:string) = ScalarVar<'t>(Expr.Var(Var(n, typeof<'t>)) |> expand_as<'t>, ?label=label)
     member x.Name = src expr
     member val Label = (defaultArg label (src expr)) with get,set 
     member x.Var = match x.Expr with | Var v -> v | _ -> failwith ""
@@ -308,7 +308,7 @@ and ScalarIndexedVar<'t when 't: equality and 't :> ValueType and 't :> IEquatab
     inherit ScalarVar<'t>(<@ var.[index.Expr] @>)
     
 and ScalarConst<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(n: string, ?v:'t) = 
-    inherit Scalar<'t>(Expr.ValueWithName((defaultArg v Unchecked.defaultof<'t>), n) |> expand_as<'t> |> simplifye)
+    inherit Scalar<'t>(Expr.ValueWithName((defaultArg v Unchecked.defaultof<'t>), n) |> expand_as<'t>)
     member val Name = n
     member val Val = defaultArg v Unchecked.defaultof<'t>
 
@@ -506,12 +506,12 @@ module Scalar =
 
     let scalar_eqn<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (e:Expr<bool>) =
         match e with
-        | SpecificCall <@@ (=) @@> (_,_,l::r::[]) -> ScalarEquation<'t> ((l |> expand_as<'t> |> simplifye |> Scalar<'t>), (l |> expand_as<'t> |> simplifye |> Scalar<'t>))
+        | SpecificCall <@@ (=) @@> (_,_,l::r::[]) -> ScalarEquation<'t> ((l |> expand_as<'t> |> Scalar<'t>), (l |> expand_as<'t> |> Scalar<'t>))
         | _ -> failwithf "The expression %s is not an equation" (src e)
     
     let scalar_varmap<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (e:Expr<bool>) =
         match e with
-        | SpecificCall <@@ (=) @@> (_,_,Var v::r::[]) when v.Type = typeof<'t> -> ScalarVarMap<'t> (v |> exprvar |> ScalarVar<'t>, (r |> expand_as<'t> |> simplifye |> Scalar<'t>))
+        | SpecificCall <@@ (=) @@> (_,_,Var v::r::[]) when v.Type = typeof<'t> -> ScalarVarMap<'t> (v |> exprvar |> ScalarVar<'t>, (r |> expand_as<'t> |> Scalar<'t>))
         | _ -> failwithf "The expression %s is not an equation" (src e)
     
     let fix_eqn (o:'a) (e:ScalarEquation<'t>) = e.Fix o

@@ -52,14 +52,17 @@ module Board =
     [<Emit("JSON.parse({0});")>]
     let parseJson (x:string) = stub<obj>
 
-    [<Emit("return {0}[{1}] !== undefined;")>]
-    let hasProperty (x : obj) (prop : string) = stub<bool>
+    [<Emit("return {1}[{0}] !== undefined;")>]
+    let hasProperty (prop : string) (x : obj)  = stub<bool>
     
-    [<Emit("return {0}[{1}];")>]
-    let getProperty<'a> (x : obj) (prop : string) = stub<'a>
+    [<Emit("return {1}[{0}];")>]
+    let getProperty<'a> (prop : string) (x : obj) = stub<'a>
     
-    [<Emit("{0}[{1}] = {2};")>]
-    let setProperty (x : obj) (prop : string) (value : obj) = stub<unit>
+    [<Emit("return {2}[{0}] !== undefined ? {2}[{0}] : {1};")>]
+    let getPropertyOrElse<'a> (prop : string) (e:'a) (x : obj) = stub<'a>
+
+    [<Emit("{2}[{0}] = {1};")>]
+    let setProperty (prop : string) (value : obj) (x : obj) = stub<unit>
 
     [<JS>]
     let defaults = {||}

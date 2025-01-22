@@ -40,24 +40,29 @@ module R =
     let simplify (x:ISymbolic<_, real>) = x.Transform(x |> simplify, null, ?s=x.Symbol)
        
     let maximize  (x:ISymbolic<_, real>) (c:ScalarRelation<real> seq)  = 
-        let s = DefaultZ3Solver
-        s.Reset()
+        let s = new Z3Solver()
+  
         c |> Seq.toList |> List.map sexpr |> opt_assert_hard s
         let _ = opt_maximize s (x.Expr)
         if opt_check_sat s then 
             let sols = opt_get_rat_var_model s
+            (s :> IDisposable).Dispose()
             sols |> Option.map(fun s -> s |> List.map (fun sol -> let v = realvar (fst sol) in ScalarVarMap(v, (sol |> snd |> real |> exprv |> Scalar<real>))))
-        else None
-
+        else 
+            (s :> IDisposable).Dispose()
+            None
+        
     let minimize (x:ISymbolic<_, real>) (c:ScalarRelation<real> seq) = 
-        let s = DefaultZ3Solver
-        s.Reset()
+        let s = new Z3Solver()
         c |> Seq.toList |> List.map sexpr |> opt_assert_hard s
         let _ = opt_minimize s (x.Expr)
         if opt_check_sat s then 
             let sols = opt_get_rat_var_model s
+            (s :> IDisposable).Dispose()
             sols |> Option.map(fun s -> s |> List.map (fun sol -> let v = realvar (fst sol) in ScalarVarMap(v, (sol |> snd |> real |> exprv |> Scalar<real>))))
-        else None
+        else 
+            (s :> IDisposable).Dispose()
+            None
 
     let sum x l u expr = Ops.Sum x (intexpr l) (intexpr u) expr |> Scalar
 

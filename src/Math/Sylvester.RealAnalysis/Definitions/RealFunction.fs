@@ -66,6 +66,7 @@ type RealFunction(f, ?symbol:string) =
 
     member x.Expr = x.ScalarExpr.Expr
 
+    member x.JSFun = recombine_func_as<real->real> [param_var x.MapExpr] x.MapExpr
     //member x.Item(i:obj) = i |> realterm  |> sexpr |> x.SubstArg |> simplifye |> x.TermMap
 
     interface IRealFunction<RealFunction> with
@@ -157,6 +158,7 @@ type RealFunction(f, ?symbol:string) =
 
      member x.Expr = x.ScalarExpr.Expr
 
+    
      new (e:Scalar<real>, ?symbol:string) =
          let vars = e |> sexpr |> get_vars
          do if vars.Length > 2 then failwith "The number of independent variables in this function is more than 2."
