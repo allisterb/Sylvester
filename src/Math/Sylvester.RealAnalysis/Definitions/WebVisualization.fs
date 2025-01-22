@@ -419,8 +419,7 @@ module WebVisualization =
             let nsf = <@ %%_nsf:real->real @>
             let _jsf = recombine_func [farg.[i]] (m)
             let jsf = <@ %%_jsf:real->real @>
-            let ejsf = ev jsf
-
+            
             let sc = if has_dict_prop<string> ("strokeColor" + (i+1).ToString()) attrs then get_dict_prop<string> ("strokeColor" + (i+1).ToString()) attrs |> exprv else strokeColor
             let sw = if has_dict_prop<int> ("strokeWidth" + (i+1).ToString()) attrs then get_dict_prop<int> ("strokeWidth" + (i+1).ToString()) attrs |> exprv else strokeWidth
             let namev = if has_dict_prop<string> ("name" + (i+1).ToString()) attrs then get_dict_prop<string> ("name" + (i+1).ToString()) attrs |> exprv else namesv.[i]
@@ -429,23 +428,25 @@ module WebVisualization =
             let fg = Expr.Let(_fgv, <@ functiongraph %nsf %xmin %xmax {|strokeColor=(%sc);strokeWidth=(%sw); withLabel=true; name=(%namev) |} %bv @>, nullv)
             ll <- replace_expr nullv fg ll
             
-            let vpoints = points |> List.map exprv<real>
-            let fvpoints = points |> List.map (ejsf >> exprv<real>) 
-            let points_labels = pointsl |> List.map snd
-            points |> List.iteri (fun j p -> 
-                let _ppvar = Var("pt" + i.ToString() + "_j" + j.ToString(), typeof<Point>)
-                let l = sprintf "%s(%A, %A)" points_labels.[j] (points.[j]) (ejsf points.[j])
-                let pt = Expr.Let(_ppvar, <@ point %vpoints.[j] %fvpoints.[j] {| name=(%(exprv l)) |} %bv @>, nullv)
-                ll <- replace_expr nullv pt ll
-                (*
-                let _ppsxvar = Var("ptsx" + i.ToString() + "_j" + j.ToString(), typeof<PerpendicularSegment>)
-                let ex = Expr.Let(_ppsxvar, <@ perp_segment (%bv).defaultAxes.x %(exprvar<Point> _ppvar) {|size = 0; dash = 1; strokeColor=(%strokeColor)|} %bv @>, nullv)
-                ll <- replace_expr nullv ex ll
+            do if points.Length > 0 then
+                let ejsf = ev jsf
+                let vpoints = points |> List.map exprv<real>
+                let fvpoints = points |> List.map (ejsf >> exprv<real>) 
+                let points_labels = pointsl |> List.map snd
+                points |> List.iteri (fun j p -> 
+                    let _ppvar = Var("pt" + i.ToString() + "_j" + j.ToString(), typeof<Point>)
+                    let l = sprintf "%s(%A, %A)" points_labels.[j] (points.[j]) (ejsf points.[j])
+                    let pt = Expr.Let(_ppvar, <@ point %vpoints.[j] %fvpoints.[j] {| name=(%(exprv l)) |} %bv @>, nullv)
+                    ll <- replace_expr nullv pt ll
+                    (*
+                    let _ppsxvar = Var("ptsx" + i.ToString() + "_j" + j.ToString(), typeof<PerpendicularSegment>)
+                    let ex = Expr.Let(_ppsxvar, <@ perp_segment (%bv).defaultAxes.x %(exprvar<Point> _ppvar) {|size = 0; dash = 1; strokeColor=(%strokeColor)|} %bv @>, nullv)
+                    ll <- replace_expr nullv ex ll
             
-                let _ppsyvar = Var("ptsy" + i.ToString() + "_j" + j.ToString(), typeof<PerpendicularSegment>)
-                let ey = Expr.Let(_ppsyvar, <@ perp_segment (%bv).defaultAxes.y %(exprvar<Point> _ppvar) {|size = 0; dash = 1; strokeColor=(%strokeColor)|} %bv @>, nullv)
-                ll <- replace_expr nullv ey ll
-                *)
+                    let _ppsyvar = Var("ptsy" + i.ToString() + "_j" + j.ToString(), typeof<PerpendicularSegment>)
+                    let ey = Expr.Let(_ppsyvar, <@ perp_segment (%bv).defaultAxes.y %(exprvar<Point> _ppvar) {|size = 0; dash = 1; strokeColor=(%strokeColor)|} %bv @>, nullv)
+                    ll <- replace_expr nullv ey ll
+                    *)
             )
         )
         

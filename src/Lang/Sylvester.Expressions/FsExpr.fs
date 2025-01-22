@@ -692,6 +692,9 @@ module FsExpr =
 
     let get_prop_else<'t> n (e:'t) (o:obj) = if has_prop<'t> n o then o.GetType().GetProperties().First(fun p -> p.Name = n && p.PropertyType = typeof<'t>).GetValue(o) :?> 't else e
     
+    let get_prop_or_fail<'t> (p:string) (f:string) (attrs:'a) =
+       if has_prop<'t> p attrs then get_prop<'t> p attrs else failwith f
+
     let has_dict_prop<'t> n (o:IDictionary<string, obj>) = o.Any(fun p -> p.Key = n && p.Value.GetType() = typeof<'t>)
        
     let get_dict_prop<'t> n (o:IDictionary<string, obj>) = o.First(fun p -> p.Key = n && p.Value.GetType()= typeof<'t>).Value :?> 't

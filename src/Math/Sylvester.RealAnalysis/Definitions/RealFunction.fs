@@ -67,6 +67,12 @@ type RealFunction(f, ?symbol:string) =
     member x.Expr = x.ScalarExpr.Expr
 
     member x.JSFun = recombine_func_as<real->real> [param_var x.MapExpr] x.MapExpr
+
+    member x.Html() = 
+        let v = x.Vars.[0] |> exprvar<real> |> latexe
+        match x.Symbol with
+        | None -> "$" + latexe x.Body + "$"
+        | Some s ->  "$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$"
     //member x.Item(i:obj) = i |> realterm  |> sexpr |> x.SubstArg |> simplifye |> x.TermMap
 
     interface IRealFunction<RealFunction> with
@@ -79,11 +85,7 @@ type RealFunction(f, ?symbol:string) =
             let f = RealFunction(Scalar<real> b, ?symbol=s)
             do f.Attrs.AddAll(defaultArg attrs null) |> ignore
             f
-        member x.Html() = 
-            let v = x.Vars.[0] |> exprvar<real> |> latexe
-            match x.Symbol with
-            | None -> "$$" + latexe x.Body + "$$"
-            | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$$"
+        member x.Html() = x.Html()
         member a.ScalarVars = a.ScalarVars
         member a.ScalarExpr = a.ScalarExpr
         member a.SymbolicFn = a.SymbolicFn
@@ -157,7 +159,12 @@ type RealFunction(f, ?symbol:string) =
          RealFunction2(vvv, symbol)
 
      member x.Expr = x.ScalarExpr.Expr
-
+     
+     member x.Html() = 
+               let v = x.ScalarVars |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n.Expr)) (x.ScalarVars |> List.head |> sexpr |> latexe)
+               match x.Symbol with
+               | None -> "$" + latexe x.ScalarExpr.Expr + "$"
+               | Some s ->  "$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr.Expr)) + "$"
     
      new (e:Scalar<real>, ?symbol:string) =
          let vars = e |> sexpr |> get_vars
@@ -202,12 +209,8 @@ type RealFunction(f, ?symbol:string) =
         member a.ScalarVars = a.ScalarVars 
         member a.ScalarExpr = a.ScalarExpr
         member a.SymbolicFn = a.SymbolicFn
-
-        member x.Html() = 
-            let v = x.ScalarVars |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n.Expr)) (x.ScalarVars |> List.head |> sexpr |> latexe)
-            match x.Symbol with
-            | None -> "$$" + latexe x.ScalarExpr.Expr + "$$"
-            | Some s ->  "$$" + (sprintf "%s(%s) = %s" s v (latexe x.ScalarExpr.Expr)) + "$$"
+        member a.Html() = a.Html()
+      
         //member x.Item(o:obj) =
 
      static member (==) (l:RealFunction2, r:RealFunction2) = ScalarEquation<real>(l.ScalarExpr, Scalar<real> r.Body)

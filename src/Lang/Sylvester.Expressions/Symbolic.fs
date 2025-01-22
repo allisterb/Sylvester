@@ -32,6 +32,10 @@ type ISymbolic<'s, 't> =
 type ISymbolicExpr<'s, 't> =
     abstract member SymbolicExpr:Expr<'t>
 
+type IDescription =
+    abstract member Html:string
+    abstract member Text:string
+
 [<AutoOpen>]
 module Symbolic =
     /// Create a symbolic variable   
@@ -171,7 +175,7 @@ module Symbolic =
         | SpecificCall <@@ (*) @@> (_, _, [Double 1.0; r]) -> latexe r 
         | SpecificCall <@@ (+) @@> (_, _, [l;SpecificCall <@@ (*) @@> (_, _, [Double -1.0; Atom r])]) -> sprintf("%s - %s") (latexe l) (latexe r)
         | SpecificCall <@@ (+) @@> (_, _, [l;SpecificCall <@@ (*) @@> (_, _, [Double -1.0; r])]) -> sprintf("%s - (%s)") (latexe l) (latexe r)
-        | SpecificCall <@@ (+) @@> (_, _, [Double l as d; r]) when l < 0. -> sprintf("%s - %s") (latexe r) (latexe d)
+        | SpecificCall <@@ (+) @@> (_, _, [Double l as d; r]) when l < 0. -> sprintf("%s - %s") (latexe r) (latexe (Expr.Value(-l)))
         | SpecificCall <@@ (+) @@> (_, _, [l; r]) -> sprintf("%s + %s") (latexe l) (latexe r)
         | SpecificCall <@@ (-) @@> (_, _, [l; r]) -> sprintf("%s - %s") (latexe l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [ValueWithName(_,_, _) as l; r]) -> sprintf("{%s}{%s}") (latexe l) (latexe <| r)
@@ -181,8 +185,8 @@ module Symbolic =
         | SpecificCall <@@ (*) @@> (_, _, [Call(None, Op "Identity", Double l::[]); r]) -> sprintf("%s\cdot%s") (latexe <| exprv l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [Atom l; Atom r]) -> sprintf("%s%s") (latexe l) (latexe r)
         | SpecificCall <@@ (*) @@> (_, _, [l; Atom r]) -> sprintf("%s%s") (latexe l) (latexe r)
-        | SpecificCall <@@ (*) @@> (_, _, [l; SpecificCall <@@ ( ** ) @@> (_, _, [Atom b; e])]) -> sprintf("%s%s^%s") (latexe l) (latexe b) (latexe e)
-        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("%s(%s)") (latexe l) (latexe r)
+        | SpecificCall <@@ (*) @@> (_, _, [l; SpecificCall <@@ ( ** ) @@> (_, _, [Atom b; Atom e])]) -> sprintf("%s%s^%s") (latexe l) (latexe b) (latexe e)
+        | SpecificCall <@@ (*) @@> (_, _, [l; r]) -> sprintf("(%s)(%s)") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; Atom r]) -> sprintf("\\frac{%s}{%s}") (latexe l) (latexe r)
         | SpecificCall <@@ (/) @@> (_, _, [l; r]) -> sprintf("\\frac{%s}{(%s)}") (latexe l) (latexe r)
         | SpecificCall <@@ ( ** ) @@> (_, _, [Atom l; Atom r]) -> sprintf("%s^{%s}") (latexe l) (latexe r)

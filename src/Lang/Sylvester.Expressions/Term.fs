@@ -76,6 +76,8 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
     
     override a.GetHashCode() = a.Display.GetHashCode()
 
+    member x.Html() = "$" + latexe x.Expr + "$"
+
     interface ISymbolic<Scalar<'t>, 't> with
            member a.Term = a
            member a.Expr = expr
@@ -87,7 +89,7 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
                 s
            
     interface IHtmlDisplay with
-        member x.Html() = "$$" + latexe x.Expr + "$$"
+        member x.Html() = x.Html()    
 
     static member Zero = typeof<'t> |> zero_val |> expand_as<'t> |> Scalar<'t>
 
@@ -324,6 +326,7 @@ and ScalarRelation<'t when 't: equality and 't :> ValueType and 't :> IEquatable
         let lhs = fix o x.Lhs in
         let rhs = fix o x.Rhs in
         ScalarRelation<'t>(lhs, rhs, x.Op)
+    member x.Html() = "$$" + latexe x.Expr + "$$"
     override x.Display = sprintf "%s %s %s" (sprinte x.Lhs.Expr) ((src op).Replace("(", "").Replace(")", "")) (sprinte x.Rhs.Expr)
     
     interface IHtmlDisplay with
