@@ -58,6 +58,11 @@ let drawfun3() =
                //y
                WebVisualization.draw_realfuns_dict dict names (funs |> Seq.toArray) |> draw_board
         | _ -> failwith ""     
+let drawfun4() =
+    // Calculate the average product of labout
+    let L =realvar "L"
+    let APL = realfun "AP_L" (L + 30 * L *** 2 + L *** 3)
+    draw {|xrange=0.,20.;yrange=0.,300.; name1="APL"; name2="MPL";x=9|} APL
 //let m = econ_model<ConsumerPreference2>
 //m
 //(m.BudgetConstraint.Fix({|Y=4.|}))
@@ -70,7 +75,7 @@ let drawfun3() =
 [<EntryPoint>]
 let main argv =
     do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
-    drawfun3() |> printf "%A"
+    drawfun4() |> printf "%A"
     0
     //let gg = WebVisualization.draw_realfun {|xrange = 0.,15.;yrange=0.,300.; a=0.,150.|} "kk" f.MapExpr |> draw_board
 

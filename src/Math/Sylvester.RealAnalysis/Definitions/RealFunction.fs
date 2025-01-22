@@ -40,7 +40,6 @@ type RealFunction(f, ?symbol:string) =
     override a.SubstArg x = base.SubstArg x |> simplifye
     new (e:Scalar<real>, ?symbol:string) =
         let v = get_vars e.Expr
-        
         do if v.Length > 1 then failwith "The number of independent variables in this function is > 1."
         let f = recombine_func_as<real->real> (if v.Length = 0 then [Var("_", typeof<real>)] else v) e.Expr in
         RealFunction(f, ?symbol=symbol)
@@ -74,7 +73,7 @@ type RealFunction(f, ?symbol:string) =
         | None -> "$" + latexe x.Body + "$"
         | Some s ->  "$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$"
     //member x.Item(i:obj) = i |> realterm  |> sexpr |> x.SubstArg |> simplifye |> x.TermMap
-
+   
     interface IRealFunction<RealFunction> with
         member x.Term = x
         member x.Expr = x.Body

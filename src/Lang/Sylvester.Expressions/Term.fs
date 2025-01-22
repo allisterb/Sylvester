@@ -231,7 +231,8 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (/) (l:Scalar<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> Scalar<'t>
 
-
+    static member (/) (l:ISymbolic<_, 't>, r:Scalar<'t>) = call_div (l.Expr) (r.Expr) |> expand_as<'t> |> Scalar<'t>
+    
     static member ( ***) (l : Scalar<real>, r : Scalar<real>) = call_pow l.Expr r.Expr |> expand_as<'t>  |> Scalar<'t>
 
     static member ( ***) (l : Scalar<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t>  |> Scalar<'t>

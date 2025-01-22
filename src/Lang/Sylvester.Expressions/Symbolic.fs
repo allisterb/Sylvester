@@ -97,7 +97,7 @@ module Symbolic =
                 let co = exprv s in  
                 m <- replace_expr (Expr.Var v) co m
         )
-        s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
+        s.Transform(expand_as<'b> m, null, ?s=s.Symbol)
         
     let fixconst (c:seq<string>) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
         let mutable m = s.Expr.Raw
@@ -106,7 +106,7 @@ module Symbolic =
                 let co = Expr.ValueWithName(Unchecked.defaultof<'b>, v.Name) in 
                 m <- replace_expr (Expr.Var v) co m
         )
-        s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
+        s.Transform(expand_as<'b> m, null, ?s=s.Symbol)
 
     (* Print quotation as string *)
 
@@ -228,7 +228,7 @@ module Symbolic =
        
     let subst (e:Expr<'t>) (v:Expr<'u>) (r:Expr<'u>) =
         let var = get_var v
-        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand_as<'t> |> simplifye
+        e.Substitute(fun v -> if v.Name = var.Name && v.Type = var.Type then Some r.Raw else None) |> expand_as<'t>
 
     let kronecker_delta<'t> (i:int) (j:int) = if i = j then one_val typeof<'t> else zero_val typeof<'t>
 
