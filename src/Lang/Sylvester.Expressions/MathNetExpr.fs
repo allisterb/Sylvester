@@ -131,14 +131,15 @@ module MathNetExpr =
             | s when s.EndsWith("__dash__") -> s.Replace("__dash__", "'")
             | s -> s
 
-        let getParam p =
+        let getParam (p:Symbol) = List.tryFind(fun (v:Var) -> v.Name = argName p) vars
+            (*
             List.fold(
                     fun x (y : Var) ->
                         match x with
                         | None when y.Name = (argName p) -> Some (Var(recover_symbol y.Name, y.Type))
                         | Some v -> Some v
                         | None -> None //failwithf "Did not find a matching var for %A." p
-                    ) None vars
+              *)      //) None vars
         
         let getMethodInfo = expand >> getFuncInfo
         

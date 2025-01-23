@@ -75,6 +75,8 @@ let drawfun4() =
 [<EntryPoint>]
 let main argv =
     do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+    drawfun2() |> printf "%A"
+    drawfun3() |> printf "%A"
     drawfun4() |> printf "%A"
     0
     //let gg = WebVisualization.draw_realfun {|xrange = 0.,15.;yrange=0.,300.; a=0.,150.|} "kk" f.MapExpr |> draw_board
