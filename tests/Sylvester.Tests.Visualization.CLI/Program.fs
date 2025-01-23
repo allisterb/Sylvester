@@ -63,6 +63,11 @@ let drawfun4() =
     let L =realvar "L"
     let APL = realfun "AP_L" (L + 30 * L *** 2 + L *** 3)
     draw {|xrange=0.,20.;yrange=0.,300.; name1="APL"; name2="MPL";x=9|} APL
+
+let fun5() =
+    let x = econ_model<ConsumerPreference> //Create a consumer preference model
+    do x.U <- utilfun2 "U" ((x.q1***0.5) * (x.q2***0.5))//Assign a Cobb-Douglas utility function as the consumer's utility function
+    x.U.Html()
 //let m = econ_model<ConsumerPreference2>
 //m
 //(m.BudgetConstraint.Fix({|Y=4.|}))
@@ -78,6 +83,7 @@ let main argv =
     drawfun2() |> printf "%A"
     drawfun3() |> printf "%A"
     drawfun4() |> printf "%A"
+    fun5() |> printf "%A"
     0
     //let gg = WebVisualization.draw_realfun {|xrange = 0.,15.;yrange=0.,300.; a=0.,150.|} "kk" f.MapExpr |> draw_board
 
