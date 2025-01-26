@@ -11,6 +11,11 @@ type RealVectorSpace<'n when 'n :>Number>() =
     inherit VectorSpace<'n, real>(Field.R, VectorT.add, VectorT.smul)
     interface ICardinality with member val Cardinality = Aleph 1
 
+[<RequireQualifiedAccess>]
+module Reals=
+    let e = Math.e |> Scalar
+    let pi = Math.pi |> Scalar
+
 [<AutoOpen>]
 module R =
     let R (dim:'n when 'n :> Number) = new RealVectorSpace<'n>()
@@ -101,10 +106,10 @@ module R =
         match s.Symbol with 
         | None -> s.Transform(Ops.Integrate x.Expr s.Expr, newattrs [("Integral", box true)])
         | Some sym -> 
-            let n = if sym.Length = 1 && System.Char.IsLower(sym.[0]) then sym.Replace(sym.[0], System.Char.ToUpper(sym.[0])) else "I".JoinSuperscript(x.Name) + sym
+            let n = if sym.Length = 1 && System.Char.IsLower(sym.[0]) then sym.Replace(sym.[0], System.Char.ToUpper(sym.[0])) else "I" + sym.JoinSuperscript(x.Name)
             s.Transform(Ops.Integrate x.Expr s.Expr, newattrs [("Integral", box true)], n)
         
-    let integrate_over (x:ScalarVar<real>) l r (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; s.Transform(Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr)
+    let integrate_over (x:ScalarVar<real>) l r (s:ISymbolic<_, real>) = fail_if_not_has_var x.Var s.Expr; Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr |> Scalar
 
     let integrate_over_R (x:ScalarVar<real>) f = integrate_over x minf inf f
 

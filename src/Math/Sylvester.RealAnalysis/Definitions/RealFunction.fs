@@ -38,6 +38,9 @@ type RealFunction(f, ?symbol:string) =
     override a.ScalarExpr = Scalar<real> a.Body
     override a.ScalarVars = a.Vars |> List.map (exprvar >> realvar)
     override a.SubstArg x = base.SubstArg x |> simplifye
+    
+    member a.ScalarVar = a.ScalarVars.[0]
+    
     new (e:Scalar<real>, ?symbol:string) =
         let v = get_vars e.Expr
         do if v.Length > 1 then failwith "The number of independent variables in this function is > 1."
@@ -228,6 +231,8 @@ module RealFunction =
 
     let realfun_s (s:string) (x:ScalarVar<real>) = RealFunction(s, x.Name)
 
+    let realfun_l (l:Expr<real->real>) = RealFunction(l)
+
     let realfun2 (s:string) (e:Scalar<real>) = RealFunction2(e, s)
 
     let realfun_im (s:string) (x:realvar) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr [e.Expr] in realfun s (scalar_varmap<real> l.Head).Rhs 
@@ -253,3 +258,9 @@ module RealFunction =
            let vars = eqns |> List.map sexpr |> get_varsl |> List.map get_var_name
            let consts = List.except [x.Var.Name] vars 
            solve_for_elim_single y e eqns |> collect_terms x |> fixconst consts |> realfun y.Name 
+
+    let integrate_fun (f:RealFunction) = integrate f.ScalarVar f
+
+    let integrate_fun_over a b (f:RealFunction) = integrate_over f.ScalarVar a b f
+
+    let integrate_fun_over_R (f:RealFunction) = integrate_over_R f.ScalarVar f

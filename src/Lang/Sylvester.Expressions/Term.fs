@@ -202,6 +202,9 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (*) (l:Scalar<int>, r:nat) = call_mul (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> simplifye|> Scalar<'t>
 
+    static member (*) (l:ISymbolic<_, 't>, r:Scalar<real>) = call_mul (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye|> l.Transform
+       
+    static member (*) (l:Scalar<real>, r:ISymbolic<_, 't>) = call_mul (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye|> r.Transform
 
     static member (/) (l:Scalar<'t>, r:Scalar<'t>) = call_div (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye|> Scalar<'t>
     
@@ -231,8 +234,10 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (/) (l:Scalar<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> simplifye|> Scalar<'t>
 
-    static member (/) (l:ISymbolic<_, 't>, r:Scalar<real>) = call_div (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye|> Scalar<'t>
+    static member (/) (l:ISymbolic<_, 't>, r:Scalar<real>) = call_div (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye|> l.Transform
     
+    static member (/) (l:Scalar<real>, r:ISymbolic<_, 't>) = call_div (l.Expr) (r.Expr) |> expand_as<'t> |> simplifye|> r.Transform
+
     static member ( ***) (l : Scalar<real>, r : Scalar<real>) = call_pow l.Expr r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
 
     static member ( ***) (l : Scalar<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>

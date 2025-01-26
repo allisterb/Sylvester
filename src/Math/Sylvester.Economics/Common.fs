@@ -309,7 +309,7 @@ module Economics =
 
     let budget_constraint (r:ScalarEquation<real>) = r |> with_attr_tag "BudgetConstraint"
 
-    let isoquants (attrs:'a) (dv:realvar) (f:DemandFunction2) (vals:seq<real>) =
+    let isoquants (attrs:'a) (dv:realvar) (f:ProductionFunction2) (vals:seq<real>) =
      let fs = vals |> Seq.map(fun v -> prodfun_im (sprintf "%s = %A" dv.Name v) dv (f == v) :> IRealFunction<RealFunction>) 
      draw attrs <| realfungrpv fs
 

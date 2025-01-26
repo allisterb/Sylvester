@@ -2,141 +2,177 @@
 
 open FSharp.Quotations
 
-open Sylvester.Collections
-
 open Arithmetic
 
-type UnivariateDistribution = 
-| ProbabilityMass of Expr<real->real> * Set<real> 
-| ProbabilityDensity of Expr<real->real> * Set<real>
-    with
-        member x.Func = 
-            match x with
-            | ProbabilityMass(d, _) -> d
-            | ProbabilityDensity(d, _) -> d
-        member x.FuncArg = param_var x.Func
-        member x.FuncBody = body' x.Func
-        member x.Support = 
-            match x with
-            | ProbabilityMass(_, s) -> s
-            | ProbabilityDensity(_, s) -> s
-        member x.Transform(t:Expr<real->real>, support:Set<real>) =
-            match x with
-            | ProbabilityMass _ -> 
-                let vd = param_var x.Func
-                let vt = param_var t
-                let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
-                let td = x.Func |> body |> subst_var_value vd bodyt |> recombine_func_as<real->real> [vd] 
-                ProbabilityMass(td, support)
-            | ProbabilityDensity _ -> 
-                let vd = param_var x.Func
-                let vt = param_var t
-                let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
-                let pd = Ops.Integrate <@ %%Expr.Var(vd): real @> (x.Func |> body |> expand_as<real>) 
-                let td = pd |> subst_var_value vd bodyt |> expand_as<real>
-                let tpd = td |> Ops.Diff 1 <@ %%Expr.Var(vd): real @> |> recombine_func_as<real->real> [vd]
-                ProbabilityDensity(tpd, support)
+type IUnivariateDistribution =
+    abstract member Support: Set<real>
+    abstract member Func: RealFunction
+    abstract member Prob: a:int->Scalar<real>
+    abstract member Prob: a:real->Scalar<real>
+    abstract member Prob: a:Scalar<real>->Scalar<real>
+    abstract member CProb: a:int*int->Scalar<real>
+    abstract member CProb: a:real*real->Scalar<real>
+    abstract member Transform: support:ISet<real>*t:Expr<real->real>*((real->real) option)->IUnivariateDistribution
 
-type MultivariateDistribution<'n when 'n :> Number> = 
-| JointProbability of Array<'n, UnivariateDistribution>
+type DiscreteProbabilityDistribution(support:ISet<real>, pmf:Expr<real->real>, ?probmap:real->real) = 
+    member x.Support = support.Set 
+    member x.Pmf = realfun_l pmf
+    member x.ProbMap = defaultArg probmap (ev pmf)
+    member x.Prob(a:int) = x.ProbMap (real a) |> Scalar
+    member x.Prob(a:real) = x.ProbMap a |> Scalar
+    member x.Prob(a:Scalar<real>) = x.Pmf.[a]
+    member x.CProb(a:int, b:int) = [a .. b] |> Seq.map x.Prob |> Seq.reduce (+) |> simplify
+    member x.CProb(a:real, b:real) = [a .. b] |> Seq.map x.Prob |> Seq.reduce (+) |> simplify
+    member x.Transform(support:ISet<real>, t:Expr<real->real>, ?probmap:real->real) = 
+        let vd = param_var x.Pmf.MapExpr
+        let vt = param_var t
+        let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
+        let td = x.Pmf.MapExpr |> body |> subst_var_value vd bodyt |> recombine_func_as<real->real> [vd] 
+        DiscreteProbabilityDistribution(support, td, ?probmap=probmap)
+    member x.Item(a:int) = x.Prob a
+    member x.Item(a:real) = x.Prob a
+    member x.Item(a:Scalar<real>) = x.Prob a
+    member x.Item(a: int, b:int) = x.CProb(a, b)
+    member x.Item(a: real, b:real) = x.CProb(a, b)
+    interface IUnivariateDistribution with
+        member x.Support = x.Support
+        member x.Func = x.Pmf
+        member x.Prob(a:int) = x.Prob a
+        member x.Prob(a:real) = x.Prob a
+        member x.Prob(a:Scalar<real>) = x.Prob a
+        member x.CProb(a:int, b:int) = x.CProb(a,b)
+        member x.CProb(a:real,b:real) = x.CProb(a,b)
+        member x.Transform(support:ISet<real>, t:Expr<real->real>, probmap:(real->real) option) = x.Transform(support, t, ?probmap=probmap) :> IUnivariateDistribution
+            
+type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>, ?probmap:real->real) = 
+    member x.Support = support.Set 
+    member x.Pdf = realfun_l pdf
+    member x.CProb a = integrate_fun_over minf a x.Pdf
+    member x.CProbMap = defaultArg probmap (fun (a:real) -> ev (x.CProb(a).Expr))
+    member x.Transform(support:ISet<real>, t:Expr<real->real>, ?probmap:real->real) = 
+        let vd = param_var pdf
+        let vt = param_var t
+        let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
+        let pd = Ops.Integrate <@ %%Expr.Var(vd): real @> (pdf |> body |> expand_as<real>) 
+        let td = pd |> subst_var_value vd bodyt |> expand_as<real>
+        let tpd = td |> Ops.Diff 1 <@ %%Expr.Var(vd): real @> |> recombine_func_as<real->real> [vd]
+        ContinuousProbabilityDistribution(support, tpd, ?probmap=probmap)        
+    member x.Item(a:int) = x.CProbMap (real a)
+    member x.Item(a:real) = x.CProbMap a
+    member x.Item(a:Scalar<real>) = x.CProb a
+
+    interface IUnivariateDistribution with
+        member x.Support = x.Support
+        member x.Func = x.Pdf
+        member x.Prob(a:int) = 0R
+        member x.Prob(a:real) = 0R
+        member x.Prob(a:Scalar<real>) = 0R
+        member x.CProb(a:int, b:int) = x.CProb(a, b)
+        member x.CProb(a:real, b:real) = x.CProb(a, b)
+        member x.Transform(support:ISet<real>, t:Expr<real->real>, probmap:(real->real) option) = x.Transform(support, t, ?probmap=probmap) :> IUnivariateDistribution
+
+type MultivariateDistribution = 
+| JointProbability of IUnivariateDistribution[]
     
-type ProbabilityDistribution<'n when 'n :> Number> =
-| UnivariateDistribution of UnivariateDistribution
-| MultivariateDistribution of MultivariateDistribution<'n>
+type ProbabilityDistribution =
+| UnivariateDistribution of IUnivariateDistribution
+| MultivariateDistribution of MultivariateDistribution
 
 type IRandomElement<'n, 'd when 'n :> Number> = 
-    abstract ProbabilityDistribution: ProbabilityDistribution<'n>
+    abstract ProbabilityDistribution: ProbabilityDistribution
 
-type RandomVariable(?distr:UnivariateDistribution, ?mean:Scalar<real>) = 
-    member val Distribution = defaultArg distr (ProbabilityMass(<@ fun _ -> 0. @>, Set.Empty))
-    interface IRandomElement<dim<1>, real> with member x.ProbabilityDistribution = UnivariateDistribution(x.Distribution)
+type IRandomVariable = 
+    inherit IRandomElement<dim<1>, real> 
+    inherit ISet<real>
+
+type DiscreteRandomVariable(distr: DiscreteProbabilityDistribution, ?mean:Scalar<real>) =      
+    member x.Distribution = distr
+    member x.Prob (a:int) = let a' = real a in if a' |?| x.Distribution.Support then x.Distribution.ProbMap a' else 0. 
+    member x.Prob (a:real) = if a |?| x.Distribution.Support then x.Distribution.ProbMap a else 0. 
+    member x.Prob (a:Scalar<real>) = x.Distribution.Pmf.[a] 
+    member x.Cdf(i:real) = [0.0 .. i] |> Seq.choose(fun e-> if x.Prob e = 0. then Some e else None) |> Seq.map x.Prob |> Seq.reduce (+)
+    member x.CProb(a:real) = if a |?| x.Distribution.Support then x.Cdf a else 0. 
+    member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (x.Prob e )) |> Seq.reduce (+) |> Scalar |> simplify
+    member x.Transform(s, t, ?m) = DiscreteRandomVariable(distr.Transform(s, t, distr.ProbMap), ?mean=m)
+    member x.Item(a: int) = x.Prob a
+    member x.Item(a: real) = x.Prob a
+    member x.Item(a: Scalar<real>) = x.Prob a
+    
+    interface IRandomVariable with member x.ProbabilityDistribution = UnivariateDistribution(x.Distribution)
+
     interface ISet<real> with 
         member x.Set = x.Distribution.Support
         member x.Equals b = x.Distribution.Support.Equals b
     
-type Discrete(support:Set<real>, pmf:Expr<real->real>, ?mean:Scalar<real>) = 
-    inherit RandomVariable(ProbabilityMass(pmf, support), ?mean=mean)
-    member x.ProbFunc = 
-        fun (a:real) ->
-            let v = param_var x.Distribution.Func
-            let b = x.Distribution.Func |> body |> subst_var_value v (Expr.Value a) 
-            <@ %%b:real @>        
-    member x.Prob = fun a -> if a |?| x.Distribution.Support then x.ProbFunc a |> ev |> exprv |> Scalar<real> else 0R 
-    member x.Cdf = 
-        fun (i:real) -> [0.0 .. i] |> Seq.choose(fun e-> if x.Prob e = 0R then Some e else None) |> Seq.map x.Prob |> Seq.reduce (+) |> simplify
-    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
-    member x.Expectation = if mean.IsSome then mean.Value else x.Distribution.Support |> Seq.map(fun e ->  e * (prob x e )) |> Seq.reduce (+) |> simplify
-    member x.Transform(t, s, m) = Discrete(s, x.Distribution.Transform(t,s).Func, m)
-    member x.Item(a: real) = x.Prob a
-    member x.Item(a: int) = x.Prob (real a)
-    member x.Item(a: Scalar<real>) = x.Distribution.FuncBody |> subst_var_value (x.Distribution.FuncArg) (Expr.Value a) |> expand_as<real> |> Scalar<real>
-   
-    static member (-) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
-    static member (-) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
+    static member (-) (l:'a, r:DiscreteRandomVariable) = let l' = realexpr l in r.Transform((r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), <@ fun x -> %l' - x @>, Scalar l' - r.Expectation)
+    static member (-) (l:DiscreteRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), <@ fun x -> x - %r' @>, Scalar r' - l.Expectation)
 
-    static member (+) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' + x @>, (r.Distribution.Support |>| <@ fun x -> (%l' + x) |?| r.Distribution.Support @>), Scalar l' + r.Expectation)
-    static member (+) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x + %r' @>, (l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), Scalar r' + l.Expectation)
+    static member (+) (l:'a, r:DiscreteRandomVariable) = let l' = realexpr l in r.Transform((r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), <@ fun x -> %l' + x @>, Scalar l' + r.Expectation)
+    static member (+) (l:DiscreteRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), <@ fun x -> x + %r' @>, Scalar r' + l.Expectation)
 
-    static member (*) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' * x @>, (r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), Scalar l' * r.Expectation)
-    static member (*) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x * %r' @>, (l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), Scalar r' * l.Expectation)
+    static member (*) (l:'a, r:DiscreteRandomVariable) = let l' = realexpr l in r.Transform((r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), <@ fun x -> %l' * x @>, Scalar l' * r.Expectation)
+    static member (*) (l:DiscreteRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), <@ fun x -> x * %r' @>, Scalar r' * l.Expectation)
 
-    static member (/) (l:'a, r:Discrete) = let l' = realexpr l in r.Transform(<@ fun x -> %l' / x @>, (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), Scalar l' / r.Expectation)
-    static member (/) (l:Discrete, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x / %r' @>, (l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), Scalar r' / l.Expectation)
+    static member (/) (l:'a, r:DiscreteRandomVariable) = let l' = realexpr l in r.Transform( (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), <@ fun x -> %l' / x @>, Scalar l' / r.Expectation)
+    static member (/) (l:DiscreteRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), <@ fun x -> x / %r' @>, Scalar r' / l.Expectation)
 
-    static member (</) (l:Discrete, r:real) = l.Cdf r
+    static member (</) (l:DiscreteRandomVariable, r:real) = l.Cdf r
     
-type Continuous(support:Set<real>, pdf:Expr<real->real>, ?mean:Scalar<real>) = 
-    inherit RandomVariable(ProbabilityDensity(pdf, support), ?mean=mean)
-    member x.ProbFunc = 
-        fun (a:real) ->         
-            let v = param_var x.Distribution.Func
-            let b = x.Distribution.Func |> body |> expand_as<real> |> Ops.DefiniteIntegral (exprvar<real> v) (exprv minf) (exprv a) |> subst_var_value v (exprv a) 
-            <@ %%b:real @>
-    member x.Cdf = fun i -> Scalar<real>(x.ProbFunc i)
-    member x.CProb = fun a -> if a |?| x.Distribution.Support then x.Cdf a else 0R 
-    member x.ProbInterval = fun a b -> if a |?| x.Distribution.Support && b |?| x.Distribution.Support then (-) (Scalar<real>(x.ProbFunc b)) (Scalar<real>(x.ProbFunc a)) else 0R
+type ContinuousRandomVariable(distr:ContinuousProbabilityDistribution, ?mean:Scalar<real>) = 
+    member val Distribution = distr
+    member x.ProbInterval(a:Scalar<real>, b:Scalar<real>)= x.Distribution.CProb b - x.Distribution.CProb a 
     member x.Expectation = 
         if mean.IsSome then 
             mean.Value 
         else
-            let v = param_var x.Distribution.Func
-            let i = call_mul <@ %%Expr.Var(v): real @> (x.Distribution.Func |> body) |> expand_as<real>
-            Ops.DefiniteIntegral <@ %%Expr.Var(v): real @> (minf'<real>) (inf'<real>) i |> Scalar<real>
-
-    member x.Transform(t, s, m) = Continuous(s, (x.Distribution.Transform(t,s)).Func, m)
+            integrate_fun_over_R (x.Distribution.Pdf.ScalarVar * x.Distribution.Pdf)
+    member x.Transform(s, t, m) = ContinuousRandomVariable(distr.Transform(s,t), m)
     
-    static member (-) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' - x @>, (r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), Scalar l' - r.Expectation)
-    static member (-) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x - %r' @>, (l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), Scalar r' - l.Expectation)
+    static member (-) (l:'a, r:ContinuousRandomVariable) = let l' = realexpr l in r.Transform((r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), <@ fun x -> %l' - x @>, Scalar l' - r.Expectation)
+    static member (-) (l:ContinuousRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x - %r') |?| l.Distribution.Support @>), <@ fun x -> x - %r' @>, Scalar r' - l.Expectation)
 
-    static member (+) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' + x @>, (r.Distribution.Support |>| <@ fun x -> (%l' + x) |?| r.Distribution.Support @>), Scalar l' + r.Expectation)
-    static member (+) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x + %r' @>, (l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), Scalar r' + l.Expectation)
+    static member (+) (l:'a, r:ContinuousRandomVariable) = let l' = realexpr l in r.Transform((r.Distribution.Support |>| <@ fun x -> (%l' - x) |?| r.Distribution.Support @>), <@ fun x -> %l' + x @>, Scalar l' + r.Expectation)
+    static member (+) (l:ContinuousRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x + %r') |?| l.Distribution.Support @>), <@ fun x -> x + %r' @>, Scalar r' + l.Expectation)
 
-    static member (*) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' * x @>, (r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), Scalar l' * r.Expectation)
-    static member (*) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x * %r' @>, (l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), Scalar r' * l.Expectation)
+    static member (*) (l:'a, r:ContinuousRandomVariable) = let l' = realexpr l in r.Transform((r.Distribution.Support |>| <@ fun x -> (%l' * x) |?| r.Distribution.Support @>), <@ fun x -> %l' * x @>, Scalar l' * r.Expectation)
+    static member (*) (l:ContinuousRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x * %r') |?| l.Distribution.Support @>), <@ fun x -> x * %r' @>, Scalar r' * l.Expectation)
 
-    static member (/) (l:'a, r:Continuous) = let l' = realexpr l in r.Transform(<@ fun x -> %l' / x @>, (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), Scalar l' / r.Expectation)
-    static member (/) (l:Continuous, r:'a) = let r' = realexpr r in l.Transform(<@ fun x -> x / %r' @>, (l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), Scalar r' / l.Expectation)
+    static member (/) (l:'a, r:ContinuousRandomVariable) = let l' = realexpr l in r.Transform( (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), <@ fun x -> %l' / x @>, Scalar l' / r.Expectation)
+    static member (/) (l:ContinuousRandomVariable, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), <@ fun x -> x / %r' @>, Scalar r' / l.Expectation)
    
 [<AutoOpen>]
 module ProbabilityDistribution =
-    let discrete s d = Discrete(s, d)
-
-    let discrete_m s d m = Discrete(s, d, m)
-
-    let continuous s d = Continuous(s, d)
-
-    let degenerate a = discrete (finite_seq [a]) <@ fun x -> 1. @>
-
-    let uniform s = let l = (Seq.length s) in discrete (finite_seq s)  <@ fun x -> 1. / real l  @>
+    let discrete_distr (s:ISet<real>) (pmf:Expr<real->real>) = DiscreteProbabilityDistribution(s, pmf) 
     
-    let poisson l = discrete_m (infinite_seq <@ fun i -> real i @> (fun r -> is_int r))  <@ fun x -> l ** x * (Math.e ** -l) / (factorial ((int) x)) @> (Scalar<real> (exprv l))
+    let drandvar (distr:DiscreteProbabilityDistribution) = DiscreteRandomVariable distr
 
-    let binomial p n = discrete ([0. .. real n] |> finite_seq)  <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
+    let drandvar_m distr m = DiscreteRandomVariable(distr, m)
+
+    let continuous_distr s d = ContinuousProbabilityDistribution(s, d)
+
+    let crandvar (distr:ContinuousProbabilityDistribution) = ContinuousRandomVariable distr
+
+    let crandvar_m distr m = ContinuousRandomVariable(distr, m)
+
+    let degenerate a = discrete_distr (finite_seq [a]) <@ fun x -> 1. @>
+
+    let uniform s = let l = (Seq.length s) in discrete_distr (finite_seq s)  <@ fun x -> 1. / real l  @>
     
+    let poisson l = discrete_distr (infinite_seq <@ fun i -> real i @> (fun r -> is_int r))  <@ fun x -> l ** x * (Math.e ** - l) / (factorial ((int) x)) @> 
+
+    //let poisson_var l = discrete_var_m (poisson l) (realterm l)
+
+    let binomial p n = discrete_distr ([0. .. real n] |> finite_seq)  <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.-p) ** (real n - x))) @> 
+    
+    let t = poisson 5.
+
+    let r = t.[5.]
     let bernoulli<'t when 't : equality> p = binomial p 1
 
-    let geometric<'t when 't : equality> p n = discrete ([0. .. real n] |> finite_seq)  <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
+    let geometric<'t when 't : equality> p n = discrete_distr ([0. .. real n] |> finite_seq)  <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
     
     let uniform_continuous<'t when 't : equality> a b = 
         let a',b' = realexpr a, realexpr b
-        continuous (open_interval a b) <@ fun x -> 1. / (%b' - %a') @> 
+        continuous_distr (open_interval a b) <@ fun x -> 1. / (%b' - %a') @>
+
+    let std_normal x = continuous_distr (open_interval minf inf) <@ fun z -> Math.e ** ((-z**2.) / 2.) @>
