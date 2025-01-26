@@ -9,10 +9,14 @@ open RealNumbers
 open MathNet.Symbolics
 fsi.PrintWidth <- 500
 
+let p = poisson 4.
 
+p.[0, 4]
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
-
+let g = realfun_l  <@ fun z -> (Math.e ** (((-z**2.) / 2.))) / (2. * Math.pi) @>
+let a =realconst "a"
+g.SubstArg <@ 4. @>
 //em.GetVar "foo"
 //let m = econ_model<ProfitMaximization>(
 
