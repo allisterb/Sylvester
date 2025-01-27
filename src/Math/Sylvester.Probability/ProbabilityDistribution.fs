@@ -44,9 +44,14 @@ type DiscreteProbabilityDistribution(support:ISet<real>, pmf:Expr<real->real>, ?
         member x.CProb(a:real,b:real) = x.CProb(a,b)
         member x.Transform(support:ISet<real>, t:Expr<real->real>, probmap:(real->real) option) = x.Transform(support, t, ?probmap=probmap) :> IUnivariateDistribution
             
-type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>, ?probmap:real->real) = 
+type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>, ?cdf:Expr<real->real>) = 
     member x.Support = support.Set 
     member x.Pdf = realfun_l pdf
+    member x.Cdf = 
+        let v = param_var pdf
+        let b = pdf |> body |> expand_as<real> |> Ops.DefiniteIntegral (exprvar<real> v) (exprv minf) (exprv a) |> subst_var_value v (exprv a)
+        let f = recombine_func_as<real->real> [v] b
+        defaultArg cdf f
     member x.CProb a = integrate_fun_over minf a x.Pdf
     member x.CProbMap = defaultArg probmap (fun (a:real) -> ev (x.CProb(a).Expr))
     member x.Transform(support:ISet<real>, t:Expr<real->real>, ?probmap:real->real) = 

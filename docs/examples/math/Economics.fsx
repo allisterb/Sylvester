@@ -20,12 +20,14 @@ g.SubstArg <@ 4. @>
 //em.GetVar "foo"
 //let m = econ_model<ProfitMaximization>(
 
-let a = realvar "a"
+
 let x = realvar "x"
+
+
 //let y = realvar "y"
 let z = realvar "z"
 let f = realfun "f" (x *** 3 + 1)
-
+f * x
 let m = econ_model<ConsumerPreference>
 (m.BudgetConstraint.Fix({|Y=4.|}))
 let y = realfun_im "Y" m.p1 ((m.BudgetConstraint.Fix({|Y=4.|})))

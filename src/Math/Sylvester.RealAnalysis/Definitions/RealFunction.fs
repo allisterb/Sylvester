@@ -16,6 +16,8 @@ type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, c
    
     abstract ScalarVars: realvar list
 
+    member x.Expr = x.ScalarExpr.Expr
+
     static member (==) (l:RealFunction<'t, 'a>, r:RealFunction<'t, 'a>) = l.ScalarExpr == r.ScalarExpr 
 
     static member (==) (l:RealFunction<'t, 'a>, r:Scalar<real>) = l.ScalarExpr == r
@@ -66,8 +68,6 @@ type RealFunction(f, ?symbol:string) =
         let vvv = Scalar<real> <@ %%vv:real @>
         RealFunction(vvv, symbol)
 
-    member x.Expr = x.ScalarExpr.Expr
-
     member x.JSFun = recombine_func_as<real->real> [param_var x.MapExpr] x.MapExpr
 
     member x.Html() = 
@@ -75,8 +75,29 @@ type RealFunction(f, ?symbol:string) =
         match x.Symbol with
         | None -> "$" + latexe x.Body + "$"
         | Some s ->  "$" + (sprintf "%s(%s) = %s" s v (latexe x.Body)) + "$"
+    
     //member x.Item(i:obj) = i |> realterm  |> sexpr |> x.SubstArg |> simplifye |> x.TermMap
    
+    static member (+) (l:RealFunction, r:Scalar<real>) = call_add (l.Body) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+         
+    static member (+) (l:Scalar<real>, r:RealFunction) = call_add (l.Expr) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+    
+    static member (-) (l:RealFunction, r:Scalar<real>) = call_sub (l.Body) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+         
+    static member (-) (l:Scalar<real>, r:RealFunction) = call_sub (l.Expr) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+
+    static member (*) (l:RealFunction, r:Scalar<real>) = call_mul (l.Body) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+         
+    static member (*) (l:Scalar<real>, r:RealFunction) = call_mul (l.Expr) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+
+    static member (/) (l:RealFunction, r:Scalar<real>) = call_div (l.Body) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+      
+    static member (/) (l:Scalar<real>, r:RealFunction) = call_div (l.Expr) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+
+    static member ( ***) (l:RealFunction, r:Scalar<real>) = call_pow (l.Body) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+         
+    static member ( ***) (l:Scalar<real>, r:RealFunction) = call_pow (l.Expr) (r.Expr) |> expand_as<real> |> Scalar |> RealFunction
+    
     interface IRealFunction<RealFunction> with
         member x.Term = x
         member x.Expr = x.Body
@@ -160,8 +181,6 @@ type RealFunction(f, ?symbol:string) =
          let vvv = Scalar<real> <@ %%vv:real @>
          RealFunction2(vvv, symbol)
 
-     member x.Expr = x.ScalarExpr.Expr
-     
      member x.Html() = 
                let v = x.ScalarVars |> List.skip 1 |> List.fold (fun p n -> sprintf "%s,%s" p (latexe n.Expr)) (x.ScalarVars |> List.head |> sexpr |> latexe)
                match x.Symbol with

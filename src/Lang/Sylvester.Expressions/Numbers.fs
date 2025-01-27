@@ -468,6 +468,8 @@ module Math =
 
     let binomial_coeff n r :real = (factorial n) / ((factorial r) * (factorial(n - r)))
 
+    let erf (x:real) = MathNet.Numerics.SpecialFunctions.Erf x
+
 [<AutoOpen>]
 module Numbers =
     let real<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>(n:'t) :real = 
