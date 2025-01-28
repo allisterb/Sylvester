@@ -200,4 +200,4 @@ module ProbabilityDistribution =
         let a',b' = realexpr a, realexpr b
         continuous_distr (open_interval a b) <@ fun x -> 1. / (%b' - %a') @> None None
 
-    let std_normal  = continuous_distr (open_interval minf inf) <@ fun z -> Math.e ** ((-z**2.) / 2.) @> None (Some 0R)
+    let normal m s = continuous_distr Field.R <@ fun z -> Math.e ** ((-z**2.) / 2.) @> (Some <@ fun z -> 0.5 + 0.5 * erf (z - m) / (s ** 0.5) @>) (Some 0R)
