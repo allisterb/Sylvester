@@ -70,18 +70,21 @@ type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>,
             let v = param_var pdf
             let b = pdf |> body |> expand_as<real> |> Ops.DefiniteIntegral (exprvar<real> v) (exprv minf) (exprvar<real> v)
             let f = recombine_func_as<real->real> [v] b
-            realfun_l f 
-        else realfun_l cdf.Value
+            f 
+        else cdf.Value
+    member x.CProbMap = ev x.Cdf 
     member x.Mean =  let v = x.Pdf.ScalarVar in defaultArg mean (integrate_fun_over_R (v * x.Pdf))
     member x.Prob(a:int) = 0R
     member x.Prob(a:real) = 0R
     member x.Prob(a:Scalar<real>) = 0R
-    member x.CProb(a:int) = x.Cdf.[(real) a]
-    member x.CProb(a:real) = x.Cdf.[a]
-    member x.CProb(a:Scalar<real>) = x.Cdf.[a]
-    member x.CProb(a:int, b:int) = x.Cdf.[(real) b] - x.Cdf.[(real) b]
-    member x.CProb(a:real, b:real) = x.Cdf.[b] - x.Cdf.[a]
-    member x.CProb(a:Scalar<real>, b:Scalar<real>) = x.Cdf.[b] - x.Cdf.[a]
+    member x.CProb(a:int) = x.CProbMap(real a) |> Scalar 
+    member x.CProb(a:real) =  x.CProbMap(a) |> Scalar 
+    member x.CProb(a:Scalar<real>) = 
+        let v = param_var x.Cdf in
+        x.Cdf |> body |> subst_var_value v a.Expr |> expand_as<real> |> Scalar
+    member x.CProb(a:int, b:int) = x.CProb b - x.CProb a
+    member x.CProb(a:real, b:real) = x.CProb b - x.CProb a
+    member x.CProb(a:Scalar<real>, b:Scalar<real>) = x.CProb b - x.CProb a
     member x.Transform(support:ISet<real>, t:Expr<real->real>) = 
        let vd = param_var x.Pdf.MapExpr
        let vt = param_var t
@@ -103,7 +106,7 @@ type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>,
         member x.Support = x.Support
         member x.Func = x.Pdf
         member x.Expectation = x.Mean
-        member x.ProbMap = x.Cdf.MapExpr
+        member x.ProbMap = x.Cdf
         member x.Prob(a:int) = 0R
         member x.Prob(a:real) = 0R
         member x.Prob(a:Scalar<real>) = 0R
@@ -198,6 +201,6 @@ module ProbabilityDistribution =
     
     let uniform_continuous<'t when 't : equality> a b = 
         let a',b' = realexpr a, realexpr b
-        continuous_distr (open_interval a b) <@ fun x -> 1. / (%b' - %a') @> None None
+        continuous_distr (open_interval a b) <@ fun x -> 1. / (%b' - %a') @> (Some <@ fun z ->  if z  >= a && z <= b then (z - a) / (b - a) else 0. @>) (Some(Scalar<real>((a + b) / 2.)))
 
     let normal m s = continuous_distr Field.R <@ fun z -> Math.e ** ((-z**2.) / 2.) @> (Some <@ fun z -> 0.5 + 0.5 * erf (z - m) / (s ** 0.5) @>) (Some 0R)

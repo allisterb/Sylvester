@@ -16,7 +16,8 @@ let x = realvar "x"
 
 let c = uniform_continuous 3. 5.
 
-integrate_over x  2 3 c.Pdf
+let X = randvar c
+//integrate_fun_over 2 3 c.Pdf
 
 //em.GetVar "foo"
 //let m = econ_model<ProfitMaximization>(
