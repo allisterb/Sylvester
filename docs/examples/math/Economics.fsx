@@ -12,15 +12,17 @@ fsi.PrintWidth <- 500
 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
+let x = realvar "x"
+
 let c = uniform_continuous 3. 5.
 
-c.[3,4]
+integrate_over x  2 3 c.Pdf
 
 //em.GetVar "foo"
 //let m = econ_model<ProfitMaximization>(
 
 
-let x = realvar "x"
+
 
 
 //let y = realvar "y"
