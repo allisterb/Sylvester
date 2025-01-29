@@ -242,7 +242,7 @@ module GE =
     let perp_segment (l:Line) (p:Point) (attr:obj) (board:Board) = stub<PerpendicularSegment>
 
     [<Emit("{3}.create('normal', [{0}, {1}], {2})")>]
-    let normal (l:Line) (p:Point) (attr:obj) (board:Board) = stub<Normal>
+    let normal_line (l:Line) (p:Point) (attr:obj) (board:Board) = stub<Normal>
 
     [<Emit("{4}.create('glider', [{1}, {2}, {0}], {3})")>]
     let glider (ge:GeometryElement) (x:float) (y:float) (attr:obj) (board:Board) = stub<Glider>

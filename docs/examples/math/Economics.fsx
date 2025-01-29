@@ -14,8 +14,9 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let x = realvar "x"
 
-let c = uniform_continuous 3. 5.
+let c = normal 0. 1.
 
+c.[1]
 let X = randvar c
 //integrate_fun_over 2 3 c.Pdf
 

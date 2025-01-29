@@ -25,8 +25,8 @@ type DiscreteProbabilityDistribution(support:ISet<real>, pmf:Expr<real->real>, ?
     member x.Pmf = realfun_l pmf
     member x.Mean = defaultArg mean (support.Set |> Seq.map(fun e ->  e * (x.Prob e)) |> Seq.reduce (+))
     member x.ProbMap = defaultArg probmap pmf |> ev
-    member x.Prob(a:int) = x.ProbMap (real a) |> Scalar
-    member x.Prob(a:real) = x.ProbMap a |> Scalar
+    member x.Prob(a:int) = if real a |?| x.Support then x.ProbMap (real a) |> Scalar else 0R
+    member x.Prob(a:real) = if a |?| x.Support then x.ProbMap a |> Scalar else 0R
     member x.Prob(a:Scalar<real>) = x.Pmf.[a]
     member x.CProb(a:int, b:int) = [a .. b] |> Seq.map x.Prob |> Seq.reduce (+) |> simplify
     member x.CProb(a:real, b:real) = [a .. b] |> Seq.map x.Prob |> Seq.reduce (+) |> simplify
@@ -98,6 +98,8 @@ type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>,
         ContinuousProbabilityDistribution(support, td.MapExpr, td.[x.Mean], ctd)
        else
         ContinuousProbabilityDistribution(support, td.MapExpr, td.[x.Mean])
+    member x.Item(a:int) = x.CProb(a)
+    member x.Item(a:real) = x.CProb(a)
     member x.Item(a:int, b:int) = x.CProb(a, b)
     member x.Item(a:real, b:real) = x.CProb(a, b)
     member x.Item(a:Scalar<real>, b:Scalar<real>) = x.CProb(a, b)
@@ -179,6 +181,28 @@ type RandomVariable<'d when 'd :> IUnivariateDistribution<'d>>(distr:'d) =
     static member (/) (l:'a, r:RandomVariable<'d>) = let l' = realexpr l in r.Transform( (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), <@ fun x -> %l' / x @>)
     static member (/) (l:RandomVariable<'d>, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), <@ fun x -> x / %r' @>)
    
+type DegenerateDistribution(a) = inherit DiscreteProbabilityDistribution(finite_seq [a], <@ fun x -> 1. @>)
+
+type DiscreteUniformDistribution(s:seq<real>) = inherit DiscreteProbabilityDistribution(finite_seq s,  let l = (Seq.length s) in <@ fun x -> 1. / real l  @>)
+
+type PoissonDistribution(l:real) = 
+    inherit DiscreteProbabilityDistribution((infinite_seq <@ real @> (fun r -> is_int r)) , <@ fun x -> l ** x * (Math.e ** - l) / (factorial ((int) x)) @>, Scalar l)
+
+type BinomialDistribution(p:real, n:int) = 
+    inherit DiscreteProbabilityDistribution(finite_seq [0. .. real n], <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.- p) ** (real n - x))) @>)
+
+type BernoulliDistribution(p:real) = inherit BinomialDistribution(p, 1) 
+
+type GeometricDistribution(p:real, n:int) = 
+    inherit DiscreteProbabilityDistribution(finite_seq [0. .. real n], <@ fun x -> ((1.-p) ** (x - 1.)) * p @>)
+
+type ContinuousUniformDistribution(a:real, b:real) =
+    inherit ContinuousProbabilityDistribution((open_interval a b), <@ fun x -> 1. / (%(realexpr b) - %(realexpr a)) @>, Scalar<real>((a + b) / 2.), <@ fun z ->  if z  >= a && z <= b then (z - a) / (b - a) else 0. @>) 
+
+type NormalDistribution(m:real, sd:real) =
+    inherit ContinuousProbabilityDistribution(Field.R, <@ fun z -> (Math.e ** (((-(z - m) / 2. * sd ** 2.)**2.)) / sqrt(2. * Math.pi * (sd ** 2.))) @>,
+                Scalar m, <@ fun x -> 0.5 + 0.5 * erf ((x - m) / (sd * x ** 0.5))@>) 
+
 [<AutoOpen>]
 module ProbabilityDistribution =
     let discrete_distr (s:ISet<real>) (pmf:Expr<real->real>) = DiscreteProbabilityDistribution(s, pmf) 
@@ -199,8 +223,6 @@ module ProbabilityDistribution =
 
     let geometric<'t when 't : equality> p n = discrete_distr ([0. .. real n] |> finite_seq)  <@ fun x -> ((1.-p) ** (x - 1.)) * p @>
     
-    let uniform_continuous<'t when 't : equality> a b = 
-        let a',b' = realexpr a, realexpr b
-        continuous_distr (open_interval a b) <@ fun x -> 1. / (%b' - %a') @> (Some <@ fun z ->  if z  >= a && z <= b then (z - a) / (b - a) else 0. @>) (Some(Scalar<real>((a + b) / 2.)))
-
-    let normal m s = continuous_distr Field.R <@ fun z -> Math.e ** ((-z**2.) / 2.) @> (Some <@ fun z -> 0.5 + 0.5 * erf (z - m) / (s ** 0.5) @>) (Some 0R)
+    let continuous_uniform<'t when 't : equality> a b = ContinuousUniformDistribution(a, b)
+    
+    let normal m sd = NormalDistribution(m, sd)
