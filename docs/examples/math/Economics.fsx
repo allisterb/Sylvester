@@ -13,11 +13,18 @@ fsi.PrintWidth <- 500
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let x = realvar "x"
+let a = realconst "a"
 
-let c = normal 0. 1.
+let p = poisson 5.
+let c = continuous_uniform 0. 1.
 
-c.[1]
+
 let X = randvar c
+
+let J = X + 0.5
+
+
+J.Distribution.CProb(0, 1)
 //integrate_fun_over 2 3 c.Pdf
 
 //em.GetVar "foo"

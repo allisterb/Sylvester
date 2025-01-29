@@ -15,10 +15,7 @@ type IUnivariateDistribution =
     abstract member CProb: a:int*int->Scalar<real>
     abstract member CProb: a:real*real->Scalar<real>
     abstract member CProb: a:Scalar<real>*Scalar<real>->Scalar<real>
-
-type IUnivariateDistribution<'distr> =
-    inherit IUnivariateDistribution
-    abstract member Transform: support:ISet<real>*t:Expr<real->real>->'distr
+    abstract member Transform: support:ISet<real>*t:Expr<real->real>-> IUnivariateDistribution
 
 type DiscreteProbabilityDistribution(support:ISet<real>, pmf:Expr<real->real>, ?mean:Scalar<real>, ?probmap:Expr<real->real>) = 
     member x.Support = support.Set 
@@ -49,7 +46,8 @@ type DiscreteProbabilityDistribution(support:ISet<real>, pmf:Expr<real->real>, ?
     member x.Item(a:Scalar<real>) = x.Prob a
     member x.Item(a: int, b:int) = x.CProb(a, b)
     member x.Item(a: real, b:real) = x.CProb(a, b)
-    interface IUnivariateDistribution<DiscreteProbabilityDistribution> with
+    
+    interface IUnivariateDistribution with
         member x.Support = x.Support
         member x.Func = x.Pmf
         member x.Expectation = x.Mean
@@ -60,8 +58,8 @@ type DiscreteProbabilityDistribution(support:ISet<real>, pmf:Expr<real->real>, ?
         member x.CProb(a:int, b:int) = x.CProb(a,b)
         member x.CProb(a:real,b:real) = x.CProb(a,b)
         member x.CProb(a:Scalar<real>,b:Scalar<real>) : Scalar<real> = x.CProb(a,b)
-        member x.Transform(support:ISet<real>, t:Expr<real->real>) = x.Transform(support, t)
-            
+        member x.Transform(support:ISet<real>, t:Expr<real->real>) = x.Transform(support, t) :> IUnivariateDistribution
+       
 type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>, ?mean:Scalar<real>, ?cdf:Expr<real->real>) = 
     member x.Support = support.Set 
     member x.Pdf = realfun_l pdf
@@ -90,21 +88,19 @@ type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>,
        let vt = param_var t
        let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
        let td = x.Pdf.MapExpr |> body |> subst_var_value vd bodyt |> recombine_func_as<real->real> [vd] |> realfun_l
-       if cdf.IsSome then
-        let vd = param_var cdf.Value
-        let vt = param_var t
-        let bodyt = t |> body |> subst_var_value vt (Expr.Var vd)
-        let ctd = cdf.Value |> body |> subst_var_value vd bodyt |> recombine_func_as<real->real> [vd] 
-        ContinuousProbabilityDistribution(support, td.MapExpr, td.[x.Mean], ctd)
-       else
-        ContinuousProbabilityDistribution(support, td.MapExpr, td.[x.Mean])
+       
+       let vd2 = param_var x.Cdf
+       let bodyt2 = t |> body |> subst_var_value vt (Expr.Var vd2)
+       let ctd = x.Cdf |> body |> subst_var_value vd2 bodyt2 |> recombine_func_as<real->real> [vd2] 
+       ContinuousProbabilityDistribution(support, td.MapExpr, Scalar <@ (%t)(%(x.Mean.Expr)) @>, ctd)
+       
     member x.Item(a:int) = x.CProb(a)
     member x.Item(a:real) = x.CProb(a)
     member x.Item(a:int, b:int) = x.CProb(a, b)
     member x.Item(a:real, b:real) = x.CProb(a, b)
     member x.Item(a:Scalar<real>, b:Scalar<real>) = x.CProb(a, b)
 
-    interface IUnivariateDistribution<ContinuousProbabilityDistribution> with
+    interface IUnivariateDistribution with
         member x.Support = x.Support
         member x.Func = x.Pdf
         member x.Expectation = x.Mean
@@ -115,7 +111,7 @@ type ContinuousProbabilityDistribution(support:ISet<real>, pdf:Expr<real->real>,
         member x.CProb(a:int, b:int) = x.CProb(a, b)
         member x.CProb(a:real, b:real) = x.CProb(a, b)
         member x.CProb(a:Scalar<real>,b:Scalar<real>) : Scalar<real> = x.CProb(a,b)
-        member x.Transform(support:ISet<real>, t:Expr<real->real>) = x.Transform(support, t)
+        member x.Transform(support:ISet<real>, t:Expr<real->real>) = x.Transform(support, t) :> IUnivariateDistribution
 
 type MultivariateDistribution = 
 | JointProbability of IUnivariateDistribution[]
@@ -164,7 +160,7 @@ type DiscreteRandomVariable(distr: DiscreteProbabilityDistribution, ?mean:Scalar
 
     static member (</) (l:DiscreteRandomVariable, r:real) = l.Cdf r
     
-type RandomVariable<'d when 'd :> IUnivariateDistribution<'d>>(distr:'d) = 
+type RandomVariable<'d when 'd :> IUnivariateDistribution>(distr:'d) = 
     member val Distribution = distr 
     member x.Expectation = x.Distribution.Expectation
     member x.Transform(s, t) = RandomVariable(distr.Transform(s,t))
@@ -181,13 +177,15 @@ type RandomVariable<'d when 'd :> IUnivariateDistribution<'d>>(distr:'d) =
     static member (/) (l:'a, r:RandomVariable<'d>) = let l' = realexpr l in r.Transform( (r.Distribution.Support |>| <@ fun x -> (%l' / x) |?| r.Distribution.Support @>), <@ fun x -> %l' / x @>)
     static member (/) (l:RandomVariable<'d>, r:'a) = let r' = realexpr r in l.Transform((l.Distribution.Support |>| <@ fun x -> (x / %r') |?| l.Distribution.Support @>), <@ fun x -> x / %r' @>)
    
-type DegenerateDistribution(a) = inherit DiscreteProbabilityDistribution(finite_seq [a], <@ fun x -> 1. @>)
-
-type DiscreteUniformDistribution(s:seq<real>) = inherit DiscreteProbabilityDistribution(finite_seq s,  let l = (Seq.length s) in <@ fun x -> 1. / real l  @>)
-
+type DegenerateDistribution(a) = 
+    inherit DiscreteProbabilityDistribution(finite_seq [a], <@ fun x -> 1. @>)
+   
+type DiscreteUniformDistribution(s:seq<real>) = 
+    inherit DiscreteProbabilityDistribution(finite_seq s,  let l = (Seq.length s) in <@ fun x -> 1. / real l  @>)
+  
 type PoissonDistribution(l:real) = 
     inherit DiscreteProbabilityDistribution((infinite_seq <@ real @> (fun r -> is_int r)) , <@ fun x -> l ** x * (Math.e ** - l) / (factorial ((int) x)) @>, Scalar l)
-
+   
 type BinomialDistribution(p:real, n:int) = 
     inherit DiscreteProbabilityDistribution(finite_seq [0. .. real n], <@ fun x -> binomial_coeff n ((int) x) * ((p ** x) * ((1.- p) ** (real n - x))) @>)
 
@@ -201,7 +199,7 @@ type ContinuousUniformDistribution(a:real, b:real) =
 
 type NormalDistribution(m:real, sd:real) =
     inherit ContinuousProbabilityDistribution(Field.R, <@ fun z -> (Math.e ** (((-(z - m) / 2. * sd ** 2.)**2.)) / sqrt(2. * Math.pi * (sd ** 2.))) @>,
-                Scalar m, <@ fun x -> 0.5 + 0.5 * erf ((x - m) / (sd * x ** 0.5))@>) 
+                Scalar m, <@ fun x -> 0.5 * (1. + erf ((x - m) / (sd * sqrt x ))) @>) 
 
 [<AutoOpen>]
 module ProbabilityDistribution =
@@ -209,7 +207,7 @@ module ProbabilityDistribution =
     
     let continuous_distr s d c m = ContinuousProbabilityDistribution(s, d, ?cdf=c, ?mean=m)
 
-    let randvar<'d when 'd :> IUnivariateDistribution<'d>> (distr:'d) = RandomVariable distr
+    let randvar<'d when 'd :> IUnivariateDistribution> (distr:'d) = RandomVariable distr
 
     let degenerate a = discrete_distr (finite_seq [a]) <@ fun x -> 1. @>
 
