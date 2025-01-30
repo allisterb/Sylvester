@@ -15,13 +15,13 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 let x = realvar "x"
 let a = realconst "a"
 
-let p = poisson 5.
+let n = normal 0. 1.
 let c = continuous_uniform 0. 1.
 
 
-let X = randvar c
+let X = randvar n
 
-let J = X + 0.5
+let z = X + 2
 
 
 J.Distribution.CProb(0, 1)
