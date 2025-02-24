@@ -6,23 +6,30 @@ open Sylvester.CAS
 open FSharp.Quotations
 open Economics
 open RealNumbers
+open Matrix
 open MathNet.Symbolics
 fsi.PrintWidth <- 500
 
 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
+
+
 let x = realvar "x"
 let a = realconst "a"
 
-let n = normal 0. 1.
+let m = mat [[5;3;2]; [4;5;6]; [1;x;a]]
+
+m * m
+
+
+let n = normal 4. 1.
 let c = continuous_uniform 0. 1.
 
 
 let X = randvar n
 
-let z = X + 2
-
+X.[2., 3.]
 
 J.Distribution.CProb(0, 1)
 //integrate_fun_over 2 3 c.Pdf

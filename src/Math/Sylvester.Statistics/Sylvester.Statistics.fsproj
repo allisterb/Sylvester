@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="LinearRegression.fs" />
     <Compile Include="Descriptive.fs" />
   </ItemGroup>
 
@@ -17,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
     <ProjectReference Include="..\..\Visualization\Sylvester.Visualization.Web\Sylvester.Visualization.Web.fsproj" />
+    <ProjectReference Include="..\Sylvester.RealAnalysis\Sylvester.RealAnalysis.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

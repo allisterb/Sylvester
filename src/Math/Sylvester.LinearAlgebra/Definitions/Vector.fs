@@ -22,6 +22,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     let expr = e  |> Array.map expand_as<'t>
     let exprmn = Array.map MathNetExpr.fromQuotation expr
     
+    member val Length = e.Length
     member val Expr = expr
     member val ExprList = expr |> Array.toList
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
@@ -82,14 +83,36 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     new([<ParamArray>] v:Scalar<'t> array) = Vector(sexprs v)
 
     new([<ParamArray>] v:'t array) = let expr = v |> Array.map exprv in Vector(expr)
-    
-    static member (+) (l: Vector<'t>, r: Vector<'t>) = 
-        Array.map2 call_add l.Expr r.Expr |> Array.map (expand_as >> simplifye) |> Vector<'t>
-
-    static member (-) (l: Vector<'t>, r: Vector<'t>) = 
-        Array.map2 call_sub l.Expr r.Expr |> Array.map (expand_as >> simplifye) |> Vector<'t>
 
     static member create([<ParamArray>] data: 't array) = Vector<'t>(data)
+
+    static member (+) (l: Vector<'t>, r: Vector<'t>) = 
+        let e = Array.map2 call_add l.Expr r.Expr |> Array.map (expand_as >> simplifye) in Vector<'t>(e, BinaryOp("+", l, r))
+    
+    static member (-) (l: Vector<'t>, r: Vector<'t>) = 
+        let e = Array.map2 call_sub l.Expr r.Expr |> Array.map (expand_as >> simplifye) in Vector<'t>(e, BinaryOp("-", l, r))
+
+    static member (*) (l: Vector<'t>, r: Vector<'t>) = 
+        let e = 
+            Array.zip l.Expr r.Expr 
+            |> Array.map(fun(a, b) -> call_mul a b)
+            |> Array.reduce (call_add)
+            |> expand_as
+            |> simplifye 
+        in Scalar<'t>(e, BinaryOp("*", l, r))
+
+    static member (*) (l: Scalar<'t>, r: Vector<'t>) = 
+        r.Expr |> Array.map(fun e -> call_mul (l.Expr) e  |> expand_as<'t> |> simplifye) |> Vector<'t>
+
+    static member (*) (l: Vector<'t>, r: Scalar<'t>) = 
+        l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
+
+    static member (*) (l: Vector<'t>, r: 't) : Vector<'t> = let r' = Scalar<'t>(exprv r) in l * r' 
+
+    static member (*) (l: 't, r: Vector<'t>) : Vector<'t> = let l' = Scalar<'t>(exprv l) in l' * r
+
+    static member (~-) (l: Vector<'t>) =
+        l.Expr |> Array.map(call_neg >> expand_as<'t> >> simplifye) |> Vector<'t>
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Vector<'dim0, 't when 'dim0 :> Number and 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable>
