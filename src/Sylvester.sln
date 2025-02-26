@@ -276,6 +276,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "school", "school", "{0AD684
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Sylvester.Tests.Economics", "..\tests\Sylvester.Tests.Economics\Sylvester.Tests.Economics.fsproj", "{15CB0DA8-823A-4265-A926-A01505B3A682}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sylvester.LinearAlgebra.TypedDimensions", "Math\Sylvester.LinearAlgebra.TypedDimensions\Sylvester.LinearAlgebra.TypedDimensions.fsproj", "{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\ext\KaosCombinatorics\Source\KaosCombinatorics\KaosCombinatorics.projitems*{6852278f-1508-43ac-8b6f-3a3f83324940}*SharedItemsImports = 5
@@ -1607,6 +1609,24 @@ Global
 		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|x64.Build.0 = Release|Any CPU
 		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|x86.ActiveCfg = Release|Any CPU
 		{15CB0DA8-823A-4265-A926-A01505B3A682}.Release|x86.Build.0 = Release|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Debug|x64.Build.0 = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Debug|x86.Build.0 = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Nuget|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Nuget|Any CPU.Build.0 = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Nuget|x64.ActiveCfg = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Nuget|x64.Build.0 = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Nuget|x86.ActiveCfg = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Nuget|x86.Build.0 = Debug|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Release|x64.ActiveCfg = Release|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Release|x64.Build.0 = Release|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Release|x86.ActiveCfg = Release|Any CPU
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1710,6 +1730,7 @@ Global
 		{40232E1D-01C5-426B-9ED9-E7EE58C1B6C0} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
 		{0AD6845D-3881-4503-9B96-091D2BEBD570} = {304EBF22-7BE1-4F6D-A444-5625BAAE5FDD}
 		{15CB0DA8-823A-4265-A926-A01505B3A682} = {921C2A48-62E1-4433-9CD4-BDBAAD7DA19D}
+		{7E089288-9FCC-40E7-BBFB-E68D7E847EFF} = {6AF10FA0-9CAD-4048-BA33-E60D8D4C5653}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5695620D-667A-4F6E-A95A-82E53070F748}
