@@ -14,15 +14,18 @@ fsi.PrintWidth <- 500
 
 do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
-
-
+[3;4;7] |> Seq.mapFold (fun i j -> i+j, j) 0 |> fst |> Seq.toArray
 let x = realvar "x"
 let a = realconst "a"
 
 let m = mat [[3;1;-4]; [2;5;6]; [1;4;8]]
 
 let n = sqmat [3;2;-1;1;6;3;2;-4;0]
-creplace 0 (vec [1;1;1]) n
+
+inverse n
+mblock 0 1 1 2 n
+
+//creplace 0 (vec [1;1;1]) n
 
 
 let o = sqmat [1;0;0;-1;3;1;2;2;1;0;-2;1;2;0;0;1]

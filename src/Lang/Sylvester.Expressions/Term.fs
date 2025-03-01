@@ -531,6 +531,8 @@ module Scalar =
 
     let s_neg_one<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.NegOne
 
+    let s_const<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> (n:obj) = Convert.ChangeType(n, typeof<'t>) :?> 't |> exprv |> Scalar
+
 [<AutoOpen>]
 module Prop =
     let prop e = Prop e

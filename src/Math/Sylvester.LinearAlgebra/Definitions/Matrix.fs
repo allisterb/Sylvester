@@ -185,7 +185,13 @@ module Matrix =
     let exprit (m:IMatrix<_>) = m.ExprT |> Array.indexed
 
     let expr2d (m:IMatrix<_>) = m.Expr2D
+    
+    let melems (m:IMatrix<_>) = m |> expr |> Array.map(Array.map Scalar<_>)
 
+    let melems2d (m:IMatrix<_>) = m |> expr2d |> Array2D.map Scalar<_>
+
+    let mmap map (m:IMatrix<_>) = [| for i in 0..m.Dims.[0] - 1 -> [| for j in 0..m.Dims.[1] - 1 -> map i j m |] |]
+    
     let trans (m:IMatrix<_>) = m.Transpose
 
     let madd (l:IMatrix<'t>) (r:IMatrix<'t>) = 
@@ -230,10 +236,10 @@ module Matrix =
         rows.[i] <- ri
         Matrix<'t> rows
 
-    let creplace j (v:Vector<_>) (l:Matrix<_>) =
+    let crep j (v:Vector<_>) (l:Matrix<_>) =
         do 
             fail_if_invalid_col_index j l
-            if v.Length <> l.Dim0 then failwith "Th length of the column vector (%A) is not the same as then number of rows (%A)" v.Length l.Dim0
+            if v.Length <> l.Dim0 then failwithf "The length of the column vector (%A) is not the same as then number of rows (%A)" v.Length l.Dim0
         let cols = l.Columns.Clone() :?> Vector<'t> array
         cols.[j] <- v
         Matrix<'t>.ofCols cols
@@ -245,29 +251,50 @@ module Matrix =
         |> sexprs2
         |> Matrix<'t>.ofCols
 
-    let delr n (m:IMatrix<_>) =
+    let rdel n (m:IMatrix<_>) =
         do fail_if_invalid_row_index n m
         m |> expri |> Array.filter(fun (i, _) -> i <> n) |> Array.map snd |> Matrix<'t>.ofRows
     
-    let delc n (m:IMatrix<_>) =
+    let cdel n (m:IMatrix<_>) =
         do fail_if_invalid_col_index n m
         m |> exprit |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> Matrix<'t>.ofCols
     
-    let submat i j (m:IMatrix<_>) = m |> delr i |> delc j
+    let submat i j (m:IMatrix<_>) = m |> rdel i |> cdel j
 
     let rec det (m:IMatrix<_>) =
         do fail_if_not_square m
-        let n = m.Dims.[0]
+        let n = m.Dims.[0] in
         match n with
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
-        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((s_neg_one<_> *** i) * m.[0, i]) |] |> Array.reduce (+) 
+        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((s_neg_one *** i) * m.[0, i]) |] |> Array.reduce (+) 
 
     let minor i j (m:IMatrix<_>) = m |> submat i j |> det
 
     let cofactor i j (m:IMatrix<_>) = m |> minor i j |> (*) (s_neg_one *** (i+j))
 
-    let adjoint (m:IMatrix<_>) =
-        let n = m.Dims.[0]
-        [| for i in 0..n - 1 -> [|for j in 0 .. n - 1 -> cofactor i j m |] |] |> Matrix<_> |> trans
+    let r_coexpand i (m:IMatrix<_>) =
+        [|for j in 0 .. m.Dims.[1] - 1 -> cofactor i j m |] |> Array.reduce (+)
 
+    let coexpand_c j (m:IMatrix<_>) =
+        [|for i in 0 .. m.Dims.[0] - 1 -> cofactor i j m |] |> Array.reduce (+)
+
+    let comat m =  m |> mmap cofactor |> Matrix<_>
+
+    let adjoint (m:IMatrix<_>) = m |> comat |> trans
+        
     let inverse (m:IMatrix<_>) = adjoint m / det m
+
+    let mblock i0 j0 i1 j1 (m:IMatrix<_>) = [|for i in i0 .. i1 -> [| for j in j0 .. j1 -> m.[i, j] |] |] |> Matrix<_>
+
+type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>(rowgroup:int seq,colgroup:int seq, m:IMatrix<'t>) =
+    do 
+        Matrix.fail_if_not_square m
+        let rowindices, rowmax = rowgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
+        let colindices, colmax = colgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
+        if rowmax >= m.Dims.[0] then failwith "The size of the row partition exceeds the number of rows in the matrix."
+        if colmax >= m.Dims.[1] then failwith "The size of the column partition exceeds the number of columns in the matrix."
+
+
+
+        //let blocks = [| for i in 0 .. rowindices.Length - 1 -> [| for j in 0 .. colindices.Length - 1 -> Matrix.submat i j m |] |]
+
