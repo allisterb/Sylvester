@@ -86,6 +86,14 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
      
     static member ofCols (data:Expr<'t> [][]) = data |> LinearAlgebraOps.transpose_mat |> Matrix<'t>
 
+    static member ofRows (data:Scalar<'t> [] []) = Matrix<'t> data
+    
+    static member ofCols (data:Scalar<'t> [][]) = data |> sexprs2 |> Matrix<'t>.ofCols
+
+    static member ofRows (data:Vector<'t> []) = Matrix<'t> data
+       
+    static member ofCols (data:Vector<'t> []) = (Matrix<'t> data).Transpose
+
     static member (+) (l: Matrix<'t>, r: Matrix<'t>) = 
         do if not <| l.HasSameDims r then failwith "Matrices for addition must have the same dimension."    
         Array.map2 (+) l.Rows r.Rows |> Matrix<'t> 
@@ -222,6 +230,14 @@ module Matrix =
         rows.[i] <- ri
         Matrix<'t> rows
 
+    let creplace j (v:Vector<_>) (l:Matrix<_>) =
+        do 
+            fail_if_invalid_col_index j l
+            if v.Length <> l.Dim0 then failwith "Th length of the column vector (%A) is not the same as then number of rows (%A)" v.Length l.Dim0
+        let cols = l.Columns.Clone() :?> Vector<'t> array
+        cols.[j] <- v
+        Matrix<'t>.ofCols cols
+        
     let diag (l:Matrix<'t>) = 
         let dim = Math.Min(l.Dim0, l.Dim1)
         Array2D.init dim dim l.Kr
@@ -244,7 +260,7 @@ module Matrix =
         let n = m.Dims.[0]
         match n with
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
-        | x -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((s_neg_one<_> *** i) * m.[0, i]) |] |> Array.reduce (+) 
+        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((s_neg_one<_> *** i) * m.[0, i]) |] |> Array.reduce (+) 
 
     let minor i j (m:IMatrix<_>) = m |> submat i j |> det
 
@@ -252,6 +268,6 @@ module Matrix =
 
     let adjoint (m:IMatrix<_>) =
         let n = m.Dims.[0]
-        [| for i in 0..n - 1 -> [|for j in 0 .. n - 1 -> cofactor i j m|] |] |> Matrix<_> |> trans
+        [| for i in 0..n - 1 -> [|for j in 0 .. n - 1 -> cofactor i j m |] |] |> Matrix<_> |> trans
 
     let inverse (m:IMatrix<_>) = adjoint m / det m
