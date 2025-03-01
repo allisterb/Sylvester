@@ -107,8 +107,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
          [| for i in 0..r.Dim1 - 1 -> l * r.Columns.[i] |] |> Array.map vexpr  |> LinearAlgebraOps.transpose_mat |> Matrix<'t>
 
     static member (/) (l: Matrix<'t>, r: Scalar<'t>) = 
-           l.Rows |> Array.map ((*) l) |> Matrix<'t> 
-
+           l.Rows |> Array.map (vsdiv r) |> Matrix<'t> 
 
     static member (|+|) (l:Matrix<'t>, r:Vector<'t>) = 
         if l.Dim1 <> r.Length then failwith "The length of the vector must be the same as the number of columns in the matrix to augment."
