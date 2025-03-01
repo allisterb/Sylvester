@@ -18,9 +18,9 @@ do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 let x = realvar "x"
 let a = realconst "a"
 
-let m = mat [[5;3;2]; [4;5;6]; [1;x;a]]
+let m = mat [[3;1;-4]; [2;5;6]; [1;4;8]]
 
-m * m
+mminor 2 1 m
 
 
 let n = normal 4. 1.

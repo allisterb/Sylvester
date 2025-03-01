@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="Definitions\Vector.fs" />
     <Compile Include="Definitions\Matrix.fs" />
+    <Compile Include="Definitions\VectorSpace.fs" />
     <Compile Include="Theories\Matrices.fs" />
     <Compile Include="Theories\VectorSpace.fs" />
   </ItemGroup>

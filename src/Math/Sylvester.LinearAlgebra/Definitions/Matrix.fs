@@ -45,6 +45,8 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         | LinearAlgebraNumericOpType -> expr |> Array.map (Array.map (evaluate >> Convert.ToDouble)) |> LinearAlgebra.DenseMatrix.ofRowArrays
         | _ -> failwithf "The type %A is not compatible with numeric linear algebra operations." t
     
+     member x.Kr = fun (i:int) (j:int) -> if i = j then x.[i].[j] else expand_as<'t>(zero_val(typeof<'t>)) |> Scalar
+
     interface IEquatable<Matrix<'t>> with
         member a.Equals b = a.UnicodeDisplay = b.UnicodeDisplay
 
@@ -98,22 +100,22 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         l.Rows |> Array.map (fun v -> v * r) |> Matrix<'t>
 
     static member (*) (l:Matrix<'t>, r:Vector<'t>) =
-        [| for i in 0..l.Dim0 -> l.Rows.[i] * r |] |> Array.map sexpr |> Vector<'t>
+        [| for i in 0..l.Dim0 - 1 -> l.Rows.[i] * r |] |> Array.map sexpr |> Vector<'t>
 
     static member (*) (l:Matrix<'t>, r:Matrix<'t>) =             
-        [| for i in 0..r.Dim1 - 1 -> l * r.Columns.[i] |] |> Array.map vexpr  |> LinearAlgebraOps.transpose_mat |> Matrix<'t>
+         [| for i in 0..r.Dim1 - 1 -> l * r.Columns.[i] |] |> Array.map vexpr  |> LinearAlgebraOps.transpose_mat |> Matrix<'t>
 
     static member (|+|) (l:Matrix<'t>, r:Vector<'t>) = 
-        if l.Dim1 <> r.Length then failwithf "The length of the vector (%A) must be the same as the number of columns in the matrix to augment (%A)." r.Length l.Dim1
-        Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> Matrix<'t>
-
-    static member (||+||) (l:Matrix<'t>, r:Vector<'t>) = 
         if l.Dim1 <> r.Length then failwith "The length of the vector must be the same as the number of columns in the matrix to augment."
-        Array.append [|r|] l.Rows |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> Matrix<'t>
+        Array.append [|r|] l.Rows |> Array.map vexpr |> array2D |> Array2D.transpose |> Matrix<'t>
+    
+    static member (||+||) (l:Matrix<'t>, r:Vector<'t>) = 
+        if l.Dim1 <> r.Length then failwithf "The length of the vector (%A) must be the same as the number of columns in the matrix to augment (%A)." r.Length l.Dim1
+        Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Matrix<'t>
 
     static member (|+||) (l:Matrix<'t>, r:Vector<'t>) = 
         if l.Dim0 <> r.Length then failwith "The length of the vector must be the same as the number of rows in the matrix to augment."
-        Array.append l.Columns [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> Matrix<'t>
+        Array.append l.Columns [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Matrix<'t>
 
     static member (||+|) (l:Matrix<'t>, r:Vector<'t>) = 
         if l.Dim0 <> r.Length then failwith "The length of the vector must be the same as the number of rows in the matrix to augment."
@@ -135,9 +137,35 @@ type Mat = Matrix<real>
 type MatQ = Matrix<rat>
 type MatZ = Matrix<int>
 
-
 module Matrix =
-    let mat (data:obj list list) = data |>  List.map (List.map realterm >> List.toArray) |> List.toArray  |> Mat
+
+    let fail_if_invalid_row_index i (m:IMatrix<'t>)  = 
+        let rcount = m.Rows.Length
+        if i >= rcount then failwithf "The row index %A is greater than the number of rows in the matrix: %A." i rcount 
+
+    let fail_if_invalid_row_indices (i:seq<int>) (m:IMatrix<'t>) = let f n = fail_if_invalid_row_index n m in i |> Seq.iter f 
+
+    let fail_if_invalid_col_index j (m:IMatrix<'t>) = 
+           let ccount = m.Columns.Length
+           if j >= ccount then failwithf "The column index %A is greater than the number of columns in the matrix: %A." j ccount 
+
+    let fail_if_invalid_indices i j (m:IMatrix<'t>) = 
+        fail_if_invalid_row_index i m
+        fail_if_invalid_col_index j m
+    
+    let fail_if_not_square (m:IMatrix<_>) = if m.Dims.[0] <>  m.Dims.[1] then failwithf "This matrix is not square and has dimensions %Ax%A" m.Dims.[0] m.Dims.[1]
+    
+    let mat (data:obj seq seq) = data |>  Seq.map (Seq.map realterm >> Seq.toArray) |> Seq.toArray  |> Mat
+
+    let matc (data:obj seq seq) =  data |>  Seq.map (Seq.map (realterm >> sexpr) >> Seq.toArray) |> Seq.toArray |> Matrix<real>.ofCols 
+
+    let mexpr (m:IMatrix<_>) = m.Expr
+    
+    let mexpri (m:IMatrix<_>) = m.Expr |> Array.indexed
+    
+    let mexprt (m:IMatrix<_>) = m.ExprT
+    
+    let mexprit (m:IMatrix<_>) = m.ExprT |> Array.indexed
 
     let madd (l:IMatrix<'t>) (r:IMatrix<'t>) = 
         do if l.Dims.[0] <> r.Dims.[0] || l.Dims.[1] <> r.Dims.[1] then failwithf "Two matrices must have the same dimensions to be conformable for addition."
@@ -147,6 +175,8 @@ module Matrix =
         do if l.Dims.[0] <> r.Dims.[0] || l.Dims.[1] <> r.Dims.[1] then failwithf "Two matrices must have the same dimensions to be conformable for subtraction."
         Array.map2 (-) l.Rows r.Rows |> Matrix<'t> 
     
+    let msmul (l:Scalar<'t>) (r:IMatrix<'t>) = r.Rows |> Array.map ((*) l) |> Matrix<'t> 
+          
     let mvmul (l:IMatrix<'t>) (r:IVector<'t>) =
         [| for i in 0..l.Dims.[0] - 1 -> vdot l.Rows.[i]  r |] |> Array.map sexpr |> Vector<'t>
     
@@ -154,8 +184,55 @@ module Matrix =
         do if l.Dims.[1] <> r.Dims.[0] then failwith "The two matrices are not conformable for matrix multiplication."
         [| for i in 0..r.Dims.[1] - 1 -> mvmul l r.Columns.[i] |] |> Array.map vexpr  |> LinearAlgebraOps.transpose_mat |> Matrix<'t>
 
- 
+    let mrmul i (k:Scalar<'t>) (l:Matrix<'t>)=
+        do fail_if_invalid_row_index i l
+        let rows = l.Rows.Clone() :?> Vector<'t> array
+        let ri = k * l.[i]
+        rows.[i] <- ri
+        Matrix<'t> rows
 
+    let mrswitch i j (l:Matrix<'t>) =
+        do fail_if_invalid_row_indices [i;j] l
+        let ri = l.[i] 
+        let rj = l.[j]
+        let rows = l.Rows.Clone() :?> Vector<'t> array
+        rows.[i] <- rj
+        rows.[j] <- ri
+        Matrix<'t> rows
 
+    let mraddmul i j (k:Scalar<'t>) (l:Matrix<'t>) =
+        do fail_if_invalid_row_indices [i;j] l
+        let rows = l.Rows.Clone() :?> Vector<'t> array
+        let ri = l.[i] + k * l.[j] 
+        rows.[i] <- ri
+        Matrix<'t> rows
+
+    let mdiag (l:Matrix<'t>) = 
+        let dim = Math.Min(l.Dim0, l.Dim1)
+        Array2D.init dim dim l.Kr
+        |> Array2D.toJagged
+        |> sexprs2
+        |> Matrix<'t>.ofCols
+
+    let mdelr n (m:IMatrix<_>) =
+        do fail_if_invalid_row_index n m
+        m |> mexpri |> Array.filter(fun (i, _) -> i <> n) |> Array.map snd |> Matrix<'t>.ofRows
+    
+    let mdelc n (m:IMatrix<_>) =
+        do fail_if_invalid_col_index n m
+        m |> mexprit |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> Matrix<'t>.ofCols
+    
+    let submat i j (m:IMatrix<_>) = m |> mdelr i |> mdelc j
+
+    let rec mdet (m:IMatrix<_>) =
+        do fail_if_not_square m
+        let n = m.Dims.[0]
+        match n with
+        | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
+        | x -> [| for i in 0..n - 1 -> m |> submat 0 i |> mdet |> ((*) m.[0, i]) |] |> Array.reduce (+) 
+
+    let mminor i j (m:IMatrix<_>) = m |> submat i j |> mdet
+
+    let mcofactor i j (m:IMatrix<_>) = m |> mminor i j |> ((*) (-1R *** (i+j))) 
 
     

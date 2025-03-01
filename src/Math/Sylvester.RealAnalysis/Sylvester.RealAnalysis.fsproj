@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\Lang\Solvers\Sylvester.Solver.Z3\Sylvester.Solver.Z3.fsproj" />
     <ProjectReference Include="..\CAS\Sylvester.CAS.Maxima\Sylvester.CAS.Maxima.fsproj" />
     <ProjectReference Include="..\Sylvester.AbstractAlgebra\Sylvester.AbstractAlgebra.fsproj" />
+    <ProjectReference Include="..\Sylvester.LinearAlgebra.TypedDimensions\Sylvester.LinearAlgebra.TypedDimensions.fsproj" />
     <ProjectReference Include="..\Sylvester.LinearAlgebra\Sylvester.LinearAlgebra.fsproj" />
   </ItemGroup>
 
