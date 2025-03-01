@@ -104,6 +104,9 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member (*) (l: Vector<'t>, r: Scalar<'t>) = 
         l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
 
+    static member (/) (l: Vector<'t>, r: Scalar<'t>) = 
+        l.Expr |> Array.map(fun e -> call_div e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
+
     static member (*) (l: Vector<'t>, r: 't) : Vector<'t> = let r' = Scalar<'t>(exprv r) in l * r' 
 
     static member (*) (l: 't, r: Vector<'t>) : Vector<'t> = let l' = Scalar<'t>(exprv l) in l' * r
@@ -127,6 +130,9 @@ module Vector =
             |> simplifye
         in Scalar<'t>(e, BinaryOp("*", l, r))
     
-    let vsmul (l:IVector<'t>) (r:Scalar<'t>) =
-         l.Expr |> Array.map(fun e -> call_mul e (r.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
+    let vsmul (l:Scalar<'t>) (r:IVector<'t>)  =
+         r.Expr |> Array.map(fun e -> call_mul (l.Expr) e |> expand_as<'t> |> simplifye) |> Vector<'t>
+
+    let vsdiv (l:Scalar<'t>) (r:IVector<'t>)  =
+         r.Expr |> Array.map(fun e -> call_div e (l.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
 

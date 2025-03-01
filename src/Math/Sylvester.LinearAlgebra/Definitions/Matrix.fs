@@ -38,7 +38,8 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         |> replace ")" "]"
         |> sprintf "[%s]"
     member x.Item with get i = x.Rows.[i] and set i value = Array.set x.Rows i value
-    
+    member x.Item with get (i,j) = expr2d.[i,j] |> Scalar<'t>
+
     member x.AsNumeric() = 
         let t = typeof<'t>
         match t with
@@ -105,6 +106,10 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member (*) (l:Matrix<'t>, r:Matrix<'t>) =             
          [| for i in 0..r.Dim1 - 1 -> l * r.Columns.[i] |] |> Array.map vexpr  |> LinearAlgebraOps.transpose_mat |> Matrix<'t>
 
+    static member (/) (l: Matrix<'t>, r: Scalar<'t>) = 
+           l.Rows |> Array.map ((*) l) |> Matrix<'t> 
+
+
     static member (|+|) (l:Matrix<'t>, r:Vector<'t>) = 
         if l.Dim1 <> r.Length then failwith "The length of the vector must be the same as the number of columns in the matrix to augment."
         Array.append [|r|] l.Rows |> Array.map vexpr |> array2D |> Array2D.transpose |> Matrix<'t>
@@ -157,15 +162,24 @@ module Matrix =
     
     let mat (data:obj seq seq) = data |>  Seq.map (Seq.map realterm >> Seq.toArray) |> Seq.toArray  |> Mat
 
+    let sqmat (data: obj seq) =
+        let n = Seq.length data
+        do if n |> is_perfect_square |> not then failwithf "The number of matrix elements must be a perfect square."
+        data |> Seq.map realterm |> Seq.splitInto (n |> float |> sqrt |> int) |> Seq.toArray |> Mat
+
     let matc (data:obj seq seq) =  data |>  Seq.map (Seq.map (realterm >> sexpr) >> Seq.toArray) |> Seq.toArray |> Matrix<real>.ofCols 
 
-    let mexpr (m:IMatrix<_>) = m.Expr
+    let expr (m:IMatrix<_>) = m.Expr
     
-    let mexpri (m:IMatrix<_>) = m.Expr |> Array.indexed
+    let expri (m:IMatrix<_>) = m.Expr |> Array.indexed
     
-    let mexprt (m:IMatrix<_>) = m.ExprT
+    let exprt (m:IMatrix<_>) = m.ExprT
     
-    let mexprit (m:IMatrix<_>) = m.ExprT |> Array.indexed
+    let exprit (m:IMatrix<_>) = m.ExprT |> Array.indexed
+
+    let expr2d (m:IMatrix<_>) = m.Expr2D
+
+    let trans (m:IMatrix<_>) = m.Transpose
 
     let madd (l:IMatrix<'t>) (r:IMatrix<'t>) = 
         do if l.Dims.[0] <> r.Dims.[0] || l.Dims.[1] <> r.Dims.[1] then failwithf "Two matrices must have the same dimensions to be conformable for addition."
@@ -177,6 +191,8 @@ module Matrix =
     
     let msmul (l:Scalar<'t>) (r:IMatrix<'t>) = r.Rows |> Array.map ((*) l) |> Matrix<'t> 
           
+    let msdiv (l:Scalar<'t>) (r:IMatrix<'t>) = r.Rows |> Array.map (vsdiv l) |> Matrix<'t>
+    
     let mvmul (l:IMatrix<'t>) (r:IVector<'t>) =
         [| for i in 0..l.Dims.[0] - 1 -> vdot l.Rows.[i]  r |] |> Array.map sexpr |> Vector<'t>
     
@@ -191,7 +207,7 @@ module Matrix =
         rows.[i] <- ri
         Matrix<'t> rows
 
-    let mrswitch i j (l:Matrix<'t>) =
+    let rswitch i j (l:Matrix<'t>) =
         do fail_if_invalid_row_indices [i;j] l
         let ri = l.[i] 
         let rj = l.[j]
@@ -200,39 +216,43 @@ module Matrix =
         rows.[j] <- ri
         Matrix<'t> rows
 
-    let mraddmul i j (k:Scalar<'t>) (l:Matrix<'t>) =
+    let raddmul i j (k:Scalar<'t>) (l:Matrix<'t>) =
         do fail_if_invalid_row_indices [i;j] l
         let rows = l.Rows.Clone() :?> Vector<'t> array
         let ri = l.[i] + k * l.[j] 
         rows.[i] <- ri
         Matrix<'t> rows
 
-    let mdiag (l:Matrix<'t>) = 
+    let diag (l:Matrix<'t>) = 
         let dim = Math.Min(l.Dim0, l.Dim1)
         Array2D.init dim dim l.Kr
         |> Array2D.toJagged
         |> sexprs2
         |> Matrix<'t>.ofCols
 
-    let mdelr n (m:IMatrix<_>) =
+    let delr n (m:IMatrix<_>) =
         do fail_if_invalid_row_index n m
-        m |> mexpri |> Array.filter(fun (i, _) -> i <> n) |> Array.map snd |> Matrix<'t>.ofRows
+        m |> expri |> Array.filter(fun (i, _) -> i <> n) |> Array.map snd |> Matrix<'t>.ofRows
     
-    let mdelc n (m:IMatrix<_>) =
+    let delc n (m:IMatrix<_>) =
         do fail_if_invalid_col_index n m
-        m |> mexprit |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> Matrix<'t>.ofCols
+        m |> exprit |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> Matrix<'t>.ofCols
     
-    let submat i j (m:IMatrix<_>) = m |> mdelr i |> mdelc j
+    let submat i j (m:IMatrix<_>) = m |> delr i |> delc j
 
-    let rec mdet (m:IMatrix<_>) =
+    let rec det (m:IMatrix<_>) =
         do fail_if_not_square m
         let n = m.Dims.[0]
         match n with
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
-        | x -> [| for i in 0..n - 1 -> m |> submat 0 i |> mdet |> ((*) m.[0, i]) |] |> Array.reduce (+) 
+        | x -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((s_neg_one<_> *** i) * m.[0, i]) |] |> Array.reduce (+) 
 
-    let mminor i j (m:IMatrix<_>) = m |> submat i j |> mdet
+    let minor i j (m:IMatrix<_>) = m |> submat i j |> det
 
-    let mcofactor i j (m:IMatrix<_>) = m |> mminor i j |> ((*) (-1R *** (i+j))) 
+    let cofactor i j (m:IMatrix<_>) = m |> minor i j |> (*) (s_neg_one *** (i+j))
 
-    
+    let adjoint (m:IMatrix<_>) =
+        let n = m.Dims.[0]
+        [| for i in 0..n - 1 -> [|for j in 0 .. n - 1 -> cofactor i j m|] |] |> Matrix<_> |> trans
+
+    let inverse (m:IMatrix<_>) = adjoint m / det m

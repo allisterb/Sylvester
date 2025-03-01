@@ -20,9 +20,13 @@ let a = realconst "a"
 
 let m = mat [[3;1;-4]; [2;5;6]; [1;4;8]]
 
-mminor 2 1 m
+let n = sqmat [3;2;-1;1;6;3;2;-4;0]
+inverse n
 
 
+let o = sqmat [1;0;0;-1;3;1;2;2;1;0;-2;1;2;0;0;1]
+
+det o
 let n = normal 4. 1.
 let c = continuous_uniform 0. 1.
 

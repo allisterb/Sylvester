@@ -95,6 +95,8 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member One = typeof<'t> |> one_val |> expand_as<'t> |> Scalar<'t>
 
+    static member NegOne = typeof<'t> |> neg_one_val |> expand_as<'t> |> Scalar<'t>
+
     static member op_Implicit (l:Scalar<'t>):Expr<'t> = l.Expr
 
     static member op_Implicit (l:'t):Scalar<'t> = Scalar (exprv l)
@@ -225,7 +227,10 @@ and Scalar<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> (e
 
     static member (/) (l:Scalar<int>, r:nat) = call_div (l.Expr) (Expr.Value (int r)) |> expand_as<'t> |> simplifye|> Scalar<'t>
 
-    static member ( ***) (l : Scalar<real>, r : Scalar<real>) = call_pow l.Expr r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    static member ( ***) (l : Scalar<'t>, r : Scalar<'t>) = call_pow l.Expr r.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
+    
+    static member ( ***) (l : Scalar<'t>, r : int) =  
+        Convert.ChangeType(r, typeof<'t>) :?> 't |> exprv |> call_pow l.Expr |> expand_as<'t> |> simplifye |> Scalar<'t>
 
     static member ( ***) (l : Scalar<real>, r : real) = call_pow l.Expr (Expr.Value r) |> expand_as<'t> |> simplifye |> Scalar<'t>
     
@@ -519,8 +524,12 @@ module Scalar =
     let fixvar (c:seq<ScalarVar<'b>>) (s:'s when 's :> #ISymbolic<'s,'b>) = fixconst (c |> Seq.map(fun _c -> _c.Name)) s
 
     let collect_linear_terms (e:realexpr) = ()
-        //match e.Expr with
+    
+    let s_zero<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.Zero
 
+    let s_one<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.One
+
+    let s_neg_one<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.NegOne
 
 [<AutoOpen>]
 module Prop =
