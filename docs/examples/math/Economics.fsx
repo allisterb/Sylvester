@@ -12,19 +12,24 @@ open MathNet.Symbolics
 fsi.PrintWidth <- 500
 
 
-do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+//do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+//let prepend<'a> (a:'a) (arr:'a[]) :'a[] = Seq.concat[ seq{a}; arr :> seq<'a>] |> Seq.toArray
 
-[3;4;7] |> Seq.mapFold (fun i j -> i+j, j) 0 |> fst |> Seq.toArray
+//[3;4;7] |> Seq.toArray |> Array.mapFold (fun i j -> i + j , (i+j)) 0 |> fst |> prepend 0 |> Array.windowed 2 
 let x = realvar "x"
 let a = realconst "a"
 
 let m = mat [[3;1;-4]; [2;5;6]; [1;4;8]]
 
-let n = sqmat [3;2;-1;1;6;3;2;-4;0]
+let n = sqmat [
+                3;2;-1
+                1;6;3
+                2;-4;x
+              ]
 
 inverse n
-let b = blockmat [1] [0] n
-b.Blocks.[1].[0]
+let b = blockmat [1] [2;1] n
+b.Dim0
 
 
 

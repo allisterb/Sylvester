@@ -152,34 +152,29 @@ type MatZ = Matrix<int>
 type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>(rowgroup:int seq,colgroup:int seq, m:IMatrix<'t>) =
     do 
         if m.Dims.[0] <>  m.Dims.[1] then failwithf "This matrix is not square and has dimensions %Ax%A" m.Dims.[0] m.Dims.[1]
-        if rowgroup |> Seq.exists ((<=) m.Dims.[0]) then failwith "An index in the row group exceeds the number of rows in the matrix."
-        if colgroup |> Seq.exists ((<=) m.Dims.[1]) then failwith "An index in the column group exceeds the number of rows in the matrix." 
+        if rowgroup |> Seq.sum <> m.Dims.[0] then failwith "The size of the row groups collection is not the same as the number of rows in the matrix"
+        if colgroup |> Seq.sum <> m.Dims.[1] then failwith "The size of the column groups collection is not the same as the number of rows in the matrix"
+
     let mblock i0 j0 i1 j1 (m:IMatrix<_>) = [|for i in i0 .. i1 -> [| for j in j0 .. j1 -> m.[i, j] |] |] |> Matrix<_> in  
-    let rowindices = Seq.concat [seq {-1}; rowgroup; seq {m.Dims.[0] - 1}] |> Seq.windowed 2 |> Seq.toArray
-    let colindices = Seq.concat [seq {-1}; rowgroup; seq {m.Dims.[1] - 1}] |> Seq.windowed 2 |> Seq.toArray
-        
+    let prepend (a:int) (arr:int[]) :int[] = Seq.concat[ seq{a}; arr :> seq<int>] |> Seq.toArray in
+    let rowindices = rowgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j , (i+j)) 0 |> fst |> prepend 0 |> Array.windowed 2
+    let colindices = colgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j , (i+j)) 0 |> fst |> prepend 0 |> Array.windowed 2        
     let blocks = [|for i in 0..rowindices.Length - 1 -> 
                     [| for j in 0..colindices.Length - 1 -> 
-                        mblock (rowindices.[i].[0] + 1) (colindices.[j].[0] + 1) rowindices.[i].[1] colindices.[j].[1] m|] |]
+                        mblock (rowindices.[i].[0]) (colindices.[j].[0]) (rowindices.[i].[1] - 1) ( colindices.[j].[1] - 1) m |] |]
+    let blocksT = Array.transpose blocks
     let expr = m.Expr
     let exprt = m.ExprT
     let expr2d = m.Expr2D
+    
     member val Parent = m
-    member val Blocks = blocks
     member val Expr = expr
     member val ExprT = exprt
     member val Expr2D = expr2d
-    
-    member val Rows = m.Rows
-    member val Columns = m.Columns
-    member val Dim0 = m.Dims.[0]
-    member val Dim1 = m.Dims.[1]
-
-
-        //let rowindices, rowmax = rowgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
-        //let colindices, colmax = colgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
-        //if rowmax >= m.Dims.[0] then failwith "The size of the row partition exceeds the number of rows in the matrix."
-        //if colmax >= m.Dims.[1] then failwith "The size of the column partition exceeds the number of columns in the matrix."
+    member val Rows = blocks
+    member val Columns = blocksT
+    member val Dim0 = blocks.Length
+    member val Dim1 = blocksT.Length
 
 module Matrix =
 
