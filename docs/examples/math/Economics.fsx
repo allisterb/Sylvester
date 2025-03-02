@@ -23,7 +23,10 @@ let m = mat [[3;1;-4]; [2;5;6]; [1;4;8]]
 let n = sqmat [3;2;-1;1;6;3;2;-4;0]
 
 inverse n
-mblock 0 1 1 2 n
+let b = blockmat [1] [0] n
+b.Blocks.[1].[0]
+
+
 
 //creplace 0 (vec [1;1;1]) n
 

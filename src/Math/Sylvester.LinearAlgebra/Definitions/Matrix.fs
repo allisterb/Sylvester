@@ -149,6 +149,38 @@ type Mat = Matrix<real>
 type MatQ = Matrix<rat>
 type MatZ = Matrix<int>
 
+type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>(rowgroup:int seq,colgroup:int seq, m:IMatrix<'t>) =
+    do 
+        if m.Dims.[0] <>  m.Dims.[1] then failwithf "This matrix is not square and has dimensions %Ax%A" m.Dims.[0] m.Dims.[1]
+        if rowgroup |> Seq.exists ((<=) m.Dims.[0]) then failwith "An index in the row group exceeds the number of rows in the matrix."
+        if colgroup |> Seq.exists ((<=) m.Dims.[1]) then failwith "An index in the column group exceeds the number of rows in the matrix." 
+    let mblock i0 j0 i1 j1 (m:IMatrix<_>) = [|for i in i0 .. i1 -> [| for j in j0 .. j1 -> m.[i, j] |] |] |> Matrix<_> in  
+    let rowindices = Seq.concat [seq {-1}; rowgroup; seq {m.Dims.[0] - 1}] |> Seq.windowed 2 |> Seq.toArray
+    let colindices = Seq.concat [seq {-1}; rowgroup; seq {m.Dims.[1] - 1}] |> Seq.windowed 2 |> Seq.toArray
+        
+    let blocks = [|for i in 0..rowindices.Length - 1 -> 
+                    [| for j in 0..colindices.Length - 1 -> 
+                        mblock (rowindices.[i].[0] + 1) (colindices.[j].[0] + 1) rowindices.[i].[1] colindices.[j].[1] m|] |]
+    let expr = m.Expr
+    let exprt = m.ExprT
+    let expr2d = m.Expr2D
+    member val Parent = m
+    member val Blocks = blocks
+    member val Expr = expr
+    member val ExprT = exprt
+    member val Expr2D = expr2d
+    
+    member val Rows = m.Rows
+    member val Columns = m.Columns
+    member val Dim0 = m.Dims.[0]
+    member val Dim1 = m.Dims.[1]
+
+
+        //let rowindices, rowmax = rowgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
+        //let colindices, colmax = colgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
+        //if rowmax >= m.Dims.[0] then failwith "The size of the row partition exceeds the number of rows in the matrix."
+        //if colmax >= m.Dims.[1] then failwith "The size of the column partition exceeds the number of columns in the matrix."
+
 module Matrix =
 
     let fail_if_invalid_row_index i (m:IMatrix<'t>)  = 
@@ -265,6 +297,7 @@ module Matrix =
         do fail_if_not_square m
         let n = m.Dims.[0] in
         match n with
+        | 1 -> m.[0,0]
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
         | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((s_neg_one *** i) * m.[0, i]) |] |> Array.reduce (+) 
 
@@ -275,7 +308,7 @@ module Matrix =
     let r_coexpand i (m:IMatrix<_>) =
         [|for j in 0 .. m.Dims.[1] - 1 -> cofactor i j m |] |> Array.reduce (+)
 
-    let coexpand_c j (m:IMatrix<_>) =
+    let c_coexpand j (m:IMatrix<_>) =
         [|for i in 0 .. m.Dims.[0] - 1 -> cofactor i j m |] |> Array.reduce (+)
 
     let comat m =  m |> mmap cofactor |> Matrix<_>
@@ -286,15 +319,6 @@ module Matrix =
 
     let mblock i0 j0 i1 j1 (m:IMatrix<_>) = [|for i in i0 .. i1 -> [| for j in j0 .. j1 -> m.[i, j] |] |] |> Matrix<_>
 
-type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>(rowgroup:int seq,colgroup:int seq, m:IMatrix<'t>) =
-    do 
-        Matrix.fail_if_not_square m
-        let rowindices, rowmax = rowgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
-        let colindices, colmax = colgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j, j) 0
-        if rowmax >= m.Dims.[0] then failwith "The size of the row partition exceeds the number of rows in the matrix."
-        if colmax >= m.Dims.[1] then failwith "The size of the column partition exceeds the number of columns in the matrix."
+    let blockmat (rowgroup:int seq) (colgroup: int seq) (m:IMatrix<_>) = BlockMatrix<_>(rowgroup, colgroup, m)
 
-
-
-        //let blocks = [| for i in 0 .. rowindices.Length - 1 -> [| for j in 0 .. colindices.Length - 1 -> Matrix.submat i j m |] |]
 
