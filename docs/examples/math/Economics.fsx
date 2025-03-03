@@ -21,17 +21,19 @@ let a = realconst "a"
 
 let m = mat [[3;1;-4]; [2;5;6]; [1;4;8]]
 
-let n = sqmat [
-                3;2;-1
-                1;6;3
-                2;-4;x
-              ]
+let n = sqmat [3;2;-1;1;6;3;2;-4;0]
 
 inverse n
-let b = blockmat [1] [2;1] n
-b.Dim0
 
 
+let P = sqmat [
+    1; 2; 2; 7
+    1; 5; 6; 2
+    3; 3; 4; 5
+    3; 3; 6; 7
+]
+
+P |> mpart [2;2] [2;2] |> blocks
 
 //creplace 0 (vec [1;1;1]) n
 

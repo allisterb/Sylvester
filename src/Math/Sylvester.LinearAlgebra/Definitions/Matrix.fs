@@ -133,6 +133,22 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
         if l.Dim0 <> r.Length then failwith "The length of the vector must be the same as the number of rows in the matrix to augment."
         Array.append l.Columns [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> Matrix<'t>
    
+    static member (|+||) (l: Matrix<'t>, r: Matrix<'t>) = 
+          do if l.Dim0 <> r.Dim0 then failwith "Matrices for column-wise join must have the same number of rows."    
+          Array.append l.Columns r.Columns |> Matrix<'t>.ofCols
+     
+    static member (||+|) (l: Matrix<'t>, r: Matrix<'t>) = 
+          do if l.Dim0 <> r.Dim0 then failwith "Matrices for column-wise join must have the same number of rows."    
+          Array.append r.Columns l.Columns |> Matrix<'t>.ofCols
+
+    static member (|+|) (l: Matrix<'t>, r: Matrix<'t>) = 
+        do if l.Dim1 <> r.Dim1 then failwith "Matrices for row-wise join must have the same number of columns."    
+        Array.append r.Rows l.Rows |> Matrix<'t>.ofRows
+
+    static member (||+||) (l: Matrix<'t>, r: Matrix<'t>) = 
+           do if l.Dim1 <> r.Dim1 then failwith "Matrices for column-wise join must have the same number of columns."    
+           Array.append l.Rows r.Rows |> Matrix<'t>.ofRows
+
 and IMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> = 
     inherit IPartialShape<dim<2>>
     abstract Expr: Expr<'t>[][]
@@ -162,7 +178,7 @@ type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't
     let blocks = [|for i in 0..rowindices.Length - 1 -> 
                     [| for j in 0..colindices.Length - 1 -> 
                         mblock (rowindices.[i].[0]) (colindices.[j].[0]) (rowindices.[i].[1] - 1) ( colindices.[j].[1] - 1) m |] |]
-    let blocksT = Array.transpose blocks
+    let blockst = Array.transpose blocks
     let expr = m.Expr
     let exprt = m.ExprT
     let expr2d = m.Expr2D
@@ -171,22 +187,46 @@ type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't
     member val Expr = expr
     member val ExprT = exprt
     member val Expr2D = expr2d
-    member val Rows = blocks
-    member val Columns = blocksT
+    member val Blocks = blocks
     member val Dim0 = blocks.Length
-    member val Dim1 = blocksT.Length
+    member val Dim1 = blockst.Length
+
+    member x.Transpose = BlockMatrix<'t>(colgroup, rowgroup, m); 
+    member x.HasSameDims(m:BlockMatrix<'t>) = x.Dim0 = m.Dim0 && x.Dim1 = m.Dim1
+    member x.Item with get i = x.Blocks.[i]
+    member x.Item with get (i,j) = x.Blocks.[i].[j]
+
+    new (blocks:Matrix<'t> [][]) =
+        let mdim0 (m:Matrix<'t>) = m.Dim0 in
+        let mdim1 (m:Matrix<'t>) = m.Dim1 in
+        let b = blocks |> Array.map (Array.reduce (|+||)) |> Array.reduce (||+||) 
+        let cg = blocks |> Array.item 0 |> Array.map mdim1
+        let rg = blocks |> Array.transpose |> Array.item 0 |> Array.map mdim0
+        BlockMatrix<'t>(rg, cg, b)
+        
+    interface IMatrix<'t> with
+        member val Dims = [| expr2d.GetLength 0; expr2d.GetLength 1 |]
+        member val Expr = expr
+        member val ExprT = exprt
+        member val Expr2D = expr2d
+        member val ExprMathNet = m.ExprMathNet
+        member val ExprVars = expr |> Array.map (Array.map(get_vars >> List.toArray)) |> Array.concat |> Array.concat
+        member val Rows = expr |> Array.map Vector<'t> 
+        member val Columns = exprt |> Array.map Vector<'t>
+        member x.Transpose = exprt |> Matrix<'t> 
+        member x.Item(i:int, j:int) = expr2d.[i, j] |> Scalar<'t>
 
 module Matrix =
 
     let fail_if_invalid_row_index i (m:IMatrix<'t>)  = 
-        let rcount = m.Rows.Length
-        if i >= rcount then failwithf "The row index %A is greater than the number of rows in the matrix: %A." i rcount 
+        let rcount = m.Rows.Length in
+        if i >= rcount then failwithf "The row index %A exceeds the number of rows in the matrix: %A." i rcount 
 
     let fail_if_invalid_row_indices (i:seq<int>) (m:IMatrix<'t>) = let f n = fail_if_invalid_row_index n m in i |> Seq.iter f 
 
     let fail_if_invalid_col_index j (m:IMatrix<'t>) = 
-           let ccount = m.Columns.Length
-           if j >= ccount then failwithf "The column index %A is greater than the number of columns in the matrix: %A." j ccount 
+           let ccount = m.Columns.Length in
+           if j >= ccount then failwithf "The column index %A exceeds the number of columns in the matrix: %A." j ccount 
 
     let fail_if_invalid_indices i j (m:IMatrix<'t>) = 
         fail_if_invalid_row_index i m
@@ -194,28 +234,28 @@ module Matrix =
     
     let fail_if_not_square (m:IMatrix<_>) = if m.Dims.[0] <>  m.Dims.[1] then failwithf "This matrix is not square and has dimensions %Ax%A" m.Dims.[0] m.Dims.[1]
     
-    let mat (data:obj seq seq) = data |>  Seq.map (Seq.map realterm >> Seq.toArray) |> Seq.toArray  |> Mat
+    let mat (data:obj seq seq) = data |> Seq.map (Seq.map realterm >> Seq.toArray) |> Seq.toArray  |> Mat
 
     let sqmat (data: obj seq) =
         let n = Seq.length data
-        do if n |> is_perfect_square |> not then failwithf "The number of matrix elements must be a perfect square."
+        do if n |> is_perfect_square |> not then failwithf "The number of matrix elements in a square matrix must be a perfect square."
         data |> Seq.map realterm |> Seq.splitInto (n |> float |> sqrt |> int) |> Seq.toArray |> Mat
 
     let matc (data:obj seq seq) =  data |>  Seq.map (Seq.map (realterm >> sexpr) >> Seq.toArray) |> Seq.toArray |> Matrix<real>.ofCols 
 
-    let expr (m:IMatrix<_>) = m.Expr
+    let mexpr (m:IMatrix<_>) = m.Expr
+      
+    let mexprt (m:IMatrix<_>) = m.ExprT
     
-    let expri (m:IMatrix<_>) = m.Expr |> Array.indexed
+    let mexpr2d (m:IMatrix<_>) = m.Expr2D
     
-    let exprt (m:IMatrix<_>) = m.ExprT
+    let mdim0 (m:Matrix<'t>) = m.Dim0
     
-    let exprit (m:IMatrix<_>) = m.ExprT |> Array.indexed
+    let mdim1 (m:Matrix<'t>) = m.Dim1
 
-    let expr2d (m:IMatrix<_>) = m.Expr2D
-    
-    let melems (m:IMatrix<_>) = m |> expr |> Array.map(Array.map Scalar<_>)
+    let melems (m:IMatrix<_>) = m |> mexpr |> Array.map(Array.map Scalar<_>)
 
-    let melems2d (m:IMatrix<_>) = m |> expr2d |> Array2D.map Scalar<_>
+    let melems2d (m:IMatrix<_>) = m |> mexpr2d |> Array2D.map Scalar<_>
 
     let mmap map (m:IMatrix<_>) = [| for i in 0..m.Dims.[0] - 1 -> [| for j in 0..m.Dims.[1] - 1 -> map i j m |] |]
     
@@ -263,7 +303,7 @@ module Matrix =
         rows.[i] <- ri
         Matrix<'t> rows
 
-    let crep j (v:Vector<_>) (l:Matrix<_>) =
+    let crepl j (v:Vector<_>) (l:Matrix<_>) =
         do 
             fail_if_invalid_col_index j l
             if v.Length <> l.Dim0 then failwithf "The length of the column vector (%A) is not the same as then number of rows (%A)" v.Length l.Dim0
@@ -280,11 +320,11 @@ module Matrix =
 
     let rdel n (m:IMatrix<_>) =
         do fail_if_invalid_row_index n m
-        m |> expri |> Array.filter(fun (i, _) -> i <> n) |> Array.map snd |> Matrix<'t>.ofRows
+        m.Expr |> Array.indexed |> Array.filter(fun (i, _) -> i <> n) |> Array.map snd |> Matrix<'t>.ofRows
     
     let cdel n (m:IMatrix<_>) =
         do fail_if_invalid_col_index n m
-        m |> exprit |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> Matrix<'t>.ofCols
+        m |> mexprt |> Array.indexed |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> Matrix<'t>.ofCols
     
     let submat i j (m:IMatrix<_>) = m |> rdel i |> cdel j
 
@@ -314,6 +354,6 @@ module Matrix =
 
     let mblock i0 j0 i1 j1 (m:IMatrix<_>) = [|for i in i0 .. i1 -> [| for j in j0 .. j1 -> m.[i, j] |] |] |> Matrix<_>
 
-    let blockmat (rowgroup:int seq) (colgroup: int seq) (m:IMatrix<_>) = BlockMatrix<_>(rowgroup, colgroup, m)
+    let mpart (rowgroup:int seq) (colgroup: int seq) (m:IMatrix<_>) = BlockMatrix<_>(rowgroup, colgroup, m)
 
-
+    let blocks (m:BlockMatrix<_>) = m.Blocks
