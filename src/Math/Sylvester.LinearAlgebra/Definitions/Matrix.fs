@@ -249,13 +249,18 @@ module Matrix =
     
     let mexpr2d (m:IMatrix<_>) = m.Expr2D
     
-    let mdim0 (m:Matrix<'t>) = m.Dim0
+    let mdim0 (m:IMatrix<'t>) = m.Dims.[0]
     
-    let mdim1 (m:Matrix<'t>) = m.Dim1
+    let mdim1 (m:IMatrix<'t>) = m.Dims.[1]
 
-    let melems (m:IMatrix<_>) = m |> mexpr |> Array.map(Array.map Scalar<_>)
+    let kr (i:int) (j:int) (m:IMatrix<_>) = if i = j then m.[i,j] else s_zero
 
-    let melems2d (m:IMatrix<_>) = m |> mexpr2d |> Array2D.map Scalar<_>
+    let mident<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> n = 
+        LinearAlgebraOps.identity_mat n |> Matrix<'t>
+
+    let melem (m:IMatrix<_>) = m |> mexpr |> Array.map(Array.map Scalar<_>)
+
+    let melem2d (m:IMatrix<_>) = m |> mexpr2d |> Array2D.map Scalar<_>
 
     let mmap map (m:IMatrix<_>) = [| for i in 0..m.Dims.[0] - 1 -> [| for j in 0..m.Dims.[1] - 1 -> map i j m |] |]
     
@@ -311,9 +316,9 @@ module Matrix =
         cols.[j] <- v
         Matrix<'t>.ofCols cols
         
-    let diag (l:Matrix<'t>) = 
-        let dim = Math.Min(l.Dim0, l.Dim1)
-        Array2D.init dim dim l.Kr
+    let diag (m:IMatrix<_>) = 
+        let dim = Math.Min(m.Dims.[0], m.Dims.[1])
+        Array2D.init dim dim (fun i j -> kr i j m)
         |> Array2D.toJagged
         |> sexprs2
         |> Matrix<'t>.ofCols
@@ -340,10 +345,10 @@ module Matrix =
 
     let cofactor i j (m:IMatrix<_>) = m |> minor i j |> (*) (s_neg_one *** (i+j))
 
-    let r_coexpand i (m:IMatrix<_>) =
+    let coexpand_r i (m:IMatrix<_>) =
         [|for j in 0 .. m.Dims.[1] - 1 -> cofactor i j m |] |> Array.reduce (+)
 
-    let c_coexpand j (m:IMatrix<_>) =
+    let coexpand_c j (m:IMatrix<_>) =
         [|for i in 0 .. m.Dims.[0] - 1 -> cofactor i j m |] |> Array.reduce (+)
 
     let comat m =  m |> mmap cofactor |> Matrix<_>
@@ -357,3 +362,9 @@ module Matrix =
     let mpart (rowgroup:int seq) (colgroup: int seq) (m:IMatrix<_>) = BlockMatrix<_>(rowgroup, colgroup, m)
 
     let blocks (m:BlockMatrix<_>) = m.Blocks
+
+    let is_square (m:IMatrix<_>) = m.Dims.[0] = m.Dims.[1]
+
+    let is_ident (m:IMatrix<_>) = 
+        m |> melem2d |> Array2D.forall(fun i j e -> if i = j then e = s_one else e = s_zero) 
+         

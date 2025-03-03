@@ -35,6 +35,12 @@ let P = sqmat [
 
 P |> mpart [2;2] [2;2] |> blocks
 
+
+let I = mident<int> 5
+
+is_ident n
+
+mident 4 + P
 //creplace 0 (vec [1;1;1]) n
 
 

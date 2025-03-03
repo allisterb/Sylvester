@@ -27,6 +27,15 @@ module Array2D =
             
     let transpose (mtx : _ [,]) = Array2D.init (mtx.GetLength 1) (mtx.GetLength 0) (fun x y -> mtx.[y,x])
 
+    let flatten (arr:_[,]) =  
+        seq {for i in 0..Array2D.length1 arr - 1 do
+                for j in 0..Array2D.length2 arr - 1 do yield arr.[i,j]} |> Seq.toArray
+
+    let forall (pred:int->int->_->bool) (arr:_[,]) =  
+        seq {for i in 0..Array2D.length1 arr - 1 do
+                for j in 0..Array2D.length2 arr - 1 do yield pred i j arr.[i,j]} 
+        |> Seq.exists((=) false)
+
 module LinearAlgebraOps =
     let vars (a:Expr<_> array list) = a |> List.map Array.toList |> List.concat |> List.map get_vars |> List.concat
 
