@@ -36,11 +36,18 @@ let P = sqmat [
 P |> mpart [2;2] [2;2] |> blocks
 
 
-let I = mident<int> 5
+let I = identmat<int> 5
 
 is_ident n
 
-mident 4 + P
+identmat 4 + P
+
+jordan_mat [
+    jordan_block<real> 2 4
+    jordan_block<real> 2 4
+    jordan_block<real> 4 -0.5
+]
+
 //creplace 0 (vec [1;1;1]) n
 
 

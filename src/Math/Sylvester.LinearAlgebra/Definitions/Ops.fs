@@ -34,7 +34,7 @@ module Array2D =
     let forall (pred:int->int->_->bool) (arr:_[,]) =  
         seq {for i in 0..Array2D.length1 arr - 1 do
                 for j in 0..Array2D.length2 arr - 1 do yield pred i j arr.[i,j]} 
-        |> Seq.exists((=) false)
+        |> Seq.forall((=) true)
 
 module LinearAlgebraOps =
     let vars (a:Expr<_> array list) = a |> List.map Array.toList |> List.concat |> List.map get_vars |> List.concat

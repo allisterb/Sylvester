@@ -78,6 +78,8 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
 
     new (s:Scalar<'t> [][]) = let expr = s |> Array.map(Array.map sexpr) in Matrix<'t> expr
 
+    new (s:Scalar<'t> [,]) = let a = s |> Array2D.toJagged in Matrix<'t> a
+    
     new(rows: Vector<'t> array) = let e = rows |> Array.map(fun a -> a.Expr) in Matrix<'t> e
 
     static member create([<ParamArray>] data: 't array array) = Matrix<'t>(data)
@@ -89,6 +91,8 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member ofRows (data:Scalar<'t> [] []) = Matrix<'t> data
     
     static member ofCols (data:Scalar<'t> [][]) = data |> sexprs2 |> Matrix<'t>.ofCols
+
+    static member ofCols (data:Scalar<'t> [,]) = data |> Array2D.toJagged |> Matrix<'t>.ofCols
 
     static member ofRows (data:Vector<'t> []) = Matrix<'t> data
        
@@ -196,10 +200,12 @@ type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't
     member x.Item with get i = x.Blocks.[i]
     member x.Item with get (i,j) = x.Blocks.[i].[j]
 
-    new (blocks:Matrix<'t> [][]) =
-        let mdim0 (m:Matrix<'t>) = m.Dim0 in
-        let mdim1 (m:Matrix<'t>) = m.Dim1 in
-        let b = blocks |> Array.map (Array.reduce (|+||)) |> Array.reduce (||+||) 
+    new (blocks:IMatrix<'t> [][]) =
+        let append_cols (l:IMatrix<'t>) (r:IMatrix<'t>) = Array.append l.Columns r.Columns |> Matrix<'t>.ofCols :> IMatrix<'t>
+        let append_rows (l:IMatrix<'t>) (r:IMatrix<'t>) = Array.append l.Rows r.Rows |> Matrix<'t>.ofRows :> IMatrix<'t>
+        let mdim0 (m:IMatrix<'t>) = m.Dims.[0] in
+        let mdim1 (m:IMatrix<'t>) = m.Dims.[1] in
+        let b = blocks |> Array.map (Array.reduce (append_cols)) |> Array.reduce (append_rows) 
         let cg = blocks |> Array.item 0 |> Array.map mdim1
         let rg = blocks |> Array.transpose |> Array.item 0 |> Array.map mdim0
         BlockMatrix<'t>(rg, cg, b)
@@ -216,6 +222,46 @@ type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't
         member x.Transpose = exprt |> Matrix<'t> 
         member x.Item(i:int, j:int) = expr2d.[i, j] |> Scalar<'t>
 
+type JordanBlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>(blocks:IMatrix<'t>[][]) =
+    inherit BlockMatrix<'t>(blocks)
+    
+    let is_zero (m:IMatrix<_>) = m.Expr2D |> Array2D.map Scalar<_> |> Array2D.forall(fun _ _ e -> e = s_zero) 
+
+    let is_jordan_block (m:IMatrix<_>) =
+        let l = m.[0,0] in
+        let elem2d = m.Expr2D |> Array2D.map Scalar<_> in
+        elem2d |> Array2D.forall(fun i j e -> if i = j then e = l else if j = i + 1 then e = s_one else e = s_zero)
+    
+    let zero_mat i j = Array2D.init j j (fun _ _ -> s_zero<'t>) |> Matrix<'t>
+    
+    let mdim0 (m:Matrix<'t>) = m.Dim0 in
+    
+    let mdim1 (m:Matrix<'t>) = m.Dim1 in
+
+    do if blocks |> array2D |> Array2D.forall(fun i j b -> if i = j then is_jordan_block b else is_zero b) |> not then failwith "Not"
+
+    new(blocks:IMatrix<'t>[]) =
+        let is_zero (m:IMatrix<_>) = m.Expr2D |> Array2D.map Scalar<_> |> Array2D.forall(fun _ _ e -> e = s_zero) 
+
+        let is_jordan_block (m:IMatrix<_>) =
+            let l = m.[0,0] in
+            let elem2d = m.Expr2D |> Array2D.map Scalar<_> in
+            m.Dims.[0] = m.Dims.[1] && elem2d |> Array2D.forall(fun i j e -> if i = j then e = l else if j = i + 1 then e = s_one else e = s_zero)
+        
+        let zero_mat i j = Array2D.init j j (fun _ _ -> s_zero<'t>) |> Matrix<'t> :> IMatrix<'t>
+        
+        let mdim0 (m:IMatrix<'t>) = m.Dims.[0] in
+        
+        let mdim1 (m:IMatrix<'t>) = m.Dims.[1] in
+        
+        do if blocks |> Array.forall is_jordan_block |> not then failwith "Not all the matrices are Jordan blocks"
+        let c = blocks.Length
+        let m = Array.sumBy mdim0 blocks
+        let n = Array.sumBy mdim1 blocks
+        do if m <> n then failwith "" 
+        let b = Array2D.init c c (fun i j -> if i = j then blocks.[i] else zero_mat (mdim0 blocks.[i]) (mdim1 blocks.[if i < c - 2 then i + 1 else i - 1])) |> Array2D.toJagged in
+        JordanBlockMatrix<'t> b
+        
 module Matrix =
 
     let fail_if_invalid_row_index i (m:IMatrix<'t>)  = 
@@ -255,12 +301,9 @@ module Matrix =
 
     let kr (i:int) (j:int) (m:IMatrix<_>) = if i = j then m.[i,j] else s_zero
 
-    let mident<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> n = 
-        LinearAlgebraOps.identity_mat n |> Matrix<'t>
+    let elem (m:IMatrix<_>) = m |> mexpr |> Array.map(Array.map Scalar<_>)
 
-    let melem (m:IMatrix<_>) = m |> mexpr |> Array.map(Array.map Scalar<_>)
-
-    let melem2d (m:IMatrix<_>) = m |> mexpr2d |> Array2D.map Scalar<_>
+    let elem2d (m:IMatrix<_>) = m |> mexpr2d |> Array2D.map Scalar<_>
 
     let mmap map (m:IMatrix<_>) = [| for i in 0..m.Dims.[0] - 1 -> [| for j in 0..m.Dims.[1] - 1 -> map i j m |] |]
     
@@ -317,11 +360,14 @@ module Matrix =
         Matrix<'t>.ofCols cols
         
     let diag (m:IMatrix<_>) = 
-        let dim = Math.Min(m.Dims.[0], m.Dims.[1])
-        Array2D.init dim dim (fun i j -> kr i j m)
-        |> Array2D.toJagged
-        |> sexprs2
-        |> Matrix<'t>.ofCols
+        let dim = Math.Min(m.Dims.[0], m.Dims.[1]) in
+        Array2D.init dim dim (fun i j -> kr i j m) |> Matrix<'t>
+
+    let identmat<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> n = 
+        LinearAlgebraOps.identity_mat n |> Matrix<'t>
+
+    let zeromat<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> i j = 
+        Array2D.init j j (fun _ _ -> s_zero<'t>) |> Matrix<'t>
 
     let rdel n (m:IMatrix<_>) =
         do fail_if_invalid_row_index n m
@@ -366,5 +412,37 @@ module Matrix =
     let is_square (m:IMatrix<_>) = m.Dims.[0] = m.Dims.[1]
 
     let is_ident (m:IMatrix<_>) = 
-        m |> melem2d |> Array2D.forall(fun i j e -> if i = j then e = s_one else e = s_zero) 
+        m |> elem2d |> Array2D.forall(fun i j e -> if i = j then e = s_one else e = s_zero) 
+
+    let is_zero (m:IMatrix<_>) = 
+        m |> elem2d |> Array2D.forall(fun _ _ e -> e = s_zero) 
+
+    let is_diag (m:IMatrix<_>) = 
+           m |> elem2d |> Array2D.forall(fun i j e -> if i <> j then e = s_zero else true) 
          
+    let diag_elem (m:IMatrix<_>) =
+        [| for i in 0..m.Dims.[0] - 1 do [| for j in 0..m.Dims.[1] - 1 do if i = j then yield m.[i,j] |] |] |> 
+            Array.filter(Array.length >> (<>) 0) |> Array.map(Array.item 0)
+    
+    let super_diag_elem (m:IMatrix<_>) =
+        [| for i in 0..m.Dims.[0] - 1 do [| for j in 0..m.Dims.[1] - 1 do if j = i + 1 then yield m.[i,j] |] |] |> 
+            Array.filter(Array.length >> (<>) 0) |> Array.map(Array.item 0)
+
+    let supra_diag_elem (m:IMatrix<_>) =
+        [| for i in 0..m.Dims.[0] - 1 do [| for j in 0..m.Dims.[1] - 1 do if j = i - 1 then yield m.[i,j] |] |] |> 
+            Array.filter(Array.length >> (<>) 0) |> Array.map(Array.item 0)
+
+    let jordan_block<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> n (l:obj) = 
+        Array2D.init n n (fun i j -> if i = j then s_const l else s_one) |> Matrix<'t>
+
+    let is_jordan_block (m:IMatrix<_>) =
+        let l = m.[0,0] in
+        is_square m && m |> elem2d |> Array2D.forall(fun i j e -> if i = j then e = l else if j = i + 1 then e = s_one else e = s_zero)
+
+    let jordan_block_eigenv (m:IMatrix<_>) =
+        if is_jordan_block m then m.[0,0] else failwith "This matrix is not a Jordan block."
+
+    let jordan_block_dim (m:IMatrix<_>) =
+        if is_jordan_block m then m.Dims.[0] else failwith "This matrix is not a Jordan block."
+
+    let jordan_mat (blocks:IMatrix<_> seq) = blocks |> Seq.toArray |> JordanBlockMatrix<_>
