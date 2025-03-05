@@ -42,12 +42,18 @@ is_ident n
 
 identmat 4 + P
 
-jordan_mat [
-    jordan_block<real> 2 4
-    jordan_block<real> 2 4
-    jordan_block<real> 4 -0.5
+let J = jordan_mat<real> [
+    jordan_block 2 4
+    jordan_block 2 4
+    jordan_block 4 -0.5
+]
+let J2 = jordan_mat<real> [
+    jordan_block 1 1
+    jordan_block 1 2
+    jordan_block 2 4
 ]
 
+J2.[1, 2]
 //creplace 0 (vec [1;1;1]) n
 
 
