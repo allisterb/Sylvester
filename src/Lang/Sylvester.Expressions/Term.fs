@@ -525,13 +525,13 @@ module Scalar =
 
     let collect_linear_terms (e:realexpr) = ()
     
-    let s_zero<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.Zero
+    let zero<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.Zero
 
-    let s_one<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.One
+    let one<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.One
 
-    let s_neg_one<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.NegOne
+    let negone<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> = Scalar<'t>.NegOne
 
-    let s_const<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> (n:obj) = Convert.ChangeType(n, typeof<'t>) :?> 't |> exprv |> Scalar
+    let sconst<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> (n:obj) = Convert.ChangeType(n, typeof<'t>) :?> 't |> exprv |> Scalar
 
 [<AutoOpen>]
 module Prop =

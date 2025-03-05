@@ -33,7 +33,7 @@ let P = sqmat [
     3; 3; 6; 7
 ]
 
-P |> mpart [2;2] [2;2] |> blocks
+P |> mpart [2;2] [2;2] |> mblocks
 
 
 let I = identmat<int> 5
@@ -53,7 +53,9 @@ let J2 = jordan_mat<real> [
     jordan_block 2 4
 ]
 
-J2.[1, 2]
+J2.Blocks.[2,2]
+
+sqmat [2; a+1;a+1; 3 + 2] = sqmat [2; 1 + a;1 + a;5]
 //creplace 0 (vec [1;1;1]) n
 
 

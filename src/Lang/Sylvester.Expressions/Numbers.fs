@@ -517,10 +517,6 @@ module Numbers =
                 t*t = n
             else false
     
-    let inline zero (x : ^T) = (^T : (member Zero : 't) (x))
-
-    let inline one (x : ^T) = (^T : (member One : 't) (x))
-    
     let inline (..+) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (+) l r
 
     let inline (..-) (l:seq<'t>) (r:seq<'t>) = Seq.map2 (-) l r
