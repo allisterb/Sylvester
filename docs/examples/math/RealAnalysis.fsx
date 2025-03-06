@@ -1,18 +1,17 @@
 #load "Include.fsx"
 
 open Sylvester
-open Sylvester.CAS
-open FSharp.Quotations
-// Init Maxima CAS
-//do Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
+open RealNumbers
+
+
+do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let x = realvar "x"
 let y = realvar "y"
 let A = realconst "A"
 
+lim x inf (3 + 1 / x - 1 / 2 *** x)
 
-sprinte <@ real <| 1 + 2 @>
+lim x neginf (sqrt((4 - 1 / x) / ( 1 - 4 / x *** 3)))
 
-let a = realseq "S" "n" <@ fun n -> 1 + 1 / n |> real @> 
-
-a
+lim x inf (1 / (x^^3))

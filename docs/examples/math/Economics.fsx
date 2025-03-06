@@ -5,7 +5,6 @@ open Sylvester
 open Sylvester.CAS
 open FSharp.Quotations
 open Economics
-open RealNumbers
 open Matrix
 open Vector
 open MathNet.Symbolics
@@ -18,6 +17,8 @@ fsi.PrintWidth <- 500
 //[3;4;7] |> Seq.toArray |> Array.mapFold (fun i j -> i + j , (i+j)) 0 |> fst |> prepend 0 |> Array.windowed 2 
 let x = realvar "x"
 let a = realconst "a"
+
+
 
 let m = mat [[3;1;-4]; [2;5;6]; [1;4;8]]
 
@@ -55,7 +56,7 @@ let J2 = jordan_mat<real> [
 
 J2.Blocks.[2,2]
 
-sqmat [2; a+1;a+1; 3 + 2] = sqmat [2; 1 + a;1 + a;5]
+sqmat [2; a+1;a+1; 3 + 3] = sqmat [2; 1 + a;a + 1;5]
 //creplace 0 (vec [1;1;1]) n
 
 

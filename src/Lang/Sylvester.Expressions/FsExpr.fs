@@ -229,6 +229,10 @@ module FsExpr =
             .Add("Single", <@ log 0.0f @> |> function |Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log))
             .Add("Double", <@ log 0. @> |> function |Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log))
 
+    let log10Op = 
+        Map.empty
+            .Add("Single", <@ log10 0.0f @> |> function |Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log10))
+            .Add("Double", <@ log10 0. @> |> function |Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (log10))
     let minOp = 
            Map.empty
                .Add("UInt16", <@ Math.Min(0us, 0us) @> |> function |Call(_, mi, _) -> mi | _ -> failwithf "Could not get op info for %A" (pown))
@@ -591,6 +595,8 @@ module FsExpr =
 
     let call_cos (l:Expr) = unary_call(None, cosOp.[l.Type.Name], l)
 
+    let call_log (l:Expr) = unary_call(None, logOp.[l.Type.Name], l)
+    
     let call_pown (l:Expr) (r:Expr) = binary_call(None, pownOp.[l.Type.Name], l, r)
 
     let call_min (l:Expr) (r:Expr) = binary_call(None, minOp.[l.Type.Name], l, r)

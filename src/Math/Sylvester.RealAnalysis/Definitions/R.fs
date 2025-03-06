@@ -20,10 +20,6 @@ module Reals=
 module R =
     let R (dim:'n when 'n :> Number) = new RealVectorSpace<'n>()
              
-    let inf = Double.MaxValue
-
-    let minf = Double.MinValue
-
     let algexpand (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.AlgExpand)
 
     let ratexpand (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.RatExpand)
@@ -111,7 +107,7 @@ module R =
         
     let integrate_over (x:ScalarVar<real>) l r (s:ISymbolic<_, real>) = Ops.DefiniteIntegral x.Expr (realexpr l) (realexpr r) s.Expr |> Scalar
 
-    let integrate_over_R (x:ScalarVar<real>) f = integrate_over x minf inf f
+    let integrate_over_R (x:ScalarVar<real>) f = integrate_over x neginf inf f
 
     
 

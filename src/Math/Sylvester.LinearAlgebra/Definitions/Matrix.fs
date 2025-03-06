@@ -60,7 +60,9 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
             let be = (b :?> IMatrix<'t>) .Expr2D |> Array2D.map simplifye
             ae.Length = be.Length && ae |> Array2D.forall(fun i j e -> sequal e be.[i,j]) else false
 
-    interface IHtmlDisplay with
+     override a.GetHashCode() = let e = a.Expr2D |> Array2D.map simplifye |> Array2D.flatten |> Array.map(sprintf "%A") |> Array.reduce(sprintf "%s,%s")  in e.GetHashCode()
+     
+     interface IHtmlDisplay with
            member x.Html() =
                let elems =
                    x.Rows 
@@ -69,7 +71,7 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
                    |> sprintf "%s"
                "$$ \\begin{pmatrix} " + elems + " \\end{pmatrix} $$"
     
-    interface IMatrix<'t> with
+     interface IMatrix<'t> with
         member val Dims = [| expr2d.GetLength 0; expr2d.GetLength 1 |]
         member val Expr = expr
         member val ExprT = exprt
@@ -370,11 +372,11 @@ module Matrix =
         match n with
         | 1 -> m.[0,0]
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
-        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((negone *** i) * m.[0, i]) |] |> Array.reduce (+) 
+        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((negone^^i) * m.[0, i]) |] |> Array.reduce (+) 
 
     let minor i j (m:IMatrix<_>) = m |> submat i j |> det
 
-    let cofactor i j (m:IMatrix<_>) = m |> minor i j |> (*) (negone *** (i+j))
+    let cofactor i j (m:IMatrix<_>) = m |> minor i j |> (*) (negone ^^ (i+j))
 
     let coexpand_r i (m:IMatrix<_>) =
         [|for j in 0 .. m.Dims.[1] - 1 -> cofactor i j m |] |> Array.reduce (+)
@@ -435,4 +437,4 @@ module Matrix =
 
     let is_jordan_mat (m:IMatrix<_>) = 
         let l = m.[0,0] in
-        is_square m && m |> elem2d |> Array2D.forall(fun i j e -> if i = j then e = l else if j = i + 1 then e = one else e = zero)
+        is_square m && m |> elem2d |> Array2D.forall(fun i j e -> if j = i + 1 then (e = one || e = zero) else if i <> j then e = zero else true)
