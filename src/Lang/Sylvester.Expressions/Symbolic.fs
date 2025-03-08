@@ -6,7 +6,7 @@ open System.IO
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open FSharp.Quotations.DerivedPatterns
-open MathNet.Symbolics
+
 
 open MathNetExpr
 
@@ -102,6 +102,8 @@ module Symbolic =
         )
         s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
 
+    
+
     (* Print quotation as string *)
 
     let rec sprinte (x:Expr) = 
@@ -143,12 +145,13 @@ module Symbolic =
         | Bool true -> "true"
         
         | ValueWithName(_,_,n) -> n
+        | Value(infinity) -> "inf"
         | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
         
         | Double d when d = Math.Floor(d + 0.00001) ->  sprinte <| Expr.Value (Convert.ToInt32(d))
 
-        | _ -> x |> expand |> MathNetExpr.fromQuotation |> Infix.format
+        | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
 
     let sprintel (exprs: Expr<'t> list) =
         exprs 
@@ -212,11 +215,11 @@ module Symbolic =
             let r = Rational d
             if r.Numerator.IsOne || (-r.Numerator).IsOne then sprintf "\\frac{%A}{%A}" r.Numerator r.Denominator else d.ToString()
 
-        | _ -> x |> MathNetExpr.fromQuotation |> LaTeX.format
+        | _ -> x |> MathNetExpr.fromQuotation |> MathNet.Symbolics.LaTeX.format
 
     let inline latex x = x |> sexpr |> latexe 
     
-    let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> Infix.format
+    let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
 
     let inline simplify expr = expr |> sexpr |> simplifye
        

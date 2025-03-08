@@ -372,11 +372,11 @@ module Matrix =
         match n with
         | 1 -> m.[0,0]
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
-        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((negone^^i) * m.[0, i]) |] |> Array.reduce (+) 
+        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((negone***i) * m.[0, i]) |] |> Array.reduce (+) 
 
     let minor i j (m:IMatrix<_>) = m |> submat i j |> det
 
-    let cofactor i j (m:IMatrix<_>) = m |> minor i j |> (*) (negone ^^ (i+j))
+    let cofactor i j (m:IMatrix<_>) = m |> minor i j |> (*) (negone***(i+j))
 
     let coexpand_r i (m:IMatrix<_>) =
         [|for j in 0 .. m.Dims.[1] - 1 -> cofactor i j m |] |> Array.reduce (+)

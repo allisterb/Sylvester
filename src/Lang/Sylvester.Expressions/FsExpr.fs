@@ -83,6 +83,11 @@ module FsExpr =
         | Var _ -> Some expr
         | _ -> None
 
+    let (|VariableWithName|_|) name expr =
+        match expr with 
+        | Var v when v.Name  = name-> Some expr
+        | _ -> None
+
     let (|Atom|_|) expr =
         match expr with
         | Variable _ 
@@ -749,3 +754,26 @@ module FsExpr =
     [<ReflectedDefinition>]
     let symbolic_fn<'t> (sym:string) (v: string array) = Unchecked.defaultof<'t>
 
+    let rec (|LinearExpr|_|) (x:string) (expr:Expr) =
+           let t = expr.Type in
+           match expr with
+           | Constant _ -> Some expr    
+           | Variable (Var v) when v.Name = x -> Some expr
+           | Multiplication(Constant _, Constant _) -> Some expr
+           | Multiplication(Constant _, Variable(Var v)) when v.Name = x -> Some expr
+           | Multiplication(Variable(Var v), Constant _)-> Some expr
+           | Addition(LinearExpr x _, LinearExpr x _) -> Some expr
+           | Subtraction(LinearExpr x l, LinearExpr x r) -> Some <| call_add l (call_mul (neg_one_val(t)) r)
+           | _ -> None
+       
+    let rec (|LinearTerms|_|) x (expr:Expr) =
+        let t = expr.Type in
+        match expr with
+        | Constant _ -> [[expr]] |> Some
+        | VariableWithName x _ -> [[expr]] |> Some 
+        | Multiplication(Constant c1, Constant  c2) ->[[call_mul c1 c2]] |> Some
+        | Multiplication(Constant c, VariableWithName x v)
+        | Multiplication(VariableWithName x v, Constant c)-> [[c;v]] |> Some
+        | Addition(LinearTerms x l, LinearTerms x r) -> l @ r |> Some
+        | Subtraction(LinearTerms x l, LinearTerms x r) -> l @ (List.map(List.map (call_mul (neg_one_val t))) r) |> Some
+        | _ -> None
