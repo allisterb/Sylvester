@@ -145,7 +145,8 @@ module Symbolic =
         | Bool true -> "true"
         
         | ValueWithName(_,_,n) -> n
-        | Value(infinity) -> "inf"
+        | Double (Double.MaxValue) -> "inf"
+        | Double (Double.MinValue) -> "neginf"
         | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
         

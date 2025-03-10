@@ -366,13 +366,23 @@ module Matrix =
     
     let submat i j (m:IMatrix<_>) = m |> rdel i |> cdel j
 
+    let mrzeros(m:IMatrix<_>) = m.Rows |> Array.map(velem >> LinearAlgebraOps.count_by((=) zero))
+
+    let mczeros(m:IMatrix<_>) = m.Columns |> Array.map(velem >> LinearAlgebraOps.count_by((=) zero))
+
     let rec det (m:IMatrix<_>) =
         do fail_if_not_square m
         let n = m.Dims.[0] in
+        let zri,zr = m |> mrzeros |> LinearAlgebraOps.maxi 
+        let zci,zc = mczeros m |> LinearAlgebraOps.maxi
         match n with
         | 1 -> m.[0,0]
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
-        | _ -> [| for i in 0..n - 1 -> m |> submat 0 i |> det |> (*) ((negone***i) * m.[0, i]) |] |> Array.reduce (+) 
+        | _ -> 
+            if zr >= zc then 
+                [| for j in 0..n - 1 -> m |> submat zri j |> det |> (*) ((negone***(zri + j)) * m.[zri, j]) |] |> Array.reduce (+) 
+            else
+                [| for i in 0..n - 1 -> m |> submat i zci |> det |> (*) ((negone***(i + zci)) * m.[i, zci]) |] |> Array.reduce (+) 
 
     let minor i j (m:IMatrix<_>) = m |> submat i j |> det
 
@@ -383,6 +393,7 @@ module Matrix =
 
     let coexpand_c j (m:IMatrix<_>) =
         [|for i in 0 .. m.Dims.[0] - 1 -> cofactor i j m |] |> Array.reduce (+)
+
 
     let comat m =  m |> mmap cofactor |> Matrix<_>
 
@@ -407,6 +418,12 @@ module Matrix =
     let is_diag (m:IMatrix<_>) = 
            m |> elem2d |> Array2D.forall(fun i j e -> if i <> j then e = zero else true) 
          
+    let is_upper_tri (m:IMatrix<_>) = 
+             m |> elem2d |> Array2D.forall(fun i j e -> if i > j then e = zero else true) 
+    
+    let is_lower_tri (m:IMatrix<_>) = 
+             m |> elem2d |> Array2D.forall(fun i j e -> if i < j then e = zero else true) 
+
     let diag_elem (m:IMatrix<_>) =
         [| for i in 0..m.Dims.[0] - 1 do [| for j in 0..m.Dims.[1] - 1 do if i = j then yield m.[i,j] |] |] |> 
             Array.filter(Array.length >> (<>) 0) |> Array.map(Array.item 0)
@@ -436,5 +453,20 @@ module Matrix =
         blocks |> Seq.toArray |> JordanMatrix<'t> 
 
     let is_jordan_mat (m:IMatrix<_>) = 
-        let l = m.[0,0] in
-        is_square m && m |> elem2d |> Array2D.forall(fun i j e -> if j = i + 1 then (e = one || e = zero) else if i <> j then e = zero else true)
+        if not (is_square m) || not (is_upper_tri m) then
+            [||]
+        else
+            let mutable l = m.[0,0]
+            let mutable bs = 0
+            let blocks = 
+                [|
+                    for i in 0..mdim0 m - 1 do  
+                        if  m.[i,i] <> l then
+                            let block =  mblock bs bs i i m
+                            bs <- i
+                            l <- m.[i,i]
+                            yield block
+                |] 
+            blocks
+            //blocks |> Array.sumBy mdim0 = mdim0 m && blocks |> Array.sumBy mdim1 = mdim1 m 
+            //&& Array.forall is_jordan_block blocks

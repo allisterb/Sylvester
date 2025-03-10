@@ -119,8 +119,10 @@ type Vec = Vector<real>
 module Vector =
     let vec (data:obj list) = data |> List.toArray |> realterms |> Vec 
     
-    let vexpr(v: Vector<'t>) = v.Expr
+    let vexpr(v: Vector<_>) = v.Expr
 
+    let velem(v:Vector<_>) = v |> vexpr |> Array.map Scalar
+    
     let vdot (l:IVector<'t>) (r:IVector<'t>) =
         do if l.Dims.[0] <> r.Dims.[0] then failwithf "Cannot find dot product of two vectors of different lengths: %A and %A." l.Dims.[0] r.Dims.[0]
         let e = 

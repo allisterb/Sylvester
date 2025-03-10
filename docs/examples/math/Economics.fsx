@@ -54,7 +54,7 @@ let J2 = jordan_mat<real> [
     jordan_block 2 4
 ]
 
-J2.Blocks.[2,2]
+is_jordan_mat J2
 
 sqmat [2; a+1;a+1; 3 + 3] = sqmat [2; 1 + a;a + 1;5]
 //creplace 0 (vec [1;1;1]) n
@@ -63,6 +63,10 @@ sqmat [2; a+1;a+1; 3 + 3] = sqmat [2; 1 + a;a + 1;5]
 let o = sqmat [1;0;0;-1;3;1;2;2;1;0;-2;1;2;0;0;1]
 
 det o
+
+sqmat [1;2;3;4;1;1;-1;3;0] |> det
+
+sqmat [1;2;-1;4;-1;3;0;2;2;1;1;2;1;4;1;3] |> det
 let n = normal 4. 1.
 let c = continuous_uniform 0. 1.
 

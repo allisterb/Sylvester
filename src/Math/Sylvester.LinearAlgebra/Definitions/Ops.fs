@@ -60,6 +60,11 @@ module LinearAlgebraOps =
                     (List.map (fun row -> match row with [] -> [] | h::t -> t) matr)
         fetch_column [] (matrix |> (Array.map(Array.toList) >> Array.toList)) |> (List.map(List.toArray) >> List.toArray)
 
+    let count_by (f : ('a -> bool)) (array : 'a[]) : int =
+        Array.fold(fun acc item -> if f item then acc + 1 else acc) 0 array
+    
+    let maxi(arr:'a[]) = arr |> Array.indexed |> Array.maxBy snd
+
 type DefaultLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with
         member x.Add l r = Array.map2 call_add l r |> Array.map (expand_as >> simplifye)        

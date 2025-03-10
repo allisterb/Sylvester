@@ -11,10 +11,10 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, y: float seq, x: obj seq) =
 
 type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: obj seq) =
     inherit LinearRegressionModel(eqn, data1 |> Seq.map System.Convert.ToDouble, data2)
-    let dv,rhs = eqn.Var, eqn.Rhs
-    let rv = rhs |> get_real_vars |> function | [v] -> v | _ -> failwithf "%A is not a linear expression of a single variable." rhs
+    let dv = eqn.Var
+    let rv = eqn |> rhs |> get_real_vars |> function | [v] -> v | _ -> failwithf "%A is not a linear expression of a single variable." (rhs eqn)
     let terms = 
-        match eqn.Rhs |> sexpr |> simplifye with
+        match eqn |> rhs |> sexpr |> simplifye with
         | LinearTerms rv.Name t -> t
         | _ -> failwithf "%A is not a linear expression of a single variable %A." eqn.Rhs rv
     let b0 = 
@@ -31,7 +31,10 @@ type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: o
     member val Variables = [|rv;dv|]
     member val Samples = seq { for x, y in samples -> [ x; y ] } |> array2D
     member val Parameters = [b0; b1]
-    member val RegressionEquation = dv == a * b0 + b1
+    member val RegressionEquation = b1 * rv + b0
+    member val RegressionFunc = fun x -> a*x + b
+
+    member x.Item(a:real) = x.RegressionFunc a
    
     new(eqn:ScalarEquation<real>, data1:obj seq, data2: obj seq) = SimpleLinearRegressionModel(as_var_map eqn, data1, data2)
 

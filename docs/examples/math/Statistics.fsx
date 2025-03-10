@@ -11,5 +11,10 @@ let lm = slrm (y == b0 + b1 * x) [
     3,6
 ]
 lm
-lm.Parameters.[0]
+slreqn lm
+
+let me (s:seq<Scalar<real>>) f = Seq.reduce f s
+
+let J = y ** 2
+
 //lems witht lm = SimpleLinearRegressionModel(y .= b0 + b1 * x + u + b0, [])
