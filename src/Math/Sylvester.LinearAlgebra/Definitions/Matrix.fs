@@ -470,3 +470,6 @@ module Matrix =
             blocks
             //blocks |> Array.sumBy mdim0 = mdim0 m && blocks |> Array.sumBy mdim1 = mdim1 m 
             //&& Array.forall is_jordan_block blocks
+
+    let mcharpoly (v:ScalarVar<'t>) (m:IMatrix<'t>) =
+        CAS.LinearAlgebra.charpoly (sexpr v) (mexpr m) 

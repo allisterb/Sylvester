@@ -7,10 +7,6 @@ open MathNet.Numerics.LinearAlgebra
 
 type Expr' = MathNet.Symbolics.Expression
 
-type _Vector<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Vector<'t>
-
-type _Matrix<'t when 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable and 't :> IComparable> = Matrix<'t>
-
 type IVectorSymbolicOps =
     abstract Add:Expr<'t> array -> Expr<'t> array -> Expr<'t> array
     abstract Subtract:Expr<'t> array -> Expr<'t> array -> Expr<'t> array
@@ -64,6 +60,19 @@ module LinearAlgebraOps =
         Array.fold(fun acc item -> if f item then acc + 1 else acc) 0 array
     
     let maxi(arr:'a[]) = arr |> Array.indexed |> Array.maxBy snd
+
+
+module AlgebraOps = 
+
+    let algexpand (x:ISymbolic<_, 't>) = x |> sexpr |> CAS.Algebra.algexpand |> x.Transform
+
+    let ratexpand (x:ISymbolic<_, 't>) = x |> sexpr |> CAS.Algebra.ratexpand |> x.Transform
+      
+    let ratsimp (x:ISymbolic<_, real>) = x |> sexpr |> CAS.Algebra.ratsimp |> x.Transform
+
+    let factor (x:ISymbolic<_, real>) = x |> sexpr |> CAS.Algebra.factor |> x.Transform
+
+    let factor_for (p:Scalar<real>) (x:ISymbolic<_, real>) = x |> sexpr |> CAS.Algebra.factor_for p.Expr |> x.Transform
 
 type DefaultLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with

@@ -112,6 +112,10 @@ module Maxima =
         |> Array.fold(fun s e -> sprintf "%s, %s" s (sprint e)) (sprint exprs.[0]) 
         |> sprintf "[%s]"
 
+    let sprintm(expr:Expr<_>[][]) =
+        expr |> Array.map (Array.map sprinte) |> Array.map(Array.reduce (sprintf "%s, %s")) |> Array.map(sprintf "[%s]")
+        |> Array.reduce (sprintf "%s, %s") |> sprintf "matrix(%s)"
+
     let extract_output text =
         let m = outputRegex.Match text 
         if m.Success then 
