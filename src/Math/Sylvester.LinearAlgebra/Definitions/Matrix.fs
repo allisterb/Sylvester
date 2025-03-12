@@ -324,7 +324,7 @@ module Matrix =
         rows.[i] <- ri
         Matrix<'t> rows
 
-    let rswitch i j (l:Matrix<'t>) =
+    let mrswitch i j (l:Matrix<'t>) =
         do fail_if_invalid_row_indices [i;j] l
         let ri = l.[i] 
         let rj = l.[j]
@@ -333,14 +333,14 @@ module Matrix =
         rows.[j] <- ri
         Matrix<'t> rows
 
-    let raddmul i j (k:Scalar<'t>) (l:Matrix<'t>) =
+    let mraddmul i j (k:Scalar<'t>) (l:Matrix<'t>) =
         do fail_if_invalid_row_indices [i;j] l
         let rows = l.Rows.Clone() :?> Vector<'t> array
         let ri = l.[i] + k * l.[j] 
         rows.[i] <- ri
         Matrix<'t> rows
 
-    let crepl j (v:Vector<_>) (l:Matrix<_>) =
+    let mcrepl j (v:Vector<_>) (l:Matrix<_>) =
         do 
             fail_if_invalid_col_index j l
             if v.Length <> l.Dim0 then failwithf "The length of the column vector (%A) is not the same as then number of rows (%A)" v.Length l.Dim0
@@ -358,15 +358,15 @@ module Matrix =
     let zeromat<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> i j = 
         Array2D.init i j (fun _ _ -> zero<'t>) |> Matrix<'t>
 
-    let rdel n (m:IMatrix<_>) =
+    let mrdel n (m:IMatrix<_>) =
         do fail_if_invalid_row_index n m
         m.Expr |> Array.indexed |> Array.filter(fun (i, _) -> i <> n) |> Array.map snd |> Matrix<'t>.ofRows
     
-    let cdel n (m:IMatrix<_>) =
+    let mcdel n (m:IMatrix<_>) =
         do fail_if_invalid_col_index n m
         m |> mexprt |> Array.indexed |> Array.filter(fun (i, _) -> i <> (int) n) |> Array.map snd |> Matrix<'t>.ofCols
     
-    let submat i j (m:IMatrix<_>) = m |> rdel i |> cdel j
+    let submat i j (m:IMatrix<_>) = m |> mrdel i |> mcdel j
 
     let mrzeros(m:IMatrix<_>) = m.Rows |> Array.map(velem >> LinearAlgebraOps.count_by((=) zero))
 
@@ -376,7 +376,7 @@ module Matrix =
         do fail_if_not_square m
         let n = m.Dims.[0] in
         let zri,zr = m |> mrzeros |> LinearAlgebraOps.maxi 
-        let zci,zc = mczeros m |> LinearAlgebraOps.maxi
+        let zci,zc = m |> mczeros|> LinearAlgebraOps.maxi
         match n with
         | 1 -> m.[0,0]
         | 2 -> m.[0,0] * m.[1,1] - m.[0,1] * m.[1, 0]
@@ -395,7 +395,6 @@ module Matrix =
 
     let coexpand_c j (m:IMatrix<_>) =
         [|for i in 0 .. m.Dims.[0] - 1 -> cofactor i j m |] |> Array.reduce (+)
-
 
     let comat m =  m |> mmap cofactor |> Matrix<_>
 

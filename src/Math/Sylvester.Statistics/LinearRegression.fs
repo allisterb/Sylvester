@@ -28,13 +28,16 @@ type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: o
     let samples = let d = Seq.zip data1 data2 in seq { for x, y in d -> System.Convert.ToDouble x, System.Convert.ToDouble y  } 
     let a, b = SimpleRegression.Fit samples
 
-    member val Variables = [|rv;dv|]
-    member val Samples = seq { for x, y in samples -> [ x; y ] } |> array2D
-    member val Parameters = [b0; b1]
-    member val RegressionEquation = b1 * rv + b0
-    member val RegressionFunc = fun x -> a*x + b
+    member val Variables = [|rv; dv|]
+    member val Samples = seq { for x, y in samples -> [ x; y] } |> array2D
+    member val ParameterConsts = [b0; b1]
+    member val RegressionEquation = b0 + b1 * rv 
+    member val RegressionFunc = fun x -> a + b * x
+    member val Parameters = [a;b]
 
-    member x.Item(a:real) = x.RegressionFunc a
+    member x.Item(i:obj) = i |> System.Convert.ToDouble |> x.RegressionFunc 
+
+    override x.ToString() = sprintf "%A: %A + %A*%A" (x.Samples) a b rv
    
     new(eqn:ScalarEquation<real>, data1:obj seq, data2: obj seq) = SimpleLinearRegressionModel(as_var_map eqn, data1, data2)
 
