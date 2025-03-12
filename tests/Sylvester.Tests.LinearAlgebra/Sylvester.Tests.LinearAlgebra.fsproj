@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Compile Include="Matrix.fs" />
-    <Compile Include="MatrixT.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

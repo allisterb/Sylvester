@@ -259,6 +259,8 @@ module Matrix =
            let ccount = m.Columns.Length in
            if j >= ccount then failwithf "The column index %A exceeds the number of columns in the matrix: %A." j ccount 
 
+    let fail_if_invalid_col_indices (j:seq<int>) (m:IMatrix<'t>) = let f n = fail_if_invalid_col_index n m in j |> Seq.iter f 
+
     let fail_if_invalid_indices i j (m:IMatrix<'t>) = 
         fail_if_invalid_row_index i m
         fail_if_invalid_col_index j m
@@ -401,7 +403,11 @@ module Matrix =
         
     let inverse (m:IMatrix<_>) = adjoint m / det m
 
-    let mblock i0 j0 i1 j1 (m:IMatrix<_>) = [|for i in i0 .. i1 -> [| for j in j0 .. j1 -> m.[i, j] |] |] |> Matrix<_>
+    let mblock i0 j0 i1 j1 (m:IMatrix<_>) = 
+        do
+            fail_if_invalid_row_indices [i0;i1] m
+            fail_if_invalid_col_indices [j0;j1] m
+        [|for i in i0 .. i1 -> [| for j in j0 .. j1 -> m.[i, j] |] |] |> Matrix<_>
 
     let mpart (rowgroup:int seq) (colgroup: int seq) (m:IMatrix<_>) = BlockMatrix<_>(rowgroup, colgroup, m)
 
@@ -472,4 +478,7 @@ module Matrix =
             //&& Array.forall is_jordan_block blocks
 
     let mcharpoly (v:ScalarVar<'t>) (m:IMatrix<'t>) =
-        CAS.LinearAlgebra.charpoly (sexpr v) (mexpr m) 
+        fail_if_not_square m
+        msub m (v * (identmat (mdim0 m))) |> det |> AlgebraOps.ratsimp == zero
+
+    let mechelon (m:IMatrix<'t>) = m |> mexpr |> CAS.LinearAlgebra.echelon |> Matrix<'t>

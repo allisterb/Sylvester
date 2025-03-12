@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="Algebra.fs" />
     <Compile Include="Analysis.fs" />
+    <Compile Include="LinearAlgebra.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

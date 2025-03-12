@@ -32,11 +32,11 @@ module Algebra =
         let f' = Algebra.partfrac_of b.Expr <@ (1 + 2)/ %b.Expr @>
         Assert.NotNull f'
         let c = realvar "c"
-        let f'' = Algebra.partfrac_of c <@ (2.5 + 1.) / %c @>
+        let f'' = Algebra.partfrac_of c.Expr <@ (2.5 + 1.) / %c.Expr @>
         Assert.NotNull f''
 
-        let x = LatinVars.x<real
-        let a = LatinVars.a<real>
+        let x = LatinVars.x
+        let a = LatinVars.a
         
         let f''' = Analysis.limit a <@ 0. @> <@ (fo(%x + %a) - fo %x) / %a @>
         Assert.NotNull f'''
@@ -49,8 +49,8 @@ module Algebra =
 
     [<Fact>]
     let ``Can solve``() =
-        let x, y = intvar2 "x" "y"
-        let soln = Algebra.solve_for y [ <@3 * %x + 5 * %y = 120 @> ]
+        let x, y = realvar2 "x" "y"
+        let soln = Algebra.solve_for defaults y [ 3 * x + 5 * y == 120  ]
         let xx = MathNet.Symbolics.Infix.parse "(3*x-120)/5"
         
         let r = xx |> function | Ok e -> Some <| MathNetExpr.toQuotation<int> (get_vars x) e | _ -> None

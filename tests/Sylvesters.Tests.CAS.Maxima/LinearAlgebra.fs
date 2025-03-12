@@ -1,4 +1,4 @@
-#load "Include.fsx"
+﻿namespace Sylvester.Tests.CAS
 
 open FSharp.Quotations
 
@@ -6,6 +6,11 @@ open Sylvester
 
 open Matrix
 open LinearEquations
+
+
+module LinearAlgebra = 
+
+
 
 do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
@@ -19,16 +24,4 @@ let l = realvar "l"
 let A = sqmat [1;2;-1;4;-1;3;0;2;2;1;1;2;1;4;1;3]
 
 mcharpoly l A
-//let c = A - l * (identmat 4) |> det |> AlgebraOps.ratsimp == zero
-
-//CAS.Maxima.send
-
-mechelon A
-
-try
-    mcharpoly l A
-with 
-    |_ -> l.Expr
-
-CAS.Maxima.last_output 24
 

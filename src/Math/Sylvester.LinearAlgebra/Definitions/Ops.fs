@@ -68,11 +68,11 @@ module AlgebraOps =
 
     let ratexpand (x:ISymbolic<_, 't>) = x |> sexpr |> CAS.Algebra.ratexpand |> x.Transform
       
-    let ratsimp (x:ISymbolic<_, real>) = x |> sexpr |> CAS.Algebra.ratsimp |> x.Transform
+    let ratsimp (x:ISymbolic<_, 't>) = x |> sexpr |> CAS.Algebra.ratsimp |> x.Transform
 
-    let factor (x:ISymbolic<_, real>) = x |> sexpr |> CAS.Algebra.factor |> x.Transform
+    let factor (x:ISymbolic<_, 't>) = x |> sexpr |> CAS.Algebra.factor |> x.Transform
 
-    let factor_for (p:Scalar<real>) (x:ISymbolic<_, real>) = x |> sexpr |> CAS.Algebra.factor_for p.Expr |> x.Transform
+    let factor_for (p:Scalar<'t>) (x:ISymbolic<_, 't>) = x |> sexpr |> CAS.Algebra.factor_for p.Expr |> x.Transform
 
 type DefaultLinearAlgebraSymbolic() =
     interface ILinearAlgebraSymbolicOps with
