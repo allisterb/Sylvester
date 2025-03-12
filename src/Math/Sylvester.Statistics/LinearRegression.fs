@@ -3,7 +3,7 @@
 open System
 open FSharp.Quotations.Patterns
 open MathNet.Numerics.LinearRegression
-
+open MathNet.Numerics.Statistics
 type LinearRegressionModel(eqn:ScalarVarMap<real>, y: float seq, x: obj seq) =
     do if Seq.length y <> Seq.length x then failwithf "The size of the dependent variable sample must be the same as the size of the independent variable sample."
     member val DependentVariable = eqn.Var
@@ -26,15 +26,23 @@ type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: o
         | Some [Constant (ValueWithName(_,_,n)); VariableWithName rv.Name _] -> ScalarConst<real> n
         | _ -> failwithf "Cannot determine the slope coefficient parameter symbol."
     let samples = let d = Seq.zip data1 data2 in seq { for x, y in d -> System.Convert.ToDouble x, System.Convert.ToDouble y  } 
+    let xsamples,ysamples = samples |> Seq.map fst, samples |> Seq.map snd
+    let xmean,xvar = xsamples |> Statistics.MeanVariance
+    let ymean,yvar = ysamples |> Statistics.MeanVariance
     let a, b = SimpleRegression.Fit samples
-
+    let rf = fun x -> a + b * x
+    let rss = samples |> Seq.sumBy(fun (x,y) -> (y - rf x) ** 2.)
+    let ess = ysamples |> Seq.sumBy(fun y -> (y - ymean) ** 2.)
     member val Variables = [|rv; dv|]
     member val Samples = seq { for x, y in samples -> [ x; y] } |> array2D
     member val ParameterConsts = [b0; b1]
     member val RegressionEquation = b0 + b1 * rv 
-    member val RegressionFunc = fun x -> a + b * x
+    member val RegressionFunc = rf 
     member val Parameters = [a;b]
-
+    member val Rss = rss
+    member val Ess = ess
+    member val Tss = ess + rss
+    member val Rsquared = 1. - (ess / rss)
     member x.Item(i:obj) = i |> System.Convert.ToDouble |> x.RegressionFunc 
 
     override x.ToString() = sprintf "%A: %A + %A*%A" (x.Samples) a b rv

@@ -10,6 +10,8 @@ let x = realvar "x"
 let y = realvar "y"
 let A = realconst "A"
 
+diff x ((ln x) *** 2) |> diff x |> lim x inf
+(*
 lim x inf (3 + 1 / x - 1 / 2***x)
 
 lim x neginf (sqrt((4 - 1 / x) / ( 1 - 4 / x***3)))
@@ -25,3 +27,10 @@ lim x inf ((x***2 + x +  1) / (x + x***2 + x***3))
 lim x inf (x***3 + x + 2)
 
 lim x inf ((x***3 + 2*x + 2) / (x***2 + 1))
+
+*)
+try
+    diff x (x * ln x) |> ignore
+with | _ -> ()
+
+CAS.Maxima.last_input 10

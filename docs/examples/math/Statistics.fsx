@@ -14,7 +14,7 @@ lm
 
 lm
 
-lm.[4]
+lm.Rsquared
 let me (s:seq<Scalar<real>>) f = Seq.reduce f s
 
 let J = y ** 2
