@@ -10,6 +10,14 @@ let x = realvar "x"
 let y = realvar "y"
 let A = realconst "A"
 
+open Integrals
+
+let f = realfun_l <@fun x-> 1. + x ** 2. @> in
+
+[-2.;0.;1.;2.] |> Seq.pairwise |> Seq.toArray
+upper_riemann_sum -2. 2. [-2.;0.;1.;2.] f
+
+
 diff x ((ln x) *** 2) |> diff x |> lim x inf
 (*
 lim x inf (3 + 1 / x - 1 / 2***x)

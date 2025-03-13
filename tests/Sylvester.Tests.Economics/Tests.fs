@@ -4,8 +4,8 @@ open System
 open Xunit
 
 open Sylvester
-open Microeconomics
-
+open Economics
+open Integrals
 
 module Economics =
 
@@ -25,3 +25,8 @@ module Economics =
         let QD1 = fix {|p_s=0.2; Y=35.|} QD
         Assert.NotNull QD1
     
+    [<Fact>]
+    let ``My test 2`` () =
+        //Declare 2 real variables
+        let g = realfun_l <@fun x -> 1. + x ** 2. @> |> upper_riemann_sum -2. 2. 3
+        Assert.True (g > 0.)

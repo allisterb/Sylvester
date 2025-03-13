@@ -13,6 +13,7 @@
     <Compile Include="Definitions\RealFunction.fs" />
     <Compile Include="Definitions\RealSequence.fs" />
     <Compile Include="Definitions\Measure.fs" />
+    <Compile Include="Definitions\Integrals.fs" />
     <Compile Include="Theories\EuclideanSpace.fs" />
     <Compile Include="Theories\Functions.fs" />
   </ItemGroup>

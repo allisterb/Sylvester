@@ -540,6 +540,14 @@ module Scalar =
         | Var v -> ScalarVarMap(v |> exprvar |> ScalarVar, eqn.Rhs)
         | _ -> failwithf "The lhs of %A is not a variable expression." eqn.Expr
 
+    let (|Division|_|) (s:Scalar<'t>) =
+        match s.Expr with
+        | FsExpr.Division(l,r) -> Some(l |> expand_as<'t> |> Scalar<'t>, r |> expand_as<'t> |> Scalar<'t>)
+        | _ -> None
+
+    let (|Zero|PositiveInfinity|NegativeInfinity|Finite|) (s:Scalar<real>) = 
+        if s = zero then Zero s else if s = inf then PositiveInfinity else if s = neginf then NegativeInfinity s else Finite s
+
 [<AutoOpen>]
 module Prop =
     let prop e = Prop e

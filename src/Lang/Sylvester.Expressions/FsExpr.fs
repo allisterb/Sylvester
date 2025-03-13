@@ -115,6 +115,11 @@ module FsExpr =
         | BinaryOp "Multiply" (l,r)-> Some(l, r)  
         | _ -> None
 
+    let (|Division|_|) =
+        function
+        | BinaryOp "Divide" (l,r)-> Some(l, r)  
+        | _ -> None
+
     let (|Exp|_|) =
         function
         | BinaryOp "Exponentiation" (l,r)-> Some(l, r)  
