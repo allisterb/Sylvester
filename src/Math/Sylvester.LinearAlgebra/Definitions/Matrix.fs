@@ -491,7 +491,8 @@ module Matrix =
         m |> mexpr |> CAS.LinearAlgebra.jordan_normal_form 
         |> List.map(
             function 
-            | l::n::[] -> jordan_block<'t> ((ev >> to_int) n) (ev l) :> IMatrix<'t> 
+            | l::m -> m |> List.map (fun n -> jordan_block<'t> ((ev >> to_int) n) (ev l) :> IMatrix<'t>)  
             | b -> failwithf "The returned list %A is not of the expected form for a Jordan block." b
         ) 
+        |> List.concat 
         |> jordan_mat<'t>
