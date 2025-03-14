@@ -35,8 +35,21 @@ module LinearAlgebra =
         | Ok s -> s |> List.map (List.toArray) |> List.toArray
         | Error e -> failwith e
     
+    let private sendListsCmd<'t> vars cmd = 
+        cmd
+        |> send
+        |> Result.mapError(fun e -> sprintf "Error executing Maxima command %s: %s. Maxima session output: %s" cmd e.Message (Maxima.last_output 10))
+        |> Result.bind(fun o -> MathNet.Symbolics.Infix.parseLists (o.Replace("%", "")))
+        |> Result.map(List.map(List.map (MathNetExpr.toQuotation<'t> vars)))
+        |> Result.mapError(fun e -> sprintf "Error parsing output of Maxima command %s: %s. Maxima session output: %s" cmd e (Maxima.last_output 10))
+        |> function
+        | Ok s -> s 
+        | Error e -> failwith e
+
     let charpoly (v:Expr<'t>) (expr:Expr<'t>[][])  =
         let vars = get_vars_m expr @ [get_var v]
         sprintf "ratsimp(charpoly(%s,%s))" (sprintm expr) (sprinte v) |> sendCmd<'t> vars
 
     let echelon(expr:Expr<'t>[][]) = sprintf "echelon(%s);" (sprintm expr) |> sendMatrixCmd<'t> (get_vars_m expr)
+
+    let jordan_normal_form (expr:Expr<'t>[][]) = sprintf "jordan(%s);" (sprintm expr) |> sendListsCmd<'t> (get_vars_m expr)

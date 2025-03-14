@@ -196,10 +196,11 @@ type BlockMatrix<'t when 't: equality and 't :> ValueType and 't : struct and 't
     let prepend (a:int) (arr:int[]) :int[] = Seq.concat[ seq{a}; arr :> seq<int>] |> Seq.toArray 
     let rowindices = rowgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j , (i+j)) 0 |> fst |> prepend 0 |> Array.windowed 2
     let colindices = colgroup |> Seq.toArray |> Array.mapFold (fun i j -> i + j , (i+j)) 0 |> fst |> prepend 0 |> Array.windowed 2        
-    let blocks = [|for i in 0..rowindices.Length - 1 -> 
+    let blocks = [| for i in 0..rowindices.Length - 1 -> 
                     [| for j in 0..colindices.Length - 1 -> 
-                        mblock (rowindices.[i].[0]) (colindices.[j].[0]) (rowindices.[i].[1] - 1) ( colindices.[j].[1] - 1) m |] |]
-                 |> array2D
+                        mblock (rowindices.[i].[0]) (colindices.[j].[0]) (rowindices.[i].[1] - 1) ( colindices.[j].[1] - 1) m 
+                    |] 
+                 |] |> array2D
     member val Parent = m  
     member val Blocks = blocks
 
@@ -225,6 +226,8 @@ type JordanMatrix<'t when 't: equality and 't :> ValueType and 't : struct and '
    
     do if blocks |> array2D |> Array2D.forall(fun i j b -> if i = j then is_jordan_block b else is_zero b) |> not then 
         failwithf "The matrix %A is not a Jordan block." (blocks |> array2D |> Array2D.flatten |> Array.find (not << is_jordan_block)) 
+
+    member val JordanBlocks = [| for i in 0 .. blocks.Length - 1 -> blocks.[i].[i] |]
 
     new(blocks:IMatrix<'t>[]) =
     
@@ -448,6 +451,8 @@ module Matrix =
         let l = m.[0,0] in
         is_square m && m |> elem2d |> Array2D.forall(fun i j e -> if i = j then e = l else if j = i + 1 then e = one else e = zero)
 
+    let mjordan_blocks (m:JordanMatrix<_>) = m.JordanBlocks
+
     let jordan_block_eigenv (m:IMatrix<_>) =
         if is_jordan_block m then m.[0,0] else failwith "This matrix is not a Jordan block."
 
@@ -481,3 +486,12 @@ module Matrix =
         msub m (v * (identmat (mdim0 m))) |> det |> AlgebraOps.ratsimp == zero
 
     let mechelon (m:IMatrix<'t>) = m |> mexpr |> CAS.LinearAlgebra.echelon |> Matrix<'t>
+
+    let jordan_normal_form (m:IMatrix<'t>) = 
+        m |> mexpr |> CAS.LinearAlgebra.jordan_normal_form 
+        |> List.map(
+            function 
+            | l::n::[] -> jordan_block<'t> ((ev >> to_int) n) (ev l) :> IMatrix<'t> 
+            | b -> failwithf "The returned list %A is not of the expected form for a Jordan block." b
+        ) 
+        |> jordan_mat<'t>

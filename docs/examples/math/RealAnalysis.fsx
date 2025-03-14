@@ -15,9 +15,9 @@ open Integrals
 let f = realfun_l <@fun x-> 1. + x ** 2. @> in
 
 [-2.;0.;1.;2.] |> Seq.pairwise |> Seq.toArray
-upper_riemann_sum -2. 2. [-2.;0.;1.;2.] f
+upper_riemann_sum -2 2 [-2;-1;0;1;2] f
 
-
+lower_riemann_sum 0. 1. (Seq.in)
 diff x ((ln x) *** 2) |> diff x |> lim x inf
 (*
 lim x inf (3 + 1 / x - 1 / 2***x)

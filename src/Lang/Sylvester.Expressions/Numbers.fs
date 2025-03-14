@@ -583,4 +583,6 @@ module Numbers =
         | :? nat as n -> (int) n
         | x -> failwithf "Cannot convert %A to an integer." x
 
+    let to_real (o:'a) : real = System.Convert.ToDouble o
+
     let real_seq<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (s:seq<'t>) = s |> Seq.map real

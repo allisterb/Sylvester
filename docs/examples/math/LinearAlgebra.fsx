@@ -16,6 +16,7 @@ MathNet.Symbolics.Infix.parseMatrix "matrix([1,-3,0,-2],[0,1,-1/5,6/5],[0,0,1,-1
 
 let l = realvar "l"
 
+MathNet.Symbolics.Infix.parseLists("[[-1,0],[2,4]]")
 let A = sqmat [1;2;-1;4;-1;3;0;2;2;1;1;2;1;4;1;3]
 
 mcharpoly l A
@@ -25,10 +26,8 @@ mcharpoly l A
 
 mechelon A
 
-try
-    mcharpoly l A
-with 
-    |_ -> l.Expr
+let a = sqmat [2;1;2;0;-2;2;1;2;-2;-1;-1;1;3;1;2;-1];
+mjordan_blocks <| jordan_normal_form a
 
 CAS.Maxima.last_output 24
 
