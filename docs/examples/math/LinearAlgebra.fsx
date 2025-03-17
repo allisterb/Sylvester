@@ -11,10 +11,14 @@ do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 fsi.PrintWidth <- 500
 
-
+MathNet.Symbolics.Infix.parseMatrix("matrix([1,-1,1,1],[-1/9,-1,0,0],[-13/9,1,-1,0],[17/9,-1,1,1]") |> Result.map(List.map(List.map (MathNetExpr.toQuotation<real> [])))
 let A = sqmat [2;0;1;-3;0;2;10;4;0;0;2;0;0;0;0;3]
-A |> jordan_normal_form |> mjordan_blocks
-
+let J = jordan_normal_form A |> perm_jordan_blocks [1;0;2]
+J |> jordan_blocks |> Array.map(fun b -> b.[0,0].Expr, exprv b.Dims.[0])  |> Array.map(fun (e,n) -> sprintf "[%s,%s]" (sprinte e) (sprinte n)) |> Array.reduce (sprintf "%s,%s") |> sprintf "[%s]"
+let P = jordan_similar J A 
+P |> mexpr
+(P * P)
+(inverse P) * A * P = J
 
 let l = realvar "l"
 

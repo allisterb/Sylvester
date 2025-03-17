@@ -451,7 +451,11 @@ module Matrix =
         let l = m.[0,0] in
         is_square m && m |> elem2d |> Array2D.forall(fun i j e -> if i = j then e = l else if j = i + 1 then e = one else e = zero)
 
-    let mjordan_blocks (m:JordanMatrix<_>) = m.JordanBlocks
+    let jordan_blocks (m:JordanMatrix<_>) = m.JordanBlocks
+
+    let perm_jordan_blocks (perm:seq<int>) (m:JordanMatrix<_>) = 
+        if Seq.length perm <> m.JordanBlocks.Length then failwith "The length of the permutation sequence must be the same as the number of blocks"
+        m.JordanBlocks |> Array.permute(fun i -> Seq.item i perm) |> JordanMatrix<_>
 
     let jordan_block_eigenv (m:IMatrix<_>) =
         if is_jordan_block m then m.[0,0] else failwith "This matrix is not a Jordan block."
@@ -488,6 +492,7 @@ module Matrix =
     let mechelon (m:IMatrix<'t>) = m |> mexpr |> CAS.LinearAlgebra.echelon |> Matrix<'t>
 
     let jordan_normal_form (m:IMatrix<'t>) = 
+        fail_if_not_square m
         m |> mexpr |> CAS.LinearAlgebra.jordan_normal_form 
         |> List.map(
             function 
@@ -496,3 +501,8 @@ module Matrix =
         ) 
         |> List.concat 
         |> jordan_mat<'t>
+
+    let jordan_similar (j:JordanMatrix<'t>) (m:IMatrix<'t>) = 
+        fail_if_not_square m
+        let blocklist = j |> jordan_blocks |> Array.map(fun b -> b.[0,0].Expr, exprv b.Dims.[0]) 
+        m |> mexpr |> CAS.LinearAlgebra.jordan_similar blocklist |> Matrix<'t>

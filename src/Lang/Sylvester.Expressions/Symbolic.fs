@@ -147,9 +147,9 @@ module Symbolic =
         | ValueWithName(_,_,n) -> n
         | Double (Double.MaxValue) -> "inf"
         | Double (Double.MinValue) -> "neginf"
+        | Call(None, Op "real_frac", Int32 n::Int32 d::[]) -> sprintf "%A/%A" n d
         | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
-        | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)
-        
+        | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)        
         | Double d when d = Math.Floor(d + 0.00001) ->  sprinte <| Expr.Value (Convert.ToInt32(d))
 
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format

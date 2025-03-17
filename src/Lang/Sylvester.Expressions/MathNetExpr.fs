@@ -27,6 +27,7 @@ module MathNetExpr =
         | SpecificCall <@@ ( ~- ) @@> (_, _, [xt]) -> -(fromQuotation xt)
         | SpecificCall <@@ ( ~+ ) @@> (_, _, [xt]) -> +(fromQuotation xt)
         | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) * (fromQuotation yt)
+        | SpecificCall <@@ ( / ) @@> (_, _, [Int32 xt; Int32 yt]) -> Expression.Rational(BigRational.FromBigIntFraction(BigInteger xt, BigInteger yt))
         | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) / (fromQuotation yt)
         | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (fromQuotation xt) ** (fromQuotation yt)
         
@@ -75,15 +76,19 @@ module MathNetExpr =
         | UInt16 k -> fromInt32 (int k)
         | UInt32 k -> fromInt64 (int64 k)
         | UInt64 k -> fromInteger (BigInteger k)
+        | Double d when d = Math.Floor(d + 0.00001) -> d |> Math.Truncate |> to_int |> BigRational.FromInt |> Number 
         | Double d -> Expression.Real d
         | Single d -> Expression.Real (float d)
         | Rational r -> Number (BigRational.FromBigIntFraction(r.Numerator, r.Denominator))
         | Natural n -> Number (BigRational.FromBigInt(n.IntVal))
+        | Value(v, t) when t = typeof<BigInteger> -> Number (BigRational.FromBigInt(v :?> BigInteger)) 
         | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
-        
+       
+
         | Let (_, _, t) -> fromQuotation t
         | Lambda (_, t) -> fromQuotation t
-        | _ -> failwithf "Expression %A is not currently supported." <| q
+        | SpecificCall <@@ Numbers.real_frac @@> (_,_, Int32 n::Int32 d::[]) -> Expression.Rational(BigRational.FromBigIntFraction(BigInteger n, BigInteger d))
+        | _ -> failwithf "Expression %A of type %A is not currently supported." q (q.Type)
 
     let fromEqualityQuotation = 
         function
@@ -117,6 +122,10 @@ module MathNetExpr =
                     Expr.Value(int n.Numerator) |> Some
                 else if typeof<'t> = typeof<Rational> then 
                     Expr.Value(Rational(n.Numerator, n.Denominator)) |> Some
+                else if n.IsInteger then (Expr.Value(float n, typeof<real>)) |> Some
+                else if typeof<'t>.Name = typeof<float>.Name then
+                    let num, den = (int) n.Numerator |> exprv, (int) n.Denominator |> exprv in 
+                    Expr.Call(real_frac_mi, [num;den]) |> Some
                 else
                     Expr.Value(Convert.ChangeType(float n, typeof<'t>) :?> 't) |> Some
             | v -> failwithf "Could not convert the value %A to an Expr." v
@@ -153,12 +162,11 @@ module MathNetExpr =
         
         let div (a:Expr) (b:Expr) = let op = divOp.[a.Type.Name] in Expr.Call(op, a::b::[])
         
-        
-
         let rec convertExpr : Expression -> Expr option = 
             function 
             | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
             | Identifier(Symbol s) -> match getParam (Symbol s) with | Some v -> Expr.Var v |> Some | None -> Expr.ValueWithName(Unchecked.defaultof<'t>, typeof<'t>, s) |> Some 
+            | Expression.Approximation(Real d) when d = Math.Floor(d + 0.00001) -> Expr.Value(Math.Truncate d) |> Some
             | Values.Value v -> value v
             | Constant (Constant.Pi) -> let p = getPropertyInfo <@ pi @> in Expr.PropertyGet p |> Some
             | Constant (Constant.E) -> let p = getPropertyInfo <@ e @> in Expr.PropertyGet p |> Some
@@ -179,7 +187,7 @@ module MathNetExpr =
                 else
                     let nExp = compileFraction n
                     let dExp = compileFraction d
-                    Option.map2 div nExp dExp
+                    Option.map2 (fun n d -> Expr.Call(real_frac_mi, n::d::[])) nExp dExp
             | Function (func, par) ->
                 let convertFunc : Function -> MethodInfo option = function
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some
@@ -213,9 +221,6 @@ module MathNetExpr =
                     //| AiryBi -> Some (mathCall1 "AiryBi")
                     //| AiryBiPrime -> Some (mathCall1 "AiryBiPrime")
                     | Ln   -> logOp.[typeof<'t>.Name]  |> Some
-                    
-
-
                     //| Log   -> getMethodInfo <@ Math.Log10 @> |> Some
                     | e    -> failwithf "Could not convert function %A to quotation." e
                 let f = convertFunc func
@@ -321,6 +326,7 @@ module MathNetExprParser =
         |>> fun num ->
             if num.IsInfinity then VisualExpression.Infinity
             elif num.IsInteger then BigInteger.Parse(num.String) |> VisualExpression.PositiveInteger
+            elif num.HasFraction then let r = BigRational.Parse(num.String) in VisualExpression.Fraction(VisualExpression.PositiveInteger r.Numerator, VisualExpression.PositiveInteger r.Denominator)
             else VisualExpression.PositiveFloatingPoint(float num.String)
 
     let symbolName : string parser =

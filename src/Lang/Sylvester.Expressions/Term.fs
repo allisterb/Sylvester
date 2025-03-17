@@ -499,6 +499,10 @@ module Scalar =
 
     let const_to_var (c:ScalarConst<'a>) = ScalarVar<'a>(c.Name)
 
+    let var_name (v:ScalarVar<_>) = v.Name
+
+    let const_name (c:ScalarConst<_>) = c.Name
+    
     let inline get_scalar_vars (x : ^T) = (^T : (member Expr : Expr<'t>) (x)) |> get_vars |> List.map (exprvar<'t> >> ScalarVar<'t>)
     
     let inline get_real_vars (x : ^T) = (^T : (member Expr : Expr<real>) (x)) |> get_vars |> List.map (exprvar<real> >> realvar)

@@ -88,6 +88,11 @@ module FsExpr =
         | Var v when v.Name  = name-> Some expr
         | _ -> None
 
+    let (|VariableWithOneOfNames|_|) (names:string seq) expr =
+        match expr with 
+        | Var v when Seq.contains v.Name names -> Some expr
+        | _ -> None
+
     let (|Atom|_|) expr =
         match expr with
         | Variable _ 
@@ -775,10 +780,10 @@ module FsExpr =
         let t = expr.Type in
         match expr with
         | Constant _ -> [[expr]] |> Some
-        | VariableWithName x _ -> [[expr]] |> Some 
+        | VariableWithOneOfNames x _ -> [[expr]] |> Some 
         | Multiplication(Constant c1, Constant  c2) ->[[call_mul c1 c2]] |> Some
-        | Multiplication(Constant c, VariableWithName x v)
-        | Multiplication(VariableWithName x v, Constant c)-> [[c;v]] |> Some
+        | Multiplication(Constant c, VariableWithOneOfNames x v)
+        | Multiplication(VariableWithOneOfNames x v, Constant c)-> [[c;v]] |> Some
         | Addition(LinearTerms x l, LinearTerms x r) -> l @ r |> Some
         | Subtraction(LinearTerms x l, LinearTerms x r) -> l @ (List.map(List.map (call_mul (neg_one_val t))) r) |> Some
         | _ -> None

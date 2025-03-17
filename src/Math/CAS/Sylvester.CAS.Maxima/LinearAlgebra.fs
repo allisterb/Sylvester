@@ -53,3 +53,8 @@ module LinearAlgebra =
     let echelon(expr:Expr<'t>[][]) = sprintf "echelon(%s);" (sprintm expr) |> sendMatrixCmd<'t> (get_vars_m expr)
 
     let jordan_normal_form (expr:Expr<'t>[][]) = sprintf "jordan(%s);" (sprintm expr) |> sendListsCmd<'t> (get_vars_m expr)
+
+    let jordan_similar (blocklist:(Expr<'t>*Expr<int>) []) (mexpr:Expr<'t>[][]) = 
+        let l = blocklist |> Array.map(fun (e,n) -> sprintf "[%s,%s]" (sprinte e) (sprinte n)) |> Array.reduce (sprintf "%s,%s") |> sprintf "[%s]"
+        let lv = blocklist |> Array.collect (fst >> get_vars >> List.toArray) |> Array.toList
+        sprintf "ModeMatrix(%s, %s);" (sprintm mexpr) l |> sendMatrixCmd<'t> (get_vars_m mexpr @ lv)
