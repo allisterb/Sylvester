@@ -1,13 +1,20 @@
 ﻿namespace Sylvester
 
 open System
+
+open FSharp.Quotations
 open FSharp.Quotations.Patterns
 open MathNet.Numerics.LinearRegression
 open MathNet.Numerics.Statistics
+
 type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) seq) =
+    let rv = eqn.Rhs |> get_real_vars
+    do if samples |> Seq.forall (fun (x, _) -> x.Length = rv.Length) |> not then 
+        failwithf "The dimension of a row of the sample data (%A) does not match the number of dependent variables in the regression equation (%A)." (samples |> Seq.find(fun (x,_) -> x.Length <> rv.Length)) rv.Length 
+    
     member val Samples = samples
     member val DependentVariable = eqn.Var
-    member val IndependentVariables = eqn.Rhs |> get_real_vars
+    member val IndependentVariables = rv
 
 type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: obj seq) =
     inherit LinearRegressionModel(eqn, Seq.zip (Seq.map (to_real >> Array.singleton) data1) (Seq.map to_real data2))
@@ -50,6 +57,7 @@ type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: o
 
 type MultipleLinearRegressionModel(eqn:ScalarVarMap<real>, data1: obj[] seq, data2:obj seq) =
     inherit LinearRegressionModel(eqn, Seq.zip (Seq.map(Array.map to_real) data1) (Seq.map to_real data2))
+    
     let dv = eqn.Var
     let rv = eqn |> rhs |> get_real_vars
     let rvn = rv |> Seq.map (fun v -> v.Name)
@@ -63,13 +71,37 @@ type MultipleLinearRegressionModel(eqn:ScalarVarMap<real>, data1: obj[] seq, dat
            | _ -> failwithf "Cannot determine the slope intercept parameter symbol."
     let b1 = 
            terms |> List.filter(function|[Constant c; VariableWithOneOfNames rvn _] -> true | _ -> false) 
-           |> List.map (function | [Constant (ValueWithName(_,_,n)); VariableWithOneOfNames rvn v] -> (get_var v).Name, ScalarConst<real> n | _ -> failwithf "Cannot determine the slope coefficient parameter symbol.")
-           //|> List.sortBy const_name
+           |> List.map (function | [Constant (ValueWithName(_,_,n)); VariableWithOneOfNames rvn v] -> (v |> get_var |> exprvar |> realvar), ScalarConst<real> n | _ -> failwithf "Cannot determine the slope coefficient parameter symbol.")
+           |> List.sortBy (fst >> var_name)
+    let rv = b1 |> List.map fst
+    let samples = base.Samples
+    let xsamples,ysamples = samples |> Seq.map fst, samples |> Seq.map snd
+    let xmean,xvar = let mv = xsamples |> Seq.map Statistics.MeanVariance in Seq.map fst mv, Seq.map snd mv
+    let ymean,yvar = ysamples |> Statistics.MeanVariance
+    let a = MultipleRegression.Svd samples
+    let b = 0.//ymean - (xmean |> Seq.mapi (fun i v -> a.[i] * v) |> Seq.reduce (+))
+    let rf = (a |> Array.mapi (fun i v -> a.[i] * (fst b1.[i])) |> Array.reduce (+)) + b
+    
+    member val Variables = rv @ [dv] |> List.toArray 
+    member val ParameterConsts = [b0] @ (b1 |> List.map snd) |> List.toArray
+    member val RegressionEquation = rf 
+    member val Parameters = Array.concat [a; [|b|]]
+    member __.Item([<ParamArray>] (x:float array)) = (x |> Array.mapi (fun i v -> a.[i] * v) |> Array.reduce (+)) + b 
+    
+    override x.ToString() = sprintf "%A: %A + %A*%A" (x.Samples) a b rv
 
-    let a = MultipleRegression.Svd base.Samples
-module SimpleLinearRegression =
+    new (eqn:ScalarEquation<real>, data1:obj[] seq, data2: obj seq) = MultipleLinearRegressionModel(as_var_map eqn, data1, data2)
+
+module LinearRegression =
     let slrm (eqn:ScalarEquation<real>) (data:seq<_*_>) =
         let d1, d2 = data |> Seq.map (fst>>box), data |> Seq.map (snd>>box)
         SimpleLinearRegressionModel(eqn, d1, d2)
 
     let slreqn (m:SimpleLinearRegressionModel) = m.RegressionEquation
+
+    let mlrm (eqn:ScalarEquation<real>) (data:seq<seq<_>*_>) =
+           let d1, d2 = data |> Seq.map (fst>> Seq.map box >> Seq.toArray), data |> Seq.map (snd>>box)
+           MultipleLinearRegressionModel(eqn, d1, d2)
+
+    let mlreqn (m:MultipleLinearRegressionModel) = m.RegressionEquation
+

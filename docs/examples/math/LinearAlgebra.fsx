@@ -18,7 +18,7 @@ J |> jordan_blocks |> Array.map(fun b -> b.[0,0].Expr, exprv b.Dims.[0])  |> Arr
 let P = jordan_similar J A 
 P |> mexpr
 (P * P)
-(inverse P) * A * P = J
+((inverse P) * A * P) 
 
 let l = realvar "l"
 

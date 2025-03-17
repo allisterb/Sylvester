@@ -31,3 +31,8 @@
 #r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\main\\FunScript\\bin\\Debug\\netstandard2.0\\FunScript.Util.dll"
 #r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.Base.dll"
 #r "C:\\Projects\\Sylvester.git\\ext\\FunScript\\src\\extra\\FunScript.Bindings.JSXGraph\\bin\\Debug\\netstandard2.0\\FunScript.Bindings.JSXGraph.dll"
+
+#r "C:\\Projects\\Sylvester.git\\src\\Data\\Sylvester.DataFrame\\bin\\Debug\\netstandard2.0\\Sylvester.Data.dll"
+#r "C:\\Projects\\Sylvester.git\\src\\Data\\Sylvester.DataFrame\\bin\\Debug\\netstandard2.0\\Sylvester.DataFrame.dll"
+#r "C:\\Users\\Allister\\.nuget\\packages\\csvhelper\\12.1.2\\lib\\netstandard2.0\\CsvHelper.dll"
+#r "C:\\Users\\Allister\\.nuget\\packages\\fsharp.interop.dynamic\\4.0.3.130\\lib\\netstandard1.6\\FSharp.Interop.Dynamic.dll"

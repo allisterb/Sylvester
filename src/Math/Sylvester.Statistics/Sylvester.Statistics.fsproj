@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Data\Sylvester.DataFrame\Sylvester.DataFrame.csproj" />
     <ProjectReference Include="..\..\Lang\Sylvester.Expressions\Sylvester.Expressions.fsproj" />
     <ProjectReference Include="..\..\Visualization\Sylvester.Visualization.Web\Sylvester.Visualization.Web.fsproj" />
     <ProjectReference Include="..\Sylvester.RealAnalysis\Sylvester.RealAnalysis.fsproj" />
