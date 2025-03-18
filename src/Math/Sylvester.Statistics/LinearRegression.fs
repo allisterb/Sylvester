@@ -23,6 +23,13 @@ module Data =
     
     let frame (file:CsvFile) = new Frame(file)
 
+    let samples (cols:seq<string>) (f:CsvFile) =
+        let n = Seq.length cols - 1
+        let df = frame f
+        let x = cols |> Seq.take (Seq.length cols - 1) |> Seq.toArray |> df.Sel in
+        let y = cols |> Seq.last 
+        Seq.zip (seq {for r in x -> seq {for i in 0 .. n - 1 -> r.[i]}}) (seq {for r in df.[y] -> r})//|> Seq.map (fun x -> x |> Seq.take (n - 1), Seq.last x) 
+
 type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) seq) =
     let rv = eqn.Rhs |> get_real_vars
     do if samples |> Seq.forall (fun (x, _) -> x.Length = rv.Length) |> not then 
@@ -92,21 +99,20 @@ type MultipleLinearRegressionModel(eqn:ScalarVarMap<real>, data1: obj[] seq, dat
     let xsamples,ysamples = samples |> Array.map fst |> Array.transpose, samples |> Array.map snd
     let xmean,xvar = let mv = xsamples |> Array.map Statistics.MeanVariance in Array.map fst mv, Seq.map snd mv
     let ymean,yvar = ysamples |> Statistics.MeanVariance
-    let a = MultipleRegression.Svd samples
-    let b = ymean - (xmean |> Seq.mapi (fun i v -> a.[i] * v) |> Seq.reduce (+))
-    let rf = (a |> Array.mapi (fun i v -> a.[i] * (fst b1.[i])) |> Array.reduce (+)) + b
-    
+    let a = MultipleRegression.QR(samples, true)
+    let re = dv == (a |> Array.skip 1 |> Array.mapi (fun i v -> rv.[i] * v) |> Array.reduce (+)) + a.[0]
+    let rf (x:float[]) = (x |> Array.mapi (fun i v -> a.[i] * v) |> Array.reduce (+)) + (a.[0])  
     member val Variables = rv @ [dv] |> List.toArray 
     member val ParameterConsts = [b0] @ (b1 |> List.map snd) |> List.toArray
-    member val RegressionEquation = rf 
-    member val Parameters = Array.concat [a; [|b|]]
+    member val RegressionEquation = re 
+    member val Parameters = a
     member val XSamples = xsamples
     member val YSamples = ysamples
     member val XMean = xmean
     member val YMean = ymean
-    member __.Item([<ParamArray>] (x:float array)) = (x |> Array.mapi (fun i v -> a.[i] * v) |> Array.reduce (+)) + b 
+    member __.Item([<ParamArray>] (x:real array)) = rf x
     
-    override x.ToString() = sprintf "%A: %A + %A*%A" (x.Samples) a b rv
+    override x.ToString() = sprintf "%A: %A" (x.Samples) re
 
     new (eqn:ScalarEquation<real>, data1:obj[] seq, data2: obj seq) = MultipleLinearRegressionModel(as_var_map eqn, data1, data2)
 
