@@ -7,14 +7,29 @@ open FSharp.Quotations.Patterns
 open MathNet.Numerics.LinearRegression
 open MathNet.Numerics.Statistics
 
+open Sylvester.Data
+
+[<AutoOpen>]
+module Data =
+    let csv_file name = new CsvFile(name)
+
+    let csv_file_delim name delim = new CsvFile(name, delim)
+    
+    let with_col_type<'t> (col:int) (f:CsvFile) = f.[col].Type <- typeof<'t>; f
+
+    let with_all_col_types<'t> (f:CsvFile) = 
+        for i in 0..f.Fields.Count - 1 do f.[i].Type <- typeof<'t> 
+        f
+    
+    let frame (file:CsvFile) = new Frame(file)
+
 type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) seq) =
     let rv = eqn.Rhs |> get_real_vars
     do if samples |> Seq.forall (fun (x, _) -> x.Length = rv.Length) |> not then 
         failwithf "The dimension of a row of the sample data (%A) does not match the number of dependent variables in the regression equation (%A)." (samples |> Seq.find(fun (x,_) -> x.Length <> rv.Length)) rv.Length 
-    
-    member val Samples = samples
+    member val Samples = samples |> Seq.toArray
     member val DependentVariable = eqn.Var
-    member val IndependentVariables = rv
+    member val IndependentVariables = rv |> List.toArray
 
 type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: obj seq) =
     inherit LinearRegressionModel(eqn, Seq.zip (Seq.map (to_real >> Array.singleton) data1) (Seq.map to_real data2))
@@ -42,7 +57,7 @@ type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: o
     let ess = ysamples |> Seq.sumBy(fun y -> (y - ymean) ** 2.)
     member val Variables = [|rv; dv|]
     member val ParameterConsts = [b0; b1]
-    member val RegressionEquation = b0 + b1 * rv 
+    member val RegressionEquation = dv == b0 + b1 * rv 
     member val RegressionFunc = rf 
     member val Parameters = [a;b]
     member val Rss = rss
@@ -51,13 +66,12 @@ type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: o
     member val Rsquared = 1. - (ess / rss)
     member x.Item(i:obj) = i |> to_real |> rf
 
-    override x.ToString() = sprintf "%A: %A + %A*%A" (x.Samples) a b rv
+    override x.ToString() = sprintf "%A: %A = %A + %A*%A" (x.Samples) dv a b rv
    
     new(eqn:ScalarEquation<real>, data1:obj seq, data2: obj seq) = SimpleLinearRegressionModel(as_var_map eqn, data1, data2)
 
 type MultipleLinearRegressionModel(eqn:ScalarVarMap<real>, data1: obj[] seq, data2:obj seq) =
     inherit LinearRegressionModel(eqn, Seq.zip (Seq.map(Array.map to_real) data1) (Seq.map to_real data2))
-    
     let dv = eqn.Var
     let rv = eqn |> rhs |> get_real_vars
     let rvn = rv |> Seq.map (fun v -> v.Name)
@@ -72,20 +86,24 @@ type MultipleLinearRegressionModel(eqn:ScalarVarMap<real>, data1: obj[] seq, dat
     let b1 = 
            terms |> List.filter(function|[Constant c; VariableWithOneOfNames rvn _] -> true | _ -> false) 
            |> List.map (function | [Constant (ValueWithName(_,_,n)); VariableWithOneOfNames rvn v] -> (v |> get_var |> exprvar |> realvar), ScalarConst<real> n | _ -> failwithf "Cannot determine the slope coefficient parameter symbol.")
-           |> List.sortBy (fst >> var_name)
+           |> List.sortBy (snd >> const_name)
     let rv = b1 |> List.map fst
     let samples = base.Samples
-    let xsamples,ysamples = samples |> Seq.map fst, samples |> Seq.map snd
-    let xmean,xvar = let mv = xsamples |> Seq.map Statistics.MeanVariance in Seq.map fst mv, Seq.map snd mv
+    let xsamples,ysamples = samples |> Array.map fst |> Array.transpose, samples |> Array.map snd
+    let xmean,xvar = let mv = xsamples |> Array.map Statistics.MeanVariance in Array.map fst mv, Seq.map snd mv
     let ymean,yvar = ysamples |> Statistics.MeanVariance
     let a = MultipleRegression.Svd samples
-    let b = 0.//ymean - (xmean |> Seq.mapi (fun i v -> a.[i] * v) |> Seq.reduce (+))
+    let b = ymean - (xmean |> Seq.mapi (fun i v -> a.[i] * v) |> Seq.reduce (+))
     let rf = (a |> Array.mapi (fun i v -> a.[i] * (fst b1.[i])) |> Array.reduce (+)) + b
     
     member val Variables = rv @ [dv] |> List.toArray 
     member val ParameterConsts = [b0] @ (b1 |> List.map snd) |> List.toArray
     member val RegressionEquation = rf 
     member val Parameters = Array.concat [a; [|b|]]
+    member val XSamples = xsamples
+    member val YSamples = ysamples
+    member val XMean = xmean
+    member val YMean = ymean
     member __.Item([<ParamArray>] (x:float array)) = (x |> Array.mapi (fun i v -> a.[i] * v) |> Array.reduce (+)) + b 
     
     override x.ToString() = sprintf "%A: %A + %A*%A" (x.Samples) a b rv

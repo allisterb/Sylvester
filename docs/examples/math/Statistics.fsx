@@ -19,16 +19,19 @@ lm
 
 lm.Rsquared
 
-let EARNINGS,S,FEMALE = realvar3  "EARNINGS" "S" "FEMALE"
-let eawe21 = new CsvFile("C:\\Users\Allister\\Documents\\School\\ST3189\\notebooks\\EAWE21.csv")
-for j in 1..eawe21.Fields.Count - 1 do eawe21.[j].Type <- typeof<float> 
-
-let frame = new Frame(eawe21);
+let EARNINGS,S,EXP = realvar3  "EARNINGS" "S" "EXP"
+let df = 
+    csv_file "C:\\Users\Allister\\Downloads\\EAWE21.csv"
+    |> with_all_col_types<float>
+    |> frame 
 
 let mlm = query {
-           for r in frame do 
-           select (seq { r.["S"]; r.["FEMALE"] }, r.["EARNINGS"])
-          } |> mlrm (EARNINGS == b0 + b1 * S + b2 * EARNINGS)  
+           for r in df do 
+           select (seq { r.["S"]; r.["EXP"] }, r.["EARNINGS"])
+          } |> mlrm (EARNINGS == b0 + b1 * S + b2 * EXP)  
 
-let slm = seq {for r in frame -> r.["S"], r.["EARNINGS"]} |> slrm (EARNINGS == b0 + b1 * S)
+let slm = seq {for r in df -> r.["S"], r.["EARNINGS"]} |> slrm (EARNINGS == b0 + b1 * S)
+mlm.XMean
+
+
 //lems witht lm = SimpleLinearRegressionModel(y .= b0 + b1 * x + u + b0, [])
