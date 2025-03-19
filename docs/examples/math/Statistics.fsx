@@ -17,20 +17,16 @@ lm
 
 lm
 
-lm.Rsquared
 
 let EARNINGS,S,EXP = realvar3  "EARNINGS" "S" "EXP"
 let eawe21 = 
     csv_file "C:\\Users\Allister\\Downloads\\EAWE21.csv"
-   |> with_all_col_types<float>
+    |> with_all_col_types<float>
 
 let m1 = eawe21 |> samples ["S"; "EARNINGS"] |> slrm (EARNINGS == b0 + b1 * S)
 
-lrymean m1
-//let mlm = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> mlrm (EARNINGS == b0 + b1 * S + b2 * EXP)  
-//mlm |> Seq.map fst |> Seq.item 0 |> Seq.toArray
-//let slm = seq {for r in df -> r.["S"], r.["EARNINGS"]} |> slrm (EARNINGS == b0 + b1 * S)
-//mlm
+let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> mlrm (EARNINGS == b0 + b1 * S + b2 * EXP)  
 
+lrR2 m2, lrrss m2, lrse m2, lrsd m2
 
 //lems witht lm = SimpleLinearRegressionModel(y .= b0 + b1 * x + u + b0, [])
