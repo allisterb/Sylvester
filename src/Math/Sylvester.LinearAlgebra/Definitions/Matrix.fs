@@ -454,7 +454,7 @@ module Matrix =
     let jordan_blocks (m:JordanMatrix<_>) = m.JordanBlocks
 
     let perm_jordan_blocks (perm:seq<int>) (m:JordanMatrix<_>) = 
-        if Seq.length perm <> m.JordanBlocks.Length then failwith "The length of the permutation sequence must be the same as the number of blocks"
+        if Seq.length perm <> m.JordanBlocks.Length then failwith "The length of the permutation sequence must be the same as the number of blocks in the Jordan matrix."
         m.JordanBlocks |> Array.permute(fun i -> Seq.item i perm) |> JordanMatrix<_>
 
     let jordan_block_eigenv (m:IMatrix<_>) =
@@ -506,3 +506,21 @@ module Matrix =
         fail_if_not_square m
         let blocklist = j |> jordan_blocks |> Array.map(fun b -> b.[0,0].Expr, exprv b.Dims.[0]) 
         m |> mexpr |> CAS.LinearAlgebra.jordan_similar blocklist |> Matrix<'t>
+
+    (*
+    let coeffmat (eqns:ScalarEquation<'t> seq) =
+        let c =  eqns |> Seq.map (rhs >> sexpr >> get_vars) |> Seq.sumBy (List.length) in
+        if c > 0 then failwith "The equation system must have only constants on its RHS to be put into matrix form."
+        let vars = eqns |> Seq.map(lhs >> sexpr >> get_vars) |> List.concat
+        let vn = vars |> List.map (fun v -> v.Name)
+        let terms = 
+               match eqn |> lhs |> sexpr |> simplifye with
+               | LinearTerms vn t -> t
+               | _ -> failwithf "%A is not a linear expression of variables %A." eqn.Rhs vn
+        let b1 = 
+            terms |> List.filter(function|[Constant c; VariableWithOneOfNames vn _] -> true | _ -> false) 
+            |> List.map (
+                function | [Constant c; VariableWithOneOfNames vn v] -> (v |> get_var |> exprvar<'t>), expand_as<'t> c | _ -> failwithf "Cannot determine the slope coefficient parameter symbol.")
+            |> List.groupBy (fst >> sprinte)
+        ()
+    *)

@@ -1,5 +1,7 @@
 #load "Include.fsx"
 
+open MathNet.Numerics
+
 open Sylvester
 open Sylvester.Data
 open LinearRegression
@@ -8,7 +10,19 @@ open LinearRegression
 let y,x = realvar2 "y" "x"
 let b0,b1,b2 = realconst3 "beta_0" "beta_1" "beta_2"
 
-let lm = slrm' (y == b0 + b1 * x) [
+let salary,roe,salarydol,roedol = realvar4 "salary" "roe" "salarydol" "roedol"
+
+let ceosal1 = csv_file "C:\Users\Allister\Downloads\gretlfiles\wooldridge\ceosal1.csv" |> with_all_col_types<float>
+let ceo1 = ceosal1 |> samples ["roe"; "salary"] |> slr (salary == b0 + b1 * roe)
+
+let roedecl = realvar "roedecl"
+ceo1 |> change_vars [
+    //salarydol == 100 * salary
+    roedecl == roe / 100
+]
+
+
+let lm = slr' (y == b0 + b1 * x) [
     1,3
     2,5
     3,6
@@ -23,10 +37,16 @@ let eawe21 =
     csv_file "C:\\Users\Allister\\Downloads\\EAWE21.csv"
     |> with_all_col_types<float>
 
-let m1 = eawe21 |> samples ["S"; "EARNINGS"] |> slrm (EARNINGS == b0 + b1 * S)
+let m1 = eawe21 |> samples ["S"; "EARNINGS"] |> slr (EARNINGS == b0 + b1 * S)
 
-let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> mlrm (EARNINGS == b0 + b1 * S + b2 * EXP)  
+let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> mlr (EARNINGS == b0 + b1 * S + b2 * EXP)  
 
 lrR2 m2, lrrss m2, lrse m2, lrsd m2
+
+let alpha =  Distributions.StudentT.InvCDF(0., 1., (real) m2.N, ((1. - 0.05) / 2.))
+
+let alpha2 = Distributions.FisherSnedecor.InvCDF(1., 498., 0.95)
+alpha2
+
 
 //lems witht lm = SimpleLinearRegressionModel(y .= b0 + b1 * x + u + b0, [])

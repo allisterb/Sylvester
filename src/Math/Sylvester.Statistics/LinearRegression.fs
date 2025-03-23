@@ -39,7 +39,7 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) se
     
     abstract Variables:ScalarVar<real> array with get
     abstract Parameters:ScalarConst<real> array with get
-    abstract RegressionEquation:ScalarEquation<real> with get
+    abstract RegressionEquation:ScalarVarMap<real> with get
     abstract RegressionCoefficients:real array with get
     abstract RegressionFunction:real array->real
     abstract XSamples:real array array with get
@@ -50,6 +50,7 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) se
     abstract YVariance:real with get
     abstract Rss:real with get
     
+    member val ModelEquation = eqn
     member val Samples = samples |> Seq.toArray
     member val N = samples |> Seq.length
     member val DependentVariable = eqn.Var
@@ -59,9 +60,10 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) se
     member x.Tss = x.Rss + x.Ess
     member x.R2 : real = GoodnessOfFit.CoefficientOfDetermination(x.YPredictions, x.YSamples)
     member x.r : real= GoodnessOfFit.R(x.YPredictions, x.YSamples)
-    member x.YSE : real = GoodnessOfFit.StandardError(x.YPredictions, x.YSamples, x.IndependentVariables.Length - 1)
-    member x.YSD : real= sqrt x.YVariance
-
+    member x.XSE = Distributions.StudentT.InvCDF(0., 1., ((float) (x.N) - 1.), (1. - 0.05) / 2.)
+    member x.YSE : real = GoodnessOfFit.StandardError(x.YPredictions, x.YSamples, x.Parameters.Length)
+    member x.XSD : real= sqrt x.YVariance
+    //member x.T = Distributions.StudentT. 
 type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: obj seq) =
     inherit LinearRegressionModel(eqn, Seq.zip (Seq.map (to_real >> Array.singleton) data1) (Seq.map to_real data2))
     let dv = eqn.Var
@@ -104,7 +106,7 @@ type SimpleLinearRegressionModel(eqn:ScalarVarMap<real>, data1:obj seq, data2: o
 
     override x.ToString() = sprintf "%A: %A = %A + %A*%A" (x.Samples) dv a b rv
    
-    new(eqn:ScalarEquation<real>, data1:obj seq, data2: obj seq) = SimpleLinearRegressionModel(as_var_map eqn, data1, data2)
+    
 
 type MultipleLinearRegressionModel(eqn:ScalarVarMap<real>, data1: obj[] seq, data2:obj seq) =
     inherit LinearRegressionModel(eqn, Seq.zip (Seq.map(Array.map to_real) data1) (Seq.map to_real data2))
@@ -150,19 +152,17 @@ type MultipleLinearRegressionModel(eqn:ScalarVarMap<real>, data1: obj[] seq, dat
     
     override x.ToString() = sprintf "%A: %A" (x.Samples) re
 
-    new (eqn:ScalarEquation<real>, data1:obj[] seq, data2: obj seq) = MultipleLinearRegressionModel(as_var_map eqn, data1, data2)
-
 module LinearRegression =
-    let slrm (eqn:ScalarEquation<real>) (data:seq<seq<_>*_>) =
+    let slr (eqn:ScalarVarMap<real>) (data:seq<seq<_>*_>) =
         let d1 = data |> Seq.map fst |> Seq.map (Seq.item 0 >> box) |> Seq.toArray
         let d2 = data |> Seq.map (snd>>box)
         SimpleLinearRegressionModel(eqn, d1, d2)
 
-    let slrm' (eqn:ScalarEquation<real>) (data:seq<_*_>) =
+    let slr' (eqn:ScalarVarMap<real>) (data:seq<_*_>) =
          let d1, d2 = data |> Seq.map (fst>>box), data |> Seq.map (snd>>box)
          SimpleLinearRegressionModel(eqn, d1, d2)
 
-    let mlrm (eqn:ScalarEquation<real>) (data:seq<seq<_>*_>) =
+    let mlr (eqn:ScalarVarMap<real>) (data:seq<seq<_>*_>) =
         let d1, d2 = data |> Seq.map (fst>> Seq.map box >> Seq.toArray), data |> Seq.map (snd>>box)
         MultipleLinearRegressionModel(eqn, d1, d2)
 
@@ -198,7 +198,30 @@ module LinearRegression =
 
     let lrse (m:LinearRegressionModel) = m.YSE
 
-    let lrsd (m:LinearRegressionModel) = m.YSD
+    //let lrsd (m:LinearRegressionModel) = m.YSD
 
     let lrR2 (m:LinearRegressionModel) = m.R2
-   
+
+    let change_var (eqn:ScalarVarMap<real>) (m:LinearRegressionModel) =
+        let rvs = eqn.Rhs |> get_real_vars
+        if rvs.Length <> 1 then failwithf "The RHS of the equation must be an expresion of a single variable."
+        let rv = List.exactlyOne rvs
+        if not (m.ModelEquation.Var = rv || Array.contains rv m.IndependentVariables) then failwithf "The RHS of the equation does not contain a dependent or independent variable of the regression equation."
+        let f = RealFunction eqn
+        let create = 
+            match m with
+            | :? SimpleLinearRegressionModel -> fun (g:ScalarVarMap<real>) s -> slr g (s |> Array.map(fun (x,y) -> x :> seq<real>,y)) :> LinearRegressionModel
+            | :? MultipleLinearRegressionModel -> fun (g:ScalarVarMap<real>) s -> mlr g (s |> Array.map(fun (x,y) -> x :> seq<real>,y)) :> LinearRegressionModel
+            | _ -> failwithf "Unknown linear regression type: %A" (m.GetType())
+        if m.ModelEquation.Var = rv then
+             let samples = m.Samples |> Array.map(fun s -> fst s, s |> snd |> f.Map) in
+             create (eqn.Var == m.ModelEquation.Rhs) samples
+        else
+            let index = Array.findIndex((=) rv) m.IndependentVariables
+            let samples = m.Samples |> Array.map(fun (x,y) -> x |> Array.mapi (fun i _x -> if index = i then f.Map _x else _x), y) in
+            let v = eqn.Lhs in
+            let p = subst_var_value rv.Var (v.Expr) m.ModelEquation.Rhs.Expr |> expand_as<real> |> simplifye |> Scalar in
+            create (m.DependentVariable == p) samples
+        
+    let change_vars (eqns:ScalarVarMap<real> seq) (m:LinearRegressionModel) = eqns |> Seq.fold (fun s e -> change_var e s) m
+

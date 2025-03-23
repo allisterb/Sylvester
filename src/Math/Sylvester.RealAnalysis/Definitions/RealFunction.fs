@@ -58,6 +58,8 @@ type RealFunction(f, ?symbol:string) =
         let vvv = Scalar<real> <@ %%vv:real @>
         RealFunction(vvv, symbol)
 
+    new (eqn:ScalarVarMap<real>) = RealFunction(eqn.Rhs, eqn.Var.Name)
+
     member x.SymbolicFn =
         let var = x.Vars.[0]
         let ev = exprv var.Name

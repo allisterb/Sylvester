@@ -588,6 +588,6 @@ module Numbers =
 
     let real_seq<'t when 't:equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t> and 't :> IFormattable> (s:seq<'t>) = s |> Seq.map real
 
-    let real_frac (n:int) (d:int) = 0.4//(real) n / (real) d
+    let real_frac (n:int) (d:int) = (real) n / (real) d
 
     let real_frac_mi = <@ real_frac 1 1 @> |> function | FSharp.Quotations.Patterns.Call(_, mi, _) -> mi | _ -> failwith ""
