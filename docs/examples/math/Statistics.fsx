@@ -13,14 +13,26 @@ let b0,b1,b2 = realconst3 "beta_0" "beta_1" "beta_2"
 let salary,roe,salarydol,roedol = realvar4 "salary" "roe" "salarydol" "roedol"
 
 let ceosal1 = csv_file "C:\Users\Allister\Downloads\gretlfiles\wooldridge\ceosal1.csv" |> with_all_col_types<float>
-let ceo1 = ceosal1 |> samples ["roe"; "salary"] |> slr (salary == b0 + b1 * roe)
+let ceo1 = ceosal1 |> samples ["roe"; "salary"] |> lr (salary == b0 + b1 * roe)
 
+
+
+let EARNINGS,S,EXP = realvar3  "EARNINGS" "S" "EXP"
+let eawe21 = 
+    csv_file "C:\\Users\Allister\\Downloads\\EAWE21.csv"
+    |> with_all_col_types<float>
+
+let m1 = eawe21 |> samples ["S"; "EARNINGS"] |> lr (EARNINGS == b0 + b1 * S)
+
+m1
 let roedecl = realvar "roedecl"
+
 ceo1 |> change_vars [
     //salarydol == 100 * salary
     roedecl == roe / 100
 ]
 
+let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> lr (EARNINGS == b0 + b1 * S + b2 * EXP)  
 
 let lm = slr' (y == b0 + b1 * x) [
     1,3
@@ -32,14 +44,8 @@ lm
 lm
 
 
-let EARNINGS,S,EXP = realvar3  "EARNINGS" "S" "EXP"
-let eawe21 = 
-    csv_file "C:\\Users\Allister\\Downloads\\EAWE21.csv"
-    |> with_all_col_types<float>
 
-let m1 = eawe21 |> samples ["S"; "EARNINGS"] |> slr (EARNINGS == b0 + b1 * S)
 
-let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> mlr (EARNINGS == b0 + b1 * S + b2 * EXP)  
 
 lrR2 m2, lrrss m2, lrse m2, lrsd m2
 
