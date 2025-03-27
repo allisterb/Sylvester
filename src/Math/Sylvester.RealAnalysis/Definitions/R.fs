@@ -5,10 +5,10 @@ open Arithmetic
 open Z3
 open Vector
 
-type Region<'n when 'n :> Number> = Set<Vec<'n>>
+type Region = Set<Vec>
 
-type RealVectorSpace<'n when 'n :>Number>() = 
-    inherit VectorSpace<'n, real>(Field.R, VectorT.add, VectorT.smul)
+type RealVectorSpace(n:int) = 
+    inherit VectorSpace<real>(n, Field.R, Vector.vadd, Vector.vsmul)
     interface ICardinality with member val Cardinality = Aleph 1
 
 [<RequireQualifiedAccess>]
@@ -18,7 +18,7 @@ module Reals=
 
 [<AutoOpen>]
 module R =
-    let R (dim:'n when 'n :> Number) = new RealVectorSpace<'n>()
+    let R (n:int) = new RealVectorSpace(n)
              
     let algexpand (x:ISymbolic<_, real>) = x.Transform(x |> sexpr |> Ops.AlgExpand)
 

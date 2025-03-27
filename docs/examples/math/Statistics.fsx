@@ -14,7 +14,7 @@ let salary,roe,salarydol,roedol = realvar4 "salary" "roe" "salarydol" "roedol"
 
 let ceosal1 = csv_file "C:\Users\Allister\Downloads\gretlfiles\wooldridge\ceosal1.csv" |> with_all_col_types<float>
 let ceo1 = ceosal1 |> samples ["roe"; "salary"] |> lr (salary == b0 + b1 * roe)
-
+ceo1.R2
 
 
 let EARNINGS,S,EXP = realvar3  "EARNINGS" "S" "EXP"
@@ -34,7 +34,7 @@ ceo1 |> change_vars [
 
 let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> lr (EARNINGS == b0 + b1 * S + b2 * EXP)  
 
-let lm = slr' (y == b0 + b1 * x) [
+let lm = slr (y == b0 + b1 * x) [
     1,3
     2,5
     3,6

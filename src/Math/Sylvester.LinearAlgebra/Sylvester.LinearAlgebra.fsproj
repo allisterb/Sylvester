@@ -10,6 +10,7 @@
     <Compile Include="Definitions\LinearEquations.fs" />
     <Compile Include="Definitions\WebVisualization.fs" />
     <Compile Include="Definitions\Vector.fs" />
+    <Compile Include="Definitions\VectorSpace.fs" />
     <Compile Include="Definitions\Matrix.fs" />
   </ItemGroup>
 

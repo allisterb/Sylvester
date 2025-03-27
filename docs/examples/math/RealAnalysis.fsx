@@ -2,7 +2,7 @@
 
 open Sylvester
 open RealNumbers
-
+open Vector
 
 do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
@@ -14,10 +14,13 @@ open Integrals
 
 let f = realfun_l <@fun x-> 1. + x ** 2. @> in
 
+
 [-2.;0.;1.;2.] |> Seq.pairwise |> Seq.toArray
 upper_riemann_sum -2 2 [-2;-1;0;1;2] f
 
-lower_riemann_sum 0. 1. (Seq.in)
+let r = RealFunctionN(x + 2*y, "r")
+r.[0,1]
+//lower_riemann_sum 0. 1. (Seq.in)
 diff x ((ln x) *** 2) |> diff x |> lim x inf
 (*
 lim x inf (3 + 1 / x - 1 / 2***x)

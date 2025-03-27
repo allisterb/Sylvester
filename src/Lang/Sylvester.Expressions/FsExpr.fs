@@ -472,6 +472,8 @@ module FsExpr =
 
     let has_var (v:Var) (vars:Var list) = vars |> List.tryFind(fun vf -> vf.Name = v.Name && vf.Type = v.Type) |> Option.isSome
     
+    let get_var_count expr = expr |> get_vars |> List.length
+
     let fail_if_not_has_var (v:Var) (expr:Expr) = 
         let vars = get_vars expr
         do if not <| has_var v vars then failwithf "The expression %A does not contain the variable %A." (src expr) v
@@ -761,7 +763,6 @@ module FsExpr =
 
     let tail (l:seq<_>) = Seq.tail l
 
-    [<ReflectedDefinition>]
     let symbolic_fn<'t> (sym:string) (v: string array) = Unchecked.defaultof<'t>
 
     let rec (|LinearExpr|_|) (x:string) (expr:Expr) =
@@ -776,7 +777,7 @@ module FsExpr =
            | Subtraction(LinearExpr x l, LinearExpr x r) -> Some <| call_add l (call_mul (neg_one_val(t)) r)
            | _ -> None
        
-    let rec (|LinearTerms|_|) x (expr:Expr) =
+    let rec (|LinearTermsOf|_|) x (expr:Expr) =
         let t = expr.Type in
         match expr with
         | Constant _ -> [[expr]] |> Some
@@ -784,6 +785,6 @@ module FsExpr =
         | Multiplication(Constant c1, Constant  c2) ->[[call_mul c1 c2]] |> Some
         | Multiplication(Constant c, VariableWithOneOfNames x v)
         | Multiplication(VariableWithOneOfNames x v, Constant c)-> [[c;v]] |> Some
-        | Addition(LinearTerms x l, LinearTerms x r) -> l @ r |> Some
-        | Subtraction(LinearTerms x l, LinearTerms x r) -> l @ (List.map(List.map (call_mul (neg_one_val t))) r) |> Some
+        | Addition(LinearTermsOf x l, LinearTermsOf x r) -> l @ r |> Some
+        | Subtraction(LinearTermsOf x l, LinearTermsOf x r) -> l @ (List.map(List.map (call_mul (neg_one_val t))) r) |> Some
         | _ -> None

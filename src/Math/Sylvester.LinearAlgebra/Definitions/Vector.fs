@@ -11,6 +11,8 @@ open MathNet.Numerics
 type IVector<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> = 
     inherit IPartialShape<dim<1>>
     abstract Expr: Expr<'t>[]
+    abstract Length: int
+    abstract Item:int->Scalar<'t>
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
@@ -44,7 +46,9 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     interface IVector<'t> with
         member val Expr = e
         member val Dims = [| e.Length |]
-    
+        member val Length = e.Length
+        member x.Item(i:int) = e.[i] |> Scalar<'t>
+
     interface IEnumerable<Expr<'t>> with
         member x.GetEnumerator ()  = (x.Expr |> Array.toSeq).GetEnumerator()
         member x.GetEnumerator () = (x :> IEnumerable<Expr<'t>>).GetEnumerator () :> IEnumerator
@@ -114,15 +118,23 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member (~-) (l: Vector<'t>) =
         l.Expr |> Array.map(call_neg >> expand_as<'t> >> simplifye) |> Vector<'t>
 
+
 type Vec = Vector<real>
 
 module Vector =
-    let vec (data:obj list) = data |> List.toArray |> realterms |> Vec 
+    let vec (data:obj seq) = data |> Seq.toArray |> realterms |> Vec 
     
     let vexpr(v: Vector<_>) = v.Expr
 
     let velem(v:Vector<_>) = v |> vexpr |> Array.map Scalar
     
+    let fail_if_different_lengths (l:IVector<'t>) (r:IVector<'t>) =
+        if l.Length <> r.Length then failwith "The 2 vectors are of different lengths."
+         
+    let vadd(l:Vector<_>) (r:Vector<_>) =
+        fail_if_different_lengths l r
+        let e = Array.map2 call_add l.Expr r.Expr |> Array.map (expand_as >> simplifye) in Vector<'t>(e, BinaryOp("+", l, r))
+
     let vdot (l:IVector<'t>) (r:IVector<'t>) =
         do if l.Dims.[0] <> r.Dims.[0] then failwithf "Cannot find dot product of two vectors of different lengths: %A and %A." l.Dims.[0] r.Dims.[0]
         let e = 
@@ -132,9 +144,16 @@ module Vector =
             |> simplifye
         in Scalar<'t>(e, BinaryOp("*", l, r))
     
-    let vsmul (l:Scalar<'t>) (r:IVector<'t>)  =
+    let vsmul (l:Scalar<'t>) (r:Vector<'t>)  =
          r.Expr |> Array.map(fun e -> call_mul (l.Expr) e |> expand_as<'t> |> simplifye) |> Vector<'t>
 
     let vsdiv (l:Scalar<'t>) (r:IVector<'t>)  =
          r.Expr |> Array.map(fun e -> call_div e (l.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
 
+(*
+    let coeffvec (eqn:ScalarEquation<'t>) =
+        let l = eqn |> lhs |> simplify
+        let vn = get_var_names l
+        match l with
+        | LinearTerms vn
+        *)
