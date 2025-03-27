@@ -3,11 +3,6 @@
 open System
 open FSharp.Quotations
 open FSharp.Quotations.Patterns
-open FSharp.Quotations.DerivedPatterns
-
-open Vector
-open Dimension
-
 
 [<AbstractClass>]
 type RealFunction<'t, 'a when 't : equality and 'a: equality>(domain:ISet<'t>, codomain:ISet<real>, map:Expr<'t->real>, amap:Expr<'a->'t>, ?symbol:string) = 
@@ -288,7 +283,8 @@ module RealFunction =
 
     let integrate_fun_over_R (f:RealFunction) = integrate_over_R f.ScalarVar f
 
-type RealFunctionN(n:int, f, s, ?symbol:string) = 
+[<StructuredFormatDisplay("{UnicodeDisplay}")>]
+type RealFunctionN(n:int, f, s, ?vars: ScalarVar<real> list, ?symbol:string) = 
     inherit RealFunction<Vector<real>, real[]>(R(n), Field.R, f, <@ Vector<real> @>, ?symbol=symbol)
     member private x.substarg (args : Expr list) =
         if args.Length <> n then failwith "The number of function arguments supplied is not equal to the dimension of the function."
@@ -297,12 +293,10 @@ type RealFunctionN(n:int, f, s, ?symbol:string) =
         let m = typeof<Vec>.GetProperty("ItemE")
         args |> List.iteri(fun i v -> me <- replace_expr (Expr.PropertyGet(vv, m, ((exprv i).Raw)::[])) v me )
         me |> expand_as<real> |> simplifye
-
     member private x.substarg (args : Expr<real> list) = args |> List.map (fun e -> e.Raw) |> x.substarg
-
     member val Dim = N
     override a.ScalarExpr = s
-    override a.ScalarVars = get_real_vars s
+    override a.ScalarVars = defaultArg vars (get_real_vars s)
     override x.SubstArg(v:Expr) = 
            match v with
            | NewTuple(args) ->
@@ -319,15 +313,36 @@ type RealFunctionN(n:int, f, s, ?symbol:string) =
         let symbol = defaultArg x.Symbol "f"
         let sv = exprv symbol
         let vvv = Scalar<real>  <@ symbolic_fn<real> (%sv) (%%eva:string[]) @>
-        RealFunction(vvv, symbol)
+        RealFunctionN(vvv, x.ScalarVars, symbol)
+
+    member x.UnicodeDisplay =
+        let v = if x.ScalarVars.Length > 0 then x.ScalarVars |> List.map sprints |> List.reduce (sprintf "%s,%s") else ""  
+        match x.Symbol with
+        | None -> sprints x.ScalarExpr 
+        | Some s -> sprintf "%s(%s) = %s" s v (sprints x.ScalarExpr)
 
     member x.Html() = 
-        let v = x.ScalarVars |> List.map latex |> List.reduce (sprintf "%s,%s") 
+        let v = if x.ScalarVars.Length > 0 then x.ScalarVars |> List.map latex |> List.reduce (sprintf "%s,%s") else "" 
         match x.Symbol with
         | None -> "$" + latex x.ScalarExpr + "$"
         | Some s -> sprintf "$%s(%s) = %s$" s v (latex x.ScalarExpr)
 
-    new (f:Scalar<real>, ?symbol:string) =
+    interface IRealFunction<RealFunctionN> with
+       member x.Term = x
+       member x.Expr = x.ScalarExpr.Expr
+       member x.SymbolicExpr = x.SymbolicFn.ScalarExpr.Expr
+       member x.Attrs = x.Attrs
+       member x.Symbol = x.Symbol
+       member a.Transform(b:Expr<real>, ?attrs, ?s) = 
+           let f = RealFunctionN(Scalar<real> b, ?symbol=s)
+           do f.Attrs.AddAll(defaultArg attrs null) |> ignore
+           f
+       member a.ScalarVars = a.ScalarVars 
+       member a.ScalarExpr = a.ScalarExpr
+       member a.SymbolicFn = a.SymbolicFn
+       member a.Html() = a.Html()
+
+    new (f:Scalar<real>, ?realvars: ScalarVar<real> list, ?symbol:string) =
         let vars = get_vars f.Expr
         let m = typeof<Vec>.GetProperty("ItemE") in
         let mutable me = f.Expr.Raw
@@ -335,6 +350,15 @@ type RealFunctionN(n:int, f, s, ?symbol:string) =
         do vars |> List.map Expr.Var |> List.iteri(fun i v -> me <- replace_expr v (Expr.PropertyGet(Expr.Var vv, m, ((exprv i).Raw)::[])) me )
         let nb = expand_as<real> me
         let nf = recombine_func_as<Vector<real>->real> [vv] nb in
-        RealFunctionN(vars.Length, nf, f, ?symbol=symbol)
+        RealFunctionN(vars.Length, nf, f, ?vars=realvars, ?symbol=symbol)
 
-    new (eqn:ScalarVarMap<real>) = RealFunctionN(eqn.Rhs, eqn.Var.Name)
+    new (f:Scalar<real>, symbol:string) = RealFunctionN(f, symbol=symbol)
+
+    new (symbol:string, [<ParamArray>] x:string array) =
+        let eva = Expr.NewArray(typeof<string>, x |> Array.toList |> List.map (exprv >> fun v -> v.Raw))
+        let vars = x |> Array.toList |> List.map realvar
+        let sv = exprv symbol
+        let vvv = Scalar<real>  <@ symbolic_fn<real> (%sv) (%%eva:string[]) @>
+        RealFunctionN(vvv, vars, symbol)
+
+    new (eqn:ScalarVarMap<real>) = RealFunctionN(eqn.Rhs, symbol=eqn.Var.Name)

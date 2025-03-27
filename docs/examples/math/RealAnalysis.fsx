@@ -18,8 +18,13 @@ let f = realfun_l <@fun x-> 1. + x ** 2. @> in
 [-2.;0.;1.;2.] |> Seq.pairwise |> Seq.toArray
 upper_riemann_sum -2 2 [-2;-1;0;1;2] f
 
-let r = RealFunctionN(x + 2*y, "r")
+let r = RealFunctionN(x + 2*y***2, "r")
 r.[0,1]
+
+diff y r
+
+let s = RealFunctionN("v", "x", "y", "z")
+s
 //lower_riemann_sum 0. 1. (Seq.in)
 diff x ((ln x) *** 2) |> diff x |> lim x inf
 (*
