@@ -98,14 +98,15 @@ module Maxima =
         | PropertyGet(None, Prop "e", []) -> "%e"
 
         | Var v -> sanitize_symbol v.Name
-        | Int32 n -> n.ToString()
-        | Double n -> n.ToString()
+  
         | ValueWithName(_,_,n) -> sanitize_symbol n
         | Lambda(x, e) -> sprintf("%A = %s") x (sprint e)
         | Double (Double.MaxValue) -> "inf"
         | Int32 (Int32.MaxValue) -> "inf"
         | Double (Double.MinValue) -> "minf"
         | Int32 (Int32.MinValue) -> "minf"
+        | Int32 n -> n.ToString()
+        | Double n -> n.ToString()
         | SpecificCall <@@ Numbers.real_frac @@> (_, _, [l;r]) -> sprintf "%s/%s" (sprint l) (sprint r)
         | _ -> x |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
 

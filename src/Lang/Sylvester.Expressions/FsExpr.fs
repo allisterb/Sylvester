@@ -765,6 +765,11 @@ module FsExpr =
 
     let symbolic_fn<'t> (sym:string) (v: string array) = Unchecked.defaultof<'t>
 
+    let is_symbolic_fn = 
+        function    
+        |  SpecificCall <@@ symbolic_fn @@> (_,_,[String _;NewArray(_, _)]) -> true
+        | _ -> false
+
     let rec (|LinearExpr|_|) (x:string) (expr:Expr) =
            let t = expr.Type in
            match expr with

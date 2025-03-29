@@ -77,13 +77,15 @@ module MathNetExpr =
         | UInt32 k -> fromInt64 (int64 k)
         | UInt64 k -> fromInteger (BigInteger k)
         | Double d when d = Math.Floor(d + 0.00001) -> d |> Math.Truncate |> to_int |> BigRational.FromInt |> Number 
+        | Double d when d = Double.MaxValue -> Expression.PositiveInfinity
+        | Double d when d = Double.MinValue -> Expression.NegativeInfinity
         | Double d -> Expression.Real d
         | Single d -> Expression.Real (float d)
         | Rational r -> Number (BigRational.FromBigIntFraction(r.Numerator, r.Denominator))
         | Natural n -> Number (BigRational.FromBigInt(n.IntVal))
         | Value(v, t) when t = typeof<BigInteger> -> Number (BigRational.FromBigInt(v :?> BigInteger)) 
         | Value(v, t) when t = typeof<Complex> -> Expression.Complex (v :?> Complex)
-       
+        
 
         | Let (_, _, t) -> fromQuotation t
         | Lambda (_, t) -> fromQuotation t
@@ -162,6 +164,10 @@ module MathNetExpr =
         
         let div (a:Expr) (b:Expr) = let op = divOp.[a.Type.Name] in Expr.Call(op, a::b::[])
         
+        let isRationalFrac (a:Expression) (b:Expression) =
+            match a, b with
+            | Number x, Number y -> true
+            | _ -> false
         let rec convertExpr : Expression -> Expr option = 
             function 
             | Identifier(Symbol "One") -> Expr.Value(Rational.One) |> Some
@@ -184,10 +190,14 @@ module MathNetExpr =
                 let d = denominator p
                 if isOne d then
                     compileFraction n
-                else
+                else if isRationalFrac n d then
                     let nExp = compileFraction n
                     let dExp = compileFraction d
                     Option.map2 (fun n d -> Expr.Call(real_frac_mi, n::d::[])) nExp dExp
+                else
+                    let nExp = compileFraction n
+                    let dExp = compileFraction d
+                    Option.map2 call_div nExp dExp
             | Function (func, par) ->
                 let convertFunc : Function -> MethodInfo option = function
                     | Exp  -> getMethodInfo <@ Math.Exp @> |> Some

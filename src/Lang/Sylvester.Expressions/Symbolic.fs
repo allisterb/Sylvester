@@ -137,7 +137,7 @@ module Symbolic =
         | Call(None, Op "real", x::[]) -> (sprinte x)
         | Call(None, Op "min", l::r::[]) -> sprintf("min(%s,%s)") (sprinte l) (sprinte r)
         | Call(None, Op "log", x::[]) -> sprintf "ln(%s)"(sprinte x)
-        | Call(None, Op "SymbolicExpr", x::[]) -> sprintf "ln(%s)"(sprinte x)
+
  
         | PropertyGet(None, Prop "e", []) -> "e"
         | PropertyGet(None, Prop "pi", []) -> "pi"
@@ -148,6 +148,8 @@ module Symbolic =
         | Double (Double.MaxValue) -> "inf"
         | Double (Double.MinValue) -> "neginf"
         | Call(None, Op "real_frac", Int32 n::Int32 d::[]) -> sprintf "%A/%A" n d
+        | SpecificCall <@@ symbolic_fn @@> (_,_,[String s;NewArray(_, v)]) -> sprintf "%s(%s)" s (v |> List.map (function | String s ->  s | _ -> failwith "") |> List.reduce (sprintf "%s,%s"))
+
         | Var x as v -> if Symbols.TransliterateGreek && Symbols.isGreek (x.Name) then Symbols.GreekUnicode.[x.Name] else x.Name  
         | Lambda(x, e) -> sprintf("%A = %s") x (sprinte e)        
         | Double d when d = Math.Floor(d + 0.00001) ->  sprinte <| Expr.Value (Convert.ToInt32(d))
@@ -209,9 +211,7 @@ module Symbolic =
             else
                 sprintf "\\bar{%s}" (n.Delete("_bar"))
         | ValueWithName(_,_,n) -> if Symbols.TransliterateGreek && Symbols.isGreek n then Symbols.GreekLatex.[n] else n
-
         | Double d when d = Math.Floor(d + 0.00001) ->  latexe <| Expr.Value (Convert.ToInt32(d))
-
         | Double d ->
             let r = Rational d
             if r.Numerator.IsOne || (-r.Numerator).IsOne then sprintf "\\frac{%A}{%A}" r.Numerator r.Denominator else d.ToString()
@@ -220,7 +220,7 @@ module Symbolic =
 
     let inline latex x = x |> sexpr |> latexe 
     
-    let inline sprints expr = expr |> sexpr |> expand |> MathNetExpr.fromQuotation |> MathNet.Symbolics.Infix.format
+    let inline sprints expr = expr |> sexpr |> sprinte
 
     let inline simplify expr = expr |> sexpr |> simplifye
        

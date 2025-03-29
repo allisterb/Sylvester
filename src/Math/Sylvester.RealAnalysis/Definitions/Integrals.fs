@@ -4,12 +4,12 @@ module Integrals =
     let lower_riemann_sum (l:obj) (r:obj) (part:obj seq) (f:RealFunction) =
         let a,b,p = to_real l, to_real r, part |> Seq.map to_real
         if Seq.min p <> a || Seq.max p <> b || (p |> Seq.pairwise |> Seq.forall(fun(l,r) -> r > l) |> not) then failwithf "The partition does not cover the interval [%A,%A]." a b
-        p |> Seq.pairwise |> Seq.sumBy(fun (l,r) -> (seq {l.. 0.01 .. r} |> Seq.map f.Map |> Seq.min) * (r - l))
+        p |> Seq.pairwise |> Seq.sumBy(fun (l,r) -> (seq {l.. 0.01 .. r} |> Seq.map f.Item |> Seq.min) * (r - l))
 
     let upper_riemann_sum (l:obj) (r:obj) (part:obj seq) (f:RealFunction) =
         let a,b,p = to_real l, to_real r, part |> Seq.map to_real
         if Seq.min p <> a || Seq.max p <> b || (p |> Seq.pairwise |> Seq.forall(fun(l,r) -> r > l) |> not) then failwithf "The partition does not cover the interval [%A,%A]." a b
-        p |> Seq.pairwise |> Seq.sumBy(fun (l,r) -> (seq {l .. 0.01 .. r} |> Seq.map f.Map |> Seq.max) * (r - l))
+        p |> Seq.pairwise |> Seq.sumBy(fun (l,r) -> (seq {l .. 0.01 .. r} |> Seq.map f.Item |> Seq.max) * (r - l))
 
     let lower_uniform_riemann_sum (l:obj) (r:obj) (n:int) (f:RealFunction) =
         let a,b = to_real l, to_real r
