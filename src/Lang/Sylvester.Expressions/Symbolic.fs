@@ -102,7 +102,14 @@ module Symbolic =
         )
         s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
 
-    
+    let const_to_var (c:seq<string>) (s:'s when 's :> #ISymbolic<'s,'b>) :'s =
+           let mutable m = s.Expr.Raw
+           get_consts m |> List.iter(fun (t,n) -> 
+               if Seq.contains n c then  
+                   let co = Expr.Var(Var(n, t)) in 
+                   m <- replace_expr (Expr.ValueWithName(Unchecked.defaultof<'b>, n)) co m
+           )
+           s.Transform(expand_as<'b> m |> simplifye, null, ?s=s.Symbol)
 
     (* Print quotation as string *)
 

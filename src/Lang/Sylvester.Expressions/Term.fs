@@ -497,7 +497,7 @@ module Scalar =
 
     let realconst4 (p:string) (q:string) (r:string) (s:string) = realconst p, realconst q, realconst r, realconst s
 
-    let const_to_var (c:ScalarConst<'a>) = ScalarVar<'a>(c.Name)
+    let const_as_var (c:ScalarConst<'a>) = ScalarVar<'a>(c.Name)
 
     let var_name (v:ScalarVar<_>) = v.Name
 
@@ -506,6 +506,8 @@ module Scalar =
     let inline get_scalar_vars (x : ^T) = (^T : (member Expr : Expr<'t>) (x)) |> get_vars |> List.map (exprvar<'t> >> ScalarVar<'t>)
     
     let inline get_real_vars (x : ^T) = (^T : (member Expr : Expr<real>) (x)) |> get_vars |> List.map (exprvar<real> >> realvar)
+
+    let inline get_real_consts (x : ^T) = (^T : (member Expr : Expr<real>) (x)) |> get_consts |> List.map (snd >> realconst)
 
     let scalar_eqn<'t when 't : equality and 't: comparison and 't :> ValueType and 't :> IEquatable<'t>> (e:Expr<bool>) =
         match e with

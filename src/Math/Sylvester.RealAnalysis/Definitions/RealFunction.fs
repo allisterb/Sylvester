@@ -166,11 +166,15 @@ type SetFunction<'t when 't: equality>(domain:Set<Set<'t>>, codomain:Set<real>, 
 module RealFunction =
     let realfun (s:string) (e:Scalar<real>) = RealFunction(e, symbol=s)
 
-    let realfun_s (s:string) (x:ScalarVar<real> seq) = RealFunction(s, x |> Seq.map var_name |> Seq.toArray)
+    let realfun_s (s:string) (x:realvar seq) = RealFunction(s, x |> Seq.map var_name |> Seq.toArray)
 
     let realfun_l (l:Expr<real->real>) = RealFunction(l)
 
-    //let realfun2 (s:string) (e:Scalar<real>) = RealFunction2(e, s)
+    let realfun_of (s:string) (v:realvar seq) (e:Scalar<real>) =
+        let cn = e |> get_real_vars |> List.except v |> List.map var_name in
+        let vn = v |> Seq.map var_name in
+        let fe = e |> fixconst cn |> const_to_var vn in
+        realfun s fe
 
     let realfun_im (s:string) (x:realvar) (e:ScalarEquation<real>) = let l = Ops.SolveFor x.Expr [e.Expr] in realfun s (scalar_varmap<real> l.Head).Rhs 
 

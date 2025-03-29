@@ -8,8 +8,8 @@ do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 let x = realvar "x"
 let y = realvar "y"
-let A = realconst "A"
-
+let t = realvar "t"
+let c = realconst "c"
 open Integrals
 
 //let f = realfun_l <@fun x-> 1. + x ** 2. @> in
@@ -21,8 +21,9 @@ open Integrals
 let r = RealFunction(x + 2*y***2, symbol = "s")
 r.[0,1]
 
-integrate y r
-
+let A = integrate_over x 1 t (1 / x) |> realfun_of "A" [t]
+sexpr A
+A.[1]
 let s = realfun_s "v" [x; y]
 
 s
