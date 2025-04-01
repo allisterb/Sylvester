@@ -11,22 +11,20 @@ open MathNet.Numerics
 type IVector<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> = 
     inherit IPartialShape<dim<1>>
     abstract Expr: Expr<'t>[]
-    abstract Length: int
+    abstract Dim: int
     abstract Item:int->Scalar<'t>
 
 [<StructuredFormatDisplay("{UnicodeDisplay}")>]
 type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>>
     (e: Expr<'t> array, ?h:TermHistory) = 
-    do if e.Length = 0 then failwith "The length of a vector must one or greater."
+    do if e.Length = 0 then failwith "The dimension of a vector must one or greater."
     let expr = e  |> Array.map expand_as<'t>
-    let exprmn = Array.map MathNetExpr.fromQuotation expr
-    
-    member val Length = e.Length
+      
+    member val Dim = e.Length
     member val Expr = expr
     member val ExprList = expr |> Array.toList
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
-    member val ExprMathNet = exprmn
-
+   
     member val UnicodeDisplay =
            expr 
            |> Array.skip 1 
@@ -46,7 +44,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     interface IVector<'t> with
         member val Expr = e
         member val Dims = [| e.Length |]
-        member val Length = e.Length
+        member val Dim = e.Length
         member x.Item(i:int) = e.[i] |> Scalar<'t>
 
     interface IEnumerable<Expr<'t>> with
@@ -118,7 +116,6 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     static member (~-) (l: Vector<'t>) =
         l.Expr |> Array.map(call_neg >> expand_as<'t> >> simplifye) |> Vector<'t>
 
-
 type Vec = Vector<real>
 
 module Vector =
@@ -128,15 +125,15 @@ module Vector =
 
     let velem(v:Vector<_>) = v |> vexpr |> Array.map Scalar
     
-    let fail_if_different_lengths (l:IVector<'t>) (r:IVector<'t>) =
-        if l.Length <> r.Length then failwith "The 2 vectors are of different lengths."
+    let fail_if_different_dim (l:IVector<'t>) (r:IVector<'t>) =
+        if l.Dim <> r.Dim then failwith "The 2 vectors are of different dimensions."
          
     let vadd(l:Vector<_>) (r:Vector<_>) =
-        fail_if_different_lengths l r
+        fail_if_different_dim l r
         let e = Array.map2 call_add l.Expr r.Expr |> Array.map (expand_as >> simplifye) in Vector<'t>(e, BinaryOp("+", l, r))
 
     let vdot (l:IVector<'t>) (r:IVector<'t>) =
-        do if l.Dims.[0] <> r.Dims.[0] then failwithf "Cannot find dot product of two vectors of different lengths: %A and %A." l.Dims.[0] r.Dims.[0]
+        fail_if_different_dim l r
         let e = 
             Array.map2 call_mul l.Expr r.Expr 
             |> Array.reduce call_add
@@ -150,10 +147,10 @@ module Vector =
     let vsdiv (l:Scalar<'t>) (r:IVector<'t>)  =
          r.Expr |> Array.map(fun e -> call_div e (l.Expr) |> expand_as<'t> |> simplifye) |> Vector<'t>
 
-(*
     let coeffvec (eqn:ScalarEquation<'t>) =
         let l = eqn |> lhs |> simplify
         let vn = get_var_names l
         match l with
-        | LinearTerms vn
-        *)
+        | LinearCoeff t -> t
+        | _ -> failwith "Not linear"
+        

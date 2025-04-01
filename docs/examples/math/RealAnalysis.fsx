@@ -21,7 +21,7 @@ open Integrals
 let r = RealFunction(x + 2*y***2, symbol = "s")
 r.[0,1]
 
-let A = integrate_over x 1 t (1 / x) |> realfun_of "A" [t]
+integrate_over x 1 t (1 / x) |> diff t = 1 / t
 sexpr A
 A.[1]
 let s = realfun_s "v" [x; y]

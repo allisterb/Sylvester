@@ -83,6 +83,6 @@ module Analysis =
             | _ -> sprint u
 
         do if l' <> "minf" && u' <> "inf" then assume <@ %u > %l @>
-        let r = sendCmd<'t>(get_vars expr @ get_vars x) <| sprintf "integrate(%s, %s, %s, %s);" (sprint expr) (sprint x) l' u'
+        let r = sendCmd<'t>(get_vars expr @ get_vars x @ get_vars l @ get_vars u) <| sprintf "integrate(%s, %s, %s, %s);" (sprint expr) (sprint x) l' u'
         do if l' <> "minf" && u' <> "inf" then forget <@ %u > %l @>
         r

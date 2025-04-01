@@ -137,19 +137,19 @@ type Matrix<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
            l.Rows |> Array.map (vsdiv r) |> Matrix<'t> 
 
     static member (|+|) (l:Matrix<'t>, r:Vector<'t>) = 
-        if l.Dim1 <> r.Length then failwith "The length of the vector must be the same as the number of columns in the matrix to augment."
+        if l.Dim1 <> r.Dim then failwith "The dimension of the vector must be the same as the number of columns in the matrix to augment."
         Array.append [|r|] l.Rows |> Array.map vexpr |> array2D |> Array2D.transpose |> Matrix<'t>
     
     static member (||+||) (l:Matrix<'t>, r:Vector<'t>) = 
-        if l.Dim1 <> r.Length then failwithf "The length of the vector (%A) must be the same as the number of columns in the matrix to augment (%A)." r.Length l.Dim1
+        if l.Dim1 <> r.Dim then failwithf "The dimension of the vector (%A) must be the same as the number of columns in the matrix to augment (%A)." r.Dim l.Dim1
         Array.append l.Rows [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Matrix<'t>
 
     static member (|+||) (l:Matrix<'t>, r:Vector<'t>) = 
-        if l.Dim0 <> r.Length then failwith "The length of the vector must be the same as the number of rows in the matrix to augment."
+        if l.Dim0 <> r.Dim then failwith "The dimension of the vector must be the same as the number of rows in the matrix to augment."
         Array.append l.Columns [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Matrix<'t>
 
     static member (||+|) (l:Matrix<'t>, r:Vector<'t>) = 
-        if l.Dim0 <> r.Length then failwith "The length of the vector must be the same as the number of rows in the matrix to augment."
+        if l.Dim0 <> r.Dim then failwith "The dimension of the vector must be the same as the number of rows in the matrix to augment."
         Array.append l.Columns [|r|] |> Array.map vexpr |> array2D |> Array2D.transpose |> Array2D.toJagged |> Matrix<'t>
    
     static member (|+||) (l: Matrix<'t>, r: Matrix<'t>) = 
@@ -346,7 +346,7 @@ module Matrix =
     let mcrepl j (v:Vector<_>) (l:Matrix<_>) =
         do 
             fail_if_invalid_col_index j l
-            if v.Length <> l.Dim0 then failwithf "The length of the column vector (%A) is not the same as then number of rows (%A)" v.Length l.Dim0
+            if v.Dim <> l.Dim0 then failwithf "The dimension of the column vector (%A) is not the same as the number of rows (%A)" v.Dim l.Dim0
         let cols = l.Columns.Clone() :?> Vector<'t> array
         cols.[j] <- v
         Matrix<'t>.ofCols cols

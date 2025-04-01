@@ -4,6 +4,7 @@ open FSharp.Quotations
 
 open Sylvester
 
+open Vector
 open Matrix
 open LinearEquations
 
@@ -11,6 +12,7 @@ do CAS.Maxima.init "C:\\MathTools\\maxima-5.44.0\\bin\\maxima.bat"
 
 fsi.PrintWidth <- 500
 
+let x,y = realvar2 "x" "y"
 MathNet.Symbolics.Infix.parseMatrix("matrix([1,-1,1,1],[-1/9,-1,0,0],[-13/9,1,-1,0],[17/9,-1,1,1]") |> Result.map(List.map(List.map (MathNetExpr.toQuotation<real> [])))
 let A = sqmat [2;0;1;-3;0;2;10;4;0;0;2;0;0;0;0;3]
 let J = jordan_normal_form A |> perm_jordan_blocks [1;0;2]
@@ -32,8 +34,9 @@ mcharpoly l B
 
 mechelon A
 
-let a = sqmat [2;1;2;0;-2;2;1;2;-2;-1;-1;1;3;1;2;-1];
-mjordan_blocks <| jordan_normal_form a
+let a = sqmat [2;1;2;0;-2;2;1;2;-2;-1;-1;1;3;1;2;-1]
 
+
+coeffvec (4*y + 3*x + 7 *y + 2*x== 0.)
 CAS.Maxima.last_output 24
 

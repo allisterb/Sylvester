@@ -62,6 +62,7 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
     let sse = ysamples |> Array.sumBy(fun y -> (y - ymean) ** 2.)
     let xsst = xsamples |> Array.mapi(fun i s -> Array.sumBy(fun x -> (x - xmean.[i]) ** 2.) s)
     member val ModelEquation = eqn
+    member val OriginalEquation : ScalarEquation<real> option = var_changes |> Option.map(Array.fold(fun e cv -> e.SubstVar(cv.Var, cv.Rhs)) (eqn :> ScalarEquation<real>)) 
     member val Samples = samples 
     member val N = samples |> Array.length
     member val DependentVariable = eqn.Var
@@ -85,7 +86,6 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
         | Some es -> 
             let vars = es |> Array.map (rhs >> sexpr >> get_vars) |> List.concat |> List.map (fun v -> v.Name) in
             if es |> Array.map (rhs >> sexpr) |> Array.forall(function | LinearTermsOf vars _ -> true | _ -> false) then re else re
-
     member val RegressionFunction = rf 
     member val YPredictions = samples |> Array.map (fst >> rf)
     member val R2 : real = GoodnessOfFit.CoefficientOfDetermination(ypred, ysamples)
@@ -95,7 +95,7 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
     member x.XSD : real= sqrt x.YVar
 
     member __.Item([<ParamArray>] (x:real array)) = rf x
-    
+    member __.Copy() = LinearRegressionModel(eqn, samples)
     override x.ToString() = sprintf "%A: %A" (x.Samples) re
 
     new (eqn:ScalarVarMap<real>, samples: (real array*real) seq) = LinearRegressionModel(eqn, samples |> Seq.toArray)
@@ -152,11 +152,11 @@ module LinearRegression =
         let f = RealFunction eqn
 
         if m.ModelEquation.Var = rv then
-             let samples = m.Samples |> Array.map(fun s -> fst s, s |> snd |> f.Map) in
+             let samples = m.Samples |> Array.map(fun s -> fst s, s |> snd |> f.Item) in
              LinearRegressionModel(eqn.Var == m.ModelEquation.Rhs, samples, [|eqn|])
         else
             let index = Array.findIndex((=) rv) m.IndependentVariables
-            let samples = m.Samples |> Array.map(fun (x,y) -> x |> Array.mapi (fun i _x -> if index = i then f.Map _x else _x), y) in
+            let samples = m.Samples |> Array.map(fun (x,y) -> x |> Array.mapi (fun i _x -> if index = i then f.Item _x else _x), y) in
             let v = eqn.Lhs in
             let p = subst_var_value rv.Var (v.Expr) m.ModelEquation.Rhs.Expr |> expand_as<real> |> simplifye |> Scalar in
             LinearRegressionModel(m.DependentVariable == p, samples, [|eqn|])

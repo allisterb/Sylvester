@@ -27,10 +27,12 @@ let m1 = eawe21 |> samples ["S"; "EARNINGS"] |> lr (EARNINGS == b0 + b1 * S)
 m1
 let roedecl = realvar "roedecl"
 
-ceo1 |> change_vars [
+let nm = ceo1 |> change_vars [
     //salarydol == 100 * salary
     roedecl == roe / 100
 ]
+
+nm.OriginalEquation
 
 let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> lr (EARNINGS == b0 + b1 * S + b2 * EXP)  
 

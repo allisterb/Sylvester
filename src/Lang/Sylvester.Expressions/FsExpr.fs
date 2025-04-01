@@ -782,6 +782,18 @@ module FsExpr =
            | Subtraction(LinearExpr x l, LinearExpr x r) -> Some <| call_add l (call_mul (neg_one_val(t)) r)
            | _ -> None
        
+    let rec (|LinearTerms|_|) (expr:Expr) =
+        let t = expr.Type in
+        match expr with
+        | Constant _ -> [[expr]] |> Some
+        | Variable _ -> [[expr]] |> Some 
+        | Multiplication(Constant c1, Constant  c2) ->[[call_mul c1 c2]] |> Some
+        | Multiplication(Constant c, Variable v)
+        | Multiplication(Variable v, Constant c)-> [[c;v]] |> Some
+        | Addition(LinearTerms l, LinearTerms r) -> l @ r |> Some
+        | Subtraction(LinearTerms l, LinearTerms r) -> l @ (List.map(List.map (call_mul (neg_one_val t))) r) |> Some
+        | _ -> None
+
     let rec (|LinearTermsOf|_|) x (expr:Expr) =
         let t = expr.Type in
         match expr with
@@ -793,3 +805,17 @@ module FsExpr =
         | Addition(LinearTermsOf x l, LinearTermsOf x r) -> l @ r |> Some
         | Subtraction(LinearTermsOf x l, LinearTermsOf x r) -> l @ (List.map(List.map (call_mul (neg_one_val t))) r) |> Some
         | _ -> None
+
+    let rec (|LinearCoeff|_|) (expr:Expr) =
+           let t = expr.Type in
+           match expr with
+           | Constant _ 
+           | Multiplication(Constant _, Constant _) -> failwithf "The term %A is not a coefficient of a variable." expr
+           | Variable v -> Some [[one_val t, v]]  
+           | Multiplication(Constant c, Variable v)
+           | Multiplication(Variable v, Constant c)-> Some [[(c,v)]]
+           | Addition(LinearCoeff l, LinearCoeff r) -> l @ r |> Some
+           | Subtraction(LinearCoeff l, LinearCoeff r) -> l @ (List.map(List.map (fun (c,v) ->  (call_mul (neg_one_val t) c,v))) r) |> Some
+           | _ -> None
+
+    

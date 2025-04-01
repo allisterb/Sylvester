@@ -1,9 +1,7 @@
 ﻿namespace Sylvester
 
 open System
-open Arithmetic
 open Z3
-open Vector
 
 type Region = Set<Vec>
 
