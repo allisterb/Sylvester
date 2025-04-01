@@ -32,7 +32,7 @@ let nm = ceo1 |> change_vars [
     roedecl == roe / 100
 ]
 
-nm.OriginalEquation
+lromeqn nm
 
 let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> lr (EARNINGS == b0 + b1 * S + b2 * EXP)  
 

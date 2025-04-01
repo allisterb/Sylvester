@@ -61,8 +61,9 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
     let ssr = samples |> Array.sumBy(fun (x,y) -> (y - rf x) ** 2.)
     let sse = ysamples |> Array.sumBy(fun y -> (y - ymean) ** 2.)
     let xsst = xsamples |> Array.mapi(fun i s -> Array.sumBy(fun x -> (x - xmean.[i]) ** 2.) s)
+    let oeqn : ScalarEquation<real> option = var_changes |> Option.map(Array.fold(fun e cv -> e.SubstVar(cv.Var, cv.Rhs)) (eqn :> ScalarEquation<real>)) 
     member val ModelEquation = eqn
-    member val OriginalEquation : ScalarEquation<real> option = var_changes |> Option.map(Array.fold(fun e cv -> e.SubstVar(cv.Var, cv.Rhs)) (eqn :> ScalarEquation<real>)) 
+    member val OriginalModelEquation = oeqn 
     member val Samples = samples 
     member val N = samples |> Array.length
     member val DependentVariable = eqn.Var
@@ -80,12 +81,8 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
     member val Sse = sse
     member val Sst = sse + ssr
     member val XSst = xsst
-    member val RegressionEquation = 
-        match var_changes with
-        | None -> re
-        | Some es -> 
-            let vars = es |> Array.map (rhs >> sexpr >> get_vars) |> List.concat |> List.map (fun v -> v.Name) in
-            if es |> Array.map (rhs >> sexpr) |> Array.forall(function | LinearTermsOf vars _ -> true | _ -> false) then re else re
+    member val RegressionEquation = re
+    member val OriginalRegressionEquation : ScalarEquation<real> option = var_changes |> Option.map(fun vc ->  vc |> Array.fold(fun e cv -> e.SubstVar(cv.Var, cv.Rhs)) (re :> ScalarEquation<real>))   
     member val RegressionFunction = rf 
     member val YPredictions = samples |> Array.map (fst >> rf)
     member val R2 : real = GoodnessOfFit.CoefficientOfDetermination(ypred, ysamples)
@@ -96,7 +93,10 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
 
     member __.Item([<ParamArray>] (x:real array)) = rf x
     member __.Copy() = LinearRegressionModel(eqn, samples)
-    override x.ToString() = sprintf "%A: %A" (x.Samples) re
+    override x.ToString() = 
+        match var_changes with
+        | None -> sprintf "%A: %A" (x.Samples) re 
+        | Some vc -> sprintf "%A: %A with [%s]" (x.Samples) re (vc |> Array.map(sprintf "%A") |> Array.reduce(sprintf "%s,%s"))
 
     new (eqn:ScalarVarMap<real>, samples: (real array*real) seq) = LinearRegressionModel(eqn, samples |> Seq.toArray)
 
@@ -121,6 +121,12 @@ module LinearRegression =
     let lrparams (m:LinearRegressionModel) = m.Parameters
 
     let lreqn (m:LinearRegressionModel) = m.RegressionEquation
+
+    let lroeqn (m:LinearRegressionModel) = m.OriginalRegressionEquation
+
+    let lrmeqn (m:LinearRegressionModel) = m.ModelEquation :> ScalarEquation<real> 
+
+    let lromeqn (m:LinearRegressionModel) = m.OriginalModelEquation
 
     let lrcoeffs (m:LinearRegressionModel) = m.RegressionCoefficients
 

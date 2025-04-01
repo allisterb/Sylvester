@@ -323,8 +323,8 @@ and ScalarRelation<'t when 't: equality and 't :> ValueType and 't :> IEquatable
         let rhs = fix o x.Rhs in
         ScalarRelation<'t>(lhs, rhs, x.Op)
     member x.SubstVar(v:ScalarVar<'t>, s:Scalar<'t>) =
-        let l = subst_var_value v.Var s.Expr lhs.Expr |> expand_as<'t> |> Scalar<'t> in
-        let r = subst_var_value v.Var s.Expr rhs.Expr |> expand_as<'t> |> Scalar<'t> in
+        let l = subst_var_value v.Var s.Expr lhs.Expr |> expand_as<'t> |> simplifye |> Scalar<'t> in
+        let r = subst_var_value v.Var s.Expr rhs.Expr |> expand_as<'t> |> simplifye |> Scalar<'t> in
         ScalarRelation(l, r, op)
     member x.Html() = "$$" + latexe x.Expr + "$$"
     override x.Display = sprintf "%s %s %s" (sprinte x.Lhs.Expr) ((src op).Replace("(", "").Replace(")", "")) (sprinte x.Rhs.Expr)
@@ -339,8 +339,8 @@ and ScalarEquation<'t when 't: equality and 't :> ValueType and 't :> IEquatable
         let rhs = fix o x.Rhs in
         ScalarEquation<'t>(lhs, rhs)
     member x.SubstVar(v:ScalarVar<'t>, s:Scalar<'t>) =
-        let l = subst_var_value v.Var s.Expr lhs.Expr |> expand_as<'t> |> Scalar<'t> in
-        let r = subst_var_value v.Var s.Expr rhs.Expr |> expand_as<'t> |> Scalar<'t> in
+        let l = subst_var_value v.Var s.Expr lhs.Expr |> expand_as<'t> |> simplifye |> Scalar<'t> in
+        let r = subst_var_value v.Var s.Expr rhs.Expr |> expand_as<'t> |> simplifye |> Scalar<'t> in
         ScalarEquation(l, r)
    
 and ScalarVarMap<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>>(var:ScalarVar<'t>, expr:Scalar<'t>) =
