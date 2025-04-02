@@ -14,11 +14,17 @@ open Sylvester.Data
 module Data =
     let csv_file name = new CsvFile(name)
 
-    let csv_file_delim name delim = new CsvFile(name, delim)
+    let csv_file_with_delim name delim = new CsvFile(name, delim)
     
-    let with_col_type<'t> (col:int) (f:CsvFile) = f.[col].Type <- typeof<'t>; f
+    let csv_fields (f:obj) = 
+        match f with
+        | :? string as fn -> fn |> CsvFile |> Seq.map(fun fn -> sprintf "%A:%A" fn.Label fn.Type) |> Seq.toArray
+        | :? CsvFile as csvf -> csvf |> Seq.map(fun fn -> sprintf "%A:%A" fn.Label fn.Type) |> Seq.toArray
+        | _ -> failwithf "Cannot get CSV fields from %A" f
 
-    let with_all_col_types<'t> (f:CsvFile) = 
+    let with_field_type<'t> (col:int) (f:CsvFile) = f.[col].Type <- typeof<'t>; f
+
+    let with_all_field_types<'t> (f:CsvFile) = 
         for i in 0..f.Fields.Count - 1 do f.[i].Type <- typeof<'t> 
         f
     
@@ -47,6 +53,8 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
         |> List.map (function | [Constant (ValueWithName(_,_,n)); VariableWithOneOfNames rvn v] -> (v |> get_var |> exprvar |> realvar), ScalarConst<real> n | _ -> failwithf "Cannot determine the slope coefficient parameter symbol.")
         |> List.sortBy (snd >> const_name)
     let rv = b1 |> List.map fst 
+    let n = samples |> Array.length
+    let dof = n - (1 + List.length b1)
     let xsamples,ysamples = samples |> Array.map fst |> Array.transpose, samples |> Array.map snd
     let xmean,xvar = let mv = xsamples |> Array.map Statistics.MeanVariance in Array.map fst mv, Array.map snd mv
     let ymean,yvar = ysamples |> Statistics.MeanVariance
@@ -60,26 +68,31 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
     let ypred = samples |> Array.map (fst >> rf)
     let ssr = samples |> Array.sumBy(fun (x,y) -> (y - rf x) ** 2.)
     let sse = ysamples |> Array.sumBy(fun y -> (y - ymean) ** 2.)
+    let sst = sse + ssr
     let xsst = xsamples |> Array.mapi(fun i s -> Array.sumBy(fun x -> (x - xmean.[i]) ** 2.) s)
     let oeqn : ScalarEquation<real> option = var_changes |> Option.map(Array.fold(fun e cv -> e.SubstVar(cv.Var, cv.Rhs)) (eqn :> ScalarEquation<real>)) 
     member val ModelEquation = eqn
     member val OriginalModelEquation = oeqn 
     member val Samples = samples 
-    member val N = samples |> Array.length
+    member val N = n
     member val DependentVariable = eqn.Var
     member val IndependentVariables = rv |> List.toArray
     member val Variables = rv @ [dv] |> List.toArray 
     member val Parameters = [b0] @ (b1 |> List.map snd) |> List.toArray
+    member val DegreesOfFreedom = dof
     member val RegressionCoefficients = a
     member val XSamples = xsamples
     member val YSamples = ysamples
     member val XMean = xmean
     member val XVar = xvar
+    member val XSd = xvar |> Array.map sqrt
     member val YMean = ymean
     member val YVar = yvar
+    member val Ysd = sqrt yvar
     member val Ssr = ssr
     member val Sse = sse
-    member val Sst = sse + ssr
+    member val Sst = sst
+    member val Ser = sqrt (ssr / (real) dof)
     member val XSst = xsst
     member val RegressionEquation = re
     member val OriginalRegressionEquation : ScalarEquation<real> option = var_changes |> Option.map(fun vc ->  vc |> Array.fold(fun e cv -> e.SubstVar(cv.Var, cv.Rhs)) (re :> ScalarEquation<real>))   
@@ -87,9 +100,6 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
     member val YPredictions = samples |> Array.map (fst >> rf)
     member val R2 : real = GoodnessOfFit.CoefficientOfDetermination(ypred, ysamples)
     member val r : real= GoodnessOfFit.R(ypred, ysamples)
-    member x.XSE = Distributions.StudentT.InvCDF(0., 1., ((float) (x.N) - 1.), (1. - 0.05) / 2.)
-    member x.YSE : real = GoodnessOfFit.StandardError(x.YPredictions, x.YSamples, x.Parameters.Length)
-    member x.XSD : real= sqrt x.YVar
 
     member __.Item([<ParamArray>] (x:real array)) = rf x
     member __.Copy() = LinearRegressionModel(eqn, samples)
@@ -144,7 +154,7 @@ module LinearRegression =
 
     let lrsst (m:LinearRegressionModel) = m.Sst
 
-    let lrse (m:LinearRegressionModel) = m.YSE
+    let lrser (m:LinearRegressionModel) = m.Ser
 
     //let lrsd (m:LinearRegressionModel) = m.YSD
 
@@ -171,3 +181,6 @@ module LinearRegression =
         let cm = eqns |> Seq.fold (fun s e -> change_var e s) m in 
         LinearRegressionModel(cm.ModelEquation, cm.Samples, eqns |> Seq.toArray)
 
+    let new_vars (eqns:ScalarVarMap<real> seq) (m:LinearRegressionModel) = 
+           let cm = eqns |> Seq.fold (fun s e -> change_var e s) m in 
+           LinearRegressionModel(cm.ModelEquation, cm.Samples)

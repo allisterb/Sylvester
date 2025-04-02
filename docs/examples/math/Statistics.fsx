@@ -4,14 +4,27 @@ open MathNet.Numerics
 
 open Sylvester
 open Sylvester.Data
+open RealNumbers
 open LinearRegression
 
-
+"C:\Users\Allister\Documents\School\EC2020\gretlfiles\wooldridge\wage1.csv" |> csv_file |> with_all_field_types<real> |> csv_fields
 let y,x = realvar2 "y" "x"
 let b0,b1,b2 = realconst3 "beta_0" "beta_1" "beta_2"
 
 let salary,roe,salarydol,roedol = realvar4 "salary" "roe" "salarydol" "roedol"
+let wage, educ, exper = realvar3 "wage" "educ" "exper"
 
+let w =  csv_file "C:\Users\Allister\Documents\School\EC2020\gretlfiles\wooldridge\wage1.csv"
+let wage1 = 
+    w
+    |> samples ["educ"; "wage"] 
+    |> lr (wage == b0 + b1 * educ)
+
+lrser wage1
+let wage2 = w |> samples ["educ"; "exper"; "wage"] |> lr (wage == b0 + b1*educ + b2*exper)
+lrser wage2
+
+lrR2 wage2
 let ceosal1 = csv_file "C:\Users\Allister\Downloads\gretlfiles\wooldridge\ceosal1.csv" |> with_all_col_types<float>
 let ceo1 = ceosal1 |> samples ["roe"; "salary"] |> lr (salary == b0 + b1 * roe)
 ceo1.R2
@@ -35,15 +48,8 @@ let nm = ceo1 |> change_vars [
 lromeqn nm
 
 let m2 = eawe21 |> samples ["S"; "EXP"; "EARNINGS"] |> lr (EARNINGS == b0 + b1 * S + b2 * EXP)  
-
-let lm = slr (y == b0 + b1 * x) [
-    1,3
-    2,5
-    3,6
-]
-lm
-
-lm
+m2
+m2 |> change_vars [roedecl == S *** 2]
 
 
 
