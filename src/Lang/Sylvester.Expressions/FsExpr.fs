@@ -464,11 +464,17 @@ module FsExpr =
         exprs |> List.iter(fun e -> e |> get_vars|> List.iter(fun v -> if not <| vars.Any(fun _v -> vequal v _v) then vars.Add v))
         vars |> Seq.toList
 
+    
+    let get_varss<'t> (exprs: Expr<'t> seq) =
+        let vars = List<Var>()
+        exprs |> Seq.iter(fun e -> e |> get_vars|> List.iter(fun v -> if not <| vars.Any(fun _v -> vequal v _v) then vars.Add v))
+        vars :> seq<Var>
+
     let get_var expr = get_vars expr |> Seq.exactlyOne
 
     let get_var_names expr = get_vars expr |> List.map (fun v -> v.Name)
     
-    let get_var_name(v:Var) = v.Name
+    let vname(v:Var) = v.Name
 
     let has_var (v:Var) (vars:Var list) = vars |> List.tryFind(fun vf -> vf.Name = v.Name && vf.Type = v.Type) |> Option.isSome
     

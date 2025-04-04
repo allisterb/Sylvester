@@ -5,7 +5,7 @@ open System.Collections
 open System.Collections.Generic
 open System.Linq
 open FSharp.Quotations
-
+open FSharp.Quotations.Patterns
 open MathNet.Numerics
 
 type IVector<'t when 't: equality and 't :> ValueType and 't :> IEquatable<'t>> = 
@@ -25,11 +25,7 @@ type Vector<'t when 't: equality and 't:> ValueType and 't : struct and 't: (new
     member val ExprList = expr |> Array.toList
     member val ExprVars = expr |> Array.map (get_vars >> List.toArray) |> Array.concat
    
-    member val UnicodeDisplay =
-           expr 
-           |> Array.skip 1 
-           |> Array.fold(fun s e -> sprintf "%s, %s" s (sprinte e)) (sprinte expr.[0]) 
-           |> sprintf "(%s)"
+    member val UnicodeDisplay = expr |> Array.map sprinte |> Array.reduce (sprintf "%s,%s") |> sprintf "[%s]"
 
     member x.AsNumeric() = 
         let t = typeof<'t>
@@ -149,8 +145,14 @@ module Vector =
 
     let coeffvec (eqn:ScalarEquation<'t>) =
         let l = eqn |> lhs |> simplify
-        let vn = get_var_names l
         match l with
-        | LinearCoeff t -> t
-        | _ -> failwith "Not linear"
+        | LinearCoeff t -> 
+            t 
+            |> List.map(
+                function 
+                | c, Var _ -> c |> expand_as<'t> |> simplifye  
+                | c,_ -> failwithf "The LHS of the equation contains a constant term %s." (sprinte c)) 
+            |> List.toArray 
+            |> Vector<'t>
+        | _ -> failwithf "The LHS of the equation: %s is not a linear expression" (sprinte l)
         

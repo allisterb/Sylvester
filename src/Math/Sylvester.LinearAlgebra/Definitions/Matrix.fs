@@ -3,6 +3,7 @@
 open System
 
 open FSharp.Quotations
+open FSharp.Quotations.Patterns
 
 open MathNet.Numerics
 
@@ -507,20 +508,28 @@ module Matrix =
         let blocklist = j |> jordan_blocks |> Array.map(fun b -> b.[0,0].Expr, exprv b.Dims.[0]) 
         m |> mexpr |> CAS.LinearAlgebra.jordan_similar blocklist |> Matrix<'t>
 
-    (*
     let coeffmat (eqns:ScalarEquation<'t> seq) =
         let c =  eqns |> Seq.map (rhs >> sexpr >> get_vars) |> Seq.sumBy (List.length) in
         if c > 0 then failwith "The equation system must have only constants on its RHS to be put into matrix form."
-        let vars = eqns |> Seq.map(lhs >> sexpr >> get_vars) |> List.concat
-        let vn = vars |> List.map (fun v -> v.Name)
-        let terms = 
-               match eqn |> lhs |> sexpr |> simplifye with
-               | LinearTerms vn t -> t
-               | _ -> failwithf "%A is not a linear expression of variables %A." eqn.Rhs vn
-        let b1 = 
-            terms |> List.filter(function|[Constant c; VariableWithOneOfNames vn _] -> true | _ -> false) 
-            |> List.map (
-                function | [Constant c; VariableWithOneOfNames vn v] -> (v |> get_var |> exprvar<'t>), expand_as<'t> c | _ -> failwithf "Cannot determine the slope coefficient parameter symbol.")
-            |> List.groupBy (fst >> sprinte)
-        ()
-    *)
+        let vars = eqns |> Seq.map(lhs >> sexpr) |> get_varss |> Seq.sortBy vname in
+        let terms = Seq.map (lhs >> sexpr >> function | LinearCoeff t -> t | expr -> failwithf "%s is not a linear expression of variables" (sprinte expr)) eqns in
+        seq {
+            for e in terms -> seq {
+                for v in vars -> 
+                    match e |> List.tryFind(function |_, Var _v when vequal v _v -> true | _ -> false) with 
+                    | Some (c,_) -> c |> expand_as<'t> |> simplifye
+                    | None -> zero_val (typeof<'t>) |> expand_as<'t>
+                }
+        } 
+        |> Seq.map Seq.toArray |> Seq.toArray
+        |> Matrix<'t>
+    
+    let unknowns (eqns:ScalarEquation<'t> seq) =
+        let c =  eqns |> Seq.map (rhs >> sexpr >> get_vars) |> Seq.sumBy (List.length) in
+        if c > 0 then failwith "The equation system must have only constants on its RHS to be put into matrix form."
+        eqns |> Seq.map(lhs >> sexpr) |> get_varss |> Seq.sortBy vname |> Seq.map exprvar |> Seq.toArray |> Vector<'t>
+
+    let constants (eqns:ScalarEquation<'t> seq) =
+        let c =  eqns |> Seq.map (rhs >> sexpr >> get_vars) |> Seq.sumBy (List.length) in
+        if c > 0 then failwith "The equation system must have only constants on its RHS to be put into matrix form."
+        eqns |> Seq.map(rhs >> sexpr >> simplifye) |> Seq.toArray |> Vector<'t> 

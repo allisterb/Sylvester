@@ -38,7 +38,12 @@ let a = sqmat [2;1;2;0;-2;2;1;2;-2;-1;-1;1;3;1;2;-1]
 
 let p = realconst "p"
 
-coeffvec (4*y + 3*x + 6*x + 7 *y + 2*x + 4 == 0.) 
-CAS.Maxima.last_output 24
+let e1 = [
+    4*y + 3*p*x + 6*x + 7 *y + 2*x  == 0.
+    3*x + 2*y == 0.
+] 
+
+constants e1
+
 
           
