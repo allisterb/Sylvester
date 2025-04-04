@@ -24,7 +24,7 @@ P |> mexpr
 
 let l = realvar "l"
 
-MathNet.Symbolics.Infix.parseLists("[[-1,0],[2,4]]")
+MathNet.Symbolics.Infix.parseLists("[[                                                                                                                                                                                                                                                                                       -1,0],[2,4]]")
 let B = sqmat [1;2;-1;4;-1;3;0;2;2;1;1;2;1;4;1;3]
 
 mcharpoly l B
@@ -36,7 +36,9 @@ mechelon A
 
 let a = sqmat [2;1;2;0;-2;2;1;2;-2;-1;-1;1;3;1;2;-1]
 
+let p = realconst "p"
 
-coeffvec (4*y + 3*x + 7 *y + 2*x== 0.)
+coeffvec (4*y + 3*x + 6*x + 7 *y + 2*x + 4 == 0.) 
 CAS.Maxima.last_output 24
 
+          

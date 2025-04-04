@@ -15,6 +15,8 @@ let salary,roe,salarydol,roedol = realvar4 "salary" "roe" "salarydol" "roedol"
 let wage, educ, exper = realvar3 "wage" "educ" "exper"
 
 let w =  csv_file "C:\Users\Allister\Documents\School\EC2020\gretlfiles\wooldridge\wage1.csv"
+csv_fields w
+
 let wage1 = 
     w
     |> samples ["educ"; "wage"] 
@@ -22,9 +24,15 @@ let wage1 =
 
 lrser wage1
 let wage2 = w |> samples ["educ"; "exper"; "wage"] |> lr (wage == b0 + b1*educ + b2*exper)
-lrser wage2
+lrR2 wage2
 
 lrR2 wage2
+
+let tenure = realvar "tenure"
+let b3 = realconst "beta_3"
+let lw = realvar "lw"
+let wage3 = w |> samples ["educ"; "exper"; "tenure"; "wage"] |> lr (wage == b0 + b1*educ + b2*exper + b3*tenure) |> change_vars [lw == ln wage]
+
 let ceosal1 = csv_file "C:\Users\Allister\Downloads\gretlfiles\wooldridge\ceosal1.csv" |> with_all_col_types<float>
 let ceo1 = ceosal1 |> samples ["roe"; "salary"] |> lr (salary == b0 + b1 * roe)
 ceo1.R2

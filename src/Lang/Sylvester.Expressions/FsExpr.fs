@@ -809,13 +809,18 @@ module FsExpr =
     let rec (|LinearCoeff|_|) (expr:Expr) =
            let t = expr.Type in
            match expr with
-           | Constant _ 
-           | Multiplication(Constant _, Constant _) -> failwithf "The term %A is not a coefficient of a variable." expr
-           | Variable v -> Some [[one_val t, v]]  
+           | Constant c -> Some [c,c] 
+           | Addition(Constant c1, Constant c2) -> let c = call_add c1 c2 in Some [c,c]
+           | Multiplication(Constant c1, Constant c2) -> Some [c1,c2]
+           | Variable v -> Some [one_val t, v]  
            | Multiplication(Constant c, Variable v)
-           | Multiplication(Variable v, Constant c)-> Some [[(c,v)]]
+           | Multiplication(Variable v, Constant c)-> Some [(c,v)]
+           | Multiplication(LinearCoeff [Constant c1, Constant c2], LinearCoeff [Constant c3, (Var _ as v)]) -> if sequal c1 c2 then Some [call_mul c1 c3, v] else [call_mul (call_mul c1 c2) c3, v] |> Some
+           | Multiplication(LinearCoeff [Constant c1, (Var _ as v)], LinearCoeff [Constant c2, Constant c3]) -> if sequal c2 c3 then Some [call_mul c1 c3, v] else [call_mul (call_mul c2 c3) c1, v] |> Some
+           | Addition(LinearCoeff ([c1,v1]), LinearCoeff ([c2,v2])) when sequal v1 v2 -> [call_add c1 c2, v1] |> Some
            | Addition(LinearCoeff l, LinearCoeff r) -> l @ r |> Some
-           | Subtraction(LinearCoeff l, LinearCoeff r) -> l @ (List.map(List.map (fun (c,v) ->  (call_mul (neg_one_val t) c,v))) r) |> Some
+           | Subtraction(LinearCoeff ([(c1,v1)]), LinearCoeff ([(c2,v2)])) when sequal v1 v2 -> [call_add c1 (call_mul (neg_one_val t) c2), v1] |> Some
+           | Subtraction(LinearCoeff l, LinearCoeff r) -> l @ (List.map (fun (c,v) ->  (call_mul (neg_one_val t) c,v)) r) |> Some
            | _ -> None
 
     

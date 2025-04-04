@@ -54,7 +54,7 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
         |> List.sortBy (snd >> const_name)
     let rv = b1 |> List.map fst 
     let n = samples |> Array.length
-    let dof = n - (1 + List.length b1)
+    let dof = n - (List.length b1 + 1)
     let xsamples,ysamples = samples |> Array.map fst |> Array.transpose, samples |> Array.map snd
     let xmean,xvar = let mv = xsamples |> Array.map Statistics.MeanVariance in Array.map fst mv, Array.map snd mv
     let ymean,yvar = ysamples |> Statistics.MeanVariance
@@ -71,6 +71,7 @@ type LinearRegressionModel(eqn:ScalarVarMap<real>, samples: (real array*real) ar
     let sst = sse + ssr
     let xsst = xsamples |> Array.mapi(fun i s -> Array.sumBy(fun x -> (x - xmean.[i]) ** 2.) s)
     let oeqn : ScalarEquation<real> option = var_changes |> Option.map(Array.fold(fun e cv -> e.SubstVar(cv.Var, cv.Rhs)) (eqn :> ScalarEquation<real>)) 
+    
     member val ModelEquation = eqn
     member val OriginalModelEquation = oeqn 
     member val Samples = samples 
@@ -124,6 +125,8 @@ module LinearRegression =
     
     let lrN (m:LinearRegressionModel) = m.N
 
+    let lrdof (m:LinearRegressionModel) = m.DegreesOfFreedom
+
     let lrdvar (m:LinearRegressionModel) = m.DependentVariable
 
     let lrivars (m:LinearRegressionModel) = m.IndependentVariables
@@ -148,6 +151,10 @@ module LinearRegression =
 
     let lrymean (m:LinearRegressionModel) = m.YMean
 
+    let lrxvar (m:LinearRegressionModel) = m.XVar
+
+    let lryvar (m:LinearRegressionModel) = m.YVar
+
     let lrssr (m:LinearRegressionModel) = m.Ssr
 
     let lrsse (m:LinearRegressionModel) = m.Sse
@@ -162,11 +169,10 @@ module LinearRegression =
 
     let change_var (eqn:ScalarVarMap<real>) (m:LinearRegressionModel) =
         let rvs = eqn.Rhs |> get_real_vars
-        if rvs.Length <> 1 then failwithf "The RHS of the equation must be an expression of a single variable."
+        if rvs.Length <> 1 then failwithf "The RHS of the equation: %A is not an expression of a single variable." eqn.Rhs
         let rv = List.exactlyOne rvs
         if not (m.ModelEquation.Var = rv || Array.contains rv m.IndependentVariables) then failwithf "The RHS of the equation does not contain a dependent or independent variable of the regression equation."
         let f = RealFunction eqn
-
         if m.ModelEquation.Var = rv then
              let samples = m.Samples |> Array.map(fun s -> fst s, s |> snd |> f.Item) in
              LinearRegressionModel(eqn.Var == m.ModelEquation.Rhs, samples, [|eqn|])
