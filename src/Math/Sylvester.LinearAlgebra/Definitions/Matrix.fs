@@ -260,8 +260,8 @@ module Matrix =
     let fail_if_invalid_row_indices (i:seq<int>) (m:IMatrix<'t>) = let f n = fail_if_invalid_row_index n m in i |> Seq.iter f 
 
     let fail_if_invalid_col_index j (m:IMatrix<'t>) = 
-           let ccount = m.Columns.Length in
-           if j >= ccount then failwithf "The column index %A exceeds the number of columns in the matrix: %A." j ccount 
+        let ccount = m.Columns.Length in
+        if j >= ccount then failwithf "The column index %A exceeds the number of columns in the matrix: %A." j ccount 
 
     let fail_if_invalid_col_indices (j:seq<int>) (m:IMatrix<'t>) = let f n = fail_if_invalid_col_index n m in j |> Seq.iter f 
 
@@ -321,26 +321,27 @@ module Matrix =
         do if l.Dims.[1] <> r.Dims.[0] then failwith "The two matrices are not conformable for matrix multiplication."
         [| for i in 0..r.Dims.[1] - 1 -> mvmul l r.Columns.[i] |] |> Array.map vexpr  |> LinearAlgebraOps.transpose_mat |> Matrix<'t>
 
-    let mrmul i (k:Scalar<'t>) (l:Matrix<'t>)=
+    let mrmul i (k:Scalar<'t>) (l:IMatrix<'t>)=
         do fail_if_invalid_row_index i l
         let rows = l.Rows.Clone() :?> Vector<'t> array
-        let ri = k * l.[i]
+        let ri = vsmul k  l.Rows.[i]
         rows.[i] <- ri
         Matrix<'t> rows
 
-    let mrswitch i j (l:Matrix<'t>) =
+    [<ReflectedDefinition>]
+    let mrswitch i j (l:IMatrix<'t>) =
         do fail_if_invalid_row_indices [i;j] l
-        let ri = l.[i] 
-        let rj = l.[j]
+        let ri = l.Rows.[i] 
+        let rj = l.Rows.[j]
         let rows = l.Rows.Clone() :?> Vector<'t> array
         rows.[i] <- rj
         rows.[j] <- ri
         Matrix<'t> rows
 
-    let mraddmul i j (k:Scalar<'t>) (l:Matrix<'t>) =
+    let mraddmul i j (k:Scalar<'t>) (l:IMatrix<'t>) =
         do fail_if_invalid_row_indices [i;j] l
         let rows = l.Rows.Clone() :?> Vector<'t> array
-        let ri = l.[i] + k * l.[j] 
+        let ri = l.Rows.[i] + k * l.Rows.[j] 
         rows.[i] <- ri
         Matrix<'t> rows
 
@@ -533,3 +534,24 @@ module Matrix =
         let c =  eqns |> Seq.map (rhs >> sexpr >> get_vars) |> Seq.sumBy (List.length) in
         if c > 0 then failwith "The equation system must have only constants on its RHS to be put into matrix form."
         eqns |> Seq.map(rhs >> sexpr >> simplifye) |> Seq.toArray |> Vector<'t> 
+
+    let augmat (eqns:ScalarEquation<'t> seq) = coeffmat eqns |+|| constants eqns
+
+    type Ero<'t when 't: equality and 't :> ValueType and 't : struct and 't: (new: unit -> 't) and 't :> IEquatable<'t>> =
+    | MulRow of int*Scalar<'t>
+    | SwitchRows of (int*int)
+    | AddRows of int*int*Scalar<'t>
+    with
+        member x.Op :Matrix<'t>->Matrix<'t>= 
+            match x with
+            | MulRow(i, s) -> mrmul i s
+            | SwitchRows(i, j) -> mrswitch i j
+            | AddRows(i,j,s) -> mraddmul i j s
+
+    let mermul i (s:obj) = Ero<'t>.MulRow(i, sterm<'t> s)
+    
+    let mersw i j = Ero<_>.SwitchRows(i,j)
+    
+    let meradd i j (s:obj) = Ero<'t>.AddRows(i,j,sterm<'t> s)
+    
+    let merops(ops:seq<Ero<'t>>) (m:Matrix<'t>) = ops |> Seq.fold(fun _m op -> op.Op _m) m

@@ -463,6 +463,14 @@ module Scalar =
         | :? int as n -> Expr.Value (rat n) |> expand_as<rat>
         | _ -> failwithf "The expression %A is not a rational number expression." x
 
+    let sterm<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> (t:obj) =
+        match box t with
+        | :? 't as v -> v |> exprv |> Scalar
+        | v when v.GetType().IsValueType -> Convert.ChangeType(v, typeof<'t>) :?> 't |> exprv |> Scalar
+        | :? Scalar<'t> as t -> t
+        | :? Expr<'t> as e -> e |> Scalar
+        | x -> failwithf "Cannot convert %A of type %A to Scalar of type %A." x (x.GetType()) (typeof<'t>)
+           
     let scalar_terms<'t when 't : equality and 't :> ValueType and 't :> IEquatable<'t>> (t:obj[]) =
         t |> Array.map(
             function
