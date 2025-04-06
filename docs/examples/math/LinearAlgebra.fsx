@@ -58,13 +58,21 @@ RR |> merops [
 ] 
 
 let x1,x2,x3 = realvar3 "x_1" "x_2" "x_3"
-
+let x4,x5 = realvar2 "x_4" "x_5"
 let sys2 = [
     x1 + x2 + x3 == 3.
     2*x1 + x2 + x3 == 4.
     x1 - x2 + 2  * x3 == 5.
 ]
 
+let sys3 = [
+    x1 + x2 + x3 + x4 + x5 == 3.
+    2*x1 + x2 + x3 + x4 + 2*x5 ==  4.
+    x1 - x2 - x3 + x4 + x5 == 5.
+    x1 + x4 + x5 == 4.
+]
+
+       
 let A = augmat sys2
 A |> merops [
     meradd 1 0 -2
@@ -72,4 +80,8 @@ A |> merops [
     mermul 1 -1
     meradd 2 1 2
     mermul 2 (1R/3)
-]
+] = mref A
+let B = mref A
+
+
+sys3 |> augmat |> mrref

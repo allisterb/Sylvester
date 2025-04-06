@@ -491,7 +491,7 @@ module Matrix =
         fail_if_not_square m
         msub m (v * (identmat (mdim0 m))) |> det |> AlgebraOps.ratsimp == zero
 
-    let mechelon (m:IMatrix<'t>) = m |> mexpr |> CAS.LinearAlgebra.echelon |> Matrix<'t>
+    let mref (m:IMatrix<'t>) = m |> mexpr |> CAS.LinearAlgebra.echelon |> Matrix<'t>
 
     let jordan_normal_form (m:IMatrix<'t>) = 
         fail_if_not_square m
@@ -555,3 +555,12 @@ module Matrix =
     let meradd i j (s:obj) = Ero<'t>.AddRows(i,j,sterm<'t> s)
     
     let merops(ops:seq<Ero<'t>>) (m:Matrix<'t>) = ops |> Seq.fold(fun _m op -> op.Op _m) m
+
+    let mrref(m:IMatrix<'t>) =
+        let mutable R = mref m
+        for j in 0..R.Dim1 - 1 do
+            let c = R.Columns.[j] in
+            for i in 0 .. c.Dim - 1 do
+                if j < R.Dim0 && i <> j && c.[i] <> zero then R <- mraddmul i j (negone / c.[i]) R
+        R
+   
