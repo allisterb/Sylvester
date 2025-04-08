@@ -107,6 +107,7 @@ module R =
 
     let integrate_over_R (x:ScalarVar<real>) f = integrate_over x neginf inf f
 
-    
+    let taylor_series (x:ScalarVar<real>) (a:obj) (n:int) (s:ISymbolic<_, real>) =
+        CAS.Analysis.taylor_series s.Expr x.Expr (a |> sterm<real> |> sexpr) n |> Scalar<real>
 
 

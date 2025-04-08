@@ -548,11 +548,11 @@ module Matrix =
             | SwitchRows(i, j) -> mrswitch i j
             | AddRows(i,j,s) -> mraddmul i j s
 
-    let mermul i (s:obj) = Ero<'t>.MulRow(i, sterm<'t> s)
+    let ermul i (s:obj) = Ero<'t>.MulRow(i, sterm<'t> s)
     
-    let mersw i j = Ero<_>.SwitchRows(i,j)
+    let ersw i j = Ero<_>.SwitchRows(i,j)
     
-    let meradd i j (s:obj) = Ero<'t>.AddRows(i,j,sterm<'t> s)
+    let eradd i j (s:obj) = Ero<'t>.AddRows(i,j,sterm<'t> s)
     
     let merops(ops:seq<Ero<'t>>) (m:Matrix<'t>) = ops |> Seq.fold(fun _m op -> op.Op _m) m
 

@@ -86,3 +86,5 @@ module Analysis =
         let r = sendCmd<'t>(get_vars expr @ get_vars x @ get_vars l @ get_vars u) <| sprintf "integrate(%s, %s, %s, %s);" (sprint expr) (sprint x) l' u'
         do if l' <> "minf" && u' <> "inf" then forget <@ %u > %l @>
         r
+
+    let taylor_series(expr:Expr<real>) (x:Expr<'t>) (a:Expr<'t>) (n:int) = sprintf "taylor(%s, %s, %s, %A);" (sprint expr) (sprint x) (sprint a) n |> sendCmd<'t> (get_vars expr)

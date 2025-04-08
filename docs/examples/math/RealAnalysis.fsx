@@ -12,6 +12,7 @@ let t = realvar "t"
 let c = realconst "c"
 open Integrals
 
+taylor_series x 4 3 (3*x***2 + 2)
 //let f = realfun_l <@fun x-> 1. + x ** 2. @> in
 
 

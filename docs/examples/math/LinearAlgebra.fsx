@@ -85,3 +85,4 @@ let B = mref A
 
 
 sys3 |> augmat |> mrref
+mrref <| mat [[1;1;1;3]; [2;1;1;4]; [1;-1;2;5]]

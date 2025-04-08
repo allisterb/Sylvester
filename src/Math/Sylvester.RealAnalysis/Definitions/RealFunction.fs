@@ -191,12 +191,12 @@ module RealFunction =
     let partdiffn_e n (f:IRealFunction<_>) = diffe (fvar n f) f
 
     let solve_for_fun (y:realvar) (x:realvar) (eqns: ScalarEquation<real> list) =
-        let vars = eqns |> List.map sexpr |> get_varsl |> List.map get_var_name
+        let vars = eqns |> List.map sexpr |> get_varsl |> List.map vname
         let consts = List.except [x.Var.Name] vars
         solve_for_single y [x] eqns |> collect_terms x |> fixconst consts |> realfun y.Name
 
     let solve_for_fun_elim (y:realvar) (e:realvar list) (x:realvar) (eqns: ScalarEquation<real> list) =
-           let vars = eqns |> List.map sexpr |> get_varsl |> List.map get_var_name
+           let vars = eqns |> List.map sexpr |> get_varsl |> List.map vname
            let consts = List.except [x.Var.Name] vars 
            solve_for_elim_single y e eqns |> collect_terms x |> fixconst consts |> realfun y.Name 
 
