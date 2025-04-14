@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.11.2" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.0" />
     <PackageReference Condition="'$(OS)' != 'Windows_NT'" Include="Sylvester.tf.Native.Win" Version="2.0.0.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
